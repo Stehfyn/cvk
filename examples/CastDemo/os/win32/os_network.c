@@ -89,16 +89,11 @@ static FORCE_INLINE void RecordError(OS_Network_t* network, uint32_t code);
 static FORCE_INLINE void RecordError(OS_Network_t* network, uint32_t code)
 {
     uint32_t error;
+    uint32_t previous;
 
-    error = code;
-    if (0 == error)
-    {
-        error = ERROR_GEN_FAILURE;
-    }
-    if (0 == network->error)
-    {
-        network->error = error;
-    }
+    error = (0 == code) ? ERROR_GEN_FAILURE : code;
+    previous = network->error;
+    network->error = (0 == previous) ? error : previous;
 }
 
 /*=================================================================================================
@@ -238,7 +233,7 @@ extern FORCE_INLINE void OS_Network_GetInterface(const OS_Network_t*     network
  *  The native call is synchronous and bounded in output size, not proven latency.
  *  Count, extent and address-family validation precede publishing any entry.
  */
-bool_t OS_Network_ReadInterfaces(OS_Network_t* network)
+extern FORCE_INLINE bool_t OS_Network_ReadInterfaces(OS_Network_t* network)
 {
     uint32_t error;
     uint32_t count;

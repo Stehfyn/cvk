@@ -24,6 +24,7 @@
 #include "crt/crt_memory.h"
 #include "crt/crt_format.h"
 #include "os/os_assert.h"
+#include "os/os_compiler.h"
 #include "os/os_memory.h"
 
 /* One TLS record is at most 16 KiB of payload plus header and trailer. */
@@ -68,7 +69,7 @@ struct CastChannel
  *  Formats the operation name and an optional hexadecimal status into the
  *  caller's diagnostic buffer.
  */
-static void SetError(char* pError, size_t capacity, const char* pWhat, unsigned long code)
+static FORCE_INLINE void SetError(char* pError, size_t capacity, const char* pWhat, unsigned long code)
 {
     if (0 != code)
     {
@@ -86,7 +87,7 @@ static void SetError(char* pError, size_t capacity, const char* pWhat, unsigned 
  *  Advances through partial socket writes until all bytes are sent or send
  *  reports an error or a closed connection.
  */
-static int SendAll(SOCKET s, const void* pData, size_t length)
+static FORCE_INLINE int SendAll(SOCKET s, const void* pData, size_t length)
 {
     const byte_t* pCursor = (const byte_t*)pData;
 
@@ -166,7 +167,7 @@ static SOCKET ConnectTcp(const char* pHost, unsigned short port, char* pError, s
  *  Publishes the negotiated TLS record limits only when the fixed record buffer
  *  can hold the complete header, maximum plaintext and trailer.
  */
-static bool_t ReadStreamSizes(CastChannel* pChannel, char* pError, size_t errorCapacity)
+static FORCE_INLINE bool_t ReadStreamSizes(CastChannel* pChannel, char* pError, size_t errorCapacity)
 {
     SECURITY_STATUS status;
     bool_t         has_header;
@@ -205,6 +206,123 @@ static bool_t ReadStreamSizes(CastChannel* pChannel, char* pError, size_t errorC
  *  unconsumed ciphertext for the next step. The current Cast connection uses
  *  manual certificate validation with no certificate-chain or host-name check.
  */
+static int AdvanceHandshake(CastChannel* pChannel,
+                            DWORD requested,
+                            SecBufferDesc* pOutDesc,
+                            SecBuffer* pOutBuffer,
+                            DWORD* pGranted,
+                            char* pError,
+                            size_t errorCapacity)
+{
+    SecBuffer inBuffers[2];
+    SecBufferDesc inDesc;
+    SECURITY_STATUS status;
+    bool_t has_output;
+    bool_t has_bytes;
+    bool_t can_send;
+
+    inBuffers[0].cbBuffer = (unsigned long)pChannel->incomingUsed;
+    inBuffers[0].BufferType = SECBUFFER_TOKEN;
+    inBuffers[0].pvBuffer = pChannel->incoming;
+    inBuffers[1].cbBuffer = 0;
+    inBuffers[1].BufferType = SECBUFFER_EMPTY;
+    inBuffers[1].pvBuffer = NULL;
+    inDesc.ulVersion = SECBUFFER_VERSION;
+    inDesc.cBuffers = 2;
+    inDesc.pBuffers = inBuffers;
+    pOutBuffer->cbBuffer = pChannel->maxHandshakeToken;
+    pOutBuffer->BufferType = SECBUFFER_TOKEN;
+    pOutBuffer->pvBuffer = pChannel->handshakeToken;
+    status = InitializeSecurityContextW(&pChannel->credentials, &pChannel->context, NULL,
+                                        requested, 0, 0, &inDesc, 0, NULL, pOutDesc, pGranted, NULL);
+    if (SEC_E_INCOMPLETE_MESSAGE == status)
+    {
+        return 0;
+    }
+    has_output = (pChannel->handshakeToken == pOutBuffer->pvBuffer);
+    has_bytes = (0 < pOutBuffer->cbBuffer);
+    can_send = has_output && (pOutBuffer->cbBuffer <= pChannel->maxHandshakeToken);
+    if (!can_send)
+    {
+        SetError(pError, errorCapacity, "TLS handshake token exceeds startup storage", 0);
+        return -1;
+    }
+    if (has_bytes && !SendAll(pChannel->socket, pOutBuffer->pvBuffer, pOutBuffer->cbBuffer))
+    {
+        SetError(pError, errorCapacity, "cannot send a handshake message", (unsigned long)WSAGetLastError());
+        return -1;
+    }
+    if (SECBUFFER_EXTRA == inBuffers[1].BufferType && inBuffers[1].cbBuffer > 0)
+    {
+        CRT_Memory_Move(pChannel->incoming,
+                        pChannel->incoming + pChannel->incomingUsed - inBuffers[1].cbBuffer,
+                        inBuffers[1].cbBuffer);
+        pChannel->incomingUsed = inBuffers[1].cbBuffer;
+    }
+    else
+    {
+        pChannel->incomingUsed = 0;
+    }
+    if (SEC_E_OK == status)
+    {
+        return ReadStreamSizes(pChannel, pError, errorCapacity) ? 2 : -1;
+    }
+    if (SEC_I_CONTINUE_NEEDED != status)
+    {
+        SetError(pError, errorCapacity, "TLS handshake failed", (unsigned long)status);
+        return -1;
+    }
+    return pChannel->incomingUsed > 0 ? 1 : 0;
+}
+
+static FORCE_INLINE int ContinueHandshake(CastChannel* pChannel,
+                             DWORD requested,
+                             SecBufferDesc* pOutDesc,
+                             SecBuffer* pOutBuffer,
+                             DWORD* pGranted,
+                             char* pError,
+                             size_t errorCapacity)
+{
+    pChannel->incomingUsed = 0;
+    for (;;)
+    {
+        int received;
+
+        if (pChannel->incomingUsed >= INCOMING_CAPACITY)
+        {
+            SetError(pError, errorCapacity, "TLS handshake record too large", 0);
+            return 0;
+        }
+        received = recv(pChannel->socket,
+                        (char*)pChannel->incoming + pChannel->incomingUsed,
+                        (int)(INCOMING_CAPACITY - pChannel->incomingUsed), 0);
+        if (received <= 0)
+        {
+            SetError(pError, errorCapacity, "connection closed during the TLS handshake",
+                     (unsigned long)WSAGetLastError());
+            return 0;
+        }
+        pChannel->incomingUsed += (size_t)received;
+        for (;;)
+        {
+            int result = AdvanceHandshake(pChannel, requested, pOutDesc, pOutBuffer,
+                                          pGranted, pError, errorCapacity);
+            if (2 == result)
+            {
+                return 1;
+            }
+            if (result < 0)
+            {
+                return 0;
+            }
+            if (0 == result)
+            {
+                break;
+            }
+        }
+    }
+}
+
 static int Handshake(CastChannel* pChannel, const char* pHost, char* pError, size_t errorCapacity)
 {
     const DWORD requested =
@@ -275,87 +393,7 @@ static int Handshake(CastChannel* pChannel, const char* pHost, char* pError, siz
         return ReadStreamSizes(pChannel, pError, errorCapacity);
     }
 
-    pChannel->incomingUsed = 0;
-    for (;;)
-    {
-        int received;
-
-        if (pChannel->incomingUsed >= INCOMING_CAPACITY)
-        {
-            SetError(pError, errorCapacity, "TLS handshake record too large", 0);
-            return 0;
-        }
-        received = recv(pChannel->socket, (char*)pChannel->incoming + pChannel->incomingUsed, (int)(INCOMING_CAPACITY - pChannel->incomingUsed), 0);
-        if (received <= 0)
-        {
-            SetError(pError, errorCapacity, "connection closed during the TLS handshake", (unsigned long)WSAGetLastError());
-            return 0;
-        }
-        pChannel->incomingUsed += (size_t)received;
-        for (;;)
-        {
-            SecBuffer     inBuffers[2];
-            SecBufferDesc inDesc;
-
-            inBuffers[0].cbBuffer   = (unsigned long)pChannel->incomingUsed;
-            inBuffers[0].BufferType = SECBUFFER_TOKEN;
-            inBuffers[0].pvBuffer   = pChannel->incoming;
-            inBuffers[1].cbBuffer   = 0;
-            inBuffers[1].BufferType = SECBUFFER_EMPTY;
-            inBuffers[1].pvBuffer   = NULL;
-            inDesc.ulVersion        = SECBUFFER_VERSION;
-            inDesc.cBuffers         = 2;
-            inDesc.pBuffers         = inBuffers;
-            outBuffer.cbBuffer      = pChannel->maxHandshakeToken;
-            outBuffer.BufferType    = SECBUFFER_TOKEN;
-            outBuffer.pvBuffer      = pChannel->handshakeToken;
-            status                  = InitializeSecurityContextW(&pChannel->credentials, &pChannel->context, NULL, requested, 0, 0, &inDesc, 0, NULL, &outDesc, &granted, NULL);
-            if (SEC_E_INCOMPLETE_MESSAGE == status)
-            {
-                break; /* the record is not complete: receive more */
-            }
-            has_output = (pChannel->handshakeToken == outBuffer.pvBuffer);
-            has_bytes = (0 < outBuffer.cbBuffer);
-            can_send = has_output && (outBuffer.cbBuffer <= pChannel->maxHandshakeToken);
-            if (!can_send)
-            {
-                SetError(pError, errorCapacity, "TLS handshake token exceeds startup storage", 0);
-                return 0;
-            }
-            if (has_bytes)
-            {
-                const int sent = SendAll(pChannel->socket, outBuffer.pvBuffer, outBuffer.cbBuffer);
-
-                if (!sent)
-                {
-                    SetError(pError, errorCapacity, "cannot send a handshake message", (unsigned long)WSAGetLastError());
-                    return 0;
-                }
-            }
-            if (SECBUFFER_EXTRA == inBuffers[1].BufferType && inBuffers[1].cbBuffer > 0)
-            {
-                CRT_Memory_Move(pChannel->incoming, pChannel->incoming + pChannel->incomingUsed - inBuffers[1].cbBuffer, inBuffers[1].cbBuffer);
-                pChannel->incomingUsed = inBuffers[1].cbBuffer;
-            }
-            else
-            {
-                pChannel->incomingUsed = 0;
-            }
-            if (SEC_E_OK == status)
-            {
-                return ReadStreamSizes(pChannel, pError, errorCapacity);
-            }
-            if (SEC_I_CONTINUE_NEEDED != status)
-            {
-                SetError(pError, errorCapacity, "TLS handshake failed", (unsigned long)status);
-                return 0;
-            }
-            if (0 == pChannel->incomingUsed)
-            {
-                break; /* nothing buffered: receive the next flight */
-            }
-        }
-    }
+    return ContinueHandshake(pChannel, requested, &outDesc, &outBuffer, &granted, pError, errorCapacity);
 }
 
 
@@ -372,6 +410,37 @@ static int Handshake(CastChannel* pChannel, const char* pHost, char* pError, siz
  *  A complete frame returns control before decrypting the following TLS record,
  *  keeping coalesced frames within the fixed plaintext capacity.
  */
+static FORCE_INLINE int AppendDecryptedBuffers(CastChannel* pChannel,
+                                  const SecBuffer* buffers,
+                                  const byte_t** ppExtra,
+                                  uint32_t* pExtraLength)
+{
+    int index;
+
+    *ppExtra = NULL;
+    *pExtraLength = 0;
+    for (index = 0; index < 4; ++index)
+    {
+        if (SECBUFFER_DATA == buffers[index].BufferType && buffers[index].cbBuffer > 0)
+        {
+            if (pChannel->plainUsed > PLAINTEXT_CAPACITY ||
+                buffers[index].cbBuffer > PLAINTEXT_CAPACITY - pChannel->plainUsed)
+            {
+                SetError(pChannel->error, sizeof(pChannel->error), "frame exceeds the CASTV2 limit", 0);
+                return 0;
+            }
+            CRT_Memory_Copy(pChannel->plain + pChannel->plainUsed, buffers[index].pvBuffer, buffers[index].cbBuffer);
+            pChannel->plainUsed += buffers[index].cbBuffer;
+        }
+        else if (SECBUFFER_EXTRA == buffers[index].BufferType && buffers[index].cbBuffer > 0)
+        {
+            *ppExtra = (const byte_t*)buffers[index].pvBuffer;
+            *pExtraLength = buffers[index].cbBuffer;
+        }
+    }
+    return 1;
+}
+
 static int DecryptBuffered(CastChannel* pChannel)
 {
     for (;;)
@@ -390,8 +459,6 @@ static int DecryptBuffered(CastChannel* pChannel)
         {
             break;
         }
-        pExtra               = NULL;
-        extraLength          = 0;
         buffers[0].cbBuffer   = (unsigned long)pChannel->incomingUsed;
         buffers[0].BufferType = SECBUFFER_DATA;
         buffers[0].pvBuffer   = pChannel->incoming;
@@ -419,23 +486,9 @@ static int DecryptBuffered(CastChannel* pChannel)
             SetError(pChannel->error, sizeof(pChannel->error), "DecryptMessage failed", (unsigned long)status);
             return 0;
         }
-        for (index = 0; index < 4; ++index)
+        if (!AppendDecryptedBuffers(pChannel, buffers, &pExtra, &extraLength))
         {
-            if (SECBUFFER_DATA == buffers[index].BufferType && buffers[index].cbBuffer > 0)
-            {
-                if (pChannel->plainUsed + buffers[index].cbBuffer > PLAINTEXT_CAPACITY)
-                {
-                    SetError(pChannel->error, sizeof(pChannel->error), "frame exceeds the CASTV2 limit", 0);
-                    return 0;
-                }
-                CRT_Memory_Copy(pChannel->plain + pChannel->plainUsed, buffers[index].pvBuffer, buffers[index].cbBuffer);
-                pChannel->plainUsed += buffers[index].cbBuffer;
-            }
-            else if (SECBUFFER_EXTRA == buffers[index].BufferType && buffers[index].cbBuffer > 0)
-            {
-                pExtra      = (const byte_t*)buffers[index].pvBuffer;
-                extraLength = buffers[index].cbBuffer;
-            }
+            return 0;
         }
         has_consumed_record = (extraLength < pChannel->incomingUsed);
         if (!has_consumed_record)
@@ -466,7 +519,7 @@ static int DecryptBuffered(CastChannel* pChannel)
  * \par Details:
  *  Reserves and locks the channel buffers before any connection is attempted.
  */
-bool_t CastChannel_Initialize(CastChannel_Workspace_t* workspace)
+extern FORCE_INLINE bool_t CastChannel_Initialize(CastChannel_Workspace_t* workspace)
 {
     bool_t ready;
     SECURITY_STATUS queryStatus;
@@ -514,7 +567,7 @@ bool_t CastChannel_Initialize(CastChannel_Workspace_t* workspace)
  * \par Details:
  *  None
  */
-const char* CastChannel_GetError(const CastChannel* pChannel)
+extern FORCE_INLINE const char* CastChannel_GetError(const CastChannel* pChannel)
 {
     return pChannel->error;
 }
@@ -524,7 +577,7 @@ const char* CastChannel_GetError(const CastChannel* pChannel)
  * \par Details:
  *  Reuses startup-owned channel storage for each connection attempt.
  */
-CastChannel* CastChannel_Connect(CastChannel_Workspace_t* workspace,
+extern FORCE_INLINE CastChannel* CastChannel_Connect(CastChannel_Workspace_t* workspace,
                                  const char*              pHost,
                                  unsigned short           port,
                                  char*                    pError,
@@ -661,6 +714,53 @@ int CastChannel_Send(CastChannel* pChannel, const Utl_CastV2_Message_t* pMessage
  *  frame inspection immediately; an incomplete unchanged frame reaches the
  *  deadline and socket-read path instead of spinning on its existing header.
  */
+static int ReceiveCiphertext(CastChannel* pChannel, ULONGLONG deadline)
+{
+    ULONGLONG now;
+    struct timeval timeout;
+    fd_set readable;
+    int ready;
+    int received;
+
+    now = GetTickCount64();
+    if (now >= deadline)
+    {
+        return 0;
+    }
+    timeout.tv_sec  = (long)((deadline - now) / CHANNEL_MILLISECONDS_PER_SECOND);
+    timeout.tv_usec = (long)((deadline - now) % CHANNEL_MILLISECONDS_PER_SECOND) * CHANNEL_MICROSECONDS_PER_MILLISECOND;
+    FD_ZERO(&readable);
+    FD_SET(pChannel->socket, &readable);
+    ready = select(0, &readable, NULL, NULL, &timeout);
+    if (0 == ready)
+    {
+        return 0;
+    }
+    if (ready < 0)
+    {
+        SetError(pChannel->error, sizeof(pChannel->error), "select failed", (unsigned long)WSAGetLastError());
+        return -1;
+    }
+    if (pChannel->incomingUsed >= INCOMING_CAPACITY)
+    {
+        SetError(pChannel->error, sizeof(pChannel->error), "TLS record too large", 0);
+        return -1;
+    }
+    received = recv(pChannel->socket, (char*)pChannel->incoming + pChannel->incomingUsed, (int)(INCOMING_CAPACITY - pChannel->incomingUsed), 0);
+    if (0 == received)
+    {
+        SetError(pChannel->error, sizeof(pChannel->error), "the receiver closed the connection", 0);
+        return -1;
+    }
+    if (received < 0)
+    {
+        SetError(pChannel->error, sizeof(pChannel->error), "recv failed", (unsigned long)WSAGetLastError());
+        return -1;
+    }
+    pChannel->incomingUsed += (size_t)received;
+    return 1;
+}
+
 int CastChannel_Receive(CastChannel* pChannel, Utl_CastV2_Message_t* pMessage, unsigned timeoutMs)
 {
     const ULONGLONG deadline = GetTickCount64() + timeoutMs;
@@ -677,11 +777,7 @@ int CastChannel_Receive(CastChannel* pChannel, Utl_CastV2_Message_t* pMessage, u
         Utl_CastV2_FrameState_t frame_state;
         uint32_t                frame_bytes;
         uint32_t                previous_plain_bytes;
-        ULONGLONG               now;
-        struct timeval          timeout;
-        fd_set                  readable;
-        int                     ready;
-        int                     received;
+        int                     receive_result;
         bool_t                  has_new_plaintext;
 
         /* plainUsed is bounded by PLAINTEXT_CAPACITY at every append. */
@@ -713,42 +809,11 @@ int CastChannel_Receive(CastChannel* pChannel, Utl_CastV2_Message_t* pMessage, u
         {
             continue; /* a frame may have completed */
         }
-        now = GetTickCount64();
-        if (now >= deadline)
+        receive_result = ReceiveCiphertext(pChannel, deadline);
+        if (receive_result <= 0)
         {
-            return 0;
+            return receive_result;
         }
-        timeout.tv_sec  = (long)((deadline - now) / CHANNEL_MILLISECONDS_PER_SECOND);
-        timeout.tv_usec = (long)((deadline - now) % CHANNEL_MILLISECONDS_PER_SECOND) * CHANNEL_MICROSECONDS_PER_MILLISECOND;
-        FD_ZERO(&readable);
-        FD_SET(pChannel->socket, &readable);
-        ready = select(0, &readable, NULL, NULL, &timeout);
-        if (0 == ready)
-        {
-            return 0;
-        }
-        if (ready < 0)
-        {
-            SetError(pChannel->error, sizeof(pChannel->error), "select failed", (unsigned long)WSAGetLastError());
-            return -1;
-        }
-        if (pChannel->incomingUsed >= INCOMING_CAPACITY)
-        {
-            SetError(pChannel->error, sizeof(pChannel->error), "TLS record too large", 0);
-            return -1;
-        }
-        received = recv(pChannel->socket, (char*)pChannel->incoming + pChannel->incomingUsed, (int)(INCOMING_CAPACITY - pChannel->incomingUsed), 0);
-        if (0 == received)
-        {
-            SetError(pChannel->error, sizeof(pChannel->error), "the receiver closed the connection", 0);
-            return -1;
-        }
-        if (received < 0)
-        {
-            SetError(pChannel->error, sizeof(pChannel->error), "recv failed", (unsigned long)WSAGetLastError());
-            return -1;
-        }
-        pChannel->incomingUsed += (size_t)received;
     }
 }
 
@@ -758,7 +823,7 @@ int CastChannel_Receive(CastChannel* pChannel, Utl_CastV2_Message_t* pMessage, u
  *  Retries the Schannel handles and socket recorded as live. Failed native
  *  cleanup retains ownership in startup storage for the next attempt.
  */
-void CastChannel_Close(CastChannel* pChannel)
+extern FORCE_INLINE void CastChannel_Close(CastChannel* pChannel)
 {
     SECURITY_STATUS security_status;
     int32_t         socket_status;
@@ -800,7 +865,7 @@ void CastChannel_Close(CastChannel* pChannel)
  * \par Details:
  *  Native cleanup can be retried while the caller retains the workspace.
  */
-bool_t CastChannel_TryClose(CastChannel_Workspace_t* workspace)
+extern FORCE_INLINE bool_t CastChannel_TryClose(CastChannel_Workspace_t* workspace)
 {
     bool_t resources_closed;
     bool_t closed;

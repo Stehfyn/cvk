@@ -1109,7 +1109,7 @@ extern FORCE_INLINE void Utl_Mpeg4_InitializeSyncSampleCursor(Utl_Mpeg4_SyncSamp
  * \par Details:
  *  None
  */
-void Utl_Mpeg4_InitializeTrackRun(Utl_Mpeg4_TrackRun_t* run)
+extern FORCE_INLINE void Utl_Mpeg4_InitializeTrackRun(Utl_Mpeg4_TrackRun_t* run)
 {
     LOGASSERT(NULL != run);
     run->version          = 0;
@@ -1125,7 +1125,7 @@ void Utl_Mpeg4_InitializeTrackRun(Utl_Mpeg4_TrackRun_t* run)
  * \par Details:
  *  None
  */
-void Utl_Mpeg4_InitializeTrackFragment(Utl_Mpeg4_TrackFragment_t* track, uint32_t trackId)
+extern FORCE_INLINE void Utl_Mpeg4_InitializeTrackFragment(Utl_Mpeg4_TrackFragment_t* track, uint32_t trackId)
 {
     LOGASSERT(NULL != track);
     LOGASSERT(0 < trackId);
@@ -1148,7 +1148,7 @@ void Utl_Mpeg4_InitializeTrackFragment(Utl_Mpeg4_TrackFragment_t* track, uint32_
  * \par Details:
  *  None
  */
-void Utl_Mpeg4_InitializeMovieFragment(Utl_Mpeg4_MovieFragment_t*       fragment,
+extern FORCE_INLINE void Utl_Mpeg4_InitializeMovieFragment(Utl_Mpeg4_MovieFragment_t*       fragment,
                                        const Utl_Mpeg4_TrackFragment_t* tracks,
                                        uint32_t                         trackCount)
 {
@@ -1427,7 +1427,7 @@ extern FORCE_INLINE bool_t Utl_Mpeg4_GetSampleDecodeTime(uint64_t* time, const U
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4_GetTrackRunByteCount(const Utl_Mpeg4_TrackRun_t* run)
+extern FORCE_INLINE uint32_t Utl_Mpeg4_GetTrackRunByteCount(const Utl_Mpeg4_TrackRun_t* run)
 {
     bool_t   valid;
     uint64_t count;
@@ -1494,7 +1494,7 @@ uint32_t Utl_Mpeg4_GetTrackRunByteCount(const Utl_Mpeg4_TrackRun_t* run)
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4_GetTrackFragmentByteCount(const Utl_Mpeg4_TrackFragment_t* track)
+extern FORCE_INLINE uint32_t Utl_Mpeg4_GetTrackFragmentByteCount(const Utl_Mpeg4_TrackFragment_t* track)
 {
     uint32_t header_bytes;
     bool_t   valid;
@@ -1561,7 +1561,7 @@ uint32_t Utl_Mpeg4_GetTrackFragmentByteCount(const Utl_Mpeg4_TrackFragment_t* tr
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4_GetMovieFragmentByteCount(const Utl_Mpeg4_MovieFragment_t* fragment)
+extern FORCE_INLINE uint32_t Utl_Mpeg4_GetMovieFragmentByteCount(const Utl_Mpeg4_MovieFragment_t* fragment)
 {
     bool_t   valid;
     uint64_t count;
@@ -2038,6 +2038,8 @@ extern FORCE_INLINE uint32_t Utl_Mpeg4_WriteFileType(const Utl_Mpeg4_FileType_t*
     bool_t              can_write;
     uint32_t            written;
     Utl_Mpeg4_Integer_t field;
+    byte_t              empty = 0;
+    const byte_t*       brands;
 
     LOGASSERT(NULL != output);
     count       = Utl_Mpeg4_GetFileTypeByteCount(fileType);
@@ -2053,12 +2055,9 @@ extern FORCE_INLINE uint32_t Utl_Mpeg4_WriteFileType(const Utl_Mpeg4_FileType_t*
         field.value     = fileType->minorVersion;
         field.byteCount = INTEGER32_BYTES;
         WriteUnsigned(&output[INTEGER32_BYTES], field);
-        if (0 < fileType->compatibleBrands.byteCount)
-        {
-            CRT_Memory_Copy(&output[UTL_MPEG4_FILE_TYPE_FIELDS_BYTES],
-                            fileType->compatibleBrands.data,
-                            fileType->compatibleBrands.byteCount);
-        }
+        brands = (0 < fileType->compatibleBrands.byteCount) ? fileType->compatibleBrands.data : &empty;
+        CRT_Memory_Copy(&output[UTL_MPEG4_FILE_TYPE_FIELDS_BYTES], brands,
+                        fileType->compatibleBrands.byteCount);
         written = count;
     }
     return written;

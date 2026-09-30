@@ -228,7 +228,7 @@ static FORCE_INLINE void MakePositionRoom(CastCommands_t* commands, CastCommand 
  * \par Details:
  *  Old entry bytes become unoccupied; no external resource is owned by an entry.
  */
-void CastCommands_Reset(CastCommands_t* commands)
+extern FORCE_INLINE void CastCommands_Reset(CastCommands_t* commands)
 {
     LOGASSERT(NULL != commands);
 
@@ -308,7 +308,7 @@ bool_t CastCommands_Push(CastCommands_t* commands, CastCommand command, float64_
  *  Publishes a pending Stop before ordinary entries. Taking an ordinary command
  *  advances the ring without moving survivors; an empty queue preserves output.
  */
-bool_t CastCommands_Take(CastCommands_t* commands, CastQueuedCommand_t* command)
+extern FORCE_INLINE bool_t CastCommands_Take(CastCommands_t* commands, CastQueuedCommand_t* command)
 {
     bool_t available;
 

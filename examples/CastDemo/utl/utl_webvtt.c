@@ -653,7 +653,7 @@ extern FORCE_INLINE uint32_t Utl_WebVtt_GetTimestampByteCount(uint64_t milliseco
  * \par Details:
  *  Each timestamp is bounded by the uint64_t time domain; the fixed sum fits uint32_t.
  */
-uint32_t Utl_WebVtt_GetTimingByteCount(uint64_t start, uint64_t end)
+extern FORCE_INLINE uint32_t Utl_WebVtt_GetTimingByteCount(uint64_t start, uint64_t end)
 {
     uint32_t count;
 

@@ -12,6 +12,7 @@
 
 #include "os/os_ringbuffer.h"
 #include "os/os_types.h"
+#include "os/os_compiler.h"
 #include <stdint.h>
 #include "os/os_assert.h"
 
@@ -50,7 +51,7 @@
  * \par Details:
  *  None
  */
-void OS_RingBuffer_Initialize(OS_RingBuffer_t* ring, byte_t* bytes, uint32_t capacity)
+extern FORCE_INLINE void OS_RingBuffer_Initialize(OS_RingBuffer_t* ring, byte_t* bytes, uint32_t capacity)
 {
     LOGASSERT(NULL != ring);
     LOGASSERT(NULL != bytes);
@@ -67,7 +68,7 @@ void OS_RingBuffer_Initialize(OS_RingBuffer_t* ring, byte_t* bytes, uint32_t cap
  * \par Details:
  *  None
  */
-uint32_t OS_RingBuffer_GetByteCount(const OS_RingBuffer_t* ring)
+extern FORCE_INLINE uint32_t OS_RingBuffer_GetByteCount(const OS_RingBuffer_t* ring)
 {
     LOGASSERT(NULL != ring);
 
@@ -139,7 +140,7 @@ const byte_t* OS_RingBuffer_GetReadableSpan(uint32_t* byteCount, const OS_RingBu
  *  The combined committed count and offset cannot exceed capacity. Address
  *  arithmetic uses a distance subtraction before adding to the first position.
  */
-byte_t* OS_RingBuffer_GetWritableSpan(uint32_t* byteCount, OS_RingBuffer_t* ring, uint32_t offset)
+extern FORCE_INLINE byte_t* OS_RingBuffer_GetWritableSpan(uint32_t* byteCount, OS_RingBuffer_t* ring, uint32_t offset)
 {
     uint32_t free_count;
     uint32_t available;
@@ -190,7 +191,7 @@ byte_t* OS_RingBuffer_GetWritableSpan(uint32_t* byteCount, OS_RingBuffer_t* ring
  * \par Details:
  *  None
  */
-void OS_RingBuffer_Reset(OS_RingBuffer_t* ring)
+extern FORCE_INLINE void OS_RingBuffer_Reset(OS_RingBuffer_t* ring)
 {
     LOGASSERT(NULL != ring);
 
@@ -203,7 +204,7 @@ void OS_RingBuffer_Reset(OS_RingBuffer_t* ring)
  * \par Details:
  *  None
  */
-void OS_RingBuffer_Produce(OS_RingBuffer_t* ring, uint32_t byteCount)
+extern FORCE_INLINE void OS_RingBuffer_Produce(OS_RingBuffer_t* ring, uint32_t byteCount)
 {
     LOGASSERT(NULL != ring);
     LOGASSERT(byteCount <= (ring->capacity - ring->byteCount));
@@ -217,7 +218,7 @@ void OS_RingBuffer_Produce(OS_RingBuffer_t* ring, uint32_t byteCount)
  *  Compute a single wrap using the distance to the storage end. The consumed
  *  count is bounded by capacity, so neither addition overflow nor division is needed.
  */
-void OS_RingBuffer_Consume(OS_RingBuffer_t* ring, uint32_t byteCount)
+extern FORCE_INLINE void OS_RingBuffer_Consume(OS_RingBuffer_t* ring, uint32_t byteCount)
 {
     uint32_t tail_distance;
 

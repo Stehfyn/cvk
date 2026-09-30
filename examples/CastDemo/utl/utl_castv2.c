@@ -477,7 +477,7 @@ extern FORCE_INLINE uint32_t Utl_CastV2_GetFrameByteCount(const Utl_CastV2_Messa
  * \par Details:
  *  Only the four-byte prefix is inspected. Subtraction avoids overflowing frame-length arithmetic.
  */
-Utl_CastV2_FrameState_t Utl_CastV2_InspectFrame(uint32_t* frameBytes, const byte_t* buffer, uint32_t byteCount)
+extern FORCE_INLINE Utl_CastV2_FrameState_t Utl_CastV2_InspectFrame(uint32_t* frameBytes, const byte_t* buffer, uint32_t byteCount)
 {
     bool_t                  has_output;
     bool_t                  has_input;

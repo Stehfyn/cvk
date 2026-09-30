@@ -101,7 +101,7 @@ static FORCE_INLINE void CopyText(char_t output[CAST_EVENTS_TEXT_CAPACITY], cons
  * \par Details:
  *  Initialize only ownership metadata; no uncommitted payload may be read.
  */
-void CastEvents_Initialize(CastEvents_t* events)
+extern FORCE_INLINE void CastEvents_Initialize(CastEvents_t* events)
 {
     LOGASSERT(NULL != events);
 
@@ -114,7 +114,7 @@ void CastEvents_Initialize(CastEvents_t* events)
  *  All role indexes and publication words are reset while no other thread can
  *  access them. Generation and ended are producer-owned after this operation.
  */
-void CastEvents_Begin(CastEvents_t* events, uint32_t generation)
+extern FORCE_INLINE void CastEvents_Begin(CastEvents_t* events, uint32_t generation)
 {
     LOGASSERT(NULL != events);
 
@@ -132,7 +132,7 @@ void CastEvents_Begin(CastEvents_t* events, uint32_t generation)
  *  slot. Terminal reason has one immutable publication and cannot be overwritten.
  *  Supported event categories select their own publication path.
  */
-bool_t CastEvents_Publish(CastEvents_t*     events,
+extern FORCE_INLINE bool_t CastEvents_Publish(CastEvents_t*     events,
                           uint32_t          generation,
                           CastEvent         event,
                           const CastStatus* status,
@@ -196,7 +196,7 @@ bool_t CastEvents_Publish(CastEvents_t*     events,
  *  status/log publications precede the subsequent channel reads. Otherwise a racing
  *  terminal event remains pending for the next call. No category uses a version counter.
  */
-bool_t CastEvents_Take(CastEvents_t* events, CastEvents_Snapshot_t* snapshot)
+extern FORCE_INLINE bool_t CastEvents_Take(CastEvents_t* events, CastEvents_Snapshot_t* snapshot)
 {
     uint32_t terminal;
     uint32_t present;

@@ -70,6 +70,10 @@
 #define DISCOVERY_DIRECT_SUFFIX          (":8008/ssdp/device-desc.xml")
 #define DISCOVERY_TERMINATOR             ('\0')
 
+#if CAST_DEVICE_NAME_BYTES == 0 || CAST_DEVICE_MODEL_BYTES == 0
+#error SSDP display text requires nonempty output arrays.
+#endif
+
 /*=================================================================================================
 ** 3.2 Types
 **===============================================================================================*/
@@ -375,16 +379,11 @@ static FORCE_INLINE void CollectResponses(Ssdp_t* discovery, uint32_t capacity, 
 static FORCE_INLINE void RecordError(Ssdp_t* discovery, uint32_t code)
 {
     uint32_t error;
+    uint32_t previous;
 
-    error = code;
-    if (0 == error)
-    {
-        error = ERROR_GEN_FAILURE;
-    }
-    if (0 == discovery->error)
-    {
-        discovery->error = error;
-    }
+    error = (0 == code) ? ERROR_GEN_FAILURE : code;
+    previous = discovery->error;
+    discovery->error = (0 == previous) ? error : previous;
 }
 
 /*************************************************************************************************/
@@ -461,7 +460,6 @@ static FORCE_INLINE bool_t WriteDisplayText(const Utl_Xml_Node_t* element, char_
     uint32_t count;
     bool_t   valid;
     LOGASSERT(NULL != output);
-    LOGASSERT(0 < capacity);
     count = 0;
     valid = Utl_Xml_WriteElementText(element, (byte_t*)output, capacity - 1, &count);
     if (valid)
@@ -483,7 +481,7 @@ static FORCE_INLINE bool_t ReadDescription(Ssdp_t* discovery, CastDevice* device
     Utl_Xml_Result_t       result;
     bool_t                 valid;
     uint32_t               error;
-    Utl_Upnp_Description_t description;
+    Utl_Upnp_Description_t description = {0};
     state  = discovery->state;
     result = Utl_Xml_ReadDocument(&state->xmlDocument, state->document, state->documentBytes);
     valid  = (UTL_XML_COMPLETE == result);
@@ -561,8 +559,8 @@ static FORCE_INLINE bool_t ReadLocation(Ssdp_t* discovery, const char_t* locatio
     Ssdp_State_t*       state;
     uint32_t            count;
     bool_t              valid;
-    Utl_Url_t           url;
-    Utl_Http_Endpoint_t endpoint;
+    Utl_Url_t           url = {0};
+    Utl_Http_Endpoint_t endpoint = {0};
     bool_t              fits_device_host;
     bool_t              fits_native_host;
     bool_t              fits_host;
@@ -966,7 +964,7 @@ static FORCE_INLINE void ReadResponse(Ssdp_State_t* state, uint32_t byteCount)
     Utl_Http_Head_t          head;
     Utl_Http_Result_t        result;
     bool_t                   valid;
-    Utl_Ssdp_Response_t      candidate;
+    Utl_Ssdp_Response_t      candidate = {0};
     Utl_Http_Text_t          target;
     bool_t                   matches_target;
     bool_t                   fits_location;
@@ -978,7 +976,6 @@ static FORCE_INLINE void ReadResponse(Ssdp_State_t* state, uint32_t byteCount)
     bool_t                   same_identity;
 
     LOGASSERT(CAST_MAX_DEVICES > state->locationCount);
-    LOGASSERT(DISCOVERY_RESPONSE_CAPACITY >= byteCount);
 
     head.fields        = state->fields;
     head.fieldCapacity = DISCOVERY_FIELD_CAPACITY;
@@ -1220,7 +1217,7 @@ bool_t Ssdp_Initialize(Ssdp_t* discovery)
  * \par Details:
  *  Worker completion must be acquired before inspecting worker-written errors.
  */
-uint32_t Ssdp_GetError(const Ssdp_t* discovery)
+extern FORCE_INLINE uint32_t Ssdp_GetError(const Ssdp_t* discovery)
 {
     LOGASSERT(NULL != discovery);
 
@@ -1328,7 +1325,7 @@ bool_t Ssdp_DescribeHost(Ssdp_t* discovery, const char_t* host, CastDevice* devi
  *  Independently releases HTTP, datagram and interface-query resources. A failed
  *  release retains both its identity and the storage holding it for the next poll.
  */
-bool_t Ssdp_TryClose(Ssdp_t* discovery)
+extern FORCE_INLINE bool_t Ssdp_TryClose(Ssdp_t* discovery)
 {
     bool_t        children_closed;
     Ssdp_State_t* state;

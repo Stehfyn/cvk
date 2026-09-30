@@ -1,12 +1,58 @@
 /* h264_params.c - Exp-Golomb SPS/PPS parser to Vulkan Std H.264 structures. */
 #include <stdint.h>
-#include <string.h>
 #include <vk_video/vulkan_video_codec_h264std.h>
 
+#include "crt/crt_memory.h"
 #include "h264_params.h"
 #include "os/os_types.h"
+#include "os/os_compiler.h"
 
-#define MAX_PARAM_SET 4096u
+#define MAX_PARAM_SET 4096U
+#define H264_BITS_PER_BYTE 8
+#define H264_LAST_BIT_IN_BYTE 7
+#define H264_EXP_GOLOMB_MAX_PREFIX_BITS 32
+#define H264_INITIAL_SCALING_FACTOR 8
+#define H264_SCALING_FACTOR_MODULUS 256
+#define H264_NAL_TYPE_MASK 0x1F
+#define H264_NAL_TYPE_SPS 7
+#define H264_NAL_TYPE_PPS 8
+#define H264_NAL_TYPE_NON_IDR_SLICE 1
+#define H264_NAL_TYPE_IDR_SLICE 5
+#define H264_NAL_REF_IDC_SHIFT 5
+#define H264_NAL_REF_IDC_MASK 0x03
+#define H264_MACROBLOCK_EDGE 16
+#define H264_SCALING_LIST_4X4_COUNT 6
+#define H264_SCALING_LIST_4X4_SIZE 16
+#define H264_SCALING_LIST_8X8_SIZE 64
+#define H264_HIGH_PROFILE_SCALING_LIST_COUNT 12
+#define H264_LEVEL_CODE_1_0 10
+#define H264_LEVEL_CODE_1_1 11
+#define H264_LEVEL_CODE_1_2 12
+#define H264_LEVEL_CODE_1_3 13
+#define H264_LEVEL_CODE_2_0 20
+#define H264_LEVEL_CODE_2_1 21
+#define H264_LEVEL_CODE_2_2 22
+#define H264_LEVEL_CODE_3_0 30
+#define H264_LEVEL_CODE_3_1 31
+#define H264_LEVEL_CODE_3_2 32
+#define H264_LEVEL_CODE_4_0 40
+#define H264_LEVEL_CODE_4_1 41
+#define H264_LEVEL_CODE_4_2 42
+#define H264_LEVEL_CODE_5_0 50
+#define H264_LEVEL_CODE_5_1 51
+#define H264_LEVEL_CODE_5_2 52
+#define H264_LEVEL_CODE_6_0 60
+#define H264_LEVEL_CODE_6_1 61
+#define H264_LEVEL_CODE_6_2 62
+#define H264_PROFILE_CODE_44 44
+#define H264_PROFILE_CODE_83 83
+#define H264_PROFILE_CODE_86 86
+#define H264_PROFILE_CODE_118 118
+#define H264_PROFILE_CODE_128 128
+#define H264_PROFILE_CODE_134 134
+#define H264_PROFILE_CODE_135 135
+#define H264_PROFILE_CODE_138 138
+#define H264_PROFILE_CODE_139 139
 
 typedef struct BitReader
 {
@@ -22,7 +68,7 @@ typedef struct BitReader
  * \par Details:
  *  Borrows the NAL payload and resets byte, bit and emulation-prevention state.
  */
-static void BitReader_Init(BitReader* pReader, const byte_t* pData, uint32_t size)
+static FORCE_INLINE void BitReader_Init(BitReader* pReader, const byte_t* pData, uint32_t size)
 {
     pReader->pData   = pData;
     pReader->size    = size;
@@ -38,7 +84,7 @@ static void BitReader_Init(BitReader* pReader, const byte_t* pData, uint32_t siz
  *  Advances most-significant bit first and skips an emulation-prevention 0x03
  *  after two zero bytes. Exhausted input currently produces zero.
  */
-static uint32_t ReadBit(BitReader* pReader)
+static FORCE_INLINE uint32_t ReadBit(BitReader* pReader)
 {
     uint8_t  byte;
     uint32_t bit;
@@ -48,8 +94,8 @@ static uint32_t ReadBit(BitReader* pReader)
         return 0;
     }
     byte = pReader->pData[pReader->bytePos];
-    bit  = (byte >> (7 - pReader->bitPos)) & 1U;
-    if (++pReader->bitPos == 8)
+    bit  = (byte >> (H264_LAST_BIT_IN_BYTE - pReader->bitPos)) & 1U;
+    if (++pReader->bitPos == H264_BITS_PER_BYTE)
     {
         pReader->bitPos = 0;
         /* Track the RBSP emulation-prevention sequence 00 00 03. */
@@ -76,7 +122,7 @@ static uint32_t ReadBit(BitReader* pReader)
  * \par Details:
  *  Accumulates the requested bit count by repeated ReadBit calls.
  */
-static uint32_t ReadBits(BitReader* pReader, int count)
+static FORCE_INLINE uint32_t ReadBits(BitReader* pReader, int count)
 {
     uint32_t value = 0;
     int i;
@@ -107,13 +153,13 @@ static uint32_t ReadUe(BitReader* pReader)
             break;
         }
         bit = ReadBit(pReader);
-        if (bit || (32 == leadingZeros))
+        if (bit || (H264_EXP_GOLOMB_MAX_PREFIX_BITS == leadingZeros))
         {
             break;
         }
         ++leadingZeros;
     }
-    if (32 == leadingZeros)
+    if (H264_EXP_GOLOMB_MAX_PREFIX_BITS == leadingZeros)
     {
         return 0;
     }
@@ -131,7 +177,7 @@ static uint32_t ReadUe(BitReader* pReader)
  *  Maps unsigned Exp-Golomb code numbers to alternating positive and negative
  *  signed values.
  */
-static int32_t ReadSe(BitReader* pReader)
+static FORCE_INLINE int32_t ReadSe(BitReader* pReader)
 {
     const uint32_t code = ReadUe(pReader);
 
@@ -149,10 +195,10 @@ static int32_t ReadSe(BitReader* pReader)
  *  Consumes signed scaling deltas and updates the rolling scale without storing
  *  the resulting matrix.
  */
-static void SkipScalingList(BitReader* pReader, int count)
+static FORCE_INLINE void SkipScalingList(BitReader* pReader, int count)
 {
-    int32_t lastScale = 8;
-    int32_t nextScale = 8;
+    int32_t lastScale = H264_INITIAL_SCALING_FACTOR;
+    int32_t nextScale = H264_INITIAL_SCALING_FACTOR;
     int j;
 
     for (j = 0; j < count; ++j)
@@ -161,9 +207,22 @@ static void SkipScalingList(BitReader* pReader, int count)
         {
             const int32_t delta = ReadSe(pReader);
 
-            nextScale = (lastScale + delta + 256) % 256;
+            nextScale = (lastScale + delta + H264_SCALING_FACTOR_MODULUS) % H264_SCALING_FACTOR_MODULUS;
         }
         lastScale = (0 == nextScale) ? lastScale : nextScale;
+    }
+}
+
+static void SkipScalingLists(BitReader* pReader, int count)
+{
+    int i;
+
+    for (i = 0; i < count; ++i)
+    {
+        if (ReadBit(pReader))
+        {
+            SkipScalingList(pReader, i < H264_SCALING_LIST_4X4_COUNT ? H264_SCALING_LIST_4X4_SIZE : H264_SCALING_LIST_8X8_SIZE);
+        }
     }
 }
 
@@ -173,47 +232,47 @@ static void SkipScalingList(BitReader* pReader, int count)
  *  Maps recognized H.264 level codes to the Vulkan video enum; the existing
  *  fallback is level 4.1.
  */
-static StdVideoH264LevelIdc MapLevel(uint32_t levelIdc)
+static FORCE_INLINE StdVideoH264LevelIdc MapLevel(uint32_t levelIdc)
 {
     switch (levelIdc)
     {
-    case 10:
+    case H264_LEVEL_CODE_1_0:
         return STD_VIDEO_H264_LEVEL_IDC_1_0;
-    case 11:
+    case H264_LEVEL_CODE_1_1:
         return STD_VIDEO_H264_LEVEL_IDC_1_1;
-    case 12:
+    case H264_LEVEL_CODE_1_2:
         return STD_VIDEO_H264_LEVEL_IDC_1_2;
-    case 13:
+    case H264_LEVEL_CODE_1_3:
         return STD_VIDEO_H264_LEVEL_IDC_1_3;
-    case 20:
+    case H264_LEVEL_CODE_2_0:
         return STD_VIDEO_H264_LEVEL_IDC_2_0;
-    case 21:
+    case H264_LEVEL_CODE_2_1:
         return STD_VIDEO_H264_LEVEL_IDC_2_1;
-    case 22:
+    case H264_LEVEL_CODE_2_2:
         return STD_VIDEO_H264_LEVEL_IDC_2_2;
-    case 30:
+    case H264_LEVEL_CODE_3_0:
         return STD_VIDEO_H264_LEVEL_IDC_3_0;
-    case 31:
+    case H264_LEVEL_CODE_3_1:
         return STD_VIDEO_H264_LEVEL_IDC_3_1;
-    case 32:
+    case H264_LEVEL_CODE_3_2:
         return STD_VIDEO_H264_LEVEL_IDC_3_2;
-    case 40:
+    case H264_LEVEL_CODE_4_0:
         return STD_VIDEO_H264_LEVEL_IDC_4_0;
-    case 41:
+    case H264_LEVEL_CODE_4_1:
         return STD_VIDEO_H264_LEVEL_IDC_4_1;
-    case 42:
+    case H264_LEVEL_CODE_4_2:
         return STD_VIDEO_H264_LEVEL_IDC_4_2;
-    case 50:
+    case H264_LEVEL_CODE_5_0:
         return STD_VIDEO_H264_LEVEL_IDC_5_0;
-    case 51:
+    case H264_LEVEL_CODE_5_1:
         return STD_VIDEO_H264_LEVEL_IDC_5_1;
-    case 52:
+    case H264_LEVEL_CODE_5_2:
         return STD_VIDEO_H264_LEVEL_IDC_5_2;
-    case 60:
+    case H264_LEVEL_CODE_6_0:
         return STD_VIDEO_H264_LEVEL_IDC_6_0;
-    case 61:
+    case H264_LEVEL_CODE_6_1:
         return STD_VIDEO_H264_LEVEL_IDC_6_1;
-    case 62:
+    case H264_LEVEL_CODE_6_2:
         return STD_VIDEO_H264_LEVEL_IDC_6_2;
     default:
         return STD_VIDEO_H264_LEVEL_IDC_4_1;
@@ -226,6 +285,36 @@ static StdVideoH264LevelIdc MapLevel(uint32_t levelIdc)
  *  Reads SPS fields used by the decoder and derives cropped display dimensions.
  *  VUI data and reference-cycle offsets are not retained by this implementation.
  */
+static FORCE_INLINE int HasHighProfileSyntax(uint32_t profileIdc)
+{
+    return profileIdc == STD_VIDEO_H264_PROFILE_IDC_HIGH || profileIdc == STD_VIDEO_H264_PROFILE_IDC_HIGH_10 ||
+           profileIdc == STD_VIDEO_H264_PROFILE_IDC_HIGH_422 || profileIdc == STD_VIDEO_H264_PROFILE_IDC_HIGH_444_PREDICTIVE ||
+           profileIdc == H264_PROFILE_CODE_44 || profileIdc == H264_PROFILE_CODE_83 || profileIdc == H264_PROFILE_CODE_86 ||
+           profileIdc == H264_PROFILE_CODE_118 || profileIdc == H264_PROFILE_CODE_128 || profileIdc == H264_PROFILE_CODE_138 ||
+           profileIdc == H264_PROFILE_CODE_139 || profileIdc == H264_PROFILE_CODE_134 || profileIdc == H264_PROFILE_CODE_135;
+}
+
+static FORCE_INLINE void ParseSpsHighProfile(BitReader* pReader, StdVideoH264SequenceParameterSet* pSps)
+{
+    const uint32_t chroma = ReadUe(pReader);
+
+    pSps->chroma_format_idc = (StdVideoH264ChromaFormatIdc)chroma;
+    if (3 == chroma)
+    {
+        pSps->flags.separate_colour_plane_flag = ReadBit(pReader);
+    }
+    pSps->bit_depth_luma_minus8                      = (uint8_t)ReadUe(pReader);
+    pSps->bit_depth_chroma_minus8                    = (uint8_t)ReadUe(pReader);
+    pSps->flags.qpprime_y_zero_transform_bypass_flag = ReadBit(pReader);
+    if (ReadBit(pReader))
+    {
+        int count = (3 == chroma) ? H264_HIGH_PROFILE_SCALING_LIST_COUNT : H264_BITS_PER_BYTE;
+
+        pSps->flags.seq_scaling_matrix_present_flag = 1;
+        SkipScalingLists(pReader, count);
+    }
+}
+
 int H264_ParseSps(const byte_t*                    pNal,
                   uint32_t                          size,
                   StdVideoH264SequenceParameterSet* pSps,
@@ -240,14 +329,14 @@ int H264_ParseSps(const byte_t*                    pNal,
     unsigned  width;
     unsigned  height;
 
-    if (size < 2 || (pNal[0] & 0x1F) != 7)
+    if (size < 2 || (pNal[0] & H264_NAL_TYPE_MASK) != H264_NAL_TYPE_SPS)
     {
         return 0; /* not an SPS NAL */
     }
-    memset(pSps, 0, sizeof(*pSps));
+    CRT_Memory_Set(pSps, 0, sizeof(*pSps));
     BitReader_Init(&reader, pNal + 1, size - 1); /* skip the 1-byte NAL header */
 
-    profileIdc                       = ReadBits(&reader, 8);
+    profileIdc                       = ReadBits(&reader, H264_BITS_PER_BYTE);
     pSps->flags.constraint_set0_flag = ReadBit(&reader);
     pSps->flags.constraint_set1_flag = ReadBit(&reader);
     pSps->flags.constraint_set2_flag = ReadBit(&reader);
@@ -255,44 +344,22 @@ int H264_ParseSps(const byte_t*                    pNal,
     pSps->flags.constraint_set4_flag = ReadBit(&reader);
     pSps->flags.constraint_set5_flag = ReadBit(&reader);
     (void)ReadBits(&reader, 2); /* reserved_zero_2bits */
-    levelIdc                   = ReadBits(&reader, 8);
+    levelIdc                   = ReadBits(&reader, H264_BITS_PER_BYTE);
     pSps->profile_idc          = (StdVideoH264ProfileIdc)profileIdc;
     pSps->level_idc            = MapLevel(levelIdc);
     pSps->seq_parameter_set_id = (uint8_t)ReadUe(&reader);
     pSps->chroma_format_idc    = STD_VIDEO_H264_CHROMA_FORMAT_IDC_420;
 
-    if (profileIdc == 100 || profileIdc == 110 || profileIdc == 122 || profileIdc == 244 || profileIdc == 44 ||
-        profileIdc == 83 || profileIdc == 86 || profileIdc == 118 || profileIdc == 128 || profileIdc == 138 ||
-        profileIdc == 139 || profileIdc == 134 || profileIdc == 135)
+    if (HasHighProfileSyntax(profileIdc))
     {
-        const uint32_t chroma = ReadUe(&reader);
-
-        pSps->chroma_format_idc = (StdVideoH264ChromaFormatIdc)chroma;
-        if (3 == chroma)
-        {
-            pSps->flags.separate_colour_plane_flag = ReadBit(&reader);
-        }
-        pSps->bit_depth_luma_minus8                      = (uint8_t)ReadUe(&reader);
-        pSps->bit_depth_chroma_minus8                    = (uint8_t)ReadUe(&reader);
-        pSps->flags.qpprime_y_zero_transform_bypass_flag = ReadBit(&reader);
-        if (ReadBit(&reader)) /* seq_scaling_matrix_present_flag */
-        {
-            int count = (3 == chroma) ? 12 : 8;
-            int i;
-
-            pSps->flags.seq_scaling_matrix_present_flag = 1;
-            for (i = 0; i < count; ++i)
-            {
-                if (ReadBit(&reader))
-                {
-                    SkipScalingList(&reader, i < 6 ? 16 : 64);
-                }
-            }
-        }
+        ParseSpsHighProfile(&reader, pSps);
     }
 
     pSps->log2_max_frame_num_minus4 = (uint8_t)ReadUe(&reader);
-    pSps->pic_order_cnt_type        = (StdVideoH264PocType)ReadUe(&reader);
+    {
+        uint32_t pocType = ReadUe(&reader);
+        pSps->pic_order_cnt_type = (StdVideoH264PocType)pocType;
+    }
     if (0 == pSps->pic_order_cnt_type)
     {
         pSps->log2_max_pic_order_cnt_lsb_minus4 = (uint8_t)ReadUe(&reader);
@@ -332,8 +399,8 @@ int H264_ParseSps(const byte_t*                    pNal,
     }
     /* vui_parameters_present_flag and the VUI itself are not needed by the decoder session. */
 
-    width  = (pSps->pic_width_in_mbs_minus1 + 1) * 16;
-    height = (pSps->pic_height_in_map_units_minus1 + 1) * 16 * (pSps->flags.frame_mbs_only_flag ? 1U : 2U);
+    width  = (pSps->pic_width_in_mbs_minus1 + 1) * H264_MACROBLOCK_EDGE;
+    height = (pSps->pic_height_in_map_units_minus1 + 1) * H264_MACROBLOCK_EDGE * (pSps->flags.frame_mbs_only_flag ? 1U : 2U);
     if (pSps->flags.frame_cropping_flag)
     {
         if (1 == pSps->chroma_format_idc)
@@ -366,7 +433,7 @@ int H264_ParseSps(const byte_t*                    pNal,
  *  Searches backward for the last set bit so PPS parsing can distinguish payload
  *  from the RBSP stop bit and padding.
  */
-static int GetRbspLastBit(const byte_t* pData, uint32_t size)
+static FORCE_INLINE int GetRbspLastBit(const byte_t* pData, uint32_t size)
 {
     int byteIndex;
 
@@ -376,11 +443,11 @@ static int GetRbspLastBit(const byte_t* pData, uint32_t size)
         {
             int bit;
 
-            for (bit = 0; bit < 8; ++bit)
+            for (bit = 0; bit < H264_BITS_PER_BYTE; ++bit)
             {
                 if (pData[byteIndex] & (1U << bit))
                 {
-                    return (byteIndex * 8) + (7 - bit);
+                    return (byteIndex * H264_BITS_PER_BYTE) + (H264_LAST_BIT_IN_BYTE - bit);
                 }
             }
         }
@@ -403,11 +470,11 @@ int H264_ParsePps(const byte_t* pNal, uint32_t size, StdVideoH264PictureParamete
     uint32_t  numSliceGroups;
     uint32_t  in;
 
-    if (size < 2 || (pNal[0] & 0x1F) != 8 || size > MAX_PARAM_SET + 1)
+    if (size < 2 || (pNal[0] & H264_NAL_TYPE_MASK) != H264_NAL_TYPE_PPS || size > MAX_PARAM_SET + 1)
     {
         return 0; /* not a PPS NAL, or too large */
     }
-    memset(pPps, 0, sizeof(*pPps));
+    CRT_Memory_Set(pPps, 0, sizeof(*pPps));
 
     /* Strip emulation-prevention bytes so more_rbsp_data can be computed by bit position. */
     for (in = 1; in < size; ++in)
@@ -438,7 +505,10 @@ int H264_ParsePps(const byte_t* pNal, uint32_t size, StdVideoH264PictureParamete
     pPps->num_ref_idx_l0_default_active_minus1         = (uint8_t)ReadUe(&reader);
     pPps->num_ref_idx_l1_default_active_minus1         = (uint8_t)ReadUe(&reader);
     pPps->flags.weighted_pred_flag                     = ReadBit(&reader);
-    pPps->weighted_bipred_idc                          = (StdVideoH264WeightedBipredIdc)ReadBits(&reader, 2);
+    {
+        uint32_t weightedBipredIdc = ReadBits(&reader, 2);
+        pPps->weighted_bipred_idc = (StdVideoH264WeightedBipredIdc)weightedBipredIdc;
+    }
     pPps->pic_init_qp_minus26                          = (int8_t)ReadSe(&reader);
     pPps->pic_init_qs_minus26                          = (int8_t)ReadSe(&reader);
     pPps->chroma_qp_index_offset                       = (int8_t)ReadSe(&reader);
@@ -450,22 +520,15 @@ int H264_ParsePps(const byte_t* pNal, uint32_t size, StdVideoH264PictureParamete
     /* more_rbsp_data(): payload remains while the cursor is before the stop bit. High-profile
     ** streams carry the 8x8-transform flag and a second chroma QP offset here, and decoding is
     ** wrong without them. */
-    if ((int)((reader.bytePos * 8) + reader.bitPos) < stopBit)
+    if (((int)(reader.bytePos * H264_BITS_PER_BYTE) + reader.bitPos) < stopBit)
     {
         pPps->flags.transform_8x8_mode_flag = ReadBit(&reader);
         if (ReadBit(&reader)) /* pic_scaling_matrix_present_flag */
         {
-            int count = 6 + (pPps->flags.transform_8x8_mode_flag ? 6 : 2);
-            int i;
+            int count = H264_SCALING_LIST_4X4_COUNT + (pPps->flags.transform_8x8_mode_flag ? H264_SCALING_LIST_4X4_COUNT : 2);
 
             pPps->flags.pic_scaling_matrix_present_flag = 1;
-            for (i = 0; i < count; ++i)
-            {
-                if (ReadBit(&reader))
-                {
-                    SkipScalingList(&reader, i < 6 ? 16 : 64);
-                }
-            }
+            SkipScalingLists(&reader, count);
         }
         pPps->second_chroma_qp_index_offset = (int8_t)ReadSe(&reader);
     }
@@ -478,7 +541,7 @@ int H264_ParsePps(const byte_t* pNal, uint32_t size, StdVideoH264PictureParamete
  *  Reads the coded-slice prefix required for frame and POC tracking using SPS/PPS
  *  bit widths. This does not parse the complete slice header.
  */
-int H264_ParseSliceHeader(const byte_t*                          pNal,
+extern FORCE_INLINE int H264_ParseSliceHeader(const byte_t*                          pNal,
                           uint32_t                                size,
                           const StdVideoH264SequenceParameterSet* pSps,
                           const StdVideoH264PictureParameterSet*  pPps,
@@ -490,14 +553,14 @@ int H264_ParseSliceHeader(const byte_t*                          pNal,
     {
         return 0;
     }
-    memset(pHeader, 0, sizeof(*pHeader));
-    pHeader->nalRefIdc   = (pNal[0] >> 5) & 0x03;
-    pHeader->nalUnitType = pNal[0] & 0x1F;
-    if (pHeader->nalUnitType != 1 && pHeader->nalUnitType != 5)
+    CRT_Memory_Set(pHeader, 0, sizeof(*pHeader));
+    pHeader->nalRefIdc   = (pNal[0] >> H264_NAL_REF_IDC_SHIFT) & H264_NAL_REF_IDC_MASK;
+    pHeader->nalUnitType = pNal[0] & H264_NAL_TYPE_MASK;
+    if (pHeader->nalUnitType != H264_NAL_TYPE_NON_IDR_SLICE && pHeader->nalUnitType != H264_NAL_TYPE_IDR_SLICE)
     {
         return 0; /* not a coded slice */
     }
-    pHeader->isIdr = (5 == pHeader->nalUnitType);
+    pHeader->isIdr = (H264_NAL_TYPE_IDR_SLICE == pHeader->nalUnitType);
     BitReader_Init(&reader, pNal + 1, size - 1);
 
     pHeader->firstMbInSlice = ReadUe(&reader);

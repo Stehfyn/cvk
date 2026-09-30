@@ -1227,11 +1227,13 @@ static FORCE_INLINE void ReadPath(Utl_Url_t* url, Utl_Url_Text_t text)
  */
 static FORCE_INLINE void WriteText(byte_t* output, uint32_t* offset, Utl_Url_Text_t text)
 {
-    if (0 < text.byteCount)
-    {
-        CRT_Memory_Copy(output + *offset, text.data, text.byteCount);
-        *offset += text.byteCount;
-    }
+    bool_t can_copy = (0 < text.byteCount);
+    byte_t discard_output = 0;
+    byte_t discard_input = 0;
+    byte_t* destination = can_copy ? output + *offset : &discard_output;
+    const byte_t* source = can_copy ? text.data : &discard_input;
+    CRT_Memory_Copy(destination, source, text.byteCount);
+    *offset += text.byteCount;
 }
 
 /*************************************************************************************************/

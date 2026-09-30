@@ -355,7 +355,7 @@ static FORCE_INLINE void RunJob(void* context)
  *  Each subowner receives initialization even after a sibling failure, leaving
  *  one consistent closure path. No callback is submitted during initialization.
  */
-bool_t Proxy_Initialize(Proxy_t* proxy)
+extern FORCE_INLINE bool_t Proxy_Initialize(Proxy_t* proxy)
 {
     bool_t file_ready;
     bool_t memory_ready;
@@ -384,7 +384,7 @@ bool_t Proxy_Initialize(Proxy_t* proxy)
  * \par Details:
  *  Callback-owned fields are never inspected; worker state is acquired atomically.
  */
-bool_t Proxy_IsReady(const Proxy_t* proxy)
+extern FORCE_INLINE bool_t Proxy_IsReady(const Proxy_t* proxy)
 {
     OS_Thread_State_t state;
     bool_t            ready;
@@ -468,7 +468,7 @@ bool_t Proxy_Start(Proxy_t* proxy, const Proxy_Request_t* request)
  *  Per-job cancellation does not stop the persistent execution lifetime.
  *  Acquired completion or FAILED grants exclusive access to callback fields.
  */
-bool_t Proxy_TryStop(Proxy_t* proxy)
+extern FORCE_INLINE bool_t Proxy_TryStop(Proxy_t* proxy)
 {
     bool_t completed;
     bool_t failed;
@@ -509,7 +509,7 @@ bool_t Proxy_TryStop(Proxy_t* proxy)
  *  Final worker exit precedes scratch removal. Private-state borrowing ends
  *  before memory release is attempted, including a failed-release retry.
  */
-bool_t Proxy_TryClose(Proxy_t* proxy)
+extern FORCE_INLINE bool_t Proxy_TryClose(Proxy_t* proxy)
 {
     bool_t stopped;
     bool_t closed;

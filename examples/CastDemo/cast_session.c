@@ -136,7 +136,7 @@ typedef struct CastSession_State_s
     CastChannel*        pChannel;
     byte_t              loadPayload[LOAD_PAYLOAD_CAPACITY];
     cvkJsonValue        jsonValues[JSON_VALUE_CAPACITY];     ///< Startup-owned response storage, exclusive to the runner.
-    int32_t             requestId;
+    uint32_t            requestId;
     byte_t              sessionBytes[SESSION_ID_CAPACITY];   ///< Retained decoded receiver session bytes.
     Utl_Json_Text_t     sessionId;                           ///< Counted borrow of sessionBytes while joined.
     byte_t              transportBytes[SESSION_ID_CAPACITY]; ///< Retained decoded receiver transport bytes.
@@ -736,7 +736,7 @@ static void Log(CastSession_State_t* pSession, const char* pFormat, ...)
  * \par Details:
  *  Passes the current status snapshot to the configured event callback.
  */
-static void EmitStatus(CastSession_State_t* pSession)
+static FORCE_INLINE void EmitStatus(CastSession_State_t* pSession)
 {
     pSession->config.callback(pSession->config.pUser, CAST_EVENT_STATUS, &pSession->status, NULL);
 }
@@ -746,7 +746,7 @@ static void EmitStatus(CastSession_State_t* pSession)
  * \par Details:
  *  Updates the state enum and display name, then publishes the status.
  */
-static void SetPhase(CastSession_State_t* pSession, CastPlayerState state, const char* pName)
+static FORCE_INLINE void SetPhase(CastSession_State_t* pSession, CastPlayerState state, const char* pName)
 {
     pSession->status.state = state;
     (void)CRT_Format_Copy(pSession->status.stateName, (uint32_t)sizeof(pSession->status.stateName), pName);
@@ -863,13 +863,12 @@ static FORCE_INLINE int32_t TakeRequestId(CastSession_State_t* session)
     bool_t  has_next;
     int32_t request;
 
-    LOGASSERT(0 <= session->requestId);
-    has_next = (INT32_MAX > session->requestId);
+    has_next = ((uint32_t)INT32_MAX > session->requestId);
     request  = 0;
     if (has_next)
     {
-        request            = session->requestId + 1;
-        session->requestId = request;
+        session->requestId += 1U;
+        request = (int32_t)session->requestId;
     }
     return request;
 }
@@ -1279,7 +1278,7 @@ static FORCE_INLINE bool_t OnReceiverStatus(CastSession_State_t*   session,
  *  Maps known receiver state names and uses the loading flag to distinguish
  *  the fallback LOADING and IDLE states.
  */
-static CastPlayerState GetStateFromName(const char* pName, int loading)
+static FORCE_INLINE CastPlayerState GetStateFromName(const char* pName, int loading)
 {
     if (0 == strcmp(pName, "PLAYING"))
     {
@@ -1296,7 +1295,7 @@ static CastPlayerState GetStateFromName(const char* pName, int loading)
     return loading ? CAST_STATE_LOADING : CAST_STATE_IDLE;
 }
 
-static void TrackSeekMotion(CastSession_State_t* pSession, const cvkJsonDocument* pDocument, const cvkJsonValue* pStatus)
+static FORCE_INLINE void TrackSeekMotion(CastSession_State_t* pSession, const cvkJsonDocument* pDocument, const cvkJsonValue* pStatus)
 {
     const double rawTime = cvkGetJsonDouble(cvkGetJsonMember(pDocument, pStatus, "currentTime"));
     char rawState[SESSION_STATUS_NAME_CAPACITY];
@@ -1318,7 +1317,7 @@ static void TrackSeekMotion(CastSession_State_t* pSession, const cvkJsonDocument
     }
 }
 
-static void ReconcileSeekTime(CastSession_State_t* pSession)
+static FORCE_INLINE void ReconcileSeekTime(CastSession_State_t* pSession)
 {
     if (pSession->seekQueued)
     {
@@ -1628,7 +1627,7 @@ static void Leave(CastSession_State_t* pSession)
 }
 
 /* Records a scrub gesture and coalesces proxy seeks to its newest position. */
-static void QueueScrub(CastSession_State_t* pSession, double seconds)
+static FORCE_INLINE void QueueScrub(CastSession_State_t* pSession, double seconds)
 {
     const ULONGLONG now = GetTickCount64();
 
@@ -1744,6 +1743,122 @@ static int ProcessCommands(CastSession_State_t* pSession)
  *  heartbeat/status timing and stream changes until termination, then publishes
  *  the terminal event.
  */
+static bool_t ServiceSessionTimers(CastSession_State_t* pSession,
+                                   ULONGLONG now,
+                                   ULONGLONG* pLastHeartbeat,
+                                   ULONGLONG* pLastPoll)
+{
+    bool_t needs_fast_poll;
+    uint64_t poll_interval;
+    bool_t poll_due;
+
+    if (pSession->loadPending && now >= pSession->loadDeadline)
+    {
+        pSession->loadPending = 0;
+        if (!Load(pSession))
+        {
+            return FALSE;
+        }
+    }
+    if (now - *pLastHeartbeat >= HEARTBEAT_MS)
+    {
+        *pLastHeartbeat = now;
+        if (!SendSimpleCommand(pSession, GetReceiverEndpoint(), UTL_CHROMECAST_COMMAND_PING))
+        {
+            return FALSE;
+        }
+    }
+    needs_fast_poll = pSession->seekPending || pSession->resumeSince ||
+                      (CAST_STATE_BUFFERING == pSession->status.state);
+    poll_interval = needs_fast_poll ? STATUS_POLL_FAST_MS : STATUS_POLL_MS;
+    poll_due = (now - *pLastPoll >= poll_interval);
+    if (pSession->mediaSessionId && poll_due)
+    {
+        *pLastPoll = now;
+        if (!SendMediaCommand(pSession, UTL_CHROMECAST_COMMAND_GET_MEDIA_STATUS))
+        {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
+static bool_t ApplyReplacement(CastSession_State_t* pSession)
+{
+    const CastMedia_t* update;
+    bool_t was_playing;
+
+    if (!IsMediaSwitchReady(pSession))
+    {
+        return TRUE;
+    }
+    update = CastMedia_Take(&pSession->replacementUpdates);
+    if (NULL == update || 0 == update->urlByteCount)
+    {
+        return TRUE;
+    }
+    CRT_Memory_Copy(pSession->config.contentUrl, update->url, (uint64_t)update->urlByteCount + 1);
+    CRT_Memory_Copy(pSession->config.contentType, update->type, (uint64_t)update->typeByteCount + 1);
+    pSession->proxy = NULL;
+    pSession->onProxy = FALSE;
+    pSession->switchedToProxy = TRUE;
+    was_playing = (CAST_STATE_PLAYING == pSession->status.state);
+    Log(pSession, "applying audio gain at %.1f s", pSession->status.currentTime);
+    return LoadMedia(pSession, pSession->config.contentUrl, pSession->config.contentType,
+                     pSession->status.currentTime, was_playing, LOAD_STREAM_BUFFERED);
+}
+
+static bool_t SwitchToProxy(CastSession_State_t* pSession)
+{
+    bool_t was_playing;
+
+    if (NULL == pSession->proxy || pSession->onProxy || pSession->switchedToProxy ||
+        !IsMediaSwitchReady(pSession))
+    {
+        return TRUE;
+    }
+    was_playing = (CAST_STATE_PLAYING == pSession->status.state);
+    Log(pSession, "switching to the low-latency proxy at %.1f s; seeks are instant from here",
+        pSession->status.currentTime);
+    pSession->onProxy = TRUE;
+    pSession->switchedToProxy = TRUE;
+    pSession->playingWanted = was_playing;
+    return LoadMedia(pSession, pSession->proxy->url, pSession->proxy->type,
+                     pSession->status.currentTime, was_playing, LOAD_STREAM_BUFFERED);
+}
+
+static int ServiceSessionIteration(CastSession_State_t* pSession,
+                                   ULONGLONG now,
+                                   ULONGLONG* pLastHeartbeat,
+                                   ULONGLONG* pLastPoll,
+                                   int* pProxyAnnounced)
+{
+    const CastMedia_t* update;
+    int commands;
+
+    if (!ServiceSessionTimers(pSession, now, pLastHeartbeat, pLastPoll))
+    {
+        return -1;
+    }
+    update = CastMedia_Take(&pSession->proxyUpdates);
+    if (NULL != update)
+    {
+        pSession->proxy = update;
+    }
+    if (NULL != pSession->proxy && !*pProxyAnnounced)
+    {
+        *pProxyAnnounced = 1;
+        Log(pSession, "proxy ready: switching over for instant, buffer-free seeking");
+    }
+    commands = ProcessCommands(pSession);
+    if (commands < 0 || !FlushSeek(pSession, now) ||
+        !ApplyReplacement(pSession) || !SwitchToProxy(pSession))
+    {
+        return -1;
+    }
+    return commands;
+}
+
 static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
 {
     char                     error[SESSION_CHANNEL_ERROR_CAPACITY];
@@ -1755,9 +1870,6 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
     const char* pReason        = NULL;
     int         result         = 1;
     int         proxyAnnounced = 0;
-    bool_t   needs_fast_poll;
-    uint64_t poll_interval;
-    bool_t   poll_due;
 
     SetPhase(pSession, CAST_STATE_CONNECTING, "CONNECTING");
     pSession->pChannel = CastChannel_Connect(&pSession->channel,
@@ -1806,13 +1918,6 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
         const int          received = CastChannel_Receive(pSession->pChannel, &message, RECEIVE_SLICE_MS);
         ULONGLONG          now;
         int                commands;
-        bool_t             proxyReady;
-        const CastMedia_t* update;
-        bool_t             ready;
-        bool_t             has_replacement;
-        bool_t             first_switch;
-        bool_t             can_switch;
-        bool_t             was_playing;
 
         if (received < 0)
         {
@@ -1834,114 +1939,11 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
             break;
         }
         now = GetTickCount64();
-        if (pSession->loadPending && now >= pSession->loadDeadline)
-        {
-            pSession->loadPending = 0;
-            if (!Load(pSession))
-            {
-                pReason = CastChannel_GetError(pSession->pChannel);
-                goto done;
-            }
-        }
-        if (now - lastHeartbeat >= HEARTBEAT_MS)
-        {
-            lastHeartbeat = now;
-            if (!SendSimpleCommand(pSession, GetReceiverEndpoint(), UTL_CHROMECAST_COMMAND_PING))
-            {
-                pReason = CastChannel_GetError(pSession->pChannel);
-                goto done;
-            }
-        }
-        needs_fast_poll =
-            pSession->seekPending || pSession->resumeSince || (CAST_STATE_BUFFERING == pSession->status.state);
-        poll_interval = needs_fast_poll ? STATUS_POLL_FAST_MS : STATUS_POLL_MS;
-        poll_due      = (now - lastPoll >= poll_interval);
-        if (pSession->mediaSessionId && poll_due)
-        {
-            lastPoll = now;
-            if (!SendMediaCommand(pSession, UTL_CHROMECAST_COMMAND_GET_MEDIA_STATUS))
-            {
-                pReason = CastChannel_GetError(pSession->pChannel);
-                goto done;
-            }
-        }
-        update = CastMedia_Take(&pSession->proxyUpdates);
-        if (NULL != update)
-        {
-            pSession->proxy = update;
-        }
-        proxyReady = (NULL != pSession->proxy);
-        if (proxyReady && !proxyAnnounced)
-        {
-            proxyAnnounced = 1;
-            Log(pSession, "proxy ready: switching over for instant, buffer-free seeking");
-        }
-        commands = ProcessCommands(pSession);
-        if (commands < 0 || !FlushSeek(pSession, now))
+        commands = ServiceSessionIteration(pSession, now, &lastHeartbeat, &lastPoll, &proxyAnnounced);
+        if (commands < 0)
         {
             pReason = CastChannel_GetError(pSession->pChannel);
             goto done;
-        }
-        ready = IsMediaSwitchReady(pSession);
-        if (ready)
-        {
-            update          = CastMedia_Take(&pSession->replacementUpdates);
-            has_replacement = (NULL != update);
-            if (has_replacement)
-            {
-                has_replacement = (0 < update->urlByteCount);
-            }
-            if (has_replacement)
-            {
-                CRT_Memory_Copy(pSession->config.contentUrl, update->url, (uint64_t)update->urlByteCount + 1);
-                CRT_Memory_Copy(pSession->config.contentType, update->type, (uint64_t)update->typeByteCount + 1);
-                pSession->proxy           = NULL;
-                pSession->onProxy         = FALSE;
-                pSession->switchedToProxy = TRUE;
-                proxyReady                = FALSE;
-                was_playing               = (CAST_STATE_PLAYING == pSession->status.state);
-                Log(pSession, "applying audio gain at %.1f s", pSession->status.currentTime);
-                if (!LoadMedia(pSession,
-                    pSession->config.contentUrl,
-                    pSession->config.contentType,
-                    pSession->status.currentTime,
-                    was_playing,
-                    LOAD_STREAM_BUFFERED))
-                {
-                    pReason = CastChannel_GetError(pSession->pChannel);
-                    goto done;
-                }
-            }
-        }
-        /* Once the proxy is ready, move onto it a single time and stay there. It is a short-GOP
-        ** stream, so from here every seek is a cheap in-stream SEEK: no LOAD, no audio reset. The
-        ** proxy is loaded as BUFFERED, not LIVE: its fragmented init segment carries the full movie
-        ** duration, and only BUFFERED makes the receiver honor that duration and play the timeline
-        ** linearly. LIVE made the receiver ignore the duration (the trackbar showed only the few
-        ** seconds transcoded so far) and continuously chase the growing live edge, which is what
-        ** made the picture bounce all over the timeline. */
-        ready        = IsMediaSwitchReady(pSession);
-        first_switch = (!pSession->onProxy) && (!pSession->switchedToProxy);
-        can_switch   = proxyReady && first_switch && ready;
-        if (can_switch)
-        {
-            was_playing = (CAST_STATE_PLAYING == pSession->status.state);
-            Log(pSession,
-                "switching to the low-latency proxy at %.1f s; seeks are instant from here",
-                pSession->status.currentTime);
-            pSession->onProxy         = TRUE;
-            pSession->switchedToProxy = TRUE;
-            pSession->playingWanted   = was_playing;
-            if (!LoadMedia(pSession,
-                pSession->proxy->url,
-                pSession->proxy->type,
-                pSession->status.currentTime,
-                was_playing,
-                LOAD_STREAM_BUFFERED))
-            {
-                pReason = CastChannel_GetError(pSession->pChannel);
-                goto done;
-            }
         }
         if (0 == commands)
         {
@@ -1972,7 +1974,7 @@ done:
  *  Only startup establishes native session and Cast channel storage. Individual casts reuse both.
  *  Native residency/resource failure remains distinguishable from caller misuse.
  */
-bool_t CastSession_Initialize(CastSession_t* session)
+extern FORCE_INLINE bool_t CastSession_Initialize(CastSession_t* session)
 {
     bool_t initialized;
 
@@ -1997,7 +1999,7 @@ bool_t CastSession_Initialize(CastSession_t* session)
  * \par Details:
  *  Preparation spans runner completion until the owner explicitly resets the object.
  */
-bool_t CastSession_IsPrepared(const CastSession_t* session)
+extern FORCE_INLINE bool_t CastSession_IsPrepared(const CastSession_t* session)
 {
     LOGASSERT(NULL != session);
 
@@ -2010,7 +2012,7 @@ bool_t CastSession_IsPrepared(const CastSession_t* session)
  *  Acquire observation pairs with the final runner release. External publishers
  *  and the worker's own result slot have separate lifetime obligations.
  */
-bool_t CastSession_IsRunning(const CastSession_t* session)
+extern FORCE_INLINE bool_t CastSession_IsRunning(const CastSession_t* session)
 {
     uint32_t running;
 
@@ -2027,7 +2029,7 @@ bool_t CastSession_IsRunning(const CastSession_t* session)
  *  State reset touches only meaningful scalar fields and string terminators;
  *  large payload capacity is retained without clearing or reallocating it.
  */
-void CastSession_Prepare(CastSession_t* session, const CastSessionConfig* config)
+extern FORCE_INLINE void CastSession_Prepare(CastSession_t* session, const CastSessionConfig* config)
 {
     bool_t initialized;
     bool_t running;
@@ -2182,7 +2184,7 @@ uint32_t CastSession_WriteLoad(const CastSessionConfig* config,
  *  The proxy worker publishes one coherent pair without waiting for the runner.
  *  A suspended consumer retains its previous slot until it takes a new pair.
  */
-void CastSession_SetProxy(CastSession_t* owner, const char* pUrl, const char* pContentType)
+extern FORCE_INLINE void CastSession_SetProxy(CastSession_t* owner, const char* pUrl, const char* pContentType)
 {
     LOGASSERT(NULL != owner);
     LOGASSERT(CastSession_IsPrepared(owner));
@@ -2196,7 +2198,7 @@ void CastSession_SetProxy(CastSession_t* owner, const char* pUrl, const char* pC
  *  The GUI owner publishes into its retained channel; the runner takes the latest
  *  complete pair once the receiver is ready for a source change. No lock is acquired.
  */
-void CastSession_ReplaceMedia(CastSession_t* owner, const char* url, const char* contentType)
+extern FORCE_INLINE void CastSession_ReplaceMedia(CastSession_t* owner, const char* url, const char* contentType)
 {
     LOGASSERT(NULL != owner);
     LOGASSERT(CastSession_IsPrepared(owner));
@@ -2234,7 +2236,7 @@ int32_t CastSession_Run(CastSession_t* session)
  *  Serializes access to the command queue and returns whether the queue accepted
  *  the command.
  */
-bool_t CastSession_Post(CastSession_t* owner, CastCommand command, double seconds)
+extern FORCE_INLINE bool_t CastSession_Post(CastSession_t* owner, CastCommand command, double seconds)
 {
     CastSession_State_t* pSession;
     bool_t               accepted;
@@ -2256,7 +2258,7 @@ bool_t CastSession_Post(CastSession_t* owner, CastCommand command, double second
  *  Callback and borrowed configuration lifetime ends only after the owner's
  *  quiescence obligation, not merely when a status event reports completion.
  */
-void CastSession_Reset(CastSession_t* session)
+extern FORCE_INLINE void CastSession_Reset(CastSession_t* session)
 {
     bool_t running;
     bool_t has_state;
@@ -2279,7 +2281,7 @@ void CastSession_Reset(CastSession_t* session)
  *  The wrapper remains live outside the released region, so successful release
  *  can clear its pointer safely. Memory errors remain available on the retained owner.
  */
-bool_t CastSession_TryClose(CastSession_t* session)
+extern FORCE_INLINE bool_t CastSession_TryClose(CastSession_t* session)
 {
     bool_t running;
     bool_t prepared;

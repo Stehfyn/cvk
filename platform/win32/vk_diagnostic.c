@@ -91,15 +91,13 @@ extern FORCE_INLINE void cvkDiagnosticWrite(const char* text)
 extern FORCE_INLINE void cvkDiagnosticWriteBytes(const char* text, uint32_t byteCount)
 {
     bool_t has_text;
-    bool_t has_bytes;
     HANDLE output;
     bool_t has_output;
     bool_t valid_output;
     DWORD  written;
 
     has_text  = (0 != text);
-    has_bytes = (0 < byteCount);
-    if (has_text && has_bytes)
+    if (has_text)
     {
         output       = GetStdHandle(STD_ERROR_HANDLE);
         has_output   = (0 != output);

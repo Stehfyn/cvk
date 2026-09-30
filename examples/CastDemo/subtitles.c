@@ -463,7 +463,6 @@ static FORCE_INLINE bool_t AppendUnsignedWide(WCHAR* output, uint32_t capacity, 
     for (used = 0; (used < capacity) && (L'\0' != output[used]); ++used)
     {
     }
-    LOGASSERT(used < capacity);
     fits = (digitCount < (capacity - used));
     if (fits)
     {
@@ -617,26 +616,34 @@ static FORCE_INLINE uint32_t GetUtf8TextByteCount(const byte_t* data, uint32_t s
  */
 static FORCE_INLINE int Append(Text* text, const byte_t* data, uint64_t size)
 {
-    bool_t   fits;
+    bool_t   fits_size;
+    bool_t   fits_capacity;
+    bool_t   can_copy;
     uint32_t count;
+    uint32_t safe_count;
+    byte_t   discard_output = 0;
+    byte_t   discard_input = 0;
+    byte_t*  destination;
+    const byte_t* source;
 
     LOGASSERT(NULL != text);
     LOGASSERT(NULL != data);
 
-    fits = (size <= MAX_SUBTITLE_BYTES);
-    if (fits)
+    fits_size     = (size <= MAX_SUBTITLE_BYTES);
+    count         = fits_size ? (uint32_t)size : 0;
+    fits_capacity = HasCapacity(text, count);
+    can_copy      = fits_size && fits_capacity;
+    safe_count    = count & ((uint32_t)0 - (uint32_t)can_copy);
+    destination   = can_copy ? text->data + text->size : &discard_output;
+    source        = can_copy ? data : &discard_input;
+    CRT_Memory_Copy(destination, source, safe_count);
+    if (can_copy)
     {
-        count = (uint32_t)size;
-        fits  = HasCapacity(text, count);
-        if (fits)
-        {
-            CRT_Memory_Copy(text->data + text->size, data, count);
-            text->size             += count;
-            text->data[text->size]  = 0;
-        }
+        text->size             += count;
+        text->data[text->size]  = 0;
     }
 
-    return fits;
+    return can_copy;
 }
 
 /*************************************************************************************************/
@@ -691,6 +698,42 @@ static FORCE_INLINE bool_t DecodeUtf8(Text* destination, const byte_t* data, uin
     return valid;
 }
 
+static FORCE_INLINE bool_t IsMatchingSubtitle(const WIN32_FIND_DATAW* entry, const TCHAR* stem)
+{
+    const WCHAR* extension = FindLastWide(entry->cFileName, L'.');
+    uint32_t stem_length;
+    uint32_t name_length;
+    uint32_t safe_length;
+    bool_t is_srt;
+    bool_t is_vtt;
+    bool_t has_prefix;
+    bool_t matches_prefix;
+    WCHAR  separator;
+
+    if ((entry->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) || NULL == extension)
+    {
+        return FALSE;
+    }
+    is_srt = (CSTR_EQUAL == CompareStringOrdinal(extension, -1, L".srt", -1, TRUE));
+    is_vtt = (CSTR_EQUAL == CompareStringOrdinal(extension, -1, L".vtt", -1, TRUE));
+    if (!is_srt && !is_vtt)
+    {
+        return FALSE;
+    }
+    if (NULL == stem)
+    {
+        return TRUE;
+    }
+    stem_length = (uint32_t)lstrlenW(stem);
+    name_length = (uint32_t)lstrlenW(entry->cFileName);
+    has_prefix = stem_length < name_length;
+    safe_length = has_prefix ? stem_length : 0;
+    separator = entry->cFileName[safe_length];
+    matches_prefix = CSTR_EQUAL == CompareStringOrdinal(entry->cFileName, (int32_t)safe_length,
+                                                       stem, (int32_t)safe_length, TRUE);
+    return has_prefix && matches_prefix && L'.' == separator;
+}
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -724,46 +767,13 @@ static FORCE_INLINE unsigned FindFiles(const TCHAR* directory,
     }
     for (;;)
     {
-        const WCHAR* extension;
-        uint32_t     stem_length;
-        uint32_t     name_length;
-        bool_t       is_directory;
-        bool_t       is_subtitle;
-        bool_t       is_srt;
-        bool_t       is_vtt;
-        bool_t       matches_stem;
         bool_t       path_fits;
 
         if (count >= SUBTITLE_MAX_TRACKS)
         {
             break;
         }
-        extension    = FindLastWide(entry.cFileName, L'.');
-        stem_length  = (NULL != stem) ? (uint32_t)lstrlenW(stem) : 0;
-        name_length  = (uint32_t)lstrlenW(entry.cFileName);
-        is_directory = !!(entry.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
-        is_subtitle  = FALSE;
-        matches_stem = TRUE;
-        if (NULL != extension)
-        {
-            is_srt      = (CSTR_EQUAL == CompareStringOrdinal(extension, -1, L".srt", -1, TRUE));
-            is_vtt      = (CSTR_EQUAL == CompareStringOrdinal(extension, -1, L".vtt", -1, TRUE));
-            is_subtitle = is_srt || is_vtt;
-        }
-        if (NULL != stem)
-        {
-            matches_stem = (stem_length < name_length);
-            if (matches_stem)
-            {
-                matches_stem = (CSTR_EQUAL == CompareStringOrdinal(entry.cFileName,
-                                                                   (int32_t)stem_length,
-                                                                   stem,
-                                                                   (int32_t)stem_length,
-                                                                   TRUE));
-                matches_stem = matches_stem && (L'.' == entry.cFileName[stem_length]);
-            }
-        }
-        if ((!is_directory) && is_subtitle && matches_stem)
+        if (IsMatchingSubtitle(&entry, stem))
         {
             path_fits = CopyWide(path, ARRAYSIZE(path), directory);
             if (path_fits)
@@ -1095,7 +1105,7 @@ static FORCE_INLINE bool_t ConvertSubRip(Conversion_t* conversion)
 static FORCE_INLINE bool_t ReadSidecar(Subtitles_Workspace_t* workspace, const SubtitleTrack* track)
 {
     HANDLE        file;
-    LARGE_INTEGER length;
+    LARGE_INTEGER length = {0};
     uint32_t      count;
     DWORD         read_count;
     bool_t        valid;
@@ -1162,7 +1172,7 @@ static FORCE_INLINE void WriteLoadError(char_t* error, uint32_t capacity)
  *  Clearing both buffers touches their pages during startup. This does not lock
  *  pages or establish residency for file, codec, server or operating-system state.
  */
-void Subtitles_Initialize(Subtitles_Workspace_t* workspace, byte_t* source, byte_t* output, uint32_t capacity)
+extern FORCE_INLINE void Subtitles_Initialize(Subtitles_Workspace_t* workspace, byte_t* source, byte_t* output, uint32_t capacity)
 {
     LOGASSERT(NULL != workspace);
     LOGASSERT(NULL != source);
@@ -1243,7 +1253,7 @@ void Subtitles_InitializeFileTrack(const TCHAR* path, SubtitleTrack* track)
  * \par Details:
  *  No ownership transfer occurs; consumers must finish before workspace reuse.
  */
-const byte_t* Subtitles_GetText(const Subtitles_Workspace_t* workspace)
+extern FORCE_INLINE const byte_t* Subtitles_GetText(const Subtitles_Workspace_t* workspace)
 {
     LOGASSERT(NULL != workspace);
     LOGASSERT(NULL != workspace->output);
@@ -1256,10 +1266,9 @@ const byte_t* Subtitles_GetText(const Subtitles_Workspace_t* workspace)
  * \par Details:
  *  The output count is published only after complete conversion.
  */
-uint32_t Subtitles_GetByteCount(const Subtitles_Workspace_t* workspace)
+extern FORCE_INLINE uint32_t Subtitles_GetByteCount(const Subtitles_Workspace_t* workspace)
 {
     LOGASSERT(NULL != workspace);
-    LOGASSERT(workspace->byteCount < workspace->capacity);
 
     return workspace->byteCount;
 }
@@ -1272,7 +1281,12 @@ uint32_t Subtitles_GetByteCount(const Subtitles_Workspace_t* workspace)
  */
 uint32_t Subtitles_Find(const TCHAR* media, SubtitleTrack tracks[SUBTITLE_MAX_TRACKS])
 {
+    const TCHAR empty_media[1] = {0};
+    const TCHAR* safe_media;
+    bool_t   valid_media;
     WCHAR    directory[SUBTITLE_PATH_CAPACITY];
+    const WCHAR empty_directory[1] = {L'\0'};
+    const WCHAR* safe_directory;
     WCHAR    stem[SUBTITLE_PATH_CAPACITY];
     WCHAR    subs[SUBTITLE_PATH_CAPACITY];
     const WCHAR* slash;
@@ -1288,16 +1302,19 @@ uint32_t Subtitles_Find(const TCHAR* media, SubtitleTrack tracks[SUBTITLE_MAX_TR
     LOGASSERT(NULL != tracks);
 
     media_length = (uint32_t)lstrlenW(media);
-    if ((L'\0' == media[0]) || (ARRAYSIZE(directory) <= media_length))
+    valid_media = (L'\0' != media[0]) && (media_length < ARRAYSIZE(directory));
+    safe_media = valid_media ? media : empty_media;
+    pathLength = GetFullPathNameW(safe_media, ARRAYSIZE(directory), directory, NULL);
+    if (!valid_media)
     {
         return 0;
     }
-    pathLength = GetFullPathNameW(media, ARRAYSIZE(directory), directory, NULL);
-    if ((0 == pathLength) || (ARRAYSIZE(directory) <= pathLength))
+    safe_directory = ((0 < pathLength) && (pathLength < ARRAYSIZE(directory))) ? directory : empty_directory;
+    slash = FindLastWide(safe_directory, L'\\');
+    if (safe_directory == empty_directory)
     {
         return 0;
     }
-    slash = FindLastWide(directory, L'\\');
     if (NULL == slash)
     {
         return 0;
@@ -1448,7 +1465,7 @@ bool_t Subtitles_Convert(Subtitles_Workspace_t* workspace, const void* bytes, ui
  *  buffers. Sidecar input borrows output until decoding completes. File and
  *  container dependencies still create native/CRT resources after startup.
  */
-bool_t Subtitles_Load(Subtitles_Workspace_t* workspace, const SubtitleTrack* track, char* error, uint32_t errorCapacity)
+extern FORCE_INLINE bool_t Subtitles_Load(Subtitles_Workspace_t* workspace, const SubtitleTrack* track, char* error, uint32_t errorCapacity)
 {
     Text   out;
     bool_t valid;

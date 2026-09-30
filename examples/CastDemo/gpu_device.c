@@ -29,7 +29,6 @@
 #include <stdint.h>
 #ifndef NDEBUG
 #include <vulkan/vk_platform.h>
-#include <stdio.h>
 #endif
 
 /*=================================================================================================
@@ -722,7 +721,7 @@ static FORCE_INLINE void WriteReadyReport(Report_t* report, const GpuDevice* pDe
  * \par Details:
  *  Query arrays remain untouched until CVK fills their counted prefixes.
  */
-void GpuDevice_Initialize(GpuDevice* pDevice)
+extern FORCE_INLINE void GpuDevice_Initialize(GpuDevice* pDevice)
 {
     LOGASSERT(NULL != pDevice);
     pDevice->decoderBusy     = FALSE;
@@ -813,7 +812,7 @@ GpuDevice* GpuDevice_Create(GpuDevice* pDevice,
  *  Waits for the device, releases the logical device and optional validation
  *  messenger and instance. Caller-owned storage remains available for reuse.
  */
-void GpuDevice_Destroy(GpuDevice* pDevice)
+extern FORCE_INLINE void GpuDevice_Destroy(GpuDevice* pDevice)
 {
     if (NULL != pDevice)
     {

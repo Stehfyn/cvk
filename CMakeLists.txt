@@ -199,7 +199,7 @@ endif()
 target_include_directories(cvk PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(cvk PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/assets/bicubic)
 # Only the header-only format utilities are needed; keep their C++ libraries out of the build.
-target_link_libraries(cvk PUBLIC Vulkan::Headers PRIVATE volk::volk cvk-vulkan-utility-headers vk-diagnostic)
+target_link_libraries(cvk PUBLIC Vulkan::Headers cvk-vulkan-utility-headers PRIVATE volk::volk vk-diagnostic)
 target_compile_definitions(cvk PUBLIC VK_NO_PROTOTYPES)
 
 if(NOT MSVC)

@@ -531,16 +531,16 @@ static FORCE_INLINE bool_t Uint(const Reader_t* reader, const Element_t* element
 static FORCE_INLINE bool_t String(const Reader_t* reader, const Element_t* element, char* out, uint64_t capacity)
 {
     uint64_t length;
+    uint64_t max_length;
+    uint64_t length_mask;
 
     LOGASSERT(NULL != out);
-    LOGASSERT(0 < capacity);
-
-    length = element->end - element->data;
-    if (capacity <= length)
-    {
-        length = capacity - 1;
-    }
+    length      = element->end - element->data;
+    max_length  = capacity - (uint64_t)(0 < capacity);
+    length_mask = (uint64_t)0 - (uint64_t)(length <= max_length);
+    length      = (length & length_mask) | (max_length & ~length_mask);
     CRT_Memory_Copy(out, reader->data + element->data, length);
+    LOGASSERT(0 < capacity);
     out[length] = MKV_TERMINATOR;
 
     return TRUE;
@@ -697,6 +697,77 @@ static FORCE_INLINE int32_t Track(const Reader_t* reader, const Element_t* entry
     return result;
 }
 
+static bool_t ReadSubtitleTracks(const Reader_t* reader,
+                                 const Element_t* element,
+                                 const uint64_t* selectedTrack,
+                                 MkvSubtitleTrack* tracks,
+                                 uint32_t capacity,
+                                 uint32_t* count)
+{
+    uint64_t position;
+    Element_t entry;
+    MkvSubtitleTrack track;
+    int32_t result;
+    bool_t valid = TRUE;
+    bool_t supported;
+    bool_t selected;
+    bool_t has_capacity;
+    bool_t can_store;
+
+    for (position = element->data; valid && position < element->end;)
+    {
+        valid = ReadElement(reader, position, element->end, &entry);
+        if (valid)
+        {
+            if (UTL_MATROSKA_ID_TRACK_ENTRY == entry.id)
+            {
+                result = Track(reader, &entry, &track);
+                valid = (MKV_TRACK_INVALID != result);
+                supported = (MKV_TRACK_SUPPORTED == result);
+                selected = (NULL == selectedTrack);
+                if (supported && NULL != selectedTrack)
+                {
+                    selected = (track.number == *selectedTrack);
+                }
+                has_capacity = (*count < capacity);
+                can_store = supported && selected && has_capacity;
+                if (can_store)
+                {
+                    tracks[*count] = track;
+                    ++(*count);
+                }
+            }
+            position = entry.end;
+        }
+    }
+    return valid;
+}
+
+static bool_t ReadSegmentInfo(const Reader_t* reader, const Element_t* element, uint64_t* timestampScale)
+{
+    uint64_t position;
+    Element_t entry;
+    bool_t valid = TRUE;
+
+    for (position = element->data; valid && position < element->end;)
+    {
+        valid = ReadElement(reader, position, element->end, &entry);
+        if (valid)
+        {
+            if (UTL_MATROSKA_ID_TIMESTAMP_SCALE == entry.id)
+            {
+                valid = Uint(reader, &entry, timestampScale);
+                if (valid)
+                {
+                    valid = (0 < *timestampScale);
+                }
+            }
+            position = entry.end;
+        }
+    }
+    return valid;
+}
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -717,14 +788,6 @@ static FORCE_INLINE bool_t Metadata(const Reader_t*   reader,
     bool_t           is_valid;
     uint64_t         offset;
     Element_t        element;
-    uint64_t         position;
-    Element_t        entry;
-    int32_t          result;
-    MkvSubtitleTrack track;
-    bool_t           supported;
-    bool_t           selected;
-    bool_t           has_capacity;
-    bool_t           can_store;
     bool_t           is_complete;
 
     have_tracks       = FALSE;
@@ -739,52 +802,12 @@ static FORCE_INLINE bool_t Metadata(const Reader_t*   reader,
         {
             if (UTL_MATROSKA_ID_TRACKS == element.id)
             {
-                for (position = element.data; is_valid && (position < element.end);)
-                {
-                    is_valid = ReadElement(reader, position, element.end, &entry);
-                    if (is_valid)
-                    {
-                        if (UTL_MATROSKA_ID_TRACK_ENTRY == entry.id)
-                        {
-                            result    = Track(reader, &entry, &track);
-                            is_valid  = (MKV_TRACK_INVALID != result);
-                            supported = (MKV_TRACK_SUPPORTED == result);
-                            selected  = (NULL == selectedTrack);
-                            if (supported && (NULL != selectedTrack))
-                            {
-                                selected = (track.number == (*selectedTrack));
-                            }
-                            has_capacity = ((*count) < capacity);
-                            can_store    = supported && selected && has_capacity;
-                            if (can_store)
-                            {
-                                tracks[(*count)] = track;
-                                ++(*count);
-                            }
-                        }
-                        position = entry.end;
-                    }
-                }
+                is_valid = ReadSubtitleTracks(reader, &element, selectedTrack, tracks, capacity, count);
                 have_tracks = is_valid;
             }
             else if (UTL_MATROSKA_ID_INFO == element.id)
             {
-                for (position = element.data; is_valid && (position < element.end);)
-                {
-                    is_valid = ReadElement(reader, position, element.end, &entry);
-                    if (is_valid)
-                    {
-                        if (UTL_MATROSKA_ID_TIMESTAMP_SCALE == entry.id)
-                        {
-                            is_valid = Uint(reader, &entry, timestampScale);
-                            if (is_valid)
-                            {
-                                is_valid = (0 < (*timestampScale));
-                            }
-                        }
-                        position = entry.end;
-                    }
-                }
+                is_valid = ReadSegmentInfo(reader, &element, timestampScale);
                 have_info = is_valid;
             }
             is_complete = have_tracks && (have_info || (UTL_MATROSKA_ID_CLUSTER == element.id));
@@ -822,69 +845,69 @@ static FORCE_INLINE bool_t EmitBlock(const Reader_t*         reader,
     uint64_t offset;
     uint64_t number;
     int32_t  relative;
-    bool_t   is_valid;
     double   end;
-    bool_t   is_selected;
-    bool_t   has_header;
-    bool_t   is_laced;
     uint32_t encoded_time;
     double   start;
     bool_t   valid_start;
     bool_t   valid_end;
     bool_t   has_text;
+    bool_t   has_header;
+    uint64_t safe_offset;
+    const byte_t* header;
+    byte_t   flags;
+    const byte_t empty_header[UTL_MATROSKA_BLOCK_HEADER_BYTES] = {0};
 
     offset   = block->data;
     number   = 0;
-    relative = 0;
-    is_valid = Vint(reader->data, block->end, &offset, &number, 0, NULL);
-    if (is_valid)
+    if (!Vint(reader->data, block->end, &offset, &number, 0, NULL))
     {
-        is_selected = (number == track->number);
-        if (is_selected)
-        {
-            has_header = (UTL_MATROSKA_BLOCK_HEADER_BYTES <= (block->end - offset));
-            is_valid   = has_header;
-            if (is_valid)
-            {
-                is_laced = !!(reader->data[offset + UTL_MATROSKA_BLOCK_FLAGS_OFFSET] & UTL_MATROSKA_BLOCK_LACING_MASK);
-                is_valid = !is_laced;
-            }
-            if (is_valid)
-            {
-                encoded_time = ((uint32_t)reader->data[offset] * MKV_BYTE_RADIX) + reader->data[offset + 1];
-                relative     = (int32_t)encoded_time;
-                if (MKV_SIGNED_TIME_FIRST <= encoded_time)
-                {
-                    relative -= MKV_TIME_MODULUS;
-                }
-                offset   += UTL_MATROSKA_BLOCK_HEADER_BYTES;
-                is_valid  = ((block->end - offset) <= MKV_MAX_CUE_BYTES);
-            }
-            if (is_valid)
-            {
-                start       = (((double)clusterTime + ((double)relative * track->timestampScale)) * (double)scale /
-                               MKV_NANOSECONDS_PER_SECOND) -
-                              ((double)track->codecDelay / MKV_NANOSECONDS_PER_SECOND);
-                end         = start + ((duration ? (double)duration * (double)scale * track->timestampScale
-                                                 : (double)track->defaultDuration) /
-                                       MKV_NANOSECONDS_PER_SECOND);
-                valid_start = (-DBL_MAX <= start) && (start <= DBL_MAX);
-                valid_end   = (start < end) && (end <= MKV_MAX_CUE_SECONDS);
-                is_valid    = valid_start && valid_end;
-                has_text    = (offset < block->end) && (0.0 < end);
-                if (is_valid && has_text)
-                {
-                    if (start < 0.0)
-                    {
-                        start = 0.0;
-                    }
-                    is_valid = callback(user, start, end, reader->data + offset, block->end - offset);
-                }
-            }
-        }
+        return FALSE;
     }
-
-    return is_valid;
+    if (number != track->number)
+    {
+        return TRUE;
+    }
+    has_header   = (offset <= block->end) && (UTL_MATROSKA_BLOCK_HEADER_BYTES <= block->end - offset);
+    safe_offset  = offset & ((uint64_t)0 - (uint64_t)has_header);
+    header       = has_header ? reader->data + safe_offset : empty_header;
+    encoded_time = ((uint32_t)header[0] * MKV_BYTE_RADIX) + header[1];
+    flags        = header[UTL_MATROSKA_BLOCK_FLAGS_OFFSET];
+    if (!has_header || (flags & UTL_MATROSKA_BLOCK_LACING_MASK))
+    {
+        return FALSE;
+    }
+    relative     = (int32_t)encoded_time;
+    if (MKV_SIGNED_TIME_FIRST <= encoded_time)
+    {
+        relative -= MKV_TIME_MODULUS;
+    }
+    offset += UTL_MATROSKA_BLOCK_HEADER_BYTES;
+    if ((block->end - offset) > MKV_MAX_CUE_BYTES)
+    {
+        return FALSE;
+    }
+    start       = (((double)clusterTime + ((double)relative * track->timestampScale)) * (double)scale /
+                   MKV_NANOSECONDS_PER_SECOND) -
+                  ((double)track->codecDelay / MKV_NANOSECONDS_PER_SECOND);
+    end         = start + ((duration ? (double)duration * (double)scale * track->timestampScale
+                                     : (double)track->defaultDuration) /
+                           MKV_NANOSECONDS_PER_SECOND);
+    valid_start = (-DBL_MAX <= start) && (start <= DBL_MAX);
+    valid_end   = (start < end) && (end <= MKV_MAX_CUE_SECONDS);
+    if (!valid_start || !valid_end)
+    {
+        return FALSE;
+    }
+    has_text = (offset < block->end) && (0.0 < end);
+    if (!has_text)
+    {
+        return TRUE;
+    }
+    if (start < 0.0)
+    {
+        start = 0.0;
+    }
+    return callback(user, start, end, reader->data + offset, block->end - offset);
 }
 
 /*************************************************************************************************/
@@ -904,6 +927,46 @@ static FORCE_INLINE bool_t TopLevel(uint32_t id)
         (UTL_MATROSKA_ID_ATTACHMENTS == id) || (UTL_MATROSKA_ID_CHAPTERS == id) || (UTL_MATROSKA_ID_TAGS == id);
 
     return is_media || is_index || is_metadata;
+}
+
+static bool_t ReadBlockGroup(const Reader_t* reader,
+                             const Element_t* group,
+                             const MkvSubtitleTrack* track,
+                             uint64_t time,
+                             uint64_t scale,
+                             MkvSubtitleProc callback,
+                             void* user)
+{
+    uint64_t position;
+    uint64_t duration = 0;
+    Element_t child;
+    Element_t block;
+    bool_t valid = TRUE;
+    bool_t has_block = FALSE;
+
+    CRT_Memory_Set(&block, 0, sizeof(block));
+    for (position = group->data; valid && position < group->end;)
+    {
+        valid = ReadElement(reader, position, group->end, &child);
+        if (valid)
+        {
+            if (UTL_MATROSKA_ID_BLOCK == child.id)
+            {
+                block = child;
+                has_block = TRUE;
+            }
+            else if (UTL_MATROSKA_ID_BLOCK_DURATION == child.id)
+            {
+                valid = Uint(reader, &child, &duration);
+            }
+            position = child.end;
+        }
+    }
+    if (valid && has_block)
+    {
+        valid = EmitBlock(reader, &block, track, time, scale, duration, callback, user);
+    }
+    return valid;
 }
 
 /*************************************************************************************************/
@@ -926,11 +989,6 @@ static FORCE_INLINE bool_t Cluster(const Reader_t*         reader,
     uint64_t  offset;
     Element_t element;
     bool_t    next_cluster;
-    bool_t    has_block;
-    uint64_t  duration;
-    Element_t block;
-    uint64_t  position;
-    Element_t child;
 
     time      = 0;
     have_time = FALSE;
@@ -954,31 +1012,7 @@ static FORCE_INLINE bool_t Cluster(const Reader_t*         reader,
             }
             else if (UTL_MATROSKA_ID_BLOCK_GROUP == element.id)
             {
-                is_valid  = have_time;
-                has_block = FALSE;
-                duration  = 0;
-                CRT_Memory_Set(&block, 0, sizeof(Element_t));
-                for (position = element.data; is_valid && (position < element.end);)
-                {
-                    is_valid = ReadElement(reader, position, element.end, &child);
-                    if (is_valid)
-                    {
-                        if (UTL_MATROSKA_ID_BLOCK == child.id)
-                        {
-                            block     = child;
-                            has_block = TRUE;
-                        }
-                        else if (UTL_MATROSKA_ID_BLOCK_DURATION == child.id)
-                        {
-                            is_valid = Uint(reader, &child, &duration);
-                        }
-                        position = child.end;
-                    }
-                }
-                if (is_valid && has_block)
-                {
-                    is_valid = EmitBlock(reader, &block, track, time, scale, duration, callback, user);
-                }
+                is_valid = have_time && ReadBlockGroup(reader, &element, track, time, scale, callback, user);
             }
             else if (UTL_MATROSKA_ID_SIMPLE_BLOCK == element.id)
             {

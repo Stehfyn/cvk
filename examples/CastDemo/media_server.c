@@ -1873,7 +1873,7 @@ static FORCE_INLINE bool_t OpenListener(MediaServer* server, const ServerEndpoin
     bool_t             opened;
     BOOL               exclusive;
     u_long             nonblocking;
-    struct sockaddr_in address;
+    struct sockaddr_in address = {0};
     int32_t            address_length;
     uint32_t           error;
     server->listener = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -1894,7 +1894,6 @@ static FORCE_INLINE bool_t OpenListener(MediaServer* server, const ServerEndpoin
     }
     if (opened)
     {
-        CRT_Memory_Set(&address, 0, sizeof(address));
         address.sin_family      = AF_INET;
         address.sin_port        = htons(endpoint->port);
         address.sin_addr.s_addr = htonl(endpoint->address);
@@ -2117,7 +2116,7 @@ static FORCE_INLINE MediaServer* StartInternal(MediaServer_Workspace_t* workspac
  *  Every client worker is initialized even after a sibling failure. Admission
  *  begins only after the complete pool is ready; partial owners remain closable.
  */
-bool_t MediaServer_Initialize(MediaServer_Workspace_t* workspace)
+extern FORCE_INLINE bool_t MediaServer_Initialize(MediaServer_Workspace_t* workspace)
 {
     bool_t        memory_ready;
     bool_t        clients_ready;
@@ -2178,7 +2177,7 @@ bool_t MediaServer_Initialize(MediaServer_Workspace_t* workspace)
  * \par Details:
  *  Native availability is acquired without inspecting callback-owned metadata.
  */
-bool_t MediaServer_IsReady(const MediaServer_Workspace_t* workspace)
+extern FORCE_INLINE bool_t MediaServer_IsReady(const MediaServer_Workspace_t* workspace)
 {
     bool_t ready;
     LOGASSERT(NULL != workspace);
@@ -2191,7 +2190,7 @@ bool_t MediaServer_IsReady(const MediaServer_Workspace_t* workspace)
  * \par Details:
  *  Resource errors survive closure; pool-native evidence is retained separately.
  */
-uint32_t MediaServer_GetError(const MediaServer_Workspace_t* workspace)
+extern FORCE_INLINE uint32_t MediaServer_GetError(const MediaServer_Workspace_t* workspace)
 {
     uint32_t error;
     LOGASSERT(NULL != workspace);
@@ -2217,7 +2216,7 @@ uint32_t MediaServer_GetError(const MediaServer_Workspace_t* workspace)
  *  Matches known extensions without case sensitivity and falls back to
  *  application/octet-stream.
  */
-const char* MediaServer_GetContentTypeForExtension(const uint16_t* pExtension)
+extern FORCE_INLINE const char* MediaServer_GetContentTypeForExtension(const uint16_t* pExtension)
 {
     static const struct
     {
@@ -2266,7 +2265,7 @@ const char* MediaServer_GetContentTypeForExtension(const uint16_t* pExtension)
  * \par Details:
  *  None
  */
-uint16_t MediaServer_GetPort(const MediaServer* pServer)
+extern FORCE_INLINE uint16_t MediaServer_GetPort(const MediaServer* pServer)
 {
     LOGASSERT(NULL != pServer);
     return pServer->port;

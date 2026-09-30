@@ -2765,7 +2765,6 @@ extern FORCE_INLINE bool_t Utl_Json_WriteInt64(Utl_Json_Writer_t* writer, int64_
     number.data      = digits;
     number.byteCount = prefix_count + digit_count;
     accepted         = WriteLiteral(writer, number);
-    LOGASSERT(0 < digit_count);
     return accepted;
 }
 
@@ -2780,7 +2779,6 @@ extern FORCE_INLINE bool_t Utl_Json_WriteDecimal(Utl_Json_Writer_t* writer, Utl_
     uint32_t        index;
     uint32_t        count;
     byte_t          digits[JSON_FIXED_BYTES];
-    bool_t          has_digits;
     uint64_t        fraction;
     uint64_t        divisor;
     Utl_Json_Text_t number;
@@ -2793,7 +2791,6 @@ extern FORCE_INLINE bool_t Utl_Json_WriteDecimal(Utl_Json_Writer_t* writer, Utl_
         scale *= JSON_DECIMAL_BASE;
     }
     count      = Utl_Decimal_WriteUint64(value.coefficient / scale, digits, sizeof(digits));
-    has_digits = (0 < count);
     if (0 < value.fractionDigits)
     {
         digits[count] = JSON_POINT;
@@ -2811,7 +2808,6 @@ extern FORCE_INLINE bool_t Utl_Json_WriteDecimal(Utl_Json_Writer_t* writer, Utl_
     number.data      = digits;
     number.byteCount = count;
     accepted         = WriteLiteral(writer, number);
-    LOGASSERT(has_digits);
     return accepted;
 }
 

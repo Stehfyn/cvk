@@ -115,7 +115,9 @@ extern FORCE_INLINE bool_t OS_Memory_Initialize(OS_Memory_t* memory, uint64_t by
 
     LOGASSERT(NULL != memory);
     LOGASSERT(0 < byteCount);
+#if UINTPTR_MAX < UINT64_MAX
     LOGASSERT(UINTPTR_MAX >= byteCount);
+#endif
 
     memory->address       = NULL;
     memory->byteCount     = 0;
@@ -237,7 +239,7 @@ extern FORCE_INLINE uint32_t OS_Memory_GetError(const OS_Memory_t* memory)
  * \par Details:
  *  No native query, lock or allocation occurs.
  */
-bool_t OS_Memory_IsReady(const OS_Memory_t* memory)
+extern FORCE_INLINE bool_t OS_Memory_IsReady(const OS_Memory_t* memory)
 {
     LOGASSERT(NULL != memory);
 

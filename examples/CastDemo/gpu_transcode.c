@@ -19,6 +19,7 @@
 #include "crt/crt_format.h"
 #include "crt/crt_memory.h"
 #include "os/os_atomic.h"
+#include "os/os_compiler.h"
 #include "os/os_types.h"
 
 /* One appended line of the human-readable report. */
@@ -136,32 +137,13 @@ typedef char GpuTranscoder_StorageAlignmentCheck[(__alignof(GpuTranscoder) <= __
  *  Area-averages source luma and chroma into reduced luma and interleaved chroma,
  *  using the decoded frame's strides and planar/interleaved layout.
  */
-static void DownscaleFrame(const FrameSlot* pSrc, byte_t* pDstLuma, byte_t* pDstChroma, unsigned ow, unsigned oh)
+static FORCE_INLINE void DownscaleLuma(const FrameSlot* pSrc, byte_t* pDstLuma, unsigned ow, unsigned oh)
 {
-    const byte_t* p_luma;
-    unsigned      luma_stride;
-    unsigned      sw;
-    unsigned      sh;
-    unsigned      chroma_stride;
-    unsigned      src_chroma_w;
-    unsigned      src_chroma_h;
-    const byte_t* p_cb;
-    const byte_t* p_cr;
-    unsigned      cb_step;
-    unsigned      oy;
-    unsigned      dst_chroma_w;
-    unsigned      dst_chroma_h;
-
-    p_luma        = pSrc->planes;
-    luma_stride   = pSrc->lumaStride;
-    sw            = pSrc->width;
-    sh            = pSrc->height;
-    chroma_stride = pSrc->chromaStride;
-    src_chroma_w  = pSrc->chromaWidth;
-    src_chroma_h  = pSrc->chromaHeight;
-    p_cb          = pSrc->planes + ((size_t)luma_stride * sh);
-    p_cr          = pSrc->chromaInterleaved ? p_cb : (p_cb + ((size_t)chroma_stride * src_chroma_h));
-    cb_step       = pSrc->chromaInterleaved ? 2U : 1U; /* interleaved Cb/Cr vs a planar Cb plane */
+    const byte_t* p_luma = pSrc->planes;
+    unsigned luma_stride = pSrc->lumaStride;
+    unsigned sw = pSrc->width;
+    unsigned sh = pSrc->height;
+    unsigned oy;
 
     for (oy = 0; oy < oh; ++oy)
     {
@@ -205,6 +187,50 @@ static void DownscaleFrame(const FrameSlot* pSrc, byte_t* pDstLuma, byte_t* pDst
         }
     }
 
+}
+
+static FORCE_INLINE void SampleChroma(const FrameSlot* pSrc,
+                         unsigned cx0,
+                         unsigned cx1,
+                         unsigned cy0,
+                         unsigned cy1,
+                         byte_t* pDst)
+{
+    unsigned chroma_stride = pSrc->chromaStride;
+    unsigned src_chroma_w = pSrc->chromaWidth;
+    unsigned src_chroma_h = pSrc->chromaHeight;
+    const byte_t* p_cb = pSrc->planes + ((size_t)pSrc->lumaStride * pSrc->height);
+    const byte_t* p_cr = pSrc->chromaInterleaved ? p_cb : (p_cb + ((size_t)chroma_stride * src_chroma_h));
+    unsigned cb_step = pSrc->chromaInterleaved ? 2U : 1U;
+    unsigned cy;
+    uint32_t sum_cb = 0;
+    uint32_t sum_cr = 0;
+    uint32_t count = 0;
+
+    for (cy = cy0; cy < cy1 && cy < src_chroma_h; ++cy)
+    {
+        unsigned cx;
+
+        for (cx = cx0; cx < cx1 && cx < src_chroma_w; ++cx)
+        {
+            sum_cb += p_cb[((uint64_t)cy * chroma_stride) + ((uint64_t)cx * cb_step)];
+            sum_cr += p_cr[((uint64_t)cy * chroma_stride) + ((uint64_t)cx * cb_step) +
+                           (pSrc->chromaInterleaved ? 1 : 0)];
+            ++count;
+        }
+    }
+    pDst[0] = (uint8_t)(sum_cb / (count ? count : 1U));
+    pDst[1] = (uint8_t)(sum_cr / (count ? count : 1U));
+}
+
+static void DownscaleChroma(const FrameSlot* pSrc, byte_t* pDstChroma, unsigned ow, unsigned oh)
+{
+    unsigned src_chroma_w = pSrc->chromaWidth;
+    unsigned src_chroma_h = pSrc->chromaHeight;
+    unsigned dst_chroma_w;
+    unsigned dst_chroma_h;
+    unsigned oy;
+
     dst_chroma_w = (ow + 1U) / 2U;
     dst_chroma_h = (oh + 1U) / 2U;
     for (oy = 0; oy < dst_chroma_h; ++oy)
@@ -223,10 +249,6 @@ static void DownscaleFrame(const FrameSlot* pSrc, byte_t* pDstLuma, byte_t* pDst
         {
             unsigned cx0;
             unsigned cx1;
-            unsigned cy;
-            uint32_t sum_cb;
-            uint32_t sum_cr;
-            uint32_t count;
 
             cx0 = ox * src_chroma_w / dst_chroma_w;
             cx1 = (ox + 1U) * src_chroma_w / dst_chroma_w;
@@ -234,25 +256,16 @@ static void DownscaleFrame(const FrameSlot* pSrc, byte_t* pDstLuma, byte_t* pDst
             {
                 cx1 = cx0 + 1U;
             }
-            sum_cb = 0;
-            sum_cr = 0;
-            count  = 0;
-            for (cy = cy0; cy < cy1 && cy < src_chroma_h; ++cy)
-            {
-                unsigned cx;
-
-                for (cx = cx0; cx < cx1 && cx < src_chroma_w; ++cx)
-                {
-                    sum_cb += p_cb[((uint64_t)cy * chroma_stride) + ((uint64_t)cx * cb_step)];
-                    sum_cr += p_cr[((uint64_t)cy * chroma_stride) + ((uint64_t)cx * cb_step) +
-                                   (pSrc->chromaInterleaved ? 1 : 0)];
-                    ++count;
-                }
-            }
-            pDstChroma[(((size_t)oy * dst_chroma_w) + ox) * 2U]        = (uint8_t)(sum_cb / (count ? count : 1U));
-            pDstChroma[((((size_t)oy * dst_chroma_w) + ox) * 2U) + 1U] = (uint8_t)(sum_cr / (count ? count : 1U));
+            SampleChroma(pSrc, cx0, cx1, cy0, cy1,
+                         &pDstChroma[(((size_t)oy * dst_chroma_w) + ox) * 2U]);
         }
     }
+}
+
+static FORCE_INLINE void DownscaleFrame(const FrameSlot* pSrc, byte_t* pDstLuma, byte_t* pDstChroma, unsigned ow, unsigned oh)
+{
+    DownscaleLuma(pSrc, pDstLuma, ow, oh);
+    DownscaleChroma(pSrc, pDstChroma, ow, oh);
 }
 
 /* A coarse optical-flow estimate: for a grid of blocks, search a small window for the best match in
@@ -265,94 +278,100 @@ static void DownscaleFrame(const FrameSlot* pSrc, byte_t* pDstLuma, byte_t* pDst
  *  Searches nearby matches for sampled blocks in the previous luma frame.
  *  Zero-motion matches seed the search so ambiguous flat blocks stay stationary.
  */
+#define GPU_TRANSCODE_MOTION_BLOCK 16U
+#define GPU_TRANSCODE_MOTION_SEARCH 4
+
+static FORCE_INLINE uint32_t MotionBlockSad(const byte_t* pPrev,
+                               const byte_t* pCurr,
+                               unsigned width,
+                               unsigned bx,
+                               unsigned by,
+                               int dx,
+                               int dy)
+{
+    uint32_t sad = 0;
+    unsigned y;
+
+    for (y = 0; y < GPU_TRANSCODE_MOTION_BLOCK; y += 2)
+    {
+        unsigned x;
+
+        for (x = 0; x < GPU_TRANSCODE_MOTION_BLOCK; x += 2)
+        {
+            int a = pCurr[(((uint64_t)by + y) * width) + (uint64_t)bx + x];
+            int b = pPrev[((uint64_t)((int64_t)by + y + dy) * width) + (uint64_t)((int64_t)bx + x + dx)];
+            sad += (uint32_t)(a > b ? a - b : b - a);
+        }
+    }
+    return sad;
+}
+
+static FORCE_INLINE void FindBestBlockMatch(const byte_t* pPrev,
+                               const byte_t* pCurr,
+                               unsigned width,
+                               unsigned height,
+                               unsigned bx,
+                               unsigned by,
+                               int* pDx,
+                               int* pDy,
+                               uint32_t* pSad)
+{
+    int dy;
+
+    *pDx = 0;
+    *pDy = 0;
+    *pSad = MotionBlockSad(pPrev, pCurr, width, bx, by, 0, 0);
+    for (dy = -GPU_TRANSCODE_MOTION_SEARCH; dy <= GPU_TRANSCODE_MOTION_SEARCH; ++dy)
+    {
+        int dx;
+
+        if ((int)by + dy < 0 || by + GPU_TRANSCODE_MOTION_BLOCK + (unsigned)dy > height)
+        {
+            continue;
+        }
+        for (dx = -GPU_TRANSCODE_MOTION_SEARCH; dx <= GPU_TRANSCODE_MOTION_SEARCH; ++dx)
+        {
+            uint32_t sad;
+
+            if ((int)bx + dx < 0 || bx + GPU_TRANSCODE_MOTION_BLOCK + (unsigned)dx > width)
+            {
+                continue;
+            }
+            sad = MotionBlockSad(pPrev, pCurr, width, bx, by, dx, dy);
+            if (sad < *pSad)
+            {
+                *pSad = sad;
+                *pDx = dx;
+                *pDy = dy;
+            }
+        }
+    }
+}
+
 static double EstimateMotion(const byte_t* pPrev,
                              const byte_t* pCurr,
-                             unsigned       width,
-                             unsigned       height,
-                             double*        pResidual)
+                             unsigned width,
+                             unsigned height,
+                             double* pResidual)
 {
-    const unsigned block  = 16;
-    const int      search = 4;
     unsigned by;
-    uint64_t motion_sum;
-    uint64_t residual_sum;
-    unsigned block_count;
+    uint64_t motion_sum = 0;
+    uint64_t residual_sum = 0;
+    unsigned block_count = 0;
 
-    motion_sum   = 0;
-    residual_sum = 0;
-    block_count  = 0;
-    for (by = 0; by + block <= height; by += block)
+    for (by = 0; by + GPU_TRANSCODE_MOTION_BLOCK <= height; by += GPU_TRANSCODE_MOTION_BLOCK)
     {
         unsigned bx;
 
-        for (bx = 0; bx + block <= width; bx += block)
+        for (bx = 0; bx + GPU_TRANSCODE_MOTION_BLOCK <= width; bx += GPU_TRANSCODE_MOTION_BLOCK)
         {
-            int      best_dx;
-            int      best_dy;
+            int best_dx;
+            int best_dy;
             uint32_t best_sad;
-            unsigned yz;
-            int      dy;
 
-            /* Seed the search with the zero-motion match so flat, ambiguous blocks (which match
-            ** equally at any offset) report no motion instead of the first candidate tried. */
-            best_dx  = 0;
-            best_dy  = 0;
-            best_sad = 0;
-            for (yz = 0; yz < block; yz += 2)
-            {
-                unsigned xz;
-
-                for (xz = 0; xz < block; xz += 2)
-                {
-                    int a;
-                    int b;
-
-                    a         = pCurr[(((uint64_t)by + yz) * width) + (uint64_t)bx + xz];
-                    b         = pPrev[(((uint64_t)by + yz) * width) + (uint64_t)bx + xz];
-                    best_sad += (uint32_t)(a > b ? a - b : b - a);
-                }
-            }
-            for (dy = -search; dy <= search; ++dy)
-            {
-                int dx;
-
-                if ((int)by + dy < 0 || by + block + (unsigned)dy > height)
-                {
-                    continue;
-                }
-                for (dx = -search; dx <= search; ++dx)
-                {
-                    uint32_t sad;
-                    unsigned y;
-
-                    if ((int)bx + dx < 0 || bx + block + (unsigned)dx > width)
-                    {
-                        continue;
-                    }
-                    sad = 0;
-                    for (y = 0; y < block; y += 2)
-                    {
-                        unsigned x;
-
-                        for (x = 0; x < block; x += 2)
-                        {
-                            int a;
-                            int b;
-
-                            a    = pCurr[(((uint64_t)by + y) * width) + (uint64_t)bx + x];
-                            b    = pPrev[((uint64_t)((int64_t)by + y + dy) * width) + (uint64_t)((int64_t)bx + x + dx)];
-                            sad += (uint32_t)(a > b ? a - b : b - a);
-                        }
-                    }
-                    if (sad < best_sad)
-                    {
-                        best_sad = sad;
-                        best_dx  = dx;
-                        best_dy  = dy;
-                    }
-                }
-            }
-            motion_sum   += (uint64_t)(best_dx < 0 ? -best_dx : best_dx) + (uint64_t)(best_dy < 0 ? -best_dy : best_dy);
+            FindBestBlockMatch(pPrev, pCurr, width, height, bx, by, &best_dx, &best_dy, &best_sad);
+            motion_sum += (uint64_t)(best_dx < 0 ? -best_dx : best_dx) +
+                          (uint64_t)(best_dy < 0 ? -best_dy : best_dy);
             residual_sum += best_sad;
             ++block_count;
         }
@@ -365,15 +384,43 @@ static double EstimateMotion(const byte_t* pPrev,
         }
         return 0.0;
     }
-    /* Motion is the mean per-block displacement over the search radius; residual is the mean best
-    ** match error per sampled pixel (0..255), used to spot scene cuts. */
     if (NULL != pResidual)
     {
-        const double half_block = (double)block / GPU_TRANSCODE_AXIS_COUNT;
+        const double half_block = (double)GPU_TRANSCODE_MOTION_BLOCK / GPU_TRANSCODE_AXIS_COUNT;
 
         *pResidual = (double)residual_sum / block_count / (half_block * half_block) / GPU_TRANSCODE_BYTE_MAX;
     }
-    return (double)motion_sum / block_count / (GPU_TRANSCODE_AXIS_COUNT * search);
+    return (double)motion_sum / block_count /
+           (GPU_TRANSCODE_AXIS_COUNT * GPU_TRANSCODE_MOTION_SEARCH);
+}
+
+static FORCE_INLINE bool_t CopyDecodedFramePlanes(FrameSlot* slot, const DecodedFrame* frame, uint64_t capacity)
+{
+    size_t        luma_bytes;
+    size_t        chroma_bytes;
+    uint64_t      safe_luma;
+    uint64_t      chroma_factor;
+    uint64_t      copy_bytes;
+    bool_t        fits_luma;
+    bool_t        fits_chroma;
+    bool_t        fits_frame;
+    byte_t        discard_output = 0;
+    byte_t        discard_input = 0;
+    byte_t*       destination;
+    const byte_t* source;
+
+    luma_bytes   = (size_t)frame->lumaStride * frame->height;
+    chroma_bytes = (size_t)frame->chromaStride * frame->chromaHeight;
+    fits_luma    = ((uint64_t)luma_bytes <= capacity);
+    safe_luma    = fits_luma ? (uint64_t)luma_bytes : 0;
+    chroma_factor = frame->chromaInterleaved ? 1ULL : 2ULL;
+    fits_chroma  = ((uint64_t)chroma_bytes <= (capacity - safe_luma) / chroma_factor);
+    fits_frame   = fits_luma && fits_chroma;
+    copy_bytes   = fits_frame ? ((uint64_t)luma_bytes + (chroma_factor * chroma_bytes)) : 0;
+    destination  = fits_frame ? slot->planes : &discard_output;
+    source       = fits_frame ? frame->pLuma : &discard_input;
+    CRT_Memory_Copy(destination, source, copy_bytes);
+    return fits_frame;
 }
 
 /* The decode-ahead producer: reads a source sample, decodes it, and copies the full-resolution NV12
@@ -394,9 +441,6 @@ static DWORD WINAPI ProducerThread(LPVOID pParameter)
         FrameSlot*       p_slot;
         const Mp4Sample* p_sample;
         DecodedFrame     df;
-        size_t           luma_bytes;
-        size_t           chroma_bytes;
-        uint64_t         chroma_copy_bytes;
         uint32_t         bytes;
 
         WaitForSingleObject(pTranscoder->emptySlots, INFINITE);
@@ -426,19 +470,13 @@ static DWORD WINAPI ProducerThread(LPVOID pParameter)
             break;
         }
         GpuDecode_GetFrame(pTranscoder->decoder, &df);
-        luma_bytes   = (size_t)df.lumaStride * df.height;
-        chroma_bytes = (size_t)df.chromaStride * df.chromaHeight;
-        if (((uint64_t)luma_bytes > pTranscoder->frameCapacity) ||
-            ((uint64_t)chroma_bytes >
-             ((pTranscoder->frameCapacity - luma_bytes) / (df.chromaInterleaved ? 1ULL : 2ULL))))
+        if (!CopyDecodedFramePlanes(p_slot, &df, pTranscoder->frameCapacity))
         {
             p_slot->eof       = 1;
             pTranscoder->head = (pTranscoder->head + 1U) % PIPELINE_SLOTS;
             ReleaseSemaphore(pTranscoder->filledSlots, 1, NULL);
             break;
         }
-        chroma_copy_bytes = df.chromaInterleaved ? chroma_bytes : (2ULL * chroma_bytes);
-        CRT_Memory_Copy(p_slot->planes, df.pLuma, luma_bytes + chroma_copy_bytes);
         p_slot->width             = df.width;
         p_slot->height            = df.height;
         p_slot->lumaStride        = df.lumaStride;
@@ -465,7 +503,7 @@ static DWORD WINAPI ProducerThread(LPVOID pParameter)
  *  Permits no-audio input or a usable AAC track with configuration, timing and
  *  sample metadata, preventing a proxy from silently discarding source audio.
  */
-static int CanPreserveAudio(const Mp4Demux* pDemux)
+static FORCE_INLINE int CanPreserveAudio(const Mp4Demux* pDemux)
 {
     uint32_t config_size;
 
@@ -487,25 +525,28 @@ static int CanPreserveAudio(const Mp4Demux* pDemux)
  *  Copies audio samples beginning before the requested video boundary. A read
  *  or mux failure aborts the proxy path instead of omitting that sample.
  */
-static int CopyAudioUntil(Mp4Demux* pDemux, Mp4Mux* pMux, unsigned* pIndex, byte_t* pBuffer, double endSeconds)
+static FORCE_INLINE int CopyAudioUntil(Mp4Demux* pDemux, Mp4Mux* pMux, unsigned* pIndex, byte_t* pBuffer, double endSeconds)
 {
     const unsigned timescale = Mp4Demux_GetAudioTimescale(pDemux);
     const unsigned count     = Mp4Demux_GetAudioSampleCount(pDemux);
+    unsigned       end_index = *pIndex;
 
-    for (;;)
+    while (end_index < count)
     {
-        const Mp4Sample* pSample;
-        uint32_t         bytes;
+        const Mp4Sample* pSample = Mp4Demux_GetAudioSample(pDemux, end_index);
 
-        if (*pIndex >= count)
-        {
-            break;
-        }
-        pSample = Mp4Demux_GetAudioSample(pDemux, *pIndex);
         if ((double)pSample->decodeTime / timescale >= endSeconds)
         {
             break;
         }
+        ++end_index;
+    }
+    while (*pIndex < end_index)
+    {
+        const Mp4Sample* pSample;
+        uint32_t         bytes;
+
+        pSample = Mp4Demux_GetAudioSample(pDemux, *pIndex);
         bytes = Mp4Demux_ReadAudioSample(pDemux, *pIndex, pBuffer, GPU_AUDIO_BUFFER_CAPACITY);
         if (0 == bytes || 0 == pSample->duration || !Mp4Mux_AddAudio(pMux, pBuffer, bytes, pSample->duration))
         {
@@ -517,13 +558,24 @@ static int CopyAudioUntil(Mp4Demux* pDemux, Mp4Mux* pMux, unsigned* pIndex, byte
 }
 
 /* Points pp/pLen at the first NAL of the given type inside an Annex-B buffer (start code stripped). */
+static FORCE_INLINE uint32_t TrimNalLength(const byte_t* pData, uint32_t start, uint32_t end)
+{
+    uint32_t length = end - start;
+
+    while (length > 0 && pData[start + length - 1] == 0)
+    {
+        --length;
+    }
+    return length;
+}
+
 /*************************************************************************************************/
 /**
  * \par Details:
  *  Scans Annex B start codes and borrows the first matching NAL span without
  *  its start code; clears the result when none matches.
  */
-static void FindNalOfType(const byte_t* pData, uint32_t size, int nalType, const byte_t** pp, uint32_t* pLen)
+static FORCE_INLINE void FindNalOfType(const byte_t* pData, uint32_t size, uint32_t nalType, const byte_t** pp, uint32_t* pLen)
 {
     uint32_t i;
     uint32_t nal_start;
@@ -544,19 +596,7 @@ static void FindNalOfType(const byte_t* pData, uint32_t size, int nalType, const
             {
                 uint32_t nal_length;
 
-                nal_length = i - nal_start;
-                for (;;)
-                {
-                    if (0 == nal_length)
-                    {
-                        break;
-                    }
-                    if (0 != pData[nal_start + nal_length - 1])
-                    {
-                        break;
-                    }
-                    --nal_length;
-                }
+                nal_length = TrimNalLength(pData, nal_start, i);
                 if (nal_length > 0 && (pData[nal_start] & H264_NAL_TYPE_MASK) == nalType)
                 {
                     *pp   = pData + nal_start;
@@ -588,7 +628,7 @@ static void FindNalOfType(const byte_t* pData, uint32_t size, int nalType, const
  * \par Details:
  *  Sets the default output width, QP, short GOP and motion-adaptation strength.
  */
-void GpuTranscode_InitializeConfig(GpuTranscodeConfig* pConfig)
+extern FORCE_INLINE void GpuTranscode_InitializeConfig(GpuTranscodeConfig* pConfig)
 {
     /* The proxy is the primary stream once the session switches to it, so it has to be worth
     ** watching: HD-wide with a low quantiser, and a short GOP so seeks are still cheap. */
@@ -785,7 +825,7 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
  * \par Details:
  *  None
  */
-double GpuTranscode_GetLastMotion(const GpuTranscoder* pTranscoder)
+extern FORCE_INLINE double GpuTranscode_GetLastMotion(const GpuTranscoder* pTranscoder)
 {
     return pTranscoder->lastMotion;
 }
@@ -795,7 +835,7 @@ double GpuTranscode_GetLastMotion(const GpuTranscoder* pTranscoder)
  * \par Details:
  *  None
  */
-const byte_t* GpuTranscode_GetHeader(GpuTranscoder* pTranscoder, uint32_t* pSize)
+extern FORCE_INLINE const byte_t* GpuTranscode_GetHeader(GpuTranscoder* pTranscoder, uint32_t* pSize)
 {
     return GpuEncode_GetHeader(pTranscoder->encoder, pSize);
 }
@@ -805,7 +845,7 @@ const byte_t* GpuTranscode_GetHeader(GpuTranscoder* pTranscoder, uint32_t* pSize
  * \par Details:
  *  None
  */
-unsigned GpuTranscode_GetOutputWidth(const GpuTranscoder* pTranscoder)
+extern FORCE_INLINE unsigned GpuTranscode_GetOutputWidth(const GpuTranscoder* pTranscoder)
 {
     return pTranscoder->outWidth;
 }
@@ -815,7 +855,7 @@ unsigned GpuTranscode_GetOutputWidth(const GpuTranscoder* pTranscoder)
  * \par Details:
  *  None
  */
-unsigned GpuTranscode_GetOutputHeight(const GpuTranscoder* pTranscoder)
+extern FORCE_INLINE unsigned GpuTranscode_GetOutputHeight(const GpuTranscoder* pTranscoder)
 {
     return pTranscoder->outHeight;
 }
@@ -838,7 +878,7 @@ unsigned GpuTranscode_GetFrameCount(const GpuTranscoder* pTranscoder)
  *  Searches backward from the clamped requested sample and resets temporal
  *  motion history at the selected keyframe.
  */
-unsigned GpuTranscode_SeekKeyframe(GpuTranscoder* pTranscoder, unsigned approxFrame)
+extern FORCE_INLINE unsigned GpuTranscode_SeekKeyframe(GpuTranscoder* pTranscoder, unsigned approxFrame)
 {
     unsigned index;
 
@@ -1010,6 +1050,35 @@ void GpuTranscode_Close(GpuTranscoder* pTranscoder)
  *  Starts at a source keyframe, preserves video timing and interleaves retained
  *  AAC up to each encoded frame's end before finalizing the clip.
  */
+static FORCE_INLINE unsigned SkipPrecedingAudio(Mp4Demux* pTiming,
+                                   unsigned start_index,
+                                   unsigned audio_samples,
+                                   unsigned video_timescale,
+                                   unsigned audio_timescale,
+                                   int has_audio)
+{
+    const Mp4Sample* p_start;
+    double start_seconds;
+    unsigned audio_index;
+
+    if (!has_audio || 0 == video_timescale || 0 == audio_timescale || 0 == start_index)
+    {
+        return 0;
+    }
+    p_start = Mp4Demux_GetSample(pTiming, start_index);
+    start_seconds = (NULL != p_start) ? (double)p_start->decodeTime / video_timescale : 0.0;
+    for (audio_index = 0; audio_index < audio_samples; ++audio_index)
+    {
+        const Mp4Sample* p_audio = Mp4Demux_GetAudioSample(pTiming, audio_index);
+
+        if (NULL == p_audio || (double)p_audio->decodeTime / audio_timescale >= start_seconds)
+        {
+            break;
+        }
+    }
+    return audio_index;
+}
+
 int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
                           const TCHAR*              pSource,
                           const TCHAR*              pDest,
@@ -1106,35 +1175,10 @@ int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
     }
 
     audio_buffer = deviceStorage->audioBuffer;
-    audio_index  = 0;
+    audio_index  = SkipPrecedingAudio(pTiming, start_index, audio_samples, video_timescale, audio_timescale, has_audio);
     produced     = 0;
     motion_accum = 0.0;
     ok           = TRUE;
-
-    /* Skip audio that precedes the (possibly seeked) start so the clip's tracks begin together. */
-    if (has_audio && video_timescale > 0 && audio_timescale > 0 && start_index > 0)
-    {
-        const Mp4Sample* p_start;
-        double           start_seconds;
-
-        p_start       = Mp4Demux_GetSample(pTiming, start_index);
-        start_seconds = (NULL != p_start) ? (double)p_start->decodeTime / video_timescale : 0.0;
-        for (;;)
-        {
-            const Mp4Sample* p_audio;
-
-            if (audio_index == audio_samples)
-            {
-                break;
-            }
-            p_audio = Mp4Demux_GetAudioSample(pTiming, audio_index);
-            if (NULL == p_audio || (double)p_audio->decodeTime / audio_timescale >= start_seconds)
-            {
-                break;
-            }
-            ++audio_index;
-        }
-    }
 
     for (frame = start_index; ok && frame < end_index; ++frame)
     {
@@ -1204,6 +1248,40 @@ int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
  *  Invokes the optional ready callback after the configured head start or the
  *  successful final flush of a short clip.
  */
+static FORCE_INLINE double GetSourceDuration(Mp4Demux* pTiming, unsigned total_samples, unsigned video_timescale)
+{
+    const Mp4Sample* p_last;
+
+    if (0 == total_samples || 0 == video_timescale)
+    {
+        return 0.0;
+    }
+    p_last = Mp4Demux_GetSample(pTiming, total_samples - 1U);
+    return (NULL != p_last) ? (double)(p_last->decodeTime + p_last->duration) / video_timescale : 0.0;
+}
+
+static FORCE_INLINE void FlushBeforeKeyframe(Mp4Mux* pMux,
+                                int keyframe,
+                                unsigned produced,
+                                unsigned* pFragments,
+                                int* pFirstFragmentSent,
+                                uint64_t head_ticks,
+                                unsigned video_timescale,
+                                GpuTranscodeReadyFn onReady,
+                                void* pUser)
+{
+    if (keyframe && produced > 0 && Mp4Mux_FlushFragment(pMux))
+    {
+        ++(*pFragments);
+        if (!*pFirstFragmentSent && NULL != onReady &&
+            head_ticks >= (uint64_t)GPU_TRANSCODE_HEAD_START * video_timescale)
+        {
+            *pFirstFragmentSent = 1;
+            onReady(pUser);
+        }
+    }
+}
+
 int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
                                     const uint16_t*           pSource,
                                     const uint16_t*           pDest,
@@ -1231,7 +1309,6 @@ int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
     const byte_t*    asc;
     uint32_t         asc_size;
     int              has_audio;
-    const Mp4Sample* p_last;
     double           full_duration;
     Mp4Mux*          pMux;
     byte_t*          audio_buffer;
@@ -1276,10 +1353,7 @@ int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
         GpuTranscode_Close(pTranscoder);
         return 0;
     }
-    p_last        = (total_samples > 0) ? Mp4Demux_GetSample(pTiming, total_samples - 1U) : NULL;
-    full_duration = (NULL != p_last && video_timescale > 0)
-                        ? (double)(p_last->decodeTime + p_last->duration) / video_timescale
-                        : 0.0;
+    full_duration = GetSourceDuration(pTiming, total_samples, video_timescale);
 
     pMux = Mp4Mux_CreateFragmented(pDest,
                                    GpuTranscode_GetOutputWidth(pTranscoder),
@@ -1336,22 +1410,8 @@ int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
             ok = 0;
             break;
         }
-        /* Each fragment starts on a keyframe: close the previous one first so it is self-seekable. */
-        if (keyframe && produced > 0)
-        {
-            if (Mp4Mux_FlushFragment(pMux))
-            {
-                ++fragments;
-                /* Start serving only once several seconds of content are on disk: a receiver that
-                ** loads a barely-started file rejects it. The transcode runs well ahead of playback,
-                ** so it keeps growing past the viewer from here. */
-                if (!first_fragment_sent && NULL != onReady && head_ticks >= (uint64_t)GPU_TRANSCODE_HEAD_START * video_timescale)
-                {
-                    first_fragment_sent = 1;
-                    onReady(pUser);
-                }
-            }
-        }
+        FlushBeforeKeyframe(pMux, keyframe, produced, &fragments, &first_fragment_sent,
+                            head_ticks, video_timescale, onReady, pUser);
         p_video  = Mp4Demux_GetSample(pTiming, frame);
         duration = p_video->duration;
         if (!Mp4Mux_AddVideo(pMux, coded, coded_size, duration, keyframe))
@@ -1371,10 +1431,10 @@ int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
     if (ok)
     {
         ok = Mp4Mux_Finish(pMux); /* flushes the trailing fragment */
-        if (!first_fragment_sent && ok && NULL != onReady)
-        {
-            onReady(pUser); /* short clip: it all landed in the final fragment */
-        }
+    }
+    if (!first_fragment_sent && ok && NULL != onReady)
+    {
+        onReady(pUser); /* short clip: it all landed in the final fragment */
     }
     Report(pReport,
            reportCapacity,

@@ -4,6 +4,7 @@
 #include <stdarg.h>
 
 #include "os/os_types.h"
+#include "os/os_compiler.h"
 #include "utl/utl_decimal.h"
 
 #define CRT_FORMAT_DECIMAL_CAPACITY (20U)
@@ -23,7 +24,7 @@ typedef struct CRT_Format_Writer_s
     bool_t   complete;
 } CRT_Format_Writer_t;
 
-static void CRT_Format_Character(CRT_Format_Writer_t* writer, char_t character)
+static FORCE_INLINE void CRT_Format_Character(CRT_Format_Writer_t* writer, char_t character)
 {
     if ((writer->count + 1U) < writer->capacity)
     {
@@ -37,7 +38,7 @@ static void CRT_Format_Character(CRT_Format_Writer_t* writer, char_t character)
     }
 }
 
-static void CRT_Format_Text(CRT_Format_Writer_t* writer, const char_t* value, uint32_t limit)
+static FORCE_INLINE void CRT_Format_Text(CRT_Format_Writer_t* writer, const char_t* value, uint32_t limit)
 {
     uint32_t index = 0;
 
@@ -52,7 +53,7 @@ static void CRT_Format_Text(CRT_Format_Writer_t* writer, const char_t* value, ui
     }
 }
 
-static void CRT_Format_Unsigned(CRT_Format_Writer_t* writer, uint64_t value)
+static FORCE_INLINE void CRT_Format_Unsigned(CRT_Format_Writer_t* writer, uint64_t value)
 {
     byte_t   digits[CRT_FORMAT_DECIMAL_CAPACITY];
     uint32_t count;
@@ -78,7 +79,7 @@ static void CRT_Format_Signed(CRT_Format_Writer_t* writer, int64_t value)
     }
 }
 
-static void CRT_Format_Hex32(CRT_Format_Writer_t* writer, uint32_t value)
+static FORCE_INLINE void CRT_Format_Hex32(CRT_Format_Writer_t* writer, uint32_t value)
 {
     uint32_t shift;
 
@@ -122,7 +123,7 @@ static void CRT_Format_Fixed(CRT_Format_Writer_t* writer, float64_t value, uint3
     CRT_Format_Unsigned(writer, fraction);
 }
 
-bool_t CRT_Format_Copy(char_t* output, uint32_t capacity, const char_t* text)
+extern FORCE_INLINE bool_t CRT_Format_Copy(char_t* output, uint32_t capacity, const char_t* text)
 {
     CRT_Format_Writer_t writer;
 
@@ -139,7 +140,7 @@ bool_t CRT_Format_Copy(char_t* output, uint32_t capacity, const char_t* text)
     return writer.complete;
 }
 
-static bool_t CRT_Format_Precision(CRT_Format_Writer_t* writer,
+static FORCE_INLINE bool_t CRT_Format_Precision(CRT_Format_Writer_t* writer,
                                    const char_t* format,
                                    uint32_t* cursor,
                                    va_list* arguments)
@@ -232,7 +233,7 @@ static bool_t CRT_Format_Conversion(CRT_Format_Writer_t* writer,
     return valid;
 }
 
-bool_t CRT_Format_VAppend(char_t* output, uint32_t capacity, const char_t* format, va_list* arguments)
+extern FORCE_INLINE bool_t CRT_Format_VAppend(char_t* output, uint32_t capacity, const char_t* format, va_list* arguments)
 {
     CRT_Format_Writer_t writer;
     uint32_t cursor = 0U;

@@ -94,7 +94,7 @@ static FORCE_INLINE byte_t* GetSlot(const OS_Queue_t* queue, uint32_t index)
  *  The constructor establishes integral entry boundaries in the byte ring. Every
  *  queue mutation preserves those boundaries; callers may not mutate ring members.
  */
-void OS_Queue_Initialize(OS_Queue_t* queue, void* entries, uint32_t entryByteCount, uint32_t capacity)
+extern FORCE_INLINE void OS_Queue_Initialize(OS_Queue_t* queue, void* entries, uint32_t entryByteCount, uint32_t capacity)
 {
     uint32_t byte_capacity;
 
@@ -114,7 +114,7 @@ void OS_Queue_Initialize(OS_Queue_t* queue, void* entries, uint32_t entryByteCou
  * \par Details:
  *  None
  */
-uint32_t OS_Queue_GetEntryCount(const OS_Queue_t* queue)
+extern FORCE_INLINE uint32_t OS_Queue_GetEntryCount(const OS_Queue_t* queue)
 {
     LOGASSERT(NULL != queue);
 
@@ -138,22 +138,23 @@ uint32_t OS_Queue_GetCapacity(const OS_Queue_t* queue)
  * \par Details:
  *  None
  */
-bool_t OS_Queue_GetEntry(void* entry, const OS_Queue_t* queue, uint32_t index)
+extern FORCE_INLINE bool_t OS_Queue_GetEntry(void* entry, const OS_Queue_t* queue, uint32_t index)
 {
     uint32_t      count;
+    uint32_t      safe_index;
     bool_t        available;
-    const byte_t* input;
+    byte_t*       slot;
+    void*         destination;
 
     LOGASSERT(NULL != entry);
     LOGASSERT(NULL != queue);
 
     count     = OS_Queue_GetEntryCount(queue);
     available = (index < count);
-    if (available)
-    {
-        input = GetSlot(queue, index);
-        CRT_Memory_Copy(entry, input, queue->entryByteCount);
-    }
+    safe_index = index & ((uint32_t)0 - (uint32_t)available);
+    slot = GetSlot(queue, safe_index);
+    destination = available ? entry : slot;
+    CRT_Memory_Move(destination, slot, queue->entryByteCount);
 
     return available;
 }
@@ -163,7 +164,7 @@ bool_t OS_Queue_GetEntry(void* entry, const OS_Queue_t* queue, uint32_t index)
  * \par Details:
  *  None
  */
-void OS_Queue_Reset(OS_Queue_t* queue)
+extern FORCE_INLINE void OS_Queue_Reset(OS_Queue_t* queue)
 {
     LOGASSERT(NULL != queue);
 
@@ -175,22 +176,23 @@ void OS_Queue_Reset(OS_Queue_t* queue)
  * \par Details:
  *  None
  */
-bool_t OS_Queue_Replace(OS_Queue_t* queue, uint32_t index, const void* entry)
+extern FORCE_INLINE bool_t OS_Queue_Replace(OS_Queue_t* queue, uint32_t index, const void* entry)
 {
     uint32_t count;
+    uint32_t safe_index;
     bool_t   available;
     byte_t*  output;
+    const void* source;
 
     LOGASSERT(NULL != queue);
     LOGASSERT(NULL != entry);
 
     count     = OS_Queue_GetEntryCount(queue);
     available = (index < count);
-    if (available)
-    {
-        output = GetSlot(queue, index);
-        CRT_Memory_Copy(output, entry, queue->entryByteCount);
-    }
+    safe_index = index & ((uint32_t)0 - (uint32_t)available);
+    output = GetSlot(queue, safe_index);
+    source = available ? entry : output;
+    CRT_Memory_Move(output, source, queue->entryByteCount);
 
     return available;
 }
@@ -200,7 +202,7 @@ bool_t OS_Queue_Replace(OS_Queue_t* queue, uint32_t index, const void* entry)
  * \par Details:
  *  None
  */
-bool_t OS_Queue_Read(void* entry, OS_Queue_t* queue)
+extern FORCE_INLINE bool_t OS_Queue_Read(void* entry, OS_Queue_t* queue)
 {
     bool_t available;
 
@@ -219,21 +221,31 @@ bool_t OS_Queue_Read(void* entry, OS_Queue_t* queue)
  *  Every slot is contiguous because the ring extent and all position advances are
  *  multiples of the fixed entry width. Copy completes before the count is advanced.
  */
-bool_t OS_Queue_Write(OS_Queue_t* queue, const void* entry)
+extern FORCE_INLINE bool_t OS_Queue_Write(OS_Queue_t* queue, const void* entry)
 {
     byte_t*  output;
+    byte_t*  safe_output;
+    const void* safe_input;
     uint32_t span_count;
+    uint32_t safe_count;
     bool_t   available;
+    bool_t   fits;
+    bool_t   can_copy;
 
     LOGASSERT(NULL != queue);
     LOGASSERT(NULL != entry);
 
     output    = OS_RingBuffer_GetWritableSpan(&span_count, &queue->ring, 0);
     available = (NULL != output);
+    fits      = (queue->entryByteCount <= span_count);
+    can_copy  = available && fits;
+    safe_count = queue->entryByteCount & ((uint32_t)0 - (uint32_t)can_copy);
+    safe_output = available ? output : queue->ring.bytes;
+    safe_input  = can_copy ? entry : safe_output;
+    CRT_Memory_Move(safe_output, safe_input, safe_count);
     if (available)
     {
         LOGASSERT(queue->entryByteCount <= span_count);
-        CRT_Memory_Copy(output, entry, queue->entryByteCount);
         OS_RingBuffer_Produce(&queue->ring, queue->entryByteCount);
     }
 
@@ -247,7 +259,7 @@ bool_t OS_Queue_Write(OS_Queue_t* queue, const void* entry)
  *  then consume the duplicate front entry. Descending indices preserve unread inputs
  *  even when physical storage wraps.
  */
-bool_t OS_Queue_Remove(OS_Queue_t* queue, uint32_t index)
+extern FORCE_INLINE bool_t OS_Queue_Remove(OS_Queue_t* queue, uint32_t index)
 {
     uint32_t      count;
     bool_t        available;

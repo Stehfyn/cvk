@@ -125,7 +125,7 @@ extern FORCEINLINE BOOL PresentSwapChain(SWAPCHAIN* pSwapChain, BOOL fRestart, B
     return (S_OK == hrFirst) && (S_OK == hrSecond);
 }
 
-void DestroySwapChain(SWAPCHAIN* pSwapChain)
+extern FORCEINLINE void DestroySwapChain(SWAPCHAIN* pSwapChain)
 {
     cdxgiUnknownReleaseSafe((IUnknown*)pSwapChain->visual);
     cdxgiUnknownReleaseSafe((IUnknown*)pSwapChain->compositionTarget);

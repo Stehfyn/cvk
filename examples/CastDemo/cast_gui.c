@@ -505,13 +505,12 @@ static FORCE_INLINE void PresentCastWindow(void* parameter);
  * \brief Reads native control text into the application's fixed UTF-16 representation.
  *
  * \param[in]     control    Native control
- * \param[out]    output     Caller-owned UTF-16 storage
- * \param[in]     capacity   Output units including the terminator
+ * \param[out]    output     GUI_SOURCE_CAPACITY UTF-16 units including the terminator
  *
  * \retval        TRUE       Complete text was read.
  * \retval        FALSE      Native text or output capacity was unsuitable.
  */
-static FORCE_INLINE bool_t ReadControlText(HWND control, WCHAR* output, uint32_t capacity);
+static FORCE_INLINE bool_t ReadControlText(HWND control, WCHAR* output);
 
 /*************************************************************************************************/
 /**
@@ -553,7 +552,7 @@ static FORCE_INLINE bool_t DeleteUtf16File(const WCHAR* path);
  * \par Details:
  *  The native workspace bounds the control read before the encoding conversion.
  */
-static FORCE_INLINE bool_t ReadControlText(HWND control, WCHAR* output, uint32_t capacity)
+static FORCE_INLINE bool_t ReadControlText(HWND control, WCHAR* output)
 {
     TCHAR   native[GUI_NATIVE_TEXT_CAPACITY];
     int32_t length;
@@ -561,7 +560,6 @@ static FORCE_INLINE bool_t ReadControlText(HWND control, WCHAR* output, uint32_t
     bool_t  read;
 
     LOGASSERT(NULL != output);
-    LOGASSERT(0 < capacity);
 
     length = GetWindowTextLength(control);
     fits   = (0 <= length) && (length < GUI_NATIVE_TEXT_CAPACITY);
@@ -570,7 +568,7 @@ static FORCE_INLINE bool_t ReadControlText(HWND control, WCHAR* output, uint32_t
     if (fits)
     {
         length = GetWindowText(control, native, GUI_NATIVE_TEXT_CAPACITY);
-        read = (0 <= length) && OS_Text_ReadNative((uint16_t*)output, capacity, native);
+        read = (0 <= length) && OS_Text_ReadNative((uint16_t*)output, GUI_SOURCE_CAPACITY, native);
     }
     return read;
 }
@@ -652,7 +650,9 @@ static FORCE_INLINE int Scale(const App* pApp, int dips)
  */
 static FORCE_INLINE void Utf8ToWide(const char* pText, WCHAR* pWide, int capacity)
 {
-    if ((NULL == pText) || (0 == MultiByteToWideChar(CP_UTF8, 0, pText, -1, pWide, capacity)))
+    const char* safe_text = (NULL != pText) ? pText : "";
+
+    if (0 == MultiByteToWideChar(CP_UTF8, 0, safe_text, -1, pWide, capacity))
     {
         pWide[0] = L'\0';
     }
@@ -660,12 +660,17 @@ static FORCE_INLINE void Utf8ToWide(const char* pText, WCHAR* pWide, int capacit
 
 static FORCE_INLINE void Utf8ToNative(const char* pText, LPTSTR pNative, uint32_t capacity)
 {
-    WCHAR wide[GUI_WIDE_TEXT_CAPACITY];
+    WCHAR wide[CAST_EVENTS_TEXT_CAPACITY];
     bool_t converted;
+    uint32_t safe_capacity;
 
-    LOGASSERT(capacity <= ARRAYSIZE(wide));
-    Utf8ToWide(pText, wide, (int)capacity);
-    converted = OS_Text_WriteNative(pNative, capacity, (const uint16_t*)wide);
+    if (0 == capacity)
+    {
+        return;
+    }
+    safe_capacity = (capacity <= ARRAYSIZE(wide)) ? capacity : ARRAYSIZE(wide);
+    Utf8ToWide(pText, wide, (int)safe_capacity);
+    converted = OS_Text_WriteNative(pNative, safe_capacity, (const uint16_t*)wide);
     if (!converted)
     {
         pNative[0] = TEXT('\0');
@@ -1318,18 +1323,16 @@ static FORCE_INLINE void DrawSubtitleItem(HWND combo, RECT rect, int index, UINT
     bool_t              selected;
     const D2D1_COLOR_F* fill;
     const D2D1_COLOR_F* foreground;
+    LRESULT             length;
 
     selected   = (0 != (state & ODS_SELECTED)) && (0 == (state & ODS_COMBOBOXEDIT));
     fill       = selected ? &c_castSelectedColor : &c_castFieldColor;
     foreground = (0 != (state & ODS_DISABLED)) ? &c_castMutedColor : &c_castTextColor;
     FillControlRect(pApp, &rect, fill);
-    if (index >= 0)
+    length = SendMessage(combo, CB_GETLBTEXTLEN, (WPARAM)index, 0);
+    if (index >= 0 && length >= 0 && length < GUI_CONTROL_TEXT_CAPACITY)
     {
-        LRESULT length = SendMessage(combo, CB_GETLBTEXTLEN, (WPARAM)index, 0);
-        if (length >= 0 && length < GUI_CONTROL_TEXT_CAPACITY)
-        {
-            SendMessage(combo, CB_GETLBTEXT, (WPARAM)index, (LPARAM)text);
-        }
+        SendMessage(combo, CB_GETLBTEXT, (WPARAM)index, (LPARAM)text);
     }
     InflateRect(&rect, -Scale(pApp, GUI_CONTROL_TEXT_INSET), 0);
     DrawControlText(pApp, text, &rect, foreground, DWRITE_TEXT_ALIGNMENT_LEADING);
@@ -2495,7 +2498,6 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
     LOGASSERT(wrote_url);
     if (app->preparingAudio)
     {
-        LOGASSERT(sizeof(app->pendingConfig.contentUrl) > url_bytes);
         CRT_Memory_Copy(app->pendingConfig.contentUrl, url, (uint64_t)url_bytes + 1U);
         CRT_Memory_Copy(app->pendingConfig.contentType, GAIN_MEDIA_TYPE, sizeof(GAIN_MEDIA_TYPE));
         ++app->events.generation;
@@ -2520,6 +2522,238 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
     }
 }
 
+static bool_t LoadCastSubtitle(App* pApp, const SubtitleTrack** ppSubtitle,
+                                const byte_t** ppVtt, uint64_t* pVttSize,
+                                char* error)
+{
+    int32_t choice;
+    bool_t automatic_selected;
+    bool_t track_selected;
+    TCHAR message[GUI_ERROR_CAPACITY];
+
+    RefreshSubtitles(pApp);
+    choice = (int32_t)SendMessage(pApp->hSubtitle, CB_GETCURSEL, 0, 0);
+    automatic_selected = (0 == choice) && (0 < pApp->subtitleCount);
+    track_selected = (2 <= choice) && ((uint32_t)(choice - 2) < pApp->subtitleCount);
+    if (automatic_selected)
+    {
+        *ppSubtitle = &pApp->subtitles[0];
+    }
+    else if (track_selected)
+    {
+        *ppSubtitle = &pApp->subtitles[choice - 2];
+    }
+    if (NULL == *ppSubtitle)
+    {
+        return TRUE;
+    }
+    if (!Subtitles_Load(&pApp->subtitleWorkspace, *ppSubtitle, error, GUI_ERROR_CAPACITY))
+    {
+        Utf8ToNative(error, message, GUI_ERROR_CAPACITY);
+        SetStatus(pApp, message);
+        return FALSE;
+    }
+    *ppVtt = Subtitles_GetText(&pApp->subtitleWorkspace);
+    *pVttSize = Subtitles_GetByteCount(&pApp->subtitleWorkspace);
+    return TRUE;
+}
+
+static FORCE_INLINE void PrepareRemoteCastContent(const WCHAR* source, CastSessionConfig* pConfig)
+{
+    const WCHAR* pExtension;
+    const char* contentType;
+    bool_t hasExtension;
+    bool_t extensionIsPath;
+
+    pExtension = Utf16FindLast(source, GUI_SOURCE_CAPACITY, L'.');
+    hasExtension = (NULL != pExtension);
+    extensionIsPath = FALSE;
+    if (hasExtension)
+    {
+        extensionIsPath = Utf16Contains(pExtension,
+                                         (uint32_t)((source + GUI_SOURCE_CAPACITY) - pExtension), L'/');
+    }
+    ToUtf8(source, pConfig->contentUrl, sizeof(pConfig->contentUrl));
+    ToUtf8(source, pConfig->title, sizeof(pConfig->title));
+    contentType = "video/mp4";
+    if (hasExtension && !extensionIsPath)
+    {
+        contentType = MediaServer_GetContentTypeForExtension(pExtension);
+    }
+    (void)CopyAscii(pConfig->contentType, ARRAYSIZE(pConfig->contentType),
+                    contentType, CAST_SESSION_TYPE_CAPACITY);
+}
+
+static bool_t PrepareLocalCastContent(App* pApp, const CastDevice* pDevice,
+                                      const WCHAR* source, const byte_t* vtt,
+                                      uint64_t vttSize, CastSessionConfig* pConfig,
+                                      char* localAddress, char* error)
+{
+    const WCHAR* pName;
+    const WCHAR* pExtension;
+    char extension[GUI_EXTENSION_CAPACITY];
+    ByteText urlWriter;
+    TCHAR message[GUI_ERROR_CAPACITY];
+
+    pName = Utf16FindLast(source, GUI_SOURCE_CAPACITY, L'\\');
+    pExtension = Utf16FindLast(source, GUI_SOURCE_CAPACITY, L'.');
+    pName = (NULL != pName) ? pName + 1 : source;
+    if (NULL != pExtension && pExtension < pName)
+    {
+        pExtension = NULL;
+    }
+    ToUtf8(pName, pConfig->title, sizeof(pConfig->title));
+    ToUtf8(NULL != pExtension ? pExtension : L"", extension, sizeof(extension));
+    (void)CopyAscii(pConfig->contentType, ARRAYSIZE(pConfig->contentType),
+                    MediaServer_GetContentTypeForExtension(pExtension), CAST_SESSION_TYPE_CAPACITY);
+    pConfig->servingLocally = 1;
+    if (!CastNetwork_ReadLocalAddress(&pApp->routeNetwork, pDevice->host,
+                                      sizeof(pDevice->host), localAddress, GUI_ADDRESS_CAPACITY))
+    {
+        SetStatus(pApp, TEXT("Cannot determine the local address facing the receiver."));
+        return FALSE;
+    }
+    pApp->pServer = MediaServer_StartWithSubtitles(&pApp->serving, source, NULL,
+                                                   DEFAULT_SERVER_PORT, pConfig->contentType,
+                                                   vtt, vttSize, error, GUI_ERROR_CAPACITY);
+    if (NULL == pApp->pServer)
+    {
+        Utf8ToNative(error, message, GUI_ERROR_CAPACITY);
+        SetStatus(pApp, message);
+        return FALSE;
+    }
+    ByteText_Initialize(&urlWriter, pConfig->contentUrl, ARRAYSIZE(pConfig->contentUrl));
+    ByteText_AppendString(&urlWriter, "http://", ARRAYSIZE("http://"));
+    ByteText_AppendString(&urlWriter, localAddress, GUI_ADDRESS_CAPACITY);
+    ByteText_AppendCharacter(&urlWriter, ':');
+    ByteText_AppendUnsigned(&urlWriter, MediaServer_GetPort(pApp->pServer));
+    ByteText_AppendString(&urlWriter, "/media", ARRAYSIZE("/media"));
+    ByteText_AppendString(&urlWriter, extension, ARRAYSIZE(extension));
+    pConfig->keyframeCount = Mp4Index_ReadKeyframes(source, pApp->keyframes, MP4_INDEX_MAX_KEYFRAMES);
+    pConfig->pKeyframes = pApp->keyframes;
+    (void)CopyUtf16(pApp->proxySource, MAX_PATH, source, GUI_SOURCE_CAPACITY);
+    (void)CopyAscii(pApp->proxyLocal, ARRAYSIZE(pApp->proxyLocal), localAddress, GUI_ADDRESS_CAPACITY);
+    pApp->proxyPort = (unsigned short)(MediaServer_GetPort(pApp->pServer) + 1);
+    (void)CopyUtf16(pApp->originalSource, MAX_PATH, source, GUI_SOURCE_CAPACITY);
+    return TRUE;
+}
+
+static bool_t ServeCastSubtitles(App* pApp, const CastDevice* pDevice,
+                                 const byte_t* vtt, uint64_t vttSize,
+                                 const SubtitleTrack* subtitle,
+                                 CastSessionConfig* pConfig,
+                                 char* localAddress, char* error)
+{
+    ByteText urlWriter;
+
+    if (NULL == pApp->pServer)
+    {
+        if (CastNetwork_ReadLocalAddress(&pApp->routeNetwork, pDevice->host,
+                                         sizeof(pDevice->host), localAddress, GUI_ADDRESS_CAPACITY))
+        {
+            pApp->pServer = MediaServer_StartWithSubtitles(&pApp->serving, NULL, NULL,
+                                                           DEFAULT_SERVER_PORT, "video/mp4",
+                                                           vtt, vttSize, error, GUI_ERROR_CAPACITY);
+        }
+        if (NULL == pApp->pServer)
+        {
+            SetStatus(pApp, TEXT("Cannot serve subtitles to the receiver."));
+            return FALSE;
+        }
+    }
+    ByteText_Initialize(&urlWriter, pConfig->subtitleUrl, ARRAYSIZE(pConfig->subtitleUrl));
+    ByteText_AppendString(&urlWriter, "http://", ARRAYSIZE("http://"));
+    ByteText_AppendString(&urlWriter, localAddress, GUI_ADDRESS_CAPACITY);
+    ByteText_AppendCharacter(&urlWriter, ':');
+    ByteText_AppendUnsigned(&urlWriter, MediaServer_GetPort(pApp->pServer));
+    ByteText_AppendString(&urlWriter, "/subtitles.vtt", ARRAYSIZE("/subtitles.vtt"));
+    (void)CopyAscii(pConfig->subtitleLanguage, ARRAYSIZE(pConfig->subtitleLanguage),
+                    subtitle->language, ARRAYSIZE(subtitle->language));
+    return TRUE;
+}
+
+static bool_t PrepareCastAudio(App* pApp, const WCHAR* source,
+                               int wantsProxy, const CastSessionConfig* pConfig,
+                               char* error)
+{
+    bool_t needs_gain;
+    TCHAR message[GUI_ERROR_CAPACITY];
+
+    (void)CopyAscii(pApp->originalUrl, ARRAYSIZE(pApp->originalUrl),
+                    pConfig->contentUrl, ARRAYSIZE(pConfig->contentUrl));
+    (void)CopyAscii(pApp->originalType, ARRAYSIZE(pApp->originalType),
+                    pConfig->contentType, ARRAYSIZE(pConfig->contentType));
+    pApp->audioNeedsConversion = 0;
+    if (!wantsProxy || L'\0' == pApp->originalSource[0])
+    {
+        return TRUE;
+    }
+    pApp->audioNeedsConversion = AudioGain_NeedsConversion(source, error, GUI_ERROR_CAPACITY);
+    if (0 > pApp->audioNeedsConversion)
+    {
+        Utf8ToNative(error, message, GUI_ERROR_CAPACITY);
+        FinishSession(pApp, message);
+        return FALSE;
+    }
+    needs_gain = !!pApp->audioNeedsConversion ||
+                 (GUI_ORIGINAL_GAIN_PERCENT != SendMessage(pApp->hGain, TBM_GETPOS, 0, 0));
+    if (needs_gain)
+    {
+        pApp->pendingConfig = *pConfig;
+        pApp->preparingAudio = 1;
+        pApp->proxyLocal[0] = '\0';
+        pApp->stopping = 0;
+        SetStatus(pApp, TEXT("Preparing AAC audio before playback; video quality is preserved. Stop cancels."));
+        UpdateControls(pApp);
+        ScheduleGain(pApp);
+        return FALSE;
+    }
+    return TRUE;
+}
+
+static void StartPreparedCastSession(App* pApp, const CastSessionConfig* pConfig, int wantsProxy)
+{
+    bool_t needs_gain;
+
+    ++pApp->events.generation;
+    CastEvents_Begin(&pApp->events.mailbox, pApp->events.generation);
+    CastSession_Prepare(&pApp->session, pConfig);
+    pApp->pSession = &pApp->session;
+    pApp->sessionBusy = OS_Thread_Submit(&pApp->sessionWorker);
+    if (!pApp->sessionBusy)
+    {
+        FinishSession(pApp, TEXT("Cannot start the Cast session."));
+        return;
+    }
+    if (wantsProxy && '\0' != pApp->proxyLocal[0])
+    {
+        Proxy_Request_t request;
+
+        request.serving = &pApp->serving;
+        request.source = pApp->proxySource;
+        request.sourceCapacity = MAX_PATH;
+        request.localAddress = pApp->proxyLocal;
+        request.localAddressCapacity = sizeof(pApp->proxyLocal);
+        request.config = &pApp->transcode;
+        request.port = pApp->proxyPort;
+        request.session = pApp->pSession;
+        (void)Proxy_Start(&pApp->proxy, &request);
+    }
+    else
+    {
+        pApp->proxyLocal[0] = '\0';
+    }
+    ZeroMemory(&pApp->status, sizeof(pApp->status));
+    pApp->stopping = 0;
+    UpdateControls(pApp);
+    needs_gain = wantsProxy &&
+                 (GUI_ORIGINAL_GAIN_PERCENT != SendMessage(pApp->hGain, TBM_GETPOS, 0, 0));
+    if (needs_gain)
+    {
+        ScheduleGain(pApp);
+    }
+}
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -2529,53 +2763,28 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
  */
 static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, uint32_t sourceCapacity, int buildProxy)
 {
-    int32_t              selected;
-    uint32_t             deviceCount;
-    uint32_t             safeSelected;
-    const CastDevice*    pDevice;
-    CastSessionConfig    config;
-    WCHAR                source[GUI_SOURCE_CAPACITY];
-    char                 error[GUI_ERROR_CAPACITY];
-    char                 localAddress[GUI_ADDRESS_CAPACITY];
-    const byte_t*        vtt;
-    uint64_t             vttSize;
-    const SubtitleTrack* subtitle;
-    bool_t               is_closing;
-    bool_t               finish_pending;
-    bool_t               gain_busy;
-    bool_t               session_active;
-    bool_t               preparing_audio;
-    bool_t               selection_nonnegative;
-    bool_t               selection_in_range;
-    bool_t               can_start;
-    bool_t               source_ready;
-    bool_t               subtitle_ready;
-    bool_t               content_ready;
-    bool_t               audio_ready;
-    bool_t               session_started;
-    bool_t               wants_proxy;
-    bool_t               is_remote;
-    bool_t               has_subtitles;
-    bool_t               needs_subtitle_server;
-    bool_t               route_ready;
-    bool_t               server_ready;
-    bool_t               needs_gain;
-    bool_t               has_proxy_source;
-    bool_t               start_proxy;
-    bool_t               source_copied;
-    ByteText             urlWriter;
+    int32_t selected;
+    uint32_t deviceCount;
+    uint32_t safeSelected;
+    const CastDevice* pDevice;
+    CastSessionConfig config;
+    WCHAR source[GUI_SOURCE_CAPACITY];
+    char error[GUI_ERROR_CAPACITY];
+    char localAddress[GUI_ADDRESS_CAPACITY];
+    const byte_t* vtt = NULL;
+    uint64_t vttSize = 0;
+    const SubtitleTrack* subtitle = NULL;
+    bool_t selection_in_range;
+    bool_t can_start;
+    bool_t source_ready;
+    bool_t wants_proxy;
+    bool_t is_remote;
 
-    selected              = ListView_GetNextItem(pApp->hList, -1, LVNI_SELECTED);
-    deviceCount           = pApp->devices.count;
-    is_closing            = !!pApp->closing;
-    finish_pending        = !!pApp->finishPending;
-    gain_busy             = !!pApp->gainBusy;
-    session_active        = (NULL != pApp->pSession);
-    preparing_audio       = !!pApp->preparingAudio;
-    selection_nonnegative = (0 <= selected);
-    selection_in_range    = FALSE;
-    safeSelected          = 0;
-    if (selection_nonnegative)
+    selected = ListView_GetNextItem(pApp->hList, -1, LVNI_SELECTED);
+    deviceCount = pApp->devices.count;
+    safeSelected = 0;
+    selection_in_range = FALSE;
+    if (0 <= selected)
     {
         selection_in_range = ((uint32_t)selected < deviceCount);
         if (selection_in_range)
@@ -2583,279 +2792,49 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, uint
             safeSelected = (uint32_t)selected;
         }
     }
-    can_start             = (!is_closing) && (!finish_pending) && (!gain_busy) &&
-                            (!session_active) && (!preparing_audio) && selection_in_range;
-    wants_proxy           = (0 != buildProxy);
-    source_ready          = FALSE;
-    pDevice               = &pApp->devices.devices[safeSelected];
-    if (can_start)
+    pDevice = &pApp->devices.devices[safeSelected];
+    can_start = !pApp->closing && !pApp->finishPending && !pApp->gainBusy &&
+                NULL == pApp->pSession && !pApp->preparingAudio && selection_in_range;
+    if (!can_start)
     {
-        source_copied = CopyUtf16(source, ARRAYSIZE(source), pSourceIn, sourceCapacity);
-        source_ready  = source_copied && (L'\0' != source[0]);
+        return;
     }
-
-    vtt            = NULL;
-    vttSize        = 0;
-    subtitle       = NULL;
-    subtitle_ready = source_ready;
-    if (source_ready)
+    source_ready = CopyUtf16(source, ARRAYSIZE(source), pSourceIn, sourceCapacity);
+    if (!source_ready || L'\0' == source[0])
     {
-        ZeroMemory(&config, sizeof(config));
-        (void)CopyAscii(config.host, ARRAYSIZE(config.host), pDevice->host, ARRAYSIZE(pDevice->host));
-        config.callback = OnSessionEvent;
-        config.pUser    = &pApp->events;
+        return;
     }
-    if (source_ready && wants_proxy)
+    wants_proxy = (0 != buildProxy);
+    ZeroMemory(&config, sizeof(config));
+    (void)CopyAscii(config.host, ARRAYSIZE(config.host), pDevice->host, ARRAYSIZE(pDevice->host));
+    config.callback = OnSessionEvent;
+    config.pUser = &pApp->events;
+    if (wants_proxy && !LoadCastSubtitle(pApp, &subtitle, &vtt, &vttSize, error))
     {
-        int32_t choice;
-        bool_t  automatic_selected;
-        bool_t  track_selected;
-
-        RefreshSubtitles(pApp);
-        choice             = (int32_t)SendMessage(pApp->hSubtitle, CB_GETCURSEL, 0, 0);
-        automatic_selected = (0 == choice) && (0 < pApp->subtitleCount);
-        track_selected     = (2 <= choice) && ((uint32_t)(choice - 2) < pApp->subtitleCount);
-        if (automatic_selected)
-        {
-            subtitle = &pApp->subtitles[0];
-        }
-        else if (track_selected)
-        {
-            subtitle = &pApp->subtitles[choice - 2];
-        }
-        if (NULL != subtitle)
-        {
-            TCHAR message[GUI_ERROR_CAPACITY];
-
-            subtitle_ready = Subtitles_Load(&pApp->subtitleWorkspace, subtitle, error, sizeof(error));
-            if (subtitle_ready)
-            {
-                vtt     = Subtitles_GetText(&pApp->subtitleWorkspace);
-                vttSize = Subtitles_GetByteCount(&pApp->subtitleWorkspace);
-            }
-            else
-            {
-                Utf8ToNative(error, message, GUI_ERROR_CAPACITY);
-                SetStatus(pApp, message);
-            }
-        }
+        return;
     }
-
-    content_ready = subtitle_ready;
-    if (subtitle_ready)
+    pApp->originalSource[0] = L'\0';
+    is_remote = Utf16StartsWithNoCase(source, ARRAYSIZE(source), L"http://", GUI_HTTP_PREFIX_LENGTH) ||
+                Utf16StartsWithNoCase(source, ARRAYSIZE(source), L"https://", GUI_HTTPS_PREFIX_LENGTH);
+    if (is_remote)
     {
-        pApp->originalSource[0] = L'\0';
-        is_remote = Utf16StartsWithNoCase(source, ARRAYSIZE(source), L"http://", GUI_HTTP_PREFIX_LENGTH) ||
-                    Utf16StartsWithNoCase(source, ARRAYSIZE(source), L"https://", GUI_HTTPS_PREFIX_LENGTH);
-        if (is_remote)
-        {
-            const WCHAR* pExtension;
-            const char*    contentType;
-            bool_t         hasExtension;
-            bool_t         extensionIsPath;
-
-            pExtension      = Utf16FindLast(source, ARRAYSIZE(source), L'.');
-            hasExtension    = (NULL != pExtension);
-            extensionIsPath = FALSE;
-            if (hasExtension)
-            {
-                extensionIsPath = Utf16Contains(pExtension, (uint32_t)((source + ARRAYSIZE(source)) - pExtension), L'/');
-            }
-            ToUtf8(source, config.contentUrl, sizeof(config.contentUrl));
-            ToUtf8(source, config.title, sizeof(config.title));
-            contentType = "video/mp4";
-            if (hasExtension && (!extensionIsPath))
-            {
-                contentType = MediaServer_GetContentTypeForExtension(pExtension);
-            }
-            (void)CopyAscii(config.contentType, ARRAYSIZE(config.contentType), contentType, CAST_SESSION_TYPE_CAPACITY);
-        }
-        else
-        {
-            const WCHAR* pName;
-            const WCHAR* pExtension;
-            char         extension[GUI_EXTENSION_CAPACITY];
-
-            pName      = Utf16FindLast(source, ARRAYSIZE(source), L'\\');
-            pExtension = Utf16FindLast(source, ARRAYSIZE(source), L'.');
-            pName      = (NULL != pName) ? pName + 1 : source;
-            if ((NULL != pExtension) && (pExtension < pName))
-            {
-                pExtension = NULL;
-            }
-            ToUtf8(pName, config.title, sizeof(config.title));
-            ToUtf8(NULL != pExtension ? pExtension : L"", extension, sizeof(extension));
-            (void)CopyAscii(config.contentType, ARRAYSIZE(config.contentType), MediaServer_GetContentTypeForExtension(pExtension), CAST_SESSION_TYPE_CAPACITY);
-            config.servingLocally = 1;
-            route_ready   = CastNetwork_ReadLocalAddress(&pApp->routeNetwork, pDevice->host, sizeof(pDevice->host), localAddress, sizeof(localAddress));
-            content_ready = route_ready;
-            if (!route_ready)
-            {
-                SetStatus(pApp, TEXT("Cannot determine the local address facing the receiver."));
-            }
-            if (route_ready)
-            {
-                pApp->pServer = MediaServer_StartWithSubtitles(&pApp->serving,
-                                                               source,
-                                                               NULL,
-                                                               DEFAULT_SERVER_PORT,
-                                                               config.contentType,
-                                                               vtt,
-                                                               vttSize,
-                                                               error,
-                                                               sizeof(error));
-                server_ready  = (NULL != pApp->pServer);
-                content_ready = server_ready;
-                if (server_ready)
-                {
-                    ByteText_Initialize(&urlWriter, config.contentUrl, ARRAYSIZE(config.contentUrl));
-                    ByteText_AppendString(&urlWriter, "http://", ARRAYSIZE("http://"));
-                    ByteText_AppendString(&urlWriter, localAddress, ARRAYSIZE(localAddress));
-                    ByteText_AppendCharacter(&urlWriter, ':');
-                    ByteText_AppendUnsigned(&urlWriter, MediaServer_GetPort(pApp->pServer));
-                    ByteText_AppendString(&urlWriter, "/media", ARRAYSIZE("/media"));
-                    ByteText_AppendString(&urlWriter, extension, ARRAYSIZE(extension));
-                    config.keyframeCount = Mp4Index_ReadKeyframes(source, pApp->keyframes, MP4_INDEX_MAX_KEYFRAMES);
-                    config.pKeyframes    = pApp->keyframes;
-                    (void)CopyUtf16(pApp->proxySource, MAX_PATH, source, ARRAYSIZE(source));
-                    (void)CopyAscii(pApp->proxyLocal, ARRAYSIZE(pApp->proxyLocal), localAddress, ARRAYSIZE(localAddress));
-                    pApp->proxyPort = (unsigned short)(MediaServer_GetPort(pApp->pServer) + 1);
-                    (void)CopyUtf16(pApp->originalSource, MAX_PATH, source, ARRAYSIZE(source));
-                }
-                else
-                {
-                    TCHAR message[GUI_ERROR_CAPACITY];
-
-                    Utf8ToNative(error, message, GUI_ERROR_CAPACITY);
-                    SetStatus(pApp, message);
-                }
-            }
-        }
+        PrepareRemoteCastContent(source, &config);
     }
-
-    has_subtitles         = (NULL != vtt);
-    needs_subtitle_server = has_subtitles && (NULL == pApp->pServer);
-    if (content_ready && needs_subtitle_server)
+    else if (!PrepareLocalCastContent(pApp, pDevice, source, vtt, vttSize,
+                                      &config, localAddress, error))
     {
-        route_ready = CastNetwork_ReadLocalAddress(&pApp->routeNetwork,
-                                                   pDevice->host,
-                                                   sizeof(pDevice->host),
-                                                   localAddress,
-                                                   sizeof(localAddress));
-        if (route_ready)
-        {
-            pApp->pServer = MediaServer_StartWithSubtitles(&pApp->serving,
-                                                           NULL,
-                                                           NULL,
-                                                           DEFAULT_SERVER_PORT,
-                                                           "video/mp4",
-                                                           vtt,
-                                                           vttSize,
-                                                           error,
-                                                           sizeof(error));
-        }
-        server_ready  = (NULL != pApp->pServer);
-        content_ready = server_ready;
-        if (!server_ready)
-        {
-            SetStatus(pApp, TEXT("Cannot serve subtitles to the receiver."));
-        }
+        return;
     }
-    if (content_ready && has_subtitles)
+    if (NULL != vtt && !ServeCastSubtitles(pApp, pDevice, vtt, vttSize,
+                                           subtitle, &config, localAddress, error))
     {
-        ByteText_Initialize(&urlWriter, config.subtitleUrl, ARRAYSIZE(config.subtitleUrl));
-        ByteText_AppendString(&urlWriter, "http://", ARRAYSIZE("http://"));
-        ByteText_AppendString(&urlWriter, localAddress, ARRAYSIZE(localAddress));
-        ByteText_AppendCharacter(&urlWriter, ':');
-        ByteText_AppendUnsigned(&urlWriter, MediaServer_GetPort(pApp->pServer));
-        ByteText_AppendString(&urlWriter, "/subtitles.vtt", ARRAYSIZE("/subtitles.vtt"));
-        (void)CopyAscii(config.subtitleLanguage,
-                        ARRAYSIZE(config.subtitleLanguage),
-                        subtitle->language,
-                        ARRAYSIZE(subtitle->language));
+        return;
     }
-
-    audio_ready = content_ready;
-    if (content_ready)
+    if (!PrepareCastAudio(pApp, source, wants_proxy, &config, error))
     {
-        (void)CopyAscii(pApp->originalUrl, ARRAYSIZE(pApp->originalUrl), config.contentUrl, ARRAYSIZE(config.contentUrl));
-        (void)CopyAscii(pApp->originalType, ARRAYSIZE(pApp->originalType), config.contentType, ARRAYSIZE(config.contentType));
-        pApp->audioNeedsConversion = 0;
-        has_proxy_source = wants_proxy && (L'\0' != pApp->originalSource[0]);
-        if (has_proxy_source)
-        {
-            pApp->audioNeedsConversion = AudioGain_NeedsConversion(source, error, sizeof(error));
-            if (0 > pApp->audioNeedsConversion)
-            {
-                TCHAR message[GUI_ERROR_CAPACITY];
-
-                Utf8ToNative(error, message, GUI_ERROR_CAPACITY);
-                FinishSession(pApp, message);
-                audio_ready = FALSE;
-            }
-            else
-            {
-                needs_gain = !!pApp->audioNeedsConversion ||
-                             (GUI_ORIGINAL_GAIN_PERCENT != SendMessage(pApp->hGain, TBM_GETPOS, 0, 0));
-                if (needs_gain)
-                {
-                    pApp->pendingConfig  = config;
-                    pApp->preparingAudio = 1;
-                    pApp->proxyLocal[0]  = '\0';
-                    pApp->stopping       = 0;
-                    SetStatus(pApp, TEXT("Preparing AAC audio before playback; video quality is preserved. Stop cancels."));
-                    UpdateControls(pApp);
-                    ScheduleGain(pApp);
-                    audio_ready = FALSE;
-                }
-            }
-        }
+        return;
     }
-
-    session_started = FALSE;
-    if (audio_ready)
-    {
-        ++pApp->events.generation;
-        CastEvents_Begin(&pApp->events.mailbox, pApp->events.generation);
-        CastSession_Prepare(&pApp->session, &config);
-        pApp->pSession    = &pApp->session;
-        pApp->sessionBusy = OS_Thread_Submit(&pApp->sessionWorker);
-        session_started  = !!pApp->sessionBusy;
-        if (!session_started)
-        {
-            FinishSession(pApp, TEXT("Cannot start the Cast session."));
-        }
-    }
-    if (session_started)
-    {
-        start_proxy = wants_proxy && ('\0' != pApp->proxyLocal[0]);
-        if (start_proxy)
-        {
-            Proxy_Request_t request;
-
-            request.serving = &pApp->serving;
-            request.source  = pApp->proxySource;
-            request.sourceCapacity       = MAX_PATH;
-            request.localAddress         = pApp->proxyLocal;
-            request.localAddressCapacity = sizeof(pApp->proxyLocal);
-            request.config               = &pApp->transcode;
-            request.port                 = pApp->proxyPort;
-            request.session              = pApp->pSession;
-            (void)Proxy_Start(&pApp->proxy, &request);
-        }
-        else
-        {
-            pApp->proxyLocal[0] = '\0';
-        }
-        ZeroMemory(&pApp->status, sizeof(pApp->status));
-        pApp->stopping = 0;
-        UpdateControls(pApp);
-        needs_gain = wants_proxy && (GUI_ORIGINAL_GAIN_PERCENT != SendMessage(pApp->hGain, TBM_GETPOS, 0, 0));
-        if (needs_gain)
-        {
-            ScheduleGain(pApp);
-        }
-    }
+    StartPreparedCastSession(pApp, &config, wants_proxy);
 }
 
 /* The Cast button: play the chosen file with the background scrub proxy. */
@@ -2868,12 +2847,110 @@ static FORCE_INLINE void StartCast(App* pApp)
 {
     WCHAR source[GUI_SOURCE_CAPACITY];
 
-    (void)ReadControlText(pApp->hFile, source, ARRAYSIZE(source));
+    (void)ReadControlText(pApp->hFile, source);
     StartCastSource(pApp, source, ARRAYSIZE(source), 1);
 }
 
 /* A short transcode of the source at the current settings, run on a worker thread so the sliders
 ** stay responsive. OS_Thread publishes the App-owned result after callback return. */
+static unsigned ParsePreviewFrames(const char* report)
+{
+    const char* pMarker;
+    const char* pDigits;
+    uint64_t parsed;
+    uint32_t digitsRead;
+    uint32_t digitCount;
+    bool_t is_digit;
+    bool_t numberReady;
+
+    pMarker = FindAscii(report, GUI_PREVIEW_REPORT_CAPACITY,
+                        "video frames from", ARRAYSIZE("video frames from") - 1);
+    if (NULL == pMarker)
+    {
+        return 0;
+    }
+    for (pDigits = pMarker; pDigits > report; --pDigits)
+    {
+        is_digit = ('0' <= pDigits[-1]) && ('9' >= pDigits[-1]);
+        if (is_digit)
+        {
+            break;
+        }
+    }
+    for (;;)
+    {
+        if (pDigits == report)
+        {
+            break;
+        }
+        is_digit = ('0' <= pDigits[-1]) && ('9' >= pDigits[-1]);
+        if (!is_digit)
+        {
+            break;
+        }
+        --pDigits;
+    }
+    digitCount = (uint32_t)(pMarker - pDigits);
+    numberReady = Utl_Decimal_ReadUint64(&parsed, &digitsRead,
+                                         (const byte_t*)pDigits, digitCount);
+    if (numberReady && digitsRead == digitCount && parsed <= UINT32_MAX)
+    {
+        return (unsigned)parsed;
+    }
+    return 0;
+}
+
+static int32_t ParsePreviewMotion(const char* report)
+{
+    const char* pMarker;
+    const char* pDigits;
+    uint64_t parsed;
+    uint32_t digitsRead;
+    uint32_t digitCount;
+    bool_t numberReady;
+
+    pMarker = FindAscii(report, GUI_PREVIEW_REPORT_CAPACITY,
+                        "avg motion ", ARRAYSIZE("avg motion ") - 1);
+    if (NULL == pMarker)
+    {
+        return 0;
+    }
+    pDigits = pMarker + (ARRAYSIZE("avg motion ") - 1);
+    digitCount = (uint32_t)((report + GUI_PREVIEW_REPORT_CAPACITY) - pDigits);
+    numberReady = Utl_Decimal_ReadUint64(&parsed, &digitsRead,
+                                         (const byte_t*)pDigits, digitCount);
+    if (numberReady && parsed <= INT32_MAX)
+    {
+        return (int32_t)parsed;
+    }
+    return 0;
+}
+
+static unsigned ReadPreviewKbps(const PreviewJob* pJob, unsigned produced)
+{
+    HANDLE hFile;
+    TCHAR nativePath[MAX_PATH];
+    LARGE_INTEGER size;
+    double seconds;
+
+    if (!OS_Text_WriteNative(nativePath, MAX_PATH, (const uint16_t*)pJob->dest))
+    {
+        return 0;
+    }
+    hFile = CreateFile(nativePath, GENERIC_READ, FILE_SHARE_READ, NULL,
+                       OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (INVALID_HANDLE_VALUE == hFile)
+    {
+        return 0;
+    }
+    size.QuadPart = 0;
+    GetFileSizeEx(hFile, &size);
+    CloseHandle(hFile);
+    seconds = (produced > 0) ? (double)produced / GUI_NOMINAL_FPS : 1.0;
+    return (unsigned)((double)size.QuadPart * GUI_BITS_PER_BYTE / GUI_KBPS_DIVISOR /
+                      (seconds > GUI_MIN_BITRATE_SECONDS ? seconds : GUI_MIN_BITRATE_SECONDS));
+}
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -2882,10 +2959,9 @@ static FORCE_INLINE void StartCast(App* pApp)
  */
 static FORCE_INLINE void PreviewJobRun(void* context)
 {
-    PreviewJob*    pJob    = (PreviewJob*)context;
+    PreviewJob* pJob = (PreviewJob*)context;
     PreviewResult* pResult = pJob->pResult;
-    char           report[GUI_PREVIEW_REPORT_CAPACITY];
-    const char*    pMarker;
+    char report[GUI_PREVIEW_REPORT_CAPACITY];
 
     ZeroMemory(pResult, sizeof(*pResult));
     (void)CopyUtf16(pResult->path, MAX_PATH, pJob->dest, ARRAYSIZE(pJob->dest));
@@ -2900,86 +2976,10 @@ static FORCE_INLINE void PreviewJobRun(void* context)
                                         sizeof(report));
     if (pResult->ok)
     {
-        HANDLE        hFile;
-        TCHAR         nativePath[MAX_PATH];
-        bool_t        nativePathReady;
-        unsigned      produced;
-        int32_t       motionPercent;
-        uint64_t      parsed;
-        uint32_t      digitsRead;
-        uint32_t      digitCount;
-        bool_t        numberReady;
-        LARGE_INTEGER size;
-
-        produced = 0;
-        motionPercent = 0;
-        /* The report ends with "... (N video frames from S)"; pull the frame count and motion. */
-        pMarker = FindAscii(report, ARRAYSIZE(report), "video frames from", ARRAYSIZE("video frames from") - 1);
-        if (NULL != pMarker)
-        {
-            const char* pDigits;
-            bool_t      is_digit;
-
-            for (pDigits = pMarker; pDigits > report; --pDigits)
-            {
-                is_digit = ('0' <= pDigits[-1]) && ('9' >= pDigits[-1]);
-                if (is_digit)
-                {
-                    break;
-                }
-            }
-            for (;;)
-            {
-                if (pDigits == report)
-                {
-                    break;
-                }
-                is_digit = ('0' <= pDigits[-1]) && ('9' >= pDigits[-1]);
-                if (!is_digit)
-                {
-                    break;
-                }
-                --pDigits;
-            }
-            digitCount  = (uint32_t)(pMarker - pDigits);
-            numberReady = Utl_Decimal_ReadUint64(&parsed, &digitsRead, (const byte_t*)pDigits, digitCount);
-            if (numberReady && (digitsRead == digitCount) && (parsed <= UINT32_MAX))
-            {
-                produced = (unsigned)parsed;
-            }
-        }
-        pMarker = FindAscii(report, ARRAYSIZE(report), "avg motion ", ARRAYSIZE("avg motion ") - 1);
-        if (NULL != pMarker)
-        {
-            const char* pDigits;
-
-            pDigits     = pMarker + (ARRAYSIZE("avg motion ") - 1);
-            digitCount  = (uint32_t)((report + ARRAYSIZE(report)) - pDigits);
-            numberReady = Utl_Decimal_ReadUint64(&parsed, &digitsRead, (const byte_t*)pDigits, digitCount);
-            if (numberReady && (parsed <= INT32_MAX))
-            {
-                motionPercent = (int32_t)parsed;
-            }
-        }
-        pResult->width         = pJob->config.width;
-        pResult->frames        = produced;
-        pResult->motionPercent = motionPercent;
-        size.QuadPart          = 0;
-        nativePathReady = OS_Text_WriteNative(nativePath, MAX_PATH, (const uint16_t*)pJob->dest);
-        hFile = INVALID_HANDLE_VALUE;
-        if (nativePathReady)
-        {
-            hFile = CreateFile(nativePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-        }
-        if (INVALID_HANDLE_VALUE != hFile)
-        {
-            double seconds;
-
-            GetFileSizeEx(hFile, &size);
-            CloseHandle(hFile);
-            seconds       = (produced > 0) ? (double)produced / GUI_NOMINAL_FPS : 1.0; /* nominal frame rate for the readout */
-            pResult->kbps = (unsigned)((double)size.QuadPart * GUI_BITS_PER_BYTE / GUI_KBPS_DIVISOR / (seconds > GUI_MIN_BITRATE_SECONDS ? seconds : GUI_MIN_BITRATE_SECONDS));
-        }
+        pResult->width = pJob->config.width;
+        pResult->frames = ParsePreviewFrames(report);
+        pResult->motionPercent = ParsePreviewMotion(report);
+        pResult->kbps = ReadPreviewKbps(pJob, pResult->frames);
     }
 }
 
@@ -3023,7 +3023,7 @@ static FORCE_INLINE void StartPreview(App* pApp)
     pJob            = &pApp->previewJob;
     if (canPrepare)
     {
-        sourceRead    = ReadControlText(pApp->hFile, source, ARRAYSIZE(source));
+        sourceRead    = ReadControlText(pApp->hFile, source);
         hasSource     = sourceRead && (L'\0' != source[0]);
         isRemote      = hasSource && Utf16StartsWithNoCase(source, ARRAYSIZE(source), L"http", 4);
         hasLocalSource = hasSource && (!isRemote);

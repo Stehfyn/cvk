@@ -1,27 +1,37 @@
 /* gpu_decode.c - Vulkan Video H.264 decoder on cvk: device, session, DPB, and the per-frame
 ** decode loop with reference management. Decoded luma is read back through cvk's queue-ownership
 ** transfer helper. */
-#define WIN32_LEAN_AND_MEAN
 #include "os/os_types.h"
-#include <Windows.h>
+#include "os/os_compiler.h"
 
 #include <stdarg.h>
+#include <stddef.h>
 #include <stdint.h>
-#include <string.h>
 
-#include <vulkan/vulkan.h>
+#include <vk_video/vulkan_video_codec_h264std.h>
+#include <vk_video/vulkan_video_codec_h264std_decode.h>
+#include <vulkan/vulkan_core.h>
 #include <volk.h>
 #include "cvk/cvk.h"
 
 #include "gpu_device.h"
 #include "gpu_decode.h"
+#include "h264_params.h"
 #include "crt/crt_format.h"
 #include "crt/crt_memory.h"
 
 #define MAX_SESSION_MEMORY 8
 #define MAX_DPB_SLOTS      17
-#define BITSTREAM_CAPACITY (4u * 1024u * 1024u)
+#define BITSTREAM_CAPACITY (UINT64_C(4) * 1024U * 1024U)
 #define MAX_IMAGE_PLANES   3
+#define DECODE_MACROBLOCK_EDGE 16U
+#define DECODE_MACROBLOCK_MASK (DECODE_MACROBLOCK_EDGE - 1U)
+#define DECODE_SLICE_CAPACITY 64
+#define DECODE_NAL_TYPE_MASK 0x1F
+#define DECODE_NAL_TYPE_NON_IDR_SLICE 1
+#define DECODE_NAL_TYPE_IDR_SLICE 5
+#define DECODE_BITS_PER_BYTE 8
+#define DECODE_SLICE_TYPE_CYCLE 5
 
 typedef struct DpbSlot
 {
@@ -166,11 +176,11 @@ static void CreateVideoImage(GpuDecoder*       pDecoder,
  * \par Details:
  *  Builds a picture-resource descriptor from the decoder's coded extent and view.
  */
-static VkVideoPictureResourceInfoKHR GetPictureResource(const GpuDecoder* pDecoder, VkImageView view)
+static FORCE_INLINE VkVideoPictureResourceInfoKHR GetPictureResource(const GpuDecoder* pDecoder, VkImageView view)
 {
     VkVideoPictureResourceInfoKHR resource;
 
-    (void)memset(&resource, 0, sizeof(resource));
+    CRT_Memory_Set(&resource, 0, sizeof(resource));
     resource.sType            = VK_STRUCTURE_TYPE_VIDEO_PICTURE_RESOURCE_INFO_KHR;
     resource.codedExtent      = pDecoder->codedExtent;
     resource.baseArrayLayer   = 0;
@@ -186,7 +196,7 @@ static VkVideoPictureResourceInfoKHR GetPictureResource(const GpuDecoder* pDecod
  *  Applies picture-order-count type-zero wrap handling. Updates the previous
  *  POC state only for reference pictures.
  */
-static int ComputePoc(GpuDecoder* pDecoder, const H264SliceHeader* pHeader, int maxPocLsb)
+static FORCE_INLINE int ComputePoc(GpuDecoder* pDecoder, const H264SliceHeader* pHeader, int maxPocLsb)
 {
     int lsb;
     int poc_msb;
@@ -282,8 +292,8 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
     cvkInitVideoProfileListInfo(&profile_list, NULL, 1, &pDecoder->profile);
 
     cvkInitVideoDecodeH264Capabilities(&h264_caps, NULL);
-    (void)memset(&decode_caps, 0, sizeof(decode_caps));
-    (void)memset(&capabilities, 0, sizeof(capabilities));
+    CRT_Memory_Set(&decode_caps, 0, sizeof(decode_caps));
+    CRT_Memory_Set(&capabilities, 0, sizeof(capabilities));
     decode_caps.sType  = VK_STRUCTURE_TYPE_VIDEO_DECODE_CAPABILITIES_KHR;
     decode_caps.pNext  = &h264_caps;
     capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR;
@@ -323,10 +333,10 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
         }
         pDecoder->dpbFormat = formats[0].format;
     }
-    pDecoder->codedExtent.width  = (width + 15u) & ~15u;
-    pDecoder->codedExtent.height = (height + 15u) & ~15u;
+    pDecoder->codedExtent.width  = (width + DECODE_MACROBLOCK_MASK) & ~DECODE_MACROBLOCK_MASK;
+    pDecoder->codedExtent.height = (height + DECODE_MACROBLOCK_MASK) & ~DECODE_MACROBLOCK_MASK;
 
-    (void)memset(&std_header, 0, sizeof(std_header));
+    CRT_Memory_Set(&std_header, 0, sizeof(std_header));
     (void)CRT_Format_Copy(std_header.extensionName, (uint32_t)sizeof(std_header.extensionName), VK_STD_VULKAN_VIDEO_CODEC_H264_DECODE_EXTENSION_NAME);
     std_header.specVersion = VK_STD_VULKAN_VIDEO_CODEC_H264_DECODE_SPEC_VERSION;
 
@@ -523,6 +533,133 @@ void GpuDecode_GetFrame(const GpuDecoder* pDecoder, DecodedFrame* pFrame)
     pFrame->pCr               = (plane_count == 3) ? (base + plane_offsets[2]) : NULL;
 }
 
+static FORCE_INLINE void RetireOldestReferences(GpuDecoder* pDecoder, unsigned max_refs)
+{
+    uint32_t i;
+    unsigned active_refs;
+    int oldest_slot;
+
+    for (;;)
+    {
+        active_refs = 0;
+        for (i = 0; i < pDecoder->maxDpbSlots; ++i)
+        {
+            active_refs += pDecoder->dpb[i].active ? 1U : 0U;
+        }
+        if (active_refs <= max_refs)
+        {
+            break;
+        }
+        oldest_slot = -1;
+        for (i = 0; i < pDecoder->maxDpbSlots; ++i)
+        {
+            if (pDecoder->dpb[i].active &&
+                (oldest_slot < 0 || pDecoder->dpb[i].age < pDecoder->dpb[oldest_slot].age))
+            {
+                oldest_slot = (int)i;
+            }
+        }
+        if (oldest_slot < 0)
+        {
+            break;
+        }
+        pDecoder->dpb[oldest_slot].active = 0;
+    }
+}
+
+static FORCE_INLINE void StoreDecodedReference(GpuDecoder* pDecoder, const H264SliceHeader* pHeader, int current_slot, int poc)
+{
+    DpbSlot* p_slot;
+    unsigned max_refs;
+
+    if (0 == pHeader->nalRefIdc)
+    {
+        return;
+    }
+    p_slot = &pDecoder->dpb[current_slot];
+    p_slot->active = 1;
+    p_slot->frameNum = (int)pHeader->frameNum;
+    p_slot->poc = poc;
+    p_slot->age = ++pDecoder->decodeOrder;
+    max_refs = pDecoder->sps.max_num_ref_frames ? pDecoder->sps.max_num_ref_frames : 1U;
+    RetireOldestReferences(pDecoder, max_refs);
+    CRT_Memory_Set(&p_slot->refInfo, 0, sizeof(p_slot->refInfo));
+    p_slot->refInfo.FrameNum = (uint16_t)pHeader->frameNum;
+    p_slot->refInfo.PicOrderCnt[0] = poc;
+    p_slot->refInfo.PicOrderCnt[1] = poc;
+}
+
+static FORCE_INLINE uint32_t CollectDecodeSlices(GpuDecoder* pDecoder,
+                                    const byte_t* pSample,
+                                    uint32_t size,
+                                    uint32_t* pSliceOffsets,
+                                    uint32_t* pStreamLength,
+                                    const byte_t** ppFirstSlice,
+                                    uint32_t* pFirstSliceSize)
+{
+    uint32_t offset = 0;
+    byte_t* p_stream = (byte_t*)pDecoder->bitstreamMapped;
+    uint32_t stream_length = 0;
+    uint32_t slice_count = 0;
+    const byte_t* p_first_slice = NULL;
+    uint32_t first_slice_size = 0;
+
+    for (;;)
+    {
+        uint32_t nal_size;
+        int b;
+        int nal_type;
+        bool_t has_nal;
+        bool_t has_prefix_space;
+        bool_t has_payload_space;
+        bool_t has_slice_slot;
+
+        if ((uint32_t)pDecoder->nalLengthSize > (size - offset))
+        {
+            break;
+        }
+        nal_size = 0;
+        for (b = 0; b < pDecoder->nalLengthSize; ++b)
+        {
+            nal_size = (nal_size << DECODE_BITS_PER_BYTE) | pSample[offset + (uint32_t)b];
+        }
+        offset += (uint32_t)pDecoder->nalLengthSize;
+        has_nal = (0 < nal_size) && (nal_size <= (size - offset));
+        if (!has_nal)
+        {
+            break;
+        }
+        nal_type = pSample[offset] & DECODE_NAL_TYPE_MASK;
+        if (nal_type == DECODE_NAL_TYPE_NON_IDR_SLICE || nal_type == DECODE_NAL_TYPE_IDR_SLICE)
+        {
+            has_prefix_space = (4 <= (BITSTREAM_CAPACITY - stream_length));
+            has_payload_space = has_prefix_space && (nal_size <= (BITSTREAM_CAPACITY - stream_length - 4));
+            has_slice_slot = (slice_count < DECODE_SLICE_CAPACITY);
+            if (!has_payload_space || !has_slice_slot)
+            {
+                break;
+            }
+            if (NULL == p_first_slice)
+            {
+                p_first_slice = pSample + offset;
+                first_slice_size = nal_size;
+            }
+            pSliceOffsets[slice_count++] = stream_length;
+            p_stream[stream_length++] = 0;
+            p_stream[stream_length++] = 0;
+            p_stream[stream_length++] = 0;
+            p_stream[stream_length++] = 1;
+            CRT_Memory_Copy(p_stream + stream_length, pSample + offset, nal_size);
+            stream_length += nal_size;
+        }
+        offset += nal_size;
+    }
+    *pStreamLength = stream_length;
+    *ppFirstSlice = p_first_slice;
+    *pFirstSliceSize = first_slice_size;
+    return slice_count;
+}
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -531,13 +668,11 @@ void GpuDecode_GetFrame(const GpuDecoder* pDecoder, DecodedFrame* pFrame)
  */
 int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t size)
 {
-    uint32_t                        offset;
-    byte_t*                         p_stream;
     uint32_t                        stream_length;
     uint32_t                        slice_count;
     const byte_t*                   p_first_slice;
     uint32_t                        first_slice_size;
-    uint32_t                        slice_offsets[64];
+    uint32_t                        slice_offsets[DECODE_SLICE_CAPACITY];
     H264SliceHeader                 header;
     int                             max_poc_lsb;
     uint32_t                        i;
@@ -567,69 +702,9 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t 
     VkDeviceSize                    transfer_bytes;
     VkImageAspectFlags              aspect_mask;
     VkPipelineStageFlags            wait_stage;
-    DpbSlot*                        p_slot;
-    unsigned                        max_refs;
-    unsigned                        active_refs;
-    int                             oldest_slot;
 
-    offset           = 0;
-    p_stream         = (byte_t*)pDecoder->bitstreamMapped;
-    stream_length    = 0;
-    slice_count      = 0;
-    p_first_slice    = NULL;
-    first_slice_size = 0;
-
-    /* Walk the AVCC NAL units: keep coded slices, and note the first slice header. */
-    for (;;)
-    {
-        uint32_t nal_size;
-        int      b;
-        int      nal_type;
-        bool_t   has_nal;
-        bool_t   has_prefix_space;
-        bool_t   has_payload_space;
-        bool_t   has_slice_slot;
-
-        if ((uint32_t)pDecoder->nalLengthSize > (size - offset))
-        {
-            break;
-        }
-        nal_size = 0;
-        for (b = 0; b < pDecoder->nalLengthSize; ++b)
-        {
-            nal_size = (nal_size << 8) | pSample[offset + b];
-        }
-        offset  += pDecoder->nalLengthSize;
-        has_nal  = (0 < nal_size) && (nal_size <= (size - offset));
-        if (!has_nal)
-        {
-            break;
-        }
-        nal_type = pSample[offset] & 0x1F;
-        if (nal_type == 1 || nal_type == 5)
-        {
-            has_prefix_space  = (4 <= (BITSTREAM_CAPACITY - stream_length));
-            has_payload_space = has_prefix_space && (nal_size <= (BITSTREAM_CAPACITY - stream_length - 4));
-            has_slice_slot    = (slice_count < 64);
-            if (!has_payload_space || !has_slice_slot)
-            {
-                break;
-            }
-            if (NULL == p_first_slice)
-            {
-                p_first_slice    = pSample + offset;
-                first_slice_size = nal_size;
-            }
-            slice_offsets[slice_count++] = stream_length;
-            p_stream[stream_length++]    = 0;
-            p_stream[stream_length++]    = 0;
-            p_stream[stream_length++]    = 0;
-            p_stream[stream_length++]    = 1;
-            (void)memcpy(p_stream + stream_length, pSample + offset, nal_size);
-            stream_length += nal_size;
-        }
-        offset += nal_size;
-    }
+    slice_count = CollectDecodeSlices(pDecoder, pSample, size, slice_offsets,
+                                      &stream_length, &p_first_slice, &first_slice_size);
     if (NULL == p_first_slice || 0 == slice_count)
     {
         return 0;
@@ -688,7 +763,7 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t 
     /* The reconstructed slot: begin is given it inactive (slotIndex -1); the decode setup slot
     ** carries its H.264 reference info and the target slot index. */
     setup_resource = GetPictureResource(pDecoder, pDecoder->dpbView[current_slot]);
-    (void)memset(&setup_ref_info, 0, sizeof(setup_ref_info));
+    CRT_Memory_Set(&setup_ref_info, 0, sizeof(setup_ref_info));
     setup_ref_info.FrameNum       = (uint16_t)header.frameNum;
     setup_ref_info.PicOrderCnt[0] = poc;
     setup_ref_info.PicOrderCnt[1] = poc;
@@ -743,16 +818,16 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t 
         pDecoder->firstFrame = 0;
     }
 
-    (void)memset(&std_picture, 0, sizeof(std_picture));
+    CRT_Memory_Set(&std_picture, 0, sizeof(std_picture));
     std_picture.seq_parameter_set_id = pDecoder->sps.seq_parameter_set_id;
     std_picture.pic_parameter_set_id = pDecoder->pps.pic_parameter_set_id;
     std_picture.frame_num            = (uint16_t)header.frameNum;
     std_picture.idr_pic_id           = (uint16_t)header.idrPicId;
     std_picture.PicOrderCnt[0]       = poc;
     std_picture.PicOrderCnt[1]       = poc;
-    std_picture.flags.IdrPicFlag     = header.isIdr ? 1u : 0u;
-    std_picture.flags.is_reference   = header.nalRefIdc ? 1u : 0u;
-    std_picture.flags.is_intra       = (header.sliceType % 5 == 2) ? 1u : 0u;
+    std_picture.flags.IdrPicFlag     = header.isIdr ? 1U : 0U;
+    std_picture.flags.is_reference   = header.nalRefIdc ? 1U : 0U;
+    std_picture.flags.is_intra       = (header.sliceType % DECODE_SLICE_TYPE_CYCLE == 2) ? 1U : 0U;
 
     dst_resource = GetPictureResource(pDecoder, pDecoder->outputView);
     /* The bitstream range must be a multiple of the codec alignment; pad within the buffer. */
@@ -761,7 +836,7 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t 
     {
         aligned_range = BITSTREAM_CAPACITY;
     }
-    (void)memset((byte_t*)pDecoder->bitstreamMapped + stream_length, 0, (size_t)(aligned_range - stream_length));
+    CRT_Memory_Set((byte_t*)pDecoder->bitstreamMapped + stream_length, 0, (size_t)(aligned_range - stream_length));
 
     cvkCmdDecodeVideoWithH264PictureInfo(pDecoder->decodeCmd,
                                          NULL,
@@ -838,52 +913,7 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t 
     cvkQueueSubmit(pDecoder->transferQueue, 1, &submit, pDecoder->transferFence);
     cvkWaitForFence(pDecoder->device, pDecoder->transferFence, VK_TRUE, UINT64_MAX);
 
-    /* Update the DPB: activate the reconstructed slot when it is a reference. */
-    if (header.nalRefIdc != 0)
-    {
-        p_slot           = &pDecoder->dpb[current_slot];
-        p_slot->active   = 1;
-        p_slot->frameNum = (int)header.frameNum;
-        p_slot->poc      = poc;
-        p_slot->age      = ++pDecoder->decodeOrder;
-
-        /* Sliding-window reference marking (H.264 8.2.5.3), applied after the picture is stored:
-        ** a stream keeps at most max_num_ref_frames short-term references, so retire the oldest
-        ** (smallest decode-order age) until the count is within that bound. Without this the DPB
-        ** filled and later frames referenced stale pictures instead of the most recent one, which
-        ** corrupted decode a few frames into every GOP. */
-        max_refs = pDecoder->sps.max_num_ref_frames ? pDecoder->sps.max_num_ref_frames : 1u;
-        for (;;)
-        {
-            active_refs = 0;
-            for (i = 0; i < pDecoder->maxDpbSlots; ++i)
-            {
-                active_refs += pDecoder->dpb[i].active ? 1u : 0u;
-            }
-            if (active_refs <= max_refs)
-            {
-                break;
-            }
-            oldest_slot = -1;
-            for (i = 0; i < pDecoder->maxDpbSlots; ++i)
-            {
-                if (pDecoder->dpb[i].active &&
-                    (oldest_slot < 0 || pDecoder->dpb[i].age < pDecoder->dpb[oldest_slot].age))
-                {
-                    oldest_slot = (int)i;
-                }
-            }
-            if (oldest_slot < 0)
-            {
-                break;
-            }
-            pDecoder->dpb[oldest_slot].active = 0;
-        }
-        (void)memset(&p_slot->refInfo, 0, sizeof(p_slot->refInfo));
-        p_slot->refInfo.FrameNum       = (uint16_t)header.frameNum;
-        p_slot->refInfo.PicOrderCnt[0] = poc;
-        p_slot->refInfo.PicOrderCnt[1] = poc;
-    }
+    StoreDecodedReference(pDecoder, &header, current_slot, poc);
     return 1;
 }
 
@@ -893,7 +923,7 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t 
  *  Waits for device work before releasing decoder-owned video, image, buffer
  *  and synchronization resources. The shared GPU device remains owned elsewhere.
  */
-void GpuDecode_Destroy(GpuDecoder* pDecoder)
+extern FORCE_INLINE void GpuDecode_Destroy(GpuDecoder* pDecoder)
 {
     GpuDevice* owner;
     uint32_t   index;

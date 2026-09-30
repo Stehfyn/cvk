@@ -326,7 +326,6 @@ static FORCE_INLINE bool_t ReadAt(HANDLE hFile, uint64_t offset, void* pOut, DWO
     bool_t        complete;
 
     LOGASSERT(NULL != pOut);
-    LOGASSERT(offset <= INT64_MAX);
     position.QuadPart = (LONGLONG)offset;
     received          = 0;
     moved             = SetFilePointerEx(hFile, position, NULL, FILE_BEGIN);
@@ -772,6 +771,45 @@ ReadTrackTimes(HANDLE     file,
  *  Selects a video track and maps sync-sample numbers through decode-time runs
  *  to seconds, bounded by the caller's output capacity.
  */
+static FORCE_INLINE bool_t ReadMdiaTimescale(HANDLE hFile, const Box* pMdia, uint32_t* pTimescale)
+{
+    byte_t buffer[MP4_INDEX_MDHD_V1_BYTES];
+    Box mdhd;
+    bool_t valid;
+
+    valid = (BOX_FOUND == FindChild(hFile, pMdia, UTL_MPEG4_BOX_MDHD, &mdhd));
+    if (!valid)
+    {
+        return FALSE;
+    }
+    valid = (MP4_INDEX_MDHD_HEADER_BYTES <= (mdhd.end - mdhd.payload)) &&
+            ReadAt(hFile, mdhd.payload, buffer, MP4_INDEX_MDHD_HEADER_BYTES);
+    if (!valid)
+    {
+        return FALSE;
+    }
+    if (1 == buffer[0])
+    {
+        valid = (MP4_INDEX_MDHD_V1_BYTES <= (mdhd.end - mdhd.payload)) &&
+                ReadAt(hFile, mdhd.payload + MP4_INDEX_MDHD_HEADER_BYTES,
+                       buffer + MP4_INDEX_MDHD_HEADER_BYTES,
+                       MP4_INDEX_MDHD_V1_EXTRA_BYTES);
+        if (valid)
+        {
+            *pTimescale = Be32(buffer + MP4_INDEX_MDHD_V1_TICKS);
+        }
+    }
+    else
+    {
+        valid = (0 == buffer[0]);
+        if (valid)
+        {
+            *pTimescale = Be32(buffer + MP4_INDEX_MDHD_V0_TICKS);
+        }
+    }
+    return valid && (0 < *pTimescale);
+}
+
 static FORCE_INLINE uint32_t
 KeyframesFromTrack(HANDLE hFile, const Box* pTrack, double* pTimes, unsigned capacity, bool_t* complete)
 {
@@ -779,9 +817,8 @@ KeyframesFromTrack(HANDLE hFile, const Box* pTrack, double* pTimes, unsigned cap
     uint32_t count;
     bool_t   is_valid;
     Box      mdia;
-    Box      hdlr;
+    Box      hdlr = {0};
     byte_t   buffer[MP4_INDEX_MDHD_V1_BYTES];
-    Box      mdhd;
     Box      minf;
     Box      stbl;
 
@@ -805,35 +842,7 @@ KeyframesFromTrack(HANDLE hFile, const Box* pTrack, double* pTimes, unsigned cap
     }
     if (is_valid)
     {
-        is_valid = (BOX_FOUND == FindChild(hFile, &mdia, UTL_MPEG4_BOX_MDHD, &mdhd));
-    }
-    if (is_valid)
-    {
-        is_valid = (MP4_INDEX_MDHD_HEADER_BYTES <= (mdhd.end - mdhd.payload)) &&
-                   ReadAt(hFile, mdhd.payload, buffer, MP4_INDEX_MDHD_HEADER_BYTES);
-        if (is_valid)
-        {
-            if (1 == buffer[0])
-            {
-                is_valid = (MP4_INDEX_MDHD_V1_BYTES <= (mdhd.end - mdhd.payload)) &&
-                           ReadAt(hFile, mdhd.payload + MP4_INDEX_MDHD_HEADER_BYTES,
-                                  buffer + MP4_INDEX_MDHD_HEADER_BYTES,
-                                  MP4_INDEX_MDHD_V1_EXTRA_BYTES);
-                if (is_valid)
-                {
-                    timescale = Be32(buffer + MP4_INDEX_MDHD_V1_TICKS);
-                }
-            }
-            else
-            {
-                is_valid = (0 == buffer[0]);
-                if (is_valid)
-                {
-                    timescale = Be32(buffer + MP4_INDEX_MDHD_V0_TICKS);
-                }
-            }
-            is_valid = is_valid && (0 < timescale);
-        }
+        is_valid = ReadMdiaTimescale(hFile, &mdia, &timescale);
     }
     if (is_valid)
     {

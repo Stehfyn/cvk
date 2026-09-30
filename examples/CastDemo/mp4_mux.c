@@ -8,11 +8,16 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <Windows.h>
+#include <Windows.h> // IWYU pragma: keep
+#include <fileapi.h>
+#include <handleapi.h>
+#include <minwindef.h>
+#include <WinBase.h>
+#include <winnt.h>
 
 #include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stddef.h>
+#include <heapapi.h>
 
 #include "mp4_mux.h"
 #include "utl/utl_mpeg4.h"
@@ -22,6 +27,38 @@
 #include "os/os_assert.h"
 #include "os/os_types.h"
 #include "crt/crt_memory.h"
+
+static FORCE_INLINE void* AllocateZeroedMux(size_t count, size_t elementSize)
+{
+    if (0 != elementSize && count > SIZE_MAX / elementSize)
+    {
+        return NULL;
+    }
+    return HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, count * elementSize);
+}
+
+static FORCE_INLINE void* ResizeMuxBytes(void* address, size_t bytes)
+{
+    HANDLE heap = GetProcessHeap();
+
+    if (NULL == address)
+    {
+        return HeapAlloc(heap, 0, bytes);
+    }
+    return HeapReAlloc(heap, 0, address, bytes);
+}
+
+static FORCE_INLINE void ReleaseMuxBytes(void* address)
+{
+    BOOL released;
+
+    if (NULL == address)
+    {
+        return;
+    }
+    released = HeapFree(GetProcessHeap(), 0, address);
+    LOGASSERT(released);
+}
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -48,6 +85,29 @@
 #define ANNEXB_PREFIX_BYTES        (3)
 #define ANNEXB_ZERO_BYTE           (0)
 #define ANNEXB_STOP_BYTE           (1)
+#define MUX_BITS_PER_BYTE          (8)
+#define MUX_BITS_PER_U16           (16)
+#define MUX_BITS_PER_U32           (32)
+#define MUX_BOX_HEADER_BYTES       (8)
+#define MUX_INITIAL_CAPACITY       (4096U)
+#define MUX_MATRIX_UNITY_16_16     (0x00010000)
+#define MUX_MATRIX_UNITY_2_30      (0x40000000)
+#define MUX_VIDEO_RESOLUTION_72DPI (0x00480000)
+#define MUX_COMPRESSOR_NAME_BYTES  (32)
+#define MUX_VIDEO_PIXEL_DEPTH      (0x0018)
+#define MUX_VIDEO_PREDEFINED       (0xFFFF)
+#define MUX_AVC_PROFILE_MAIN       (0x4D)
+#define MUX_AVC_LEVEL_3_1          (0x1F)
+#define MUX_AVCC_LENGTH_FIELD      (0xFF)
+#define MUX_AVCC_ONE_SPS           (0xE1)
+#define MUX_TRACK_ENABLED_FLAGS    (0x00000007)
+#define MUX_UNITY_VOLUME_8_8       (0x0100U)
+#define MUX_LANGUAGE_UND           (0x55C4)
+#define MUX_MOVIE_TIMESCALE        (1000U)
+#define MUX_DURATION_ROUNDING      (0.5)
+#define MUX_VIDEO_SAMPLE_FLAGS     (0x01010000)
+#define MUX_AUDIO_SAMPLE_FLAGS     (0x02000000)
+#define MUX_DEFAULT_VIDEO_TIMESCALE (90000U)
 
 /*=================================================================================================
 ** 3.2 Types
@@ -537,73 +597,80 @@ static FORCE_INLINE void CommitFragment(Mp4Mux* mux, const FragmentLayout_t* lay
  * \par Details:
  *  None
  */
+static FORCE_INLINE bool_t GrowBuffer(MuxBuffer* buffer, uint32_t required)
+{
+    uint32_t capacity;
+    byte_t* grown;
+
+    if (buffer->fixed)
+    {
+        return FALSE;
+    }
+    capacity = buffer->capacity;
+    if (0 == capacity)
+    {
+        capacity = FRAGMENT_METADATA_CAPACITY;
+    }
+    while (required > capacity)
+    {
+        if (UINT32_MAX / 2 < capacity)
+        {
+            capacity = required;
+        }
+        else
+        {
+            capacity *= 2;
+        }
+    }
+    grown = (byte_t*)ResizeMuxBytes(buffer->data, capacity);
+    if (NULL == grown)
+    {
+        return FALSE;
+    }
+    buffer->data = grown;
+    buffer->capacity = capacity;
+    return TRUE;
+}
+
 static FORCE_INLINE void BufferBytes(MuxBuffer* buffer, const void* data, uint32_t count)
 {
     bool_t   has_input;
     bool_t   empty;
     bool_t   valid_input;
     bool_t   fits;
+    bool_t   grown;
+    bool_t   copy;
     uint32_t required;
-    uint32_t capacity;
-    byte_t*  grown;
+    uint32_t bounded_count;
+    uint32_t copied_count;
+    byte_t   discard = 0;
+    byte_t*  destination;
+    const void* source;
 
     LOGASSERT(NULL != buffer);
     has_input   = (NULL != data);
     empty       = (0 == count);
     valid_input = has_input || empty;
     LOGASSERT(valid_input);
+    fits = (count <= UINT32_MAX - buffer->size);
+    bounded_count = count & ((uint32_t)0 - (uint32_t)fits);
+    required = buffer->size + bounded_count;
+    grown = TRUE;
+    if (!buffer->failed && buffer->capacity < required)
+    {
+        grown = GrowBuffer(buffer, required);
+    }
+    copy = !buffer->failed && fits && grown && !empty;
+    copied_count = count & ((uint32_t)0 - (uint32_t)copy);
+    destination = copy ? &buffer->data[buffer->size] : &discard;
+    source = copy ? data : &discard;
+    CRT_Memory_Move(destination, source, copied_count);
     if (!buffer->failed)
     {
-        fits           = (count <= UINT32_MAX - buffer->size);
-        buffer->failed = !fits;
-        if (fits)
+        buffer->failed = !fits || !grown;
+        if (copy)
         {
-            required = buffer->size + count;
-            if (buffer->capacity < required)
-            {
-                if (buffer->fixed)
-                {
-                    buffer->failed = TRUE;
-                }
-                else
-                {
-                    capacity = buffer->capacity;
-                    if (0 == capacity)
-                    {
-                        capacity = FRAGMENT_METADATA_CAPACITY;
-                    }
-                    for (;;)
-                    {
-                        if (required <= capacity)
-                        {
-                            break;
-                        }
-                        if (UINT32_MAX / 2 < capacity)
-                        {
-                            capacity = required;
-                        }
-                        else
-                        {
-                            capacity *= 2;
-                        }
-                    }
-                    grown          = (byte_t*)realloc(buffer->data, capacity);
-                    buffer->failed = (NULL == grown);
-                    if (!buffer->failed)
-                    {
-                        buffer->data     = grown;
-                        buffer->capacity = capacity;
-                    }
-                }
-            }
-            if (!buffer->failed)
-            {
-                if (!empty)
-                {
-                    CRT_Memory_Copy(&buffer->data[buffer->size], data, count);
-                    buffer->size = required;
-                }
-            }
+            buffer->size = required;
         }
     }
 }
@@ -613,7 +680,7 @@ static FORCE_INLINE void BufferBytes(MuxBuffer* buffer, const void* data, uint32
  * \par Details:
  *  None
  */
-static void BufferU8(MuxBuffer* pBuffer, uint8_t value)
+static FORCE_INLINE void BufferU8(MuxBuffer* pBuffer, uint8_t value)
 {
     BufferBytes(pBuffer, &value, 1);
 }
@@ -623,11 +690,11 @@ static void BufferU8(MuxBuffer* pBuffer, uint8_t value)
  * \par Details:
  *  Appends a 16-bit integer in big-endian byte order.
  */
-static void BufferU16(MuxBuffer* pBuffer, uint16_t value)
+static FORCE_INLINE void BufferU16(MuxBuffer* pBuffer, uint16_t value)
 {
     byte_t bytes[2];
 
-    bytes[0] = (uint8_t)(value >> 8);
+    bytes[0] = (uint8_t)(value >> MUX_BITS_PER_BYTE);
     bytes[1] = (uint8_t)value;
     BufferBytes(pBuffer, bytes, 2);
 }
@@ -637,13 +704,13 @@ static void BufferU16(MuxBuffer* pBuffer, uint16_t value)
  * \par Details:
  *  Appends a 32-bit integer in big-endian byte order.
  */
-static void BufferU32(MuxBuffer* pBuffer, uint32_t value)
+static FORCE_INLINE void BufferU32(MuxBuffer* pBuffer, uint32_t value)
 {
     byte_t bytes[4];
 
-    bytes[0] = (uint8_t)(value >> 24);
-    bytes[1] = (uint8_t)(value >> 16);
-    bytes[2] = (uint8_t)(value >> 8);
+    bytes[0] = (uint8_t)(value >> (MUX_BITS_PER_U32 - MUX_BITS_PER_BYTE));
+    bytes[1] = (uint8_t)(value >> MUX_BITS_PER_U16);
+    bytes[2] = (uint8_t)(value >> MUX_BITS_PER_BYTE);
     bytes[3] = (uint8_t)value;
     BufferBytes(pBuffer, bytes, 4);
 }
@@ -653,9 +720,9 @@ static void BufferU32(MuxBuffer* pBuffer, uint32_t value)
  * \par Details:
  *  Appends the high and low 32-bit words in big-endian order.
  */
-static void BufferU64(MuxBuffer* pBuffer, uint64_t value)
+static FORCE_INLINE void BufferU64(MuxBuffer* pBuffer, uint64_t value)
 {
-    BufferU32(pBuffer, (uint32_t)(value >> 32));
+    BufferU32(pBuffer, (uint32_t)(value >> MUX_BITS_PER_U32));
     BufferU32(pBuffer, (uint32_t)value);
 }
 
@@ -722,15 +789,15 @@ static FORCE_INLINE void BoxClose(MuxBuffer* buffer, uint32_t position)
  */
 static void BufferMatrix(MuxBuffer* pBuffer)
 {
-    BufferU32(pBuffer, 0x00010000);
+    BufferU32(pBuffer, MUX_MATRIX_UNITY_16_16);
     BufferU32(pBuffer, 0);
     BufferU32(pBuffer, 0);
     BufferU32(pBuffer, 0);
-    BufferU32(pBuffer, 0x00010000);
+    BufferU32(pBuffer, MUX_MATRIX_UNITY_16_16);
     BufferU32(pBuffer, 0);
     BufferU32(pBuffer, 0);
     BufferU32(pBuffer, 0);
-    BufferU32(pBuffer, 0x40000000);
+    BufferU32(pBuffer, MUX_MATRIX_UNITY_2_30);
 }
 
 /*************************************************************************************************/
@@ -760,7 +827,10 @@ static FORCE_INLINE bool_t WriteFileBytes(Mp4Mux* mux, const void* data, uint32_
 }
 
 /*************************************************************************************************/
-/** \par Details: Reads the current 64-bit native output position. */
+/**
+ * \par Details:
+ *  Reads the current 64-bit native output position.
+ */
 static FORCE_INLINE int64_t GetFileOffset(HANDLE file)
 {
     LARGE_INTEGER distance;
@@ -777,12 +847,14 @@ static FORCE_INLINE int64_t GetFileOffset(HANDLE file)
 }
 
 /*************************************************************************************************/
-/** \par Details: Moves the native output to an existing absolute position. */
+/**
+ * \par Details:
+ *  Moves the native output to an existing absolute position.
+ */
 static FORCE_INLINE bool_t SetFileOffset(HANDLE file, int64_t offset)
 {
     LARGE_INTEGER distance;
 
-    LOGASSERT(0 <= offset);
     distance.QuadPart = offset;
     return !!SetFilePointerEx(file, distance, NULL, FILE_BEGIN);
 }
@@ -830,7 +902,7 @@ static FORCE_INLINE bool_t WriteFileType(Mp4Mux* mux, bool_t fragmented)
  *  Removes an optional three- or four-byte Annex B start code and copies the
  *  raw NAL into fixed parameter storage when it fits.
  */
-static void StoreParameterSet(const byte_t* pData, uint32_t size, byte_t* pOut, uint32_t* pOutSize)
+static FORCE_INLINE void StoreParameterSet(const byte_t* pData, uint32_t size, byte_t* pOut, uint32_t* pOutSize)
 {
     uint32_t start;
 
@@ -848,7 +920,7 @@ static void StoreParameterSet(const byte_t* pData, uint32_t size, byte_t* pOut, 
         *pOutSize = 0;
         return;
     }
-    memcpy(pOut, pData + start, size - start);
+    CRT_Memory_Copy(pOut, pData + start, size - start);
     *pOutSize = size - start;
 }
 
@@ -857,15 +929,15 @@ static void StoreParameterSet(const byte_t* pData, uint32_t size, byte_t* pOut, 
  * \par Details:
  *  Grows the sample array when full and returns the newly occupied entry.
  */
-static MuxSample* AppendSample(MuxSample** ppArray, uint32_t* pCount, uint32_t* pCapacity)
+static FORCE_INLINE MuxSample* AppendSample(MuxSample** ppArray, uint32_t* pCount, uint32_t* pCapacity)
 {
     if (*pCount == *pCapacity)
     {
         uint32_t   new_capacity;
         MuxSample* grown;
 
-        new_capacity = *pCapacity ? *pCapacity * 2u : 4096u;
-        grown        = (MuxSample*)realloc(*ppArray, (size_t)new_capacity * sizeof(MuxSample));
+            new_capacity = *pCapacity ? *pCapacity * 2U : MUX_INITIAL_CAPACITY;
+        grown        = (MuxSample*)ResizeMuxBytes(*ppArray, (size_t)new_capacity * sizeof(MuxSample));
         if (NULL == grown)
         {
             return NULL;
@@ -884,6 +956,17 @@ static MuxSample* AppendSample(MuxSample** ppArray, uint32_t* pCount, uint32_t* 
  *  Scans Annex B NAL boundaries and appends four-byte length prefixes with raw
  *  NAL payloads, stripping trailing zero bytes before the next start code.
  */
+static FORCE_INLINE uint32_t TrimAvccNal(const byte_t* pData, uint32_t start, uint32_t end)
+{
+    uint32_t length = end - start;
+
+    while (length > 0 && pData[start + length - 1] == 0)
+    {
+        --length;
+    }
+    return length;
+}
+
 static uint32_t AppendAvcc(MuxBuffer* pBuffer, const byte_t* pData, uint32_t size)
 {
     uint32_t original;
@@ -907,19 +990,7 @@ static uint32_t AppendAvcc(MuxBuffer* pBuffer, const byte_t* pData, uint32_t siz
             {
                 uint32_t nal_length;
 
-                nal_length = i - nal_start;
-                for (;;)
-                {
-                    if (0 == nal_length)
-                    {
-                        break;
-                    }
-                    if (0 != pData[nal_start + nal_length - 1])
-                    {
-                        break;
-                    }
-                    --nal_length;
-                }
+                nal_length = TrimAvccNal(pData, nal_start, i);
                 BufferU32(pBuffer, nal_length);
                 BufferBytes(pBuffer, pData + nal_start, nal_length);
             }
@@ -1031,7 +1102,7 @@ static void WriteSampleTables(MuxBuffer* pBuffer, const MuxSample* pSamples, uin
         {
             if (pSamples[i].keyframe)
             {
-                BufferU32(pBuffer, i + 1u);
+                BufferU32(pBuffer, i + 1U);
                 ++sync_count;
             }
         }
@@ -1073,26 +1144,26 @@ static void WriteVideoSampleEntry(Mp4Mux* pMux, MuxBuffer* pBuffer)
         BufferU32(pBuffer, 0);
         BufferU16(pBuffer, (uint16_t)pMux->width);
         BufferU16(pBuffer, (uint16_t)pMux->height);
-        BufferU32(pBuffer, 0x00480000); /* 72 dpi */
-        BufferU32(pBuffer, 0x00480000);
+        BufferU32(pBuffer, MUX_VIDEO_RESOLUTION_72DPI); /* 72 dpi */
+        BufferU32(pBuffer, MUX_VIDEO_RESOLUTION_72DPI);
         BufferU32(pBuffer, 0);
         BufferU16(pBuffer, 1); /* frame count */
         {
-            byte_t compressor[32];
+            byte_t compressor[MUX_COMPRESSOR_NAME_BYTES];
 
-            memset(compressor, 0, sizeof(compressor));
+            CRT_Memory_Set(compressor, 0, sizeof(compressor));
             BufferBytes(pBuffer, compressor, sizeof(compressor));
         }
-        BufferU16(pBuffer, 0x0018); /* depth */
-        BufferU16(pBuffer, 0xFFFF); /* predefined */
+        BufferU16(pBuffer, MUX_VIDEO_PIXEL_DEPTH); /* depth */
+        BufferU16(pBuffer, MUX_VIDEO_PREDEFINED); /* predefined */
 
         avcc = BoxOpen(pBuffer, "avcC");
         BufferU8(pBuffer, 1);                                       /* configuration version */
-        BufferU8(pBuffer, pMux->spsSize > 1 ? pMux->sps[1] : 0x4D); /* AVCProfileIndication */
+        BufferU8(pBuffer, pMux->spsSize > 1 ? pMux->sps[1] : MUX_AVC_PROFILE_MAIN); /* AVCProfileIndication */
         BufferU8(pBuffer, pMux->spsSize > 2 ? pMux->sps[2] : 0x00); /* profile compatibility */
-        BufferU8(pBuffer, pMux->spsSize > 3 ? pMux->sps[3] : 0x1F); /* AVCLevelIndication */
-        BufferU8(pBuffer, 0xFF);                                    /* 6 bits reserved | lengthSizeMinusOne = 3 */
-        BufferU8(pBuffer, 0xE1);                                    /* 3 bits reserved | numSPS = 1 */
+        BufferU8(pBuffer, pMux->spsSize > 3 ? pMux->sps[3] : MUX_AVC_LEVEL_3_1); /* AVCLevelIndication */
+        BufferU8(pBuffer, MUX_AVCC_LENGTH_FIELD);                              /* 6 bits reserved | lengthSizeMinusOne = 3 */
+        BufferU8(pBuffer, MUX_AVCC_ONE_SPS);                                   /* 3 bits reserved | numSPS = 1 */
         BufferU16(pBuffer, (uint16_t)pMux->spsSize);
         BufferBytes(pBuffer, pMux->sps, pMux->spsSize);
         BufferU8(pBuffer, 1); /* numPPS */
@@ -1236,7 +1307,7 @@ static FORCE_INLINE void WriteAudioSampleEntry(Mp4Mux* mux, MuxBuffer* buffer)
  * \par Details:
  *  Sums sample durations into the track's 64-bit tick count.
  */
-static uint64_t GetTrackDuration(const MuxSample* pSamples, uint32_t count)
+static FORCE_INLINE uint64_t GetTrackDuration(const MuxSample* pSamples, uint32_t count)
 {
     uint64_t total;
     uint32_t i;
@@ -1285,21 +1356,21 @@ static void WriteTrack(Mp4Mux* pMux, MuxBuffer* pBuffer, int isVideo, uint32_t m
     trak = BoxOpen(pBuffer, "trak");
 
     box = BoxOpen(pBuffer, "tkhd");
-    BufferU32(pBuffer, 0x00000007); /* enabled | in movie | in preview */
+    BufferU32(pBuffer, MUX_TRACK_ENABLED_FLAGS); /* enabled | in movie | in preview */
     BufferU32(pBuffer, 0);
     BufferU32(pBuffer, 0);
-    BufferU32(pBuffer, isVideo ? 1u : 2u);
+    BufferU32(pBuffer, isVideo ? 1U : 2U);
     BufferU32(pBuffer, 0);
     BufferU32(pBuffer, movie_duration);
     BufferU32(pBuffer, 0);
     BufferU32(pBuffer, 0);
     BufferU16(pBuffer, 0);                      /* layer */
     BufferU16(pBuffer, 0);                      /* alternate group */
-    BufferU16(pBuffer, isVideo ? 0u : 0x0100u); /* volume */
+    BufferU16(pBuffer, isVideo ? 0U : MUX_UNITY_VOLUME_8_8); /* volume */
     BufferU16(pBuffer, 0);
     BufferMatrix(pBuffer);
-    BufferU32(pBuffer, isVideo ? (pMux->width << 16) : 0u);
-    BufferU32(pBuffer, isVideo ? (pMux->height << 16) : 0u);
+    BufferU32(pBuffer, isVideo ? (pMux->width << MUX_BITS_PER_U16) : 0U);
+    BufferU32(pBuffer, isVideo ? (pMux->height << MUX_BITS_PER_U16) : 0U);
     BoxClose(pBuffer, box);
 
     mdia = BoxOpen(pBuffer, "mdia");
@@ -1309,7 +1380,7 @@ static void WriteTrack(Mp4Mux* pMux, MuxBuffer* pBuffer, int isVideo, uint32_t m
     BufferU32(pBuffer, 0);
     BufferU32(pBuffer, timescale);
     BufferU32(pBuffer, (uint32_t)track_duration);
-    BufferU16(pBuffer, 0x55C4); /* language 'und' */
+    BufferU16(pBuffer, MUX_LANGUAGE_UND); /* language 'und' */
     BufferU16(pBuffer, 0);
     BoxClose(pBuffer, box);
 
@@ -1320,7 +1391,7 @@ static void WriteTrack(Mp4Mux* pMux, MuxBuffer* pBuffer, int isVideo, uint32_t m
     BufferU32(pBuffer, 0);
     BufferU32(pBuffer, 0);
     BufferU32(pBuffer, 0);
-    BufferBytes(pBuffer, isVideo ? "VideoHandler" : "SoundHandler", isVideo ? 13u : 13u);
+    BufferBytes(pBuffer, isVideo ? "VideoHandler" : "SoundHandler", (uint32_t)sizeof("VideoHandler"));
     BoxClose(pBuffer, box);
 
     minf = BoxOpen(pBuffer, "minf");
@@ -1417,8 +1488,8 @@ static int WriteFragmentedInit(Mp4Mux* pMux)
         return 0;
     }
 
-    movie_timescale     = 1000;
-    movie_duration      = (uint32_t)(pMux->fullDurationSeconds * movie_timescale + 0.5);
+    movie_timescale     = MUX_MOVIE_TIMESCALE;
+    movie_duration      = (uint32_t)((pMux->fullDurationSeconds * movie_timescale) + MUX_DURATION_ROUNDING);
     pMux->fragMoof.size = 0;
     moov                = BoxOpen(&pMux->fragMoof, "moov");
     {
@@ -1430,8 +1501,8 @@ static int WriteFragmentedInit(Mp4Mux* pMux)
         BufferU32(&pMux->fragMoof, 0);
         BufferU32(&pMux->fragMoof, movie_timescale);
         BufferU32(&pMux->fragMoof, movie_duration);
-        BufferU32(&pMux->fragMoof, 0x00010000);
-        BufferU16(&pMux->fragMoof, 0x0100);
+        BufferU32(&pMux->fragMoof, MUX_MATRIX_UNITY_16_16);
+        BufferU16(&pMux->fragMoof, MUX_UNITY_VOLUME_8_8);
         BufferU16(&pMux->fragMoof, 0);
         BufferU32(&pMux->fragMoof, 0);
         BufferU32(&pMux->fragMoof, 0);
@@ -1442,7 +1513,7 @@ static int WriteFragmentedInit(Mp4Mux* pMux)
         BufferU32(&pMux->fragMoof, 0);
         BufferU32(&pMux->fragMoof, 0);
         BufferU32(&pMux->fragMoof, 0);
-        BufferU32(&pMux->fragMoof, (pMux->hasAudio ? 3u : 2u));
+        BufferU32(&pMux->fragMoof, (pMux->hasAudio ? 3U : 2U));
         BoxClose(&pMux->fragMoof, mvhd);
     }
     WriteTrack(pMux, &pMux->fragMoof, 1, movie_timescale); /* empty tables: videoCount is 0 */
@@ -1462,10 +1533,10 @@ static int WriteFragmentedInit(Mp4Mux* pMux)
             BufferU32(&pMux->fragMoof, movie_duration);
             BoxClose(&pMux->fragMoof, mehd);
         }
-        WriteTrex(&pMux->fragMoof, 1, 0x01010000); /* video defaults to a non-sync sample */
+        WriteTrex(&pMux->fragMoof, 1, MUX_VIDEO_SAMPLE_FLAGS); /* video defaults to a non-sync sample */
         if (pMux->hasAudio)
         {
-            WriteTrex(&pMux->fragMoof, 2, 0x02000000);
+            WriteTrex(&pMux->fragMoof, 2, MUX_AUDIO_SAMPLE_FLAGS);
         }
         BoxClose(&pMux->fragMoof, mvex);
     }
@@ -1662,6 +1733,36 @@ static FORCE_INLINE bool_t WriteNal(Mp4Mux* mux, Utl_Mpeg4_Span_t bytes)
     return valid;
 }
 
+static FORCE_INLINE bool_t WriteProgressiveNal(Mp4Mux* mux,
+                                  Utl_Mpeg4_Span_t bytes,
+                                  uint32_t start,
+                                  uint32_t end,
+                                  bool_t trim,
+                                  uint32_t* pTotal)
+{
+    Utl_Mpeg4_Span_t nal;
+    uint64_t next_count;
+    bool_t valid;
+
+    nal.data = &bytes.data[start];
+    nal.byteCount = end - start;
+    if (trim)
+    {
+        while (nal.byteCount > 0 && ANNEXB_ZERO_BYTE == nal.data[nal.byteCount - 1])
+        {
+            --nal.byteCount;
+        }
+    }
+    next_count = (uint64_t)*pTotal + MUX_INTEGER32_BYTES + nal.byteCount;
+    valid = (next_count <= UINT32_MAX);
+    if (valid)
+    {
+        valid = WriteNal(mux, nal);
+        *pTotal = (uint32_t)next_count;
+    }
+    return valid;
+}
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -1684,8 +1785,6 @@ static FORCE_INLINE bool_t WriteProgressiveVideo(Mp4Mux*          mux,
     bool_t           has_start;
     bool_t           has_body;
     bool_t           has_nal;
-    Utl_Mpeg4_Span_t nal;
-    uint64_t         next_count;
     MuxSample*       sample;
 
     offset = GetFileOffset(mux->file);
@@ -1714,27 +1813,7 @@ static FORCE_INLINE bool_t WriteProgressiveVideo(Mp4Mux*          mux,
             has_nal   = has_start && has_body;
             if (has_nal)
             {
-                nal.data      = &bytes.data[start];
-                nal.byteCount = index - start;
-                for (;;)
-                {
-                    if (0 == nal.byteCount)
-                    {
-                        break;
-                    }
-                    if (ANNEXB_ZERO_BYTE != nal.data[nal.byteCount - 1])
-                    {
-                        break;
-                    }
-                    --nal.byteCount;
-                }
-                next_count = (uint64_t)total + MUX_INTEGER32_BYTES + nal.byteCount;
-                valid      = (next_count <= UINT32_MAX);
-                if (valid)
-                {
-                    valid = WriteNal(mux, nal);
-                    total = (uint32_t)next_count;
-                }
+                valid = WriteProgressiveNal(mux, bytes, start, index, TRUE, &total);
             }
             index += ANNEXB_PREFIX_BYTES;
             start = index;
@@ -1749,15 +1828,7 @@ static FORCE_INLINE bool_t WriteProgressiveVideo(Mp4Mux*          mux,
     has_nal   = valid && has_start && has_body;
     if (has_nal)
     {
-        nal.data      = &bytes.data[start];
-        nal.byteCount = bytes.byteCount - start;
-        next_count    = (uint64_t)total + MUX_INTEGER32_BYTES + nal.byteCount;
-        valid         = (next_count <= UINT32_MAX);
-        if (valid)
-        {
-            valid = WriteNal(mux, nal);
-            total = (uint32_t)next_count;
-        }
+        valid = WriteProgressiveNal(mux, bytes, start, bytes.byteCount, FALSE, &total);
     }
     has_body = (0 < total);
     valid    = valid && has_body;
@@ -2038,9 +2109,13 @@ Mp4Mux* Mp4Mux_Create(const TCHAR* pPath,
                       uint32_t       ascSize)
 {
     Mp4Mux* pMux;
-    byte_t  mdat_header[8];
+    byte_t  mdat_header[MUX_BOX_HEADER_BYTES];
+    byte_t  empty_asc = 0;
+    bool_t  has_asc;
+    uint32_t copied_asc;
+    const byte_t* asc_source;
 
-    pMux = (Mp4Mux*)calloc(1, sizeof(*pMux));
+    pMux = (Mp4Mux*)AllocateZeroedMux(1, sizeof(*pMux));
     if (NULL == pMux)
     {
         return NULL;
@@ -2055,23 +2130,23 @@ Mp4Mux* Mp4Mux_Create(const TCHAR* pPath,
                              NULL);
     if (INVALID_HANDLE_VALUE == pMux->file)
     {
-        free(pMux);
+        ReleaseMuxBytes(pMux);
         return NULL;
     }
     pMux->width           = width;
     pMux->height          = height;
-    pMux->videoTimescale  = videoTimescale ? videoTimescale : 90000u;
+    pMux->videoTimescale  = videoTimescale ? videoTimescale : MUX_DEFAULT_VIDEO_TIMESCALE;
     pMux->hasAudio        = hasAudio;
     pMux->audioTimescale  = audioTimescale;
     pMux->audioSampleRate = audioSampleRate;
     pMux->audioChannels   = audioChannels;
     StoreParameterSet(pSps, spsSize, pMux->sps, &pMux->spsSize);
     StoreParameterSet(pPps, ppsSize, pMux->pps, &pMux->ppsSize);
-    if (hasAudio && NULL != pAsc && ascSize > 0 && ascSize <= sizeof(pMux->asc))
-    {
-        memcpy(pMux->asc, pAsc, ascSize);
-        pMux->ascSize = ascSize;
-    }
+    has_asc = hasAudio && NULL != pAsc && ascSize > 0 && ascSize <= sizeof(pMux->asc);
+    copied_asc = ascSize & ((uint32_t)0 - (uint32_t)has_asc);
+    asc_source = has_asc ? pAsc : &empty_asc;
+    CRT_Memory_Copy(pMux->asc, asc_source, copied_asc);
+    pMux->ascSize = copied_asc;
 
     if (!WriteFileType(pMux, FALSE))
     {
@@ -2081,9 +2156,9 @@ Mp4Mux* Mp4Mux_Create(const TCHAR* pPath,
 
     /* mdat: size patched on finish; samples stream in after this header. */
     pMux->mdatStart = GetFileOffset(pMux->file);
-    memset(mdat_header, 0, sizeof(mdat_header));
-    memcpy(mdat_header + 4, "mdat", 4);
-    if (!WriteFileBytes(pMux, mdat_header, sizeof(mdat_header)))
+    CRT_Memory_Set(mdat_header, 0, sizeof(mdat_header));
+    CRT_Memory_Copy(mdat_header + 4, "mdat", 4);
+    if (pMux->mdatStart < 0 || !WriteFileBytes(pMux, mdat_header, sizeof(mdat_header)))
     {
         Mp4Mux_Destroy(pMux);
         return NULL;
@@ -2114,8 +2189,12 @@ Mp4Mux* Mp4Mux_CreateFragmented(const TCHAR* pPath,
                                 double         fullDurationSeconds)
 {
     Mp4Mux* pMux;
+    byte_t  empty_asc = 0;
+    bool_t  has_asc;
+    uint32_t copied_asc;
+    const byte_t* asc_source;
 
-    pMux = (Mp4Mux*)calloc(1, sizeof(*pMux));
+    pMux = (Mp4Mux*)AllocateZeroedMux(1, sizeof(*pMux));
     if (NULL == pMux)
     {
         return NULL;
@@ -2130,25 +2209,25 @@ Mp4Mux* Mp4Mux_CreateFragmented(const TCHAR* pPath,
                              NULL);
     if (INVALID_HANDLE_VALUE == pMux->file)
     {
-        free(pMux);
+        ReleaseMuxBytes(pMux);
         return NULL;
     }
     pMux->fragmented          = 1;
     pMux->fullDurationSeconds = fullDurationSeconds;
     pMux->width               = width;
     pMux->height              = height;
-    pMux->videoTimescale      = videoTimescale ? videoTimescale : 90000u;
+    pMux->videoTimescale      = videoTimescale ? videoTimescale : MUX_DEFAULT_VIDEO_TIMESCALE;
     pMux->hasAudio            = hasAudio;
     pMux->audioTimescale      = audioTimescale;
     pMux->audioSampleRate     = audioSampleRate;
     pMux->audioChannels       = audioChannels;
     StoreParameterSet(pSps, spsSize, pMux->sps, &pMux->spsSize);
     StoreParameterSet(pPps, ppsSize, pMux->pps, &pMux->ppsSize);
-    if (hasAudio && NULL != pAsc && ascSize > 0 && ascSize <= sizeof(pMux->asc))
-    {
-        memcpy(pMux->asc, pAsc, ascSize);
-        pMux->ascSize = ascSize;
-    }
+    has_asc = hasAudio && NULL != pAsc && ascSize > 0 && ascSize <= sizeof(pMux->asc);
+    copied_asc = ascSize & ((uint32_t)0 - (uint32_t)has_asc);
+    asc_source = has_asc ? pAsc : &empty_asc;
+    CRT_Memory_Copy(pMux->asc, asc_source, copied_asc);
+    pMux->ascSize = copied_asc;
     if (!WriteFragmentedInit(pMux))
     {
         Mp4Mux_Destroy(pMux);
@@ -2208,7 +2287,7 @@ int Mp4Mux_FlushFragment(Mp4Mux* pMux)
  *  Routes a complete video sample through the selected output mode.
  *  Payload failures latch before sample-count publication.
  */
-int Mp4Mux_AddVideo(Mp4Mux* pMux, const byte_t* pData, uint32_t size, uint32_t duration, int keyframe)
+extern FORCE_INLINE int Mp4Mux_AddVideo(Mp4Mux* pMux, const byte_t* pData, uint32_t size, uint32_t duration, int keyframe)
 {
     bool_t           has_input;
     bool_t           empty;
@@ -2244,7 +2323,7 @@ int Mp4Mux_AddVideo(Mp4Mux* pMux, const byte_t* pData, uint32_t size, uint32_t d
  *  Routes a complete audio sample through the selected output mode.
  *  Payload failures latch before sample-count publication.
  */
-int Mp4Mux_AddAudio(Mp4Mux* pMux, const byte_t* pData, uint32_t size, uint32_t duration)
+extern FORCE_INLINE int Mp4Mux_AddAudio(Mp4Mux* pMux, const byte_t* pData, uint32_t size, uint32_t duration)
 {
     bool_t           has_input;
     bool_t           empty;
@@ -2311,7 +2390,7 @@ int Mp4Mux_Finish(Mp4Mux* pMux)
         return 0;
     }
     mdat_size = (uint64_t)(mdat_end - pMux->mdatStart);
-    if (mdat_size > 0xFFFFFFFFu)
+    if (mdat_size > UINT32_MAX)
     {
         return 0; /* the proxy is not expected to exceed 4 GiB */
     }
@@ -2319,17 +2398,17 @@ int Mp4Mux_Finish(Mp4Mux* pMux)
     {
         return 0;
     }
-    patch[0] = (uint8_t)(mdat_size >> 24);
-    patch[1] = (uint8_t)(mdat_size >> 16);
-    patch[2] = (uint8_t)(mdat_size >> 8);
+    patch[0] = (uint8_t)(mdat_size >> (MUX_BITS_PER_U32 - MUX_BITS_PER_BYTE));
+    patch[1] = (uint8_t)(mdat_size >> MUX_BITS_PER_U16);
+    patch[2] = (uint8_t)(mdat_size >> MUX_BITS_PER_BYTE);
     patch[3] = (uint8_t)mdat_size;
     if ((!WriteFileBytes(pMux, patch, 4)) || (!SetFileOffset(pMux->file, mdat_end)))
     {
         return 0;
     }
 
-    memset(&buffer, 0, sizeof(buffer));
-    movie_timescale = 1000;
+    CRT_Memory_Set(&buffer, 0, sizeof(buffer));
+    movie_timescale = MUX_MOVIE_TIMESCALE;
     video_seconds_scaled =
         pMux->videoTimescale ? GetTrackDuration(pMux->video, pMux->videoCount) * movie_timescale / pMux->videoTimescale
                              : 0;
@@ -2349,8 +2428,8 @@ int Mp4Mux_Finish(Mp4Mux* pMux)
         BufferU32(&buffer, 0);
         BufferU32(&buffer, movie_timescale);
         BufferU32(&buffer, movie_duration);
-        BufferU32(&buffer, 0x00010000); /* rate 1.0 */
-        BufferU16(&buffer, 0x0100);     /* volume 1.0 */
+        BufferU32(&buffer, MUX_MATRIX_UNITY_16_16); /* rate 1.0 */
+        BufferU16(&buffer, MUX_UNITY_VOLUME_8_8);   /* volume 1.0 */
         BufferU16(&buffer, 0);
         BufferU32(&buffer, 0);
         BufferU32(&buffer, 0);
@@ -2361,7 +2440,7 @@ int Mp4Mux_Finish(Mp4Mux* pMux)
         BufferU32(&buffer, 0);
         BufferU32(&buffer, 0);
         BufferU32(&buffer, 0);
-        BufferU32(&buffer, (pMux->hasAudio && pMux->audioCount > 0) ? 3u : 2u); /* next track ID */
+        BufferU32(&buffer, (pMux->hasAudio && pMux->audioCount > 0) ? 3U : 2U); /* next track ID */
         BoxClose(&buffer, mvhd);
     }
     WriteTrack(pMux, &buffer, 1, movie_timescale);
@@ -2373,7 +2452,7 @@ int Mp4Mux_Finish(Mp4Mux* pMux)
 
     pMux->failed = pMux->failed || buffer.failed;
     ok           = !pMux->failed && (NULL != buffer.data) && WriteFileBytes(pMux, buffer.data, buffer.size);
-    free(buffer.data);
+    ReleaseMuxBytes(buffer.data);
     return ok && !pMux->failed;
 }
 
@@ -2383,7 +2462,7 @@ int Mp4Mux_Finish(Mp4Mux* pMux)
  *  Closes output and frees ordinary sample arrays, fragment buffers and owner
  *  storage. NULL is accepted.
  */
-void Mp4Mux_Destroy(Mp4Mux* pMux)
+extern FORCE_INLINE void Mp4Mux_Destroy(Mp4Mux* pMux)
 {
     if (NULL == pMux)
     {
@@ -2393,9 +2472,9 @@ void Mp4Mux_Destroy(Mp4Mux* pMux)
     {
         (void)CloseHandle(pMux->file);
     }
-    free(pMux->video);
-    free(pMux->audio);
-    free(pMux->fragVideoData.data);
-    free(pMux->fragAudioData.data);
-    free(pMux);
+    ReleaseMuxBytes(pMux->video);
+    ReleaseMuxBytes(pMux->audio);
+    ReleaseMuxBytes(pMux->fragVideoData.data);
+    ReleaseMuxBytes(pMux->fragAudioData.data);
+    ReleaseMuxBytes(pMux);
 }
