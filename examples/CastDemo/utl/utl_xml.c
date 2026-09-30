@@ -794,11 +794,18 @@ static FORCE_INLINE uint32_t GetByte(const Cursor_t* cursor)
  */
 static FORCE_INLINE bool_t IsRawEqual(Utl_Xml_Text_t first, Utl_Xml_Text_t second)
 {
+    const byte_t* firstData;
+    const byte_t* secondData;
+    uint32_t     byteCount;
     bool_t equal;
-    equal = (first.byteCount == second.byteCount);
-    if (equal && (0 < first.byteCount))
+
+    firstData  = first.data;
+    secondData = second.data;
+    byteCount  = first.byteCount;
+    equal = (byteCount == second.byteCount);
+    if (equal && (0 < byteCount))
     {
-        equal = (0 == CRT_Memory_Compare(first.data, second.data, first.byteCount));
+        equal = (0 == CRT_Memory_Compare(firstData, secondData, byteCount));
     }
     return equal;
 }

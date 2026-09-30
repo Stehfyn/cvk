@@ -1101,6 +1101,7 @@ static FORCE_INLINE void CopyJsonString(const cvkJsonValue* pValue, char* pOut, 
     bool_t   has_value;
     bool_t   is_string;
     uint64_t length;
+    const void* text;
 
     LOGASSERT(NULL != pOut);
     LOGASSERT(0 < capacity);
@@ -1112,6 +1113,7 @@ static FORCE_INLINE void CopyJsonString(const cvkJsonValue* pValue, char* pOut, 
         is_string = (CVK_JSON_STRING == pValue->kind);
         if (is_string)
         {
+            text = pValue->pText;
             length = pValue->textLength;
             if (capacity <= length)
             {
@@ -1119,7 +1121,7 @@ static FORCE_INLINE void CopyJsonString(const cvkJsonValue* pValue, char* pOut, 
             }
             if (0 < length)
             {
-                CRT_Memory_Copy(pOut, pValue->pText, length);
+                CRT_Memory_Copy(pOut, text, length);
             }
             pOut[length] = 0;
         }

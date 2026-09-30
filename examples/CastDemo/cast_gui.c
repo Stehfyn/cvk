@@ -652,8 +652,10 @@ static FORCE_INLINE void Utf8ToWide(const char* pText, WCHAR* pWide, int capacit
 {
     const char* safe_text = (NULL != pText) ? pText : "";
 
-    pWide[0] = L'\0';
-    (void)MultiByteToWideChar(CP_UTF8, 0, safe_text, -1, pWide, capacity);
+    if (0 == MultiByteToWideChar(CP_UTF8, 0, safe_text, -1, pWide, capacity))
+    {
+        pWide[0] = L'\0';
+    }
 }
 
 static FORCE_INLINE void Utf8ToNative(const char* pText, LPTSTR pNative, uint32_t capacity)
