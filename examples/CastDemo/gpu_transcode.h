@@ -13,7 +13,7 @@
 #include "os/os_atomic.h"
 #include <stddef.h>
 #include <stdint.h>
-#include <wchar.h>
+#include <tchar.h>
 
 /* The full GPU proxy transcoder: an MP4 source decoded on the GPU, box-downscaled to outWidth (its
 ** height derived from the source aspect ratio), and re-encoded as a low-bitrate H.264 proxy. */
@@ -40,7 +40,7 @@ void GpuTranscode_InitializeConfig(GpuTranscodeConfig* pConfig);
 
 /* Opens the source and creates the GPU decode and encode sessions for the given settings. Returns
 ** NULL on failure with a reason in pReport. */
-GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const wchar_t* pFile, const GpuTranscodeConfig* pConfig, char* pReport, size_t reportCapacity);
+GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, const GpuTranscodeConfig* pConfig, char* pReport, size_t reportCapacity);
 
 /* The average inter-frame motion of the most recently produced frame (0..1), from the optical-flow
 ** estimator. Meaningful only when motionAdaptive is set. */
@@ -69,8 +69,8 @@ void GpuTranscode_Close(GpuTranscoder* pTranscoder);
 ** passthrough, interleaved and timed from the source). If pCancel is non-NULL and becomes non-zero
 ** the transcode stops early. Writes diagnostics to pReport. Returns 1 on success. */
 int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
-                          const wchar_t*            pSource,
-                          const wchar_t*            pDest,
+                          const TCHAR*              pSource,
+                          const TCHAR*              pDest,
                           const GpuTranscodeConfig* pConfig,
                           unsigned                  startFrame,
                           unsigned                  maxFrames,

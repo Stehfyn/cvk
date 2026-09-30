@@ -3647,12 +3647,7 @@ static FORCE_INLINE void CastWindow_OnDrawItem(HWND hWnd, const DRAWITEMSTRUCT* 
     pApp = GetApp(hWnd);
     if (item->CtlType == ODT_COMBOBOX && item->CtlID == ID_SUBTITLE)
     {
-        PaintSubtitleItem(item->hwndItem,
-                          item->hDC,
-                          item->rcItem,
-                          item->itemID == (UINT)-1 ? -1 : (int)item->itemID,
-                          item->itemState,
-                          pApp);
+        PaintSubtitleItem(item->hwndItem, item->hDC, item->rcItem, item->itemID == (UINT)-1 ? -1 : (int)item->itemID, item->itemState, pApp);
         return;
     }
     if (item->CtlType != ODT_BUTTON)
@@ -3995,10 +3990,12 @@ static FORCE_INLINE LRESULT CastWindow_OnNotify(HWND hWnd, int idFrom, NMHDR* pH
         if (slider)
         {
             if (draw->dwDrawStage == CDDS_PREPAINT)
+            {
                 return CDRF_NOTIFYITEMDRAW;
+            }
             if (draw->dwDrawStage == CDDS_ITEMPREPAINT)
             {
-                RECT rect;
+                RECT                rect;
                 const D2D1_COLOR_F* fill;
 
                 rect.left = 0;
@@ -4051,9 +4048,9 @@ static FORCE_INLINE void CastWindow_OnHScroll(HWND hWnd, HWND hControl, UINT cod
 
     if (hControl == pApp->hGain)
     {
-        TCHAR text[64];
+        TCHAR      text[64];
         NativeText writer;
-        unsigned percent = (unsigned)SendMessage(pApp->hGain, TBM_GETPOS, 0, 0);
+        unsigned   percent = (unsigned)SendMessage(pApp->hGain, TBM_GETPOS, 0, 0);
         NativeText_Initialize(&writer, text, ARRAYSIZE(text));
         NativeText_AppendString(&writer, TEXT("Audio gain "));
         NativeText_AppendUnsigned(&writer, percent, 1);
@@ -4118,7 +4115,6 @@ static FORCE_INLINE void OnPreviewDone(HWND hWnd, const PreviewResult* pResult)
     {
         (void)SetWindowText(pApp->hCfgReadout, TEXT("Preview failed (need a local AVC MP4 with an H.264 track)."));
     }
-    (void)pResult; /* App-owned storage; nothing to free */
 }
 
 /*************************************************************************************************/

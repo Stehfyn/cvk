@@ -568,7 +568,7 @@ void GpuTranscode_InitializeConfig(GpuTranscodeConfig* pConfig)
  *  Opens the source and creates its shared GPU device, decoder, encoder and
  *  frame-ring storage. Failed resource setup unwinds through Close.
  */
-GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const wchar_t* pFile, const GpuTranscodeConfig* pConfig, char* pReport, size_t reportCapacity)
+GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, const GpuTranscodeConfig* pConfig, char* pReport, size_t reportCapacity)
 {
     Mp4Demux*                        p_demux;
     uint32_t                         sps_size;
@@ -945,8 +945,8 @@ void GpuTranscode_Close(GpuTranscoder* pTranscoder)
  *  AAC up to each encoded frame's end before finalizing the clip.
  */
 int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
-                          const wchar_t*            pSource,
-                          const wchar_t*            pDest,
+                          const TCHAR*              pSource,
+                          const TCHAR*              pDest,
                           const GpuTranscodeConfig* pConfig,
                           unsigned                  startFrame,
                           unsigned                  maxFrames,

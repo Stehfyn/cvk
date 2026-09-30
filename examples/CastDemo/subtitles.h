@@ -18,7 +18,7 @@
 **===============================================================================================*/
 
 #include <stdint.h>
-#include <wchar.h>
+#include <tchar.h>
 #include "os/os_types.h"
 
 /*=================================================================================================
@@ -39,8 +39,8 @@
 /** \brief Sidecar or embedded text-track selection with owned display fields. */
 typedef struct SubtitleTrack
 {
-    wchar_t  path[260];
-    wchar_t  label[320];
+    TCHAR    path[260];
+    TCHAR    label[320];
     char     language[16];
     int32_t  embedded;      /* -1: sidecar; otherwise zero-based MP4 text track */
     uint64_t matroskaTrack; /* nonzero: embedded Matroska UTF-8 track number */
@@ -115,7 +115,7 @@ void Subtitles_Initialize(Subtitles_Workspace_t* workspace, byte_t* source, byte
  *
  * \retval     None
  */
-void Subtitles_InitializeFileTrack(const wchar_t* path, SubtitleTrack* track);
+void Subtitles_InitializeFileTrack(const TCHAR* path, SubtitleTrack* track);
 
 /*************************************************************************************************/
 /**
@@ -161,7 +161,7 @@ uint32_t Subtitles_GetByteCount(const Subtitles_Workspace_t* workspace);
  * \retval     count   Number of initialized entries, at most SUBTITLE_MAX_TRACKS.
  * \retval     0       No supported tracks or the media path could not be resolved.
  */
-uint32_t Subtitles_Find(const wchar_t* media, SubtitleTrack tracks[SUBTITLE_MAX_TRACKS]);
+uint32_t Subtitles_Find(const TCHAR* media, SubtitleTrack tracks[SUBTITLE_MAX_TRACKS]);
 
 /*************************************************************************************************/
 /**

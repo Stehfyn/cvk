@@ -210,8 +210,8 @@ static FORCE_INLINE bool_t DecodeUtf8(Text* destination, const byte_t* data, uin
  *
  * \retval        count   Updated number of initialized track records.
  */
-static FORCE_INLINE unsigned FindFiles(const wchar_t* directory,
-                                       const wchar_t* stem,
+static FORCE_INLINE unsigned FindFiles(const TCHAR* directory,
+                                       const TCHAR* stem,
                                        SubtitleTrack* tracks,
                                        unsigned       count);
 
@@ -690,8 +690,8 @@ static FORCE_INLINE bool_t DecodeUtf8(Text* destination, const byte_t* data, uin
  *  Filters directory entries by subtitle extension and optional media stem.
  *  Every processed entry advances enumeration, including entries skipped by filters.
  */
-static FORCE_INLINE unsigned FindFiles(const wchar_t* directory,
-                                       const wchar_t* stem,
+static FORCE_INLINE unsigned FindFiles(const TCHAR* directory,
+                                       const TCHAR* stem,
                                        SubtitleTrack* tracks,
                                        unsigned       count)
 {
@@ -1177,7 +1177,7 @@ void Subtitles_Initialize(Subtitles_Workspace_t* workspace, byte_t* source, byte
  *  Copies the path and display label and derives a short lowercase language
  *  suffix from the filename when present.
  */
-void Subtitles_InitializeFileTrack(const wchar_t* path, SubtitleTrack* track)
+void Subtitles_InitializeFileTrack(const TCHAR* path, SubtitleTrack* track)
 {
     const WCHAR* name;
     WCHAR        stem[260];
@@ -1262,7 +1262,7 @@ uint32_t Subtitles_GetByteCount(const Subtitles_Workspace_t* workspace)
  *  Searches adjacent sidecar files and the Subs directory, then appends supported
  *  MP4 and Matroska tracks within the fixed track-list capacity.
  */
-uint32_t Subtitles_Find(const wchar_t* media, SubtitleTrack tracks[SUBTITLE_MAX_TRACKS])
+uint32_t Subtitles_Find(const TCHAR* media, SubtitleTrack tracks[SUBTITLE_MAX_TRACKS])
 {
     WCHAR    directory[260];
     WCHAR    stem[260];

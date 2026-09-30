@@ -93,7 +93,7 @@ void AudioGain_Apply(int16_t* samples, size_t count, unsigned percent)
  *  Opens the first audio stream through Media Foundation and checks its native
  *  subtype. AAC and MP3 bypass conversion; inspection failure returns an error.
  */
-int AudioGain_NeedsConversion(const wchar_t* source, char* error, size_t errorCapacity)
+int AudioGain_NeedsConversion(const TCHAR* source, char* error, size_t errorCapacity)
 {
     IMFSourceReader* reader = NULL;
     IMFMediaType*    type   = NULL;
@@ -144,8 +144,8 @@ done:
  *  preserving presentation timestamps. Cancellation and errors release the COM
  *  objects and delete the incomplete output file.
  */
-int AudioGain_Convert(const wchar_t* source,
-                      const wchar_t* dest,
+int AudioGain_Convert(const TCHAR* source,
+                      const TCHAR* dest,
                       unsigned       percent,
                       volatile long* cancel,
                       volatile long* progress,

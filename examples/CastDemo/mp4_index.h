@@ -15,7 +15,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <wchar.h>
+#include <tchar.h>
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -61,7 +61,7 @@
  * \retval nonzero Complete index count, no greater than capacity.
  * \retval 0 No retained index; leave the requested seek time unchanged.
  */
-unsigned Mp4Index_ReadKeyframes(const wchar_t* pFile, double* pTimes, unsigned capacity);
+unsigned Mp4Index_ReadKeyframes(const TCHAR* pFile, double* pTimes, unsigned capacity);
 
 /*************************************************************************************************/
 /**

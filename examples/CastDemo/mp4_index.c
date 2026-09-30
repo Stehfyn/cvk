@@ -891,7 +891,7 @@ static FORCE_INLINE uint32_t ReadMovieTimes(HANDLE file, const Box* root, double
  *  Opens the file, locates movie tracks and collects the first available video
  *  sync-sample index before closing the handle.
  */
-unsigned Mp4Index_ReadKeyframes(const wchar_t* pFile, double* pTimes, unsigned capacity)
+unsigned Mp4Index_ReadKeyframes(const TCHAR* pFile, double* pTimes, unsigned capacity)
 {
     bool_t        has_storage;
     bool_t        empty;
