@@ -102,6 +102,7 @@ target_link_libraries(ImmersiveWindowDemo PRIVATE
     cast-formats
     crt-abi
     BufferOverflowU
+    ntdll
     kernel32)
 # Optional real-GPU comparison against the pinned reference implementation.
 set(CVK_DEMO_TEST_VIDEO "" CACHE FILEPATH "Video fixture for the optional CDX/CVK pixel comparison")

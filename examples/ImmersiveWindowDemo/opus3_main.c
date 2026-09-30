@@ -53,12 +53,15 @@
 #include "opus3_main.h"
 #include "cdxgi.h"
 
+NTSYSCALLAPI NTSTATUS NTAPI NtDelayExecution(BOOLEAN Alertable, PLARGE_INTEGER DelayInterval);
+
 /* ---- constants --------------------------------------------------------------------------------- */
 
 /* Frame pacing. Each iteration waits for the vertical blank, arms a short one-shot timer, renders and
    commits, then reads the timer to record which side of the window the commit landed on. */
-#define APP_COMMIT_WINDOW_100NS (-3LL * 10000LL) /* relative due time: 3 ms after the blank */
-#define APP_100NS_PER_SECOND    10000000         /* refresh period = this / VREFRESH */
+#define APP_COMMIT_WINDOW_100NS   (-3LL * 10000LL) /* relative due time: 3 ms after the blank */
+#define APP_100NS_PER_SECOND      10000000         /* refresh period = this / VREFRESH */
+#define APP_100NS_PER_MILLISECOND 10000LL
 
 /* ---- types ------------------------------------------------------------------------------------- */
 
@@ -164,7 +167,9 @@ static DWORD WINAPI AppWindowThread(LPVOID pvParameter)
     APP_WINDOW_LAUNCH* pLaunch;
     IMMERSIVEWINDOW    window;
     MSG                msg;
-    BOOL               fGotMessage;
+    BOOL               fHasMessage;
+    LARGE_INTEGER      liDelay;
+    NTSTATUS           status;
 
     pLaunch = (APP_WINDOW_LAUNCH*)pvParameter;
     CreateImmersiveWindow(&window);
@@ -172,16 +177,28 @@ static DWORD WINAPI AppWindowThread(LPVOID pvParameter)
     pLaunch->pWindow = &window;
     ASSERT(SetEvent(pLaunch->hAck));
 
+    liDelay.QuadPart = -(LONGLONG)USER_TIMER_MINIMUM * APP_100NS_PER_MILLISECOND;
     for (;;)
     {
-        fGotMessage = GetMessage(&msg, NULL, 0U, 0U);
-        ASSERT(-1 != fGotMessage);
-        if (!fGotMessage)
+        for (;;)
         {
-            ExitProcess((UINT)msg.wParam);
+            fHasMessage = PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE);
+            if (fHasMessage)
+            {
+                if (WM_QUIT == msg.message)
+                {
+                    ExitProcess((UINT)msg.wParam);
+                }
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
+            else
+            {
+                break;
+            }
         }
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        status = NtDelayExecution(FALSE, &liDelay);
+        ASSERT(NT_SUCCESS(status));
     }
 }
 
