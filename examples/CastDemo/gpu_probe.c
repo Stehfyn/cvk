@@ -15,13 +15,19 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <vulkan/vulkan.h>
+#include <Windows.h> // IWYU pragma: keep
+#include <stdint.h>
+#include <minwindef.h>
+#include <vk_video/vulkan_video_codec_h264std.h>
 #include <volk.h>
+#include <vulkan/vulkan_core.h>
 #include "cvk/cvk.h"
 #include "gpu_probe.h"
 #include "crt/crt_memory.h"
 #include "os/os_assert.h"
 #include "os/os_compiler.h"
+#include "os/os_types.h"
+#include "os/os_memory.h"
 #include "utl/utl_decimal.h"
 
 /*=================================================================================================
@@ -129,7 +135,7 @@ static FORCE_INLINE bool_t HasExtension(const GpuProbe_Storage_t* storage, const
  * \param[in] text   Counted source
  * \param[in] bytes   Source bytes
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void AppendText(GpuProbe_t* probe, const char_t* text, uint32_t bytes);
 
@@ -146,7 +152,7 @@ static FORCE_INLINE void AppendText(GpuProbe_t* probe, const char_t* text, uint3
  * \param[in,out] probe   Report owner
  * \param[in] value   Numeric property
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void AppendNumber(GpuProbe_t* probe, uint32_t value);
 
@@ -163,7 +169,7 @@ static FORCE_INLINE void AppendNumber(GpuProbe_t* probe, uint32_t value);
  * \param[in,out] probe   Report owner
  * \param[in] answer   Capability result
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void AppendQuestion(GpuProbe_t* probe, bool_t answer);
 
@@ -277,7 +283,7 @@ static FORCE_INLINE bool_t ReadDecodeProfile(GpuProbe_t* probe, VkPhysicalDevice
  * \param[in,out] probe   Selected snapshot and report
  * \param[in] physical   Selected physical device
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void ReportSelected(GpuProbe_t* probe, VkPhysicalDevice physical);
 

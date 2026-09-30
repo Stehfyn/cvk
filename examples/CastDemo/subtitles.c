@@ -12,10 +12,16 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <windows.h>
+#include <Windows.h> // IWYU pragma: keep
+#include <minwinbase.h>
+#include <fileapi.h>
+#include <WinBase.h>
+#include <minwindef.h>
+#include <handleapi.h>
 #include <stringapiset.h>
 #include <stdint.h>
-#include <wchar.h>
+#include <winnt.h>
+#include <WinNls.h>
 #include "subtitles.h"
 #include "mp4_demux.h"
 #include "mkv_subtitles.h"
@@ -51,6 +57,7 @@
 #define SUBTITLE_NEWLINE                ("\n")
 #define SUBTITLE_MP4_LANGUAGE_CAPACITY  (4)
 #define SUBTITLE_UINT64_DIGITS           (20)
+#define SUBTITLE_MKV_NAME_CAPACITY      (256)
 #define SUBTITLE_LOAD_ERROR                                                                                            \
     ("Cannot read subtitles: invalid input or storage capacity exceeded. "                                             \
      "Use UTF-8/UTF-16 SRT or WebVTT, MP4 tx3g, or MKV UTF-8/SubRip text.")
@@ -285,7 +292,7 @@ static FORCE_INLINE int TextSample(void* user, double start, double end, const b
  *
  * \param[in,out] text   Exclusively owned decoded scratch
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void NormalizeNewlines(Text* text);
 
@@ -355,7 +362,7 @@ static FORCE_INLINE bool_t ReadSidecar(Subtitles_Workspace_t* workspace, const S
  * \param[out] error      Writable description
  * \param[in]  capacity   Writable bytes
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void WriteLoadError(char_t* error, uint32_t capacity);
 
@@ -364,7 +371,7 @@ static FORCE_INLINE void WriteLoadError(char_t* error, uint32_t capacity);
 **===============================================================================================*/
 
 /*************************************************************************************************/
-/** \par Details: Finds the last matching native UTF-16 code unit in terminated text. */
+/** \brief Finds the last matching native UTF-16 code unit in terminated text. */
 static FORCE_INLINE const WCHAR* FindLastWide(const WCHAR* text, WCHAR character)
 {
     const WCHAR* found;
@@ -383,7 +390,7 @@ static FORCE_INLINE const WCHAR* FindLastWide(const WCHAR* text, WCHAR character
 }
 
 /*************************************************************************************************/
-/** \par Details: Appends terminated native text while retaining the destination terminator. */
+/** \brief Appends terminated native text while retaining the destination terminator. */
 static FORCE_INLINE bool_t AppendWide(WCHAR* output, uint32_t capacity, const WCHAR* input)
 {
     uint32_t used;
@@ -408,7 +415,7 @@ static FORCE_INLINE bool_t AppendWide(WCHAR* output, uint32_t capacity, const WC
 }
 
 /*************************************************************************************************/
-/** \par Details: Copies terminated native text with bounded truncation. */
+/** \brief Copies terminated native text with bounded truncation. */
 static FORCE_INLINE bool_t CopyWide(WCHAR* output, uint32_t capacity, const WCHAR* input)
 {
     LOGASSERT(NULL != output);
@@ -418,7 +425,7 @@ static FORCE_INLINE bool_t CopyWide(WCHAR* output, uint32_t capacity, const WCHA
 }
 
 /*************************************************************************************************/
-/** \par Details: Widens ASCII display fragments into a bounded native label. */
+/** \brief Widens ASCII display fragments into a bounded native label. */
 static FORCE_INLINE bool_t AppendAsciiWide(WCHAR* output, uint32_t capacity, const char* input)
 {
     uint32_t used;
@@ -443,7 +450,7 @@ static FORCE_INLINE bool_t AppendAsciiWide(WCHAR* output, uint32_t capacity, con
 }
 
 /*************************************************************************************************/
-/** \par Details: Uses the counted decimal writer for a bounded native label. */
+/** \brief Uses the counted decimal writer for a bounded native label. */
 static FORCE_INLINE bool_t AppendUnsignedWide(WCHAR* output, uint32_t capacity, uint64_t value)
 {
     byte_t   digits[SUBTITLE_UINT64_DIGITS];
@@ -470,7 +477,7 @@ static FORCE_INLINE bool_t AppendUnsignedWide(WCHAR* output, uint32_t capacity, 
 }
 
 /*************************************************************************************************/
-/** \par Details: Copies a terminated ASCII field with bounded truncation. */
+/** \brief Copies a terminated ASCII field with bounded truncation. */
 static FORCE_INLINE bool_t CopyAscii(char* output, uint32_t capacity, const char* input)
 {
     uint32_t index;
@@ -672,7 +679,7 @@ static FORCE_INLINE bool_t DecodeUtf8(Text* destination, const byte_t* data, uin
                 break;
             }
             LOGASSERT(UTL_UNICODE_READ_SCALAR == read_result);
-            written = Utl_Unicode_WriteUtf8(scalar, (byte_t*)destination->data + offset, byte_count - offset);
+            written = Utl_Unicode_WriteUtf8(scalar, destination->data + offset, byte_count - offset);
             LOGASSERT(0 < written);
             offset += written;
         }
@@ -696,8 +703,8 @@ static FORCE_INLINE unsigned FindFiles(const TCHAR* directory,
                                        unsigned       count)
 {
     WIN32_FIND_DATAW entry;
-    WCHAR            pattern[260];
-    WCHAR            path[260];
+    WCHAR            pattern[SUBTITLE_PATH_CAPACITY];
+    WCHAR            path[SUBTITLE_PATH_CAPACITY];
     HANDLE           find;
     bool_t           pattern_fits;
 
@@ -1094,6 +1101,7 @@ static FORCE_INLINE bool_t ReadSidecar(Subtitles_Workspace_t* workspace, const S
     bool_t        valid;
     bool_t        closed;
 
+    count = 0;
     file  = CreateFileW(track->path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     valid = (INVALID_HANDLE_VALUE != file);
     if (valid)
@@ -1180,7 +1188,7 @@ void Subtitles_Initialize(Subtitles_Workspace_t* workspace, byte_t* source, byte
 void Subtitles_InitializeFileTrack(const TCHAR* path, SubtitleTrack* track)
 {
     const WCHAR* name;
-    WCHAR        stem[260];
+    WCHAR        stem[SUBTITLE_PATH_CAPACITY];
     const WCHAR* dot;
     uint32_t     name_length;
     uint32_t     index;
@@ -1264,10 +1272,10 @@ uint32_t Subtitles_GetByteCount(const Subtitles_Workspace_t* workspace)
  */
 uint32_t Subtitles_Find(const TCHAR* media, SubtitleTrack tracks[SUBTITLE_MAX_TRACKS])
 {
-    WCHAR    directory[260];
-    WCHAR    stem[260];
-    WCHAR    subs[260];
-    WCHAR*   slash;
+    WCHAR    directory[SUBTITLE_PATH_CAPACITY];
+    WCHAR    stem[SUBTITLE_PATH_CAPACITY];
+    WCHAR    subs[SUBTITLE_PATH_CAPACITY];
+    const WCHAR* slash;
     const WCHAR* dot;
     uint32_t count;
     uint32_t index;
@@ -1289,7 +1297,7 @@ uint32_t Subtitles_Find(const TCHAR* media, SubtitleTrack tracks[SUBTITLE_MAX_TR
     {
         return 0;
     }
-    slash = (WCHAR*)FindLastWide(directory, L'\\');
+    slash = FindLastWide(directory, L'\\');
     if (NULL == slash)
     {
         return 0;
@@ -1299,7 +1307,7 @@ uint32_t Subtitles_Find(const TCHAR* media, SubtitleTrack tracks[SUBTITLE_MAX_TR
     {
         return 0;
     }
-    slash[1] = L'\0';
+    directory[(slash - directory) + 1] = L'\0';
     dot      = FindLastWide(stem, L'.');
     if (NULL != dot)
     {
@@ -1341,7 +1349,7 @@ uint32_t Subtitles_Find(const TCHAR* media, SubtitleTrack tracks[SUBTITLE_MAX_TR
         total = MkvSubtitles_Find(media, mkv, SUBTITLE_MAX_TRACKS - count);
         for (index = 0; index < total; ++index)
         {
-            WCHAR name[256];
+            WCHAR name[SUBTITLE_MKV_NAME_CAPACITY];
 
             name[0] = L'\0';
             Subtitles_InitializeFileTrack(media, &tracks[count]);

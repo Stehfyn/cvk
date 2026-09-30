@@ -129,7 +129,7 @@ static FORCE_INLINE Utl_Mpeg4_Span_t Bytes(const byte_t* data, uint32_t count);
  * \param[in]     bytes     Independent header encoding
  * \param[in]     extent    Resolved box size and enclosing file extent
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckBox(TestContext_t* context, Utl_Mpeg4_Span_t bytes, uint64_t extent);
 
@@ -146,7 +146,7 @@ static FORCE_INLINE void CheckBox(TestContext_t* context, Utl_Mpeg4_Span_t bytes
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckBoxBoundaries(TestContext_t* context);
 
@@ -162,7 +162,7 @@ static FORCE_INLINE void CheckBoxBoundaries(TestContext_t* context);
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckFullBox(TestContext_t* context);
 
@@ -180,7 +180,7 @@ static FORCE_INLINE void CheckFullBox(TestContext_t* context);
  * \param[in] model   Required retained complete model
  * \param[in] bytes   Independent prefix under test
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckFileTypePrefix(const Utl_Mpeg4_FileType_t* model, Utl_Mpeg4_Span_t bytes);
 
@@ -198,7 +198,7 @@ static FORCE_INLINE void CheckFileTypePrefix(const Utl_Mpeg4_FileType_t* model, 
  * \param[in]     model     Complete file-type model
  * \param[in]     bytes     Independent complete payload encoding
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckFileTypeCapacities(TestContext_t*              context,
                                                  const Utl_Mpeg4_FileType_t* model,
@@ -217,7 +217,7 @@ static FORCE_INLINE void CheckFileTypeCapacities(TestContext_t*              con
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckFileType(TestContext_t* context);
 
@@ -234,7 +234,7 @@ static FORCE_INLINE void CheckFileType(TestContext_t* context);
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckBitstream(TestContext_t* context);
 
@@ -251,7 +251,7 @@ static FORCE_INLINE void CheckBitstream(TestContext_t* context);
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckBitstreamFailure(TestContext_t* context);
 
@@ -268,7 +268,7 @@ static FORCE_INLINE void CheckBitstreamFailure(TestContext_t* context);
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckUnsigned(TestContext_t* context);
 
@@ -285,7 +285,7 @@ static FORCE_INLINE void CheckUnsigned(TestContext_t* context);
  *
  * \param[in,out] context   Required reusable fixture owner
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckTableHeader(TestContext_t* context);
 
@@ -301,7 +301,7 @@ static FORCE_INLINE void CheckTableHeader(TestContext_t* context);
  *  - 002 A present zero-entry stss shall accept no sync sample.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckTableHeaderRejection(void);
 
@@ -317,7 +317,7 @@ static FORCE_INLINE void CheckTableHeaderRejection(void);
  *  - 002 Missing samples and an exhausted table shall preserve published results.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckTimingRuns(void);
 
@@ -332,7 +332,7 @@ static FORCE_INLINE void CheckTimingRuns(void);
  *  - 001 Every shorter entry shall leave all output and cursor members unchanged.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckTimingFailure(void);
 
@@ -347,7 +347,7 @@ static FORCE_INLINE void CheckTimingFailure(void);
  *  - 001 Zero-valued syntax shall not create a non-progressing cursor or an invented format rejection.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckZeroTiming(void);
 
@@ -363,7 +363,7 @@ static FORCE_INLINE void CheckZeroTiming(void);
  *  - 002 The independent sequence one, three, five shall consume exactly three entries.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckSyncSamples(void);
 
@@ -379,7 +379,7 @@ static FORCE_INLINE void CheckSyncSamples(void);
  *
  * \param[in] run   Decoded second run, beginning at sample four
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckSampleQueries(const Utl_Mpeg4_TimeToSampleRun_t* run);
 
@@ -394,7 +394,7 @@ static FORCE_INLINE void CheckSampleQueries(const Utl_Mpeg4_TimeToSampleRun_t* r
  *  - 001 The second run shall reject overflow while preserving the first run and cursor.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckTimingOverflow(void);
 
@@ -409,7 +409,7 @@ static FORCE_INLINE void CheckTimingOverflow(void);
  *  - 001 Invalid input shall preserve every cursor member and the result.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckSyncTruncation(void);
 
@@ -426,7 +426,7 @@ static FORCE_INLINE void CheckSyncTruncation(void);
  *
  * \param[in,out] context   Required reusable fixture owner
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckSyncTableHeader(TestContext_t* context);
 

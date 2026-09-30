@@ -54,7 +54,7 @@ class WireReaderTests(unittest.TestCase):
                    for name in ("protobuf", "unicode", "castv2")]
         sources.append(source_root / "os/clang/os_assert.c")
         arguments = ["-std=c11", "-O3", "-Weverything", "-Werror", "-Wno-padded",
-                     "-Wno-documentation", "-Wno-unsafe-buffer-usage", "-I" + str(source_root)]
+                     "-I" + str(source_root)]
         for source in sources:
             subprocess.run([tidy, str(source), "--config-file=" + str(source_root / ".clang-tidy"),
                             "--", *arguments], check=True, capture_output=True, text=True)

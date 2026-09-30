@@ -114,7 +114,7 @@ int32_t Utl_ExpGolomb_ReadSigned(Utl_Mpeg4_BitReader_t* reader);
  * \param[in,out] writer  Initialized writer or bit counter
  * \param[in]     value   Unsigned syntax value
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_ExpGolomb_WriteUnsigned(Utl_Mpeg4_BitWriter_t* writer, uint32_t value);
 
@@ -132,7 +132,7 @@ void Utl_ExpGolomb_WriteUnsigned(Utl_Mpeg4_BitWriter_t* writer, uint32_t value);
  * \param[in,out] writer  Initialized writer or bit counter
  * \param[in]     value   Signed syntax value
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_ExpGolomb_WriteSigned(Utl_Mpeg4_BitWriter_t* writer, int32_t value);
 

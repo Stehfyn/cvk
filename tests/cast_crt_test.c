@@ -79,7 +79,7 @@ static FORCE_INLINE byte_t Pattern(uint32_t index);
  * \param[in]     input_offset   Source placement
  * \param[in]     output_offset  Destination placement
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckCopy(const byte_t* input,
                                    byte_t*       output,
@@ -99,7 +99,7 @@ static FORCE_INLINE void CheckCopy(const byte_t* input,
  * \param[in]     output_offset  Destination placement
  * \param[in]     value          Fill byte
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckSet(byte_t* output, uint32_t length, uint32_t output_offset, byte_t value);
 
@@ -110,7 +110,7 @@ static FORCE_INLINE void CheckSet(byte_t* output, uint32_t length, uint32_t outp
  * \par Requirements:
  *  - 001 Failed expectations shall use the always-active production assertion.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckCopyAndSet(void);
 
@@ -123,7 +123,7 @@ static FORCE_INLINE void CheckFormat(void);
  * \par Requirements:
  *  - 001 Failed expectations shall use the always-active production assertion.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckMove(void);
 
@@ -134,7 +134,7 @@ static FORCE_INLINE void CheckMove(void);
  * \par Requirements:
  *  - 001 Failed expectations shall use the always-active production assertion.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckCompare(void);
 

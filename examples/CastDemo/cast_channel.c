@@ -1,10 +1,20 @@
 /* cast_channel.c - Winsock transport, SChannel TLS client, CASTV2 framing. */
 #define WIN32_LEAN_AND_MEAN
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <windows.h>
 #define SECURITY_WIN32
-#include <security.h>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#include <Windows.h> // IWYU pragma: keep
+#include <sspi.h>
+#include "os/os_types.h"
+#include <stdint.h>
+#include <minwinbase.h>
+#include <minwindef.h>
+#include <winerror.h>
+#include <winnt.h>
+#include <stringapiset.h>
+#include <WinNls.h>
+#include "utl/utl_castv2.h"
+#include <sysinfoapi.h>
 #include <schannel.h>
 
 #include <stdlib.h>
@@ -17,10 +27,15 @@
 #include "os/os_memory.h"
 
 /* One TLS record is at most 16 KiB of payload plus header and trailer. */
-#define INCOMING_CAPACITY  (32 * 1024)
-#define PLAINTEXT_CAPACITY (UTL_CASTV2_MAX_FRAME + 16 * 1024)
+#define INCOMING_CAPACITY  ((size_t)(32U * 1024U))
+#define PLAINTEXT_CAPACITY (UTL_CASTV2_MAX_FRAME + (16 * 1024))
 #define CHUNK_CAPACITY     (20 * 1024)
 #define HANDSHAKE_TOKEN_CAPACITY (64 * 1024)
+#define CHANNEL_ERROR_CAPACITY (256)
+#define CHANNEL_HOST_CAPACITY (256)
+#define CHANNEL_SERVICE_CAPACITY (8)
+#define CHANNEL_MILLISECONDS_PER_SECOND (1000)
+#define CHANNEL_MICROSECONDS_PER_MILLISECOND (1000)
 
 struct CastChannel
 {
@@ -33,7 +48,7 @@ struct CastChannel
     uint32_t                  maxHandshakeToken;
     PSecPkgInfoW              packageInfo;
     SecPkgContext_StreamSizes sizes;
-    char                      error[256];
+    char                      error[CHANNEL_ERROR_CAPACITY];
     /* ciphertext received but not yet decrypted */
     byte_t incoming[INCOMING_CAPACITY];
     size_t incomingUsed;
@@ -107,7 +122,7 @@ static SOCKET ConnectTcp(const char* pHost, unsigned short port, char* pError, s
     struct addrinfo* pResults = NULL;
     struct addrinfo* pAddress;
     SOCKET           s = INVALID_SOCKET;
-    char service[8];
+    char service[CHANNEL_SERVICE_CAPACITY];
 
     ZeroMemory(&hints, sizeof(hints));
     hints.ai_family   = AF_UNSPEC;
@@ -198,7 +213,7 @@ static int Handshake(CastChannel* pChannel, const char* pHost, char* pError, siz
     TimeStamp       expiry;
     SECURITY_STATUS status;
     DWORD           granted;
-    WCHAR           host[256];
+    WCHAR           host[CHANNEL_HOST_CAPACITY];
     SecBuffer       outBuffer;
     SecBufferDesc   outDesc;
     bool_t          has_output;
@@ -319,7 +334,7 @@ static int Handshake(CastChannel* pChannel, const char* pHost, char* pError, siz
             }
             if (SECBUFFER_EXTRA == inBuffers[1].BufferType && inBuffers[1].cbBuffer > 0)
             {
-                memmove(pChannel->incoming, pChannel->incoming + pChannel->incomingUsed - inBuffers[1].cbBuffer, inBuffers[1].cbBuffer);
+                CRT_Memory_Move(pChannel->incoming, pChannel->incoming + pChannel->incomingUsed - inBuffers[1].cbBuffer, inBuffers[1].cbBuffer);
                 pChannel->incomingUsed = inBuffers[1].cbBuffer;
             }
             else
@@ -413,7 +428,7 @@ static int DecryptBuffered(CastChannel* pChannel)
                     SetError(pChannel->error, sizeof(pChannel->error), "frame exceeds the CASTV2 limit", 0);
                     return 0;
                 }
-                memcpy(pChannel->plain + pChannel->plainUsed, buffers[index].pvBuffer, buffers[index].cbBuffer);
+                CRT_Memory_Copy(pChannel->plain + pChannel->plainUsed, buffers[index].pvBuffer, buffers[index].cbBuffer);
                 pChannel->plainUsed += buffers[index].cbBuffer;
             }
             else if (SECBUFFER_EXTRA == buffers[index].BufferType && buffers[index].cbBuffer > 0)
@@ -430,7 +445,7 @@ static int DecryptBuffered(CastChannel* pChannel)
         }
         if (extraLength > 0)
         {
-            memmove(pChannel->incoming, pExtra, extraLength); /* the extra bytes live inside incoming */
+            CRT_Memory_Move(pChannel->incoming, pExtra, extraLength); /* the extra bytes live inside incoming */
         }
         pChannel->incomingUsed = extraLength;
         frame_state           = Utl_CastV2_InspectFrame(&frame_bytes, pChannel->plain, (uint32_t)pChannel->plainUsed);
@@ -653,7 +668,7 @@ int CastChannel_Receive(CastChannel* pChannel, Utl_CastV2_Message_t* pMessage, u
     /* Drop the frame handed out by the previous call. */
     if (pChannel->plainConsumed > 0)
     {
-        memmove(pChannel->plain, pChannel->plain + pChannel->plainConsumed, pChannel->plainUsed - pChannel->plainConsumed);
+        CRT_Memory_Move(pChannel->plain, pChannel->plain + pChannel->plainConsumed, pChannel->plainUsed - pChannel->plainConsumed);
         pChannel->plainUsed -= pChannel->plainConsumed;
         pChannel->plainConsumed = 0;
     }
@@ -703,8 +718,8 @@ int CastChannel_Receive(CastChannel* pChannel, Utl_CastV2_Message_t* pMessage, u
         {
             return 0;
         }
-        timeout.tv_sec  = (long)((deadline - now) / 1000);
-        timeout.tv_usec = (long)((deadline - now) % 1000) * 1000;
+        timeout.tv_sec  = (long)((deadline - now) / CHANNEL_MILLISECONDS_PER_SECOND);
+        timeout.tv_usec = (long)((deadline - now) % CHANNEL_MILLISECONDS_PER_SECOND) * CHANNEL_MICROSECONDS_PER_MILLISECOND;
         FD_ZERO(&readable);
         FD_SET(pChannel->socket, &readable);
         ready = select(0, &readable, NULL, NULL, &timeout);

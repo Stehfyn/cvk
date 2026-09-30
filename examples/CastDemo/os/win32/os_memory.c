@@ -64,7 +64,7 @@
  * \param[in,out] memory   Initialized lifetime owner
  * \param[in]     code     Native error captured immediately after failure
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void RecordError(OS_Memory_t* memory, uint32_t code);
 

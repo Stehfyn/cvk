@@ -50,7 +50,7 @@
  *  - 001 Every byte across multiple pages and the final partial page shall retain its expected value.
  *  - 002 Volatile storage shall require actual reads and writes in the native compiler ABI test.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckStack(void);
 

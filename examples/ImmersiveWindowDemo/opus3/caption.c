@@ -1,3 +1,5 @@
+// CDX supplies D2D and DWrite declarations that conflict with the SDK headers.
+// NOLINTBEGIN(misc-include-cleaner)
 /*
  * caption.c -- the caption DWM would have drawn for the borderless window, rendered into the presenter's
  * Direct2D context each frame: the system icon, the DWrite title, the caption-button sprites straight out
@@ -24,7 +26,9 @@
  */
 
 #pragma runtime_checks("", off)
+#if defined(_MSC_VER) && !defined(__clang__)
 #pragma check_stack(off)
+#endif
 #pragma strict_gs_check(off)
 
 #ifndef WIN32_LEAN_AND_MEAN
@@ -34,12 +38,21 @@
 #define COBJMACROS
 #endif
 
-#include <windows.h>
-#include <initguid.h>
-#pragma warning(push)
-#pragma warning(disable : 4201) /* nameless struct/union in the DirectX headers */
+#include <Windows.h> // IWYU pragma: keep
+#include <initguid.h> // IWYU pragma: keep
+#include <WinUser.h>
+#include <WinBase.h>
+#include <windef.h>
+#include <minwindef.h>
+#include <winnt.h>
+#include <Uxtheme.h>
+#include <objbase.h>
+#include <combaseapi.h>
+#include <WinNls.h>
+#include <libloaderapi.h>
+#include <stringapiset.h>
+#include <winerror.h>
 #include <vssym32.h>
-#pragma warning(pop)
 #include "caption.h"
 #include "window.h"
 #include "dpi.h"
@@ -50,23 +63,32 @@
 
 /* Caption metrics and shades. */
 #define CAPTION_GAP_DIP               6     /* title gap from the icon and from the button cluster      */
-#define CAPTION_INACTIVE_ALPHA        0.4f  /* title / glyph / sprite alpha while the window is inactive */
-#define CAPTION_HOT_ALPHA             0.12f /* light/dark button hover highlight                        */
-#define CAPTION_PRESSED_ALPHA         0.24f /* light/dark button pressed highlight                      */
-#define CAPTION_BORDER_ACTIVE_ALPHA   0.50f /* Windows 10 top border, active window                     */
-#define CAPTION_BORDER_INACTIVE_ALPHA 0.33f /* Windows 10 top border, inactive window                   */
+#define CAPTION_INACTIVE_ALPHA        0.4F  /* title / glyph / sprite alpha while the window is inactive */
+#define CAPTION_HOT_ALPHA             0.12F /* light/dark button hover highlight                        */
+#define CAPTION_PRESSED_ALPHA         0.24F /* light/dark button pressed highlight                      */
+#define CAPTION_BORDER_ACTIVE_ALPHA   0.50F /* Windows 10 top border, active window                     */
+#define CAPTION_BORDER_INACTIVE_ALPHA 0.33F /* Windows 10 top border, inactive window                   */
 
 /* Light/dark toggle glyph, by the mode it is shown in. The code points are shared by Segoe Fluent Icons
    (Windows 11) and Segoe MDL2 Assets (Windows 10). */
-#define CAPTION_TOGGLE_CP_DARK_MODE  0xE706u /* drawn while in dark mode  */
-#define CAPTION_TOGGLE_CP_LIGHT_MODE 0xF0CEu /* drawn while in light mode */
-#define CAPTION_TOGGLE_EM_DARK_MODE  11.0f   /* em size (DIPs) in dark mode  */
-#define CAPTION_TOGGLE_EM_LIGHT_MODE 14.0f   /* em size (DIPs) in light mode */
+#define CAPTION_TOGGLE_CP_DARK_MODE  0xE706U /* drawn while in dark mode  */
+#define CAPTION_TOGGLE_CP_LIGHT_MODE 0xF0CEU /* drawn while in light mode */
+#define CAPTION_TOGGLE_EM_DARK_MODE  11.0F   /* em size (DIPs) in dark mode  */
+static const FLOAT CAPTION_TOGGLE_EM_LIGHT_MODE = 14.0F; /* em size (DIPs) in light mode */
 
 /* Windows 10: the MDL2 moon, thinned. */
-#define CAPTION_MOON_ERODE_DIP   0.3f /* stroke thinned by this per side (DIPs)                         */
-#define CAPTION_MOON_PADDING_DIP 1.0f /* bitmap padding around the ink (DIPs)                           */
-#define CAPTION_MOON_SUPERSAMPLE 4u   /* rasterized at this many times the pixel size, then downsampled */
+static const FLOAT CAPTION_MOON_ERODE_DIP = 0.3F; /* stroke thinned by this per side (DIPs) */
+#define CAPTION_MOON_PADDING_DIP 1.0F /* bitmap padding around the ink (DIPs)                           */
+#define CAPTION_MOON_SUPERSAMPLE 4U   /* rasterized at this many times the pixel size, then downsampled */
+static const FLOAT CAPTION_GEOMETRY_TOLERANCE = 0.01F;
+static const FLOAT CAPTION_BOTH_SIDES = 2.0F;
+#define CAPTION_PIXEL_CEIL_BIAS 0.999F
+#define CAPTION_HALF_PIXEL 0.5F
+#define CAPTION_BITMAP_DPI 96.0F
+#define CAPTION_TITLE_GAMMA 1.8F
+#define CAPTION_ATLAS_DPI_120 120U
+#define CAPTION_ATLAS_DPI_144 144U
+#define CAPTION_ATLAS_DPI_192 192U
 
 /* "DWMWindow" theme class: the caption-button atlas uDWM composites from. TMT_DISKSTREAM is the atlas
    image; per part, TMT_ATLASRECT locates its strip (four states stacked vertically) and the background
@@ -87,14 +109,14 @@
 #define CAPTION_WP_MINMAX_DARK       88 /* min/max background, dark theme, active  */
 #define CAPTION_WP_INACTIVE          1  /* part id offset: active -> inactive       */
 #define CAPTION_ATLAS_STATES         4
-#define CAPTION_ATLAS_STATE_NORMAL   0u
-#define CAPTION_ATLAS_STATE_HOT      1u
-#define CAPTION_ATLAS_STATE_PRESSED  2u
+#define CAPTION_ATLAS_STATE_NORMAL   0U
+#define CAPTION_ATLAS_STATE_HOT      1U
+#define CAPTION_ATLAS_STATE_PRESSED  2U
 
-static const D2D1_COLOR_F CAPTION_CF_BLACK       = {0.0f, 0.0f, 0.0f, 1.0f};
-static const D2D1_COLOR_F CAPTION_CF_WHITE       = {1.0f, 1.0f, 1.0f, 1.0f};
-static const D2D1_COLOR_F CAPTION_CF_DARK_BORDER = {0.3f, 0.3f, 0.3f, 1.0f};
-static const D2D1_COLOR_F CAPTION_CF_CLEAR       = {0.0f, 0.0f, 0.0f, 0.0f};
+static const D2D1_COLOR_F CAPTION_CF_BLACK       = {0.0F, 0.0F, 0.0F, 1.0F};
+static const D2D1_COLOR_F CAPTION_CF_WHITE       = {1.0F, 1.0F, 1.0F, 1.0F};
+static const D2D1_COLOR_F CAPTION_CF_DARK_BORDER = {0.3F, 0.3F, 0.3F, 1.0F};
+static const D2D1_COLOR_F CAPTION_CF_CLEAR       = {0.0F, 0.0F, 0.0F, 0.0F};
 
 /* ---- types ------------------------------------------------------------------------------------- */
 
@@ -154,7 +176,7 @@ static FORCEINLINE FLOAT CaptionOpacity(const IMMERSIVEWINDOW* pWindow, BOOL fCu
 
     if (pWindow->fActive || fCursorLit)
     {
-        flOpacity = 1.0f;
+        flOpacity = 1.0F;
     }
     else
     {
@@ -166,31 +188,33 @@ static FORCEINLINE FLOAT CaptionOpacity(const IMMERSIVEWINDOW* pWindow, BOOL fCu
 /* The atlas cell a button's visual state selects: the strip's normal, hot and pressed cells. */
 static FORCEINLINE UINT CaptionAtlasState(CAPTIONBUTTONSTATE state)
 {
-    switch (state)
+    if (CBST_HOT == state)
     {
-        case CBST_HOT:     return CAPTION_ATLAS_STATE_HOT;
-        case CBST_PRESSED: return CAPTION_ATLAS_STATE_PRESSED;
-        case CBST_NORMAL:
-        default:           return CAPTION_ATLAS_STATE_NORMAL;
+        return CAPTION_ATLAS_STATE_HOT;
     }
+    if (CBST_PRESSED == state)
+    {
+        return CAPTION_ATLAS_STATE_PRESSED;
+    }
+    return CAPTION_ATLAS_STATE_NORMAL;
 }
 
 /* The atlas glyph variant for a DPI: parts are authored at 96/120/144/192 as four consecutive ids. */
 static FORCEINLINE UINT CaptionAtlasVariant(UINT dpi)
 {
-    if (dpi >= 192u)
+    if (dpi >= CAPTION_ATLAS_DPI_192)
     {
-        return 3u;
+        return 3U;
     }
-    if (dpi >= 144u)
+    if (dpi >= CAPTION_ATLAS_DPI_144)
     {
-        return 2u;
+        return 2U;
     }
-    if (dpi >= 120u)
+    if (dpi >= CAPTION_ATLAS_DPI_120)
     {
-        return 1u;
+        return 1U;
     }
-    return 0u;
+    return 0U;
 }
 
 /* A WIC source converted to premultiplied BGRA, the format the Direct2D bitmaps here take. */
@@ -221,10 +245,10 @@ static FORCEINLINE ID2D1Bitmap1* CaptionCreateTargetBitmap(ID2D1DeviceContext* p
     SecureZeroMemory(&bp, sizeof(bp));
     bp.pixelFormat.format    = DXGI_FORMAT_B8G8R8A8_UNORM;
     bp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
-    bp.dpiX                  = 96.0f;
-    bp.dpiY                  = 96.0f;
+    bp.dpiX                  = CAPTION_BITMAP_DPI;
+    bp.dpiY                  = CAPTION_BITMAP_DPI;
     bp.bitmapOptions         = D2D1_BITMAP_OPTIONS_TARGET;
-    ASSERT(SUCCEEDED(ID2D1DeviceContext_CreateBitmap1(pDC, size, NULL, 0u, &bp, &pBitmap)));
+    ASSERT(SUCCEEDED(ID2D1DeviceContext_CreateBitmap1(pDC, size, NULL, 0U, &bp, &pBitmap)));
     return pBitmap;
 }
 
@@ -267,7 +291,7 @@ static FORCEINLINE BOOL CaptionLayoutEquals(const CAPTIONLAYOUT* pA, const CAPTI
     fEqual = (pA->dpi == pB->dpi) && (pA->cyCaption == pB->cyCaption) && (pA->cyTopBorder == pB->cyTopBorder) && (pA->xTitle == pB->xTitle) && EqualRect(&pA->sysMenu, &pB->sysMenu);
     prcA   = pA->buttons;
     prcB   = pB->buttons;
-    for (cRects = CB_COUNT; cRects != 0u; --cRects, ++prcA, ++prcB)
+    for (cRects = CB_COUNT; cRects != 0U; --cRects, ++prcA, ++prcB)
     {
         fEqual = fEqual && EqualRect(prcA, prcB);
     }
@@ -288,7 +312,7 @@ static FORCEINLINE void CaptionCopyLayout(CAPTIONLAYOUT* pTo, const CAPTIONLAYOU
     pTo->sysMenu     = pFrom->sysMenu;
     prcTo            = pTo->buttons;
     prcFrom          = pFrom->buttons;
-    for (cRects = CB_COUNT; cRects != 0u; --cRects, ++prcTo, ++prcFrom)
+    for (cRects = CB_COUNT; cRects != 0U; --cRects, ++prcTo, ++prcFrom)
     {
         *prcTo = *prcFrom;
     }
@@ -314,7 +338,7 @@ static FORCEINLINE IDWriteRenderingParams2* CaptionCreateTextParams(IDWriteFacto
     IDWriteRenderingParams2* pParams;
 
     ASSERT(SUCCEEDED(IDWriteFactory_QueryInterface(pDWrite, &IID_IDWriteFactory2, (void**)&pDWrite2)));
-    ASSERT(SUCCEEDED(IDWriteFactory2_CreateCustomRenderingParams2(pDWrite2, flGamma, 0.0f, flContrast, 0.0f, DWRITE_PIXEL_GEOMETRY_FLAT, DWRITE_RENDERING_MODE_DEFAULT, DWRITE_GRID_FIT_MODE_DEFAULT, &pParams)));
+    ASSERT(SUCCEEDED(IDWriteFactory2_CreateCustomRenderingParams2(pDWrite2, flGamma, 0.0F, flContrast, 0.0F, DWRITE_PIXEL_GEOMETRY_FLAT, DWRITE_RENDERING_MODE_DEFAULT, DWRITE_GRID_FIT_MODE_DEFAULT, &pParams)));
     CaptionRelease((IUnknown**)&pDWrite2);
     return pParams;
 }
@@ -337,7 +361,7 @@ static FORCEINLINE IDWriteFontFace* CaptionCreateToggleFont(IDWriteFactory* pDWr
 
     ASSERT(SUCCEEDED(IDWriteFactory_GetSystemFontCollection(pDWrite, &pCollection, FALSE)));
 
-    iFamily = 0u;
+    iFamily = 0U;
     fFamilyExists = FALSE;
     ASSERT(SUCCEEDED(IDWriteFontCollection_FindFamilyName(pCollection, pszFamily, &iFamily, &fFamilyExists)));
     if (!fFamilyExists)
@@ -350,7 +374,7 @@ static FORCEINLINE IDWriteFontFace* CaptionCreateToggleFont(IDWriteFactory* pDWr
     ASSERT(SUCCEEDED(IDWriteFontFamily_GetFirstMatchingFont(pFamily, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STRETCH_NORMAL, DWRITE_FONT_STYLE_NORMAL, &pFont)));
     ASSERT(SUCCEEDED(IDWriteFont_CreateFontFace(pFont, &pFace)));
     ASSERT(SUCCEEDED(IDWriteFontFace_GetGlyphIndices(pFace, rgCodePoints, ARRAYSIZE(rgCodePoints), rgGlyphIndices)));
-    for (i = 0u; i < ARRAYSIZE(rgCodePoints); ++i)
+    for (i = 0U; i < ARRAYSIZE(rgCodePoints); ++i)
     {
         ASSERT(rgGlyphIndices[i]);
     }
@@ -374,19 +398,19 @@ static FORCEINLINE ID2D1PathGeometry* CaptionCreateMoonGeometry(ID2D1Factory* pF
 
     ASSERT(SUCCEEDED(ID2D1Factory_CreatePathGeometry(pFactory, &pGlyph)));
     ASSERT(SUCCEEDED(ID2D1PathGeometry_Open(pGlyph, &pSink)));
-    ASSERT(SUCCEEDED(IDWriteFontFace_GetGlyphRunOutline(pFace, CAPTION_TOGGLE_EM_LIGHT_MODE, &glyphIndex, NULL, NULL, 1u, FALSE, FALSE, (IDWriteGeometrySink*)pSink)));
+    ASSERT(SUCCEEDED(IDWriteFontFace_GetGlyphRunOutline(pFace, CAPTION_TOGGLE_EM_LIGHT_MODE, &glyphIndex, NULL, NULL, 1U, FALSE, FALSE, (IDWriteGeometrySink*)pSink)));
     ASSERT(SUCCEEDED(ID2D1GeometrySink_Close(pSink)));
     CaptionRelease((IUnknown**)&pSink);
 
     ASSERT(SUCCEEDED(ID2D1Factory_CreatePathGeometry(pFactory, &pBand)));
     ASSERT(SUCCEEDED(ID2D1PathGeometry_Open(pBand, &pSink)));
-    ASSERT(SUCCEEDED(ID2D1PathGeometry_Widen(pGlyph, 2.0f * CAPTION_MOON_ERODE_DIP, NULL, NULL, 0.01f, (ID2D1SimplifiedGeometrySink*)pSink)));
+    ASSERT(SUCCEEDED(ID2D1PathGeometry_Widen(pGlyph, CAPTION_BOTH_SIDES * CAPTION_MOON_ERODE_DIP, NULL, NULL, CAPTION_GEOMETRY_TOLERANCE, (ID2D1SimplifiedGeometrySink*)pSink)));
     ASSERT(SUCCEEDED(ID2D1GeometrySink_Close(pSink)));
     CaptionRelease((IUnknown**)&pSink);
 
     ASSERT(SUCCEEDED(ID2D1Factory_CreatePathGeometry(pFactory, &pMoon)));
     ASSERT(SUCCEEDED(ID2D1PathGeometry_Open(pMoon, &pSink)));
-    ASSERT(SUCCEEDED(ID2D1PathGeometry_CombineWithGeometry(pGlyph, (ID2D1Geometry*)pBand, D2D1_COMBINE_MODE_EXCLUDE, NULL, 0.01f, (ID2D1SimplifiedGeometrySink*)pSink)));
+    ASSERT(SUCCEEDED(ID2D1PathGeometry_CombineWithGeometry(pGlyph, (ID2D1Geometry*)pBand, D2D1_COMBINE_MODE_EXCLUDE, NULL, CAPTION_GEOMETRY_TOLERANCE, (ID2D1SimplifiedGeometrySink*)pSink)));
     ASSERT(SUCCEEDED(ID2D1GeometrySink_Close(pSink)));
     CaptionRelease((IUnknown**)&pSink);
 
@@ -412,8 +436,8 @@ static FORCEINLINE ID2D1Bitmap1* CaptionRasterizeMoon(ID2D1DeviceContext* pDC, I
     ASSERT(SUCCEEDED(ID2D1PathGeometry_GetBounds(pMoon, NULL, &rfBounds)));
     pptMoon->x  = rfBounds.left - CAPTION_MOON_PADDING_DIP;
     pptMoon->y  = rfBounds.top - CAPTION_MOON_PADDING_DIP;
-    size.width  = (UINT32)(((rfBounds.right - rfBounds.left + (2.0f * CAPTION_MOON_PADDING_DIP)) * flScale) + 0.999f);
-    size.height = (UINT32)(((rfBounds.bottom - rfBounds.top + (2.0f * CAPTION_MOON_PADDING_DIP)) * flScale) + 0.999f);
+    size.width  = (UINT32)(((rfBounds.right - rfBounds.left + (CAPTION_BOTH_SIDES * CAPTION_MOON_PADDING_DIP)) * flScale) + CAPTION_PIXEL_CEIL_BIAS);
+    size.height = (UINT32)(((rfBounds.bottom - rfBounds.top + (CAPTION_BOTH_SIDES * CAPTION_MOON_PADDING_DIP)) * flScale) + CAPTION_PIXEL_CEIL_BIAS);
     pLo         = CaptionCreateTargetBitmap(pDC, size);
     size.width  *= CAPTION_MOON_SUPERSAMPLE;
     size.height *= CAPTION_MOON_SUPERSAMPLE;
@@ -437,10 +461,10 @@ static FORCEINLINE ID2D1Bitmap1* CaptionRasterizeMoon(ID2D1DeviceContext* pDC, I
     ASSERT(SUCCEEDED(ID2D1DeviceContext_EndDraw(pDC, NULL, NULL)));
 
     /* Downsampled: the large bitmap scaled onto the small one. */
-    mx._11 = 1.0f / (FLOAT)CAPTION_MOON_SUPERSAMPLE;
+    mx._11 = 1.0F / (FLOAT)CAPTION_MOON_SUPERSAMPLE;
     mx._22 = mx._11;
-    mx._31 = 0.0f;
-    mx._32 = 0.0f;
+    mx._31 = 0.0F;
+    mx._32 = 0.0F;
     ID2D1DeviceContext_SetTarget(pDC, (ID2D1Image*)pLo);
     ID2D1DeviceContext_BeginDraw(pDC);
     ID2D1DeviceContext_Clear(pDC, &CAPTION_CF_CLEAR);
@@ -449,8 +473,8 @@ static FORCEINLINE ID2D1Bitmap1* CaptionRasterizeMoon(ID2D1DeviceContext* pDC, I
     ASSERT(SUCCEEDED(ID2D1DeviceContext_EndDraw(pDC, NULL, NULL)));
 
     /* Back to the frame: identity transform, the swap chain's target. */
-    mx._11 = 1.0f;
-    mx._22 = 1.0f;
+    mx._11 = 1.0F;
+    mx._22 = 1.0F;
     ID2D1DeviceContext_SetTransform(pDC, &mx);
     ID2D1DeviceContext_SetTarget(pDC, pTargetPrev);
 
@@ -514,19 +538,19 @@ static FORCEINLINE void CaptionDrawAtlasBackground(ID2D1DeviceContext* pDC, cons
     rgflTargetY[2] = (FLOAT)(prc->bottom - sizing.cyBottomHeight);
     rgflTargetY[3] = (FLOAT)prc->bottom;
 
-    for (y = 0u; y < 3u; ++y)
+    for (y = 0U; y < 3U; ++y)
     {
-        for (x = 0u; x < 3u; ++x)
+        for (x = 0U; x < 3U; ++x)
         {
             rfFrom.left   = rgflSourceX[x];
             rfFrom.top    = rgflSourceY[y];
-            rfFrom.right  = rgflSourceX[x + 1u];
-            rfFrom.bottom = rgflSourceY[y + 1u];
+            rfFrom.right  = rgflSourceX[x + 1U];
+            rfFrom.bottom = rgflSourceY[y + 1U];
             rfTo.left     = rgflTargetX[x];
             rfTo.top      = rgflTargetY[y];
-            rfTo.right    = rgflTargetX[x + 1u];
-            rfTo.bottom   = rgflTargetY[y + 1u];
-            ID2D1DeviceContext_DrawBitmap(pDC, pAtlas->bitmap, &rfTo, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, &rfFrom);
+            rfTo.right    = rgflTargetX[x + 1U];
+            rfTo.bottom   = rgflTargetY[y + 1U];
+            ID2D1DeviceContext_DrawBitmap(pDC, pAtlas->bitmap, &rfTo, 1.0F, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, &rfFrom);
         }
     }
 }
@@ -623,23 +647,23 @@ static FORCEINLINE void CaptionLoadAtlas(CAPTION* pCaption, ID2D1DeviceContext* 
     ASSERT(SUCCEEDED(IWICImagingFactory_CreateStream(pCaption->wic, &pStream)));
     ASSERT(SUCCEEDED(IWICStream_InitializeFromMemory(pStream, (BYTE*)pvStream, cbStream)));
     ASSERT(SUCCEEDED(IWICImagingFactory_CreateDecoderFromStream(pCaption->wic, (IStream*)pStream, NULL, WICDecodeMetadataCacheOnLoad, &pDecoder)));
-    ASSERT(SUCCEEDED(IWICBitmapDecoder_GetFrame(pDecoder, 0u, &pFrame)));
+    ASSERT(SUCCEEDED(IWICBitmapDecoder_GetFrame(pDecoder, 0U, &pFrame)));
     pConverter     = CaptionConvertToPbgra(pCaption->wic, (IWICBitmapSource*)pFrame);
     pAtlas->bitmap = CaptionCreateBitmapFromWic(pDC, (IWICBitmapSource*)pConverter);
 
     /* The parts: every glyph strip, and the background strips with their 9-slice margins. */
     uPart = CAPTION_WP_GLYPH_LIGHT_FIRST;
-    for (cParts = CAPTION_WP_GLYPH_LIGHT_LAST - CAPTION_WP_GLYPH_LIGHT_FIRST + 1u; cParts != 0u; --cParts, ++uPart)
+    for (cParts = CAPTION_WP_GLYPH_LIGHT_LAST - CAPTION_WP_GLYPH_LIGHT_FIRST + 1U; cParts != 0U; --cParts, ++uPart)
     {
         CaptionReadAtlasPartRect(hTheme, pAtlas, uPart);
     }
     uPart = CAPTION_WP_GLYPH_DARK_FIRST;
-    for (cParts = CAPTION_WP_GLYPH_DARK_LAST - CAPTION_WP_GLYPH_DARK_FIRST + 1u; cParts != 0u; --cParts, ++uPart)
+    for (cParts = CAPTION_WP_GLYPH_DARK_LAST - CAPTION_WP_GLYPH_DARK_FIRST + 1U; cParts != 0U; --cParts, ++uPart)
     {
         CaptionReadAtlasPartRect(hTheme, pAtlas, uPart);
     }
     puPart = rgBackgroundParts;
-    for (cParts = ARRAYSIZE(rgBackgroundParts); cParts != 0u; --cParts, ++puPart)
+    for (cParts = ARRAYSIZE(rgBackgroundParts); cParts != 0U; --cParts, ++puPart)
     {
         uPart = *puPart;
         CaptionReadAtlasPartRect(hTheme, pAtlas, uPart);
@@ -698,10 +722,10 @@ static FORCEINLINE void CaptionLayoutTitle(CAPTION* pCaption, ID2D1DeviceContext
 
     SecureZeroMemory(&ncm, sizeof(ncm));
     ncm.cbSize = (DWORD)sizeof(ncm);
-    ASSERT(SystemParametersInfoForDpi(SPI_GETNONCLIENTMETRICS, (UINT)sizeof(ncm), &ncm, 0u, pLayout->dpi));
+    ASSERT(SystemParametersInfoForDpi(SPI_GETNONCLIENTMETRICS, (UINT)sizeof(ncm), &ncm, 0U, pLayout->dpi));
     ASSERT(GetUserDefaultLocaleName(szLocale, ARRAYSIZE(szLocale)));
     flFontSize = (FLOAT)-ncm.lfCaptionFont.lfHeight;
-    ASSERT(flFontSize > 0.0f);
+    ASSERT(flFontSize > 0.0F);
     if (ncm.lfCaptionFont.lfItalic)
     {
         fontStyle = DWRITE_FONT_STYLE_ITALIC;
@@ -733,8 +757,8 @@ static FORCEINLINE void CaptionLayoutTitle(CAPTION* pCaption, ID2D1DeviceContext
        the frame supplies the shade) at the origin centering it in the band. */
     size.width      = (UINT32)cxAvailable;
     size.height     = (UINT32)cyBand;
-    ptOrigin.x      = 0.0f;
-    ptOrigin.y      = (FLOAT)(LONG)(0.5f * (cyBand - metrics.height)) - metrics.top;
+    ptOrigin.x      = 0.0F;
+    ptOrigin.y      = (FLOAT)(LONG)(CAPTION_HALF_PIXEL * ((FLOAT)cyBand - metrics.height)) - metrics.top;
     pText->mask     = CaptionCreateTargetBitmap(pDC, size);
     pTargetPrev     = CaptionBeginMask(pDC, pText->mask);
     modeTextPrev    = ID2D1DeviceContext_GetTextAntialiasMode(pDC);
@@ -748,7 +772,7 @@ static FORCEINLINE void CaptionLayoutTitle(CAPTION* pCaption, ID2D1DeviceContext
     CaptionEndMask(pDC, pTargetPrev);
 
     pText->rfDest.left   = (FLOAT)xLeft;
-    pText->rfDest.top    = 0.0f;
+    pText->rfDest.top    = 0.0F;
     pText->rfDest.right  = (FLOAT)(xLeft + cxAvailable);
     pText->rfDest.bottom = (FLOAT)cyBand;
 
@@ -765,7 +789,7 @@ static FORCEINLINE void CaptionDrawIcon(const CAPTION* pCaption, ID2D1DeviceCont
     D2D1_RECT_F rf;
 
     rf = CaptionRectF(&pLayout->buttons[CB_ICON]);
-    ID2D1DeviceContext_DrawBitmap(pDC, pCaption->iconBitmap, &rf, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL);
+    ID2D1DeviceContext_DrawBitmap(pDC, pCaption->iconBitmap, &rf, 1.0F, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL);
 }
 
 /* The caption title: its mask filled in the foreground shade. */
@@ -795,8 +819,8 @@ static FORCEINLINE void CaptionDrawTopBorder(const CAPTION* pCaption, ID2D1Devic
     {
         return;
     }
-    rf.left   = 0.0f;
-    rf.top    = 0.0f;
+    rf.left   = 0.0F;
+    rf.top    = 0.0F;
     rf.right  = (FLOAT)(pWindow->rcClient.right - pWindow->rcClient.left);
     rf.bottom = (FLOAT)pLayout->cyTopBorder;
     if (pWindow->fLightMode)
@@ -869,7 +893,7 @@ static FORCEINLINE DWRITE_GLYPH_RUN CaptionToggleRun(const CAPTION* pCaption, CA
     }
     SecureZeroMemory(&run, sizeof(run));
     run.fontFace     = pCaption->fontFace;
-    run.glyphCount   = 1u;
+    run.glyphCount   = 1U;
     run.glyphIndices = &pCaption->glyphIndices[glyph];
     run.fontEmSize   = flEm * flScale;
     return run;
@@ -882,12 +906,12 @@ static FORCEINLINE D2D1_POINT_2F CaptionToggleOrigin(ID2D1DeviceContext* pDC, co
     D2D1_POINT_2F ptOrigin;
     D2D1_RECT_F   rfBounds;
 
-    ptOrigin.x = (FLOAT)(LONG)(0.5f * (cell.cx - pRun->fontEmSize)) - 0.5f;
-    ptOrigin.y = (FLOAT)(LONG)(0.5f * (cell.cy + pRun->fontEmSize));
+    ptOrigin.x = (FLOAT)(LONG)(CAPTION_HALF_PIXEL * ((FLOAT)cell.cx - pRun->fontEmSize)) - CAPTION_HALF_PIXEL;
+    ptOrigin.y = (FLOAT)(LONG)(CAPTION_HALF_PIXEL * ((FLOAT)cell.cy + pRun->fontEmSize));
     if (CG_DARK_MODE == glyph)
     {
         ASSERT(SUCCEEDED(ID2D1DeviceContext_GetGlyphRunWorldBounds(pDC, ptOrigin, pRun, DWRITE_MEASURING_MODE_NATURAL, &rfBounds)));
-        ptOrigin.y += 0.5f * (cell.cy - rfBounds.top - rfBounds.bottom);
+        ptOrigin.y += CAPTION_HALF_PIXEL * ((FLOAT)cell.cy - rfBounds.top - rfBounds.bottom);
     }
     return ptOrigin;
 }
@@ -936,13 +960,13 @@ static FORCEINLINE void CaptionRenderToggleMaskMoon(CAPTION* pCaption, ID2D1Devi
         run      = CaptionToggleRun(pCaption, glyph, flScale);
         ptOrigin = CaptionToggleOrigin(pDC, &run, cell, glyph);
         ID2D1Bitmap1_GetPixelSize(pMoonBitmap, &size);
-        rf.left   = (FLOAT)(LONG)(ptOrigin.x + (ptMoon.x * flScale) + 0.5f);
-        rf.top    = (FLOAT)(LONG)(ptOrigin.y + (ptMoon.y * flScale) + 0.5f);
+        rf.left   = (FLOAT)(LONG)(ptOrigin.x + (ptMoon.x * flScale) + CAPTION_HALF_PIXEL);
+        rf.top    = (FLOAT)(LONG)(ptOrigin.y + (ptMoon.y * flScale) + CAPTION_HALF_PIXEL);
         rf.right  = rf.left + (FLOAT)size.width;
         rf.bottom = rf.top + (FLOAT)size.height;
 
         pTargetPrev = CaptionBeginMask(pDC, pMask);
-        ID2D1DeviceContext_DrawBitmap(pDC, (ID2D1Bitmap*)pMoonBitmap, &rf, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL);
+        ID2D1DeviceContext_DrawBitmap(pDC, (ID2D1Bitmap*)pMoonBitmap, &rf, 1.0F, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL);
         CaptionEndMask(pDC, pTargetPrev);
 
         CaptionRelease((IUnknown**)&pMoonBitmap);
@@ -972,7 +996,7 @@ static FORCEINLINE void CaptionLoadToggleMasks(CAPTION* pCaption, ID2D1DeviceCon
 
     ppMask = pCaption->toggleMasks;
     glyph  = CG_DARK_MODE;
-    for (cMasks = CG_COUNT; cMasks != 0u; --cMasks, ++ppMask, ++glyph)
+    for (cMasks = CG_COUNT; cMasks != 0U; --cMasks, ++ppMask, ++glyph)
     {
         CaptionRelease((IUnknown**)ppMask);
         *ppMask = CaptionCreateTargetBitmap(pDC, size);
@@ -1105,7 +1129,7 @@ static FORCEINLINE void CaptionDrawButtons(const CAPTION* pCaption, ID2D1DeviceC
 
     button = CB_MINBUTTON;
     ++prc;
-    for (cButtons = CB_CLOSEBUTTON - CB_MINBUTTON + 1u; cButtons != 0u; --cButtons, ++button, ++prc)
+    for (cButtons = CB_CLOSEBUTTON - CB_MINBUTTON + 1U; cButtons != 0U; --cButtons, ++button, ++prc)
     {
         state = GetCaptionButtonState(pWindow, button);
         CaptionDrawAtlasButton(pCaption, pDC, prc, button, state, fZoomed, pLayout->dpi);
@@ -1194,8 +1218,8 @@ void InitCaption(CAPTION* pCaption, const IMMERSIVEWINDOW* pWindow, ID2D1DeviceC
 
     ASSERT(SUCCEEDED(CoCreateInstance(&CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, &IID_IWICImagingFactory, (void**)&pCaption->wic)));
     ASSERT(SUCCEEDED(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, &IID_IDWriteFactory, (IUnknown**)&pCaption->dwrite)));
-    pCaption->textParams = CaptionCreateTextParams(pCaption->dwrite, 1.0f, 0.0f);
-    pCaption->titleParams = CaptionCreateTextParams(pCaption->dwrite, 1.8f, 1.0f);
+    pCaption->textParams = CaptionCreateTextParams(pCaption->dwrite, 1.0F, 0.0F);
+    pCaption->titleParams = CaptionCreateTextParams(pCaption->dwrite, CAPTION_TITLE_GAMMA, 1.0F);
     ASSERT(SUCCEEDED(ID2D1DeviceContext_CreateSolidColorBrush(pDC, &CAPTION_CF_WHITE, NULL, &pCaption->brush)));
     pCaption->fontFace = CaptionCreateToggleFont(pCaption->dwrite, pCaption->platform->pszToggleFontFamily, pCaption->glyphIndices);
 }
@@ -1287,3 +1311,4 @@ void DestroyCaption(CAPTION* pCaption)
     CaptionRelease((IUnknown**)&pCaption->dwrite);
     CaptionRelease((IUnknown**)&pCaption->wic);
 }
+// NOLINTEND(misc-include-cleaner)

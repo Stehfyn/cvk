@@ -252,7 +252,7 @@ static FORCE_INLINE bool_t IsValidCommand(const Utl_Chromecast_Command_t* comman
  * \param[in]     name     Cast field name
  * \param[in]     bytes    Counted name bytes
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteName(Utl_Json_Writer_t* writer, const char_t* name, uint32_t bytes);
 
@@ -270,7 +270,7 @@ static FORCE_INLINE void WriteName(Utl_Json_Writer_t* writer, const char_t* name
  * \param[in]     value    Cast token
  * \param[in]     bytes    Counted token bytes
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteToken(Utl_Json_Writer_t* writer, const char_t* value, uint32_t bytes);
 
@@ -281,7 +281,7 @@ static FORCE_INLINE void WriteToken(Utl_Json_Writer_t* writer, const char_t* val
  * \param[in,out] writer   Initialized writer
  * \param[in]     rgba     Packed RRGGBBAA value
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void WriteColor(Utl_Json_Writer_t* writer, uint32_t rgba);
 
@@ -298,7 +298,7 @@ static FORCE_INLINE void WriteColor(Utl_Json_Writer_t* writer, uint32_t rgba);
  * \param[in,out] writer     Shared JSON writer
  * \param[in]     subtitle   Valid selected track
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteSubtitle(Utl_Json_Writer_t* writer, const Utl_Chromecast_Subtitle_t* subtitle);
 
@@ -309,7 +309,7 @@ static FORCE_INLINE void WriteSubtitle(Utl_Json_Writer_t* writer, const Utl_Chro
  * \param[in,out] writer   Initialized writer
  * \param[in]     style    Preflighted borrowed style model
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void WriteTextTrackStyle(Utl_Json_Writer_t* writer, const Utl_Chromecast_TextTrackStyle_t* style);
 
@@ -326,7 +326,7 @@ static FORCE_INLINE void WriteTextTrackStyle(Utl_Json_Writer_t* writer, const Ut
  * \param[in,out] writer   Counting or output writer
  * \param[in]     load     Stable Cast model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void EncodeLoad(Utl_Json_Writer_t* writer, const Utl_Chromecast_Load_t* load);
 
@@ -344,7 +344,7 @@ static FORCE_INLINE void EncodeLoad(Utl_Json_Writer_t* writer, const Utl_Chromec
  * \param[in,out] writer   Initialized writer inside a command object
  * \param[in]     seek     Stable validated model
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void WriteSeek(Utl_Json_Writer_t* writer, const Utl_Chromecast_Seek_t* seek);
 
@@ -362,7 +362,7 @@ static FORCE_INLINE void WriteSeek(Utl_Json_Writer_t* writer, const Utl_Chromeca
  * \param[in,out] writer    Initialized exclusive writer
  * \param[in]     command   Stable validated command model
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void EncodeCommand(Utl_Json_Writer_t* writer, const Utl_Chromecast_Command_t* command);
 

@@ -30,6 +30,9 @@
 #define SUBTITLE_MAX_TRACKS    (32)                     ///< Maximum discovered tracks in one result list.
 #define SUBTITLE_MAX_BYTES     (0x01000000)             ///< Sixteen MiB application payload limit.
 #define SUBTITLE_TEXT_CAPACITY (SUBTITLE_MAX_BYTES + 1) ///< Full payload and retained terminator.
+#define SUBTITLE_PATH_CAPACITY (260)
+#define SUBTITLE_LABEL_CAPACITY (320)
+#define SUBTITLE_LANGUAGE_CAPACITY (16)
 
 /*=================================================================================================
 ** 3.2 Types
@@ -39,9 +42,9 @@
 /** \brief Sidecar or embedded text-track selection with owned display fields. */
 typedef struct SubtitleTrack
 {
-    TCHAR    path[260];
-    TCHAR    label[320];
-    char     language[16];
+    TCHAR    path[SUBTITLE_PATH_CAPACITY];
+    TCHAR    label[SUBTITLE_LABEL_CAPACITY];
+    char     language[SUBTITLE_LANGUAGE_CAPACITY];
     int32_t  embedded;      /* -1: sidecar; otherwise zero-based MP4 text track */
     uint64_t matroskaTrack; /* nonzero: embedded Matroska UTF-8 track number */
 } SubtitleTrack;
@@ -94,7 +97,7 @@ typedef struct Subtitles_Workspace_s
  * \param[out] output      Required result storage, disjoint from source and workspace
  * \param[in]  capacity    Readable/writable bytes in each buffer
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void Subtitles_Initialize(Subtitles_Workspace_t* workspace, byte_t* source, byte_t* output, uint32_t capacity);
 
@@ -113,7 +116,7 @@ void Subtitles_Initialize(Subtitles_Workspace_t* workspace, byte_t* source, byte
  * \param[in]  path    Required terminated native path
  * \param[out] track   Required exclusively owned destination
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void Subtitles_InitializeFileTrack(const TCHAR* path, SubtitleTrack* track);
 
@@ -176,13 +179,13 @@ uint32_t Subtitles_Find(const TCHAR* media, SubtitleTrack tracks[SUBTITLE_MAX_TR
  *  - 006 No allocation or release shall occur; prefixed WebVTT still lacks full grammar validation.
  *
  * \param[in,out] workspace   Required initialized reusable storage
- * \param[in]     data        Required readable source bytes
+ * \param[in]     bytes       Required readable source bytes
  * \param[in]     size        Source byte count
  *
  * \retval        TRUE    Complete WebVTT is available through GetText/GetByteCount.
  * \retval        FALSE   Invalid input or insufficient capacity; prior output is invalidated.
  */
-bool_t Subtitles_Convert(Subtitles_Workspace_t* workspace, const void* data, uint64_t size);
+bool_t Subtitles_Convert(Subtitles_Workspace_t* workspace, const void* bytes, uint64_t size);
 
 /*************************************************************************************************/
 /**

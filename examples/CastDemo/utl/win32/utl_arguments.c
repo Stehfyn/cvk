@@ -61,7 +61,7 @@ static FORCE_INLINE bool_t IsWhitespace(uint16_t value);
  * \param[in] input         Readable command-line units
  * \param[in] inputCount    Readable unit count
  * \param[in,out] cursor    Current position
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void ReadBackslashes(const uint16_t* input, uint32_t inputCount, uint32_t* cursor);
 
@@ -112,7 +112,7 @@ ReadArgument(uint16_t* output, const uint16_t* input, uint32_t inputCount, uint3
  * \param[out] output       Preflighted storage or NULL
  * \param[in,out] count     Current output unit count
  * \param[in] value         Decoded unit
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void WriteUnit(uint16_t* output, uint32_t* count, uint16_t value);
 

@@ -57,7 +57,7 @@
  * \param[out] image   Unpublished image owner with no live resources
  * \param[in] createInfo   Validated startup configuration and native sharing handles
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Gfx_Image_InitializeShared(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 

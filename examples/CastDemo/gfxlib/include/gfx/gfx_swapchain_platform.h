@@ -49,7 +49,7 @@
  * \param[in] pSignalSemaphoreValues D3D12 fence or timeline values parallel to the signal semaphores
  * \param[in] fence                 Submission completion fence, or VK_NULL_HANDLE
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Gfx_Swapchain_Platform_QueueSubmit(VkQueue                     queue,
                                         const void*                 pNext,

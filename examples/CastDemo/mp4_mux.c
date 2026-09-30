@@ -8,7 +8,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <windows.h>
+#include <Windows.h>
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -174,7 +174,7 @@ static FORCE_INLINE uint32_t WriteAudioDescriptor(const Mp4Mux* mux, byte_t* out
  * \param[in,out] mux      Required mux owner
  * \param[in,out] buffer   Required legacy box-assembly buffer
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteAudioSampleEntry(Mp4Mux* mux, MuxBuffer* buffer);
 
@@ -192,7 +192,7 @@ static FORCE_INLINE void WriteAudioSampleEntry(Mp4Mux* mux, MuxBuffer* buffer);
  * \param[in,out] buffer   Required legacy output buffer
  * \param[in]     flags    Box-specific 24-bit flags
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void BufferFullBoxVersionZero(MuxBuffer* buffer, uint32_t flags);
 
@@ -230,7 +230,7 @@ static FORCE_INLINE bool_t WriteFileType(Mp4Mux* mux, bool_t fragmented);
  * \param[in]     data     Disjoint input, nullable only when empty
  * \param[in]     count    Readable input bytes
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void BufferBytes(MuxBuffer* buffer, const void* data, uint32_t count);
 
@@ -249,7 +249,7 @@ static FORCE_INLINE void BufferBytes(MuxBuffer* buffer, const void* data, uint32
  * \param[in]     offset   Reserved byte offset
  * \param[in]     value    Complete replacement value
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void PatchBuffer32(MuxBuffer* buffer, uint32_t offset, uint32_t value);
 
@@ -267,7 +267,7 @@ static FORCE_INLINE void PatchBuffer32(MuxBuffer* buffer, uint32_t offset, uint3
  * \param[in,out] buffer     Required assembly owner
  * \param[in]     position   Previously reserved box start
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void BoxClose(MuxBuffer* buffer, uint32_t position);
 
@@ -284,7 +284,7 @@ static FORCE_INLINE void BoxClose(MuxBuffer* buffer, uint32_t position);
  *
  * \param[in,out] mux   Required exclusively owned mux
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void InitializeFragmentStorage(Mp4Mux* mux);
 
@@ -303,7 +303,7 @@ static FORCE_INLINE void InitializeFragmentStorage(Mp4Mux* mux);
  * \param[out] run       Required associated run model
  * \param[in]  trackId   Movie track identity
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void InitializeFragmentTrack(Utl_Mpeg4_TrackFragment_t* track,
                                                  Utl_Mpeg4_TrackRun_t*      run,
@@ -454,7 +454,7 @@ static FORCE_INLINE bool_t WriteProgressiveAudio(Mp4Mux* mux, Utl_Mpeg4_Span_t b
  * \param[out] layout   Required worker-local storage
  * \param[in]  mux      Required stable mux owner
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void InitializeFragmentLayout(FragmentLayout_t* layout, const Mp4Mux* mux);
 
@@ -524,7 +524,7 @@ static FORCE_INLINE bool_t WriteFragmentLayout(Mp4Mux* mux, const FragmentLayout
  * \param[in,out] mux      Required exclusive mux owner
  * \param[in]     layout   Successfully published layout
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CommitFragment(Mp4Mux* mux, const FragmentLayout_t* layout);
 

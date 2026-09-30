@@ -1,27 +1,8 @@
-# Required owned-code policy. External libraries/headers are excluded by user instruction;
-# MSVC permits only compiler padding. The explicitly approved Clang exceptions
-# are specified in .clang-tidy; the VS command line retains the same check selection.
+# Required owned-code policy. MSVC permits only compiler padding.
 find_program(CAST_CLANG_TIDY_EXECUTABLE NAMES clang-tidy REQUIRED)
 get_filename_component(cast_clang_tidy_directory "${CAST_CLANG_TIDY_EXECUTABLE}" DIRECTORY)
 set(cast_clang_tidy_config "${CMAKE_CURRENT_LIST_DIR}/.clang-tidy")
-set(cast_clang_tidy_checks "clang-analyzer-*,bugprone-*,cert-*,concurrency-*,misc-*,performance-*,portability-*,readability-*,-clang-analyzer-optin.performance.Padding,-bugprone-easily-swappable-parameters")
-
-# The user approved generator fixes and matching output after the original scoped
-# diagnostic exceptions. Preserve that exception list and derive its policy from
-# the owned policy so future changes to the common checks remain effective.
-set(cast_generated_clang_tidy_config "${CMAKE_CURRENT_BINARY_DIR}/cvk-generated.clang-tidy")
-string(JOIN "," cast_generated_clang_tidy_exceptions
-    "-readability-non-const-parameter"
-    "-bugprone-invalid-enum-default-initialization"
-    "-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling")
-file(READ "${cast_clang_tidy_config}" cast_generated_clang_tidy_text)
-string(REPLACE "  -bugprone-easily-swappable-parameters"
-    "  -bugprone-easily-swappable-parameters,\n  ${cast_generated_clang_tidy_exceptions}"
-    cast_generated_clang_tidy_text "${cast_generated_clang_tidy_text}")
-string(REPLACE "'-Wno-unsafe-buffer-usage']"
-    "'-Wno-unsafe-buffer-usage', '-Wno-missing-noreturn', '-Wno-implicit-int-enum-cast']"
-    cast_generated_clang_tidy_text "${cast_generated_clang_tidy_text}")
-file(WRITE "${cast_generated_clang_tidy_config}" "${cast_generated_clang_tidy_text}")
+set(cast_clang_tidy_checks "clang-analyzer-*,bugprone-*,-bugprone-easily-swappable-parameters,cert-*,concurrency-*,misc-*,performance-*,portability-*,readability-*,-clang-analyzer-optin.performance.Padding")
 
 # An installed executable is insufficient if it cannot recognize the policy.
 # Recheck when the configuration changes; retain every diagnostic on failure.
@@ -29,10 +10,6 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${cast_clang_tid
 execute_process(
     COMMAND "${CAST_CLANG_TIDY_EXECUTABLE}" "--config-file=${cast_clang_tidy_config}" --verify-config
     COMMAND_ERROR_IS_FATAL ANY)
-execute_process(
-    COMMAND "${CAST_CLANG_TIDY_EXECUTABLE}" "--config-file=${cast_generated_clang_tidy_config}" --verify-config
-    COMMAND_ERROR_IS_FATAL ANY)
-
 function(cast_apply_build_policy target)
     get_target_property(target_type ${target} TYPE)
     get_target_property(target_external ${target} CVK_EXTERNAL)
@@ -40,15 +17,8 @@ function(cast_apply_build_policy target)
         return()
     endif()
 
-    set(target_clang_tidy_config "${cast_clang_tidy_config}")
-    set(target_clang_tidy_checks "${cast_clang_tidy_checks}")
-    if(target STREQUAL "cvk" OR target STREQUAL "cvk-platform" OR target STREQUAL "scvk")
-        set(target_clang_tidy_config "${cast_generated_clang_tidy_config}")
-        string(APPEND target_clang_tidy_checks ",${cast_generated_clang_tidy_exceptions}")
-    endif()
-
     target_compile_options(${target} PRIVATE
-        "$<$<COMPILE_LANG_AND_ID:C,MSVC>:/Wall;/WX;/wd4820;/external:W0;/external:env:INCLUDE;/analyze:external->")
+        "$<$<COMPILE_LANG_AND_ID:C,MSVC>:/Wall;/WX;/wd4820;/external:env:INCLUDE;/analyze:external->")
     # Native source metadata keeps analysis diagnostics visible and disables the
     # obsolete minimal-rebuild mode without a target that rewrites build items.
     get_target_property(target_sources ${target} SOURCES)
@@ -64,7 +34,7 @@ function(cast_apply_build_policy target)
         endif()
     endforeach()
     set_target_properties(${target} PROPERTIES
-        C_CLANG_TIDY "${CAST_CLANG_TIDY_EXECUTABLE};--config-file=${target_clang_tidy_config};--warnings-as-errors=*"
+        C_CLANG_TIDY "${CAST_CLANG_TIDY_EXECUTABLE};--config-file=${cast_clang_tidy_config};--warnings-as-errors=*"
         NO_SYSTEM_FROM_IMPORTED FALSE
         VS_GLOBAL_RunCodeAnalysis true
         VS_GLOBAL_CodeAnalysisRuleSet "AllRules.ruleset"
@@ -72,10 +42,10 @@ function(cast_apply_build_policy target)
         VS_GLOBAL_EnableMicrosoftCodeAnalysis true
         VS_GLOBAL_EnableClangTidyCodeAnalysis true
         VS_GLOBAL_ClangTidyToolPath "${cast_clang_tidy_directory}"
-        VS_GLOBAL_ClangTidyChecks "${target_clang_tidy_checks}"
+        VS_GLOBAL_ClangTidyChecks "${cast_clang_tidy_checks}"
         VS_GLOBAL_ClangTidyHeaderFilter ".*"
         VS_GLOBAL_ClangTidyWarningsInSystemHeaders false
-        VS_GLOBAL_ClangTidyToolExeAdditionalOptions "--warnings-as-errors=* --config-file=\"${target_clang_tidy_config}\"")
+        VS_GLOBAL_ClangTidyToolExeAdditionalOptions "--warnings-as-errors=* --config-file=\"${cast_clang_tidy_config}\"")
 endfunction()
 
 function(cast_apply_directory_policy directory)

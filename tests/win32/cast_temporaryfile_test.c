@@ -63,7 +63,7 @@ static OS_TemporaryFile_t g_second;
  *  - 001 Both owners shall be ready and their path borrows shall remain stable.
  *  - 002 Comparison shall use only initialized units through termination.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckDistinctPaths(void);
 
@@ -79,7 +79,7 @@ static FORCE_INLINE void CheckDistinctPaths(void);
  *  - 002 Failed closure shall revoke readiness while retaining first-error evidence.
  *  - 003 Releasing the conflicting handle shall permit removal and idempotent closure.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckRemovalRetry(void);
 

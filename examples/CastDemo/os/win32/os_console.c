@@ -91,7 +91,7 @@ static FORCE_INLINE uint32_t GetModifiers(uint32_t nativeState);
  * \param[in,out] console   Required initialized owner
  * \param[in]     error     Native failure code, normalized when unexpectedly zero
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void RecordError(OS_Console_t* console, uint32_t error);
 

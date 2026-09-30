@@ -3,7 +3,7 @@
 #include "cvk/ubm/cvk_ubm_json.h"
 #include "cvk/cvk_json.h"
 #include "cvk/internal/cvk_json_work.h"
-#include <string.h>
+#include "vk_diagnostic.h"
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_ubm.h>
 
@@ -21,7 +21,7 @@ void cvkReadJsonUbmSurfaceCreateInfoSEC(cvkJsonWork* pWork, const cvkJsonValue* 
     pContext = pWork->pContext;
     pInfo    = (VkUbmSurfaceCreateInfoSEC*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_UBM_SURFACE_CREATE_INFO_SEC;
 

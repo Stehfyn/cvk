@@ -6,6 +6,7 @@
 #include "cvk/cvk.h"
 #include "cvk/ohos/cvk_ohos.h"
 #include <volk.h>
+#include "vk_diagnostic.h"
 #include <stdint.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_ohos.h>
@@ -99,11 +100,12 @@ extern CVK_FORCE_INLINE void cvkGetMemoryNativeBufferOHOS(VkDevice device, const
 }
 extern CVK_FORCE_INLINE void cvkGetNativeBufferPropertiesOHOS(VkDevice device, const struct OH_NativeBuffer* buffer, void* pNext, VkNativeBufferPropertiesOHOS* pProperties)
 {
-    VkNativeBufferPropertiesOHOS properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_PROPERTIES_OHOS,
-        .pNext = pNext
-    };
+    VkNativeBufferPropertiesOHOS properties;
+
+    cvkZeroMemory(&properties, sizeof(properties));
+
+    properties.sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_PROPERTIES_OHOS;
+    properties.pNext = pNext;
 
     CVK_CHECK(vkGetNativeBufferPropertiesOHOS(device, buffer, &properties));
 
@@ -264,11 +266,12 @@ extern CVK_FORCE_INLINE void cvkGetNativeBufferFormatPropertiesOHOS(VkDevice    
                                                                     VkNativeBufferFormatPropertiesOHOS* pNativeBufferFormatPropertiesOHOS)
 {
     VkNativeBufferPropertiesOHOS       properties;
-    VkNativeBufferFormatPropertiesOHOS ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_FORMAT_PROPERTIES_OHOS,
-        .pNext = pNext
-    };
+    VkNativeBufferFormatPropertiesOHOS ext_properties;
+
+    cvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_FORMAT_PROPERTIES_OHOS;
+    ext_properties.pNext = pNext;
 
     cvkGetNativeBufferPropertiesOHOS(device, buffer, &ext_properties, &properties);
 
@@ -286,11 +289,12 @@ extern CVK_FORCE_INLINE VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithNa
 {
     VkResult                 result;
     VkImageFormatProperties2 image_format_properties;
-    VkNativeBufferUsageOHOS native_buffer_usage =
-    {
-        .sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_USAGE_OHOS,
-        .pNext = pNativeBufferUsageOHOSNext
-    };
+    VkNativeBufferUsageOHOS  native_buffer_usage;
+
+    cvkZeroMemory(&native_buffer_usage, sizeof(native_buffer_usage));
+
+    native_buffer_usage.sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_USAGE_OHOS;
+    native_buffer_usage.pNext = pNativeBufferUsageOHOSNext;
 
     result = cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &native_buffer_usage, &image_format_properties);
 

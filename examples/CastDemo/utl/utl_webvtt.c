@@ -118,7 +118,7 @@ typedef struct Line_s
  * \param[out] output     Writable storage or NULL for measurement
  * \param[in]  capacity   Permitted byte count
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void InitializeWriter(Writer_t* writer, byte_t* output, uint32_t capacity);
 
@@ -137,7 +137,7 @@ static FORCE_INLINE void InitializeWriter(Writer_t* writer, byte_t* output, uint
  * \param[in]     input       Required readable fragment
  * \param[in]     byteCount   Fragment extent
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void AppendBytes(Writer_t* writer, const byte_t* input, uint32_t byteCount);
 
@@ -156,7 +156,7 @@ static FORCE_INLINE void AppendBytes(Writer_t* writer, const byte_t* input, uint
  * \param[in,out] writer   Initialized cursor
  * \param[in]     value    Grammar byte
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void AppendByte(Writer_t* writer, byte_t value);
 
@@ -175,7 +175,7 @@ static FORCE_INLINE void AppendByte(Writer_t* writer, byte_t value);
  * \param[in,out] writer   Initialized cursor
  * \param[in]     number   Required decimal field and minimum width
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void AppendNumber(Writer_t* writer, const Number_t* number);
 
@@ -194,7 +194,7 @@ static FORCE_INLINE void AppendNumber(Writer_t* writer, const Number_t* number);
  * \param[in,out] writer         Initialized cursor
  * \param[in]     milliseconds   Timestamp offset
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void AppendTimestamp(Writer_t* writer, uint64_t milliseconds);
 
@@ -214,7 +214,7 @@ static FORCE_INLINE void AppendTimestamp(Writer_t* writer, uint64_t milliseconds
  * \param[in]     start    Start milliseconds
  * \param[in]     end      End milliseconds
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void AppendTiming(Writer_t* writer, uint64_t start, uint64_t end);
 
@@ -231,7 +231,7 @@ static FORCE_INLINE void AppendTiming(Writer_t* writer, uint64_t start, uint64_t
  * \param[in,out] writer   Initialized cursor
  * \param[in]     scalar   Valid non-newline scalar
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void AppendScalar(Writer_t* writer, uint32_t scalar);
 
@@ -251,7 +251,7 @@ static FORCE_INLINE void AppendScalar(Writer_t* writer, uint32_t scalar);
  * \param[in,out] line     Initialized line state
  * \param[in]     scalar   Decoded source scalar
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void AppendLineScalar(Writer_t* writer, Line_t* line, uint32_t scalar);
 
@@ -270,7 +270,7 @@ static FORCE_INLINE void AppendLineScalar(Writer_t* writer, Line_t* line, uint32
  * \param[in]     input       Stable borrowed text; NULL only for zero byteCount
  * \param[in]     byteCount   Readable bytes
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void AppendText(Writer_t* writer, const byte_t* input, uint32_t byteCount);
 
@@ -306,7 +306,7 @@ static FORCE_INLINE uint32_t ReadNumber(Reader_t* reader, uint64_t* value, uint3
  * \param[in,out] reader      Initialized private cursor
  * \param[in]     delimiter   Required grammar byte
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void ReadDelimiter(Reader_t* reader, byte_t delimiter);
 

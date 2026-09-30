@@ -61,7 +61,7 @@
  * \par Requirements:
  *  - 001 Every failed expectation shall terminate through the production assertion.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CheckRings(void);
 
@@ -72,7 +72,7 @@ static void CheckRings(void);
  * \par Requirements:
  *  - 001 Every failed expectation shall terminate through the production assertion.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CheckQueues(void);
 
@@ -83,7 +83,7 @@ static void CheckQueues(void);
  * \par Requirements:
  *  - 001 Every failed expectation shall terminate through the production assertion.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CheckCommandPolicies(void);
 
@@ -94,7 +94,7 @@ static void CheckCommandPolicies(void);
  * \par Requirements:
  *  - 001 Every failure shall terminate through the production assertion.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CheckSaturation(void);
 

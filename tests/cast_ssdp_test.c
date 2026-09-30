@@ -148,7 +148,7 @@ static const CacheCase_t c_cache[] = {
  * \param[in,out] search      Initialized query
  * \param[in,out] expected    Exact encoded extent
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckSearchCapacities(Workspace_t*             workspace,
                                                const Utl_Ssdp_Search_t* search,
@@ -163,7 +163,7 @@ static FORCE_INLINE void CheckSearchCapacities(Workspace_t*             workspac
  *
  * \param[in,out] workspace   Caller-owned message and output storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckSearch(Workspace_t* workspace);
 
@@ -176,7 +176,7 @@ static FORCE_INLINE void CheckSearch(Workspace_t* workspace);
  *
  * \param[in,out] workspace   Caller-owned message and output storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void ReadFixture(Workspace_t* workspace);
 
@@ -188,7 +188,7 @@ static FORCE_INLINE void ReadFixture(Workspace_t* workspace);
  * \param[in,out] response    Current result record
  * \param[in,out] before      Last successfully published record
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckCacheDirectives(Workspace_t*         workspace,
                                               Utl_Ssdp_Response_t* response,
@@ -201,7 +201,7 @@ static FORCE_INLINE void CheckCacheDirectives(Workspace_t*         workspace,
  * \param[in,out] workspace   Caller-owned field storage
  * \param[in,out] response    Last valid response, preserved by every failed read
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckResponsePrefixes(Workspace_t* workspace, Utl_Ssdp_Response_t* response);
 
@@ -214,7 +214,7 @@ static FORCE_INLINE void CheckResponsePrefixes(Workspace_t* workspace, Utl_Ssdp_
  *
  * \param[in,out] workspace   Caller-owned message and output storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckResponses(Workspace_t* workspace);
 

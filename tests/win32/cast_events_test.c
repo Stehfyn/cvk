@@ -130,7 +130,7 @@ static FORCE_INLINE uint32_t ReadSequence(const char_t* text);
  * \param[out] status     Producer-owned status fixture
  * \param[in]  sequence   One-based publication number
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void WriteStatus(CastStatus* status, uint32_t sequence);
 
@@ -144,7 +144,7 @@ static FORCE_INLINE void WriteStatus(CastStatus* status, uint32_t sequence);
  * \param[out] text       CAST_EVENTS_TEXT_CAPACITY writable bytes
  * \param[in]  sequence   One-based publication number
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void WriteLog(char_t* text, uint32_t sequence);
 
@@ -161,7 +161,7 @@ static FORCE_INLINE void WriteLog(char_t* text, uint32_t sequence);
  *
  * \param[in] text   Stable complete log-pattern input
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void PublishMedia(const char_t* text);
 
@@ -187,7 +187,7 @@ static FORCE_INLINE uint32_t CheckMediaPair(const CastMedia_t* media, uint32_t p
  * \par Requirements:
  *  - 001 Caller-owned fixtures shall outlive every native test thread.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckSequential(void);
 
@@ -211,7 +211,7 @@ static DWORD WINAPI PublishEvents(LPVOID context);
  * \par Requirements:
  *  - 001 Caller-owned fixtures shall outlive every native test thread.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckConcurrent(void);
 

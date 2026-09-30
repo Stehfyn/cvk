@@ -4,8 +4,9 @@
 #include "cvk/cvk.h"
 #include "cvk/cvk_json.h"
 #include "cvk/internal/cvk_json_work.h"
+#include "vk_diagnostic.h"
+#include <stddef.h>
 #include <stdint.h>
-#include <string.h>
 #include <vulkan/vulkan_beta.h>
 #include <vulkan/vulkan_core.h>
 
@@ -15,7 +16,7 @@
  * \param[in] pValue JSON array, or NULL.
  * \param[out] pOutput Native element storage, already zeroed.
  * \param[in] capacity Native element count.
- * \retval None
+ * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkReadJsonUint32FixedArray(const cvkJsonContext* pContext, const cvkJsonValue* pValue, uint32_t* pOutput, uint32_t capacity);
 
@@ -55,7 +56,7 @@ void cvkReadJsonAccelerationStructureDenseGeometryFormatTrianglesDataAMDX(cvkJso
     pContext = pWork->pContext;
     pInfo    = (VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DENSE_GEOMETRY_FORMAT_TRIANGLES_DATA_AMDX;
 
@@ -111,7 +112,7 @@ void cvkReadJsonAccelerationStructureTrianglesDisplacementMicromapNV(cvkJsonWork
     pContext = pWork->pContext;
     pInfo    = (VkAccelerationStructureTrianglesDisplacementMicromapNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_TRIANGLES_DISPLACEMENT_MICROMAP_NV;
 
@@ -229,7 +230,7 @@ void cvkReadJsonCudaFunctionCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkCudaFunctionCreateInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_CUDA_FUNCTION_CREATE_INFO_NV;
 
@@ -265,7 +266,7 @@ void cvkReadJsonCudaLaunchInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject
     pContext = pWork->pContext;
     pInfo    = (VkCudaLaunchInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_CUDA_LAUNCH_INFO_NV;
 
@@ -331,7 +332,7 @@ void cvkReadJsonCudaModuleCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkCudaModuleCreateInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_CUDA_MODULE_CREATE_INFO_NV;
 
@@ -360,7 +361,7 @@ void cvkReadJsonDeviceOrHostAddressConstAMDX(cvkJsonWork* pWork, const cvkJsonVa
     pInfo      = (VkDeviceOrHostAddressConstAMDX*)pOutput;
     has_member = VK_FALSE;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = cvkGetJsonMember(&pContext->document, pObject, "deviceAddress");
     if (!has_member && !cvkIsJsonNull(value))
@@ -382,7 +383,7 @@ void cvkReadJsonDispatchGraphCountInfoAMDX(cvkJsonWork* pWork, const cvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkDispatchGraphCountInfoAMDX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value        = cvkGetJsonMember(&pContext->document, pObject, "count");
 
@@ -411,7 +412,7 @@ void cvkReadJsonDispatchGraphInfoAMDX(cvkJsonWork* pWork, const cvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkDispatchGraphInfoAMDX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value               = cvkGetJsonMember(&pContext->document, pObject, "nodeIndex");
 
@@ -446,7 +447,7 @@ void cvkReadJsonExecutionGraphPipelineCreateInfoAMDX(cvkJsonWork* pWork, const c
     pContext = pWork->pContext;
     pInfo    = (VkExecutionGraphPipelineCreateInfoAMDX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXECUTION_GRAPH_PIPELINE_CREATE_INFO_AMDX;
 
@@ -517,7 +518,7 @@ void cvkReadJsonExecutionGraphPipelineScratchSizeAMDX(cvkJsonWork* pWork, const 
     pContext = pWork->pContext;
     pInfo    = (VkExecutionGraphPipelineScratchSizeAMDX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXECUTION_GRAPH_PIPELINE_SCRATCH_SIZE_AMDX;
 
@@ -552,7 +553,7 @@ void cvkReadJsonPhysicalDeviceCudaKernelLaunchFeaturesNV(cvkJsonWork* pWork, con
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceCudaKernelLaunchFeaturesNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAUNCH_FEATURES_NV;
 
@@ -579,7 +580,7 @@ void cvkReadJsonPhysicalDeviceCudaKernelLaunchPropertiesNV(cvkJsonWork* pWork, c
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceCudaKernelLaunchPropertiesNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAUNCH_PROPERTIES_NV;
 
@@ -610,7 +611,7 @@ void cvkReadJsonPhysicalDeviceDenseGeometryFormatFeaturesAMDX(cvkJsonWork* pWork
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DENSE_GEOMETRY_FORMAT_FEATURES_AMDX;
 
@@ -637,7 +638,7 @@ void cvkReadJsonPhysicalDeviceDisplacementMicromapFeaturesNV(cvkJsonWork* pWork,
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceDisplacementMicromapFeaturesNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISPLACEMENT_MICROMAP_FEATURES_NV;
 
@@ -664,7 +665,7 @@ void cvkReadJsonPhysicalDeviceDisplacementMicromapPropertiesNV(cvkJsonWork* pWor
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceDisplacementMicromapPropertiesNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISPLACEMENT_MICROMAP_PROPERTIES_NV;
 
@@ -691,7 +692,7 @@ void cvkReadJsonPhysicalDevicePortabilitySubsetFeatures(cvkJsonWork* pWork, cons
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDevicePortabilitySubsetFeaturesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR;
 
@@ -774,7 +775,7 @@ void cvkReadJsonPhysicalDevicePortabilitySubsetProperties(cvkJsonWork* pWork, co
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDevicePortabilitySubsetPropertiesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_KHR;
 
@@ -801,7 +802,7 @@ void cvkReadJsonPhysicalDeviceShaderEnqueueFeaturesAMDX(cvkJsonWork* pWork, cons
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceShaderEnqueueFeaturesAMDX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_FEATURES_AMDX;
 
@@ -832,7 +833,7 @@ void cvkReadJsonPhysicalDeviceShaderEnqueuePropertiesAMDX(cvkJsonWork* pWork, co
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceShaderEnqueuePropertiesAMDX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_PROPERTIES_AMDX;
 
@@ -884,7 +885,7 @@ void cvkReadJsonPipelineShaderStageNodeCreateInfoAMDX(cvkJsonWork* pWork, const 
     pContext = pWork->pContext;
     pInfo    = (VkPipelineShaderStageNodeCreateInfoAMDX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_NODE_CREATE_INFO_AMDX;
 
@@ -904,63 +905,34 @@ void cvkReadJsonPipelineShaderStageNodeCreateInfoAMDX(cvkJsonWork* pWork, const 
 }
 extern CVK_FORCE_INLINE VkCompressedTriangleFormatAMDX cvkParseJsonCompressedTriangleFormatAMDX(const cvkJsonValue* pValue)
 {
-    uint64_t                       enumerant;
-    VkCompressedTriangleFormatAMDX result;
-    uint32_t                       index;
-    VkBool32                       found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const cvkJsonName table[] = {{"VK_COMPRESSED_TRIANGLE_FORMAT_DGF1_AMDX", (uint64_t)VK_COMPRESSED_TRIANGLE_FORMAT_DGF1_AMDX}};
 
-    static const VkCompressedTriangleFormatAMDX enumerants[] = {VK_COMPRESSED_TRIANGLE_FORMAT_DGF1_AMDX};
-
     enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_COMPRESSED_TRIANGLE_FORMAT_DGF1_AMDX);
     CVK_ASSERT(found);
 
-    return result;
+    return (VkCompressedTriangleFormatAMDX)enumerant;
 }
 extern CVK_FORCE_INLINE VkDisplacementMicromapFormatNV cvkParseJsonDisplacementMicromapFormatNV(const cvkJsonValue* pValue)
 {
-    uint64_t                       enumerant;
-    VkDisplacementMicromapFormatNV result;
-    uint32_t                       index;
-    VkBool32                       found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const cvkJsonName table[] = {{"VK_DISPLACEMENT_MICROMAP_FORMAT_64_TRIANGLES_64_BYTES_NV", (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_64_TRIANGLES_64_BYTES_NV},
                                         {"VK_DISPLACEMENT_MICROMAP_FORMAT_256_TRIANGLES_128_BYTES_NV", (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_256_TRIANGLES_128_BYTES_NV},
                                         {"VK_DISPLACEMENT_MICROMAP_FORMAT_1024_TRIANGLES_128_BYTES_NV", (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_1024_TRIANGLES_128_BYTES_NV}};
 
-    static const VkDisplacementMicromapFormatNV enumerants[] = {VK_DISPLACEMENT_MICROMAP_FORMAT_64_TRIANGLES_64_BYTES_NV,
-                                                                VK_DISPLACEMENT_MICROMAP_FORMAT_256_TRIANGLES_128_BYTES_NV,
-                                                                VK_DISPLACEMENT_MICROMAP_FORMAT_1024_TRIANGLES_128_BYTES_NV};
-
     enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_64_TRIANGLES_64_BYTES_NV) || (enumerant == (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_256_TRIANGLES_128_BYTES_NV) ||
+            (enumerant == (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_1024_TRIANGLES_128_BYTES_NV);
     CVK_ASSERT(found);
 
-    return result;
+    return (VkDisplacementMicromapFormatNV)enumerant;
 }
 extern CVK_FORCE_INLINE void cvkParseJsonAccelerationStructureDenseGeometryFormatTrianglesDataAMDX(const cvkJsonContext*                                        pContext,
                                                                                                    const cvkJsonValue*                                          pObject,

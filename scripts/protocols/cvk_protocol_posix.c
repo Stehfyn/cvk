@@ -42,7 +42,7 @@
  * \param[out] pImage                  Receives the created VkImage
  * \param[out] pMemory                 Receives the imported VkDeviceMemory
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkImportFdImage(VkPhysicalDevice                   physicalDevice,
                       VkDevice                           device,
@@ -182,7 +182,7 @@ void cvkImportFdImage(VkPhysicalDevice                   physicalDevice,
  * \param[out] pImage                     Receives the created VkImage
  * \param[out] pMemories                  Receives one VkDeviceMemory per memory object; memoryObjectCount entries
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
                           VkDevice                     device,
@@ -388,7 +388,7 @@ void cvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
  * \param[out] pBuffer                 Receives the created VkBuffer
  * \param[out] pMemory                 Receives the imported VkDeviceMemory
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkImportFdBuffer(VkPhysicalDevice                   physicalDevice,
                        VkDevice                           device,
@@ -501,7 +501,7 @@ void cvkImportFdBuffer(VkPhysicalDevice                   physicalDevice,
  * \param[out] pMemory                 Receives the exportable VkDeviceMemory
  * \param[out] pFd                     Receives the exported descriptor, owned by the caller
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkExportFdImage(VkPhysicalDevice                   physicalDevice,
                       VkDevice                           device,
@@ -611,7 +611,7 @@ void cvkExportFdImage(VkPhysicalDevice                   physicalDevice,
  * \param[out] pMemory                 Receives the exportable VkDeviceMemory
  * \param[out] pFd                     Receives the exported descriptor, owned by the caller
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkExportFdBuffer(VkPhysicalDevice                   physicalDevice,
                        VkDevice                           device,

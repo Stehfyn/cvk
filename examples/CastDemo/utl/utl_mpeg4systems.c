@@ -94,7 +94,7 @@ typedef struct DescriptorPrefix_s
  *
  * \param[in] span   Counted borrowed bytes
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void AssertSpan(Utl_Mpeg4_Span_t span);
 
@@ -205,7 +205,7 @@ static FORCE_INLINE bool_t ReadUrl(Utl_Mpeg4_Span_t* url, DescriptorCursor_t* cu
  * \param[in,out] cursor   Required output offset
  * \param[in]     field    Field value and byte width
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteInteger(byte_t* output, uint32_t* cursor, Utl_Mpeg4_Integer_t field);
 

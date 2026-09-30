@@ -361,7 +361,7 @@ typedef struct Utl_Http_Endpoint_s
  * \param[in]  fields          Caller-owned array retained through completion
  * \param[in]  fieldCapacity   Number of writable slots
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void Utl_Http_InitializeHeadReader(Utl_Http_HeadReader_t* reader,
                                    Utl_Http_Kind_t        kind,

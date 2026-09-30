@@ -347,7 +347,7 @@ static FORCE_INLINE bool_t SendErrorResponse(Connection_t* connection, uint16_t 
  * \param[in] response     Selected response metadata
  * \param[in] sent         Transmitted body bytes
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void LogResponse(const Connection_t*        connection,
                                      const CastHttp_Request_t*  request,
@@ -371,7 +371,7 @@ static FORCE_INLINE void LogResponse(const Connection_t*        connection,
  * \param[in]  request      Ready request policy
  * \param[out] response     Exclusive complete response metadata
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void ReadGrowingResponse(const Connection_t*       connection,
                                              const CastHttp_Request_t* request,
@@ -471,7 +471,7 @@ static FORCE_INLINE bool_t ServeRequest(Connection_t* connection);
  *
  * \param[in,out] parameter   Connection_t supplied by AcceptLoop
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void ServeConnection(void* parameter);
 
@@ -505,7 +505,7 @@ static FORCE_INLINE bool_t ReadBindAddress(const char_t* text, uint32_t* address
  * \param[in,out] storage   Retained startup storage
  * \param[in] code   Captured native failure
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void RecordError(MediaServer_Storage_t* storage, uint32_t code);
 
@@ -524,7 +524,7 @@ static FORCE_INLINE void RecordError(MediaServer_Storage_t* storage, uint32_t co
  * \param[in] text   Complete constant diagnostic
  * \param[in] count   Diagnostic byte count
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteError(char_t* output, uint32_t capacity, const char_t* text, uint32_t count);
 
@@ -605,7 +605,7 @@ static FORCE_INLINE bool_t TryCloseConnectionResources(MediaServer_Storage_t* st
  * \param[in,out] storage   Exclusive admission metadata
  * \param[in,out] connection   Retained slot
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void RetireConnection(MediaServer_Storage_t* storage, Connection_t* connection);
 
@@ -623,7 +623,7 @@ static FORCE_INLINE void RetireConnection(MediaServer_Storage_t* storage, Connec
  *
  * \param[in,out] storage   Admission-owned connection lifetimes
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void RetireConnections(MediaServer_Storage_t* storage);
 
@@ -643,7 +643,7 @@ static FORCE_INLINE void RetireConnections(MediaServer_Storage_t* storage);
  * \param[in,out] connection   Exclusive free slot
  * \param[in] client   Accepted native socket
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void StartClient(MediaServer* server, Connection_t* connection, SOCKET client);
 
@@ -660,7 +660,7 @@ static FORCE_INLINE void StartClient(MediaServer* server, Connection_t* connecti
  *
  * \param[in,out] server   Active listener metadata
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void PollListener(MediaServer* server);
 
@@ -677,7 +677,7 @@ static FORCE_INLINE void PollListener(MediaServer* server);
  *
  * \param[in,out] server   Stopping listener slot
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void RetireListener(MediaServer* server);
 
@@ -696,7 +696,7 @@ static FORCE_INLINE void RetireListener(MediaServer* server);
  *
  * \param[in,out] storage   Retained pool with a failed admission worker
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void RecoverAdmission(MediaServer_Storage_t* storage);
 
@@ -714,7 +714,7 @@ static FORCE_INLINE void RecoverAdmission(MediaServer_Storage_t* storage);
  *
  * \param[in,out] context   Stable initialized MediaServer_Workspace_t owner
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void AcceptLoop(void* context);
 
@@ -749,7 +749,7 @@ static FORCE_INLINE bool_t OpenListener(MediaServer* server, const ServerEndpoin
  * \param[in,out] server   Exclusive reserved slot
  * \param[in] representation   Validated source model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void PrepareRepresentation(MediaServer* server, const ServerRepresentation_t* representation);
 

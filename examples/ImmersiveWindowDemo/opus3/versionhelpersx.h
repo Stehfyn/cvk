@@ -1,7 +1,7 @@
 #ifndef VERSIONHELPERSX_H
 #define VERSIONHELPERSX_H
 
-#include <windows.h>
+#include <Windows.h>
 #include "delayimpx.h"
 
 #ifdef __cplusplus

@@ -124,7 +124,7 @@ static const NumberFormat_t c_fractionFormat = {SRT_FRACTION_DIGITS, SRT_FRACTIO
  * \param[in]  input       Stable counted source, NULL only when empty
  * \param[in]  byteCount   Readable extent
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void InitializeCursor(Cursor_t* cursor, const byte_t* input, uint32_t byteCount);
 
@@ -141,7 +141,7 @@ static FORCE_INLINE void InitializeCursor(Cursor_t* cursor, const byte_t* input,
  *
  * \param[out] cue   Required private model
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void InitializeCue(Utl_Srt_Cue_t* cue);
 
@@ -176,7 +176,7 @@ static FORCE_INLINE bool_t HasArrow(const Utl_Srt_Span_t* line);
  * \param[in]     format   Required field rules
  * \param[out]    number   Required private result, ignored after failure
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void ReadNumber(Cursor_t* cursor, const NumberFormat_t* format, Number_t* number);
 
@@ -195,7 +195,7 @@ static FORCE_INLINE void ReadNumber(Cursor_t* cursor, const NumberFormat_t* form
  * \param[in,out] cursor     Initialized private cursor
  * \param[in]     expected   Required separator, colon or comma
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void ReadDelimiter(Cursor_t* cursor, byte_t expected);
 
@@ -267,7 +267,7 @@ static FORCE_INLINE bool_t ReadTimingLine(const Utl_Srt_Span_t* line, Utl_Srt_Cu
  * \param[in]     first    Required validated first line
  * \param[in,out] cue      Initialized private cue staging
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void ReadHeader(Cursor_t* cursor, const Line_t* first, Utl_Srt_Cue_t* cue);
 
@@ -286,7 +286,7 @@ static FORCE_INLINE void ReadHeader(Cursor_t* cursor, const Line_t* first, Utl_S
  * \param[in,out] cursor    Initialized private cursor after timing
  * \param[out]    payload   Required private span staging
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void ReadPayload(Cursor_t* cursor, Utl_Srt_Span_t* payload);
 
@@ -304,7 +304,7 @@ static FORCE_INLINE void ReadPayload(Cursor_t* cursor, Utl_Srt_Span_t* payload);
  * \param[out] output   Required public destination
  * \param[in]  staged   Required complete private model
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void PublishCue(Utl_Srt_Cue_t* output, const Utl_Srt_Cue_t* staged);
 

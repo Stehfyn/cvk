@@ -59,7 +59,7 @@
  * \param[out] output   Non-NULL owned event-text storage
  * \param[in]  input    Optional readable text; NULL means empty
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void CopyText(char_t output[CAST_EVENTS_TEXT_CAPACITY], const char_t* input);
 

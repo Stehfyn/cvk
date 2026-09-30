@@ -6,6 +6,7 @@
 #include "cvk/cvk.h"
 #include "cvk/android/cvk_android.h"
 #include <volk.h>
+#include "vk_diagnostic.h"
 #include <stdint.h>
 #include <vulkan/vulkan_android.h>
 #include <vulkan/vulkan_core.h>
@@ -106,11 +107,12 @@ extern CVK_FORCE_INLINE void cvkCreateAndroidSurface(VkInstance                 
 }
 extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferPropertiesANDROID(VkDevice device, const struct AHardwareBuffer* buffer, void* pNext, VkAndroidHardwareBufferPropertiesANDROID* pProperties)
 {
-    VkAndroidHardwareBufferPropertiesANDROID properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_PROPERTIES_ANDROID,
-        .pNext = pNext
-    };
+    VkAndroidHardwareBufferPropertiesANDROID properties;
+
+    cvkZeroMemory(&properties, sizeof(properties));
+
+    properties.sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_PROPERTIES_ANDROID;
+    properties.pNext = pNext;
 
     CVK_CHECK(vkGetAndroidHardwareBufferPropertiesANDROID(device, buffer, &properties));
 
@@ -282,11 +284,12 @@ extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferFormatProperties2ANDROID
                                                                                  VkAndroidHardwareBufferFormatProperties2ANDROID* pAndroidHardwareBufferFormatProperties2ANDROID)
 {
     VkAndroidHardwareBufferPropertiesANDROID        properties;
-    VkAndroidHardwareBufferFormatProperties2ANDROID ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_2_ANDROID,
-        .pNext = pNext
-    };
+    VkAndroidHardwareBufferFormatProperties2ANDROID ext_properties;
+
+    cvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_2_ANDROID;
+    ext_properties.pNext = pNext;
 
     cvkGetAndroidHardwareBufferPropertiesANDROID(device, buffer, &ext_properties, &properties);
 
@@ -298,11 +301,12 @@ extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferFormatPropertiesANDROID(
                                                                                 VkAndroidHardwareBufferFormatPropertiesANDROID* pAndroidHardwareBufferFormatPropertiesANDROID)
 {
     VkAndroidHardwareBufferPropertiesANDROID       properties;
-    VkAndroidHardwareBufferFormatPropertiesANDROID ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_ANDROID,
-        .pNext = pNext
-    };
+    VkAndroidHardwareBufferFormatPropertiesANDROID ext_properties;
+
+    cvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_ANDROID;
+    ext_properties.pNext = pNext;
 
     cvkGetAndroidHardwareBufferPropertiesANDROID(device, buffer, &ext_properties, &properties);
 
@@ -314,11 +318,12 @@ extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferFormatResolvePropertiesA
                                                                                        VkAndroidHardwareBufferFormatResolvePropertiesANDROID* pAndroidHardwareBufferFormatResolvePropertiesANDROID)
 {
     VkAndroidHardwareBufferPropertiesANDROID              properties;
-    VkAndroidHardwareBufferFormatResolvePropertiesANDROID ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_RESOLVE_PROPERTIES_ANDROID,
-        .pNext = pNext
-    };
+    VkAndroidHardwareBufferFormatResolvePropertiesANDROID ext_properties;
+
+    cvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_RESOLVE_PROPERTIES_ANDROID;
+    ext_properties.pNext = pNext;
 
     cvkGetAndroidHardwareBufferPropertiesANDROID(device, buffer, &ext_properties, &properties);
 
@@ -351,11 +356,12 @@ extern CVK_FORCE_INLINE VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithAn
 {
     VkResult                            result;
     VkImageFormatProperties2            image_format_properties;
-    VkAndroidHardwareBufferUsageANDROID android_hardware_buffer_usage =
-    {
-        .sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_USAGE_ANDROID,
-        .pNext = pAndroidHardwareBufferUsageANDROIDNext
-    };
+    VkAndroidHardwareBufferUsageANDROID android_hardware_buffer_usage;
+
+    cvkZeroMemory(&android_hardware_buffer_usage, sizeof(android_hardware_buffer_usage));
+
+    android_hardware_buffer_usage.sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_USAGE_ANDROID;
+    android_hardware_buffer_usage.pNext = pAndroidHardwareBufferUsageANDROIDNext;
 
     result = cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &android_hardware_buffer_usage, &image_format_properties);
 
@@ -368,11 +374,12 @@ extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceExternalFormatResolveProperties
                                                                                         VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* pPhysicalDeviceExternalFormatResolvePropertiesANDROID)
 {
     VkPhysicalDeviceProperties2                            properties;
-    VkPhysicalDeviceExternalFormatResolvePropertiesANDROID ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_PROPERTIES_ANDROID,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceExternalFormatResolvePropertiesANDROID ext_properties;
+
+    cvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_PROPERTIES_ANDROID;
+    ext_properties.pNext = pNext;
 
     cvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 

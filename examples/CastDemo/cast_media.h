@@ -83,7 +83,7 @@ typedef struct CastMedia_Channel_s
  *
  * \param[out] channel   Required quiescent channel with retained payload storage
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void CastMedia_Initialize(CastMedia_Channel_t* channel);
 
@@ -105,7 +105,7 @@ void CastMedia_Initialize(CastMedia_Channel_t* channel);
  * \param[in]     url       Required text within CAST_MEDIA_URL_CAPACITY bytes
  * \param[in]     type      Required text within CAST_MEDIA_TYPE_CAPACITY bytes
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 void CastMedia_Publish(CastMedia_Channel_t* channel, const char_t* url, const char_t* type);
 

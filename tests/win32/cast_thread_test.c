@@ -83,7 +83,7 @@ static Fixture_t g_restarted; ///< Immediate rearm followed by shutdown.
  *
  * \param[in,out] context   Initialized Job_t whose owner waits for completion
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void RunJob(void* context);
 
@@ -96,7 +96,7 @@ static FORCE_INLINE void RunJob(void* context);
  *
  * \param[in,out] thread   Initialized execution object with an accepted job
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void WaitForResult(OS_Thread_t* thread);
 
@@ -109,7 +109,7 @@ static FORCE_INLINE void WaitForResult(OS_Thread_t* thread);
  *
  * \param[in,out] thread   Initialized execution object
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CloseThread(OS_Thread_t* thread);
 
@@ -122,7 +122,7 @@ static FORCE_INLINE void CloseThread(OS_Thread_t* thread);
  *
  * \param[out] fixture   Fresh static storage retained until thread closure
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void InitializeFixture(Fixture_t* fixture);
 
@@ -135,7 +135,7 @@ static FORCE_INLINE void InitializeFixture(Fixture_t* fixture);
  *
  * \param[in,out] fixture   Initialized idle fixture with its gate closed
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckAcceptedStop(Fixture_t* fixture);
 
@@ -148,7 +148,7 @@ static FORCE_INLINE void CheckAcceptedStop(Fixture_t* fixture);
  *
  * \param[in,out] fixture   Initialized idle fixture
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckRepeatedJobs(Fixture_t* fixture);
 
@@ -161,7 +161,7 @@ static FORCE_INLINE void CheckRepeatedJobs(Fixture_t* fixture);
  *
  * \param[in,out] fixture   Initialized idle fixture
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckRearmStop(Fixture_t* fixture);
 

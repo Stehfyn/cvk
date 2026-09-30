@@ -72,7 +72,7 @@ bool_t OS_Process_ReadArgument(uint32_t* unitCount, uint16_t* output, uint32_t c
  *
  * \param[in] interactive   TRUE permits error dialogs; FALSE suppresses them.
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void OS_Process_SetInteractive(bool_t interactive);
 
@@ -85,7 +85,7 @@ void OS_Process_SetInteractive(bool_t interactive);
  *
  * \param[in] status   Process completion code
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 OS_NORETURN void OS_Process_Exit(uint32_t status);
 

@@ -165,7 +165,7 @@ typedef struct Utl_Mpeg4Audio_Config_s
  *
  * \param[out] config   Required exclusively writable model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Mpeg4Audio_InitializeConfig(Utl_Mpeg4Audio_Config_t* config);
 

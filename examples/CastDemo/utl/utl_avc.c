@@ -97,7 +97,7 @@ typedef struct AvcCursor_s
  *
  * \param[in] bytes   Complete borrowed extent
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void AssertSpan(Utl_Mpeg4_Span_t bytes);
 
@@ -204,7 +204,7 @@ static FORCE_INLINE bool_t ReadEntry(Utl_Mpeg4_Span_t* parameter, AvcCursor_t* c
  * \param[in,out] cursor   Required initialized cursor
  * \param[in]     count    Declared bounded count
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void ReadParameterSets(Utl_Avc_ParameterSets_t* sets, AvcCursor_t* cursor, uint32_t count);
 
@@ -222,7 +222,7 @@ static FORCE_INLINE void ReadParameterSets(Utl_Avc_ParameterSets_t* sets, AvcCur
  * \param[in,out] config   Required initialized candidate
  * \param[in,out] cursor   Required initialized cursor
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void ReadHighFields(Utl_Avc_Config_t* config, AvcCursor_t* cursor);
 
@@ -241,7 +241,7 @@ static FORCE_INLINE void ReadHighFields(Utl_Avc_Config_t* config, AvcCursor_t* c
  * \param[in,out] position   Required bounded output cursor
  * \param[in]     bytes      Validated stable span
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteSpan(byte_t* output, uint32_t* position, Utl_Mpeg4_Span_t bytes);
 

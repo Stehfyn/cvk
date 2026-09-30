@@ -121,7 +121,7 @@ typedef struct Utl_Ssdp_Response_s
  * \param[in]  target        Valid counted target URI
  * \param[in]  maximumWait   Positive response window in seconds
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void Utl_Ssdp_InitializeSearch(Utl_Ssdp_Search_t* search, Utl_Http_Text_t target, uint32_t maximumWait);
 

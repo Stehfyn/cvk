@@ -145,7 +145,7 @@ typedef struct Utl_Url_s
  *
  * \param[out] url   Required object, exclusively owned
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void Utl_Url_Initialize(Utl_Url_t* url);
 

@@ -20,7 +20,7 @@
  * \param[in] clearValueCount Number of clear values.
  * \param[in] pClearValues Clear values, or NULL when the count is zero.
  * \param[in] contents Subpass contents mode.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkCmdBeginRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
                                           const void*             pBarrierNext,
@@ -72,7 +72,7 @@ void cvkCmdBeginRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
  * \param[in] subresourceRange Attachment subresources to release.
  * \param[in] srcStageMask Stage that accessed the image.
  * \param[in] dependencyFlags Image barrier dependency flags.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkCmdEndRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
                                         const void*             pBarrierNext,
@@ -112,7 +112,7 @@ void cvkCmdEndRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
  * \param[in] pipeline Fullscreen triangle-strip pipeline.
  * \param[in] layout Pipeline layout for the descriptor set.
  * \param[in] descriptorSet Descriptor set bound at set zero.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkCmdExecuteFullscreenQuadRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
                                                           VkImageLayout           externalLayout,
@@ -183,7 +183,7 @@ void cvkCmdExecuteFullscreenQuadRenderPassOnExternalImage(VkCommandBuffer       
  * \param[in] pImages Images to acquire.
  * \param[in] subresourceRange Subresources of each image.
  * \param[in] sampledStageMask Shader stages that sample the images.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkCmdAcquireSampledImagesFromExternal(VkCommandBuffer         commandBuffer,
                                             VkImageLayout           externalLayout,
@@ -222,7 +222,7 @@ void cvkCmdAcquireSampledImagesFromExternal(VkCommandBuffer         commandBuffe
  * \param[in] pImages Images to release.
  * \param[in] subresourceRange Subresources of each image.
  * \param[in] sampledStageMask Shader stages that sampled the images.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkCmdReleaseSampledImagesToExternal(VkCommandBuffer         commandBuffer,
                                           VkImageLayout           sampledLayout,
@@ -258,7 +258,7 @@ void cvkCmdReleaseSampledImagesToExternal(VkCommandBuffer         commandBuffer,
  * \param[in] image Image to transition.
  * \param[in] subresourceRange Subresources to transition.
  * \param[in] sampledStageMask Shader stages that sample the image.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkCmdTransitionUndefinedImageToSampledImage(VkCommandBuffer         commandBuffer,
                                                   VkImageLayout           sampledLayout,
@@ -289,7 +289,7 @@ void cvkCmdTransitionUndefinedImageToSampledImage(VkCommandBuffer         comman
  * \param[in] layout Pipeline layout for the descriptor set.
  * \param[in] descriptorSet Descriptor set bound at set zero.
  * \param[in] vertexCount Number of vertices to draw.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  commandBuffer,
                                   VkRenderPass     renderPass,
@@ -339,7 +339,7 @@ void cvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  commandBuffer,
  * \param[in] vertexCount Number of vertices to draw.
  * \param[in] pushConstantSize Size of the fragment push constants.
  * \param[in] pPushConstants Fragment push constants.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkCmdExecuteGraphicsRenderPassWithPushConstants(VkCommandBuffer  commandBuffer,
                                                    VkRenderPass     renderPass,
@@ -448,7 +448,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeve
  * \param[out] pInstance                Receives the created VkInstance
  * \param[out] pMessenger               Receives the created VkDebugUtilsMessengerEXT
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkCreateDebugInstance(const void*                          pNext,
                             VkInstanceCreateFlags                flags,
@@ -652,7 +652,7 @@ uint32_t cvkAllocateVideoSessionMemory(VkPhysicalDevice             physicalDevi
  * \param[out] pScratchMemory          Receives the scratch memory
  * \param[out] pScratchDeviceAddress   Receives the aligned scratch device address for the build
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkSetupAccelerationStructure(VkPhysicalDevice                         physicalDevice,
                                    VkDevice                                 device,
@@ -716,7 +716,7 @@ void cvkSetupAccelerationStructure(VkPhysicalDevice                         phys
  * \param[out] pHitRegion              Receives the hit region
  * \param[out] pCallableRegion         Receives the callable region
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkSetupRayTracingShaderBindingTable(VkPhysicalDevice                 physicalDevice,
                                           VkDevice                         device,
@@ -800,7 +800,7 @@ void cvkSetupRayTracingShaderBindingTable(VkPhysicalDevice                 physi
  * \param[in]  pRangeNext              Optional extension chain for the VkMappedMemoryRange, or NULL
  * \param[in]  pData                   Bytes to write; size bytes
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkWriteMemory(VkDevice         device,
                     VkDeviceMemory   memory,
@@ -814,7 +814,7 @@ void cvkWriteMemory(VkDevice         device,
 
     CVK_ASSERT(VK_WHOLE_SIZE != size);
     cvkMapMemory(device, memory, offset, size, flags, &mapped);
-    (void)memcpy(mapped, pData, (size_t)size);
+    cvkCopyMemory(mapped, pData, (size_t)size);
     cvkFlushMappedMemoryRange(device, pRangeNext, memory, offset, size);
     cvkUnmapMemory(device, memory);
 }
@@ -834,7 +834,7 @@ void cvkWriteMemory(VkDevice         device,
  * \param[in]  pRangeNext              Optional extension chain for the VkMappedMemoryRange, or NULL
  * \param[out] pData                   Receives size bytes
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadMemory(VkDevice         device,
                    VkDeviceMemory   memory,
@@ -849,7 +849,7 @@ void cvkReadMemory(VkDevice         device,
     CVK_ASSERT(VK_WHOLE_SIZE != size);
     cvkMapMemory(device, memory, offset, size, flags, &mapped);
     cvkInvalidateMappedMemoryRange(device, pRangeNext, memory, offset, size);
-    (void)memcpy(pData, mapped, (size_t)size);
+    cvkCopyMemory(pData, mapped, (size_t)size);
     cvkUnmapMemory(device, memory);
 }
 
@@ -863,7 +863,7 @@ void cvkReadMemory(VkDevice         device,
  * \param[in]  flags                   vkMapMemory flags
  * \param[in]  pData                   Bytes to write; size bytes
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkWriteCoherentMemory(VkDevice         device,
                             VkDeviceMemory   memory,
@@ -876,7 +876,7 @@ void cvkWriteCoherentMemory(VkDevice         device,
 
     CVK_ASSERT(VK_WHOLE_SIZE != size);
     cvkMapMemory(device, memory, offset, size, flags, &mapped);
-    (void)memcpy(mapped, pData, (size_t)size);
+    cvkCopyMemory(mapped, pData, (size_t)size);
     cvkUnmapMemory(device, memory);
 }
 
@@ -890,7 +890,7 @@ void cvkWriteCoherentMemory(VkDevice         device,
  * \param[in]  flags                   vkMapMemory flags
  * \param[out] pData                   Receives size bytes
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadCoherentMemory(VkDevice         device,
                            VkDeviceMemory   memory,
@@ -903,6 +903,6 @@ void cvkReadCoherentMemory(VkDevice         device,
 
     CVK_ASSERT(VK_WHOLE_SIZE != size);
     cvkMapMemory(device, memory, offset, size, flags, &mapped);
-    (void)memcpy(pData, mapped, (size_t)size);
+    cvkCopyMemory(pData, mapped, (size_t)size);
     cvkUnmapMemory(device, memory);
 }

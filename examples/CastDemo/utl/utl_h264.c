@@ -217,7 +217,7 @@ typedef struct NalUnit_s
  *
  * \param[in] value Caller-supplied flag
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void AssertBoolean(bool_t value);
 
@@ -326,7 +326,7 @@ static FORCE_INLINE uint32_t GreatestCommonDivisor(uint32_t left, uint32_t right
  * \param[in,out] writer  Byte-aligned RBSP writer
  * \param[in]     value   Payload type or payload size to encode
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteSEIExtendedValue(Utl_Mpeg4_BitWriter_t* writer, uint64_t value);
 
@@ -341,7 +341,7 @@ static FORCE_INLINE void WriteSEIExtendedValue(Utl_Mpeg4_BitWriter_t* writer, ui
  * \param[in,out] writer Initialized bit writer
  * \param[in] params Validated SPS syntax
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteVui(Utl_Mpeg4_BitWriter_t* writer, const Utl_H264_SpsParams_t* params);
 
@@ -357,7 +357,7 @@ static FORCE_INLINE void WriteVui(Utl_Mpeg4_BitWriter_t* writer, const Utl_H264_
  * \param[in] scaling_list Validated scaling-list model
  * \param[in] element_count 4-by-4 or 8-by-8 coefficient count
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteScalingList(Utl_Mpeg4_BitWriter_t*        writer,
                                           const Utl_H264_ScalingList_t* scaling_list,
@@ -374,7 +374,7 @@ static FORCE_INLINE void WriteScalingList(Utl_Mpeg4_BitWriter_t*        writer,
  * \param[in,out] writer Initialized bit writer
  * \param[in] params Validated PPS syntax
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WritePpsScalingLists(Utl_Mpeg4_BitWriter_t* writer, const Utl_H264_PpsParams_t* params);
 
@@ -390,7 +390,7 @@ static FORCE_INLINE void WritePpsScalingLists(Utl_Mpeg4_BitWriter_t* writer, con
  * \param[in,out] writer   Initialized byte-aligned writer or counter
  * \param[in]     unit     Stable header and bounded RBSP model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteNalBytes(Utl_Mpeg4_BitWriter_t* writer, const NalUnit_t* unit);
 

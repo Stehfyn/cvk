@@ -183,7 +183,7 @@ typedef struct Utl_Xml_Document_s
  * \param[out] document   Exclusive owner
  * \param[in]  storage    Retained fixed arrays
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void Utl_Xml_InitializeDocument(Utl_Xml_Document_t* document, Utl_Xml_Storage_t storage);
 

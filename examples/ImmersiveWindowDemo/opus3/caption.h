@@ -1,12 +1,10 @@
-#pragma once
+#ifndef IMMERSIVE_OPUS3_CAPTION_H
+#define IMMERSIVE_OPUS3_CAPTION_H
 
-#include <windows.h>
-#include <uxtheme.h>
-#pragma warning(push)
-#pragma warning(disable : 4201) /* nameless struct/union in the DirectX headers */
+#include <Windows.h>
+#include <Uxtheme.h>
 #include <wincodec.h>
 #include <cd2d.h>
-#pragma warning(pop)
 #include "window.h" /* IMMERSIVEWINDOW, which owns the CAPTION; CAPTIONLAYOUT and CAPTIONBUTTON, which the recording follows */
 
 typedef struct CAPTIONPLATFORM CAPTIONPLATFORM; /* caption.c: the Windows 10 / Windows 11 function table */
@@ -85,25 +83,27 @@ typedef struct CAPTION
    and this context. */
 void
 InitCaption(
-    CAPTION*               caption,
-    const IMMERSIVEWINDOW* window,
-    ID2D1DeviceContext*    context);
+    CAPTION*               pCaption,
+    const IMMERSIVEWINDOW* pWindow,
+    ID2D1DeviceContext*    pDC);
 
 void
 DestroyCaption(
-    CAPTION* caption);
+    CAPTION* pCaption);
 
 /* Before a frame's draw opens: bring the resources up to date with the window's caption revision and
    the frame's layout (its DPI and width), and the recording up to date with both and the window's
    state. Rebuilds and recording retarget the context. */
 void
 PrepareWindowCaption(
-    CAPTION*             caption,
-    ID2D1DeviceContext*  context,
-    const CAPTIONLAYOUT* layout);
+    CAPTION*             pCaption,
+    ID2D1DeviceContext*  pDC,
+    const CAPTIONLAYOUT* pLayout);
 
 /* Inside the frame's draw: replay the caption as prepared. */
 void
 DrawWindowCaption(
-    CAPTION*            caption,
-    ID2D1DeviceContext* context);
+    CAPTION*            pCaption,
+    ID2D1DeviceContext* pDC);
+
+#endif /* IMMERSIVE_OPUS3_CAPTION_H */

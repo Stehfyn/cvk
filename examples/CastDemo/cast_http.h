@@ -107,7 +107,7 @@ typedef struct CastHttp_Response_s
  * \param[in,out] fields          Disjoint fixed field records
  * \param[in]     fieldCapacity   Number of writable records
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 void CastHttp_InitializeRequest(CastHttp_Request_t* request, Utl_Http_Field_t* fields, uint32_t fieldCapacity);
 
@@ -126,7 +126,7 @@ void CastHttp_InitializeRequest(CastHttp_Request_t* request, Utl_Http_Field_t* f
  * \param[out] response   Required exclusive model
  * \param[in]  status     Named HTTP status
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void CastHttp_InitializeResponse(CastHttp_Response_t* response, uint16_t status);
 

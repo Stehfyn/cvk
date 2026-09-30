@@ -67,7 +67,7 @@
  * \param[in,out] file   Initialized file owner
  * \param[in]     code   Native error captured immediately after failure
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void RecordError(OS_TemporaryFile_t* file, uint32_t code);
 

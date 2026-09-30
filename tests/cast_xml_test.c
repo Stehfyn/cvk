@@ -351,7 +351,7 @@ static const DescriptionCase_t c_descriptionCases[] = {
  * \par Requirements:
  *  - 001 First shall be within the fixed output.
  * \param[in] first   Beginning of the guard tail
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckGuard(uint32_t first);
 
@@ -364,7 +364,7 @@ static FORCE_INLINE void CheckGuard(uint32_t first);
  * \par Requirements:
  *  - 001 Document shall contain the current completed case.
  * \param[in] test   Independent expected bytes
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckText(const Case_t* test);
 
@@ -377,7 +377,7 @@ static FORCE_INLINE void CheckText(const Case_t* test);
  * \par Requirements:
  *  - 001 Input and expected result shall be independent test data.
  * \param[in] test   Complete parser expectation
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckCase(const Case_t* test);
 
@@ -389,7 +389,7 @@ static FORCE_INLINE void CheckCase(const Case_t* test);
  *
  * \par Requirements:
  *  - 001 Only the complete independent document shall be accepted.
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckPrefixes(void);
 
@@ -401,7 +401,7 @@ static FORCE_INLINE void CheckPrefixes(void);
  *
  * \par Requirements:
  *  - 001 Zero-capacity storage shall be valid initialization and fail only when a record is needed.
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckCapacity(void);
 
@@ -413,7 +413,7 @@ static FORCE_INLINE void CheckCapacity(void);
  *
  * \par Requirements:
  *  - 001 Sibling scopes and unprefixed attribute namespaces shall remain independent.
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckNamespaces(void);
 
@@ -425,7 +425,7 @@ static FORCE_INLINE void CheckNamespaces(void);
  *
  * \par Requirements:
  *  - 001 Nested devices and vendor fields shall not override direct schema fields.
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckDescription(void);
 
@@ -441,7 +441,7 @@ static FORCE_INLINE void CheckDescription(void);
  *  - 002 Encoded closing delimiters and raw attribute data shall retain their permitted meanings.
  *  - 003 Invalid text shall preserve both the output bytes and the count.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckTextKinds(void);
 
@@ -459,7 +459,7 @@ static FORCE_INLINE void CheckTextKinds(void);
  *
  * \param[in] test   Expected display-identity result
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckDescriptionCase(const DescriptionCase_t* test);
 

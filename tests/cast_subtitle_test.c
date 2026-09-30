@@ -76,7 +76,7 @@ static FixtureWorkspace_t g_fixture;
  *  - 002 Successful conversion shall match independent expected wire bytes.
  *  - 003 A malformed conversion shall not retain an earlier result or prevent subsequent reuse.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckWorkspace(void);
 
@@ -226,7 +226,7 @@ static FORCE_INLINE void CheckWorkspace(void)
  *  - 001 Accepted inputs shall publish complete WebVTT and rejected inputs an empty result.
  *  - 002 Every conversion shall reuse the initialized workspace and invalidate failed output.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckTimestamps(void);
 
@@ -338,7 +338,7 @@ static FORCE_INLINE bool_t AcceptLateCue(void* user, double start, double end, c
  *
  * \param[in] path   Required temporary file path owned by the fixture
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckLateTrack(const TCHAR* path);
 

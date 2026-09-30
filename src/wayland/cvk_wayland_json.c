@@ -3,7 +3,7 @@
 #include "cvk/wayland/cvk_wayland_json.h"
 #include "cvk/cvk_json.h"
 #include "cvk/internal/cvk_json_work.h"
-#include <string.h>
+#include "vk_diagnostic.h"
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_wayland.h>
 
@@ -21,7 +21,7 @@ void cvkReadJsonWaylandSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkWaylandSurfaceCreateInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
 

@@ -1,11 +1,13 @@
-#pragma once
+#ifndef IMMERSIVE_OPUS3_WINDOW_H
+#define IMMERSIVE_OPUS3_WINDOW_H
 
-#include <windows.h>
+#include <Windows.h>
 #include "swapchain.h"
 
 typedef struct CAPTION CAPTION; /* caption.h, which builds on this header's layout and button types */
 
 #define WC_IMMERSIVEWINDOW TEXT("Opus3BorderlessWindow")
+#define IMMERSIVE_CAPTION_TITLE_CAPACITY (256)
 
 typedef enum CAPTIONBUTTON
 {
@@ -56,7 +58,7 @@ typedef struct IMMERSIVEWINDOW
     CAPTIONBUTTON      pressedButton;
     BOOL               fLightMode;
     BOOL               fActive;
-    WCHAR              captionTitle[256];
+    WCHAR              captionTitle[IMMERSIVE_CAPTION_TITLE_CAPACITY];
     HICON              captionIcon;      /* the icon DWM would show, at the DPI's small size          */
     HICON              captionIconOwned; /* captionIcon when it is a copy this window made, to destroy */
     HICON              smallIconSource;  /* caller-owned WM_SETICON source, never the resized copy   */
@@ -133,3 +135,5 @@ void
 EndImmersivePaint(
     IMMERSIVEWINDOW*            window,
     const IMMERSIVEPAINTSTRUCT* ps);
+
+#endif /* IMMERSIVE_OPUS3_WINDOW_H */

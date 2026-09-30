@@ -1,7 +1,7 @@
 #ifndef SHELLSCALINGAPIX_H
 #define SHELLSCALINGAPIX_H
 
-#include <windows.h>
+#include <Windows.h>
 #include <shellscalingapi.h>
 
 #ifdef __cplusplus

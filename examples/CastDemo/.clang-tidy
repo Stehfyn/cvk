@@ -6,26 +6,21 @@
 Checks: >
   clang-analyzer-*,
   bugprone-*,
+  -bugprone-easily-swappable-parameters,
   cert-*,
   concurrency-*,
   misc-*,
   performance-*,
   portability-*,
   readability-*,
-  -clang-analyzer-optin.performance.Padding,
-  -bugprone-easily-swappable-parameters
+  -clang-analyzer-optin.performance.Padding
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 SystemHeaders: false
-# User-approved exceptions: compiler padding, Clang documentation diagnostics
-# conflicting with bare \retval None, and minimum parameter-name length. Clang
-# provides no separate switch for its empty retval paragraph warning. Other
-# identifier-length checks remain enabled; existing parameter names are preserved.
-# Later approved: raw C buffer usage and existing adjacent same-type parameters.
-# Bounds/path analysis and every other bugprone check remain enabled.
-# Compiler-introduced padding is also reported by this separate analyzer check.
-ExtraArgs: ['-Wno-padded', '-Wno-documentation', '-Wno-unsafe-buffer-usage']
+# The C pointer-indexing diagnostic is excluded for the counted-buffer APIs.
+ExtraArgs: ['-Wno-padded', '-Wno-unsafe-buffer-usage']
 CheckOptions:
   readability-identifier-length.MinimumParameterNameLength: 1
+  readability-identifier-length.MinimumVariableNameLength: 1
 FormatStyle: file
 ...

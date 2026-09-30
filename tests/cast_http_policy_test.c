@@ -501,7 +501,7 @@ static const RequestCase_t c_requests[] = {
  *
  * \param[in] first   First unwritten byte
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckGuard(uint32_t first);
 
@@ -518,7 +518,7 @@ static FORCE_INLINE void CheckGuard(uint32_t first);
  *
  * \param[in] test   Independent expected result
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckRequest(const RequestCase_t* test);
 
@@ -535,7 +535,7 @@ static FORCE_INLINE void CheckRequest(const RequestCase_t* test);
  *  - 003 A capacity failure shall latch until reinitialization.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckPipeline(void);
 
@@ -554,7 +554,7 @@ static FORCE_INLINE void CheckPipeline(void);
  * \param[in] expected        Independent expected bytes
  * \param[in] expectedBytes   Exact expected extent
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckResponse(const CastHttp_Response_t* response,
                                        const char_t*              expected,
@@ -572,7 +572,7 @@ static FORCE_INLINE void CheckResponse(const CastHttp_Response_t* response,
  *  - 002 Invalid interval arithmetic and field injection shall fail without writes.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckResponses(void);
 

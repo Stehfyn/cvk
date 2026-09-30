@@ -3,7 +3,7 @@
 #include "cvk/ios/cvk_ios_json.h"
 #include "cvk/cvk_json.h"
 #include "cvk/internal/cvk_json_work.h"
-#include <string.h>
+#include "vk_diagnostic.h"
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_ios.h>
 
@@ -21,7 +21,7 @@ void cvkReadJsonIOSSurfaceCreateInfoMVK(cvkJsonWork* pWork, const cvkJsonValue* 
     pContext = pWork->pContext;
     pInfo    = (VkIOSSurfaceCreateInfoMVK*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK;
 

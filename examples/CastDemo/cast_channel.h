@@ -75,7 +75,7 @@ int CastChannel_Receive(CastChannel* pChannel, Utl_CastV2_Message_t* pMessage, u
  *
  * \param[in,out] pChannel   Channel returned by Connect; NULL is permitted.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void CastChannel_Close(CastChannel* pChannel);
 

@@ -12,9 +12,17 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <windows.h>
+#include <Windows.h> // IWYU pragma: keep
+#include <stdint.h>
+#include <minwindef.h>
+#include <memoryapi.h>
+#include <handleapi.h>
+#include <WinBase.h>
+#include <fileapi.h>
 #include <float.h>
+#include <winnt.h>
 #include "mkv_subtitles.h"
+#include "os/os_types.h"
 #include "utl/utl_matroska.h"
 #include "os/os_assert.h"
 #include "os/os_compiler.h"
@@ -26,7 +34,7 @@
 ** 3.1 Macros
 **===============================================================================================*/
 
-#define MKV_MAX_CUE_BYTES          (1024 * 1024)  ///< Maximum accepted cue payload.
+#define MKV_MAX_CUE_BYTES          (UINT64_C(1024) * UINT64_C(1024))  ///< Maximum accepted cue payload.
 #define MKV_BITS_PER_BYTE          (8)            ///< Bits in an EBML octet.
 #define MKV_TERMINATOR             ('\0')         ///< Metadata string terminator.
 #define MKV_CODEC_CAPACITY         (64)           ///< Terminated codec identifier capacity.
@@ -653,7 +661,7 @@ static FORCE_INLINE int32_t Track(const Reader_t* reader, const Element_t* entry
                     {
                         narrow_bits = (uint32_t)bits;
                         CRT_Memory_Copy(&narrow_scale, &narrow_bits, sizeof(float32_t));
-                        track->timestampScale = narrow_scale;
+                        track->timestampScale = (double)narrow_scale;
                     }
                     else if (sizeof(float64_t) == length)
                     {
@@ -843,7 +851,7 @@ static FORCE_INLINE bool_t EmitBlock(const Reader_t*         reader,
             }
             if (is_valid)
             {
-                encoded_time = (uint32_t)reader->data[offset] * MKV_BYTE_RADIX + reader->data[offset + 1];
+                encoded_time = ((uint32_t)reader->data[offset] * MKV_BYTE_RADIX) + reader->data[offset + 1];
                 relative     = (int32_t)encoded_time;
                 if (MKV_SIGNED_TIME_FIRST <= encoded_time)
                 {
@@ -854,12 +862,12 @@ static FORCE_INLINE bool_t EmitBlock(const Reader_t*         reader,
             }
             if (is_valid)
             {
-                start       = ((double)clusterTime + (double)relative * track->timestampScale) * (double)scale /
-                                  MKV_NANOSECONDS_PER_SECOND -
-                              (double)track->codecDelay / MKV_NANOSECONDS_PER_SECOND;
-                end         = start + (duration ? (double)duration * (double)scale * track->timestampScale
-                                                : (double)track->defaultDuration) /
-                                          MKV_NANOSECONDS_PER_SECOND;
+                start       = (((double)clusterTime + ((double)relative * track->timestampScale)) * (double)scale /
+                               MKV_NANOSECONDS_PER_SECOND) -
+                              ((double)track->codecDelay / MKV_NANOSECONDS_PER_SECOND);
+                end         = start + ((duration ? (double)duration * (double)scale * track->timestampScale
+                                                 : (double)track->defaultDuration) /
+                                       MKV_NANOSECONDS_PER_SECOND);
                 valid_start = (-DBL_MAX <= start) && (start <= DBL_MAX);
                 valid_end   = (start < end) && (end <= MKV_MAX_CUE_SECONDS);
                 is_valid    = valid_start && valid_end;

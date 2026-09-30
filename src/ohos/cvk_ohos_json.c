@@ -3,8 +3,8 @@
 #include "cvk/ohos/cvk_ohos_json.h"
 #include "cvk/cvk_json.h"
 #include "cvk/internal/cvk_json_work.h"
+#include "vk_diagnostic.h"
 #include <stdint.h>
-#include <string.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_ohos.h>
 
@@ -22,7 +22,7 @@ void cvkReadJsonExternalFormatOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObje
     pContext = pWork->pContext;
     pInfo    = (VkExternalFormatOHOS*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_OHOS;
 
@@ -49,7 +49,7 @@ void cvkReadJsonImportNativeBufferInfoOHOS(cvkJsonWork* pWork, const cvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkImportNativeBufferInfoOHOS*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_NATIVE_BUFFER_INFO_OHOS;
 
@@ -73,7 +73,7 @@ void cvkReadJsonMemoryGetNativeBufferInfoOHOS(cvkJsonWork* pWork, const cvkJsonV
     pContext = pWork->pContext;
     pInfo    = (VkMemoryGetNativeBufferInfoOHOS*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_GET_NATIVE_BUFFER_INFO_OHOS;
 
@@ -104,7 +104,7 @@ void cvkReadJsonNativeBufferFormatPropertiesOHOS(cvkJsonWork* pWork, const cvkJs
     pContext = pWork->pContext;
     pInfo    = (VkNativeBufferFormatPropertiesOHOS*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_FORMAT_PROPERTIES_OHOS;
 
@@ -166,7 +166,7 @@ void cvkReadJsonNativeBufferPropertiesOHOS(cvkJsonWork* pWork, const cvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkNativeBufferPropertiesOHOS*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_PROPERTIES_OHOS;
 
@@ -197,7 +197,7 @@ void cvkReadJsonNativeBufferUsageOHOS(cvkJsonWork* pWork, const cvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkNativeBufferUsageOHOS*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_USAGE_OHOS;
 
@@ -224,7 +224,7 @@ void cvkReadJsonSurfaceCreateInfoOHOS(cvkJsonWork* pWork, const cvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkSurfaceCreateInfoOHOS*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_CREATE_INFO_OHOS;
 

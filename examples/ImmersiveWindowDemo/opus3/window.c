@@ -1,6 +1,17 @@
 // C port of https://github.com/melak47/BorderlessWindow (CC0-1.0).
+// CDX supplies D2D and composition declarations that conflict with the SDK headers.
+// NOLINTBEGIN(misc-include-cleaner)
 #define WIN32_LEAN_AND_MEAN
 #define COBJMACROS
+#include <Windows.h> // IWYU pragma: keep
+#include <WinUser.h>
+#include <WinBase.h>
+#include <windef.h>
+#include <minwindef.h>
+#include <winnt.h>
+#include <wingdi.h>
+#include <synchapi.h>
+#include <libloaderapi.h>
 #include "window.h"
 #include "caption.h"
 #include "dpi.h"
@@ -11,12 +22,6 @@
 #include <dwmapi.h>
 
 #define EXIT_SUCCESS 0
-#define EXIT_FAILURE 1
-
-#define HANDLE_WM_MOUSELEAVE(hwnd, wParam, lParam, fn) \
-    ((fn)(hwnd), 0L)
-#define FORWARD_WM_MOUSELEAVE(hwnd, fn) \
-    (void)(fn)((hwnd), WM_MOUSELEAVE, 0L, 0L)
 
 #define HANDLE_WM_NCMOUSELEAVE(hwnd, wParam, lParam, fn) \
     ((fn)(hwnd), 0L)
@@ -61,19 +66,16 @@
     (BOOL)(fn)((hwnd), WM_SETTEXT, 0L, (LPARAM)(LPCTSTR)(lpszText))
 
 /* WM_SETICON returns the icon it replaced. */
-#define HANDLE_WM_SETICON(hwnd, wParam, lParam, fn) \
-    (LRESULT)(fn)((hwnd), (UINT)(wParam), (HICON)(lParam))
 #define FORWARD_WM_SETICON(hwnd, uType, hIcon, fn) \
-    (HICON)(fn)((hwnd), WM_SETICON, (WPARAM)(UINT)(uType), (LPARAM)(HICON)(hIcon))
+    (HICON)(ULONG_PTR)(fn)((hwnd), WM_SETICON, (WPARAM)(UINT)(uType), (LPARAM)(HICON)(hIcon))
 
 #define SetWindowStyle(hwnd, style) (SetWindowLongPtr(hwnd, GWL_STYLE, (LONG_PTR)(style)))
-#define SetWindowExStyle(hwnd, style) (SetWindowLongPtr(hwnd, GWL_EXSTYLE, (LONG_PTR)(style)))
 #define SetWindowUserData(hwnd, data) (SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)(data)))
-#define GetWindowUserData(hwnd) ((void*)GetWindowLongPtr(hwnd, GWLP_USERDATA))
+#define GetWindowUserData(hwnd) ((IMMERSIVEWINDOW*)(ULONG_PTR)GetWindowLongPtr(hwnd, GWLP_USERDATA))
 
-#define ABS(x)         ((x < 0) ? -x : x)
-#define RECTWIDTH(rc)  (ABS(rc.right - rc.left))
-#define RECTHEIGHT(rc) (ABS(rc.bottom - rc.top))
+#define ABS(x)         (((x) < 0) ? -(x) : (x))
+#define RECTWIDTH(rc)  (ABS((rc).right - (rc).left))
+#define RECTHEIGHT(rc) (ABS((rc).bottom - (rc).top))
 #define WVR_NONE       (0x00000000)
 
 /* Private nonclient hit-test code for the light/dark caption button,
@@ -84,6 +86,7 @@
 #define STYLE_BASIC_BORDERLESS (WS_POPUP            | WS_THICKFRAME              | WS_SYSMENU | WS_MAXIMIZEBOX | WS_MINIMIZEBOX)
 #define STYLE_FULLSCREEN       (WS_POPUP | WS_SYSMENU | WS_MINIMIZEBOX)
 #define STYLE_FRAME_MASK       (STYLE_WINDOWED | STYLE_AERO_BORDERLESS)
+#define WINDOW_RESIZE_CORNER_SCALE 1.5
 
 static FORCEINLINE BOOL
 IsCompositionEnabled(
@@ -97,10 +100,7 @@ IsCompositionEnabled(
     {
         return enabled;
     }
-    else
-    {
-        return FALSE;
-    }
+    return FALSE;
 }
 
 static FORCEINLINE BOOL
@@ -126,10 +126,7 @@ ReleaseCaptureEx(
   {
       return ReleaseCapture();
   }
-  else
-  {
-      return TRUE;
-  }
+  return TRUE;
 }
 
 static FORCEINLINE BOOL
@@ -170,15 +167,9 @@ SelectWindowStyle(
         {
             return STYLE_AERO_BORDERLESS;
         }
-        else
-        {
-            return STYLE_BASIC_BORDERLESS;
-        }
+        return STYLE_BASIC_BORDERLESS;
     }
-    else
-    {
-        return STYLE_WINDOWED;
-    }
+    return STYLE_WINDOWED;
 }
 
 static FORCEINLINE void
@@ -221,7 +212,7 @@ static FORCEINLINE IMMERSIVEWINDOW*
 GetImmersiveWindow(
     HWND hwnd)
 {
-    return (IMMERSIVEWINDOW*)GetWindowUserData(hwnd);
+    return GetWindowUserData(hwnd); // NOLINT(performance-no-int-to-ptr): Win32 stores the pointer in LONG_PTR.
 }
 
 static void
@@ -283,6 +274,23 @@ SetBorderlessShadow(
 }
 
 static void
+RestoreWindowedState(IMMERSIVEWINDOW* window, DWORD style)
+{
+    ASSERT(SetWindowStyle(window->hwnd, style | SelectWindowStyle(window->fBorderless)));
+    SetShadow(window->hwnd, !window->fBorderless || window->fShadow);
+    ASSERT(SetWindowPlacement(window->hwnd, &window->windowedPlacement));
+    if (window->windowedPlacement.showCmd == SW_SHOWNORMAL)
+    {
+        /* A snapped window's current rectangle can differ from rcNormalPosition. */
+        ASSERT(SetWindowRect(window->hwnd, NULL, &window->windowedRect, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOACTIVATE));
+    }
+    else
+    {
+        ASSERT(SetWindowPos(window->hwnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE));
+    }
+}
+
+static void
 SetFullscreen(
     IMMERSIVEWINDOW* window,
     BOOL             fEnabled)
@@ -320,18 +328,7 @@ SetFullscreen(
     }
     else
     {
-        ASSERT(SetWindowStyle(window->hwnd, style | SelectWindowStyle(window->fBorderless)));
-        SetShadow(window->hwnd, !window->fBorderless || window->fShadow);
-        ASSERT(SetWindowPlacement(window->hwnd, &window->windowedPlacement));
-        if (window->windowedPlacement.showCmd == SW_SHOWNORMAL)
-        {
-            /* A snapped window's current rectangle can differ from rcNormalPosition. */
-            ASSERT(SetWindowRect(window->hwnd, NULL, &window->windowedRect, SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOACTIVATE));
-        }
-        else
-        {
-            ASSERT(SetWindowPos(window->hwnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE));
-        }
+        RestoreWindowedState(window, style);
     }
     UpdateWindowMetrics(window);
 }
@@ -482,7 +479,7 @@ GetBorderlessCaptionLayout(
     layout->xTitle      = metrics->xTitle;
     rect   = &layout->buttons[CB_LIGHTDARKBUTTON];
     button = CB_LIGHTDARKBUTTON;
-    for (count = CB_CLOSEBUTTON - CB_LIGHTDARKBUTTON + 1u; count != 0u; --count, ++button, ++rect)
+    for (count = CB_CLOSEBUTTON - CB_LIGHTDARKBUTTON + 1U; count != 0U; --count, ++button, ++rect)
     {
         *rect = BorderlessCaptionButtonRect(metrics, clientWidth, button);
         if (IsZoomed(window->hwnd))
@@ -530,7 +527,7 @@ HitTestBorderlessCaption(
     RECT          rect;
     CAPTIONBUTTON button;
 
-    for (button = (CB_COUNT - 1); button > CB_NONE; --button)
+    for (button = (CAPTIONBUTTON)(CB_COUNT - 1); button > CB_NONE; --button)
     {
         if (button == CB_ICON)
         {
@@ -621,9 +618,9 @@ HitTestBorderlessWindow(
     {
         ASSERT(GetWindowRect(hwnd, &rect));
         border = window->metrics.border;
-        left   = ptCursor.x <  (rect.left  + (1.5 * border.cx));
+        left   = ptCursor.x <  (rect.left  + (WINDOW_RESIZE_CORNER_SCALE * border.cx));
         top    = ptCursor.y <  rect.top    + border.cy;
-        right  = ptCursor.x >= rect.right  - (1.5 * border.cx);
+        right  = ptCursor.x >= rect.right  - (WINDOW_RESIZE_CORNER_SCALE * border.cx);
         bottom = ptCursor.y >= rect.bottom - border.cy;
 
         if (top && left)
@@ -686,15 +683,15 @@ UpdateCaptionIcon(
     hIcon = window->smallIconSource;
     if (!hIcon)
     {
-        hIcon = (HICON)SendMessage(window->hwnd, WM_GETICON, ICON_BIG, (LPARAM)dpi);
+        hIcon = (HICON)SendMessage(window->hwnd, WM_GETICON, ICON_BIG, (LPARAM)dpi); // NOLINT(performance-no-int-to-ptr): WM_GETICON returns an icon handle.
     }
     if (!hIcon)
     {
-        hIcon = (HICON)GetClassLongPtr(window->hwnd, GCLP_HICON);
+        hIcon = (HICON)GetClassLongPtr(window->hwnd, GCLP_HICON); // NOLINT(performance-no-int-to-ptr): class value is an icon handle.
     }
     if (!hIcon)
     {
-        hIcon = (HICON)GetClassLongPtr(window->hwnd, GCLP_HICONSM);
+        hIcon = (HICON)GetClassLongPtr(window->hwnd, GCLP_HICONSM); // NOLINT(performance-no-int-to-ptr): class value is an icon handle.
     }
     if (!hIcon)
     {
@@ -704,7 +701,7 @@ UpdateCaptionIcon(
 
     cxSmall    = (int)window->metrics.smallIcon.cx;
     cySmall    = (int)window->metrics.smallIcon.cy;
-    hIconSized = (HICON)CopyImage(hIcon, IMAGE_ICON, cxSmall, cySmall, 0u);
+    hIconSized = (HICON)CopyImage(hIcon, IMAGE_ICON, cxSmall, cySmall, 0U);
     ASSERT(hIconSized);
     ASSERT(GetIconInfo(hIconSized, &iconInfo));
     hIconOwned = CreateIconIndirect(&iconInfo);
@@ -720,7 +717,7 @@ UpdateCaptionIcon(
     /* Give DWM the same DPI-sized pixels as the custom caption. Leaving ICON_SMALL unset lets
        user32/DWM select and resample a different image at different display scales. Calling the
        default procedure directly keeps this internal copy out of OnSetIcon's caller-owned source. */
-    (void)FORWARD_WM_SETICON(window->hwnd, ICON_SMALL, hIcon, DefWindowProc);
+    (void)FORWARD_WM_SETICON(window->hwnd, ICON_SMALL, hIcon, DefWindowProc); // NOLINT(performance-no-int-to-ptr): WM_SETICON returns an icon handle.
 
     AcquireSRWLockExclusive(&window->presentLock);
     hIconOwnedPrev           = window->captionIconOwned;
@@ -742,13 +739,18 @@ OnNCCreate(
 {
     IMMERSIVEWINDOW* window;
     BOOL             created;
+    WCHAR*           copiedTitle;
 
     window = (IMMERSIVEWINDOW*)lpCreateStruct->lpCreateParams;
     window->hwnd = hwnd;
 
     /* Keep title access on the window thread. The renderer holds presentLock,
        so sending WM_GETTEXT from there could deadlock with a window message. */
-    lstrcpynW(window->captionTitle, lpCreateStruct->lpszName, ARRAYSIZE(window->captionTitle));
+    copiedTitle = lstrcpynW(window->captionTitle, lpCreateStruct->lpszName, ARRAYSIZE(window->captionTitle));
+    if (NULL == copiedTitle)
+    {
+        return FALSE;
+    }
     ++window->captionRevision;
 
     SetWindowUserData(hwnd, window);
@@ -1048,7 +1050,7 @@ OnLButtonUp(
                 case CB_ICON:
                 case CB_NONE:
                 case CB_COUNT:
-                default:
+                default: // NOLINT(clang-diagnostic-covered-switch-default): invalid button is ignored.
                     break;
             }
         }
@@ -1072,7 +1074,7 @@ ShowSystemMenu(
     hMenu = GetSystemMenu(hwnd, FALSE);
     flags = TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON;
 
-    selected = TrackPopupMenuEx(hMenu, flags, x, y, hwnd, NULL);
+    selected = (UINT)TrackPopupMenuEx(hMenu, flags, x, y, hwnd, NULL);
 
     if (selected != 0)
     {
@@ -1160,21 +1162,11 @@ OnNCActivate(
     window->fActive = fActive;
     ReleaseSRWLockExclusive(&window->presentLock);
 
-    if (window->fBorderless)
+    if (window->fBorderless && !IsCompositionEnabled())
     {
-        if (IsCompositionEnabled())
-        {
-            return FORWARD_WM_NCACTIVATE(hwnd, fActive, lParam, DefWindowProc);
-        }
-        else
-        {
-            return TRUE;
-        }
+        return TRUE;
     }
-    else
-    {
-       return FORWARD_WM_NCACTIVATE(hwnd, fActive, lParam, DefWindowProc);
-    }
+    return FORWARD_WM_NCACTIVATE(hwnd, fActive, lParam, DefWindowProc);
 }
 
 static FORCEINLINE void
@@ -1253,6 +1245,9 @@ OnShortcutKey(
                 SetFullscreen(window, !window->fFullscreen);
             }
             return TRUE;
+
+        default:
+            break;
     }
 
     return FALSE;
@@ -1449,6 +1444,7 @@ OnSetText(
 {
     IMMERSIVEWINDOW* window;
     LPCWSTR          title;
+    WCHAR*           copiedTitle;
     BOOL             result;
 
     window = GetImmersiveWindow(hwnd);
@@ -1465,8 +1461,15 @@ OnSetText(
             title = L"";
         }
         AcquireSRWLockExclusive(&window->presentLock);
-        lstrcpynW(window->captionTitle, title, ARRAYSIZE(window->captionTitle));
-        ++window->captionRevision;
+        copiedTitle = lstrcpynW(window->captionTitle, title, ARRAYSIZE(window->captionTitle));
+        if (NULL != copiedTitle)
+        {
+            ++window->captionRevision;
+        }
+        else
+        {
+            result = FALSE;
+        }
         ReleaseSRWLockExclusive(&window->presentLock);
     }
 
@@ -1491,7 +1494,7 @@ OnSetIcon(
     }
     else
     {
-        hIconPrev = FORWARD_WM_SETICON(hwnd, uType, hIcon, DefWindowProc);
+        hIconPrev = FORWARD_WM_SETICON(hwnd, uType, hIcon, DefWindowProc); // NOLINT(performance-no-int-to-ptr): WM_SETICON returns an icon handle.
     }
 
     if (window)
@@ -1555,9 +1558,14 @@ WndProc(
 {
     switch (Msg)
     {
-        HANDLE_MSG(hWnd, WM_SETTEXT,               OnSetText);
-        HANDLE_MSG(hWnd, WM_SETICON,               OnSetIcon);
-        HANDLE_MSG(hWnd, WM_SETTINGCHANGE,         OnSettingChange);
+        HANDLE_MSG(hWnd, WM_SETTEXT,               OnSetText); // NOLINT(performance-no-int-to-ptr): windowsx.h message ABI.
+        case WM_SETICON:
+        {
+            HICON hIconPrev;
+            hIconPrev = OnSetIcon(hWnd, (UINT)wParam, (HICON)lParam); // NOLINT(performance-no-int-to-ptr): lParam holds an icon handle.
+            return (LRESULT)(LONG_PTR)hIconPrev;
+        }
+        HANDLE_MSG(hWnd, WM_SETTINGCHANGE,         OnSettingChange); // NOLINT(performance-no-int-to-ptr): windowsx.h message ABI.
         HANDLE_MSG(hWnd, WM_THEMECHANGED,          OnThemeChanged);
         HANDLE_MSG(hWnd, WM_NCCREATE,              OnNCCreate);
         HANDLE_MSG(hWnd, WM_NCCALCSIZE,            OnNCCalcSize);
@@ -1570,10 +1578,10 @@ WndProc(
         HANDLE_MSG(hWnd, WM_MOUSEMOVE,             OnMouseMove);
         HANDLE_MSG(hWnd, WM_LBUTTONUP,             OnLButtonUp);
         HANDLE_MSG(hWnd, WM_CANCELMODE,            OnCancelMode);
-        HANDLE_MSG(hWnd, WM_CAPTURECHANGED,        OnCaptureChanged);
+        HANDLE_MSG(hWnd, WM_CAPTURECHANGED,        OnCaptureChanged); // NOLINT(performance-no-int-to-ptr): windowsx.h message ABI.
         HANDLE_MSG(hWnd, WM_NCACTIVATE,            OnNCActivate);
         HANDLE_MSG(hWnd, WM_DWMCOMPOSITIONCHANGED, OnDWMCompositionChanged);
-        HANDLE_MSG(hWnd, WM_DPICHANGED,            OnDpiChanged);
+        HANDLE_MSG(hWnd, WM_DPICHANGED,            OnDpiChanged); // NOLINT(performance-no-int-to-ptr): lParam holds a RECT pointer.
         HANDLE_MSG(hWnd, WM_KEYDOWN,               OnKeyDown);
         HANDLE_MSG(hWnd, WM_SYSKEYDOWN,            OnSysKeyDown);
         HANDLE_MSG(hWnd, WM_SYSCOMMAND,            OnSysCommand);
@@ -1582,6 +1590,8 @@ WndProc(
         HANDLE_MSG(hWnd, WM_CLOSE,                 OnClose);
         HANDLE_MSG(hWnd, WM_DESTROY,               OnDestroy);
         HANDLE_MSG(hWnd, WM_NCDESTROY,             OnNCDestroy);
+        default:
+            break;
     }
 
     if (WM_NCCREATE != Msg)
@@ -1599,8 +1609,8 @@ WndProc(
 
 /* Client shades. Dark mode's clear color alternates with the frame parity: both are black; tint one to
    see the cadence. */
-static const D2D1_COLOR_F WINDOW_CF_LIGHT_CLIENT     = {0.95f, 0.95f, 0.95f, 1.0f};
-static const D2D1_COLOR_F WINDOW_RGCF_DARK_CLIENT[2] = {{0.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f, 1.0f}};
+static const D2D1_COLOR_F WINDOW_CF_LIGHT_CLIENT     = {0.95F, 0.95F, 0.95F, 1.0F};
+static const D2D1_COLOR_F WINDOW_RGCF_DARK_CLIENT[2] = {{0.0F, 0.0F, 0.0F, 1.0F}, {0.0F, 0.0F, 0.0F, 1.0F}};
 
 ID2D1DeviceContext*
 BeginImmersivePaint(
@@ -1632,7 +1642,7 @@ BeginImmersivePaint(
     }
     else
     {
-        clientColor = &WINDOW_RGCF_DARK_CLIENT[window->paintCount & 1u];
+        clientColor = &WINDOW_RGCF_DARK_CLIENT[window->paintCount & 1U];
     }
     ID2D1DeviceContext_Clear(ps->context, clientColor);
     return ps->context;
@@ -1660,7 +1670,7 @@ EndImmersivePaint(
        that the border mode alternates with the frame parity. */
     if (window->paintCount)
     {
-        borderMode = (DCOMPOSITION_BORDER_MODE)(window->paintCount & 1u);
+        borderMode = (DCOMPOSITION_BORDER_MODE)(window->paintCount & 1U);
     }
     else
     {
@@ -1770,3 +1780,4 @@ CreateImmersiveWindow(
 
     ASSERT(SetWindowLongPtr(window->hwnd, GWLP_USERDATA, (LONG_PTR)window) == (LONG_PTR)window);
 }
+// NOLINTEND(misc-include-cleaner)

@@ -75,7 +75,7 @@ typedef struct Gfx_Surface_Storage_s
  * \param[out] storage     Unpublished startup-owned surface and its enumeration workspace
  * \param[in]  createInfo  Direct-presentation selection and initialized device context
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void Gfx_Surface_InitializeDirect(Gfx_Surface_Storage_t* storage, const Gfx_Surface_CreateInfo_t* createInfo);
 

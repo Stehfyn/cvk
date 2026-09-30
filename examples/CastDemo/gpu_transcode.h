@@ -74,7 +74,7 @@ int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
                           const GpuTranscodeConfig* pConfig,
                           unsigned                  startFrame,
                           unsigned                  maxFrames,
-                          volatile long*            pCancel,
+                          const volatile long*      pCancel,
                           char*                     pReport,
                           size_t                    reportCapacity);
 

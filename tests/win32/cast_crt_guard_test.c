@@ -60,7 +60,7 @@
  * \param[in,out] output   Required disjoint output extent
  * \param[in]     length   Nonzero extent abutting an inaccessible page
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckRange(byte_t* input, byte_t* output, uint32_t length);
 

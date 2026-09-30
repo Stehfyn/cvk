@@ -44,7 +44,7 @@
  *  - 002 The adapter shall invoke OS_Application_Main once and shall not return.
  *  - 003 No CRT startup or shutdown shall execute.
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 OS_NORETURN void WinMainStartup(void);
 

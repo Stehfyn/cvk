@@ -82,7 +82,7 @@ static ImageFormat_t GetFormatGeometry(uint32_t fourcc);
  * \param[out] layout  Unpublished layout receiving active row sizes and counts
  * \param[in]  image   Native format and dimensions
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void InitializeGeometry(Gfx_Image_Layout_t* layout, const VAImage* image);
 
@@ -98,7 +98,7 @@ static void InitializeGeometry(Gfx_Image_Layout_t* layout, const VAImage* image)
  * \param[in,out] plane   Plane receiving its validated packed offset
  * \param[in,out] layout  Unpublished layout accumulating the packed extent
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void InitializePlane(Gfx_Image_Plane_t* plane, Gfx_Image_Layout_t* layout);
 
@@ -116,7 +116,7 @@ static void InitializePlane(Gfx_Image_Plane_t* plane, Gfx_Image_Layout_t* layout
  * \param[in]  input         Base of disjoint source storage
  * \param[in]  packedOutput  TRUE to pack native rows, FALSE to unpack host rows
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CopyPlane(const Gfx_Image_Plane_t* plane, byte_t* output, const byte_t* input, bool_t packedOutput);
 

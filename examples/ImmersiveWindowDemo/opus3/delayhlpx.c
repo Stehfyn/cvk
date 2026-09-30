@@ -9,7 +9,9 @@
  */
 
 #pragma runtime_checks("", off)
+#if defined(_MSC_VER) && !defined(__clang__)
 #pragma check_stack(off)
+#endif
 #pragma strict_gs_check(off)
 
 #pragma comment(lib, "kernel32.lib")
@@ -18,14 +20,18 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
-#include <windows.h>
-#pragma warning(push)
-#pragma warning(disable: 4201)
+#include <Windows.h> // IWYU pragma: keep
 #include <delayimp.h>
-#pragma warning(pop)
+#include <winnt.h>
+#include <basetsd.h>
+#include <libloaderapi.h>
+#include <minwindef.h>
+#include <stddef.h>
 
 /* Linker-provided image base; RVAs in the descriptor are relative to it. */
+// NOLINTBEGIN(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp,clang-diagnostic-reserved-identifier): linker-defined names.
 extern IMAGE_DOS_HEADER __ImageBase;
+extern FARPROC WINAPI __delayLoadHelper2(PCImgDelayDescr pidd, FARPROC* ppfnIATEntry);
 
 static FORCEINLINE PVOID RvaToPtr(RVA rva)
 {
@@ -63,7 +69,7 @@ FARPROC WINAPI __delayLoadHelper2(PCImgDelayDescr pidd, FARPROC* ppfnIATEntry)
 
     if (IMAGE_SNAP_BY_ORDINAL(pINT[index].u1.Ordinal))
     {
-        pfn = GetProcAddress(hmod, (LPCSTR)(ULONG_PTR)IMAGE_ORDINAL(pINT[index].u1.Ordinal));
+        pfn = GetProcAddress(hmod, (LPCSTR)(ULONG_PTR)IMAGE_ORDINAL(pINT[index].u1.Ordinal)); // NOLINT(performance-no-int-to-ptr): Win32 encodes ordinal imports as pointers.
     }
     else
     {
@@ -74,3 +80,4 @@ FARPROC WINAPI __delayLoadHelper2(PCImgDelayDescr pidd, FARPROC* ppfnIATEntry)
     (*ppfnIATEntry) = pfn;
     return pfn;
 }
+// NOLINTEND(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp,clang-diagnostic-reserved-identifier)

@@ -3,7 +3,7 @@
 #include "cvk/xcb/cvk_xcb_json.h"
 #include "cvk/cvk_json.h"
 #include "cvk/internal/cvk_json_work.h"
-#include <string.h>
+#include "vk_diagnostic.h"
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_xcb.h>
 
@@ -21,7 +21,7 @@ void cvkReadJsonXcbSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkXcbSurfaceCreateInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
 

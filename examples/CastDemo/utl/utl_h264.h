@@ -421,7 +421,7 @@ typedef struct Utl_H264_PpsParams_s
  * \param[in]  maxNumReorderFrames                  max_num_reorder_frames
  * \param[in]  maxDecFrameBuffering                 max_dec_frame_buffering
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_H264_InitializeSps(Utl_H264_SpsParams_t* params,
                             uint8_t               profileIdc,
@@ -469,7 +469,7 @@ void Utl_H264_InitializeSps(Utl_H264_SpsParams_t* params,
  * \param[in]  coefficients    Raster-order coefficients, each in the range 1..255
  * \param[in]  elementCount    Number of coefficients: 16 for 4-by-4 or 64 for 8-by-8
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Utl_H264_InitializeScalingList(Utl_H264_ScalingList_t* params, const uint8_t* coefficients, uint32_t elementCount);
 
@@ -501,7 +501,7 @@ void Utl_H264_InitializeScalingList(Utl_H264_ScalingList_t* params, const uint8_
  * \param[in]  chromaFormatIdc                      Chroma format of the referenced SPS
  * \param[in]  secondChromaQpIndexOffset            Second chroma QP offset in the range -12..12
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Utl_H264_InitializePps(Utl_H264_PpsParams_t* params,
                             uint32_t              picParameterSetId,
@@ -668,7 +668,7 @@ uint8_t Utl_H264_DeriveMotionVectorLengthLog2(uint32_t maximumLength);
  * \param[out] paddedWidth    Coded width in luma samples
  * \param[out] paddedHeight   Coded frame height in luma samples
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_H264_DeriveCodedDimensions(uint32_t  width,
                                     uint32_t  height,
@@ -692,7 +692,7 @@ void Utl_H264_DeriveCodedDimensions(uint32_t  width,
  * \param[out] cropUnitX       Horizontal crop unit in luma samples
  * \param[out] cropUnitY       Vertical crop unit in luma samples
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_H264_DeriveCropUnits(uint32_t chromaFormatIdc, bool_t interlaced, uint32_t* cropUnitX, uint32_t* cropUnitY);
 
@@ -740,7 +740,7 @@ uint32_t Utl_H264_DeriveTimeScale(uint32_t frameRateNumerator);
  * \param[out] log2Horizontal    Horizontal exponent in the range 0..16, or zero when unrestricted
  * \param[out] log2Vertical      Vertical exponent in the range 0..16, or zero when unrestricted
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_H264_DeriveMotionVectorLimits(bool_t    restricted,
                                        uint32_t  maximumHorizontal,
@@ -766,7 +766,7 @@ void Utl_H264_DeriveMotionVectorLimits(bool_t    restricted,
  * \param[out] sarWidth           Receives extended-SAR width, or zero for a predefined ratio
  * \param[out] sarHeight          Receives extended-SAR height, or zero for a predefined ratio
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Utl_H264_DeriveAspectRatio(uint32_t  width,
                                 uint32_t  height,
@@ -797,7 +797,7 @@ uint8_t Utl_H264_DeriveSliceType(Utl_H264_PictureType_t pictureType);
  * \param[out] list0Count          Available count for P/B slices, or one when unused or empty
  * \param[out] list1Count          Available count for B slices, or one when unused or empty
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_H264_DeriveActiveReferenceCounts(uint8_t   sliceType,
                                           uint32_t  decodedPictureCount,

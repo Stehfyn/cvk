@@ -8,11 +8,13 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h> // IWYU pragma: keep
+#include <stddef.h>
 #include "vk_diagnostic.h"
 #include "utl/utl_decimal.h"
 #include "os/os_types.h"
 
-#include <Windows.h> // IWYU pragma: keep
 #include <fileapi.h>
 #include <handleapi.h>
 #include <minwindef.h>
@@ -42,6 +44,23 @@
 ** 4. PUBLIC FUNCTIONS
 **===============================================================================================*/
 
+void cvkZeroMemory(void* pMemory, size_t byteCount)
+{
+    SecureZeroMemory(pMemory, byteCount);
+}
+
+void cvkCopyMemory(void* pDestination, const void* pSource, size_t byteCount)
+{
+    unsigned char*       destination = (unsigned char*)pDestination;
+    const unsigned char* source      = (const unsigned char*)pSource;
+    size_t               index;
+
+    for (index = 0; index < byteCount; ++index)
+    {
+        destination[index] = source[index];
+    }
+}
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -53,13 +72,13 @@ extern FORCE_INLINE void cvkDiagnosticWrite(const char* text)
     DWORD written;
     HANDLE output;
 
-    if (NULL != text)
+    if (0 != text)
     {
         length = (DWORD)lstrlenA(text);
         output = GetStdHandle(STD_ERROR_HANDLE);
-        if ((NULL != output) && (INVALID_HANDLE_VALUE != output))
+        if ((0 != output) && (INVALID_HANDLE_VALUE != output))
         {
-            (void)WriteFile(output, text, length, &written, NULL);
+            (void)WriteFile(output, text, length, &written, 0);
         }
     }
 }
@@ -78,16 +97,16 @@ extern FORCE_INLINE void cvkDiagnosticWriteBytes(const char* text, uint32_t byte
     bool_t valid_output;
     DWORD  written;
 
-    has_text  = (NULL != text);
+    has_text  = (0 != text);
     has_bytes = (0 < byteCount);
     if (has_text && has_bytes)
     {
         output       = GetStdHandle(STD_ERROR_HANDLE);
-        has_output   = (NULL != output);
+        has_output   = (0 != output);
         valid_output = (INVALID_HANDLE_VALUE != output);
         if (has_output && valid_output)
         {
-            (void)WriteFile(output, text, byteCount, &written, NULL);
+            (void)WriteFile(output, text, byteCount, &written, 0);
         }
     }
 }

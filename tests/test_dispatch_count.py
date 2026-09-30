@@ -22,7 +22,6 @@ class DispatchCountTests(unittest.TestCase):
         self.assertIsNotNone(tidy, "clang-tidy is required for this native diagnostic fixture")
         policy = ROOT / "examples/CastDemo/.clang-tidy"
         arguments = ["-std=c11", "-Weverything", "-Werror", "-Wno-padded",
-                     "-Wno-documentation", "-Wno-unsafe-buffer-usage",
                      "-I" + str(ROOT / "include"), "-I" + str(ROOT / "examples/CastDemo"),
                      "-isystem", str(ROOT / "external/Vulkan-Headers/include")]
         # The isolated query has no native calls. A caller-contract failure traps;

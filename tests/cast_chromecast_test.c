@@ -204,7 +204,7 @@ static FORCE_INLINE Utl_Json_Text_t Text(const char_t* data, uint32_t byteCount)
  *
  * \param[out] load   Required fixture model
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void InitializeLoad(Utl_Chromecast_Load_t* load);
 
@@ -219,7 +219,7 @@ static FORCE_INLINE void InitializeLoad(Utl_Chromecast_Load_t* load);
  *  - 001 Fixture storage shall remain live for the complete call.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckKnownLoad(TestContext_t* context);
 
@@ -234,7 +234,7 @@ static FORCE_INLINE void CheckKnownLoad(TestContext_t* context);
  *  - 001 Fixture storage shall remain live for the complete call.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckSubtitle(TestContext_t* context);
 
@@ -249,7 +249,7 @@ static FORCE_INLINE void CheckSubtitle(TestContext_t* context);
  *  - 001 Fixture storage shall remain live for the complete call.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckStrings(TestContext_t* context);
 
@@ -265,7 +265,7 @@ static FORCE_INLINE void CheckStrings(TestContext_t* context);
  *
  * \param[in] load   Deliberately invalid fixture
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckRejected(TestContext_t* context, Utl_Chromecast_Load_t* load);
 
@@ -280,7 +280,7 @@ static FORCE_INLINE void CheckRejected(TestContext_t* context, Utl_Chromecast_Lo
  *  - 001 Fixture storage shall remain live for the complete call.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckInvalidModels(TestContext_t* context);
 
@@ -295,7 +295,7 @@ static FORCE_INLINE void CheckInvalidModels(TestContext_t* context);
  *  - 001 Fixture storage shall remain live for the complete call.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckNumericLimits(TestContext_t* context);
 
@@ -312,7 +312,7 @@ static FORCE_INLINE void CheckNumericLimits(TestContext_t* context);
  *
  * \param[in,out] context   Entry-owned output and sentinel storage
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckStyles(TestContext_t* context);
 
@@ -328,7 +328,7 @@ static FORCE_INLINE void CheckStyles(TestContext_t* context);
  * \param[in]     expected    Independently specified wire bytes
  * \param[in]     byteCount   Expected complete wire extent
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckStyle(TestContext_t*               context,
                                     const Utl_Chromecast_Load_t* load,
@@ -351,7 +351,7 @@ static FORCE_INLINE void CheckStyle(TestContext_t*               context,
  * \param[in]     expected    Independent expected wire bytes
  * \param[in]     byteCount   Expected serialized extent
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckCommand(TestContext_t*                  context,
                                       const Utl_Chromecast_Command_t* command,
@@ -371,7 +371,7 @@ static FORCE_INLINE void CheckCommand(TestContext_t*                  context,
  * \param[in,out] context   Entry-owned fixture buffers
  * \param[in]     command   Invalid external field model with its selected member initialized
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckRejectedCommand(TestContext_t* context, const Utl_Chromecast_Command_t* command);
 
@@ -388,7 +388,7 @@ static FORCE_INLINE void CheckRejectedCommand(TestContext_t* context, const Utl_
  *
  * \param[in,out] context   Entry-owned fixture buffers
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckCommands(TestContext_t* context);
 
@@ -404,7 +404,7 @@ static FORCE_INLINE void CheckCommands(TestContext_t* context);
  *
  * \param[in,out] context   Entry-owned fixture buffers
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckInvalidCommands(TestContext_t* context);
 
@@ -422,7 +422,7 @@ static FORCE_INLINE void CheckInvalidCommands(TestContext_t* context);
  * \param[in] kind       Namespace selector
  * \param[in] expected   Independent wire spelling
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckNamespace(Utl_Chromecast_Namespace_t kind, Utl_Json_Text_t expected);
 
@@ -437,7 +437,7 @@ static FORCE_INLINE void CheckNamespace(Utl_Chromecast_Namespace_t kind, Utl_Jso
  *  - 001 Unsupported selectors shall return their documented empty or invalid result.
  *  - 002 Every supported command shall select the protocol's expected namespace.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckNamespaces(void);
 
@@ -455,7 +455,7 @@ static FORCE_INLINE void CheckNamespaces(void);
  *
  * \param[in,out] context   Required retained output and sentinel storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckCountedRoute(TestContext_t* context);
 

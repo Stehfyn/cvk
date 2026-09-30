@@ -190,9 +190,9 @@ uint32_t cvkCalculateFormatPlaneLayouts(VkFormat      format,
 
     plane_count  = vkuFormatPlaneCount(format);
     plane_offset = 0;
-    (void)memset(pPlaneOffsets, 0, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneOffsets[0]));
-    (void)memset(pPlaneStrides, 0, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneStrides[0]));
-    (void)memset(pPlaneExtents, 0, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneExtents[0]));
+    cvkZeroMemory(pPlaneOffsets, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneOffsets[0]));
+    cvkZeroMemory(pPlaneStrides, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneStrides[0]));
+    cvkZeroMemory(pPlaneExtents, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneExtents[0]));
     for (plane_index = 0; plane_index < plane_count; ++plane_index)
     {
         if (1 == plane_count)
@@ -365,7 +365,7 @@ uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
  * \param[in] imageSrcQueueFamilyIndex         Image ownership source after the transfer
  * \param[in] imageDstQueueFamilyIndex         Image ownership destination after the transfer
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkCmdTransferBufferToImageQueueOwnership(VkCommandBuffer          commandBuffer,
                                                VkDependencyFlags        dependencyFlags,
@@ -489,7 +489,7 @@ void cvkCmdTransferBufferToImageQueueOwnership(VkCommandBuffer          commandB
  * \param[in] bufferSrcQueueFamilyIndex         Buffer ownership source after the transfer
  * \param[in] bufferDstQueueFamilyIndex         Buffer ownership destination after the transfer
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkCmdTransferImageToBufferQueueOwnership(VkCommandBuffer          commandBuffer,
                                                VkDependencyFlags        dependencyFlags,
@@ -631,7 +631,7 @@ void cvkCmdTransferImageToBufferQueueOwnership(VkCommandBuffer          commandB
  * \param[in] dstReleaseQueueFamilyIndex   Destination ownership during the release
  * \param[in] dstDstQueueFamilyIndex       Destination ownership after the transfer
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkCmdTransferImageToImageQueueOwnership(VkCommandBuffer          commandBuffer,
                                               VkDependencyFlags        dependencyFlags,
@@ -769,7 +769,7 @@ void cvkCmdTransferImageToImageQueueOwnership(VkCommandBuffer          commandBu
  * \param[in] dstDstAccessMask        Access that next uses the destination
  * \param[in] dstFinalLayout          Layout of the destination after the transfer
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkCmdTransferBlitImage(VkCommandBuffer          commandBuffer,
                              VkDependencyFlags        dependencyFlags,

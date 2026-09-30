@@ -140,7 +140,7 @@ void cvkInitWin32AllocationCallbacks(VkAllocationCallbacks* pCallbacks)
  * \param[out] pImage                  Receives the created VkImage
  * \param[out] pMemory                 Receives the imported VkDeviceMemory
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice,
                                VkDevice                           device,
@@ -296,7 +296,7 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
  * \param[out] pImage                  Receives the created VkImage
  * \param[out] pMemory                 Receives the imported VkDeviceMemory
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkImportWin32HandleImage2D(VkPhysicalDevice                   physicalDevice,
                                  VkDevice                           device,
@@ -396,7 +396,7 @@ VkBool32 cvkGetPhysicalDeviceD3D11Texture2DImportSupport(VkPhysicalDevice physic
  * \param[out] pImage           Receives the created VkImage
  * \param[out] pMemory          Receives the imported VkDeviceMemory
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkImportD3D11Texture2D(VkPhysicalDevice physicalDevice, VkDevice device, VkFormat format, VkExtent2D extent2D, VkImageUsageFlags usage, HANDLE handle, VkImage* pImage, VkDeviceMemory* pMemory)
 {
@@ -457,7 +457,7 @@ void cvkImportD3D11Texture2D(VkPhysicalDevice physicalDevice, VkDevice device, V
  * \param[out] pBuffer                 Receives the created VkBuffer
  * \param[out] pMemory                 Receives the imported VkDeviceMemory
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevice,
                                 VkDevice                           device,
@@ -594,7 +594,7 @@ void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
  * \param[out] pMemory                 Receives the exportable VkDeviceMemory
  * \param[out] pHandle                 Receives the exported handle, owned by the caller
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkExportWin32HandleImage(VkPhysicalDevice                   physicalDevice,
                                VkDevice                           device,
@@ -717,7 +717,7 @@ void cvkExportWin32HandleImage(VkPhysicalDevice                   physicalDevice
  * \param[out] pMemory                 Receives the exportable VkDeviceMemory
  * \param[out] pHandle                 Receives the exported handle, owned by the caller
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkExportWin32HandleBuffer(VkPhysicalDevice                   physicalDevice,
                                 VkDevice                           device,

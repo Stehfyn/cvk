@@ -90,7 +90,7 @@ typedef struct WorkerGroup_s
  * \par Requirements:
  *  - 001 Assertions shall remain active in Release.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckValues(void);
 

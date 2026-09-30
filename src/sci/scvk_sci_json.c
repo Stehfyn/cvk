@@ -4,8 +4,8 @@
 #include "scvk/scvk.h"
 #include "scvk/scvk_json.h"
 #include "scvk/internal/scvk_json_work.h"
+#include "vk_diagnostic.h"
 #include <stdint.h>
-#include <string.h>
 #include <vulkan/vulkan_sc_core.h>
 #include <vulkan/vulkan_sci.h>
 
@@ -23,7 +23,7 @@ void scvkReadJsonDeviceSemaphoreSciSyncPoolReservationCreateInfoNV(scvkJsonWork*
     pContext = pWork->pContext;
     pInfo    = (VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_SEMAPHORE_SCI_SYNC_POOL_RESERVATION_CREATE_INFO_NV;
 
@@ -50,7 +50,7 @@ void scvkReadJsonExportFenceSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkExportFenceSciSyncInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_FENCE_SCI_SYNC_INFO_NV;
 
@@ -74,7 +74,7 @@ void scvkReadJsonExportMemorySciBufInfoNV(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkExportMemorySciBufInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_SCI_BUF_INFO_NV;
 
@@ -98,7 +98,7 @@ void scvkReadJsonExportSemaphoreSciSyncInfoNV(scvkJsonWork* pWork, const scvkJso
     pContext = pWork->pContext;
     pInfo    = (VkExportSemaphoreSciSyncInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_SCI_SYNC_INFO_NV;
 
@@ -122,7 +122,7 @@ void scvkReadJsonFenceGetSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkFenceGetSciSyncInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_FENCE_GET_SCI_SYNC_INFO_NV;
 
@@ -158,7 +158,7 @@ void scvkReadJsonImportFenceSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkImportFenceSciSyncInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_FENCE_SCI_SYNC_INFO_NV;
 
@@ -194,7 +194,7 @@ void scvkReadJsonImportMemorySciBufInfoNV(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkImportMemorySciBufInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_SCI_BUF_INFO_NV;
 
@@ -223,7 +223,7 @@ void scvkReadJsonImportSemaphoreSciSyncInfoNV(scvkJsonWork* pWork, const scvkJso
     pContext = pWork->pContext;
     pInfo    = (VkImportSemaphoreSciSyncInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_SCI_SYNC_INFO_NV;
 
@@ -259,7 +259,7 @@ void scvkReadJsonMemoryGetSciBufInfoNV(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkMemoryGetSciBufInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_GET_SCI_BUF_INFO_NV;
 
@@ -295,7 +295,7 @@ void scvkReadJsonMemorySciBufPropertiesNV(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkMemorySciBufPropertiesNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_SCI_BUF_PROPERTIES_NV;
 
@@ -322,7 +322,7 @@ void scvkReadJsonPhysicalDeviceExternalMemorySciBufFeaturesNV(scvkJsonWork* pWor
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExternalMemorySciBufFeaturesNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_SCI_BUF_FEATURES_NV;
 
@@ -353,7 +353,7 @@ void scvkReadJsonPhysicalDeviceExternalSciSync2FeaturesNV(scvkJsonWork* pWork, c
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExternalSciSync2FeaturesNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SCI_SYNC_2_FEATURES_NV;
 
@@ -392,7 +392,7 @@ void scvkReadJsonPhysicalDeviceExternalSciSyncFeaturesNV(scvkJsonWork* pWork, co
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExternalSciSyncFeaturesNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SCI_SYNC_FEATURES_NV;
 
@@ -431,7 +431,7 @@ void scvkReadJsonSciSyncAttributesInfoNV(scvkJsonWork* pWork, const scvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkSciSyncAttributesInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SCI_SYNC_ATTRIBUTES_INFO_NV;
 
@@ -465,7 +465,7 @@ void scvkReadJsonSemaphoreGetSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonVa
     pContext = pWork->pContext;
     pInfo    = (VkSemaphoreGetSciSyncInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_SCI_SYNC_INFO_NV;
 
@@ -501,7 +501,7 @@ void scvkReadJsonSemaphoreSciSyncCreateInfoNV(scvkJsonWork* pWork, const scvkJso
     pContext = pWork->pContext;
     pInfo    = (VkSemaphoreSciSyncCreateInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_SCI_SYNC_CREATE_INFO_NV;
 
@@ -532,7 +532,7 @@ void scvkReadJsonSemaphoreSciSyncPoolCreateInfoNV(scvkJsonWork* pWork, const scv
     pContext = pWork->pContext;
     pInfo    = (VkSemaphoreSciSyncPoolCreateInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_SCI_SYNC_POOL_CREATE_INFO_NV;
 
@@ -544,62 +544,35 @@ void scvkReadJsonSemaphoreSciSyncPoolCreateInfoNV(scvkJsonWork* pWork, const scv
 }
 extern SCVK_FORCE_INLINE VkSciSyncClientTypeNV scvkParseJsonSciSyncClientTypeNV(const scvkJsonValue* pValue)
 {
-    uint64_t              enumerant;
-    VkSciSyncClientTypeNV result;
-    uint32_t              index;
-    VkBool32              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_NV", (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_NV},
                                          {"VK_SCI_SYNC_CLIENT_TYPE_WAITER_NV", (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_WAITER_NV},
                                          {"VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_WAITER_NV", (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_WAITER_NV}};
 
-    static const VkSciSyncClientTypeNV enumerants[] = {VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_NV, VK_SCI_SYNC_CLIENT_TYPE_WAITER_NV, VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_WAITER_NV};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_NV) || (enumerant == (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_WAITER_NV) ||
+            (enumerant == (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_WAITER_NV);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSciSyncClientTypeNV)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSciSyncPrimitiveTypeNV scvkParseJsonSciSyncPrimitiveTypeNV(const scvkJsonValue* pValue)
 {
-    uint64_t                 enumerant;
-    VkSciSyncPrimitiveTypeNV result;
-    uint32_t                 index;
-    VkBool32                 found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SCI_SYNC_PRIMITIVE_TYPE_FENCE_NV", (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_FENCE_NV},
                                          {"VK_SCI_SYNC_PRIMITIVE_TYPE_SEMAPHORE_NV", (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_SEMAPHORE_NV}};
 
-    static const VkSciSyncPrimitiveTypeNV enumerants[] = {VK_SCI_SYNC_PRIMITIVE_TYPE_FENCE_NV, VK_SCI_SYNC_PRIMITIVE_TYPE_SEMAPHORE_NV};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_FENCE_NV) || (enumerant == (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_SEMAPHORE_NV);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSciSyncPrimitiveTypeNV)enumerant;
 }
 extern SCVK_FORCE_INLINE void scvkParseJsonDeviceSemaphoreSciSyncPoolReservationCreateInfoNV(const scvkJsonContext*                               pContext,
                                                                                              const scvkJsonValue*                                 pObject,

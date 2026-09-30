@@ -140,7 +140,7 @@ typedef struct Gfx_Surface_s
  * \param[out] ppSurface          Receives a non-NULL surface retained for process lifetime
  * \param[in]  pCreateInfo        Non-NULL configuration satisfying the selected surface contract
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Gfx_Surface_Create(Gfx_Surface_t** ppSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo);
 
@@ -155,7 +155,7 @@ void Gfx_Surface_Create(Gfx_Surface_t** ppSurface, const Gfx_Surface_CreateInfo_
  *
  * \param[in,out] pSurface        Storage surface with initialized target images and no active reader
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Gfx_Surface_Acquire(Gfx_Surface_t* pSurface);
 
@@ -170,7 +170,7 @@ void Gfx_Surface_Acquire(Gfx_Surface_t* pSurface);
  *
  * \param[in,out] pSurface        Storage surface with submitted writes and writePending set
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Gfx_Surface_Release(Gfx_Surface_t* pSurface);
 

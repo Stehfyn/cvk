@@ -115,7 +115,7 @@ static const char_t        c_emptyCueWire[] = "00:00:00.000 --> 00:00:01.001\n\n
  * \param[in] data        Stable source vector
  * \param[in] byteCount   Readable bytes
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckReader(const byte_t* data, uint32_t byteCount);
 
@@ -126,7 +126,7 @@ static FORCE_INLINE void CheckReader(const byte_t* data, uint32_t byteCount);
  * \par Details:
  *  All malformed scalar assertions pass.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckInvalidReaders(void);
 
@@ -139,7 +139,7 @@ static FORCE_INLINE void CheckInvalidReaders(void);
  *
  * \param[in] item   Independent expected value, bytes and count
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckTimestamp(const Time_t* item);
 
@@ -150,7 +150,7 @@ static FORCE_INLINE void CheckTimestamp(const Time_t* item);
  * \par Details:
  *  Invalid-input output-preservation assertions pass.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckInvalidTimestamps(void);
 
@@ -165,7 +165,7 @@ static FORCE_INLINE void CheckInvalidTimestamps(void);
  * \param[in] expected    Independent expected serialization
  * \param[in] byteCount   Expected serialization length
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckCue(const Utl_WebVtt_Cue_t* cue, const char_t* expected, uint32_t byteCount);
 
@@ -176,7 +176,7 @@ static FORCE_INLINE void CheckCue(const Utl_WebVtt_Cue_t* cue, const char_t* exp
  * \par Details:
  *  Every cue fixture passes.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckCues(void);
 

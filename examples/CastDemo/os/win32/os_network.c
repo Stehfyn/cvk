@@ -73,7 +73,7 @@ typedef struct OS_Network_State_s
  * \param[in,out] network   Initialized owner
  * \param[in]     code      Captured native failure code
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void RecordError(OS_Network_t* network, uint32_t code);
 

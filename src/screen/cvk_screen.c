@@ -6,6 +6,7 @@
 #include "cvk/cvk.h"
 #include "cvk/screen/cvk_screen.h"
 #include <volk.h>
+#include "vk_diagnostic.h"
 #include <stdint.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_screen.h>
@@ -88,11 +89,12 @@ extern CVK_FORCE_INLINE VkBool32 cvkGetPhysicalDeviceScreenPresentationSupportQN
 }
 extern CVK_FORCE_INLINE void cvkGetScreenBufferPropertiesQNX(VkDevice device, const struct _screen_buffer* buffer, void* pNext, VkScreenBufferPropertiesQNX* pProperties)
 {
-    VkScreenBufferPropertiesQNX properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_PROPERTIES_QNX,
-        .pNext = pNext
-    };
+    VkScreenBufferPropertiesQNX properties;
+
+    cvkZeroMemory(&properties, sizeof(properties));
+
+    properties.sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_PROPERTIES_QNX;
+    properties.pNext = pNext;
 
     CVK_CHECK(vkGetScreenBufferPropertiesQNX(device, buffer, &properties));
 
@@ -214,11 +216,12 @@ extern CVK_FORCE_INLINE void cvkGetScreenBufferFormatPropertiesQNX(VkDevice     
                                                                    VkScreenBufferFormatPropertiesQNX* pScreenBufferFormatPropertiesQNX)
 {
     VkScreenBufferPropertiesQNX       properties;
-    VkScreenBufferFormatPropertiesQNX ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_FORMAT_PROPERTIES_QNX,
-        .pNext = pNext
-    };
+    VkScreenBufferFormatPropertiesQNX ext_properties;
+
+    cvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_FORMAT_PROPERTIES_QNX;
+    ext_properties.pNext = pNext;
 
     cvkGetScreenBufferPropertiesQNX(device, buffer, &ext_properties, &properties);
 

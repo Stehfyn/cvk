@@ -3,8 +3,9 @@
 #include "scvk/scvk_json.h"
 #include "scvk/scvk.h"
 #include "scvk/internal/scvk_json_work.h"
+#include "vk_diagnostic.h"
+#include <stddef.h>
 #include <stdint.h>
-#include <string.h>
 #include <vulkan/vulkan_sc_core.h>
 
 /**
@@ -51,7 +52,7 @@ static SCVK_FORCE_INLINE uint32_t* scvkReadJsonUint32Array(const scvkJsonContext
  * \param[in] pValue JSON array, or NULL.
  * \param[out] pOutput Native element storage, already zeroed.
  * \param[in] capacity Native element count.
- * \retval None
+ * \retval None No value is returned.
  */
 static SCVK_FORCE_INLINE void scvkReadJsonFloatFixedArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue, float* pOutput, uint32_t capacity);
 
@@ -83,7 +84,7 @@ static SCVK_FORCE_INLINE void scvkReadJsonFloatFixedArray(const scvkJsonContext*
  * \param[in] pValue JSON array, or NULL.
  * \param[out] pOutput Native element storage, already zeroed.
  * \param[in] capacity Native element count.
- * \retval None
+ * \retval None No value is returned.
  */
 static SCVK_FORCE_INLINE void scvkReadJsonInt32FixedArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue, int32_t* pOutput, uint32_t capacity);
 
@@ -115,7 +116,7 @@ static SCVK_FORCE_INLINE void scvkReadJsonInt32FixedArray(const scvkJsonContext*
  * \param[in] pValue JSON array, or NULL.
  * \param[out] pOutput Native element storage, already zeroed.
  * \param[in] capacity Native element count.
- * \retval None
+ * \retval None No value is returned.
  */
 static SCVK_FORCE_INLINE void scvkReadJsonUint32FixedArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue, uint32_t* pOutput, uint32_t capacity);
 
@@ -459,7 +460,7 @@ static SCVK_FORCE_INLINE uint64_t* scvkReadJsonUint64Array(const scvkJsonContext
  * \param[in] pValue JSON array, or NULL.
  * \param[out] pOutput Native element storage, already zeroed.
  * \param[in] capacity Native element count.
- * \retval None
+ * \retval None No value is returned.
  */
 static SCVK_FORCE_INLINE void scvkReadJsonUint8FixedArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue, uint8_t* pOutput, uint32_t capacity);
 
@@ -491,7 +492,7 @@ static SCVK_FORCE_INLINE void scvkReadJsonUint8FixedArray(const scvkJsonContext*
  * \param[in] pValue JSON array, or NULL.
  * \param[out] pOutput Native element storage, already zeroed.
  * \param[in] capacity Native element count.
- * \retval None
+ * \retval None No value is returned.
  */
 static SCVK_FORCE_INLINE void scvkReadJsonPhysicalDeviceFixedArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue, VkPhysicalDevice* pOutput, uint32_t capacity);
 
@@ -525,7 +526,7 @@ static SCVK_FORCE_INLINE void scvkReadJsonPhysicalDeviceFixedArray(const scvkJso
  * \param[in] pValue JSON array, or NULL.
  * \param[out] pOutput Native element storage, already zeroed.
  * \param[in] capacity Native element count.
- * \retval None
+ * \retval None No value is returned.
  */
 static SCVK_FORCE_INLINE void scvkReadJsonDeviceSizeFixedArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue, VkDeviceSize* pOutput, uint32_t capacity);
 
@@ -633,7 +634,7 @@ static SCVK_FORCE_INLINE VkDynamicState* scvkReadJsonDynamicStateArray(const scv
  * \param[in] pValue JSON array, or NULL.
  * \param[out] pOutput Native element storage, already zeroed.
  * \param[in] capacity Native element count.
- * \retval None
+ * \retval None No value is returned.
  */
 static SCVK_FORCE_INLINE void scvkReadJsonFragmentShadingRateCombinerOpFixedArray(const scvkJsonContext*              pContext,
                                                                                   const scvkJsonValue*                pValue,
@@ -1067,7 +1068,7 @@ void scvkReadJsonAcquireNextImageInfo(scvkJsonWork* pWork, const scvkJsonValue* 
     pContext = pWork->pContext;
     pInfo    = (VkAcquireNextImageInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR;
 
@@ -1119,7 +1120,7 @@ void scvkReadJsonAcquireProfilingLockInfo(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkAcquireProfilingLockInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_ACQUIRE_PROFILING_LOCK_INFO_KHR;
 
@@ -1149,7 +1150,7 @@ void scvkReadJsonAllocationCallbacks(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkAllocationCallbacks*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
     (void)pContext;
     (void)pObject;
 }
@@ -1167,7 +1168,7 @@ void scvkReadJsonApplicationInfo(scvkJsonWork* pWork, const scvkJsonValue* pObje
     pContext = pWork->pContext;
     pInfo    = (VkApplicationInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 
@@ -1212,7 +1213,7 @@ void scvkReadJsonApplicationParameters(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkApplicationParametersEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_APPLICATION_PARAMETERS_EXT;
 
@@ -1251,7 +1252,7 @@ void scvkReadJsonAttachmentDescription(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkAttachmentDescription*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value        = scvkGetJsonMember(&pContext->document, pObject, "flags");
 
@@ -1312,7 +1313,7 @@ void scvkReadJsonAttachmentDescription2(scvkJsonWork* pWork, const scvkJsonValue
     pContext = pWork->pContext;
     pInfo    = (VkAttachmentDescription2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2;
 
@@ -1380,7 +1381,7 @@ void scvkReadJsonAttachmentDescriptionStencilLayout(scvkJsonWork* pWork, const s
     pContext = pWork->pContext;
     pInfo    = (VkAttachmentDescriptionStencilLayout*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT;
 
@@ -1414,7 +1415,7 @@ void scvkReadJsonAttachmentReference(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkAttachmentReference*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value             = scvkGetJsonMember(&pContext->document, pObject, "attachment");
 
@@ -1440,7 +1441,7 @@ void scvkReadJsonAttachmentReference2(scvkJsonWork* pWork, const scvkJsonValue* 
     pContext = pWork->pContext;
     pInfo    = (VkAttachmentReference2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2;
 
@@ -1476,7 +1477,7 @@ void scvkReadJsonAttachmentReferenceStencilLayout(scvkJsonWork* pWork, const scv
     pContext = pWork->pContext;
     pInfo    = (VkAttachmentReferenceStencilLayout*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_STENCIL_LAYOUT;
 
@@ -1505,7 +1506,7 @@ void scvkReadJsonAttachmentSampleLocations(scvkJsonWork* pWork, const scvkJsonVa
     pContext = pWork->pContext;
     pInfo    = (VkAttachmentSampleLocationsEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                  = scvkGetJsonMember(&pContext->document, pObject, "attachmentIndex");
 
@@ -1531,7 +1532,7 @@ void scvkReadJsonBindBufferMemoryDeviceGroupInfo(scvkJsonWork* pWork, const scvk
     pContext = pWork->pContext;
     pInfo    = (VkBindBufferMemoryDeviceGroupInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO;
 
@@ -1564,7 +1565,7 @@ void scvkReadJsonBindBufferMemoryInfo(scvkJsonWork* pWork, const scvkJsonValue* 
     pContext = pWork->pContext;
     pInfo    = (VkBindBufferMemoryInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO;
 
@@ -1607,7 +1608,7 @@ void scvkReadJsonBindImageMemoryDeviceGroupInfo(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkBindImageMemoryDeviceGroupInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO;
 
@@ -1657,7 +1658,7 @@ void scvkReadJsonBindImageMemoryInfo(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkBindImageMemoryInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO;
 
@@ -1698,7 +1699,7 @@ void scvkReadJsonBindImageMemorySwapchainInfo(scvkJsonWork* pWork, const scvkJso
     pContext = pWork->pContext;
     pInfo    = (VkBindImageMemorySwapchainInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR;
 
@@ -1732,7 +1733,7 @@ void scvkReadJsonBindImagePlaneMemoryInfo(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkBindImagePlaneMemoryInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO;
 
@@ -1761,7 +1762,7 @@ void scvkReadJsonBufferCopy(scvkJsonWork* pWork, const scvkJsonValue* pObject, v
     pContext = pWork->pContext;
     pInfo    = (VkBufferCopy*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value            = scvkGetJsonMember(&pContext->document, pObject, "srcOffset");
 
@@ -1789,7 +1790,7 @@ void scvkReadJsonBufferCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObj
     pContext = pWork->pContext;
     pInfo    = (VkBufferCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 
@@ -1839,7 +1840,7 @@ void scvkReadJsonBufferDeviceAddressInfo(scvkJsonWork* pWork, const scvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkBufferDeviceAddressInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
 
@@ -1870,7 +1871,7 @@ void scvkReadJsonBufferImageCopy(scvkJsonWork* pWork, const scvkJsonValue* pObje
     pContext = pWork->pContext;
     pInfo    = (VkBufferImageCopy*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                    = scvkGetJsonMember(&pContext->document, pObject, "bufferOffset");
 
@@ -1914,7 +1915,7 @@ void scvkReadJsonBufferMemoryBarrier(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkBufferMemoryBarrier*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
 
@@ -1968,7 +1969,7 @@ void scvkReadJsonBufferMemoryRequirementsInfo2(scvkJsonWork* pWork, const scvkJs
     pContext = pWork->pContext;
     pInfo    = (VkBufferMemoryRequirementsInfo2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2;
 
@@ -1999,7 +2000,7 @@ void scvkReadJsonBufferOpaqueCaptureAddressCreateInfo(scvkJsonWork* pWork, const
     pContext = pWork->pContext;
     pInfo    = (VkBufferOpaqueCaptureAddressCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO;
 
@@ -2026,7 +2027,7 @@ void scvkReadJsonBufferViewCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* 
     pContext = pWork->pContext;
     pInfo    = (VkBufferViewCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
 
@@ -2073,7 +2074,7 @@ void scvkReadJsonCalibratedTimestampInfo(scvkJsonWork* pWork, const scvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkCalibratedTimestampInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR;
 
@@ -2102,7 +2103,7 @@ void scvkReadJsonClearAttachment(scvkJsonWork* pWork, const scvkJsonValue* pObje
     pContext = pWork->pContext;
     pInfo    = (VkClearAttachment*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                  = scvkGetJsonMember(&pContext->document, pObject, "aspectMask");
 
@@ -2134,7 +2135,7 @@ void scvkReadJsonClearColorValue(scvkJsonWork* pWork, const scvkJsonValue* pObje
     pInfo      = (VkClearColorValue*)pOutput;
     has_member = VK_FALSE;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "float32");
     if (!has_member && !scvkIsJsonNull(value))
@@ -2170,7 +2171,7 @@ void scvkReadJsonClearDepthStencilValue(scvkJsonWork* pWork, const scvkJsonValue
     pContext = pWork->pContext;
     pInfo    = (VkClearDepthStencilValue*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value          = scvkGetJsonMember(&pContext->document, pObject, "depth");
 
@@ -2194,7 +2195,7 @@ void scvkReadJsonClearRect(scvkJsonWork* pWork, const scvkJsonValue* pObject, vo
     pContext = pWork->pContext;
     pInfo    = (VkClearRect*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "rect");
     if (!scvkIsJsonNull(value))
@@ -2225,7 +2226,7 @@ void scvkReadJsonClearValue(scvkJsonWork* pWork, const scvkJsonValue* pObject, v
     pInfo      = (VkClearValue*)pOutput;
     has_member = VK_FALSE;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "color");
     if (!has_member && !scvkIsJsonNull(value))
@@ -2254,7 +2255,7 @@ void scvkReadJsonCommandBufferAllocateInfo(scvkJsonWork* pWork, const scvkJsonVa
     pContext = pWork->pContext;
     pInfo    = (VkCommandBufferAllocateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 
@@ -2294,7 +2295,7 @@ void scvkReadJsonCommandBufferBeginInfo(scvkJsonWork* pWork, const scvkJsonValue
     pContext = pWork->pContext;
     pInfo    = (VkCommandBufferBeginInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -2331,7 +2332,7 @@ void scvkReadJsonCommandBufferInheritanceInfo(scvkJsonWork* pWork, const scvkJso
     pContext = pWork->pContext;
     pInfo    = (VkCommandBufferInheritanceInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 
@@ -2384,7 +2385,7 @@ void scvkReadJsonCommandPoolCreateInfo(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkCommandPoolCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 
@@ -2415,7 +2416,7 @@ void scvkReadJsonCommandPoolMemoryConsumption(scvkJsonWork* pWork, const scvkJso
     pContext = pWork->pContext;
     pInfo    = (VkCommandPoolMemoryConsumption*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_POOL_MEMORY_CONSUMPTION;
 
@@ -2450,7 +2451,7 @@ void scvkReadJsonCommandPoolMemoryReservationCreateInfo(scvkJsonWork* pWork, con
     pContext = pWork->pContext;
     pInfo    = (VkCommandPoolMemoryReservationCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_POOL_MEMORY_RESERVATION_CREATE_INFO;
 
@@ -2481,7 +2482,7 @@ void scvkReadJsonComponentMapping(scvkJsonWork* pWork, const scvkJsonValue* pObj
     pContext = pWork->pContext;
     pInfo    = (VkComponentMapping*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "r");
     if (!scvkIsJsonNull(value))
@@ -2518,7 +2519,7 @@ void scvkReadJsonComputePipelineCreateInfo(scvkJsonWork* pWork, const scvkJsonVa
     pContext = pWork->pContext;
     pInfo    = (VkComputePipelineCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
 
@@ -2568,7 +2569,7 @@ void scvkReadJsonConformanceVersion(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkConformanceVersion*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value           = scvkGetJsonMember(&pContext->document, pObject, "major");
 
@@ -2600,7 +2601,7 @@ void scvkReadJsonCopyDescriptorSet(scvkJsonWork* pWork, const scvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkCopyDescriptorSet*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET;
 
@@ -2657,7 +2658,7 @@ void scvkReadJsonDebugUtilsLabel(scvkJsonWork* pWork, const scvkJsonValue* pObje
     pContext = pWork->pContext;
     pInfo    = (VkDebugUtilsLabelEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
 
@@ -2693,7 +2694,7 @@ void scvkReadJsonDebugUtilsMessengerCallbackData(scvkJsonWork* pWork, const scvk
     pContext = pWork->pContext;
     pInfo    = (VkDebugUtilsMessengerCallbackDataEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT;
 
@@ -2786,7 +2787,7 @@ void scvkReadJsonDebugUtilsMessengerCreateInfo(scvkJsonWork* pWork, const scvkJs
     pContext = pWork->pContext;
     pInfo    = (VkDebugUtilsMessengerCreateInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 
@@ -2821,7 +2822,7 @@ void scvkReadJsonDebugUtilsObjectNameInfo(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkDebugUtilsObjectNameInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
 
@@ -2859,7 +2860,7 @@ void scvkReadJsonDebugUtilsObjectTagInfo(scvkJsonWork* pWork, const scvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkDebugUtilsObjectTagInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
 
@@ -2899,7 +2900,7 @@ void scvkReadJsonDescriptorBufferInfo(scvkJsonWork* pWork, const scvkJsonValue* 
     pContext = pWork->pContext;
     pInfo    = (VkDescriptorBufferInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "buffer");
     if (!scvkIsJsonNull(value))
@@ -2930,7 +2931,7 @@ void scvkReadJsonDescriptorImageInfo(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkDescriptorImageInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "sampler");
     if (!scvkIsJsonNull(value))
@@ -2968,7 +2969,7 @@ void scvkReadJsonDescriptorPoolCreateInfo(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkDescriptorPoolCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 
@@ -3017,7 +3018,7 @@ void scvkReadJsonDescriptorPoolSize(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkDescriptorPoolSize*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "type");
     if (!scvkIsJsonNull(value))
@@ -3042,7 +3043,7 @@ void scvkReadJsonDescriptorSetAllocateInfo(scvkJsonWork* pWork, const scvkJsonVa
     pContext = pWork->pContext;
     pInfo    = (VkDescriptorSetAllocateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 
@@ -3082,7 +3083,7 @@ void scvkReadJsonDescriptorSetLayoutBinding(scvkJsonWork* pWork, const scvkJsonV
     pContext = pWork->pContext;
     pInfo    = (VkDescriptorSetLayoutBinding*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value          = scvkGetJsonMember(&pContext->document, pObject, "binding");
 
@@ -3121,7 +3122,7 @@ void scvkReadJsonDescriptorSetLayoutBindingFlagsCreateInfo(scvkJsonWork* pWork, 
     pContext = pWork->pContext;
     pInfo    = (VkDescriptorSetLayoutBindingFlagsCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
 
@@ -3156,7 +3157,7 @@ void scvkReadJsonDescriptorSetLayoutCreateInfo(scvkJsonWork* pWork, const scvkJs
     pContext = pWork->pContext;
     pInfo    = (VkDescriptorSetLayoutCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 
@@ -3201,7 +3202,7 @@ void scvkReadJsonDescriptorSetLayoutSupport(scvkJsonWork* pWork, const scvkJsonV
     pContext = pWork->pContext;
     pInfo    = (VkDescriptorSetLayoutSupport*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT;
 
@@ -3228,7 +3229,7 @@ void scvkReadJsonDescriptorSetVariableDescriptorCountAllocateInfo(scvkJsonWork* 
     pContext = pWork->pContext;
     pInfo    = (VkDescriptorSetVariableDescriptorCountAllocateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO;
 
@@ -3261,7 +3262,7 @@ void scvkReadJsonDescriptorSetVariableDescriptorCountLayoutSupport(scvkJsonWork*
     pContext = pWork->pContext;
     pInfo    = (VkDescriptorSetVariableDescriptorCountLayoutSupport*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT;
 
@@ -3290,7 +3291,7 @@ void scvkReadJsonDeviceCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObj
     pContext = pWork->pContext;
     pInfo    = (VkDeviceCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
@@ -3378,7 +3379,7 @@ void scvkReadJsonDeviceEventInfo(scvkJsonWork* pWork, const scvkJsonValue* pObje
     pContext = pWork->pContext;
     pInfo    = (VkDeviceEventInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT;
 
@@ -3407,7 +3408,7 @@ void scvkReadJsonDeviceGroupCommandBufferBeginInfo(scvkJsonWork* pWork, const sc
     pContext = pWork->pContext;
     pInfo    = (VkDeviceGroupCommandBufferBeginInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -3434,7 +3435,7 @@ void scvkReadJsonDeviceGroupDeviceCreateInfo(scvkJsonWork* pWork, const scvkJson
     pContext = pWork->pContext;
     pInfo    = (VkDeviceGroupDeviceCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO;
 
@@ -3467,7 +3468,7 @@ void scvkReadJsonDeviceGroupPresentCapabilities(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkDeviceGroupPresentCapabilitiesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR;
 
@@ -3499,7 +3500,7 @@ void scvkReadJsonDeviceGroupPresentInfo(scvkJsonWork* pWork, const scvkJsonValue
     pContext = pWork->pContext;
     pInfo    = (VkDeviceGroupPresentInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR;
 
@@ -3539,7 +3540,7 @@ void scvkReadJsonDeviceGroupRenderPassBeginInfo(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkDeviceGroupRenderPassBeginInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO;
 
@@ -3584,7 +3585,7 @@ void scvkReadJsonDeviceGroupSubmitInfo(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkDeviceGroupSubmitInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO;
 
@@ -3635,7 +3636,7 @@ void scvkReadJsonDeviceGroupSwapchainCreateInfo(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkDeviceGroupSwapchainCreateInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR;
 
@@ -3662,7 +3663,7 @@ void scvkReadJsonDeviceMemoryOpaqueCaptureAddressInfo(scvkJsonWork* pWork, const
     pContext = pWork->pContext;
     pInfo    = (VkDeviceMemoryOpaqueCaptureAddressInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO;
 
@@ -3695,7 +3696,7 @@ void scvkReadJsonDeviceObjectReservationCreateInfo(scvkJsonWork* pWork, const sc
     pContext = pWork->pContext;
     pInfo    = (VkDeviceObjectReservationCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_OBJECT_RESERVATION_CREATE_INFO;
 
@@ -3900,7 +3901,7 @@ void scvkReadJsonDeviceQueueCreateInfo(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkDeviceQueueCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 
@@ -3941,7 +3942,7 @@ void scvkReadJsonDeviceQueueInfo2(scvkJsonWork* pWork, const scvkJsonValue* pObj
     pContext = pWork->pContext;
     pInfo    = (VkDeviceQueueInfo2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2;
 
@@ -3976,7 +3977,7 @@ void scvkReadJsonDispatchIndirectCommand(scvkJsonWork* pWork, const scvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkDispatchIndirectCommand*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value    = scvkGetJsonMember(&pContext->document, pObject, "x");
 
@@ -4004,7 +4005,7 @@ void scvkReadJsonDisplayEventInfo(scvkJsonWork* pWork, const scvkJsonValue* pObj
     pContext = pWork->pContext;
     pInfo    = (VkDisplayEventInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT;
 
@@ -4033,7 +4034,7 @@ void scvkReadJsonDisplayModeCreateInfo(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkDisplayModeCreateInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR;
 
@@ -4066,7 +4067,7 @@ void scvkReadJsonDisplayModeParameters(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkDisplayModeParametersKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "visibleRegion");
     if (!scvkIsJsonNull(value))
@@ -4091,7 +4092,7 @@ void scvkReadJsonDisplayModeProperties2(scvkJsonWork* pWork, const scvkJsonValue
     pContext = pWork->pContext;
     pInfo    = (VkDisplayModeProperties2KHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_MODE_PROPERTIES_2_KHR;
 
@@ -4120,7 +4121,7 @@ void scvkReadJsonDisplayModeProperties(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkDisplayModePropertiesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "displayMode");
     if (!scvkIsJsonNull(value))
@@ -4149,7 +4150,7 @@ void scvkReadJsonDisplayPlaneCapabilities2(scvkJsonWork* pWork, const scvkJsonVa
     pContext = pWork->pContext;
     pInfo    = (VkDisplayPlaneCapabilities2KHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_PLANE_CAPABILITIES_2_KHR;
 
@@ -4178,7 +4179,7 @@ void scvkReadJsonDisplayPlaneCapabilities(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkDisplayPlaneCapabilitiesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                 = scvkGetJsonMember(&pContext->document, pObject, "supportedAlpha");
 
@@ -4239,7 +4240,7 @@ void scvkReadJsonDisplayPlaneInfo2(scvkJsonWork* pWork, const scvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkDisplayPlaneInfo2KHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_PLANE_INFO_2_KHR;
 
@@ -4273,7 +4274,7 @@ void scvkReadJsonDisplayPlaneProperties2(scvkJsonWork* pWork, const scvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkDisplayPlaneProperties2KHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_PLANE_PROPERTIES_2_KHR;
 
@@ -4302,7 +4303,7 @@ void scvkReadJsonDisplayPlaneProperties(scvkJsonWork* pWork, const scvkJsonValue
     pContext = pWork->pContext;
     pInfo    = (VkDisplayPlanePropertiesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "currentDisplay");
     if (!scvkIsJsonNull(value))
@@ -4329,7 +4330,7 @@ void scvkReadJsonDisplayPowerInfo(scvkJsonWork* pWork, const scvkJsonValue* pObj
     pContext = pWork->pContext;
     pInfo    = (VkDisplayPowerInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT;
 
@@ -4358,7 +4359,7 @@ void scvkReadJsonDisplayPresentInfo(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkDisplayPresentInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR;
 
@@ -4395,7 +4396,7 @@ void scvkReadJsonDisplayProperties2(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkDisplayProperties2KHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_PROPERTIES_2_KHR;
 
@@ -4424,7 +4425,7 @@ void scvkReadJsonDisplayProperties(scvkJsonWork* pWork, const scvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkDisplayPropertiesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "display");
     if (!scvkIsJsonNull(value))
@@ -4474,7 +4475,7 @@ void scvkReadJsonDisplaySurfaceCreateInfo(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkDisplaySurfaceCreateInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR;
 
@@ -4536,7 +4537,7 @@ void scvkReadJsonDrawIndexedIndirectCommand(scvkJsonWork* pWork, const scvkJsonV
     pContext = pWork->pContext;
     pInfo    = (VkDrawIndexedIndirectCommand*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                = scvkGetJsonMember(&pContext->document, pObject, "indexCount");
 
@@ -4572,7 +4573,7 @@ void scvkReadJsonDrawIndirectCommand(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkDrawIndirectCommand*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                = scvkGetJsonMember(&pContext->document, pObject, "vertexCount");
 
@@ -4604,7 +4605,7 @@ void scvkReadJsonDrmFormatModifierProperties(scvkJsonWork* pWork, const scvkJson
     pContext = pWork->pContext;
     pInfo    = (VkDrmFormatModifierPropertiesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                                  = scvkGetJsonMember(&pContext->document, pObject, "drmFormatModifier");
 
@@ -4634,7 +4635,7 @@ void scvkReadJsonDrmFormatModifierPropertiesList(scvkJsonWork* pWork, const scvk
     pContext = pWork->pContext;
     pInfo    = (VkDrmFormatModifierPropertiesListEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT;
 
@@ -4675,7 +4676,7 @@ void scvkReadJsonEventCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObje
     pContext = pWork->pContext;
     pInfo    = (VkEventCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
 
@@ -4702,7 +4703,7 @@ void scvkReadJsonExportFenceCreateInfo(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkExportFenceCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO;
 
@@ -4729,7 +4730,7 @@ void scvkReadJsonExportMemoryAllocateInfo(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkExportMemoryAllocateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO;
 
@@ -4756,7 +4757,7 @@ void scvkReadJsonExportSemaphoreCreateInfo(scvkJsonWork* pWork, const scvkJsonVa
     pContext = pWork->pContext;
     pInfo    = (VkExportSemaphoreCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO;
 
@@ -4783,14 +4784,14 @@ void scvkReadJsonExtensionProperties(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkExtensionProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "extensionName");
     if (!scvkIsJsonNull(value))
     {
         if (SCVK_JSON_STRING == value->kind)
         {
-            (void)memcpy(pInfo->extensionName, value->pText, (value->textLength < sizeof(pInfo->extensionName)) ? value->textLength : sizeof(pInfo->extensionName) - 1);
+            scvkCopyMemory(pInfo->extensionName, value->pText, (value->textLength < sizeof(pInfo->extensionName)) ? value->textLength : sizeof(pInfo->extensionName) - 1);
         }
     }
     value              = scvkGetJsonMember(&pContext->document, pObject, "specVersion");
@@ -4811,7 +4812,7 @@ void scvkReadJsonExtent2D(scvkJsonWork* pWork, const scvkJsonValue* pObject, voi
     pContext = pWork->pContext;
     pInfo    = (VkExtent2D*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value         = scvkGetJsonMember(&pContext->document, pObject, "width");
 
@@ -4835,7 +4836,7 @@ void scvkReadJsonExtent3D(scvkJsonWork* pWork, const scvkJsonValue* pObject, voi
     pContext = pWork->pContext;
     pInfo    = (VkExtent3D*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value         = scvkGetJsonMember(&pContext->document, pObject, "width");
 
@@ -4863,7 +4864,7 @@ void scvkReadJsonExternalBufferProperties(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkExternalBufferProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES;
 
@@ -4892,7 +4893,7 @@ void scvkReadJsonExternalFenceProperties(scvkJsonWork* pWork, const scvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkExternalFenceProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES;
 
@@ -4927,7 +4928,7 @@ void scvkReadJsonExternalImageFormatProperties(scvkJsonWork* pWork, const scvkJs
     pContext = pWork->pContext;
     pInfo    = (VkExternalImageFormatProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES;
 
@@ -4956,7 +4957,7 @@ void scvkReadJsonExternalMemoryBufferCreateInfo(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkExternalMemoryBufferCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO;
 
@@ -4983,7 +4984,7 @@ void scvkReadJsonExternalMemoryImageCreateInfo(scvkJsonWork* pWork, const scvkJs
     pContext = pWork->pContext;
     pInfo    = (VkExternalMemoryImageCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
 
@@ -5010,7 +5011,7 @@ void scvkReadJsonExternalMemoryProperties(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkExternalMemoryProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                                = scvkGetJsonMember(&pContext->document, pObject, "externalMemoryFeatures");
 
@@ -5038,7 +5039,7 @@ void scvkReadJsonExternalSemaphoreProperties(scvkJsonWork* pWork, const scvkJson
     pContext = pWork->pContext;
     pInfo    = (VkExternalSemaphoreProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES;
 
@@ -5075,7 +5076,7 @@ void scvkReadJsonFaultCallbackInfo(scvkJsonWork* pWork, const scvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkFaultCallbackInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_FAULT_CALLBACK_INFO;
 
@@ -5116,7 +5117,7 @@ void scvkReadJsonFaultData(scvkJsonWork* pWork, const scvkJsonValue* pObject, vo
     pContext = pWork->pContext;
     pInfo    = (VkFaultData*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_FAULT_DATA;
 
@@ -5150,7 +5151,7 @@ void scvkReadJsonFenceCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObje
     pContext = pWork->pContext;
     pInfo    = (VkFenceCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 
@@ -5177,7 +5178,7 @@ void scvkReadJsonFenceGetFdInfo(scvkJsonWork* pWork, const scvkJsonValue* pObjec
     pContext = pWork->pContext;
     pInfo    = (VkFenceGetFdInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR;
 
@@ -5213,7 +5214,7 @@ void scvkReadJsonFilterCubicImageViewImageFormatProperties(scvkJsonWork* pWork, 
     pContext = pWork->pContext;
     pInfo    = (VkFilterCubicImageViewImageFormatPropertiesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_FILTER_CUBIC_IMAGE_VIEW_IMAGE_FORMAT_PROPERTIES_EXT;
 
@@ -5244,7 +5245,7 @@ void scvkReadJsonFormatProperties(scvkJsonWork* pWork, const scvkJsonValue* pObj
     pContext = pWork->pContext;
     pInfo    = (VkFormatProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                        = scvkGetJsonMember(&pContext->document, pObject, "linearTilingFeatures");
 
@@ -5272,7 +5273,7 @@ void scvkReadJsonFormatProperties2(scvkJsonWork* pWork, const scvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkFormatProperties2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
 
@@ -5302,7 +5303,7 @@ void scvkReadJsonFragmentShadingRateAttachmentInfo(scvkJsonWork* pWork, const sc
     pContext = pWork->pContext;
     pInfo    = (VkFragmentShadingRateAttachmentInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR;
 
@@ -5340,7 +5341,7 @@ void scvkReadJsonFramebufferAttachmentImageInfo(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkFramebufferAttachmentImageInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO;
 
@@ -5395,7 +5396,7 @@ void scvkReadJsonFramebufferAttachmentsCreateInfo(scvkJsonWork* pWork, const scv
     pContext = pWork->pContext;
     pInfo    = (VkFramebufferAttachmentsCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO;
 
@@ -5436,7 +5437,7 @@ void scvkReadJsonFramebufferCreateInfo(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkFramebufferCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 
@@ -5493,7 +5494,7 @@ void scvkReadJsonGraphicsPipelineCreateInfo(scvkJsonWork* pWork, const scvkJsonV
     pContext = pWork->pContext;
     pInfo    = (VkGraphicsPipelineCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 
@@ -5647,7 +5648,7 @@ void scvkReadJsonHdrMetadata(scvkJsonWork* pWork, const scvkJsonValue* pObject, 
     pContext = pWork->pContext;
     pInfo    = (VkHdrMetadataEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_HDR_METADATA_EXT;
 
@@ -5706,7 +5707,7 @@ void scvkReadJsonHeadlessSurfaceCreateInfo(scvkJsonWork* pWork, const scvkJsonVa
     pContext = pWork->pContext;
     pInfo    = (VkHeadlessSurfaceCreateInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT;
 
@@ -5734,7 +5735,7 @@ void scvkReadJsonImageBlit(scvkJsonWork* pWork, const scvkJsonValue* pObject, vo
     pContext = pWork->pContext;
     pInfo    = (VkImageBlit*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "srcSubresource");
     if (!scvkIsJsonNull(value))
@@ -5783,7 +5784,7 @@ void scvkReadJsonImageCopy(scvkJsonWork* pWork, const scvkJsonValue* pObject, vo
     pContext = pWork->pContext;
     pInfo    = (VkImageCopy*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "srcSubresource");
     if (!scvkIsJsonNull(value))
@@ -5825,7 +5826,7 @@ void scvkReadJsonImageCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObje
     pContext = pWork->pContext;
     pInfo    = (VkImageCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 
@@ -5911,7 +5912,7 @@ void scvkReadJsonImageDrmFormatModifierExplicitCreateInfo(scvkJsonWork* pWork, c
     pContext = pWork->pContext;
     pInfo    = (VkImageDrmFormatModifierExplicitCreateInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT;
 
@@ -5956,7 +5957,7 @@ void scvkReadJsonImageDrmFormatModifierListCreateInfo(scvkJsonWork* pWork, const
     pContext = pWork->pContext;
     pInfo    = (VkImageDrmFormatModifierListCreateInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT;
 
@@ -5989,7 +5990,7 @@ void scvkReadJsonImageDrmFormatModifierProperties(scvkJsonWork* pWork, const scv
     pContext = pWork->pContext;
     pInfo    = (VkImageDrmFormatModifierPropertiesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT;
 
@@ -6016,7 +6017,7 @@ void scvkReadJsonImageFormatListCreateInfo(scvkJsonWork* pWork, const scvkJsonVa
     pContext = pWork->pContext;
     pInfo    = (VkImageFormatListCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
 
@@ -6049,7 +6050,7 @@ void scvkReadJsonImageFormatProperties(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkImageFormatProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "maxExtent");
     if (!scvkIsJsonNull(value))
@@ -6086,7 +6087,7 @@ void scvkReadJsonImageFormatProperties2(scvkJsonWork* pWork, const scvkJsonValue
     pContext = pWork->pContext;
     pInfo    = (VkImageFormatProperties2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
 
@@ -6115,7 +6116,7 @@ void scvkReadJsonImageMemoryBarrier(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkImageMemoryBarrier*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
 
@@ -6177,7 +6178,7 @@ void scvkReadJsonImageMemoryRequirementsInfo2(scvkJsonWork* pWork, const scvkJso
     pContext = pWork->pContext;
     pInfo    = (VkImageMemoryRequirementsInfo2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2;
 
@@ -6208,7 +6209,7 @@ void scvkReadJsonImagePlaneMemoryRequirementsInfo(scvkJsonWork* pWork, const scv
     pContext = pWork->pContext;
     pInfo    = (VkImagePlaneMemoryRequirementsInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO;
 
@@ -6237,7 +6238,7 @@ void scvkReadJsonImageResolve(scvkJsonWork* pWork, const scvkJsonValue* pObject,
     pContext = pWork->pContext;
     pInfo    = (VkImageResolve*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "srcSubresource");
     if (!scvkIsJsonNull(value))
@@ -6279,7 +6280,7 @@ void scvkReadJsonImageStencilUsageCreateInfo(scvkJsonWork* pWork, const scvkJson
     pContext = pWork->pContext;
     pInfo    = (VkImageStencilUsageCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO;
 
@@ -6306,7 +6307,7 @@ void scvkReadJsonImageSubresource(scvkJsonWork* pWork, const scvkJsonValue* pObj
     pContext = pWork->pContext;
     pInfo    = (VkImageSubresource*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value             = scvkGetJsonMember(&pContext->document, pObject, "aspectMask");
 
@@ -6334,7 +6335,7 @@ void scvkReadJsonImageSubresourceLayers(scvkJsonWork* pWork, const scvkJsonValue
     pContext = pWork->pContext;
     pInfo    = (VkImageSubresourceLayers*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                 = scvkGetJsonMember(&pContext->document, pObject, "aspectMask");
 
@@ -6366,7 +6367,7 @@ void scvkReadJsonImageSubresourceRange(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkImageSubresourceRange*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                 = scvkGetJsonMember(&pContext->document, pObject, "aspectMask");
 
@@ -6402,7 +6403,7 @@ void scvkReadJsonImageSwapchainCreateInfo(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkImageSwapchainCreateInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR;
 
@@ -6433,7 +6434,7 @@ void scvkReadJsonImageViewASTCDecodeMode(scvkJsonWork* pWork, const scvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkImageViewASTCDecodeModeEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT;
 
@@ -6462,7 +6463,7 @@ void scvkReadJsonImageViewCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkImageViewCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 
@@ -6517,7 +6518,7 @@ void scvkReadJsonImageViewUsageCreateInfo(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkImageViewUsageCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO;
 
@@ -6544,7 +6545,7 @@ void scvkReadJsonImportFenceFdInfo(scvkJsonWork* pWork, const scvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkImportFenceFdInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR;
 
@@ -6587,7 +6588,7 @@ void scvkReadJsonImportMemoryFdInfo(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkImportMemoryFdInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR;
 
@@ -6619,7 +6620,7 @@ void scvkReadJsonImportMemoryHostPointerInfo(scvkJsonWork* pWork, const scvkJson
     pContext = pWork->pContext;
     pInfo    = (VkImportMemoryHostPointerInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT;
 
@@ -6648,7 +6649,7 @@ void scvkReadJsonImportSemaphoreFdInfo(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkImportSemaphoreFdInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
 
@@ -6691,7 +6692,7 @@ void scvkReadJsonInputAttachmentAspectReference(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkInputAttachmentAspectReference*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                       = scvkGetJsonMember(&pContext->document, pObject, "subpass");
 
@@ -6721,7 +6722,7 @@ void scvkReadJsonInstanceCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkInstanceCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 
@@ -6792,14 +6793,14 @@ void scvkReadJsonLayerProperties(scvkJsonWork* pWork, const scvkJsonValue* pObje
     pContext = pWork->pContext;
     pInfo    = (VkLayerProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "layerName");
     if (!scvkIsJsonNull(value))
     {
         if (SCVK_JSON_STRING == value->kind)
         {
-            (void)memcpy(pInfo->layerName, value->pText, (value->textLength < sizeof(pInfo->layerName)) ? value->textLength : sizeof(pInfo->layerName) - 1);
+            scvkCopyMemory(pInfo->layerName, value->pText, (value->textLength < sizeof(pInfo->layerName)) ? value->textLength : sizeof(pInfo->layerName) - 1);
         }
     }
     value                        = scvkGetJsonMember(&pContext->document, pObject, "specVersion");
@@ -6815,7 +6816,7 @@ void scvkReadJsonLayerProperties(scvkJsonWork* pWork, const scvkJsonValue* pObje
     {
         if (SCVK_JSON_STRING == value->kind)
         {
-            (void)memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
+            scvkCopyMemory(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
         }
     }
 }
@@ -6833,7 +6834,7 @@ void scvkReadJsonLayerSetting(scvkJsonWork* pWork, const scvkJsonValue* pObject,
     pContext = pWork->pContext;
     pInfo    = (VkLayerSettingEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "pLayerName");
     if (!scvkIsJsonNull(value))
@@ -6870,7 +6871,7 @@ void scvkReadJsonLayerSettingsCreateInfo(scvkJsonWork* pWork, const scvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkLayerSettingsCreateInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT;
 
@@ -6911,7 +6912,7 @@ void scvkReadJsonMappedMemoryRange(scvkJsonWork* pWork, const scvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkMappedMemoryRange*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
 
@@ -6949,7 +6950,7 @@ void scvkReadJsonMemoryAllocateFlagsInfo(scvkJsonWork* pWork, const scvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkMemoryAllocateFlagsInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO;
 
@@ -6980,7 +6981,7 @@ void scvkReadJsonMemoryAllocateInfo(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkMemoryAllocateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 
@@ -7011,7 +7012,7 @@ void scvkReadJsonMemoryBarrier(scvkJsonWork* pWork, const scvkJsonValue* pObject
     pContext = pWork->pContext;
     pInfo    = (VkMemoryBarrier*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
 
@@ -7042,7 +7043,7 @@ void scvkReadJsonMemoryDedicatedAllocateInfo(scvkJsonWork* pWork, const scvkJson
     pContext = pWork->pContext;
     pInfo    = (VkMemoryDedicatedAllocateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
 
@@ -7080,7 +7081,7 @@ void scvkReadJsonMemoryDedicatedRequirements(scvkJsonWork* pWork, const scvkJson
     pContext = pWork->pContext;
     pInfo    = (VkMemoryDedicatedRequirements*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
 
@@ -7111,7 +7112,7 @@ void scvkReadJsonMemoryFdProperties(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkMemoryFdPropertiesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR;
 
@@ -7138,7 +7139,7 @@ void scvkReadJsonMemoryGetFdInfo(scvkJsonWork* pWork, const scvkJsonValue* pObje
     pContext = pWork->pContext;
     pInfo    = (VkMemoryGetFdInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
 
@@ -7174,7 +7175,7 @@ void scvkReadJsonMemoryHeap(scvkJsonWork* pWork, const scvkJsonValue* pObject, v
     pContext = pWork->pContext;
     pInfo    = (VkMemoryHeap*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value        = scvkGetJsonMember(&pContext->document, pObject, "size");
 
@@ -7198,7 +7199,7 @@ void scvkReadJsonMemoryHostPointerProperties(scvkJsonWork* pWork, const scvkJson
     pContext = pWork->pContext;
     pInfo    = (VkMemoryHostPointerPropertiesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT;
 
@@ -7225,7 +7226,7 @@ void scvkReadJsonMemoryOpaqueCaptureAddressAllocateInfo(scvkJsonWork* pWork, con
     pContext = pWork->pContext;
     pInfo    = (VkMemoryOpaqueCaptureAddressAllocateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO;
 
@@ -7252,7 +7253,7 @@ void scvkReadJsonMemoryRequirements(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkMemoryRequirements*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                 = scvkGetJsonMember(&pContext->document, pObject, "size");
 
@@ -7280,7 +7281,7 @@ void scvkReadJsonMemoryRequirements2(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkMemoryRequirements2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
 
@@ -7309,7 +7310,7 @@ void scvkReadJsonMemoryType(scvkJsonWork* pWork, const scvkJsonValue* pObject, v
     pContext = pWork->pContext;
     pInfo    = (VkMemoryType*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                = scvkGetJsonMember(&pContext->document, pObject, "propertyFlags");
 
@@ -7333,7 +7334,7 @@ void scvkReadJsonMultisampleProperties(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkMultisamplePropertiesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT;
 
@@ -7362,7 +7363,7 @@ void scvkReadJsonOffset2D(scvkJsonWork* pWork, const scvkJsonValue* pObject, voi
     pContext = pWork->pContext;
     pInfo    = (VkOffset2D*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value    = scvkGetJsonMember(&pContext->document, pObject, "x");
 
@@ -7386,7 +7387,7 @@ void scvkReadJsonOffset3D(scvkJsonWork* pWork, const scvkJsonValue* pObject, voi
     pContext = pWork->pContext;
     pInfo    = (VkOffset3D*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value    = scvkGetJsonMember(&pContext->document, pObject, "x");
 
@@ -7414,7 +7415,7 @@ void scvkReadJsonPerformanceCounterDescription(scvkJsonWork* pWork, const scvkJs
     pContext = pWork->pContext;
     pInfo    = (VkPerformanceCounterDescriptionKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_DESCRIPTION_KHR;
 
@@ -7432,7 +7433,7 @@ void scvkReadJsonPerformanceCounterDescription(scvkJsonWork* pWork, const scvkJs
     {
         if (SCVK_JSON_STRING == value->kind)
         {
-            (void)memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
+            scvkCopyMemory(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
         }
     }
     value = scvkGetJsonMember(&pContext->document, pObject, "category");
@@ -7440,7 +7441,7 @@ void scvkReadJsonPerformanceCounterDescription(scvkJsonWork* pWork, const scvkJs
     {
         if (SCVK_JSON_STRING == value->kind)
         {
-            (void)memcpy(pInfo->category, value->pText, (value->textLength < sizeof(pInfo->category)) ? value->textLength : sizeof(pInfo->category) - 1);
+            scvkCopyMemory(pInfo->category, value->pText, (value->textLength < sizeof(pInfo->category)) ? value->textLength : sizeof(pInfo->category) - 1);
         }
     }
     value = scvkGetJsonMember(&pContext->document, pObject, "description");
@@ -7448,7 +7449,7 @@ void scvkReadJsonPerformanceCounterDescription(scvkJsonWork* pWork, const scvkJs
     {
         if (SCVK_JSON_STRING == value->kind)
         {
-            (void)memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
+            scvkCopyMemory(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
         }
     }
 }
@@ -7466,7 +7467,7 @@ void scvkReadJsonPerformanceCounter(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkPerformanceCounterKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_KHR;
 
@@ -7512,7 +7513,7 @@ void scvkReadJsonPerformanceCounterResult(scvkJsonWork* pWork, const scvkJsonVal
     pInfo      = (VkPerformanceCounterResultKHR*)pOutput;
     has_member = VK_FALSE;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "int32");
     if (!has_member && !scvkIsJsonNull(value))
@@ -7569,7 +7570,7 @@ void scvkReadJsonPerformanceQueryReservationInfo(scvkJsonWork* pWork, const scvk
     pContext = pWork->pContext;
     pInfo    = (VkPerformanceQueryReservationInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_RESERVATION_INFO_KHR;
 
@@ -7596,7 +7597,7 @@ void scvkReadJsonPerformanceQuerySubmitInfo(scvkJsonWork* pWork, const scvkJsonV
     pContext = pWork->pContext;
     pInfo    = (VkPerformanceQuerySubmitInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_SUBMIT_INFO_KHR;
 
@@ -7623,7 +7624,7 @@ void scvkReadJsonPhysicalDevice16BitStorageFeatures(scvkJsonWork* pWork, const s
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDevice16BitStorageFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES;
 
@@ -7662,7 +7663,7 @@ void scvkReadJsonPhysicalDevice4444FormatsFeatures(scvkJsonWork* pWork, const sc
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDevice4444FormatsFeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_4444_FORMATS_FEATURES_EXT;
 
@@ -7693,7 +7694,7 @@ void scvkReadJsonPhysicalDevice8BitStorageFeatures(scvkJsonWork* pWork, const sc
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDevice8BitStorageFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES;
 
@@ -7728,7 +7729,7 @@ void scvkReadJsonPhysicalDeviceASTCDecodeFeatures(scvkJsonWork* pWork, const scv
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceASTCDecodeFeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT;
 
@@ -7755,7 +7756,7 @@ void scvkReadJsonPhysicalDeviceBlendOperationAdvancedFeatures(scvkJsonWork* pWor
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT;
 
@@ -7782,7 +7783,7 @@ void scvkReadJsonPhysicalDeviceBlendOperationAdvancedProperties(scvkJsonWork* pW
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT;
 
@@ -7829,7 +7830,7 @@ void scvkReadJsonPhysicalDeviceBufferDeviceAddressFeatures(scvkJsonWork* pWork, 
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceBufferDeviceAddressFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
 
@@ -7864,7 +7865,7 @@ void scvkReadJsonPhysicalDeviceColorWriteEnableFeatures(scvkJsonWork* pWork, con
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceColorWriteEnableFeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COLOR_WRITE_ENABLE_FEATURES_EXT;
 
@@ -7891,7 +7892,7 @@ void scvkReadJsonPhysicalDeviceConservativeRasterizationProperties(scvkJsonWork*
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceConservativeRasterizationPropertiesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT;
 
@@ -7950,7 +7951,7 @@ void scvkReadJsonPhysicalDeviceCustomBorderColorFeatures(scvkJsonWork* pWork, co
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceCustomBorderColorFeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT;
 
@@ -7981,7 +7982,7 @@ void scvkReadJsonPhysicalDeviceCustomBorderColorProperties(scvkJsonWork* pWork, 
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceCustomBorderColorPropertiesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT;
 
@@ -8008,7 +8009,7 @@ void scvkReadJsonPhysicalDeviceDepthClipEnableFeatures(scvkJsonWork* pWork, cons
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceDepthClipEnableFeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT;
 
@@ -8035,7 +8036,7 @@ void scvkReadJsonPhysicalDeviceDepthStencilResolveProperties(scvkJsonWork* pWork
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceDepthStencilResolveProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES;
 
@@ -8074,7 +8075,7 @@ void scvkReadJsonPhysicalDeviceDescriptorIndexingFeatures(scvkJsonWork* pWork, c
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceDescriptorIndexingFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
 
@@ -8177,7 +8178,7 @@ void scvkReadJsonPhysicalDeviceDescriptorIndexingProperties(scvkJsonWork* pWork,
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceDescriptorIndexingProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES;
 
@@ -8292,7 +8293,7 @@ void scvkReadJsonPhysicalDeviceDiscardRectangleProperties(scvkJsonWork* pWork, c
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceDiscardRectanglePropertiesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT;
 
@@ -8319,7 +8320,7 @@ void scvkReadJsonPhysicalDeviceDriverProperties(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceDriverProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES;
 
@@ -8338,7 +8339,7 @@ void scvkReadJsonPhysicalDeviceDriverProperties(scvkJsonWork* pWork, const scvkJ
     {
         if (SCVK_JSON_STRING == value->kind)
         {
-            (void)memcpy(pInfo->driverName, value->pText, (value->textLength < sizeof(pInfo->driverName)) ? value->textLength : sizeof(pInfo->driverName) - 1);
+            scvkCopyMemory(pInfo->driverName, value->pText, (value->textLength < sizeof(pInfo->driverName)) ? value->textLength : sizeof(pInfo->driverName) - 1);
         }
     }
     value = scvkGetJsonMember(&pContext->document, pObject, "driverInfo");
@@ -8346,7 +8347,7 @@ void scvkReadJsonPhysicalDeviceDriverProperties(scvkJsonWork* pWork, const scvkJ
     {
         if (SCVK_JSON_STRING == value->kind)
         {
-            (void)memcpy(pInfo->driverInfo, value->pText, (value->textLength < sizeof(pInfo->driverInfo)) ? value->textLength : sizeof(pInfo->driverInfo) - 1);
+            scvkCopyMemory(pInfo->driverInfo, value->pText, (value->textLength < sizeof(pInfo->driverInfo)) ? value->textLength : sizeof(pInfo->driverInfo) - 1);
         }
     }
     value = scvkGetJsonMember(&pContext->document, pObject, "conformanceVersion");
@@ -8369,7 +8370,7 @@ void scvkReadJsonPhysicalDeviceExtendedDynamicState2Features(scvkJsonWork* pWork
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExtendedDynamicState2FeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_2_FEATURES_EXT;
 
@@ -8404,7 +8405,7 @@ void scvkReadJsonPhysicalDeviceExtendedDynamicStateFeatures(scvkJsonWork* pWork,
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExtendedDynamicStateFeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT;
 
@@ -8431,7 +8432,7 @@ void scvkReadJsonPhysicalDeviceExternalBufferInfo(scvkJsonWork* pWork, const scv
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExternalBufferInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO;
 
@@ -8468,7 +8469,7 @@ void scvkReadJsonPhysicalDeviceExternalFenceInfo(scvkJsonWork* pWork, const scvk
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExternalFenceInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO;
 
@@ -8497,7 +8498,7 @@ void scvkReadJsonPhysicalDeviceExternalImageFormatInfo(scvkJsonWork* pWork, cons
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExternalImageFormatInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO;
 
@@ -8526,7 +8527,7 @@ void scvkReadJsonPhysicalDeviceExternalMemoryHostProperties(scvkJsonWork* pWork,
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExternalMemoryHostPropertiesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT;
 
@@ -8553,7 +8554,7 @@ void scvkReadJsonPhysicalDeviceExternalSemaphoreInfo(scvkJsonWork* pWork, const 
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExternalSemaphoreInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO;
 
@@ -8582,7 +8583,7 @@ void scvkReadJsonPhysicalDeviceFeatures(scvkJsonWork* pWork, const scvkJsonValue
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                                          = scvkGetJsonMember(&pContext->document, pObject, "robustBufferAccess");
 
@@ -8818,7 +8819,7 @@ void scvkReadJsonPhysicalDeviceFeatures2(scvkJsonWork* pWork, const scvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceFeatures2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
 
@@ -8847,7 +8848,7 @@ void scvkReadJsonPhysicalDeviceFloatControlsProperties(scvkJsonWork* pWork, cons
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceFloatControlsProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES;
 
@@ -8940,7 +8941,7 @@ void scvkReadJsonPhysicalDeviceFragmentShaderInterlockFeatures(scvkJsonWork* pWo
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT;
 
@@ -8975,7 +8976,7 @@ void scvkReadJsonPhysicalDeviceFragmentShadingRateFeatures(scvkJsonWork* pWork, 
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceFragmentShadingRateFeaturesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR;
 
@@ -9010,7 +9011,7 @@ void scvkReadJsonPhysicalDeviceFragmentShadingRate(scvkJsonWork* pWork, const sc
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceFragmentShadingRateKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_KHR;
 
@@ -9043,7 +9044,7 @@ void scvkReadJsonPhysicalDeviceFragmentShadingRateProperties(scvkJsonWork* pWork
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceFragmentShadingRatePropertiesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR;
 
@@ -9138,7 +9139,7 @@ void scvkReadJsonPhysicalDeviceGroupProperties(scvkJsonWork* pWork, const scvkJs
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceGroupProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES;
 
@@ -9174,7 +9175,7 @@ void scvkReadJsonPhysicalDeviceHostQueryResetFeatures(scvkJsonWork* pWork, const
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceHostQueryResetFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
 
@@ -9201,7 +9202,7 @@ void scvkReadJsonPhysicalDeviceIDProperties(scvkJsonWork* pWork, const scvkJsonV
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceIDProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES;
 
@@ -9247,7 +9248,7 @@ void scvkReadJsonPhysicalDeviceImageDrmFormatModifierInfo(scvkJsonWork* pWork, c
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceImageDrmFormatModifierInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT;
 
@@ -9289,7 +9290,7 @@ void scvkReadJsonPhysicalDeviceImageFormatInfo2(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceImageFormatInfo2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
 
@@ -9335,7 +9336,7 @@ void scvkReadJsonPhysicalDeviceImageViewImageFormatInfo(scvkJsonWork* pWork, con
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceImageViewImageFormatInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_IMAGE_FORMAT_INFO_EXT;
 
@@ -9364,7 +9365,7 @@ void scvkReadJsonPhysicalDeviceImagelessFramebufferFeatures(scvkJsonWork* pWork,
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceImagelessFramebufferFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES;
 
@@ -9391,7 +9392,7 @@ void scvkReadJsonPhysicalDeviceLimits(scvkJsonWork* pWork, const scvkJsonValue* 
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceLimits*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                                                  = scvkGetJsonMember(&pContext->document, pObject, "maxImageDimension1D");
 
@@ -9837,7 +9838,7 @@ void scvkReadJsonPhysicalDeviceMaintenance3Properties(scvkJsonWork* pWork, const
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceMaintenance3Properties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES;
 
@@ -9868,7 +9869,7 @@ void scvkReadJsonPhysicalDeviceMemoryBudgetProperties(scvkJsonWork* pWork, const
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceMemoryBudgetPropertiesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT;
 
@@ -9903,7 +9904,7 @@ void scvkReadJsonPhysicalDeviceMemoryProperties(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceMemoryProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                  = scvkGetJsonMember(&pContext->document, pObject, "memoryTypeCount");
 
@@ -9950,7 +9951,7 @@ void scvkReadJsonPhysicalDeviceMemoryProperties2(scvkJsonWork* pWork, const scvk
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceMemoryProperties2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
 
@@ -9979,7 +9980,7 @@ void scvkReadJsonPhysicalDeviceMultiviewFeatures(scvkJsonWork* pWork, const scvk
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceMultiviewFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES;
 
@@ -10014,7 +10015,7 @@ void scvkReadJsonPhysicalDeviceMultiviewProperties(scvkJsonWork* pWork, const sc
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceMultiviewProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES;
 
@@ -10045,7 +10046,7 @@ void scvkReadJsonPhysicalDevicePCIBusInfoProperties(scvkJsonWork* pWork, const s
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDevicePCIBusInfoPropertiesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT;
 
@@ -10084,7 +10085,7 @@ void scvkReadJsonPhysicalDevicePerformanceQueryFeatures(scvkJsonWork* pWork, con
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDevicePerformanceQueryFeaturesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR;
 
@@ -10115,7 +10116,7 @@ void scvkReadJsonPhysicalDevicePerformanceQueryProperties(scvkJsonWork* pWork, c
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDevicePerformanceQueryPropertiesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR;
 
@@ -10142,7 +10143,7 @@ void scvkReadJsonPhysicalDevicePointClippingProperties(scvkJsonWork* pWork, cons
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDevicePointClippingProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES;
 
@@ -10171,7 +10172,7 @@ void scvkReadJsonPhysicalDeviceProperties(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                = scvkGetJsonMember(&pContext->document, pObject, "apiVersion");
 
@@ -10199,7 +10200,7 @@ void scvkReadJsonPhysicalDeviceProperties(scvkJsonWork* pWork, const scvkJsonVal
     {
         if (SCVK_JSON_STRING == value->kind)
         {
-            (void)memcpy(pInfo->deviceName, value->pText, (value->textLength < sizeof(pInfo->deviceName)) ? value->textLength : sizeof(pInfo->deviceName) - 1);
+            scvkCopyMemory(pInfo->deviceName, value->pText, (value->textLength < sizeof(pInfo->deviceName)) ? value->textLength : sizeof(pInfo->deviceName) - 1);
         }
     }
     value = scvkGetJsonMember(&pContext->document, pObject, "pipelineCacheUUID");
@@ -10232,7 +10233,7 @@ void scvkReadJsonPhysicalDeviceProperties2(scvkJsonWork* pWork, const scvkJsonVa
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceProperties2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
 
@@ -10261,7 +10262,7 @@ void scvkReadJsonPhysicalDeviceProtectedMemoryFeatures(scvkJsonWork* pWork, cons
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceProtectedMemoryFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES;
 
@@ -10288,7 +10289,7 @@ void scvkReadJsonPhysicalDeviceProtectedMemoryProperties(scvkJsonWork* pWork, co
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceProtectedMemoryProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES;
 
@@ -10315,7 +10316,7 @@ void scvkReadJsonPhysicalDeviceSampleLocationsProperties(scvkJsonWork* pWork, co
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceSampleLocationsPropertiesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT;
 
@@ -10360,7 +10361,7 @@ void scvkReadJsonPhysicalDeviceSamplerFilterMinmaxProperties(scvkJsonWork* pWork
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceSamplerFilterMinmaxProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES;
 
@@ -10391,7 +10392,7 @@ void scvkReadJsonPhysicalDeviceSamplerYcbcrConversionFeatures(scvkJsonWork* pWor
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceSamplerYcbcrConversionFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES;
 
@@ -10418,7 +10419,7 @@ void scvkReadJsonPhysicalDeviceScalarBlockLayoutFeatures(scvkJsonWork* pWork, co
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceScalarBlockLayoutFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
 
@@ -10445,7 +10446,7 @@ void scvkReadJsonPhysicalDeviceSeparateDepthStencilLayoutsFeatures(scvkJsonWork*
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES;
 
@@ -10472,7 +10473,7 @@ void scvkReadJsonPhysicalDeviceShaderAtomicFloatFeatures(scvkJsonWork* pWork, co
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceShaderAtomicFloatFeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_FEATURES_EXT;
 
@@ -10543,7 +10544,7 @@ void scvkReadJsonPhysicalDeviceShaderAtomicInt64Features(scvkJsonWork* pWork, co
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceShaderAtomicInt64Features*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES;
 
@@ -10574,7 +10575,7 @@ void scvkReadJsonPhysicalDeviceShaderClockFeatures(scvkJsonWork* pWork, const sc
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceShaderClockFeaturesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR;
 
@@ -10605,7 +10606,7 @@ void scvkReadJsonPhysicalDeviceShaderDrawParametersFeatures(scvkJsonWork* pWork,
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceShaderDrawParametersFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
 
@@ -10632,7 +10633,7 @@ void scvkReadJsonPhysicalDeviceShaderFloat16Int8Features(scvkJsonWork* pWork, co
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceShaderFloat16Int8Features*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES;
 
@@ -10663,7 +10664,7 @@ void scvkReadJsonPhysicalDeviceShaderImageAtomicInt64Features(scvkJsonWork* pWor
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_ATOMIC_INT64_FEATURES_EXT;
 
@@ -10694,7 +10695,7 @@ void scvkReadJsonPhysicalDeviceShaderSubgroupExtendedTypesFeatures(scvkJsonWork*
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES;
 
@@ -10721,7 +10722,7 @@ void scvkReadJsonPhysicalDeviceSparseProperties(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceSparseProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                                           = scvkGetJsonMember(&pContext->document, pObject, "residencyStandard2DBlockShape");
 
@@ -10757,7 +10758,7 @@ void scvkReadJsonPhysicalDeviceSubgroupProperties(scvkJsonWork* pWork, const scv
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceSubgroupProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES;
 
@@ -10796,7 +10797,7 @@ void scvkReadJsonPhysicalDeviceSurfaceInfo2(scvkJsonWork* pWork, const scvkJsonV
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceSurfaceInfo2KHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
 
@@ -10827,7 +10828,7 @@ void scvkReadJsonPhysicalDeviceTexelBufferAlignmentFeatures(scvkJsonWork* pWork,
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT;
 
@@ -10854,7 +10855,7 @@ void scvkReadJsonPhysicalDeviceTimelineSemaphoreFeatures(scvkJsonWork* pWork, co
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceTimelineSemaphoreFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
 
@@ -10881,7 +10882,7 @@ void scvkReadJsonPhysicalDeviceTimelineSemaphoreProperties(scvkJsonWork* pWork, 
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceTimelineSemaphoreProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES;
 
@@ -10908,7 +10909,7 @@ void scvkReadJsonPhysicalDeviceUniformBufferStandardLayoutFeatures(scvkJsonWork*
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceUniformBufferStandardLayoutFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES;
 
@@ -10935,7 +10936,7 @@ void scvkReadJsonPhysicalDeviceVariablePointersFeatures(scvkJsonWork* pWork, con
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceVariablePointersFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES;
 
@@ -10966,7 +10967,7 @@ void scvkReadJsonPhysicalDeviceVertexInputDynamicStateFeatures(scvkJsonWork* pWo
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_INPUT_DYNAMIC_STATE_FEATURES_EXT;
 
@@ -10993,7 +10994,7 @@ void scvkReadJsonPhysicalDeviceVulkan11Features(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceVulkan11Features*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
 
@@ -11064,7 +11065,7 @@ void scvkReadJsonPhysicalDeviceVulkan11Properties(scvkJsonWork* pWork, const scv
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceVulkan11Properties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
 
@@ -11151,7 +11152,7 @@ void scvkReadJsonPhysicalDeviceVulkan12Features(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceVulkan12Features*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
 
@@ -11362,7 +11363,7 @@ void scvkReadJsonPhysicalDeviceVulkan12Properties(scvkJsonWork* pWork, const scv
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceVulkan12Properties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
 
@@ -11381,7 +11382,7 @@ void scvkReadJsonPhysicalDeviceVulkan12Properties(scvkJsonWork* pWork, const scv
     {
         if (SCVK_JSON_STRING == value->kind)
         {
-            (void)memcpy(pInfo->driverName, value->pText, (value->textLength < sizeof(pInfo->driverName)) ? value->textLength : sizeof(pInfo->driverName) - 1);
+            scvkCopyMemory(pInfo->driverName, value->pText, (value->textLength < sizeof(pInfo->driverName)) ? value->textLength : sizeof(pInfo->driverName) - 1);
         }
     }
     value = scvkGetJsonMember(&pContext->document, pObject, "driverInfo");
@@ -11389,7 +11390,7 @@ void scvkReadJsonPhysicalDeviceVulkan12Properties(scvkJsonWork* pWork, const scv
     {
         if (SCVK_JSON_STRING == value->kind)
         {
-            (void)memcpy(pInfo->driverInfo, value->pText, (value->textLength < sizeof(pInfo->driverInfo)) ? value->textLength : sizeof(pInfo->driverInfo) - 1);
+            scvkCopyMemory(pInfo->driverInfo, value->pText, (value->textLength < sizeof(pInfo->driverInfo)) ? value->textLength : sizeof(pInfo->driverInfo) - 1);
         }
     }
     value = scvkGetJsonMember(&pContext->document, pObject, "conformanceVersion");
@@ -11605,7 +11606,7 @@ void scvkReadJsonPhysicalDeviceVulkanMemoryModelFeatures(scvkJsonWork* pWork, co
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceVulkanMemoryModelFeatures*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES;
 
@@ -11640,7 +11641,7 @@ void scvkReadJsonPhysicalDeviceVulkanSC10Features(scvkJsonWork* pWork, const scv
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceVulkanSC10Features*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_SC_1_0_FEATURES;
 
@@ -11667,7 +11668,7 @@ void scvkReadJsonPhysicalDeviceVulkanSC10Properties(scvkJsonWork* pWork, const s
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceVulkanSC10Properties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_SC_1_0_PROPERTIES;
 
@@ -11762,7 +11763,7 @@ void scvkReadJsonPhysicalDeviceYcbcr2Plane444FormatsFeatures(scvkJsonWork* pWork
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_2_PLANE_444_FORMATS_FEATURES_EXT;
 
@@ -11789,7 +11790,7 @@ void scvkReadJsonPhysicalDeviceYcbcrImageArraysFeatures(scvkJsonWork* pWork, con
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceYcbcrImageArraysFeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT;
 
@@ -11816,7 +11817,7 @@ void scvkReadJsonPipelineCacheCreateInfo(scvkJsonWork* pWork, const scvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkPipelineCacheCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
 
@@ -11847,7 +11848,7 @@ void scvkReadJsonPipelineCacheHeaderVersionOne(scvkJsonWork* pWork, const scvkJs
     pContext = pWork->pContext;
     pInfo    = (VkPipelineCacheHeaderVersionOne*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value             = scvkGetJsonMember(&pContext->document, pObject, "headerSize");
 
@@ -11886,7 +11887,7 @@ void scvkReadJsonPipelineCacheHeaderVersionSafetyCriticalOne(scvkJsonWork* pWork
     pContext = pWork->pContext;
     pInfo    = (VkPipelineCacheHeaderVersionSafetyCriticalOne*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "headerVersionOne");
     if (!scvkIsJsonNull(value))
@@ -11928,7 +11929,7 @@ void scvkReadJsonPipelineCacheSafetyCriticalIndexEntry(scvkJsonWork* pWork, cons
     pContext = pWork->pContext;
     pInfo    = (VkPipelineCacheSafetyCriticalIndexEntry*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "pipelineIdentifier");
     if (!scvkIsJsonNull(value))
@@ -11973,7 +11974,7 @@ void scvkReadJsonPipelineCacheStageValidationIndexEntry(scvkJsonWork* pWork, con
     pContext = pWork->pContext;
     pInfo    = (VkPipelineCacheStageValidationIndexEntry*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value             = scvkGetJsonMember(&pContext->document, pObject, "codeSize");
 
@@ -11997,7 +11998,7 @@ void scvkReadJsonPipelineColorBlendAdvancedStateCreateInfo(scvkJsonWork* pWork, 
     pContext = pWork->pContext;
     pInfo    = (VkPipelineColorBlendAdvancedStateCreateInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT;
 
@@ -12034,7 +12035,7 @@ void scvkReadJsonPipelineColorBlendAttachmentState(scvkJsonWork* pWork, const sc
     pContext = pWork->pContext;
     pInfo    = (VkPipelineColorBlendAttachmentState*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value              = scvkGetJsonMember(&pContext->document, pObject, "blendEnable");
 
@@ -12090,7 +12091,7 @@ void scvkReadJsonPipelineColorBlendStateCreateInfo(scvkJsonWork* pWork, const sc
     pContext = pWork->pContext;
     pInfo    = (VkPipelineColorBlendStateCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 
@@ -12152,7 +12153,7 @@ void scvkReadJsonPipelineColorWriteCreateInfo(scvkJsonWork* pWork, const scvkJso
     pContext = pWork->pContext;
     pInfo    = (VkPipelineColorWriteCreateInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_WRITE_CREATE_INFO_EXT;
 
@@ -12185,7 +12186,7 @@ void scvkReadJsonPipelineDepthStencilStateCreateInfo(scvkJsonWork* pWork, const 
     pContext = pWork->pContext;
     pInfo    = (VkPipelineDepthStencilStateCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 
@@ -12253,7 +12254,7 @@ void scvkReadJsonPipelineDiscardRectangleStateCreateInfo(scvkJsonWork* pWork, co
     pContext = pWork->pContext;
     pInfo    = (VkPipelineDiscardRectangleStateCreateInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT;
 
@@ -12303,7 +12304,7 @@ void scvkReadJsonPipelineDynamicStateCreateInfo(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkPipelineDynamicStateCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 
@@ -12340,7 +12341,7 @@ void scvkReadJsonPipelineFragmentShadingRateStateCreateInfo(scvkJsonWork* pWork,
     pContext = pWork->pContext;
     pInfo    = (VkPipelineFragmentShadingRateStateCreateInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR;
 
@@ -12374,7 +12375,7 @@ void scvkReadJsonPipelineInputAssemblyStateCreateInfo(scvkJsonWork* pWork, const
     pContext = pWork->pContext;
     pInfo    = (VkPipelineInputAssemblyStateCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 
@@ -12412,7 +12413,7 @@ void scvkReadJsonPipelineLayoutCreateInfo(scvkJsonWork* pWork, const scvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkPipelineLayoutCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 
@@ -12466,7 +12467,7 @@ void scvkReadJsonPipelineMultisampleStateCreateInfo(scvkJsonWork* pWork, const s
     pContext = pWork->pContext;
     pInfo    = (VkPipelineMultisampleStateCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 
@@ -12519,7 +12520,7 @@ void scvkReadJsonPipelineOfflineCreateInfo(scvkJsonWork* pWork, const scvkJsonVa
     pContext = pWork->pContext;
     pInfo    = (VkPipelineOfflineCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_OFFLINE_CREATE_INFO;
 
@@ -12556,7 +12557,7 @@ void scvkReadJsonPipelinePoolSize(scvkJsonWork* pWork, const scvkJsonValue* pObj
     pContext = pWork->pContext;
     pInfo    = (VkPipelinePoolSize*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_POOL_SIZE;
 
@@ -12587,7 +12588,7 @@ void scvkReadJsonPipelineRasterizationConservativeStateCreateInfo(scvkJsonWork* 
     pContext = pWork->pContext;
     pInfo    = (VkPipelineRasterizationConservativeStateCreateInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT;
 
@@ -12623,7 +12624,7 @@ void scvkReadJsonPipelineRasterizationDepthClipStateCreateInfo(scvkJsonWork* pWo
     pContext = pWork->pContext;
     pInfo    = (VkPipelineRasterizationDepthClipStateCreateInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_DEPTH_CLIP_STATE_CREATE_INFO_EXT;
 
@@ -12654,7 +12655,7 @@ void scvkReadJsonPipelineRasterizationStateCreateInfo(scvkJsonWork* pWork, const
     pContext = pWork->pContext;
     pInfo    = (VkPipelineRasterizationStateCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 
@@ -12723,7 +12724,7 @@ void scvkReadJsonPipelineSampleLocationsStateCreateInfo(scvkJsonWork* pWork, con
     pContext = pWork->pContext;
     pInfo    = (VkPipelineSampleLocationsStateCreateInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT;
 
@@ -12757,7 +12758,7 @@ void scvkReadJsonPipelineShaderStageCreateInfo(scvkJsonWork* pWork, const scvkJs
     pContext = pWork->pContext;
     pInfo    = (VkPipelineShaderStageCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 
@@ -12811,7 +12812,7 @@ void scvkReadJsonPipelineTessellationDomainOriginStateCreateInfo(scvkJsonWork* p
     pContext = pWork->pContext;
     pInfo    = (VkPipelineTessellationDomainOriginStateCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO;
 
@@ -12840,7 +12841,7 @@ void scvkReadJsonPipelineTessellationStateCreateInfo(scvkJsonWork* pWork, const 
     pContext = pWork->pContext;
     pInfo    = (VkPipelineTessellationStateCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
 
@@ -12873,7 +12874,7 @@ void scvkReadJsonPipelineVertexInputStateCreateInfo(scvkJsonWork* pWork, const s
     pContext = pWork->pContext;
     pInfo    = (VkPipelineVertexInputStateCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
@@ -12937,7 +12938,7 @@ void scvkReadJsonPipelineViewportStateCreateInfo(scvkJsonWork* pWork, const scvk
     pContext = pWork->pContext;
     pInfo    = (VkPipelineViewportStateCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 
@@ -12999,7 +13000,7 @@ void scvkReadJsonPresentInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, 
     pContext = pWork->pContext;
     pInfo    = (VkPresentInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
@@ -13053,7 +13054,7 @@ void scvkReadJsonPresentRegion(scvkJsonWork* pWork, const scvkJsonValue* pObject
     pContext = pWork->pContext;
     pInfo    = (VkPresentRegionKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                 = scvkGetJsonMember(&pContext->document, pObject, "rectangleCount");
 
@@ -13089,7 +13090,7 @@ void scvkReadJsonPresentRegions(scvkJsonWork* pWork, const scvkJsonValue* pObjec
     pContext = pWork->pContext;
     pInfo    = (VkPresentRegionsKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR;
 
@@ -13130,7 +13131,7 @@ void scvkReadJsonProtectedSubmitInfo(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkProtectedSubmitInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO;
 
@@ -13157,7 +13158,7 @@ void scvkReadJsonPushConstantRange(scvkJsonWork* pWork, const scvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkPushConstantRange*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value             = scvkGetJsonMember(&pContext->document, pObject, "stageFlags");
 
@@ -13185,7 +13186,7 @@ void scvkReadJsonQueryPoolCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkQueryPoolCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
 
@@ -13225,7 +13226,7 @@ void scvkReadJsonQueryPoolPerformanceCreateInfo(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkQueryPoolPerformanceCreateInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_QUERY_POOL_PERFORMANCE_CREATE_INFO_KHR;
 
@@ -13262,7 +13263,7 @@ void scvkReadJsonQueueFamilyProperties(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkQueueFamilyProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                     = scvkGetJsonMember(&pContext->document, pObject, "queueFlags");
 
@@ -13296,7 +13297,7 @@ void scvkReadJsonQueueFamilyProperties2(scvkJsonWork* pWork, const scvkJsonValue
     pContext = pWork->pContext;
     pInfo    = (VkQueueFamilyProperties2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
 
@@ -13325,7 +13326,7 @@ void scvkReadJsonRect2D(scvkJsonWork* pWork, const scvkJsonValue* pObject, void*
     pContext = pWork->pContext;
     pInfo    = (VkRect2D*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "offset");
     if (!scvkIsJsonNull(value))
@@ -13352,7 +13353,7 @@ void scvkReadJsonRectLayer(scvkJsonWork* pWork, const scvkJsonValue* pObject, vo
     pContext = pWork->pContext;
     pInfo    = (VkRectLayerKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "offset");
     if (!scvkIsJsonNull(value))
@@ -13382,7 +13383,7 @@ void scvkReadJsonRefreshObject(scvkJsonWork* pWork, const scvkJsonValue* pObject
     pContext = pWork->pContext;
     pInfo    = (VkRefreshObjectKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "objectType");
     if (!scvkIsJsonNull(value))
@@ -13413,7 +13414,7 @@ void scvkReadJsonRefreshObjectList(scvkJsonWork* pWork, const scvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkRefreshObjectListKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_REFRESH_OBJECT_LIST_KHR;
 
@@ -13454,7 +13455,7 @@ void scvkReadJsonRenderPassAttachmentBeginInfo(scvkJsonWork* pWork, const scvkJs
     pContext = pWork->pContext;
     pInfo    = (VkRenderPassAttachmentBeginInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO;
 
@@ -13489,7 +13490,7 @@ void scvkReadJsonRenderPassBeginInfo(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkRenderPassBeginInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 
@@ -13551,7 +13552,7 @@ void scvkReadJsonRenderPassCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* 
     pContext = pWork->pContext;
     pInfo    = (VkRenderPassCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 
@@ -13632,7 +13633,7 @@ void scvkReadJsonRenderPassCreateInfo2(scvkJsonWork* pWork, const scvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkRenderPassCreateInfo2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2;
 
@@ -13722,7 +13723,7 @@ void scvkReadJsonRenderPassInputAttachmentAspectCreateInfo(scvkJsonWork* pWork, 
     pContext = pWork->pContext;
     pInfo    = (VkRenderPassInputAttachmentAspectCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO;
 
@@ -13763,7 +13764,7 @@ void scvkReadJsonRenderPassMultiviewCreateInfo(scvkJsonWork* pWork, const scvkJs
     pContext = pWork->pContext;
     pInfo    = (VkRenderPassMultiviewCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO;
 
@@ -13816,7 +13817,7 @@ void scvkReadJsonRenderPassSampleLocationsBeginInfo(scvkJsonWork* pWork, const s
     pContext = pWork->pContext;
     pInfo    = (VkRenderPassSampleLocationsBeginInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT;
 
@@ -13874,7 +13875,7 @@ void scvkReadJsonSampleLocation(scvkJsonWork* pWork, const scvkJsonValue* pObjec
     pContext = pWork->pContext;
     pInfo    = (VkSampleLocationEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value    = scvkGetJsonMember(&pContext->document, pObject, "x");
 
@@ -13900,7 +13901,7 @@ void scvkReadJsonSampleLocationsInfo(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkSampleLocationsInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT;
 
@@ -13951,7 +13952,7 @@ void scvkReadJsonSamplerCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkSamplerCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
 
@@ -14046,7 +14047,7 @@ void scvkReadJsonSamplerCustomBorderColorCreateInfo(scvkJsonWork* pWork, const s
     pContext = pWork->pContext;
     pInfo    = (VkSamplerCustomBorderColorCreateInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT;
 
@@ -14080,7 +14081,7 @@ void scvkReadJsonSamplerReductionModeCreateInfo(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkSamplerReductionModeCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO;
 
@@ -14109,7 +14110,7 @@ void scvkReadJsonSamplerYcbcrConversionCreateInfo(scvkJsonWork* pWork, const scv
     pContext = pWork->pContext;
     pInfo    = (VkSamplerYcbcrConversionCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO;
 
@@ -14171,7 +14172,7 @@ void scvkReadJsonSamplerYcbcrConversionImageFormatProperties(scvkJsonWork* pWork
     pContext = pWork->pContext;
     pInfo    = (VkSamplerYcbcrConversionImageFormatProperties*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES;
 
@@ -14198,7 +14199,7 @@ void scvkReadJsonSamplerYcbcrConversionInfo(scvkJsonWork* pWork, const scvkJsonV
     pContext = pWork->pContext;
     pInfo    = (VkSamplerYcbcrConversionInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
 
@@ -14229,7 +14230,7 @@ void scvkReadJsonSemaphoreCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkSemaphoreCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -14256,7 +14257,7 @@ void scvkReadJsonSemaphoreGetFdInfo(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkSemaphoreGetFdInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
 
@@ -14292,7 +14293,7 @@ void scvkReadJsonSemaphoreSignalInfo(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkSemaphoreSignalInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO;
 
@@ -14326,7 +14327,7 @@ void scvkReadJsonSemaphoreTypeCreateInfo(scvkJsonWork* pWork, const scvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkSemaphoreTypeCreateInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO;
 
@@ -14358,7 +14359,7 @@ void scvkReadJsonSemaphoreWaitInfo(scvkJsonWork* pWork, const scvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkSemaphoreWaitInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO;
 
@@ -14400,7 +14401,7 @@ void scvkReadJsonSharedPresentSurfaceCapabilities(scvkJsonWork* pWork, const scv
     pContext = pWork->pContext;
     pInfo    = (VkSharedPresentSurfaceCapabilitiesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR;
 
@@ -14429,7 +14430,7 @@ void scvkReadJsonSpecializationInfo(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkSpecializationInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                = scvkGetJsonMember(&pContext->document, pObject, "mapEntryCount");
 
@@ -14466,7 +14467,7 @@ void scvkReadJsonSpecializationMapEntry(scvkJsonWork* pWork, const scvkJsonValue
     pContext = pWork->pContext;
     pInfo    = (VkSpecializationMapEntry*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value             = scvkGetJsonMember(&pContext->document, pObject, "constantID");
 
@@ -14494,7 +14495,7 @@ void scvkReadJsonStencilOpState(scvkJsonWork* pWork, const scvkJsonValue* pObjec
     pContext = pWork->pContext;
     pInfo    = (VkStencilOpState*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "failOp");
     if (!scvkIsJsonNull(value))
@@ -14542,7 +14543,7 @@ void scvkReadJsonSubmitInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, v
     pContext = pWork->pContext;
     pInfo    = (VkSubmitInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -14598,7 +14599,7 @@ void scvkReadJsonSubpassBeginInfo(scvkJsonWork* pWork, const scvkJsonValue* pObj
     pContext = pWork->pContext;
     pInfo    = (VkSubpassBeginInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO;
 
@@ -14627,7 +14628,7 @@ void scvkReadJsonSubpassDependency(scvkJsonWork* pWork, const scvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkSubpassDependency*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                  = scvkGetJsonMember(&pContext->document, pObject, "srcSubpass");
 
@@ -14671,7 +14672,7 @@ void scvkReadJsonSubpassDependency2(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkSubpassDependency2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2;
 
@@ -14728,7 +14729,7 @@ void scvkReadJsonSubpassDescription(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkSubpassDescription*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value        = scvkGetJsonMember(&pContext->document, pObject, "flags");
 
@@ -14821,7 +14822,7 @@ void scvkReadJsonSubpassDescription2(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkSubpassDescription2*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2;
 
@@ -14924,7 +14925,7 @@ void scvkReadJsonSubpassDescriptionDepthStencilResolve(scvkJsonWork* pWork, cons
     pContext = pWork->pContext;
     pInfo    = (VkSubpassDescriptionDepthStencilResolve*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE;
 
@@ -14967,7 +14968,7 @@ void scvkReadJsonSubpassEndInfo(scvkJsonWork* pWork, const scvkJsonValue* pObjec
     pContext = pWork->pContext;
     pInfo    = (VkSubpassEndInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SUBPASS_END_INFO;
 
@@ -14991,7 +14992,7 @@ void scvkReadJsonSubpassSampleLocations(scvkJsonWork* pWork, const scvkJsonValue
     pContext = pWork->pContext;
     pInfo    = (VkSubpassSampleLocationsEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value               = scvkGetJsonMember(&pContext->document, pObject, "subpassIndex");
 
@@ -15017,7 +15018,7 @@ void scvkReadJsonSubresourceLayout(scvkJsonWork* pWork, const scvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkSubresourceLayout*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value             = scvkGetJsonMember(&pContext->document, pObject, "offset");
 
@@ -15053,7 +15054,7 @@ void scvkReadJsonSurfaceCapabilities2EXT(scvkJsonWork* pWork, const scvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkSurfaceCapabilities2EXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT;
 
@@ -15124,7 +15125,7 @@ void scvkReadJsonSurfaceCapabilities2(scvkJsonWork* pWork, const scvkJsonValue* 
     pContext = pWork->pContext;
     pInfo    = (VkSurfaceCapabilities2KHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
 
@@ -15153,7 +15154,7 @@ void scvkReadJsonSurfaceCapabilities(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkSurfaceCapabilitiesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value                = scvkGetJsonMember(&pContext->document, pObject, "minImageCount");
 
@@ -15213,7 +15214,7 @@ void scvkReadJsonSurfaceFormat2(scvkJsonWork* pWork, const scvkJsonValue* pObjec
     pContext = pWork->pContext;
     pInfo    = (VkSurfaceFormat2KHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
 
@@ -15242,7 +15243,7 @@ void scvkReadJsonSurfaceFormat(scvkJsonWork* pWork, const scvkJsonValue* pObject
     pContext = pWork->pContext;
     pInfo    = (VkSurfaceFormatKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value = scvkGetJsonMember(&pContext->document, pObject, "format");
     if (!scvkIsJsonNull(value))
@@ -15269,7 +15270,7 @@ void scvkReadJsonSwapchainCounterCreateInfo(scvkJsonWork* pWork, const scvkJsonV
     pContext = pWork->pContext;
     pInfo    = (VkSwapchainCounterCreateInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT;
 
@@ -15296,7 +15297,7 @@ void scvkReadJsonSwapchainCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkSwapchainCreateInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 
@@ -15398,7 +15399,7 @@ void scvkReadJsonTimelineSemaphoreSubmitInfo(scvkJsonWork* pWork, const scvkJson
     pContext = pWork->pContext;
     pInfo    = (VkTimelineSemaphoreSubmitInfo*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO;
 
@@ -15440,7 +15441,7 @@ void scvkReadJsonValidationFeatures(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkValidationFeaturesEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
 
@@ -15482,7 +15483,7 @@ void scvkReadJsonVertexInputAttributeDescription(scvkJsonWork* pWork, const scvk
     pContext = pWork->pContext;
     pInfo    = (VkVertexInputAttributeDescription*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value           = scvkGetJsonMember(&pContext->document, pObject, "location");
 
@@ -15515,7 +15516,7 @@ void scvkReadJsonVertexInputAttributeDescription2(scvkJsonWork* pWork, const scv
     pContext = pWork->pContext;
     pInfo    = (VkVertexInputAttributeDescription2EXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT;
 
@@ -15555,7 +15556,7 @@ void scvkReadJsonVertexInputBindingDescription(scvkJsonWork* pWork, const scvkJs
     pContext = pWork->pContext;
     pInfo    = (VkVertexInputBindingDescription*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value          = scvkGetJsonMember(&pContext->document, pObject, "binding");
 
@@ -15585,7 +15586,7 @@ void scvkReadJsonVertexInputBindingDescription2(scvkJsonWork* pWork, const scvkJ
     pContext = pWork->pContext;
     pInfo    = (VkVertexInputBindingDescription2EXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT;
 
@@ -15625,7 +15626,7 @@ void scvkReadJsonViewport(scvkJsonWork* pWork, const scvkJsonValue* pObject, voi
     pContext = pWork->pContext;
     pInfo    = (VkViewport*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value           = scvkGetJsonMember(&pContext->document, pObject, "x");
 
@@ -15667,7 +15668,7 @@ void scvkReadJsonWriteDescriptorSet(scvkJsonWork* pWork, const scvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkWriteDescriptorSet*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 
@@ -15746,7 +15747,7 @@ void scvkReadJsonXYColor(scvkJsonWork* pWork, const scvkJsonValue* pObject, void
     pContext = pWork->pContext;
     pInfo    = (VkXYColorEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     value    = scvkGetJsonMember(&pContext->document, pObject, "x");
 

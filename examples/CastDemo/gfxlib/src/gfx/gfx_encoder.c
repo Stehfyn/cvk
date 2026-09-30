@@ -242,7 +242,7 @@ struct Gfx_Encoder_s
  * \param[in] profile   Selected Baseline, Main or High profile
  * \param[out] sps   Native sequence parameters
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void InitializeSequenceParameters(const Config_t*                   config,
                                          VAProfile                         profile,
@@ -258,7 +258,7 @@ static void InitializeSequenceParameters(const Config_t*                   confi
  *
  * \param[out] lists   Required storage for both native lists
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void InitializeReferenceLists(ReferenceLists_t* lists);
 
@@ -278,7 +278,7 @@ static void InitializeReferenceLists(ReferenceLists_t* lists);
  * \param[in] reconstructionSurface   Available reconstruction target
  * \param[out] picture   Required native picture-parameter storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void InitializePictureParameters(const Gfx_Encoder_t*             encoder,
                                         const Gfx_Encoder_EncodeInfo_t*  request,
@@ -300,7 +300,7 @@ static void InitializePictureParameters(const Gfx_Encoder_t*             encoder
  * \param[in] request   Picture request retaining enabled weight spans
  * \param[in] lists   Initialized native reference lists and active counts
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void InitializeSliceWeights(VAEncSliceParameterBufferH264*  slice,
                                    const Gfx_Encoder_EncodeInfo_t* request,
@@ -323,7 +323,7 @@ static void InitializeSliceWeights(VAEncSliceParameterBufferH264*  slice,
  * \param[in] lists   Complete native reference lists with active counts
  * \param[in] sliceIndex   Existing slice slot within the configured picture partition
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void InitializeSliceParameters(Gfx_Encoder_t*                  encoder,
                                       const Gfx_Encoder_EncodeInfo_t* request,
@@ -338,7 +338,7 @@ static void InitializeSliceParameters(Gfx_Encoder_t*                  encoder,
  * \param[out] config     Receives initialized stream settings
  * \param[in]  createInfo Creation request providing the input dimensions and stream settings
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void InitializeConfig(Config_t* config, const Gfx_Encoder_CreateInfo_t* createInfo);
 
@@ -379,7 +379,7 @@ static uint32_t GetCodedBufferCapacity(const Config_t* config, uint32_t format);
  *
  * \param[in] createInfo        VA encoder configuration including rate-control, GOP, slice, profile, and surface constraints
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void ValidateCreateInfo(const Gfx_Encoder_CreateInfo_t* createInfo);
 
@@ -603,7 +603,7 @@ static uint32_t BuildReferenceListH264(const Gfx_Encoder_t* encoder,
  * \param[in] encodeInfo  Per-picture weight flags
  * \param[in] pictureType Mapped VA encoding picture type
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void ValidatePredictionWeightsH264(const Config_t*                 config,
                                           const Gfx_Encoder_EncodeInfo_t* encodeInfo,
@@ -678,7 +678,7 @@ static bool_t GetStatus(Gfx_Encoder_t* encoder, void* codedBytes, uint64_t coded
  * \param[out] rateControlBufId Persistent miscellaneous rate-control buffer.
  * \param[out] frameRateBufId Persistent miscellaneous frame-rate buffer.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CreateVaapiEncoderResources(VADisplay       dpy,
                                         VAContextID     context,
@@ -732,7 +732,7 @@ static void CreateVaapiEncoderResources(VADisplay       dpy,
  * \param[out] profileIdc Selected H.264 profile_idc
  * \param[out] constraintSetFlags Selected H.264 constraint flags
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CreateVaapiEncoder(VADisplay                 dpy,
                                uint32_t                  format,
@@ -771,7 +771,7 @@ static void CreateVaapiEncoder(VADisplay                 dpy,
  * \param[out] encoder        Zero-initialized encoder marked ready after complete creation
  * \param[in] createInfo      Backend and codec configuration
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void CreateEncoder(Gfx_Encoder_t* encoder, const Gfx_Encoder_CreateInfo_t* createInfo);
 
@@ -789,7 +789,7 @@ static void CreateEncoder(Gfx_Encoder_t* encoder, const Gfx_Encoder_CreateInfo_t
  * \param[out]    idrFrameIndex       Receives the new frame-number and POC origin
  * \param[in,out] idrPicId            IDR identifier to alternate between zero and one
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void ResetIdrState(uint32_t  frameIndex,
                           uint32_t* decodedPictureCount,
@@ -812,7 +812,7 @@ static void ResetIdrState(uint32_t  frameIndex,
  * \param[in]     topField              TRUE for a top-field reference
  * \param[in]     bottomField           TRUE for a bottom-field reference
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void UpdateDecodedPictureBuffer(Gfx_Encoder_t*           encoder,
                                        Utl_H264_ReferenceType_t referenceType,
@@ -832,7 +832,7 @@ static void UpdateDecodedPictureBuffer(Gfx_Encoder_t*           encoder,
  * \param[in,out] image      Acquired input whose pending upload is consumed
  * \param[in]     encodeInfo Per-picture type, reference, prediction, weighting and end-of-stream settings
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void EncodeImage(Gfx_Encoder_t* encoder, Gfx_Image_t* image, const Gfx_Encoder_EncodeInfo_t* encodeInfo);
 

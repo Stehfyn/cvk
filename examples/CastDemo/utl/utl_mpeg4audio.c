@@ -367,7 +367,7 @@ static FORCE_INLINE uint8_t ReadObject(Utl_Mpeg4_BitReader_t* reader);
  * \param[out]    frequency   Required candidate field
  * \param[in,out] reader      Required initialized cursor
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void ReadFrequency(Utl_Mpeg4Audio_Frequency_t* frequency, Utl_Mpeg4_BitReader_t* reader);
 
@@ -385,7 +385,7 @@ static FORCE_INLINE void ReadFrequency(Utl_Mpeg4Audio_Frequency_t* frequency, Ut
  * \param[in,out] reader     Required initialized cursor
  * \param[in]     count      Element count
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void ReadElements(Utl_Mpeg4Audio_Element_t* elements,
                                       Utl_Mpeg4_BitReader_t*    reader,
@@ -404,7 +404,7 @@ static FORCE_INLINE void ReadElements(Utl_Mpeg4Audio_Element_t* elements,
  * \param[in,out] program   Required initialized candidate
  * \param[in,out] reader    Required initialized cursor
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void ReadProgramMixdown(Utl_Mpeg4Audio_Program_t* program, Utl_Mpeg4_BitReader_t* reader);
 
@@ -423,7 +423,7 @@ static FORCE_INLINE void ReadProgramMixdown(Utl_Mpeg4Audio_Program_t* program, U
  * \param[in,out] program   Required initialized candidate
  * \param[in,out] reader    Required initialized cursor
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void ReadProgram(Utl_Mpeg4Audio_Program_t* program, Utl_Mpeg4_BitReader_t* reader);
 
@@ -504,7 +504,7 @@ static FORCE_INLINE Utl_Mpeg4Audio_Status_t ReadPadding(Utl_Mpeg4_BitReader_t* r
  * \param[in,out] writer      Required cursor
  * \param[in]     frequency   Required validated frequency
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteFrequency(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4Audio_Frequency_t* frequency);
 
@@ -522,7 +522,7 @@ static FORCE_INLINE void WriteFrequency(Utl_Mpeg4_BitWriter_t* writer, const Utl
  * \param[in]     elements   Required selected elements
  * \param[in]     count      Validated element count
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteElements(Utl_Mpeg4_BitWriter_t*          writer,
                                        const Utl_Mpeg4Audio_Element_t* elements,
@@ -541,7 +541,7 @@ static FORCE_INLINE void WriteElements(Utl_Mpeg4_BitWriter_t*          writer,
  * \param[in,out] writer    Required cursor
  * \param[in]     program   Required program
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteProgramMixdown(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4Audio_Program_t* program);
 
@@ -559,7 +559,7 @@ static FORCE_INLINE void WriteProgramMixdown(Utl_Mpeg4_BitWriter_t* writer, cons
  * \param[in,out] writer    Required cursor
  * \param[in]     program   Required bounded model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteProgram(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4Audio_Program_t* program);
 
@@ -576,7 +576,7 @@ static FORCE_INLINE void WriteProgram(Utl_Mpeg4_BitWriter_t* writer, const Utl_M
  * \param[in,out] writer   Required cursor
  * \param[in]     config   Required validated model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteExtension(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4Audio_Config_t* config);
 
@@ -594,7 +594,7 @@ static FORCE_INLINE void WriteExtension(Utl_Mpeg4_BitWriter_t* writer, const Utl
  * \param[in,out] writer   Required cursor
  * \param[in]     config   Required stable model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteConfiguration(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4Audio_Config_t* config);
 

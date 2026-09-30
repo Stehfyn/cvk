@@ -1,13 +1,19 @@
 /* gpu_transcode.c - Stage 1: Vulkan Video H.264 encode/decode capability detection through cvk. */
 #define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+#include <Windows.h> // IWYU pragma: keep
+#include <stdint.h>
+#include <minwindef.h>
+#include <winnt.h>
+#include <synchapi.h>
+#include <WinBase.h>
+#include <vk_video/vulkan_video_codec_h264std.h>
+#include <processthreadsapi.h>
+#include <handleapi.h>
 
 #include <stdarg.h>
 #include <string.h>
 
-#include <vulkan/vulkan.h>
 #include <volk.h>
-#include "cvk/cvk.h"
 
 #include "gpu_transcode.h"
 #include "crt/crt_format.h"
@@ -43,6 +49,27 @@ static void Report(char* pReport, size_t capacity, const char* pFormat, ...)
 #include "gpu_encode.h"
 
 #define PIPELINE_SLOTS 3
+#define H264_NAL_TYPE_MASK              (0x1FU)
+#define H264_NAL_TYPE_SPS               (7U)
+#define H264_NAL_TYPE_PPS               (8U)
+#define GPU_TRANSCODE_DEFAULT_WIDTH     (1280U)
+#define GPU_TRANSCODE_DEFAULT_BITRATE   (4000U)
+#define GPU_TRANSCODE_DEFAULT_GOP       (12U)
+#define GPU_TRANSCODE_DEFAULT_QP_INTRA  (20)
+#define GPU_TRANSCODE_DEFAULT_QP_INTER  (23)
+#define GPU_TRANSCODE_DEFAULT_MOTION    (30)
+#define GPU_TRANSCODE_REPORT_CAPACITY   (1600U)
+#define GPU_TRANSCODE_DEVICE_REPORT_CAPACITY (256U)
+#define GPU_TRANSCODE_CODEC_REPORT_CAPACITY  (512U)
+#define GPU_TRANSCODE_MIN_WIDTH         (16U)
+#define GPU_TRANSCODE_MAX_QP            (50)
+#define GPU_TRANSCODE_HEAD_START        (8U)
+#define GPU_TRANSCODE_SCENE_RESIDUAL    (0.18)
+#define GPU_TRANSCODE_SCENE_MOTION      (0.35)
+#define GPU_TRANSCODE_MOTION_QP_RANGE   (8.0)
+#define GPU_TRANSCODE_ROUND_HALF        (0.5)
+#define GPU_TRANSCODE_BYTE_MAX          (255.0)
+#define GPU_TRANSCODE_AXIS_COUNT        (2.0)
 
 /* One decoded full-resolution frame handed from the decode thread to the encode thread, in whatever
 ** YCbCr layout the decoder produced (interleaved 2-plane or planar 3-plane). */
@@ -342,9 +369,11 @@ static double EstimateMotion(const byte_t* pPrev,
     ** match error per sampled pixel (0..255), used to spot scene cuts. */
     if (NULL != pResidual)
     {
-        *pResidual = (double)residual_sum / block_count / ((double)(block / 2) * (block / 2)) / 255.0;
+        const double half_block = (double)block / GPU_TRANSCODE_AXIS_COUNT;
+
+        *pResidual = (double)residual_sum / block_count / (half_block * half_block) / GPU_TRANSCODE_BYTE_MAX;
     }
-    return (double)motion_sum / block_count / (2.0 * search);
+    return (double)motion_sum / block_count / (GPU_TRANSCODE_AXIS_COUNT * search);
 }
 
 /* The decode-ahead producer: reads a source sample, decodes it, and copies the full-resolution NV12
@@ -528,7 +557,7 @@ static void FindNalOfType(const byte_t* pData, uint32_t size, int nalType, const
                     }
                     --nal_length;
                 }
-                if (nal_length > 0 && (pData[nal_start] & 0x1F) == nalType)
+                if (nal_length > 0 && (pData[nal_start] & H264_NAL_TYPE_MASK) == nalType)
                 {
                     *pp   = pData + nal_start;
                     *pLen = nal_length;
@@ -543,7 +572,7 @@ static void FindNalOfType(const byte_t* pData, uint32_t size, int nalType, const
             ++i;
         }
     }
-    if (nal_start > 0 && nal_start < size && (pData[nal_start] & 0x1F) == nalType)
+    if (nal_start > 0 && nal_start < size && (pData[nal_start] & H264_NAL_TYPE_MASK) == nalType)
     {
         *pp   = pData + nal_start;
         *pLen = size - nal_start;
@@ -563,13 +592,13 @@ void GpuTranscode_InitializeConfig(GpuTranscodeConfig* pConfig)
 {
     /* The proxy is the primary stream once the session switches to it, so it has to be worth
     ** watching: HD-wide with a low quantiser, and a short GOP so seeks are still cheap. */
-    pConfig->width          = 1280;
-    pConfig->bitrateKbps    = 4000;
-    pConfig->gopLength      = 12; /* ~0.5 s between keyframes at 24 fps, so a seek decodes little */
-    pConfig->qpIntra        = 20;
-    pConfig->qpInter        = 23;
+    pConfig->width          = GPU_TRANSCODE_DEFAULT_WIDTH;
+    pConfig->bitrateKbps    = GPU_TRANSCODE_DEFAULT_BITRATE;
+    pConfig->gopLength      = GPU_TRANSCODE_DEFAULT_GOP; /* ~0.5 s between keyframes at 24 fps, so a seek decodes little */
+    pConfig->qpIntra        = GPU_TRANSCODE_DEFAULT_QP_INTRA;
+    pConfig->qpInter        = GPU_TRANSCODE_DEFAULT_QP_INTER;
     pConfig->motionAdaptive = 1;
-    pConfig->motionStrength = 30; /* a gentle bit-saver on still frames, not a quality cliff */
+    pConfig->motionStrength = GPU_TRANSCODE_DEFAULT_MOTION; /* a gentle bit-saver on still frames, not a quality cliff */
 }
 
 /*************************************************************************************************/
@@ -598,9 +627,9 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
     uint64_t                         workspace_bytes;
     uint64_t                         offset;
     GpuTranscoder*                   pTranscoder;
-    char                             device_report[256];
-    char                             decode_report[512];
-    char                             encode_report[512];
+    char                             device_report[GPU_TRANSCODE_DEVICE_REPORT_CAPACITY];
+    char                             decode_report[GPU_TRANSCODE_CODEC_REPORT_CAPACITY];
+    char                             encode_report[GPU_TRANSCODE_CODEC_REPORT_CAPACITY];
 
     if (reportCapacity > 0)
     {
@@ -626,9 +655,9 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
         return NULL;
     }
     out_width = (pConfig->width + 1U) & ~1U;
-    if (out_width < 16U)
+    if (out_width < GPU_TRANSCODE_MIN_WIDTH)
     {
-        out_width = 16U;
+        out_width = GPU_TRANSCODE_MIN_WIDTH;
     }
     output_height = (((uint64_t)out_width * source_height) + (source_width / 2U)) / source_width;
     if (output_height >= UINT32_MAX)
@@ -645,7 +674,7 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
 
     source_pixels = (uint64_t)source_width * source_height;
     proxy_pixels  = (uint64_t)out_width * out_height;
-    if ((source_pixels > GPU_FRAME_STORAGE_CAPACITY / (PIPELINE_SLOTS * 2U)) ||
+    if ((source_pixels > GPU_FRAME_STORAGE_CAPACITY / ((uint64_t)PIPELINE_SLOTS * 2U)) ||
         (proxy_pixels > GPU_FRAME_STORAGE_CAPACITY / 2U))
     {
         Report(pReport, reportCapacity, "frame dimensions exceed resident workspace\n");
@@ -704,7 +733,7 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
                                             pConfig->gopLength,
                                             pConfig->qpIntra,
                                             pConfig->qpInter,
-                                            30,
+                                            GPU_TRANSCODE_DEFAULT_MOTION,
                                             1,
                                             encode_report,
                                             sizeof(encode_report));
@@ -886,13 +915,13 @@ const byte_t* GpuTranscode_ReadNextFrame(GpuTranscoder* pTranscoder, uint32_t* p
                                                  pTranscoder->outHeight,
                                                  &residual);
         pTranscoder->lastMotion = motion;
-        bump                    = (int)(((1.0 - motion) * (pTranscoder->config.motionStrength / 100.0) * 8.0) + 0.5);
+        bump                    = (int)(((1.0 - motion) * (pTranscoder->config.motionStrength / 100.0) * GPU_TRANSCODE_MOTION_QP_RANGE) + GPU_TRANSCODE_ROUND_HALF);
         qp_override             = pTranscoder->config.qpInter + bump;
-        if (qp_override > 50)
+        if (qp_override > GPU_TRANSCODE_MAX_QP)
         {
-            qp_override = 50;
+            qp_override = GPU_TRANSCODE_MAX_QP;
         }
-        if (!force_idr && residual > 0.18 && motion > 0.35)
+        if (!force_idr && residual > GPU_TRANSCODE_SCENE_RESIDUAL && motion > GPU_TRANSCODE_SCENE_MOTION)
         {
             force_idr = 1; /* a sudden, poorly-matching change of content: a new shot */
         }
@@ -906,7 +935,7 @@ const byte_t* GpuTranscode_ReadNextFrame(GpuTranscoder* pTranscoder, uint32_t* p
                                   qp_override,
                                   pSize);
 
-    memcpy(pTranscoder->prevLuma, pTranscoder->dstLuma, (size_t)pTranscoder->outWidth * pTranscoder->outHeight);
+    CRT_Memory_Copy(pTranscoder->prevLuma, pTranscoder->dstLuma, (uint64_t)pTranscoder->outWidth * pTranscoder->outHeight);
     pTranscoder->havePrev = 1;
     if (NULL != pKeyframe)
     {
@@ -987,12 +1016,12 @@ int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
                           const GpuTranscodeConfig* pConfig,
                           unsigned                  startFrame,
                           unsigned                  maxFrames,
-                          volatile long*            pCancel,
+                          const volatile long*      pCancel,
                           char*                     pReport,
                           size_t                    reportCapacity)
 {
     GpuTranscoder* pTranscoder;
-    char           open_report[1600];
+    char           open_report[GPU_TRANSCODE_REPORT_CAPACITY];
     Mp4Demux*      pTiming;
     const byte_t*  header;
     uint32_t       header_size;
@@ -1035,8 +1064,8 @@ int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
     }
 
     header = GpuTranscode_GetHeader(pTranscoder, &header_size);
-    FindNalOfType(header, header_size, 7, &sps, &sps_size);
-    FindNalOfType(header, header_size, 8, &pps, &pps_size);
+    FindNalOfType(header, header_size, H264_NAL_TYPE_SPS, &sps, &sps_size);
+    FindNalOfType(header, header_size, H264_NAL_TYPE_PPS, &pps, &pps_size);
     video_timescale = Mp4Demux_GetTimescale(pTiming);
     total_samples   = Mp4Demux_GetSampleCount(pTiming);
     start_index     = (startFrame > 0) ? GpuTranscode_SeekKeyframe(pTranscoder, startFrame) : 0U;
@@ -1157,7 +1186,7 @@ int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
            reportCapacity,
            "proxy mp4: %s, avg motion %d%% (%u video frames from %u)\n",
            ok ? "ok" : "failed",
-           (int)(produced ? (motion_accum / produced * 100.0) + 0.5 : 0.0),
+           (int)(produced ? (motion_accum / produced * 100.0) + GPU_TRANSCODE_ROUND_HALF : 0.0),
            produced,
            start_index);
     Mp4Mux_Destroy(pMux);
@@ -1187,7 +1216,7 @@ int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
                                     uint32_t                  reportCapacity)
 {
     GpuTranscoder*   pTranscoder;
-    char             open_report[1600];
+    char             open_report[GPU_TRANSCODE_REPORT_CAPACITY];
     Mp4Demux*        pTiming;
     const byte_t*    header;
     uint32_t         header_size;
@@ -1232,8 +1261,8 @@ int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
     }
 
     header = GpuTranscode_GetHeader(pTranscoder, &header_size);
-    FindNalOfType(header, header_size, 7, &sps, &sps_size);
-    FindNalOfType(header, header_size, 8, &pps, &pps_size);
+    FindNalOfType(header, header_size, H264_NAL_TYPE_SPS, &sps, &sps_size);
+    FindNalOfType(header, header_size, H264_NAL_TYPE_PPS, &pps, &pps_size);
     video_timescale = Mp4Demux_GetTimescale(pTiming);
     total_samples   = Mp4Demux_GetSampleCount(pTiming);
     audio_samples   = Mp4Demux_GetAudioSampleCount(pTiming);
@@ -1316,7 +1345,7 @@ int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
                 /* Start serving only once several seconds of content are on disk: a receiver that
                 ** loads a barely-started file rejects it. The transcode runs well ahead of playback,
                 ** so it keeps growing past the viewer from here. */
-                if (!first_fragment_sent && NULL != onReady && head_ticks >= (uint64_t)8U * video_timescale)
+                if (!first_fragment_sent && NULL != onReady && head_ticks >= (uint64_t)GPU_TRANSCODE_HEAD_START * video_timescale)
                 {
                     first_fragment_sent = 1;
                     onReady(pUser);

@@ -132,7 +132,7 @@ static const uint32_t c_badContentBytes[]  = {9, 13, 12, 11, 15, 11, 12, 12, 12,
 /** \brief Terminates with a source-line code when a check fails.
  *  \param[in] passed   Check outcome
  *  \param[in] line     Source line reported as process status
- *  \retval None
+ *  \retval None No value is returned.
  */
 static FORCE_INLINE void Check(bool_t passed, uint32_t line);
 
@@ -148,37 +148,37 @@ static bool_t Equal(const byte_t* left, const byte_t* right, uint32_t count);
 
 /*************************************************************************************************/
 /** \brief Exercises independent Unicode vectors and malformed input.
- *  \retval None
+ *  \retval None No value is returned.
  */
 static void CheckUnicodeVectors(void);
 
 /*************************************************************************************************/
 /** \brief Checks all scalar values and all isolated UTF-16 units.
- *  \retval None
+ *  \retval None No value is returned.
  */
 static void CheckUnicodeDomain(void);
 
 /*************************************************************************************************/
 /** \brief Checks independent Cast bytes, capacity and incremental framing.
- *  \retval None
+ *  \retval None No value is returned.
  */
 static void CheckCastFrames(void);
 
 /*************************************************************************************************/
 /** \brief Checks schema presence, duplicates, unknown fields and invalid encodings.
- *  \retval None
+ *  \retval None No value is returned.
  */
 static void CheckCastSchema(void);
 
 /*************************************************************************************************/
 /** \brief Checks decimal limits, prefix consumption and bounded output.
- *  \retval None
+ *  \retval None No value is returned.
  */
 static void CheckDecimal(void);
 
 /*************************************************************************************************/
 /** \brief Checks byte-range grammar, resolution, canonical output and failure preservation.
- *  \retval None
+ *  \retval None No value is returned.
  */
 static void CheckHttpRanges(void);
 

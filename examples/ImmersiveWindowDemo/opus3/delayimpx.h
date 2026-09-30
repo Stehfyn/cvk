@@ -1,7 +1,7 @@
 #ifndef DELAYIMPX_H
 #define DELAYIMPX_H
 
-#include <windows.h>
+#include <Windows.h>
 
 /*
  * delayimpx.h -- internal delay-load thunk generators (spiritual successor to the toolset's
@@ -28,6 +28,7 @@
  * _ErrVal (already of type _RetType) is returned if the library or the export is missing. Use this
  * (rather than DECLARE_DLL_THUNK) for a DLL that may not already be resident, e.g. shcore.
  */
+// NOLINTBEGIN(bugprone-macro-parentheses): _Args1 and _Args2 are parenthesized argument lists.
 #define DELAYLOAD(_hInst, _DllName, _CallConv, _WrapperName, _ExportName, _Args1, _Args2, _RetType, _ErrVal) \
     typedef _RetType(_CallConv* PFN_##_WrapperName) _Args1;                                                  \
     _RetType _CallConv _WrapperName _Args1                                                                   \
@@ -98,4 +99,5 @@
         return s_pfn _Args2;                                                                        \
     }
 
+// NOLINTEND(bugprone-macro-parentheses)
 #endif /* DELAYIMPX_H */

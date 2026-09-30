@@ -90,7 +90,7 @@ typedef struct Gfx_Renderer_Statistics_t
  * \param[out] ppRenderer         Receives the initialized renderer
  * \param[in]  pCreateInfo        Backend, Vulkan context, and render-target extent
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Gfx_Renderer_Create(Gfx_Renderer_t** ppRenderer, const Gfx_Renderer_CreateInfo_t* pCreateInfo);
 
@@ -104,7 +104,7 @@ void Gfx_Renderer_Create(Gfx_Renderer_t** ppRenderer, const Gfx_Renderer_CreateI
  * \param[in,out] pRenderer       Idle renderer beginning a frame
  * \param[in,out] pTargetImage    Acquired swapchain image receiving the completed target
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Gfx_Renderer_BeginFrame(Gfx_Renderer_t* pRenderer, Gfx_Image_t* pTargetImage);
 
@@ -115,7 +115,7 @@ void Gfx_Renderer_BeginFrame(Gfx_Renderer_t* pRenderer, Gfx_Image_t* pTargetImag
  * \param[in,out] pRenderer       Renderer between BeginFrame() and EndFrame()
  * \param[in]     frameIndex      Animation frame used by the test scene
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Gfx_Renderer_Render(Gfx_Renderer_t* pRenderer, uint32_t frameIndex);
 
@@ -129,7 +129,7 @@ void Gfx_Renderer_Render(Gfx_Renderer_t* pRenderer, uint32_t frameIndex);
  *
  * \param[in,out] pRenderer       Active renderer containing recorded render work
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Gfx_Renderer_EndFrame(Gfx_Renderer_t* pRenderer);
 
@@ -144,7 +144,7 @@ void Gfx_Renderer_EndFrame(Gfx_Renderer_t* pRenderer);
  * \param[in,out] pRenderer       Renderer whose timestamp queries are collected
  * \param[out]    pStatistics     Receives completed frame count and GPU time
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Gfx_Renderer_GetStatistics(Gfx_Renderer_t* pRenderer, Gfx_Renderer_Statistics_t* pStatistics);
 

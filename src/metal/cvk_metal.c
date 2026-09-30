@@ -6,6 +6,7 @@
 #include "cvk/cvk.h"
 #include "cvk/metal/cvk_metal.h"
 #include <volk.h>
+#include "vk_diagnostic.h"
 #include <stdint.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_metal.h>
@@ -216,11 +217,12 @@ extern CVK_FORCE_INLINE void cvkGetMemoryMetalHandleProperties(VkDevice         
                                                                void*                              pNext,
                                                                VkMemoryMetalHandlePropertiesEXT*  pMemoryMetalHandleProperties)
 {
-    VkMemoryMetalHandlePropertiesEXT memory_metal_handle_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_MEMORY_METAL_HANDLE_PROPERTIES_EXT,
-        .pNext = pNext
-    };
+    VkMemoryMetalHandlePropertiesEXT memory_metal_handle_properties;
+
+    cvkZeroMemory(&memory_metal_handle_properties, sizeof(memory_metal_handle_properties));
+
+    memory_metal_handle_properties.sType = VK_STRUCTURE_TYPE_MEMORY_METAL_HANDLE_PROPERTIES_EXT;
+    memory_metal_handle_properties.pNext = pNext;
 
     CVK_CHECK(vkGetMemoryMetalHandlePropertiesEXT(device, handleType, pHandle, &memory_metal_handle_properties));
 

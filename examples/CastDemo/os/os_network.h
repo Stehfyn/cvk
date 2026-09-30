@@ -156,7 +156,7 @@ uint32_t OS_Network_GetInterfaceCount(const OS_Network_t* network);
  * \param[in]  index     Index less than GetInterfaceCount
  * \param[out] value     Required disjoint output
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void OS_Network_GetInterface(const OS_Network_t* network, uint32_t index, OS_Network_Interface_t* value);
 

@@ -118,7 +118,7 @@ foreach(configuration IN LISTS cvk_configurations)
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_${configuration_upper} TRUE)
 endforeach()
 
-add_compile_options("$<$<COMPILE_LANG_AND_ID:C,MSVC>:/external:W0;/external:env:INCLUDE;/analyze:external->")
+add_compile_options("$<$<COMPILE_LANG_AND_ID:C,MSVC>:/external:env:INCLUDE>")
 add_compile_options($<$<COMPILE_LANG_AND_ID:C,GNU,Clang,AppleClang>:-O3>)
 # Prefer full LTO for this generated, monolithic source: it can discard unreachable
 # wrapper families before optimizing them, and exposes every live tier for inlining.
@@ -140,7 +140,7 @@ target_include_directories(vk-diagnostic PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/pla
 target_link_libraries(vk-diagnostic PRIVATE utl-decimal)
 if(MSVC)
     target_compile_options(utl-decimal PRIVATE /GS- /Zl)
-    target_compile_options(vk-diagnostic PRIVATE /GS- /Zl /wd5045)
+    target_compile_options(vk-diagnostic PRIVATE /GS- /Zl)
 endif()
 
 # Regenerate the core, JSON, and platform pairs from the registries and policies.
@@ -174,10 +174,6 @@ endif()
 # its own generated pair that includes cvk/cvk.h. Tier 3 protocols (scripts/protocols/) are folded
 # into the platform pairs by the generator; "posix" is the pair for descriptor protocols.
 set(cvk_core_sources src/cvk.c src/cvk_json.c src/cvk_json_enums.c src/cvk_json_structs.c)
-if(MSVC)
-    set_source_files_properties(src/cvk_json.c src/cvk_json_enums.c src/cvk_json_structs.c
-        PROPERTIES COMPILE_OPTIONS "/wd4711;/wd5045")
-endif()
 set(CVK_SOURCES ${cvk_core_sources} ${cvk_platform_sources})
 
 if(cvk_platform_sources)
@@ -186,7 +182,7 @@ if(cvk_platform_sources)
     # and included in the existing cvk archive.
     add_library(cvk-platform OBJECT ${cvk_platform_sources})
     target_include_directories(cvk-platform PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-    target_link_libraries(cvk-platform PRIVATE Vulkan::Headers volk::volk cvk-vulkan-utility-headers)
+    target_link_libraries(cvk-platform PRIVATE Vulkan::Headers volk::volk cvk-vulkan-utility-headers vk-diagnostic)
     target_compile_definitions(cvk-platform PRIVATE VK_NO_PROTOTYPES)
     if(NOT MSVC)
         target_compile_options(cvk-platform PRIVATE -Wall -Wextra -Wpedantic -Werror=implicit-function-declaration)
@@ -214,9 +210,6 @@ endif()
 enable_testing()
 add_executable(cvk-pipeline-json-test tests/pipeline_json_test.c)
 target_link_libraries(cvk-pipeline-json-test PRIVATE cvk volk::volk vk-diagnostic)
-if(MSVC)
-    target_compile_options(cvk-pipeline-json-test PRIVATE /wd4710)
-endif()
 add_test(NAME cvk-pipeline-json-parse COMMAND cvk-pipeline-json-test
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cube.pc.json
     ${CMAKE_CURRENT_SOURCE_DIR}/examples/ImmersiveWindowDemo/shaders/nv12.pipeline.json

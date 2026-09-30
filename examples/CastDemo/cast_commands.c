@@ -84,7 +84,7 @@ static FORCE_INLINE bool_t CanReplaceTail(const CastCommands_t* commands, CastCo
  * \param[in,out] commands   Initialized queue
  * \param[in]     command    Command whose priority controls eviction
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void MakePositionRoom(CastCommands_t* commands, CastCommand command);
 

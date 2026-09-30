@@ -90,7 +90,7 @@ typedef struct FragmentBox_s
  *
  * \param[in] bytes   Stable readable extent
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void AssertSpan(Utl_Mpeg4_Span_t bytes);
 
@@ -135,7 +135,7 @@ static FORCE_INLINE uint64_t ReadUnsigned(const byte_t* bytes, uint32_t width);
  * \param[out] bytes   Complete writable field
  * \param[in]  field   Value paired with its validated wire width
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteUnsigned(byte_t* bytes, Utl_Mpeg4_Integer_t field);
 
@@ -154,7 +154,7 @@ static FORCE_INLINE void WriteUnsigned(byte_t* bytes, Utl_Mpeg4_Integer_t field)
  * \param[in,out] writer   Required preflighted writable owner
  * \param[in]     field    Complete validated field
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteBitField(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_BitField_t field);
 
@@ -245,7 +245,7 @@ static FORCE_INLINE bool_t IsFragmentSample(const Utl_Mpeg4_FragmentSample_t* sa
  * \param[in,out] writer   Required initialized writer
  * \param[in]     value    Complete field value
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteFragment32(Utl_Mpeg4_BitWriter_t* writer, uint32_t value);
 
@@ -262,7 +262,7 @@ static FORCE_INLINE void WriteFragment32(Utl_Mpeg4_BitWriter_t* writer, uint32_t
  * \param[in,out] writer   Required initialized writer
  * \param[in]     value    Complete field value
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteFragment64(Utl_Mpeg4_BitWriter_t* writer, uint64_t value);
 
@@ -280,7 +280,7 @@ static FORCE_INLINE void WriteFragment64(Utl_Mpeg4_BitWriter_t* writer, uint64_t
  * \param[in,out] writer   Required initialized writer
  * \param[in]     box      Paired type and complete extent
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteFragmentBox(Utl_Mpeg4_BitWriter_t* writer, FragmentBox_t box);
 
@@ -297,7 +297,7 @@ static FORCE_INLINE void WriteFragmentBox(Utl_Mpeg4_BitWriter_t* writer, Fragmen
  * \param[in,out] writer   Required writer
  * \param[in]     fields   Known FullBox fields
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteFragmentFields(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_FullBoxFields_t fields);
 
@@ -314,7 +314,7 @@ static FORCE_INLINE void WriteFragmentFields(Utl_Mpeg4_BitWriter_t* writer, Utl_
  * \param[in,out] writer   Required writer
  * \param[in]     track    Stable validated track
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteFragmentHeader(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4_TrackFragment_t* track);
 
@@ -331,7 +331,7 @@ static FORCE_INLINE void WriteFragmentHeader(Utl_Mpeg4_BitWriter_t* writer, cons
  * \param[in,out] writer   Required writer
  * \param[in]     track    Stable track with known decode-time version
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteFragmentDecodeTime(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4_TrackFragment_t* track);
 
@@ -349,7 +349,7 @@ static FORCE_INLINE void WriteFragmentDecodeTime(Utl_Mpeg4_BitWriter_t* writer, 
  * \param[in]     sample   Stable validated sample
  * \param[in]     run      Stable selected field layout
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteFragmentSample(Utl_Mpeg4_BitWriter_t*            writer,
                                              const Utl_Mpeg4_FragmentSample_t* sample,
@@ -368,7 +368,7 @@ static FORCE_INLINE void WriteFragmentSample(Utl_Mpeg4_BitWriter_t*            w
  * \param[in,out] writer   Required writer
  * \param[in]     run      Stable validated run
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteFragmentRun(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4_TrackRun_t* run);
 
@@ -385,7 +385,7 @@ static FORCE_INLINE void WriteFragmentRun(Utl_Mpeg4_BitWriter_t* writer, const U
  * \param[in,out] writer   Required writer
  * \param[in]     track    Stable validated track
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteTrackFragment(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4_TrackFragment_t* track);
 

@@ -1,5 +1,4 @@
-# Dependencies keep their upstream sources and are excluded from owned-code diagnostics.
-# SYSTEM propagates header classification without changing diagnostics in consumers.
+# Dependencies keep their upstream sources. SYSTEM propagates header classification.
 function(cvk_external_target target)
     set_target_properties(${target} PROPERTIES SYSTEM TRUE CVK_EXTERNAL TRUE)
     get_target_property(target_type ${target} TYPE)
@@ -9,9 +8,6 @@ function(cvk_external_target target)
             VS_GLOBAL_RunCodeAnalysis false
             VS_GLOBAL_EnableMicrosoftCodeAnalysis false
             VS_GLOBAL_EnableClangTidyCodeAnalysis false)
-        target_compile_options(${target} PRIVATE
-            "$<$<COMPILE_LANG_AND_ID:C,MSVC>:/W0;/external:W0;/external:env:INCLUDE>"
-            "$<$<COMPILE_LANG_AND_ID:C,Clang,GNU>:-w>")
     endif()
 endfunction()
 

@@ -205,7 +205,7 @@ typedef struct Utl_Json_Reader_s
  * \param[out]    buffer          Writable bytes, or NULL for counting
  * \param[in]     capacity        Output/counting limit
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Json_InitializeWriter(Utl_Json_Writer_t* writer,
                                Utl_Json_Frame_t*  frames,
@@ -229,7 +229,7 @@ void Utl_Json_InitializeWriter(Utl_Json_Writer_t* writer,
  * \param[out] values     Exclusive storage retained through all document borrows
  * \param[in]  capacity   Positive writable record count
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Json_InitializeReader(Utl_Json_Reader_t* reader, Utl_Json_Value_t* values, uint32_t capacity);
 

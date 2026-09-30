@@ -77,7 +77,7 @@ static void FillRing(VideoStream* pStream, DWORD budgetMs);
 /**
  * \brief Writes a decimal diagnostic value through the generic Win32 text interface.
  * \param[in] value  Unsigned value to display.
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void DebugUint32(uint32_t value);
 

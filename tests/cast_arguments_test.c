@@ -89,7 +89,7 @@ static const uint16_t       c_missing[]       = {'p', ' ', '\t'};
  * \param[in] arguments   Initialized input record
  * \param[in] capacity    Capacity being exercised
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckCapacity(const ArgumentCase_t*  fixture,
                                        const Utl_Arguments_t* arguments,
@@ -101,7 +101,7 @@ static FORCE_INLINE void CheckCapacity(const ArgumentCase_t*  fixture,
  *
  * \param[in] fixture   Counted input and expected argument
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void CheckArgument(const ArgumentCase_t* fixture);
 

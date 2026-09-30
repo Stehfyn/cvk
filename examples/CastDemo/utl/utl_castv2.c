@@ -87,7 +87,7 @@ typedef struct MessageReader_s
  *  - 001 The caller shall supply writable reader storage.
  *  - 002 No previous field or presence state shall be retained.
  * \param[out] reader   Candidate reader
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void InitializeReader(MessageReader_t* reader);
 
@@ -122,7 +122,7 @@ static FORCE_INLINE bool_t IsValidMessage(const Utl_CastV2_Message_t* message);
  * \param[in]  message   Validated message
  * \param[in]  index     Zero through CASTV2_FIELD_COUNT minus one
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void DeriveField(Utl_Protobuf_Field_t* field, const Utl_CastV2_Message_t* message, uint32_t index);
 
@@ -148,7 +148,7 @@ static FORCE_INLINE bool_t ReadBytesField(MessageReader_t* reader, const Utl_Pro
  *  - 002 Accepted values shall update their corresponding presence bits.
  * \param[in,out] reader   Initialized unpublished candidate
  * \param[in]     field    Decoded protobuf VARINT record
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void ReadIntegerField(MessageReader_t* reader, const Utl_Protobuf_Field_t* field);
 
@@ -160,7 +160,7 @@ static FORCE_INLINE void ReadIntegerField(MessageReader_t* reader, const Utl_Pro
  * \param[out] buffer      Non-NULL output
  * \param[in]  byteCount   Exact MessageByteCount result
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void WriteBody(const Utl_CastV2_Message_t* message, byte_t* buffer, uint32_t byteCount);
 

@@ -143,7 +143,7 @@ static CastEvents_Snapshot_t s_snapshot;
  *
  * \param[in] context   Unused callback context
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void EmptyJob(void* context);
 

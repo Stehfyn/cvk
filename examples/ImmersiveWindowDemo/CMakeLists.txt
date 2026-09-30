@@ -68,7 +68,6 @@ target_include_directories(immersive-opus3-window PUBLIC "${opus3_dir}")
 target_compile_definitions(immersive-opus3-window PRIVATE UNICODE _UNICODE)
 target_link_libraries(immersive-opus3-window PUBLIC cdcomp cd2d cd3d11 cdxgi)
 target_compile_options(immersive-opus3-window PRIVATE /GS- /Zl)
-cvk_external_target(immersive-opus3-window)
 add_executable(ImmersiveWindowDemo WIN32
     opus3_main.c
     opus3_main.h

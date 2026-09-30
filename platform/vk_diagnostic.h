@@ -12,6 +12,7 @@
 **===============================================================================================*/
 
 #include <stdint.h>
+#include <stddef.h>
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -45,9 +46,21 @@
 
 /*************************************************************************************************/
 /**
+ * \brief Clears a typed destination without a C runtime dependency.
+ * \param[out] pMemory Writable destination.
+ * \param[in] byteCount Number of bytes to clear.
+ * \retval None No value is returned.
+ */
+void cvkZeroMemory(void* pMemory, size_t byteCount);
+
+/** Copies a counted nonoverlapping byte span without requiring a C runtime. */
+void cvkCopyMemory(void* pDestination, const void* pSource, size_t byteCount);
+
+/*************************************************************************************************/
+/**
  * \brief Writes a bounded terminated diagnostic byte string to standard error.
  * \param[in] text  Source string, or NULL for no output.
- * \retval    None
+ * \retval    None No value is returned.
  */
 void FORCE_INLINE cvkDiagnosticWrite(const char* text);
 
@@ -59,7 +72,7 @@ void FORCE_INLINE cvkDiagnosticWrite(const char* text);
  *  - 002 NULL or empty input shall produce no output.
  * \param[in] text       Counted text; no terminator is required.
  * \param[in] byteCount  Readable byte extent.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkDiagnosticWriteBytes(const char* text, uint32_t byteCount);
 
@@ -70,7 +83,7 @@ void cvkDiagnosticWriteBytes(const char* text, uint32_t byteCount);
  *  - 001 Formatting shall use bounded automatic storage and the decimal module.
  *  - 002 No CRT formatting or allocation shall occur.
  * \param[in] value  Value to display.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkDiagnosticWriteDecimal(uint64_t value);
 
@@ -78,14 +91,14 @@ void cvkDiagnosticWriteDecimal(uint64_t value);
 /**
  * \brief Writes an unsigned value as eight hexadecimal digits.
  * \param[in] value  Value to format.
- * \retval    None
+ * \retval    None No value is returned.
  */
 void cvkDiagnosticWriteHex(uint32_t value);
 
 /*************************************************************************************************/
 /**
  * \brief Ends the process after a fatal diagnostic.
- * \retval    None
+ * \retval    None No value is returned.
  */
 VK_DIAGNOSTIC_NORETURN void cvkDiagnosticExit(void);
 

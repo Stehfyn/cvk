@@ -97,7 +97,7 @@ static uint64_t ReadCodeNumber(Utl_Mpeg4_BitReader_t* reader);
  * \param[in,out] writer      Initialized shared writer or counter
  * \param[in]     codeNumber  Value not exceeding MAX_SIGNED_CODE_NUMBER
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void WriteCodeNumber(Utl_Mpeg4_BitWriter_t* writer, uint64_t codeNumber);
 

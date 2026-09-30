@@ -6,6 +6,7 @@
 #include "cvk/cvk.h"
 #include "cvk/fuchsia/cvk_fuchsia.h"
 #include <volk.h>
+#include "vk_diagnostic.h"
 #include <stdint.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_fuchsia.h>
@@ -246,11 +247,12 @@ extern CVK_FORCE_INLINE void cvkDestroyBufferCollectionFUCHSIA(VkDevice device, 
 }
 extern CVK_FORCE_INLINE void cvkGetBufferCollectionPropertiesFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, void* pNext, VkBufferCollectionPropertiesFUCHSIA* pProperties)
 {
-    VkBufferCollectionPropertiesFUCHSIA properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_BUFFER_COLLECTION_PROPERTIES_FUCHSIA,
-        .pNext = pNext
-    };
+    VkBufferCollectionPropertiesFUCHSIA properties;
+
+    cvkZeroMemory(&properties, sizeof(properties));
+
+    properties.sType = VK_STRUCTURE_TYPE_BUFFER_COLLECTION_PROPERTIES_FUCHSIA;
+    properties.pNext = pNext;
 
     CVK_CHECK(vkGetBufferCollectionPropertiesFUCHSIA(device, collection, &properties));
 
@@ -274,11 +276,12 @@ extern CVK_FORCE_INLINE void cvkGetMemoryZirconHandlePropertiesFUCHSIA(VkDevice 
                                                                        void*                                  pNext,
                                                                        VkMemoryZirconHandlePropertiesFUCHSIA* pMemoryZirconHandleProperties)
 {
-    VkMemoryZirconHandlePropertiesFUCHSIA memory_zircon_handle_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_MEMORY_ZIRCON_HANDLE_PROPERTIES_FUCHSIA,
-        .pNext = pNext
-    };
+    VkMemoryZirconHandlePropertiesFUCHSIA memory_zircon_handle_properties;
+
+    cvkZeroMemory(&memory_zircon_handle_properties, sizeof(memory_zircon_handle_properties));
+
+    memory_zircon_handle_properties.sType = VK_STRUCTURE_TYPE_MEMORY_ZIRCON_HANDLE_PROPERTIES_FUCHSIA;
+    memory_zircon_handle_properties.pNext = pNext;
 
     CVK_CHECK(vkGetMemoryZirconHandlePropertiesFUCHSIA(device, handleType, zirconHandle, &memory_zircon_handle_properties));
 

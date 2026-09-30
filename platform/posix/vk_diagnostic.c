@@ -10,6 +10,16 @@
 #define VK_DIAGNOSTIC_HEX_SHIFT (4)
 #define VK_DIAGNOSTIC_UINT64_DIGITS (20)
 
+void cvkZeroMemory(void* pMemory, size_t byteCount)
+{
+    __builtin_memset(pMemory, 0, byteCount);
+}
+
+void cvkCopyMemory(void* pDestination, const void* pSource, size_t byteCount)
+{
+    __builtin_memcpy(pDestination, pSource, byteCount);
+}
+
 static void WriteText(const char* text)
 {
     unsigned int length;

@@ -146,7 +146,7 @@ typedef struct Ssdp_State_s
  * \param[in,out] discovery   Initialized owner
  * \param[in]     code        Captured native or local failure code
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void RecordError(Ssdp_t* discovery, uint32_t code);
 
@@ -341,7 +341,7 @@ static FORCE_INLINE bool_t SendSearch(Ssdp_t* discovery);
  * \param[in,out] state       Exclusive native workspace with room for one more location
  * \param[in]     byteCount   Positive datagram byte count within response storage
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void ReadResponse(Ssdp_State_t* state, uint32_t byteCount);
 
@@ -359,7 +359,7 @@ static FORCE_INLINE void ReadResponse(Ssdp_State_t* state, uint32_t byteCount);
  * \param[in]     capacity    Positive location limit no greater than CAST_MAX_DEVICES
  * \param[in]     timeoutMs   Reply window in milliseconds
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CollectResponses(Ssdp_t* discovery, uint32_t capacity, uint32_t timeoutMs);
 

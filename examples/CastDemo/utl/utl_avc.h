@@ -99,7 +99,7 @@ typedef struct Utl_Avc_Config_s
  *
  * \param[out] config   Required exclusively writable owner
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Avc_InitializeConfig(Utl_Avc_Config_t* config);
 

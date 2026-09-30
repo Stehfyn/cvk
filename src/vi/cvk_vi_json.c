@@ -3,7 +3,7 @@
 #include "cvk/vi/cvk_vi_json.h"
 #include "cvk/cvk_json.h"
 #include "cvk/internal/cvk_json_work.h"
-#include <string.h>
+#include "vk_diagnostic.h"
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_vi.h>
 
@@ -21,7 +21,7 @@ void cvkReadJsonViSurfaceCreateInfoNN(cvkJsonWork* pWork, const cvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkViSurfaceCreateInfoNN*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN;
 

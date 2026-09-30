@@ -3,8 +3,8 @@
 #include "cvk/android/cvk_android_json.h"
 #include "cvk/cvk_json.h"
 #include "cvk/internal/cvk_json_work.h"
+#include "vk_diagnostic.h"
 #include <stdint.h>
-#include <string.h>
 #include <vulkan/vulkan_android.h>
 #include <vulkan/vulkan_core.h>
 
@@ -22,7 +22,7 @@ void cvkReadJsonAndroidHardwareBufferFormatProperties2ANDROID(cvkJsonWork* pWork
     pContext = pWork->pContext;
     pInfo    = (VkAndroidHardwareBufferFormatProperties2ANDROID*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_2_ANDROID;
 
@@ -84,7 +84,7 @@ void cvkReadJsonAndroidHardwareBufferFormatPropertiesANDROID(cvkJsonWork* pWork,
     pContext = pWork->pContext;
     pInfo    = (VkAndroidHardwareBufferFormatPropertiesANDROID*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_ANDROID;
 
@@ -146,7 +146,7 @@ void cvkReadJsonAndroidHardwareBufferFormatResolvePropertiesANDROID(cvkJsonWork*
     pContext = pWork->pContext;
     pInfo    = (VkAndroidHardwareBufferFormatResolvePropertiesANDROID*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_RESOLVE_PROPERTIES_ANDROID;
 
@@ -175,7 +175,7 @@ void cvkReadJsonAndroidHardwareBufferPropertiesANDROID(cvkJsonWork* pWork, const
     pContext = pWork->pContext;
     pInfo    = (VkAndroidHardwareBufferPropertiesANDROID*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_PROPERTIES_ANDROID;
 
@@ -206,7 +206,7 @@ void cvkReadJsonAndroidHardwareBufferUsageANDROID(cvkJsonWork* pWork, const cvkJ
     pContext = pWork->pContext;
     pInfo    = (VkAndroidHardwareBufferUsageANDROID*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_USAGE_ANDROID;
 
@@ -233,7 +233,7 @@ void cvkReadJsonAndroidSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkAndroidSurfaceCreateInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
 
@@ -260,7 +260,7 @@ void cvkReadJsonExternalFormatANDROID(cvkJsonWork* pWork, const cvkJsonValue* pO
     pContext = pWork->pContext;
     pInfo    = (VkExternalFormatANDROID*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_ANDROID;
 
@@ -287,7 +287,7 @@ void cvkReadJsonImportAndroidHardwareBufferInfoANDROID(cvkJsonWork* pWork, const
     pContext = pWork->pContext;
     pInfo    = (VkImportAndroidHardwareBufferInfoANDROID*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID;
 
@@ -311,7 +311,7 @@ void cvkReadJsonMemoryGetAndroidHardwareBufferInfoANDROID(cvkJsonWork* pWork, co
     pContext = pWork->pContext;
     pInfo    = (VkMemoryGetAndroidHardwareBufferInfoANDROID*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_GET_ANDROID_HARDWARE_BUFFER_INFO_ANDROID;
 
@@ -342,7 +342,7 @@ void cvkReadJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID(cvkJsonWork* 
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExternalFormatResolveFeaturesANDROID*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_FEATURES_ANDROID;
 
@@ -369,7 +369,7 @@ void cvkReadJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(cvkJsonWork
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExternalFormatResolvePropertiesANDROID*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_PROPERTIES_ANDROID;
 

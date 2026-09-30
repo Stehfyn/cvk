@@ -12,8 +12,7 @@
 #include <Windows.h> // IWYU pragma: keep
 #include <minwindef.h>
 #include <fileapi.h>
-#include <winbase.h>
-#include <wchar.h>
+#include <WinBase.h>
 #include <handleapi.h>
 
 #include <stdint.h>
@@ -32,6 +31,16 @@
 **===============================================================================================*/
 
 #define TABLE_PAGE_BYTES (4096) ///< Fixed resident bytes per streamed table.
+#define MP4_INDEX_U32_HIGH_SHIFT      (24U)
+#define MP4_INDEX_U32_MID_SHIFT       (16U)
+#define MP4_INDEX_U32_LOW_SHIFT       (8U)
+#define MP4_INDEX_HANDLER_MIN_BYTES   (12U)
+#define MP4_INDEX_HANDLER_TYPE_OFFSET (8U)
+#define MP4_INDEX_MDHD_HEADER_BYTES   (16U)
+#define MP4_INDEX_MDHD_V1_BYTES       (24U)
+#define MP4_INDEX_MDHD_V1_EXTRA_BYTES (8U)
+#define MP4_INDEX_MDHD_V1_TICKS       (20U)
+#define MP4_INDEX_MDHD_V0_TICKS       (12U)
 
 /*=================================================================================================
 ** 3.2 Types
@@ -298,7 +307,8 @@ static FORCE_INLINE uint32_t ReadMovieTimes(HANDLE file, const Box* root, double
  */
 static FORCE_INLINE uint32_t Be32(const byte_t* p)
 {
-    return ((uint32_t)p[0] << 24) | ((uint32_t)p[1] << 16) | ((uint32_t)p[2] << 8) | (uint32_t)p[3];
+    return ((uint32_t)p[0] << MP4_INDEX_U32_HIGH_SHIFT) | ((uint32_t)p[1] << MP4_INDEX_U32_MID_SHIFT) |
+           ((uint32_t)p[2] << MP4_INDEX_U32_LOW_SHIFT) | (uint32_t)p[3];
 }
 
 /*************************************************************************************************/
@@ -770,7 +780,7 @@ KeyframesFromTrack(HANDLE hFile, const Box* pTrack, double* pTimes, unsigned cap
     bool_t   is_valid;
     Box      mdia;
     Box      hdlr;
-    byte_t   buffer[32];
+    byte_t   buffer[MP4_INDEX_MDHD_V1_BYTES];
     Box      mdhd;
     Box      minf;
     Box      stbl;
@@ -786,10 +796,11 @@ KeyframesFromTrack(HANDLE hFile, const Box* pTrack, double* pTimes, unsigned cap
     }
     if (is_valid)
     {
-        is_valid = (12 <= (hdlr.end - hdlr.payload)) && ReadAt(hFile, hdlr.payload, buffer, 12);
+        is_valid = (MP4_INDEX_HANDLER_MIN_BYTES <= (hdlr.end - hdlr.payload)) &&
+                   ReadAt(hFile, hdlr.payload, buffer, MP4_INDEX_HANDLER_MIN_BYTES);
         if (is_valid)
         {
-            is_valid = (UTL_MPEG4_HANDLER_VIDEO == Be32(buffer + 8));
+            is_valid = (UTL_MPEG4_HANDLER_VIDEO == Be32(buffer + MP4_INDEX_HANDLER_TYPE_OFFSET));
         }
     }
     if (is_valid)
@@ -798,15 +809,19 @@ KeyframesFromTrack(HANDLE hFile, const Box* pTrack, double* pTimes, unsigned cap
     }
     if (is_valid)
     {
-        is_valid = (16 <= (mdhd.end - mdhd.payload)) && ReadAt(hFile, mdhd.payload, buffer, 16);
+        is_valid = (MP4_INDEX_MDHD_HEADER_BYTES <= (mdhd.end - mdhd.payload)) &&
+                   ReadAt(hFile, mdhd.payload, buffer, MP4_INDEX_MDHD_HEADER_BYTES);
         if (is_valid)
         {
             if (1 == buffer[0])
             {
-                is_valid = (24 <= (mdhd.end - mdhd.payload)) && ReadAt(hFile, mdhd.payload + 16, buffer + 16, 8);
+                is_valid = (MP4_INDEX_MDHD_V1_BYTES <= (mdhd.end - mdhd.payload)) &&
+                           ReadAt(hFile, mdhd.payload + MP4_INDEX_MDHD_HEADER_BYTES,
+                                  buffer + MP4_INDEX_MDHD_HEADER_BYTES,
+                                  MP4_INDEX_MDHD_V1_EXTRA_BYTES);
                 if (is_valid)
                 {
-                    timescale = Be32(buffer + 20);
+                    timescale = Be32(buffer + MP4_INDEX_MDHD_V1_TICKS);
                 }
             }
             else
@@ -814,7 +829,7 @@ KeyframesFromTrack(HANDLE hFile, const Box* pTrack, double* pTimes, unsigned cap
                 is_valid = (0 == buffer[0]);
                 if (is_valid)
                 {
-                    timescale = Be32(buffer + 12);
+                    timescale = Be32(buffer + MP4_INDEX_MDHD_V0_TICKS);
                 }
             }
             is_valid = is_valid && (0 < timescale);

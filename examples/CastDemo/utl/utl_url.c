@@ -89,7 +89,7 @@ typedef struct Slice_s
  *
  * \param[in] text   Borrowed component
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void AssertText(Utl_Url_Text_t text);
 
@@ -384,7 +384,7 @@ static FORCE_INLINE bool_t ReadAuthority(Utl_Url_t* url, Utl_Url_Text_t text);
  * \param[in,out] url    Private candidate
  * \param[in]     text   Remaining URI syntax
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void ReadPath(Utl_Url_t* url, Utl_Url_Text_t text);
 
@@ -402,7 +402,7 @@ static FORCE_INLINE void ReadPath(Utl_Url_t* url, Utl_Url_Text_t text);
  * \param[in,out] offset   Current initialized output count
  * \param[in]     text     Borrowed validated component
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void WriteText(byte_t* output, uint32_t* offset, Utl_Url_Text_t text);
 
@@ -420,7 +420,7 @@ static FORCE_INLINE void WriteText(byte_t* output, uint32_t* offset, Utl_Url_Tex
  * \param[in,out] offset   Current initialized output count
  * \param[in]     value    Grammar delimiter
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void WriteCharacter(byte_t* output, uint32_t* offset, byte_t value);
 
@@ -439,7 +439,7 @@ static FORCE_INLINE void WriteCharacter(byte_t* output, uint32_t* offset, byte_t
  * \param[out]    output   Complete writable destination
  * \param[in,out] offset   Current destination offset
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void WriteAuthority(const Utl_Url_t* url, byte_t* output, uint32_t* offset);
 

@@ -68,7 +68,7 @@ static OS_Network_t g_network;
  *  - 002 Startup failure shall expose neither readiness nor snapshot entries.
  *  - 003 Repeated closure shall preserve the first failure and release retained memory.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckFailedStartup(void);
 
@@ -85,7 +85,7 @@ static FORCE_INLINE void CheckFailedStartup(void);
  *
  * \param[in] index   Published interface index
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckInterface(uint32_t index);
 
@@ -101,7 +101,7 @@ static FORCE_INLINE void CheckInterface(uint32_t index);
  *  - 002 Query/getter calls shall preserve the owned region address and extent.
  *  - 003 Repeated getters shall copy identical values without consuming the snapshot.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckSnapshots(void);
 
@@ -115,7 +115,7 @@ static FORCE_INLINE void CheckSnapshots(void);
  * \par Requirements:
  *  - 001 Independent values and guards shall be checked without relying on a round trip alone.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckRoutes(void);
 
@@ -129,7 +129,7 @@ static FORCE_INLINE void CheckRoutes(void);
  * \par Requirements:
  *  - 001 Failure shall preserve guarded output and success shall match independent bytes.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckRouteOutput(void);
 

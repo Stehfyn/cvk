@@ -10,7 +10,7 @@ static CVK_FORCE_INLINE VkBool32 cvkIsJsonTextSpace(char value)
 /**
  * \brief Advances over JSON whitespace.
  * \param[in,out] pReader Input cursor and bounds.
- * \retval None
+ * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkSkipJsonSpace(cvkJsonReader* pReader)
 {
@@ -31,7 +31,7 @@ static CVK_FORCE_INLINE void cvkSkipJsonSpace(cvkJsonReader* pReader)
 /**
  * \brief Consumes at least one decimal digit.
  * \param[in,out] pReader Input cursor and bounds.
- * \retval None
+ * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkReadJsonDigits(cvkJsonReader* pReader)
 {
@@ -54,7 +54,7 @@ static CVK_FORCE_INLINE void cvkReadJsonDigits(cvkJsonReader* pReader)
 /**
  * \brief Consumes a JSON number according to its integer, fraction and exponent grammar.
  * \param[in,out] pReader Input cursor and bounds.
- * \retval None
+ * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkReadJsonNumber(cvkJsonReader* pReader)
 {
@@ -141,7 +141,7 @@ static CVK_FORCE_INLINE const char* cvkReadJsonQuoted(cvkJsonReader* pReader,
  * \brief Consumes a literal and records its kind.
  * \param[in,out] pReader Input cursor and bounds.
  * \param[out] pValue Value receiving the literal kind.
- * \retval None
+ * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkReadJsonLiteral(cvkJsonReader* pReader,
                                                cvkJsonValue* pValue)
@@ -186,7 +186,7 @@ static CVK_FORCE_INLINE uint32_t cvkReadJsonToken(cvkJsonReader* pReader)
     index = pReader->valueCount;
     ++pReader->valueCount;
     value = &pReader->pValues[index];
-    (void)memset(value, 0, sizeof(*value));
+    cvkZeroMemory(value, sizeof(*value));
     value->firstChild  = CVK_JSON_NONE;
     value->nextSibling = CVK_JSON_NONE;
     switch (*pReader->pCursor)
@@ -532,7 +532,7 @@ uint64_t cvkGetJsonUint64(const cvkJsonValue* pValue)
     {
         return 0;
     }
-    (void)memcpy(buffer, pValue->pText, pValue->textLength);
+    cvkCopyMemory(buffer, pValue->pText, pValue->textLength);
     buffer[pValue->textLength] = '\0';
     return cvkParseUint64Text(buffer);
 }
@@ -555,7 +555,7 @@ int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
     {
         return 0;
     }
-    (void)memcpy(buffer, pValue->pText, pValue->textLength);
+    cvkCopyMemory(buffer, pValue->pText, pValue->textLength);
     buffer[pValue->textLength] = '\0';
     text = buffer;
     for (; cvkIsJsonTextSpace(*text);)
@@ -709,7 +709,7 @@ double cvkGetJsonDouble(const cvkJsonValue* pValue)
     {
         return 0.0;
     }
-    (void)memcpy(buffer, pValue->pText, pValue->textLength);
+    cvkCopyMemory(buffer, pValue->pText, pValue->textLength);
     buffer[pValue->textLength] = '\0';
     text = buffer;
     for (; cvkIsJsonTextSpace(*text);)
@@ -867,7 +867,7 @@ uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, const cvkJsonName* pTable
             char buffer[CVK_JSON_INTEGER_TEXT_CAPACITY];
 
             CVK_ASSERT((size_t)(token_end - token) < sizeof(buffer));
-            (void)memcpy(buffer, token, (size_t)(token_end - token));
+            cvkCopyMemory(buffer, token, (size_t)(token_end - token));
             buffer[token_end - token] = '\0';
             flags |= cvkParseUint64Text(buffer); /* a numeric token */
         }
@@ -956,7 +956,7 @@ void* cvkAllocateArena(cvkArena* pArena, size_t size, size_t alignment)
 /**
  * \brief Frees callback-backed arena blocks and resets the arena.
  * \param[in,out] pArena Arena to release.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkFreeArena(cvkArena* pArena)
 {

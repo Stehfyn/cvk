@@ -266,7 +266,7 @@ MediaServer* MediaServer_StartGrowing(MediaServer_Workspace_t* workspace,
  *
  * \param[in,out] pServer   Optional retained listener
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void MediaServer_MarkComplete(MediaServer* pServer);
 

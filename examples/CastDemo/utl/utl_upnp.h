@@ -71,7 +71,7 @@ typedef struct Utl_Upnp_Description_s
  *
  * \param[out] description   Required exclusive result
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void Utl_Upnp_InitializeDescription(Utl_Upnp_Description_t* description);
 

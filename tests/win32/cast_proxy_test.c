@@ -81,7 +81,7 @@ static MediaServer_Workspace_t g_serving;
  * \param[in]     status    Unused status
  * \param[in]     text      Unused diagnostic
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static OS_NORETURN FORCE_INLINE void RejectEvent(void*             context,
                                                  CastEvent         event,
@@ -99,7 +99,7 @@ static OS_NORETURN FORCE_INLINE void RejectEvent(void*             context,
  *  - 001 The session shall be prepared; the proxy shall initially be ready.
  *  - 002 Invalid UTF-16, empty/unterminated source and invalid/unterminated IPv4 shall leave the proxy ready.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckRejectedInput(void);
 
@@ -116,7 +116,7 @@ static FORCE_INLINE void CheckRejectedInput(void);
  *
  * \param[in] final   TRUE requests final closure; FALSE requests reusable per-job stop
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void AwaitStop(bool_t final);
 
@@ -131,7 +131,7 @@ static FORCE_INLINE void AwaitStop(bool_t final);
  *  - 001 The supplied empty source shall fail container parsing before any GPU is created.
  *  - 002 Callback completion alone shall not rearm the proxy for another request.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void AwaitCompletion(void);
 
@@ -146,7 +146,7 @@ static FORCE_INLINE void AwaitCompletion(void);
  *  - 001 The memory address, extent and scratch-path address shall remain stable across jobs.
  *  - 002 A second submission shall fail before per-job stop, even if the callback already completed.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckReuse(void);
 

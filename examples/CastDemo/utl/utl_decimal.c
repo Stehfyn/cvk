@@ -89,8 +89,8 @@ extern FORCE_INLINE bool_t Utl_Decimal_ReadUint64(uint64_t* value, uint32_t* byt
     uint64_t digit;
     bool_t   fits_value;
 
-    has_outputs = (NULL != value) && (NULL != bytesRead);
-    has_input   = (NULL != buffer) && (0 < byteCount);
+    has_outputs = (0 != value) && (0 != bytesRead);
+    has_input   = (0 != buffer) && (0 < byteCount);
     is_valid    = has_outputs && has_input;
     cursor      = 0;
     number      = 0;
@@ -141,7 +141,7 @@ extern FORCE_INLINE uint32_t Utl_Decimal_WriteUint64(uint64_t value, byte_t* buf
     uint32_t cursor;
 
     count        = Utl_Decimal_GetUint64ByteCount(value);
-    has_buffer   = (NULL != buffer);
+    has_buffer   = (0 != buffer);
     has_capacity = (count <= capacity);
     if (has_buffer && has_capacity)
     {

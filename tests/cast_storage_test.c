@@ -75,7 +75,7 @@ static const Storage_t   g_zero = {{0}};
  * \param[in]     status    Unused borrowed status
  * \param[in]     text      Unused borrowed diagnostic
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static OS_NORETURN FORCE_INLINE void RejectEvent(void* context, CastEvent event, const CastStatus* status, const char* text);
 
@@ -91,7 +91,7 @@ static OS_NORETURN FORCE_INLINE void RejectEvent(void* context, CastEvent event,
  *  - 002 The last byte of the declared extent shall retain a written value across getter calls.
  *  - 003 Closed storage shall publish no address or usable byte count.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckMemory(void);
 
@@ -109,7 +109,7 @@ static FORCE_INLINE void CheckMemory(void);
  * \param[in] address     Expected startup region address
  * \param[in] byteCount   Expected startup usable extent
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckPreparedCast(const void* address, uint64_t byteCount);
 
@@ -126,7 +126,7 @@ static FORCE_INLINE void CheckPreparedCast(const void* address, uint64_t byteCou
  *  - 003 Closure while prepared shall reject without revoking usable storage.
  *  - 004 Repeated Reset and successful closure shall be idempotent.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckSession(void);
 

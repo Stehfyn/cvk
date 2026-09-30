@@ -3,8 +3,8 @@
 #include "scvk/screen/scvk_screen_json.h"
 #include "scvk/scvk_json.h"
 #include "scvk/internal/scvk_json_work.h"
+#include "vk_diagnostic.h"
 #include <stdint.h>
-#include <string.h>
 #include <vulkan/vulkan_sc_core.h>
 #include <vulkan/vulkan_screen.h>
 
@@ -22,7 +22,7 @@ void scvkReadJsonExternalFormatQNX(scvkJsonWork* pWork, const scvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkExternalFormatQNX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_QNX;
 
@@ -49,7 +49,7 @@ void scvkReadJsonImportScreenBufferInfoQNX(scvkJsonWork* pWork, const scvkJsonVa
     pContext = pWork->pContext;
     pInfo    = (VkImportScreenBufferInfoQNX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_SCREEN_BUFFER_INFO_QNX;
 
@@ -73,7 +73,7 @@ void scvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(scvkJsonWor
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_SCREEN_BUFFER_FEATURES_QNX;
 
@@ -100,7 +100,7 @@ void scvkReadJsonScreenBufferFormatPropertiesQNX(scvkJsonWork* pWork, const scvk
     pContext = pWork->pContext;
     pInfo    = (VkScreenBufferFormatPropertiesQNX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_FORMAT_PROPERTIES_QNX;
 
@@ -166,7 +166,7 @@ void scvkReadJsonScreenBufferPropertiesQNX(scvkJsonWork* pWork, const scvkJsonVa
     pContext = pWork->pContext;
     pInfo    = (VkScreenBufferPropertiesQNX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    scvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_PROPERTIES_QNX;
 

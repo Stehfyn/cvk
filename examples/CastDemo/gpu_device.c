@@ -96,7 +96,7 @@ typedef struct DeviceRequest_s
  * \param[in]     text      Required readable text span
  * \param[in]     byteCount Complete input byte count
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void WriteReportText(Report_t* report, const void* text, uint32_t byteCount);
 
@@ -111,7 +111,7 @@ static FORCE_INLINE void WriteReportText(Report_t* report, const void* text, uin
  * \param[in,out] report Required initialized output cursor
  * \param[in]     value  Queue-family index
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void WriteReportNumber(Report_t* report, uint32_t value);
 
@@ -162,7 +162,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL Validation(VkDebugUtilsMessageSeverityFlag
  * \param[in] needDecode   H.264 decode requirement
  * \param[in] needEncode   H.264 encode requirement
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void InitializeRequest(DeviceRequest_t* request, bool_t needDecode, bool_t needEncode);
 
@@ -176,7 +176,7 @@ static FORCE_INLINE void InitializeRequest(DeviceRequest_t* request, bool_t need
  *
  * \param[in,out] pDevice Required closed owner
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void InitializeNativeInstance(GpuDevice* pDevice);
 
@@ -244,7 +244,7 @@ static FORCE_INLINE bool_t FindPhysicalDevice(GpuDevice* pDevice, const DeviceRe
  * \param[in,out] pDevice Required owner with a complete selection
  * \param[in] request     Preflighted extension set
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CreateNativeDevice(GpuDevice* pDevice, const DeviceRequest_t* request);
 
@@ -259,7 +259,7 @@ static FORCE_INLINE void CreateNativeDevice(GpuDevice* pDevice, const DeviceRequ
  * \param[in,out] report Required output cursor
  * \param[in] pDevice    Required complete device selection
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void WriteReadyReport(Report_t* report, const GpuDevice* pDevice);
 

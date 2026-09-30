@@ -103,7 +103,7 @@ static FORCE_INLINE Utl_Mpeg4_Span_t Bytes(const byte_t* bytes, uint32_t count);
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckDescriptor(TestContext_t* context);
 
@@ -119,7 +119,7 @@ static FORCE_INLINE void CheckDescriptor(TestContext_t* context);
  *
  * \param[in] stream   Required complete model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckOptionalFields(const Utl_Mpeg4Systems_ElementaryStream_t* stream);
 
@@ -135,7 +135,7 @@ static FORCE_INLINE void CheckOptionalFields(const Utl_Mpeg4Systems_ElementarySt
  *
  * \param[in] stream   Required complete model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckStreamFields(const Utl_Mpeg4Systems_ElementaryStream_t* stream);
 
@@ -151,7 +151,7 @@ static FORCE_INLINE void CheckStreamFields(const Utl_Mpeg4Systems_ElementaryStre
  *
  * \param[in] decoder   Required complete model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckDecoderFields(const Utl_Mpeg4Systems_DecoderConfig_t* decoder);
 
@@ -169,7 +169,7 @@ static FORCE_INLINE void CheckDecoderFields(const Utl_Mpeg4Systems_DecoderConfig
  * \param[in,out] context   Required fixture storage
  * \param[in]     input     Complete known wire vector
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckStream(TestContext_t* context, Utl_Mpeg4_Span_t input);
 
@@ -184,7 +184,7 @@ static FORCE_INLINE void CheckStream(TestContext_t* context, Utl_Mpeg4_Span_t in
  *  - 001 Rejected reads shall preserve all previously published result fields.
  *  - 002 A child outside its enclosing ES payload shall never be selected as that ES's decoder.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckRejected(void);
 
@@ -201,7 +201,7 @@ static FORCE_INLINE void CheckRejected(void);
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckLengths(TestContext_t* context);
 
@@ -215,7 +215,7 @@ static FORCE_INLINE void CheckLengths(TestContext_t* context);
  * \par Requirements:
  *  - 001 A prior valid ES model shall survive every rejected nested field unchanged.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckMalformedParts(void);
 
@@ -232,7 +232,7 @@ static FORCE_INLINE void CheckMalformedParts(void);
  * \param[in,out] context   Required fixture storage
  * \param[in]     decoder   Required invalid model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckRejectedDecoder(TestContext_t* context, const Utl_Mpeg4Systems_DecoderConfig_t* decoder);
 
@@ -248,7 +248,7 @@ static FORCE_INLINE void CheckRejectedDecoder(TestContext_t* context, const Utl_
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckInvalidDecoder(TestContext_t* context);
 

@@ -90,7 +90,7 @@ typedef struct JsonTest_s
  * \param[out] test     Required case storage
  * \param[in]  frames   Number of available records, at most TEST_FRAMES
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void InitializeCase(JsonTest_t* test, uint32_t frames);
 
@@ -116,7 +116,7 @@ static FORCE_INLINE Utl_Json_Text_t Text(const char_t* data, uint32_t count);
  * \param[in] data       Borrowed numeric lexeme
  * \param[in] count      Exact lexeme extent
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckNumber(bool_t expected, const char_t* data, uint32_t count);
 
@@ -127,7 +127,7 @@ static FORCE_INLINE void CheckNumber(bool_t expected, const char_t* data, uint32
  * \par Details:
  *  A mismatch asserts.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckNumbers(void);
 
@@ -140,7 +140,7 @@ static FORCE_INLINE void CheckNumbers(void);
  *
  * \param[in,out] writer   Initialized output or counting writer
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void WriteNested(Utl_Json_Writer_t* writer);
 
@@ -153,7 +153,7 @@ static FORCE_INLINE void WriteNested(Utl_Json_Writer_t* writer);
  *
  * \param[in,out] test   Quiescent caller-owned case storage
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckOutput(JsonTest_t* test);
 
@@ -166,7 +166,7 @@ static FORCE_INLINE void CheckOutput(JsonTest_t* test);
  *
  * \param[in,out] test   Quiescent caller-owned case storage
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckState(JsonTest_t* test);
 
@@ -179,7 +179,7 @@ static FORCE_INLINE void CheckState(JsonTest_t* test);
  *
  * \param[in,out] test   Quiescent caller-owned case storage
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckAfterComplete(JsonTest_t* test);
 
@@ -199,7 +199,7 @@ static FORCE_INLINE void CheckAfterComplete(JsonTest_t* test);
  * \param[in]     byteCount   Exact input extent
  * \param[in]     expected    Required syntax result
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckDocument(JsonTest_t*           test,
                                        const char_t*         input,
@@ -219,7 +219,7 @@ static FORCE_INLINE void CheckDocument(JsonTest_t*           test,
  *
  * \param[in,out] test   Entry-owned fixture
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckReaderSyntax(JsonTest_t* test);
 
@@ -232,7 +232,7 @@ static FORCE_INLINE void CheckReaderSyntax(JsonTest_t* test);
  *
  * \param[in,out] test   Entry-owned fixture
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckReaderDepth(JsonTest_t* test);
 
@@ -249,7 +249,7 @@ static FORCE_INLINE void CheckReaderDepth(JsonTest_t* test);
  *
  * \param[in,out] test   Entry-owned fixture
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckReaderTree(JsonTest_t* test);
 
@@ -262,7 +262,7 @@ static FORCE_INLINE void CheckReaderTree(JsonTest_t* test);
  *
  * \param[in,out] test   Entry-owned fixture
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckReaderInvalidStrings(JsonTest_t* test);
 
@@ -279,7 +279,7 @@ static FORCE_INLINE void CheckReaderInvalidStrings(JsonTest_t* test);
  *
  * \param[in,out] test   Entry-owned fixture
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckReaderStrings(JsonTest_t* test);
 
@@ -298,7 +298,7 @@ static FORCE_INLINE void CheckReaderStrings(JsonTest_t* test);
  * \param[in]     text       Independent complete JSON fixture
  * \param[in]     expected   Exact expected value, or NULL for domain rejection
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckInteger(JsonTest_t* test, Utl_Json_Text_t text, const int64_t* expected);
 
@@ -315,7 +315,7 @@ static FORCE_INLINE void CheckInteger(JsonTest_t* test, Utl_Json_Text_t text, co
  *
  * \param[in,out] test   Entry-owned reader storage
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckIntegers(JsonTest_t* test);
 

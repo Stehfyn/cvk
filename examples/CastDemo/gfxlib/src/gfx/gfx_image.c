@@ -76,7 +76,7 @@ typedef struct Gfx_Image_Storage_s
  * \param[in] image   VA image whose pending work was synchronized
  * \param[in] status  Original success, decode-error or hardware-busy result
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void ReportVaImageDiagnostics(const Gfx_Image_t* image, VAStatus status);
 
@@ -95,7 +95,7 @@ static void ReportVaImageDiagnostics(const Gfx_Image_t* image, VAStatus status);
  *
  * \param[in] image   VA image exclusively owned by its caller
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void SynchronizeVaImage(const Gfx_Image_t* image);
 
@@ -116,7 +116,7 @@ static void SynchronizeVaImage(const Gfx_Image_t* image);
  * \param[out]    dst     Destination receiving tightly packed image planes without native row padding
  * \param[in]     dstSize Destination capacity in bytes; must fit uint32_t and hold all packed planes
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void ReadVaapiImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize);
 
@@ -133,7 +133,7 @@ static void ReadVaapiImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize
  * \param[out]    dst     Destination receiving the current image pixels, including GPU changes
  * \param[in]     dstSize Packed pixel byte count; must equal uploadByteCount
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void ReadVulkanImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize);
 
@@ -144,7 +144,7 @@ static void ReadVulkanImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSiz
  * \param[in] image Image that must be acquired and have no unconsumed write
  * \param[in] src   Non-null source pixel storage
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void ValidateWriteMemory(const Gfx_Image_t* image, const void* src);
 
@@ -156,7 +156,7 @@ static void ValidateWriteMemory(const Gfx_Image_t* image, const void* src);
  * \param[in]     src     Packed source pixels
  * \param[in]     srcSize Source capacity in bytes; must hold all packed planes and fit uint32_t
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void WriteVaapiImageMemory(Gfx_Image_t* image, const void* src, uint64_t srcSize);
 
@@ -168,7 +168,7 @@ static void WriteVaapiImageMemory(Gfx_Image_t* image, const void* src, uint64_t 
  * \param[in]     src     Source pixels copied into coherent staging memory
  * \param[in]     srcSize Packed pixel byte count; must equal uploadByteCount
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void WriteVulkanImageMemory(Gfx_Image_t* image, const void* src, uint64_t srcSize);
 
@@ -178,7 +178,7 @@ static void WriteVulkanImageMemory(Gfx_Image_t* image, const void* src, uint64_t
  *
  * \param[in] createInfo Non-NULL creation parameters with nonzero dimensions, a recognized hint and kind, and interop inputs when required
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void ValidateCreateInfo(const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -192,7 +192,7 @@ static void ValidateCreateInfo(const Gfx_Image_CreateInfo_t* createInfo);
  * \param[in]  surfaceId Native VA surface containing the pixels
  * \param[in]  imageView Persistent derived view for STORAGE; a zeroed VAImage for IMPORT/EXPORT
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void InitVaapiImage(Gfx_Image_t*     image,
                            Gfx_Image_Kind_t kind,
@@ -220,7 +220,7 @@ static void InitVaapiImage(Gfx_Image_t*     image,
  * \param[out] pReadbackFence Receives the unsignaled readback fence
  * \param[out] pStagingSize   Receives the staging buffer size in bytes
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CreateVulkanStorageImageResources(VkPhysicalDevice             physicalDevice,
                                               VkDevice                     device,
@@ -245,7 +245,7 @@ static void CreateVulkanStorageImageResources(VkPhysicalDevice             physi
  * \param[out] image      Allocated image receiving its native representation and backend state
  * \param[in]  createInfo STORAGE configuration with an initialized VA display, render-target format, and pixel fourcc
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CreateVaapiStorageImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -281,7 +281,7 @@ static void CreateVaapiStorageImage(Gfx_Image_t* image, const Gfx_Image_CreateIn
  * \param[in]  height                   Image height in pixels
  * \param[in]  uploadByteCount          Packed STORAGE staging size in bytes; zero for interop
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void InitVulkanImage(Gfx_Image_t*          image,
                             Gfx_Image_Kind_t      kind,
@@ -321,7 +321,7 @@ static void InitVulkanImage(Gfx_Image_t*          image,
  * \param[out] image      Allocated image receiving its native representation and backend state
  * \param[in]  createInfo STORAGE configuration with transfer-destination usage and a queue matching the borrowed command pool and buffer
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CreateVulkanStorageImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -332,7 +332,7 @@ static void CreateVulkanStorageImage(Gfx_Image_t* image, const Gfx_Image_CreateI
  * \param[out] image      Allocated image receiving its native representation and backend state
  * \param[in]  createInfo Validated backend, image kind, extent, and native creation inputs
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CreateVaapiImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -343,7 +343,7 @@ static void CreateVaapiImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* c
  * \param[out] image      Allocated image receiving its native representation and backend state
  * \param[in]  createInfo Validated backend, image kind, extent, and native creation inputs
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CreateVulkanImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -354,7 +354,7 @@ static void CreateVulkanImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* 
  * \param[out] image      Allocated image initialized by the selected concrete creation function
  * \param[in]  createInfo Image backend, sharing kind, dimensions, and native creation parameters
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CreateImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -366,7 +366,7 @@ static void CreateImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* create
  * \param[out]    dst     Non-NULL destination storage filled before the function returns
  * \param[in]     dstSize Destination capacity satisfying the selected backend's size requirements
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void ReadImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize);
 
@@ -378,7 +378,7 @@ static void ReadImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize);
  * \param[in]     src     Source pixel bytes
  * \param[in]     srcSize Source capacity satisfying the selected backend's size requirements
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void WriteImageMemory(Gfx_Image_t* image, const void* src, uint64_t srcSize);
 

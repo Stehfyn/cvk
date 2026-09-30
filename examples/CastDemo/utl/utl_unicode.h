@@ -100,7 +100,7 @@ typedef struct Utl_Unicode_Reader_s
  * \param[in]  data        Stable input, NULL only for an empty span
  * \param[in]  byteCount   Readable bytes retained until the cursor is no longer used
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void Utl_Unicode_InitializeReader(Utl_Unicode_Reader_t* reader, const byte_t* data, uint32_t byteCount);
 

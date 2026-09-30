@@ -142,7 +142,7 @@ static FORCE_INLINE uint32_t GetRangeField(const Utl_Http_Head_t* head);
  * \param[in,out] output   Private field owner
  * \param[in]     field    Named stable field spans
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void AppendField(ResponseHead_t* output, const Utl_Http_Field_t* field);
 
@@ -161,7 +161,7 @@ static FORCE_INLINE void AppendField(ResponseHead_t* output, const Utl_Http_Fiel
  * \param[out] output     Private fixed workspace
  * \param[in]  response   Validated metadata
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void SetResponseHead(ResponseHead_t* output, const CastHttp_Response_t* response);
 

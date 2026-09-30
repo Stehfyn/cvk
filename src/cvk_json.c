@@ -3,9 +3,11 @@
 #include "cvk/cvk_json.h"
 #include "cvk/cvk.h"
 #include "cvk/internal/cvk_json_work.h"
+#include "vk_diagnostic.h"
 #include <cvk_bicubic_frag.inc>
 #include <cvk_bicubic_pipeline_json.inc>
 #include <cvk_fullscreen_vert.inc>
+#include <stddef.h>
 #include <stdint.h>
 #include <string.h>
 #include <vulkan/vulkan_core.h>
@@ -53,19 +55,19 @@ static CVK_FORCE_INLINE VkBool32 cvkIsJsonTextSpace(char value);
 /**
  * \brief Advances over JSON whitespace.
  * \param[in,out] pReader Input cursor and bounds.
- * \retval None
+ * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkSkipJsonSpace(cvkJsonReader* pReader);
 /**
  * \brief Consumes at least one decimal digit.
  * \param[in,out] pReader Input cursor and bounds.
- * \retval None
+ * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkReadJsonDigits(cvkJsonReader* pReader);
 /**
  * \brief Consumes a JSON number according to its integer, fraction and exponent grammar.
  * \param[in,out] pReader Input cursor and bounds.
- * \retval None
+ * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkReadJsonNumber(cvkJsonReader* pReader);
 /**
@@ -79,7 +81,7 @@ static CVK_FORCE_INLINE const char* cvkReadJsonQuoted(cvkJsonReader* pReader, ui
  * \brief Consumes a literal and records its kind.
  * \param[in,out] pReader Input cursor and bounds.
  * \param[out] pValue Value receiving the literal kind.
- * \retval None
+ * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkReadJsonLiteral(cvkJsonReader* pReader, cvkJsonValue* pValue);
 /**
@@ -136,7 +138,7 @@ static CVK_FORCE_INLINE VkDescriptorSetLayoutBinding* cvkResolvePipelineJsonBind
  * \param[in,out] pUser Resolver state.
  * \param[in] pSource Stage with its parse-time address intact.
  * \param[out] pStage Resolved stage copy.
- * \retval None
+ * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkResolvePipelineJsonShader(const cvkPipelineJson*                 pPipeline,
                                                           PFN_cvkResolveJsonHandle               resolveExternal,
@@ -343,7 +345,7 @@ static CVK_FORCE_INLINE uint32_t cvkReadJsonToken(cvkJsonReader* pReader)
     ++pReader->valueCount;
     value = &pReader->pValues[index];
 
-    (void)memset(value, 0, sizeof(*value));
+    cvkZeroMemory(value, sizeof(*value));
 
     value->firstChild  = CVK_JSON_NONE;
     value->nextSibling = CVK_JSON_NONE;
@@ -629,7 +631,7 @@ extern CVK_FORCE_INLINE uint64_t cvkGetJsonUint64(const cvkJsonValue* pValue)
     {
         return 0;
     }
-    (void)memcpy(buffer, pValue->pText, pValue->textLength);
+    cvkCopyMemory(buffer, pValue->pText, pValue->textLength);
 
     buffer[pValue->textLength] = '\0';
 
@@ -646,7 +648,7 @@ extern CVK_FORCE_INLINE int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
     {
         return 0;
     }
-    (void)memcpy(buffer, pValue->pText, pValue->textLength);
+    cvkCopyMemory(buffer, pValue->pText, pValue->textLength);
 
     buffer[pValue->textLength] = '\0';
     text                       = buffer;
@@ -813,7 +815,7 @@ extern CVK_FORCE_INLINE double cvkGetJsonDouble(const cvkJsonValue* pValue)
     {
         return 0.0;
     }
-    (void)memcpy(buffer, pValue->pText, pValue->textLength);
+    cvkCopyMemory(buffer, pValue->pText, pValue->textLength);
 
     buffer[pValue->textLength] = '\0';
     text                       = buffer;
@@ -943,7 +945,7 @@ extern CVK_FORCE_INLINE uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, c
 
             CVK_ASSERT((size_t)(token_end - token) < sizeof(buffer));
 
-            (void)memcpy(buffer, token, (size_t)(token_end - token));
+            cvkCopyMemory(buffer, token, (size_t)(token_end - token));
 
             buffer[token_end - token] = '\0';
 
@@ -1163,7 +1165,7 @@ extern CVK_FORCE_INLINE uint32_t cvkParsePipelineJsonObjectList(const cvkJsonCon
 
         CVK_ASSERT((NULL != member) && (member->keyLength < sizeof(buffer)));
 
-        (void)memcpy(buffer, member->pKey, member->keyLength);
+        cvkCopyMemory(buffer, member->pKey, member->keyLength);
 
         buffer[member->keyLength] = '\0';
 
@@ -1238,7 +1240,7 @@ extern CVK_FORCE_INLINE void cvkParsePipelineJson(const cvkJsonContext* pContext
     void*                 elements;
     uint32_t              index;
 
-    (void)memset(pPipeline, 0, sizeof(*pPipeline));
+    cvkZeroMemory(pPipeline, sizeof(*pPipeline));
 
     context                    = *pContext;
     context.ppHandleReferences = &pPipeline->pHandleReferences;
@@ -1473,7 +1475,7 @@ extern CVK_FORCE_INLINE void cvkCreatePipelineJsonObjects(VkDevice              
     uint64_t     object_id;
     VkRenderPass render_pass;
 
-    (void)memset(pObjects, 0, sizeof(*pObjects));
+    cvkZeroMemory(pObjects, sizeof(*pObjects));
     CVK_ASSERT(CVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->samplerYcbcrConversionCount);
     CVK_ASSERT(CVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->samplerCount);
     CVK_ASSERT(CVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->descriptorSetLayoutCount);

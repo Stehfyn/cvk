@@ -3,7 +3,7 @@
 ** transfer helper. */
 #define WIN32_LEAN_AND_MEAN
 #include "os/os_types.h"
-#include <windows.h>
+#include <Windows.h>
 
 #include <stdarg.h>
 #include <stdint.h>

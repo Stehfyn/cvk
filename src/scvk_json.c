@@ -3,6 +3,8 @@
 #include "scvk/scvk_json.h"
 #include "scvk/scvk.h"
 #include "scvk/internal/scvk_json_work.h"
+#include "vk_diagnostic.h"
+#include <stddef.h>
 #include <stdint.h>
 #include <string.h>
 #include <vulkan/vulkan_sc_core.h>
@@ -20,19 +22,19 @@ static SCVK_FORCE_INLINE VkBool32 scvkIsJsonTextSpace(char value);
 /**
  * \brief Advances over JSON whitespace.
  * \param[in,out] pReader Input cursor and bounds.
- * \retval None
+ * \retval None No value is returned.
  */
 static SCVK_FORCE_INLINE void scvkSkipJsonSpace(scvkJsonReader* pReader);
 /**
  * \brief Consumes at least one decimal digit.
  * \param[in,out] pReader Input cursor and bounds.
- * \retval None
+ * \retval None No value is returned.
  */
 static SCVK_FORCE_INLINE void scvkReadJsonDigits(scvkJsonReader* pReader);
 /**
  * \brief Consumes a JSON number according to its integer, fraction and exponent grammar.
  * \param[in,out] pReader Input cursor and bounds.
- * \retval None
+ * \retval None No value is returned.
  */
 static SCVK_FORCE_INLINE void scvkReadJsonNumber(scvkJsonReader* pReader);
 /**
@@ -46,7 +48,7 @@ static SCVK_FORCE_INLINE const char* scvkReadJsonQuoted(scvkJsonReader* pReader,
  * \brief Consumes a literal and records its kind.
  * \param[in,out] pReader Input cursor and bounds.
  * \param[out] pValue Value receiving the literal kind.
- * \retval None
+ * \retval None No value is returned.
  */
 static SCVK_FORCE_INLINE void scvkReadJsonLiteral(scvkJsonReader* pReader, scvkJsonValue* pValue);
 /**
@@ -103,7 +105,7 @@ static SCVK_FORCE_INLINE VkDescriptorSetLayoutBinding* scvkResolvePipelineJsonBi
  * \param[in,out] pUser Resolver state.
  * \param[in] pSource Stage with its parse-time address intact.
  * \param[out] pStage Resolved stage copy.
- * \retval None
+ * \retval None No value is returned.
  */
 static SCVK_FORCE_INLINE void scvkResolvePipelineJsonShader(const scvkPipelineJson*                pPipeline,
                                                             PFN_scvkResolveJsonHandle              resolveExternal,
@@ -300,7 +302,7 @@ static SCVK_FORCE_INLINE uint32_t scvkReadJsonToken(scvkJsonReader* pReader)
     ++pReader->valueCount;
     value = &pReader->pValues[index];
 
-    (void)memset(value, 0, sizeof(*value));
+    scvkZeroMemory(value, sizeof(*value));
 
     value->firstChild  = SCVK_JSON_NONE;
     value->nextSibling = SCVK_JSON_NONE;
@@ -586,7 +588,7 @@ extern SCVK_FORCE_INLINE uint64_t scvkGetJsonUint64(const scvkJsonValue* pValue)
     {
         return 0;
     }
-    (void)memcpy(buffer, pValue->pText, pValue->textLength);
+    scvkCopyMemory(buffer, pValue->pText, pValue->textLength);
 
     buffer[pValue->textLength] = '\0';
 
@@ -603,7 +605,7 @@ extern SCVK_FORCE_INLINE int64_t scvkGetJsonInt64(const scvkJsonValue* pValue)
     {
         return 0;
     }
-    (void)memcpy(buffer, pValue->pText, pValue->textLength);
+    scvkCopyMemory(buffer, pValue->pText, pValue->textLength);
 
     buffer[pValue->textLength] = '\0';
     text                       = buffer;
@@ -770,7 +772,7 @@ extern SCVK_FORCE_INLINE double scvkGetJsonDouble(const scvkJsonValue* pValue)
     {
         return 0.0;
     }
-    (void)memcpy(buffer, pValue->pText, pValue->textLength);
+    scvkCopyMemory(buffer, pValue->pText, pValue->textLength);
 
     buffer[pValue->textLength] = '\0';
     text                       = buffer;
@@ -900,7 +902,7 @@ extern SCVK_FORCE_INLINE uint64_t scvkParseJsonFlags(const scvkJsonValue* pValue
 
             SCVK_ASSERT((size_t)(token_end - token) < sizeof(buffer));
 
-            (void)memcpy(buffer, token, (size_t)(token_end - token));
+            scvkCopyMemory(buffer, token, (size_t)(token_end - token));
 
             buffer[token_end - token] = '\0';
 
@@ -1120,7 +1122,7 @@ extern SCVK_FORCE_INLINE uint32_t scvkParsePipelineJsonObjectList(const scvkJson
 
         SCVK_ASSERT((NULL != member) && (member->keyLength < sizeof(buffer)));
 
-        (void)memcpy(buffer, member->pKey, member->keyLength);
+        scvkCopyMemory(buffer, member->pKey, member->keyLength);
 
         buffer[member->keyLength] = '\0';
 
@@ -1195,7 +1197,7 @@ extern SCVK_FORCE_INLINE void scvkParsePipelineJson(const scvkJsonContext* pCont
     void*                  elements;
     uint32_t               index;
 
-    (void)memset(pPipeline, 0, sizeof(*pPipeline));
+    scvkZeroMemory(pPipeline, sizeof(*pPipeline));
 
     context                    = *pContext;
     context.ppHandleReferences = &pPipeline->pHandleReferences;
@@ -1430,7 +1432,7 @@ extern SCVK_FORCE_INLINE void scvkCreatePipelineJsonObjects(VkDevice            
     uint64_t     object_id;
     VkRenderPass render_pass;
 
-    (void)memset(pObjects, 0, sizeof(*pObjects));
+    scvkZeroMemory(pObjects, sizeof(*pObjects));
     SCVK_ASSERT(SCVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->samplerYcbcrConversionCount);
     SCVK_ASSERT(SCVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->samplerCount);
     SCVK_ASSERT(SCVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->descriptorSetLayoutCount);

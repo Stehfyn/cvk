@@ -104,7 +104,7 @@ typedef struct TestVector_s
  * \param[in]     bytes      Exact malformed/unsupported input
  * \param[in]     expected   Expected rejection category
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckRejected(TestContext_t*          context,
                                        Utl_Mpeg4_Span_t        bytes,
@@ -124,7 +124,7 @@ static FORCE_INLINE void CheckRejected(TestContext_t*          context,
  * \param[in,out] context   Required fixture storage
  * \param[in]     config    Required valid stable model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckShortWrites(TestContext_t* context, const Utl_Mpeg4Audio_Config_t* config);
 
@@ -142,7 +142,7 @@ static FORCE_INLINE void CheckShortWrites(TestContext_t* context, const Utl_Mpeg
  * \param[in,out] context   Required fixture storage
  * \param[in]     vector    Required independent expected vector
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckVector(TestContext_t* context, const TestVector_t* vector);
 
@@ -159,7 +159,7 @@ static FORCE_INLINE void CheckVector(TestContext_t* context, const TestVector_t*
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckBaseVectors(TestContext_t* context);
 
@@ -176,7 +176,7 @@ static FORCE_INLINE void CheckBaseVectors(TestContext_t* context);
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckExtensionVectors(TestContext_t* context);
 
@@ -193,7 +193,7 @@ static FORCE_INLINE void CheckExtensionVectors(TestContext_t* context);
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckMalformed(TestContext_t* context);
 
@@ -211,7 +211,7 @@ static FORCE_INLINE void CheckMalformed(TestContext_t* context);
  * \param[in,out] context   Required fixture storage
  * \param[in]     config    Required invalid model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckInvalidModel(TestContext_t* context, const Utl_Mpeg4Audio_Config_t* config);
 
@@ -228,7 +228,7 @@ static FORCE_INLINE void CheckInvalidModel(TestContext_t* context, const Utl_Mpe
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckModelBoundaries(TestContext_t* context);
 
@@ -245,7 +245,7 @@ static FORCE_INLINE void CheckModelBoundaries(TestContext_t* context);
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckProgramComment(TestContext_t* context);
 

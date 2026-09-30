@@ -3,7 +3,7 @@
 #include "cvk/ggp/cvk_ggp_json.h"
 #include "cvk/cvk_json.h"
 #include "cvk/internal/cvk_json_work.h"
-#include <string.h>
+#include "vk_diagnostic.h"
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_ggp.h>
 
@@ -21,7 +21,7 @@ void cvkReadJsonPresentFrameTokenGGP(cvkJsonWork* pWork, const cvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkPresentFrameTokenGGP*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PRESENT_FRAME_TOKEN_GGP;
 
@@ -45,7 +45,7 @@ void cvkReadJsonStreamDescriptorSurfaceCreateInfoGGP(cvkJsonWork* pWork, const c
     pContext = pWork->pContext;
     pInfo    = (VkStreamDescriptorSurfaceCreateInfoGGP*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_STREAM_DESCRIPTOR_SURFACE_CREATE_INFO_GGP;
 

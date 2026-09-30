@@ -80,7 +80,7 @@ static const byte_t   c_protoBytes[]     = {0x12, 3, 'a', 'b', 'c'};
  * \param[in] passed   Predicate being checked
  * \param[in] code     Source line of the failed expectation
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void Check(bool_t passed, uint32_t code);
 
@@ -102,7 +102,7 @@ static FORCE_INLINE bool_t EqualBytes(const byte_t* first, const byte_t* second,
  * \par Requirements:
  *  - 001 Every failed expectation shall terminate through the production assertion.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckMatroskaSizes(void);
 
@@ -113,7 +113,7 @@ static FORCE_INLINE void CheckMatroskaSizes(void);
  * \par Requirements:
  *  - 001 Every failed expectation shall terminate through the production assertion.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckProtobufIntegers(void);
 
@@ -124,7 +124,7 @@ static FORCE_INLINE void CheckProtobufIntegers(void);
  * \par Requirements:
  *  - 001 Every failed expectation shall terminate through the production assertion.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckProtobufGroups(void);
 
@@ -135,7 +135,7 @@ static FORCE_INLINE void CheckProtobufGroups(void);
  * \par Requirements:
  *  - 001 Every failed expectation shall terminate through the production assertion.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckMp4(void);
 
@@ -146,7 +146,7 @@ static FORCE_INLINE void CheckMp4(void);
  * \par Requirements:
  *  - 001 Every failed expectation shall terminate through the production assertion.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckVints(void);
 
@@ -157,7 +157,7 @@ static FORCE_INLINE void CheckVints(void);
  * \par Requirements:
  *  - 001 Every failed expectation shall terminate through the production assertion.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckMatroska(void);
 
@@ -168,7 +168,7 @@ static FORCE_INLINE void CheckMatroska(void);
  * \par Requirements:
  *  - 001 Every failed expectation shall terminate through the production assertion.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckProtobuf(void);
 

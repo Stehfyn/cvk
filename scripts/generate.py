@@ -14,6 +14,7 @@ import os
 import re
 import sys
 import tempfile
+import xml.etree.ElementTree as ET
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Set, Tuple
@@ -873,7 +874,7 @@ class Generator:
         for p in params:
             lines.append(f" * \\param[{'out' if p.is_out else 'in'}] {p.name.ljust(width)}  {p.doc}")
         if ret == "void":
-            lines.append(" *\n * \\retval None")
+            lines.append(" *\n * \\retval None No value is returned.")
         elif ret == "VkResult":
             lines.append(" *\n * \\return VK_SUCCESS or one of: " + ", ".join(informational) + ". Error results abort.")
         elif ret == "uint32_t" and cmd and any(r == "n*" for r in self.roles(cmd)):
@@ -889,6 +890,22 @@ class Generator:
             self.errors.append(f"entity spans several platforms {sorted(plats)}: {decl.splitlines()[-1]}")
             return
         key = next(iter(plats)) if plats else ""
+        # These mutable pointers are Vulkan output storage. The wrapper stores or forwards
+        # them; their pointees are written later by the driver.
+        output_pointer_functions = {
+            "cvkInitBindMemoryStatus",
+            "cvkInitConvertCooperativeVectorMatrixInfoNV",
+            "cvkInitImageCompressionControl",
+            "cvkInitLatencySurfaceCapabilitiesNV",
+            "cvkInitPresentInfo",
+            "cvkInitRenderPassPerformanceCountersByRegionBeginInfoARM",
+            "cvkInitSurfacePresentModeCompatibility",
+            "cvkConvertCooperativeVectorMatrixNV",
+            "cvkQueuePresent",
+        }
+        if not json and any(re.search(rf"\b{name}\s*\(", defn.split("{", 1)[0]) for name in output_pointer_functions):
+            defn = ("// NOLINTBEGIN(readability-non-const-parameter): Vulkan output pointer contract.\n"
+                    + defn + "\n// NOLINTEND(readability-non-const-parameter)")
         if self.designated_initializers:
             pattern = (r"(?m)^([ \t]*)(Vk\w+)[ \t]+(\w+);[ \t]*\n(?:[ \t]*\n)*"
                        r"\1\3[ \t]*=[ \t]*\(\2\)[ \t]*\n\1\{")
@@ -920,11 +937,14 @@ class Generator:
                               arrays: Optional[List[Tuple[str, str]]] = None) -> List[str]:
         """Initialize wrapper-owned storage, including each element of a local array."""
         arrays = arrays or []
-        if self.designated_initializers:
+        if (s.returnedonly or arrays) and self.designated_initializers:
+            body = [f"cvkZeroMemory(&{target}, sizeof({target}));"]
+            body += [f"{target}.{name} = {value};" for name, value in fields]
+        elif self.designated_initializers:
             body = self.designated_initializer(f"{target} = ({s.name})", fields + [(name, "{0}") for name, _ in arrays])
         else:
             body = [f"{target}.{name} = {value};" for name, value in fields]
-        return body + [f"(void)memcpy({target}.{name}, {value}, sizeof({target}.{name}));" for name, value in arrays]
+        return body + [f"cvkCopyMemory({target}.{name}, {value}, sizeof({target}.{name}));" for name, value in arrays]
 
     def designated_builder_body(self, s: Struct, fields: List[Tuple[str, str]], arrays: List[Param]) -> List[str]:
         """Initialize the complete value, copying array arguments before writing pInfo."""
@@ -935,8 +955,9 @@ class Generator:
         local = "initialized_info"
         while local in {m.name for m in s.members}:
             local += "_"
-        return (self.designated_initializer(f"{s.name} {local} =", values)
-                + [f"(void)memcpy({local}.{m.name}, {m.name}, sizeof({local}.{m.name}));" for m in arrays]
+        return ([f"{s.name} {local};", f"cvkZeroMemory(&{local}, sizeof({local}));"]
+                + [f"{local}.{name} = {value};" for name, value in fields]
+                + [f"cvkCopyMemory({local}.{m.name}, {m.name}, sizeof({local}.{m.name}));" for m in arrays]
                 + [f"(*pInfo) = {local};"])
 
     def array_extent(self, s: Struct, m: Param) -> str:
@@ -971,7 +992,7 @@ class Generator:
                     continue
                 if m.array_len:
                     params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, f"{s.name}::{m.name}", False))
-                    body.append(f"(void)memcpy(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));")
+                    body.append(f"cvkCopyMemory(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));")
                     arrays.append(m)
                 else:
                     params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
@@ -997,7 +1018,7 @@ class Generator:
             params = [EmittedParam(f"{s.name}* pInfo", "pInfo", f"Receives the initialized {s.name}", True)]
             if m.array_len:
                 params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, f"{s.name}::{m.name}", False))
-                body = [f"(void)memcpy(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));"]
+                body = [f"cvkCopyMemory(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));"]
             else:
                 params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
                 body = [f"pInfo->{m.name} = {m.name};"]
@@ -1137,7 +1158,7 @@ static CVK_FORCE_INLINE {ctype}* {name}(const cvkJsonContext* pContext,
  * \\param[in] pValue JSON array, or NULL.
  * \\param[out] pOutput Native element storage, already zeroed.
  * \\param[in] capacity Native element count.
- * \\retval None
+ * \\retval None No value is returned.
  */
 static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
                                     const cvkJsonValue* pValue,
@@ -1183,7 +1204,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
         if m.array_len:
             dims = [d for d in m.array_len.split("][")]
             if t == "char" and len(dims) == 1:
-                return ["if (CVK_JSON_STRING == value->kind)", "{", f"    (void)memcpy({dst}, value->pText, (value->textLength < sizeof({dst})) ? value->textLength : sizeof({dst}) - 1);", "}"], False, False
+                return ["if (CVK_JSON_STRING == value->kind)", "{", f"    cvkCopyMemory({dst}, value->pText, (value->textLength < sizeof({dst})) ? value->textLength : sizeof({dst}) - 1);", "}"], False, False
             elem = self.json_assignment(t, f"{dst}[index]", "cvkGetJsonElement(&pContext->document, value, index)")
             if elem is not None and len(dims) == 1:
                 reader = self.json_fixed_array_reader(t, platforms)
@@ -1294,6 +1315,8 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             self.sigs[name] = (ret, params)
             self.place_json(frozenset(), doc + sig + ";", sig + "\n{\n" + indent("\n".join(body)) + "\n}")
         # enumerations and flag bits
+        enum_aliases = {entry.get("name"): entry.get("alias") for entry in ET.parse(self.reg.path).iter("enum")
+                        if entry.get("name") and entry.get("alias")}
         for enum in sorted(self.reg.enums):
             if not enum.startswith("Vk") or not self.json_type_required(enum) or enum in self.reg.type_aliases:
                 continue
@@ -1304,20 +1327,25 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             if values:
                 body += ["uint64_t enumerant;"]
                 if enum not in self.reg.enums64:
-                    body += [f"{enum} result;", "uint32_t index;", "VkBool32 found;"]
+                    body += ["VkBool32 found;"]
                 body += [""]
                 body += self.json_name_table(values, enum in self.reg.enums64)
                 if enum in self.reg.enums64:
                     body += ["enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));",
                              f"return ({enum})enumerant;"]
                 else:
-                    body += [f"static const {enum} enumerants[] = {{", "    " + ",\n    ".join(values), "};", "",
-                             "enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));",
-                             "result = enumerants[0];", "found = VK_FALSE;",
-                             "for (index = 0; index < VK_COUNT_OF(enumerants); ++index)", "{",
-                             "    if (enumerant == (uint64_t)enumerants[index])", "    {",
-                             "        result = enumerants[index];", "        found = VK_TRUE;", "        break;", "    }", "}",
-                             "CVK_ASSERT(found);", "return result;"]
+                    unique_values = []
+                    seen_values = set()
+                    for value in values:
+                        canonical = value
+                        while canonical in enum_aliases:
+                            canonical = enum_aliases[canonical]
+                        if canonical not in seen_values:
+                            unique_values.append(value)
+                            seen_values.add(canonical)
+                    matches = " ||\n    ".join(f"(enumerant == (uint64_t){value})" for value in unique_values)
+                    body += ["enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));",
+                             f"found = {matches};", "CVK_ASSERT(found);", f"return ({enum})enumerant;"]
             else:
                 body += ["int64_t enumerant;", "",
                          "enumerant = cvkGetJsonInt64(pValue);",
@@ -1369,7 +1397,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
                 needs_storage |= ns
                 needs_inner |= any("inner" in l for l in stmts)
                 members.append((m, stmts))
-            body.append(f"(void)memset(pInfo, 0, sizeof(*pInfo));")
+            body.append("cvkZeroMemory(pInfo, sizeof(*pInfo));")
             if s.stype:
                 body.append(f"pInfo->sType = {s.stype};")
             for m, stmts in members:
@@ -1406,7 +1434,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
                           " * \\param[in,out] pWork Bounded parse workspace.\n"
                           " * \\param[in] pObject JSON object to read.\n"
                           " * \\param[out] pOutput Storage for the typed Vulkan structure.\n"
-                          " * \\retval None\n */\n")
+                          " * \\retval None No value is returned.\n */\n")
             self.json_worker_decls.append(worker_doc + worker_sig + ";")
             worker_decls = ["const cvkJsonContext* pContext;", f"{s.name}* pInfo;"] + decls
             worker_body = ["pContext = pWork->pContext;", f"pInfo = ({s.name}*)pOutput;"] + body
@@ -2156,7 +2184,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             prof = re.search(r"\\par Profile:\s*(\w+)", doc)
             if prof and prof.group(1) != self.api:
                 continue
-            diagnostic_support = {"cvkDiagnosticWrite", "cvkDiagnosticWriteHex"}
+            diagnostic_support = {"cvkDiagnosticWrite", "cvkDiagnosticWriteHex", "cvkCopyMemory", "cvkZeroMemory"}
             unknown = [c for c in sorted(set(re.findall(r"\b(cvk\w+)\s*\(", body)))
                        if c not in self.sigs and c != name and c not in diagnostic_support]
             if unknown:
@@ -2640,16 +2668,21 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
         required.update(self.direct_type_headers(defs) - set(self.PLATFORM_INCLUDES[plat]))
         required.update(header for header in self.PLATFORM_INCLUDES[plat] if header.startswith("<vulkan/"))
         required.add(self.vk_header)
+        if plat == "win32":
+            required.add("<windef.h>")
         if not re.search(r"\b(?:VKAPI_ATTR|VKAPI_CALL|VKAPI_PTR)\b", defs):
             required.discard("<vulkan/vk_platform.h>")
-        if re.search(r"\b(?:memcpy|memmove|memcmp|memset|str\w*)\s*\(", defs):
+        if "cvkCopyMemory(" in defs or "cvkZeroMemory(" in defs:
+            required.add('"vk_diagnostic.h"')
+        if re.search(r"\b(?:memmove|memcmp|str\w*)\s*\(", defs):
             required.add("<string.h>")
         includes = "".join(f"#include {i}\n" for i in sorted(required))
         # Expose this platform's extensions before Volk declares their dispatch pointers.
         # In particular, the pinned Volk does not include vulkan_ubm.h itself.
         preamble = "#ifndef VK_NO_PROTOTYPES\n#define VK_NO_PROTOTYPES\n#endif\n" if self.loader_header else ""
+        loader = self.loader_include()
         return self.inline_source("/* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */\n\n"
-                f"{preamble}#include \"cvk/cvk.h\"\n#include \"cvk/{plat}/cvk_{plat}.h\"\n{self.loader_include()}"
+                f"{preamble}#include \"cvk/cvk.h\"\n#include \"cvk/{plat}/cvk_{plat}.h\"\n{loader}"
                 f"{includes}\n{defs}\n")
 
     def loader_include(self) -> str:
@@ -2663,6 +2696,8 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
         headers = {f"<{self.reg.type_headers[name]}>" for name in tokens & self.reg.type_headers.keys()}
         if any(re.fullmatch(r"u?int(?:8|16|32|64|ptr)_t|U?INT(?:8|16|32|64|PTR)_(?:MAX|MIN|C)", name) for name in tokens):
             headers.add("<stdint.h>")
+        if "size_t" in tokens:
+            headers.add("<stddef.h>")
         if tokens & {"VKAPI_ATTR", "VKAPI_CALL", "VKAPI_PTR"}:
             headers.add("<vulkan/vk_platform.h>")
         return headers
@@ -2702,6 +2737,8 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
         required.add(self.vk_header)
         if part != "enums":
             required.add('"cvk/internal/cvk_json_work.h"')
+        if "cvkZeroMemory(" in definitions or "cvkCopyMemory(" in definitions:
+            required.add('"vk_diagnostic.h"')
         if re.search(r"\b(?:memcpy|memcmp|memset|strlen)\s*\(", definitions):
             required.add("<string.h>")
         if plat:
@@ -2793,7 +2830,7 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
  * \param[in] pFile         Non-NULL null-terminated source filename.
  * \param[in] line          Source line recorded with the expression.
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 """ + declaration
         return declaration
@@ -2847,20 +2884,6 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 
     @staticmethod
     def source_include(header: str) -> str:
-        if header == "<vulkan/utility/vk_format_utils.h>":
-            # /external:W0 does not cover every MSVC backend diagnostic.
-            # The user excludes external-library warnings, but owned definitions
-            # must retain the original warning state after this include.
-            return """/* Preserve the external-library boundary during MSVC code generation. */
-#if defined(_MSC_VER) && !defined(__clang__)
-#pragma warning(push)
-#pragma warning(disable: 4710 5045)
-#endif
-#include <vulkan/utility/vk_format_utils.h>
-#if defined(_MSC_VER) && !defined(__clang__)
-#pragma warning(pop)
-#endif
-"""
         return f"#include {header}\n"
 
 def load_policy(path: str) -> dict:

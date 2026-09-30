@@ -254,7 +254,7 @@ static FORCE_INLINE uint32_t GetRangeMemberByteCount(const Utl_Http_Range_t* ran
  * \param[in] isTunnel     Successful CONNECT policy
  * \param[in] isResponse   Response rather than request
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void DeriveFramingResult(Utl_Http_Framing_t*        result,
                                              const HttpFramingFields_t* fields,
@@ -340,7 +340,7 @@ static FORCE_INLINE bool_t ReadStartLine(Utl_Http_Head_t* head, Utl_Http_Text_t 
  * \param[in,out] reader   Initialized scan state
  * \param[in]     line     Borrowed line excluding its CRLF
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void ReadCompletedLine(Utl_Http_HeadReader_t* reader, Utl_Http_Text_t line);
 
@@ -356,7 +356,7 @@ static FORCE_INLINE void ReadCompletedLine(Utl_Http_HeadReader_t* reader, Utl_Ht
  * \param[in,out] reader   Initialized incremental reader
  * \param[in] value        Newly consumed octet
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void ReadHeadByte(Utl_Http_HeadReader_t* reader, byte_t value);
 
@@ -540,7 +540,7 @@ static FORCE_INLINE bool_t ReadRangeMember(Utl_Http_Range_t* range,
  * \param[in,out] cursor   Next output offset
  * \param[in]     text     Readable disjoint span
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void WriteSpan(byte_t* buffer, uint32_t* cursor, Utl_Http_Text_t text);
 
@@ -552,7 +552,7 @@ static FORCE_INLINE void WriteSpan(byte_t* buffer, uint32_t* cursor, Utl_Http_Te
  * \param[in,out] cursor    Next output offset
  * \param[in]     literal   Internal constant covered by writer size preflight
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void WriteLiteral(byte_t* buffer, uint32_t* cursor, const char_t* literal);
 
@@ -564,7 +564,7 @@ static FORCE_INLINE void WriteLiteral(byte_t* buffer, uint32_t* cursor, const ch
  * \param[in]  value    Number already bounded by its calendar component
  * \param[in]  width    Two or four decimal digits
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void WriteDateNumber(byte_t* output, uint32_t value, uint32_t width);
 

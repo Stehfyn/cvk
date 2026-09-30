@@ -273,7 +273,7 @@ typedef struct Utl_Mpeg4_MovieFragment_s
  * \param[out] header   Required exclusively writable owner
  * \param[in]  type     Box type code
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Mpeg4_InitializeBoxHeader(Utl_Mpeg4_BoxHeader_t* header, uint32_t type);
 
@@ -292,7 +292,7 @@ void Utl_Mpeg4_InitializeBoxHeader(Utl_Mpeg4_BoxHeader_t* header, uint32_t type)
  * \param[out] reader   Required exclusively writable owner
  * \param[in]  bytes    Stable complete memory extent
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Mpeg4_InitializeBitReader(Utl_Mpeg4_BitReader_t* reader, Utl_Mpeg4_Span_t bytes);
 
@@ -312,7 +312,7 @@ void Utl_Mpeg4_InitializeBitReader(Utl_Mpeg4_BitReader_t* reader, Utl_Mpeg4_Span
  * \param[out] output     Required writable storage, untouched during initialization
  * \param[in]  capacity   Complete writable extent
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Mpeg4_InitializeBitWriter(Utl_Mpeg4_BitWriter_t* writer, byte_t* output, uint32_t capacity);
 
@@ -330,7 +330,7 @@ void Utl_Mpeg4_InitializeBitWriter(Utl_Mpeg4_BitWriter_t* writer, byte_t* output
  *
  * \param[out] writer   Required exclusively writable owner
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Mpeg4_InitializeBitCounter(Utl_Mpeg4_BitWriter_t* writer);
 
@@ -348,7 +348,7 @@ void Utl_Mpeg4_InitializeBitCounter(Utl_Mpeg4_BitWriter_t* writer);
  * \param[out] table   Required exclusively writable owner
  * \param[in]  type    stts or stss
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Mpeg4_InitializeSampleTable(Utl_Mpeg4_SampleTable_t* table, uint32_t type);
 
@@ -366,7 +366,7 @@ void Utl_Mpeg4_InitializeSampleTable(Utl_Mpeg4_SampleTable_t* table, uint32_t ty
  * \param[out] cursor   Required exclusively writable owner
  * \param[in]  table    Required stts prefix model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Mpeg4_InitializeTimeToSampleCursor(Utl_Mpeg4_TimeToSampleCursor_t* cursor,
                                             const Utl_Mpeg4_SampleTable_t*  table);
@@ -385,7 +385,7 @@ void Utl_Mpeg4_InitializeTimeToSampleCursor(Utl_Mpeg4_TimeToSampleCursor_t* curs
  * \param[out] cursor   Required exclusively writable owner
  * \param[in]  table    Required present stss prefix model
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Mpeg4_InitializeSyncSampleCursor(Utl_Mpeg4_SyncSampleCursor_t* cursor, const Utl_Mpeg4_SampleTable_t* table);
 
@@ -401,7 +401,7 @@ void Utl_Mpeg4_InitializeSyncSampleCursor(Utl_Mpeg4_SyncSampleCursor_t* cursor, 
  *
  * \param[out] run   Required exclusive owner
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Mpeg4_InitializeTrackRun(Utl_Mpeg4_TrackRun_t* run);
 
@@ -419,7 +419,7 @@ void Utl_Mpeg4_InitializeTrackRun(Utl_Mpeg4_TrackRun_t* run);
  * \param[out] track     Required exclusive owner
  * \param[in]  trackId   Positive track identity
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Mpeg4_InitializeTrackFragment(Utl_Mpeg4_TrackFragment_t* track, uint32_t trackId);
 
@@ -438,7 +438,7 @@ void Utl_Mpeg4_InitializeTrackFragment(Utl_Mpeg4_TrackFragment_t* track, uint32_
  * \param[in]  tracks       Required stable initialized array
  * \param[in]  trackCount   Readable track fragments
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Mpeg4_InitializeMovieFragment(Utl_Mpeg4_MovieFragment_t*       fragment,
                                        const Utl_Mpeg4_TrackFragment_t* tracks,
@@ -867,7 +867,7 @@ uint32_t Utl_Mpeg4_WriteUnsigned(Utl_Mpeg4_Integer_t field, byte_t* output, uint
  * \param[in,out] writer   Required initialized writer or counter
  * \param[in]     field    Complete unsigned field
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Mpeg4_WriteBits(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_BitField_t field);
 
@@ -887,7 +887,7 @@ void Utl_Mpeg4_WriteBits(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_BitField_t fie
  * \param[in,out] writer   Required initialized writer or counter
  * \param[in]     bytes    Stable complete byte sequence
  *
- * \retval None
+ * \retval None No value is returned.
  */
 void Utl_Mpeg4_WriteAlignedBytes(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_Span_t bytes);
 

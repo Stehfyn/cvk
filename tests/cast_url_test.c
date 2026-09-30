@@ -244,7 +244,7 @@ static const Ipv4Case_t c_ipv4Cases[] = {
  * \param[in] text        Actual component
  * \param[in] expected    Required expected bytes
  * \param[in] byteCount   Expected extent
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckText(Utl_Url_Text_t text, const char_t* expected, uint32_t byteCount);
 
@@ -257,7 +257,7 @@ static FORCE_INLINE void CheckText(Utl_Url_Text_t text, const char_t* expected, 
  * \par Requirements:
  *  - 001 Offset shall be within the retained output extent.
  * \param[in] offset   First byte that must retain its guard value
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckGuard(uint32_t offset);
 
@@ -271,7 +271,7 @@ static FORCE_INLINE void CheckGuard(uint32_t offset);
  *  - 001 Input shall be a valid case smaller than fixture output capacity.
  * \param[in] test   Independent expected syntax
  * \param[in] url    Parsed input model
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckWrite(const Case_t* test, const Utl_Url_t* url);
 
@@ -287,7 +287,7 @@ static FORCE_INLINE void CheckWrite(const Case_t* test, const Utl_Url_t* url);
  *
  * \param[in] url   Candidate after rejected input
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckUnchanged(const Utl_Url_t* url);
 
@@ -299,7 +299,7 @@ static FORCE_INLINE void CheckUnchanged(const Utl_Url_t* url);
  *
  * \par Requirements:
  *  - 001 Invalid reads shall preserve the known nonempty model's recomposition and presence flags.
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckCases(void);
 
@@ -311,7 +311,7 @@ static FORCE_INLINE void CheckCases(void);
  *
  * \par Requirements:
  *  - 001 Generic syntax shall remain separate from native port range limits.
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckComponents(void);
 
@@ -323,7 +323,7 @@ static FORCE_INLINE void CheckComponents(void);
  *
  * \par Requirements:
  *  - 001 Literal plus, NUL, high octets and percent shall preserve their byte meanings.
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckDecoding(void);
 
@@ -336,7 +336,7 @@ static FORCE_INLINE void CheckDecoding(void);
  * \par Requirements:
  *  - 001 Query escapes, empty paths and fragments shall match independent expected bytes.
  * \param[in] test   Required independent expectation
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckHttpTarget(const HttpCase_t* test);
 
@@ -349,7 +349,7 @@ static FORCE_INLINE void CheckHttpTarget(const HttpCase_t* test);
  * \par Requirements:
  *  - 001 Every endpoint field, target byte and count shall survive HTTP profile rejection.
  * \param[in] test   Required independent expectation
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckHttpFailure(const HttpCase_t* test);
 
@@ -361,7 +361,7 @@ static FORCE_INLINE void CheckHttpFailure(const HttpCase_t* test);
  *
  * \par Requirements:
  *  - 001 Generic syntax shall remain separate from HTTP and native transport restrictions.
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckHttpCases(void);
 
@@ -377,7 +377,7 @@ static FORCE_INLINE void CheckHttpCases(void);
  *
  * \param[in] test   Independently valid canonical case
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckIpv4Output(const Ipv4Case_t* test);
 
@@ -391,7 +391,7 @@ static FORCE_INLINE void CheckIpv4Output(const Ipv4Case_t* test);
  * \par Requirements:
  *  - 001 Independent values and guards shall be checked without relying on a round trip alone.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckIpv4(void);
 

@@ -185,7 +185,7 @@ static uint32_t GetVulkanConvertOutputWordSize(ConvertRoute_t convertRoute);
  * \param[out] descriptorBindings  Receives the two complete descriptor layout bindings
  * \param[out] descriptorPoolSizes Receives the corresponding distinct pool resource counts
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void GetVulkanConvertDescriptorSchema(
     ConvertRoute_t               convertRoute,
@@ -235,7 +235,7 @@ static const uint32_t* GetVulkanConvertShaderCode(ConvertRoute_t convertRoute, s
  * \param[out] pPipeline                  Receives imageCount compute pipelines
  * \param[out] ppBackingImages            Receives imageCount swapchain-owned backing images
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void CreateVulkanConvertSwapchainResources(VkPhysicalDevice             physicalDevice,
                                                   VkDevice                     device,
@@ -271,7 +271,7 @@ static void CreateVulkanConvertSwapchainResources(VkPhysicalDevice             p
  *
  * \param[in] pCreateInfo    Swapchain configuration to validate
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void ValidateCreateInfo(const Gfx_Swapchain_CreateInfo_t* pCreateInfo);
 
@@ -282,7 +282,7 @@ static void ValidateCreateInfo(const Gfx_Swapchain_CreateInfo_t* pCreateInfo);
  * \param[out] swapchain     Swapchain receiving backing images and per-image conversion resources
  * \param[in]  pCreateInfo    Validated swapchain configuration
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void CreateVulkanConvertSwapchain(Gfx_Swapchain_t* swapchain, const Gfx_Swapchain_CreateInfo_t* pCreateInfo);
 
@@ -293,7 +293,7 @@ static void CreateVulkanConvertSwapchain(Gfx_Swapchain_t* swapchain, const Gfx_S
  * \param[out] swapchain     Destination swapchain
  * \param[in]  pCreateInfo    Conversion request whose backend hint selects the implementation
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void CreateConvertSwapchain(Gfx_Swapchain_t* swapchain, const Gfx_Swapchain_CreateInfo_t* pCreateInfo);
 
@@ -304,7 +304,7 @@ static void CreateConvertSwapchain(Gfx_Swapchain_t* swapchain, const Gfx_Swapcha
  * \param[out] swapchain     Zero-initialized destination storage
  * \param[in]  pCreateInfo    Kind-specific creation request
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void CreateSwapchain(Gfx_Swapchain_t* swapchain, const Gfx_Swapchain_CreateInfo_t* pCreateInfo);
 
@@ -316,7 +316,7 @@ static void CreateSwapchain(Gfx_Swapchain_t* swapchain, const Gfx_Swapchain_Crea
  * \param[in]     timeout       Nanosecond Vulkan slot-completion timeout
  * \param[out]    ppImage       Receives the acquired backing image; timeout or invalid acquisition state is fatal
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void AcquireNextImage(Gfx_Swapchain_t* swapchain, uint64_t timeout, Gfx_Image_t** ppImage);
 
@@ -357,7 +357,7 @@ static void AcquireNextImage(Gfx_Swapchain_t* swapchain, uint64_t timeout, Gfx_I
  * \param[in]        externalSemaphore            Optional destination timeline semaphore
  * \param[in,out]    externalSemaphoreValue       Current destination timeline value, advanced for this submission
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void DispatchVulkanConvertImage(VkDevice         device,
                                        VkQueue          queue,
@@ -399,7 +399,7 @@ static void DispatchVulkanConvertImage(VkDevice         device,
  * \param[in,out] swapchain Swapchain containing the conversion route, conversion resources, and target surface
  * \param[in,out] image     Acquired backing image whose pending writes are consumed by this submission
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void SubmitVulkanConvertImage(Gfx_Swapchain_t* swapchain, Gfx_Image_t* image);
 
@@ -410,7 +410,7 @@ static void SubmitVulkanConvertImage(Gfx_Swapchain_t* swapchain, Gfx_Image_t* im
  * \param[in,out] swapchain    Conversion swapchain owning the acquired image
  * \param[in,out] image        Acquired image submitted for conversion
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void SubmitConvertImage(Gfx_Swapchain_t* swapchain, Gfx_Image_t* image);
 
@@ -421,7 +421,7 @@ static void SubmitConvertImage(Gfx_Swapchain_t* swapchain, Gfx_Image_t* image);
  * \param[in,out] swapchain    Owning swapchain whose slot becomes available after backend work
  * \param[in,out] image        Acquired member image; foreign or already released images are fatal
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void SubmitImage(Gfx_Swapchain_t* swapchain, Gfx_Image_t* image);
 

@@ -56,7 +56,7 @@ static const Utl_Arguments_Record_t c_records[] = {{c_program, sizeof(c_program)
  * \param[in] argument    Selected record ordinal
  * \param[in] capacity    Capacity to exercise
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckCapacity(const Utl_Arguments_t* arguments, uint32_t argument, uint32_t capacity);
 

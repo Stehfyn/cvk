@@ -35,7 +35,7 @@ typedef struct cvkJsonStructureReader
  * \brief Reserves bounded parse scratch from callbacks or the unused end of the caller's arena.
  * \param[out] pWork Receives the initialized work stack.
  * \param[in] pContext Document and caller-owned arena.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkInitializeJsonWork(cvkJsonWork* pWork, const cvkJsonContext* pContext);
 
@@ -45,14 +45,14 @@ void cvkInitializeJsonWork(cvkJsonWork* pWork, const cvkJsonContext* pContext);
  * \param[in] read Reader for the object's native structure type.
  * \param[in] pObject JSON object, or NULL for a zeroed structure.
  * \param[out] pOutput Native structure storage.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkAppendJsonWork(cvkJsonWork* pWork, PFN_cvkReadJsonObject read, const cvkJsonValue* pObject, void* pOutput);
 
 /**
  * \brief Drains pending objects iteratively and releases the reserved scratch.
  * \param[in,out] pWork Initialized work stack.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkRunJsonWork(cvkJsonWork* pWork);
 
@@ -69,7 +69,7 @@ void* cvkScheduleJsonStructureChain(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAabbPositions(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -77,7 +77,7 @@ void cvkReadJsonAabbPositions(cvkJsonWork* pWork, const cvkJsonValue* pObject, v
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureBuildGeometryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -85,7 +85,7 @@ void cvkReadJsonAccelerationStructureBuildGeometryInfo(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureBuildRangeInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -93,7 +93,7 @@ void cvkReadJsonAccelerationStructureBuildRangeInfo(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureBuildSizesInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -101,7 +101,7 @@ void cvkReadJsonAccelerationStructureBuildSizesInfo(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureCaptureDescriptorDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -109,7 +109,7 @@ void cvkReadJsonAccelerationStructureCaptureDescriptorDataInfo(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureCreateInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -117,7 +117,7 @@ void cvkReadJsonAccelerationStructureCreateInfo2(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -125,7 +125,7 @@ void cvkReadJsonAccelerationStructureCreateInfo(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -133,7 +133,7 @@ void cvkReadJsonAccelerationStructureCreateInfoNV(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureDenseGeometryFormatTrianglesDataAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -141,7 +141,7 @@ void cvkReadJsonAccelerationStructureDenseGeometryFormatTrianglesDataAMDX(cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureDeviceAddressInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -149,7 +149,7 @@ void cvkReadJsonAccelerationStructureDeviceAddressInfo(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometryAabbsData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -157,7 +157,7 @@ void cvkReadJsonAccelerationStructureGeometryAabbsData(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometryData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -165,7 +165,7 @@ void cvkReadJsonAccelerationStructureGeometryData(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometryInstancesData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -173,7 +173,7 @@ void cvkReadJsonAccelerationStructureGeometryInstancesData(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometry(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -181,7 +181,7 @@ void cvkReadJsonAccelerationStructureGeometry(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometryLinearSweptSpheresDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -189,7 +189,7 @@ void cvkReadJsonAccelerationStructureGeometryLinearSweptSpheresDataNV(cvkJsonWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometryMicromapData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -197,7 +197,7 @@ void cvkReadJsonAccelerationStructureGeometryMicromapData(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometryMotionTrianglesDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -205,7 +205,7 @@ void cvkReadJsonAccelerationStructureGeometryMotionTrianglesDataNV(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometrySpheresDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -213,7 +213,7 @@ void cvkReadJsonAccelerationStructureGeometrySpheresDataNV(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometryTrianglesData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -221,7 +221,7 @@ void cvkReadJsonAccelerationStructureGeometryTrianglesData(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -229,7 +229,7 @@ void cvkReadJsonAccelerationStructureInfoNV(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureInstance(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -237,7 +237,7 @@ void cvkReadJsonAccelerationStructureInstance(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureMatrixMotionInstanceNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -245,7 +245,7 @@ void cvkReadJsonAccelerationStructureMatrixMotionInstanceNV(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureMemoryRequirementsInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -253,7 +253,7 @@ void cvkReadJsonAccelerationStructureMemoryRequirementsInfoNV(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureMotionInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -261,7 +261,7 @@ void cvkReadJsonAccelerationStructureMotionInfoNV(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureMotionInstanceDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -269,7 +269,7 @@ void cvkReadJsonAccelerationStructureMotionInstanceDataNV(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureMotionInstanceNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -277,7 +277,7 @@ void cvkReadJsonAccelerationStructureMotionInstanceNV(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureSRTMotionInstanceNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -285,7 +285,7 @@ void cvkReadJsonAccelerationStructureSRTMotionInstanceNV(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureTrianglesDisplacementMicromapNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -293,7 +293,7 @@ void cvkReadJsonAccelerationStructureTrianglesDisplacementMicromapNV(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureTrianglesOpacityMicromapEXT(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -301,7 +301,7 @@ void cvkReadJsonAccelerationStructureTrianglesOpacityMicromapEXT(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureTrianglesOpacityMicromap(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -309,7 +309,7 @@ void cvkReadJsonAccelerationStructureTrianglesOpacityMicromap(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureVersionInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -317,7 +317,7 @@ void cvkReadJsonAccelerationStructureVersionInfo(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAcquireNextImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -325,7 +325,7 @@ void cvkReadJsonAcquireNextImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAcquireProfilingLockInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -333,7 +333,7 @@ void cvkReadJsonAcquireProfilingLockInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAllocationCallbacks(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -341,7 +341,7 @@ void cvkReadJsonAllocationCallbacks(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAmigoProfilingSubmitInfoSEC(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -349,7 +349,7 @@ void cvkReadJsonAmigoProfilingSubmitInfoSEC(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAndroidHardwareBufferFormatProperties2ANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -357,7 +357,7 @@ void cvkReadJsonAndroidHardwareBufferFormatProperties2ANDROID(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAndroidHardwareBufferFormatPropertiesANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -365,7 +365,7 @@ void cvkReadJsonAndroidHardwareBufferFormatPropertiesANDROID(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAndroidHardwareBufferFormatResolvePropertiesANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -373,7 +373,7 @@ void cvkReadJsonAndroidHardwareBufferFormatResolvePropertiesANDROID(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAndroidHardwareBufferPropertiesANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -381,7 +381,7 @@ void cvkReadJsonAndroidHardwareBufferPropertiesANDROID(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAndroidHardwareBufferUsageANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -389,7 +389,7 @@ void cvkReadJsonAndroidHardwareBufferUsageANDROID(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAndroidSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -397,7 +397,7 @@ void cvkReadJsonAndroidSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAntiLagDataAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -405,7 +405,7 @@ void cvkReadJsonAntiLagDataAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAntiLagPresentationInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -413,7 +413,7 @@ void cvkReadJsonAntiLagPresentationInfoAMD(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonApplicationInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -421,7 +421,7 @@ void cvkReadJsonApplicationInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentDescription(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -429,7 +429,7 @@ void cvkReadJsonAttachmentDescription(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentDescription2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -437,7 +437,7 @@ void cvkReadJsonAttachmentDescription2(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentDescriptionStencilLayout(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -445,7 +445,7 @@ void cvkReadJsonAttachmentDescriptionStencilLayout(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentFeedbackLoopInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -453,7 +453,7 @@ void cvkReadJsonAttachmentFeedbackLoopInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentReference(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -461,7 +461,7 @@ void cvkReadJsonAttachmentReference(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentReference2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -469,7 +469,7 @@ void cvkReadJsonAttachmentReference2(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentReferenceStencilLayout(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -477,7 +477,7 @@ void cvkReadJsonAttachmentReferenceStencilLayout(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentSampleCountInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -485,7 +485,7 @@ void cvkReadJsonAttachmentSampleCountInfoAMD(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentSampleLocations(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -493,7 +493,7 @@ void cvkReadJsonAttachmentSampleLocations(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBeginCustomResolveInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -501,7 +501,7 @@ void cvkReadJsonBeginCustomResolveInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindAccelerationStructureMemoryInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -509,7 +509,7 @@ void cvkReadJsonBindAccelerationStructureMemoryInfoNV(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindBufferMemoryDeviceGroupInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -517,7 +517,7 @@ void cvkReadJsonBindBufferMemoryDeviceGroupInfo(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindBufferMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -525,7 +525,7 @@ void cvkReadJsonBindBufferMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindDataGraphPipelineSessionMemoryInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -533,7 +533,7 @@ void cvkReadJsonBindDataGraphPipelineSessionMemoryInfoARM(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindDescriptorBufferEmbeddedSamplersInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -541,7 +541,7 @@ void cvkReadJsonBindDescriptorBufferEmbeddedSamplersInfo(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindDescriptorSetsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -549,7 +549,7 @@ void cvkReadJsonBindDescriptorSetsInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindHeapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -557,7 +557,7 @@ void cvkReadJsonBindHeapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, vo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindImageMemoryDeviceGroupInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -565,7 +565,7 @@ void cvkReadJsonBindImageMemoryDeviceGroupInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindImageMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -573,7 +573,7 @@ void cvkReadJsonBindImageMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindImageMemorySwapchainInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -581,7 +581,7 @@ void cvkReadJsonBindImageMemorySwapchainInfo(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindImagePlaneMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -589,7 +589,7 @@ void cvkReadJsonBindImagePlaneMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindIndexBuffer3Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -597,7 +597,7 @@ void cvkReadJsonBindIndexBuffer3Info(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindIndexBufferIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -605,7 +605,7 @@ void cvkReadJsonBindIndexBufferIndirectCommand(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindIndexBufferIndirectCommandNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -613,7 +613,7 @@ void cvkReadJsonBindIndexBufferIndirectCommandNV(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindMemoryStatus(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -621,7 +621,7 @@ void cvkReadJsonBindMemoryStatus(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindPipelineIndirectCommandNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -629,7 +629,7 @@ void cvkReadJsonBindPipelineIndirectCommandNV(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindShaderGroupIndirectCommandNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -637,7 +637,7 @@ void cvkReadJsonBindShaderGroupIndirectCommandNV(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindSparseInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -645,7 +645,7 @@ void cvkReadJsonBindSparseInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindTensorMemoryInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -653,7 +653,7 @@ void cvkReadJsonBindTensorMemoryInfoARM(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindTransformFeedbackBuffer2Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -661,7 +661,7 @@ void cvkReadJsonBindTransformFeedbackBuffer2Info(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindVertexBuffer3Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -669,7 +669,7 @@ void cvkReadJsonBindVertexBuffer3Info(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindVertexBufferIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -677,7 +677,7 @@ void cvkReadJsonBindVertexBufferIndirectCommand(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindVertexBufferIndirectCommandNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -685,7 +685,7 @@ void cvkReadJsonBindVertexBufferIndirectCommandNV(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBindVideoSessionMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -693,7 +693,7 @@ void cvkReadJsonBindVideoSessionMemoryInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBlitImageCubicWeightsInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -701,7 +701,7 @@ void cvkReadJsonBlitImageCubicWeightsInfoQCOM(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBlitImageInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -709,7 +709,7 @@ void cvkReadJsonBlitImageInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferCaptureDescriptorDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -717,7 +717,7 @@ void cvkReadJsonBufferCaptureDescriptorDataInfo(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferCollectionBufferCreateInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -725,7 +725,7 @@ void cvkReadJsonBufferCollectionBufferCreateInfoFUCHSIA(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferCollectionConstraintsInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -733,7 +733,7 @@ void cvkReadJsonBufferCollectionConstraintsInfoFUCHSIA(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferCollectionCreateInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -741,7 +741,7 @@ void cvkReadJsonBufferCollectionCreateInfoFUCHSIA(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferCollectionImageCreateInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -749,7 +749,7 @@ void cvkReadJsonBufferCollectionImageCreateInfoFUCHSIA(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferCollectionPropertiesFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -757,7 +757,7 @@ void cvkReadJsonBufferCollectionPropertiesFUCHSIA(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferConstraintsInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -765,7 +765,7 @@ void cvkReadJsonBufferConstraintsInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -773,7 +773,7 @@ void cvkReadJsonBufferCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferCopy2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -781,7 +781,7 @@ void cvkReadJsonBufferCopy2(cvkJsonWork* pWork, const cvkJsonValue* pObject, voi
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -789,7 +789,7 @@ void cvkReadJsonBufferCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferDeviceAddressAlignmentAllocateInfoVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -797,7 +797,7 @@ void cvkReadJsonBufferDeviceAddressAlignmentAllocateInfoVALVE(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferDeviceAddressCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -805,7 +805,7 @@ void cvkReadJsonBufferDeviceAddressCreateInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferDeviceAddressInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -813,7 +813,7 @@ void cvkReadJsonBufferDeviceAddressInfo(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferImageCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -821,7 +821,7 @@ void cvkReadJsonBufferImageCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferImageCopy2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -829,7 +829,7 @@ void cvkReadJsonBufferImageCopy2(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferMemoryBarrier(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -837,7 +837,7 @@ void cvkReadJsonBufferMemoryBarrier(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferMemoryBarrier2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -845,7 +845,7 @@ void cvkReadJsonBufferMemoryBarrier2(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferMemoryRequirementsInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -853,7 +853,7 @@ void cvkReadJsonBufferMemoryRequirementsInfo2(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferOpaqueCaptureAddressCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -861,7 +861,7 @@ void cvkReadJsonBufferOpaqueCaptureAddressCreateInfo(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferUsageFlags2CreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -869,7 +869,7 @@ void cvkReadJsonBufferUsageFlags2CreateInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBufferViewCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -877,7 +877,7 @@ void cvkReadJsonBufferViewCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBuildPartitionedAccelerationStructureIndirectCommandNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -885,7 +885,7 @@ void cvkReadJsonBuildPartitionedAccelerationStructureIndirectCommandNV(cvkJsonWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonBuildPartitionedAccelerationStructureInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -893,7 +893,7 @@ void cvkReadJsonBuildPartitionedAccelerationStructureInfoNV(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCalibratedTimestampInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -901,7 +901,7 @@ void cvkReadJsonCalibratedTimestampInfo(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCheckpointData2NV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -909,7 +909,7 @@ void cvkReadJsonCheckpointData2NV(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCheckpointDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -917,7 +917,7 @@ void cvkReadJsonCheckpointDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClearAttachment(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -925,7 +925,7 @@ void cvkReadJsonClearAttachment(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClearColorValue(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -933,7 +933,7 @@ void cvkReadJsonClearColorValue(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClearDepthStencilValue(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -941,7 +941,7 @@ void cvkReadJsonClearDepthStencilValue(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClearRect(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -949,7 +949,7 @@ void cvkReadJsonClearRect(cvkJsonWork* pWork, const cvkJsonValue* pObject, void*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClearValue(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -957,7 +957,7 @@ void cvkReadJsonClearValue(cvkJsonWork* pWork, const cvkJsonValue* pObject, void
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureBuildClustersBottomLevelInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -965,7 +965,7 @@ void cvkReadJsonClusterAccelerationStructureBuildClustersBottomLevelInfoNV(cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureBuildTriangleClusterInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -973,7 +973,7 @@ void cvkReadJsonClusterAccelerationStructureBuildTriangleClusterInfoNV(cvkJsonWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureBuildTriangleClusterTemplateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -981,7 +981,7 @@ void cvkReadJsonClusterAccelerationStructureBuildTriangleClusterTemplateInfoNV(c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureClustersBottomLevelInputNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -989,7 +989,7 @@ void cvkReadJsonClusterAccelerationStructureClustersBottomLevelInputNV(cvkJsonWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureCommandsInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -997,7 +997,7 @@ void cvkReadJsonClusterAccelerationStructureCommandsInfoNV(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureGeometryIndexAndGeometryFlagsNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1005,7 +1005,7 @@ void cvkReadJsonClusterAccelerationStructureGeometryIndexAndGeometryFlagsNV(cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureGetTemplateIndicesInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1013,7 +1013,7 @@ void cvkReadJsonClusterAccelerationStructureGetTemplateIndicesInfoNV(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureInputInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1021,7 +1021,7 @@ void cvkReadJsonClusterAccelerationStructureInputInfoNV(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureInstantiateClusterInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1029,7 +1029,7 @@ void cvkReadJsonClusterAccelerationStructureInstantiateClusterInfoNV(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureMoveObjectsInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1037,7 +1037,7 @@ void cvkReadJsonClusterAccelerationStructureMoveObjectsInfoNV(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureMoveObjectsInputNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1045,7 +1045,7 @@ void cvkReadJsonClusterAccelerationStructureMoveObjectsInputNV(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureOpInputNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1053,7 +1053,7 @@ void cvkReadJsonClusterAccelerationStructureOpInputNV(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureTriangleClusterInputNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1061,7 +1061,7 @@ void cvkReadJsonClusterAccelerationStructureTriangleClusterInputNV(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCoarseSampleLocationNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1069,7 +1069,7 @@ void cvkReadJsonCoarseSampleLocationNV(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCoarseSampleOrderCustomNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1077,7 +1077,7 @@ void cvkReadJsonCoarseSampleOrderCustomNV(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonColorBlendAdvanced(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1085,7 +1085,7 @@ void cvkReadJsonColorBlendAdvanced(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonColorBlendEquation(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1093,7 +1093,7 @@ void cvkReadJsonColorBlendEquation(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1101,7 +1101,7 @@ void cvkReadJsonCommandBufferAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1109,7 +1109,7 @@ void cvkReadJsonCommandBufferBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferInheritanceConditionalRenderingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1117,7 +1117,7 @@ void cvkReadJsonCommandBufferInheritanceConditionalRenderingInfo(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferInheritanceDescriptorHeapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1125,7 +1125,7 @@ void cvkReadJsonCommandBufferInheritanceDescriptorHeapInfo(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferInheritanceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1133,7 +1133,7 @@ void cvkReadJsonCommandBufferInheritanceInfo(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferInheritanceRenderPassTransformInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1141,7 +1141,7 @@ void cvkReadJsonCommandBufferInheritanceRenderPassTransformInfoQCOM(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferInheritanceRenderingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1149,7 +1149,7 @@ void cvkReadJsonCommandBufferInheritanceRenderingInfo(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferInheritanceViewportScissorInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1157,7 +1157,7 @@ void cvkReadJsonCommandBufferInheritanceViewportScissorInfoNV(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1165,7 +1165,7 @@ void cvkReadJsonCommandBufferSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCommandPoolCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1173,7 +1173,7 @@ void cvkReadJsonCommandPoolCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonComponentMapping(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1181,7 +1181,7 @@ void cvkReadJsonComponentMapping(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonComputeOccupancyPriorityParametersNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1189,7 +1189,7 @@ void cvkReadJsonComputeOccupancyPriorityParametersNV(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonComputePipelineCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1197,7 +1197,7 @@ void cvkReadJsonComputePipelineCreateInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonComputePipelineIndirectBufferInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1205,7 +1205,7 @@ void cvkReadJsonComputePipelineIndirectBufferInfoNV(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonConditionalRenderingBeginInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1213,7 +1213,7 @@ void cvkReadJsonConditionalRenderingBeginInfo2(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonConditionalRenderingBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1221,7 +1221,7 @@ void cvkReadJsonConditionalRenderingBeginInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonConformanceVersion(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1229,7 +1229,7 @@ void cvkReadJsonConformanceVersion(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonConvertCooperativeVectorMatrixInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1237,7 +1237,7 @@ void cvkReadJsonConvertCooperativeVectorMatrixInfoNV(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCooperativeMatrixFlexibleDimensionsPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1245,7 +1245,7 @@ void cvkReadJsonCooperativeMatrixFlexibleDimensionsPropertiesNV(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCooperativeMatrixProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1253,7 +1253,7 @@ void cvkReadJsonCooperativeMatrixProperties2(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCooperativeMatrixProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1261,7 +1261,7 @@ void cvkReadJsonCooperativeMatrixProperties(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCooperativeMatrixPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1269,7 +1269,7 @@ void cvkReadJsonCooperativeMatrixPropertiesNV(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCooperativeVectorPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1277,7 +1277,7 @@ void cvkReadJsonCooperativeVectorPropertiesNV(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyAccelerationStructureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1285,7 +1285,7 @@ void cvkReadJsonCopyAccelerationStructureInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyAccelerationStructureToMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1293,7 +1293,7 @@ void cvkReadJsonCopyAccelerationStructureToMemoryInfo(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyBufferInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1301,7 +1301,7 @@ void cvkReadJsonCopyBufferInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyBufferToImageInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1309,7 +1309,7 @@ void cvkReadJsonCopyBufferToImageInfo2(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyCommandTransformInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1317,7 +1317,7 @@ void cvkReadJsonCopyCommandTransformInfoQCOM(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyDescriptorSet(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1325,7 +1325,7 @@ void cvkReadJsonCopyDescriptorSet(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyDeviceMemoryImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1333,7 +1333,7 @@ void cvkReadJsonCopyDeviceMemoryImageInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyDeviceMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1341,7 +1341,7 @@ void cvkReadJsonCopyDeviceMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyImageInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1349,7 +1349,7 @@ void cvkReadJsonCopyImageInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyImageToBufferInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1357,7 +1357,7 @@ void cvkReadJsonCopyImageToBufferInfo2(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyImageToImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1365,7 +1365,7 @@ void cvkReadJsonCopyImageToImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyImageToMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1373,7 +1373,7 @@ void cvkReadJsonCopyImageToMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyMemoryIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1381,7 +1381,7 @@ void cvkReadJsonCopyMemoryIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyMemoryIndirectInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1389,7 +1389,7 @@ void cvkReadJsonCopyMemoryIndirectInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyMemoryToAccelerationStructureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1397,7 +1397,7 @@ void cvkReadJsonCopyMemoryToAccelerationStructureInfo(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyMemoryToImageIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1405,7 +1405,7 @@ void cvkReadJsonCopyMemoryToImageIndirectCommand(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyMemoryToImageIndirectInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1413,7 +1413,7 @@ void cvkReadJsonCopyMemoryToImageIndirectInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyMemoryToImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1421,7 +1421,7 @@ void cvkReadJsonCopyMemoryToImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyMemoryToMicromapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1429,7 +1429,7 @@ void cvkReadJsonCopyMemoryToMicromapInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyMicromapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1437,7 +1437,7 @@ void cvkReadJsonCopyMicromapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyMicromapToMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1445,7 +1445,7 @@ void cvkReadJsonCopyMicromapToMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCopyTensorInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1453,7 +1453,7 @@ void cvkReadJsonCopyTensorInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCuFunctionCreateInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1461,7 +1461,7 @@ void cvkReadJsonCuFunctionCreateInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCuLaunchInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1469,7 +1469,7 @@ void cvkReadJsonCuLaunchInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCuModuleCreateInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1477,7 +1477,7 @@ void cvkReadJsonCuModuleCreateInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCuModuleTexturingModeCreateInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1485,7 +1485,7 @@ void cvkReadJsonCuModuleTexturingModeCreateInfoNVX(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCudaFunctionCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1493,7 +1493,7 @@ void cvkReadJsonCudaFunctionCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCudaLaunchInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1501,7 +1501,7 @@ void cvkReadJsonCudaLaunchInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCudaModuleCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1509,7 +1509,7 @@ void cvkReadJsonCudaModuleCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonCustomResolveCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1517,7 +1517,7 @@ void cvkReadJsonCustomResolveCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonD3D12FenceSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1525,7 +1525,7 @@ void cvkReadJsonD3D12FenceSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphOpticalFlowImageFormatInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1533,7 +1533,7 @@ void cvkReadJsonDataGraphOpticalFlowImageFormatInfoARM(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphOpticalFlowImageFormatPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1541,7 +1541,7 @@ void cvkReadJsonDataGraphOpticalFlowImageFormatPropertiesARM(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineBuiltinModelCreateInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1549,7 +1549,7 @@ void cvkReadJsonDataGraphPipelineBuiltinModelCreateInfoQCOM(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineCompilerControlCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1557,7 +1557,7 @@ void cvkReadJsonDataGraphPipelineCompilerControlCreateInfoARM(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineConstantARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1565,7 +1565,7 @@ void cvkReadJsonDataGraphPipelineConstantARM(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineConstantTensorSemiStructuredSparsityInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1573,7 +1573,7 @@ void cvkReadJsonDataGraphPipelineConstantTensorSemiStructuredSparsityInfoARM(cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1581,7 +1581,7 @@ void cvkReadJsonDataGraphPipelineCreateInfoARM(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineDispatchInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1589,7 +1589,7 @@ void cvkReadJsonDataGraphPipelineDispatchInfoARM(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineIdentifierCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1597,7 +1597,7 @@ void cvkReadJsonDataGraphPipelineIdentifierCreateInfoARM(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1605,7 +1605,7 @@ void cvkReadJsonDataGraphPipelineInfoARM(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineNeuralStatisticsCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1613,7 +1613,7 @@ void cvkReadJsonDataGraphPipelineNeuralStatisticsCreateInfoARM(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineOpticalFlowCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1621,7 +1621,7 @@ void cvkReadJsonDataGraphPipelineOpticalFlowCreateInfoARM(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineOpticalFlowDispatchInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1629,7 +1629,7 @@ void cvkReadJsonDataGraphPipelineOpticalFlowDispatchInfoARM(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelinePropertyQueryResultARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1637,7 +1637,7 @@ void cvkReadJsonDataGraphPipelinePropertyQueryResultARM(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineResourceInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1645,7 +1645,7 @@ void cvkReadJsonDataGraphPipelineResourceInfoARM(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineResourceInfoImageLayoutARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1653,7 +1653,7 @@ void cvkReadJsonDataGraphPipelineResourceInfoImageLayoutARM(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineSessionBindPointRequirementARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1661,7 +1661,7 @@ void cvkReadJsonDataGraphPipelineSessionBindPointRequirementARM(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineSessionBindPointRequirementsInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1669,7 +1669,7 @@ void cvkReadJsonDataGraphPipelineSessionBindPointRequirementsInfoARM(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineSessionCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1677,7 +1677,7 @@ void cvkReadJsonDataGraphPipelineSessionCreateInfoARM(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineSessionMemoryRequirementsInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1685,7 +1685,7 @@ void cvkReadJsonDataGraphPipelineSessionMemoryRequirementsInfoARM(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineSessionNeuralStatisticsCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1693,7 +1693,7 @@ void cvkReadJsonDataGraphPipelineSessionNeuralStatisticsCreateInfoARM(cvkJsonWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineShaderModuleCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1701,7 +1701,7 @@ void cvkReadJsonDataGraphPipelineShaderModuleCreateInfoARM(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineSingleNodeConnectionARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1709,7 +1709,7 @@ void cvkReadJsonDataGraphPipelineSingleNodeConnectionARM(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineSingleNodeCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1717,7 +1717,7 @@ void cvkReadJsonDataGraphPipelineSingleNodeCreateInfoARM(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphProcessingEngineCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1725,7 +1725,7 @@ void cvkReadJsonDataGraphProcessingEngineCreateInfoARM(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphTOSANameQualityARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1733,7 +1733,7 @@ void cvkReadJsonDataGraphTOSANameQualityARM(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDebugMarkerMarkerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1741,7 +1741,7 @@ void cvkReadJsonDebugMarkerMarkerInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDebugMarkerObjectNameInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1749,7 +1749,7 @@ void cvkReadJsonDebugMarkerObjectNameInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDebugMarkerObjectTagInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1757,7 +1757,7 @@ void cvkReadJsonDebugMarkerObjectTagInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDebugReportCallbackCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1765,7 +1765,7 @@ void cvkReadJsonDebugReportCallbackCreateInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDebugUtilsLabel(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1773,7 +1773,7 @@ void cvkReadJsonDebugUtilsLabel(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDebugUtilsMessengerCallbackData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1781,7 +1781,7 @@ void cvkReadJsonDebugUtilsMessengerCallbackData(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDebugUtilsMessengerCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1789,7 +1789,7 @@ void cvkReadJsonDebugUtilsMessengerCreateInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDebugUtilsObjectNameInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1797,7 +1797,7 @@ void cvkReadJsonDebugUtilsObjectNameInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDebugUtilsObjectTagInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1805,7 +1805,7 @@ void cvkReadJsonDebugUtilsObjectTagInfo(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDecompressMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1813,7 +1813,7 @@ void cvkReadJsonDecompressMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDecompressMemoryRegion(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1821,7 +1821,7 @@ void cvkReadJsonDecompressMemoryRegion(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDecompressMemoryRegionNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1829,7 +1829,7 @@ void cvkReadJsonDecompressMemoryRegionNV(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDedicatedAllocationBufferCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1837,7 +1837,7 @@ void cvkReadJsonDedicatedAllocationBufferCreateInfoNV(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDedicatedAllocationImageCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1845,7 +1845,7 @@ void cvkReadJsonDedicatedAllocationImageCreateInfoNV(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDedicatedAllocationMemoryAllocateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1853,7 +1853,7 @@ void cvkReadJsonDedicatedAllocationMemoryAllocateInfoNV(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDependencyInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1861,7 +1861,7 @@ void cvkReadJsonDependencyInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDepthBiasInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1869,7 +1869,7 @@ void cvkReadJsonDepthBiasInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, v
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDepthBiasRepresentationInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1877,7 +1877,7 @@ void cvkReadJsonDepthBiasRepresentationInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDepthClampRange(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1885,7 +1885,7 @@ void cvkReadJsonDepthClampRange(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorAddressInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1893,7 +1893,7 @@ void cvkReadJsonDescriptorAddressInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorBufferBindingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1901,7 +1901,7 @@ void cvkReadJsonDescriptorBufferBindingInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorBufferBindingPushDescriptorBufferHandle(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1909,7 +1909,7 @@ void cvkReadJsonDescriptorBufferBindingPushDescriptorBufferHandle(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1917,7 +1917,7 @@ void cvkReadJsonDescriptorBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1925,7 +1925,7 @@ void cvkReadJsonDescriptorData(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorGetInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1933,7 +1933,7 @@ void cvkReadJsonDescriptorGetInfo(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorGetTensorInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1941,7 +1941,7 @@ void cvkReadJsonDescriptorGetTensorInfoARM(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1949,7 +1949,7 @@ void cvkReadJsonDescriptorImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourceConstantOffset(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1957,7 +1957,7 @@ void cvkReadJsonDescriptorMappingSourceConstantOffset(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourceData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1965,7 +1965,7 @@ void cvkReadJsonDescriptorMappingSourceData(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourceHeapData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1973,7 +1973,7 @@ void cvkReadJsonDescriptorMappingSourceHeapData(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourceIndirectAddress(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1981,7 +1981,7 @@ void cvkReadJsonDescriptorMappingSourceIndirectAddress(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourceIndirectIndexArray(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1989,7 +1989,7 @@ void cvkReadJsonDescriptorMappingSourceIndirectIndexArray(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourceIndirectIndex(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -1997,7 +1997,7 @@ void cvkReadJsonDescriptorMappingSourceIndirectIndex(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourcePushIndex(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2005,7 +2005,7 @@ void cvkReadJsonDescriptorMappingSourcePushIndex(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourceShaderRecordIndex(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2013,7 +2013,7 @@ void cvkReadJsonDescriptorMappingSourceShaderRecordIndex(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorPoolCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2021,7 +2021,7 @@ void cvkReadJsonDescriptorPoolCreateInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorPoolInlineUniformBlockCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2029,7 +2029,7 @@ void cvkReadJsonDescriptorPoolInlineUniformBlockCreateInfo(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorPoolSize(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2037,7 +2037,7 @@ void cvkReadJsonDescriptorPoolSize(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2045,7 +2045,7 @@ void cvkReadJsonDescriptorSetAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetAndBindingMapping(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2053,7 +2053,7 @@ void cvkReadJsonDescriptorSetAndBindingMapping(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetBindingReferenceVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2061,7 +2061,7 @@ void cvkReadJsonDescriptorSetBindingReferenceVALVE(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetLayoutBinding(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2069,7 +2069,7 @@ void cvkReadJsonDescriptorSetLayoutBinding(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetLayoutBindingFlagsCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2077,7 +2077,7 @@ void cvkReadJsonDescriptorSetLayoutBindingFlagsCreateInfo(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetLayoutCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2085,7 +2085,7 @@ void cvkReadJsonDescriptorSetLayoutCreateInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetLayoutHostMappingInfoVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2093,7 +2093,7 @@ void cvkReadJsonDescriptorSetLayoutHostMappingInfoVALVE(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetLayoutSupport(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2101,7 +2101,7 @@ void cvkReadJsonDescriptorSetLayoutSupport(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetVariableDescriptorCountAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2109,7 +2109,7 @@ void cvkReadJsonDescriptorSetVariableDescriptorCountAllocateInfo(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetVariableDescriptorCountLayoutSupport(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2117,7 +2117,7 @@ void cvkReadJsonDescriptorSetVariableDescriptorCountLayoutSupport(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorUpdateTemplateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2125,7 +2125,7 @@ void cvkReadJsonDescriptorUpdateTemplateCreateInfo(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorUpdateTemplateEntry(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2133,7 +2133,7 @@ void cvkReadJsonDescriptorUpdateTemplateEntry(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceAddressBindingCallbackData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2141,7 +2141,7 @@ void cvkReadJsonDeviceAddressBindingCallbackData(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceAddressRange(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2149,7 +2149,7 @@ void cvkReadJsonDeviceAddressRange(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceBufferMemoryRequirements(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2157,7 +2157,7 @@ void cvkReadJsonDeviceBufferMemoryRequirements(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2165,7 +2165,7 @@ void cvkReadJsonDeviceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceDeviceMemoryReportCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2173,7 +2173,7 @@ void cvkReadJsonDeviceDeviceMemoryReportCreateInfo(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceDiagnosticsConfigCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2181,7 +2181,7 @@ void cvkReadJsonDeviceDiagnosticsConfigCreateInfoNV(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceEventInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2189,7 +2189,7 @@ void cvkReadJsonDeviceEventInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultAddressInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2197,7 +2197,7 @@ void cvkReadJsonDeviceFaultAddressInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultCounts(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2205,7 +2205,7 @@ void cvkReadJsonDeviceFaultCounts(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultDebugInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2213,7 +2213,7 @@ void cvkReadJsonDeviceFaultDebugInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultInfoEXT(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2221,7 +2221,7 @@ void cvkReadJsonDeviceFaultInfoEXT(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2229,7 +2229,7 @@ void cvkReadJsonDeviceFaultInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultShaderAbortMessageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2237,7 +2237,7 @@ void cvkReadJsonDeviceFaultShaderAbortMessageInfo(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultVendorBinaryHeaderVersionOne(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2245,7 +2245,7 @@ void cvkReadJsonDeviceFaultVendorBinaryHeaderVersionOne(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultVendorInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2253,7 +2253,7 @@ void cvkReadJsonDeviceFaultVendorInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupBindSparseInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2261,7 +2261,7 @@ void cvkReadJsonDeviceGroupBindSparseInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupCommandBufferBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2269,7 +2269,7 @@ void cvkReadJsonDeviceGroupCommandBufferBeginInfo(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupDeviceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2277,7 +2277,7 @@ void cvkReadJsonDeviceGroupDeviceCreateInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupPresentCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2285,7 +2285,7 @@ void cvkReadJsonDeviceGroupPresentCapabilities(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupPresentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2293,7 +2293,7 @@ void cvkReadJsonDeviceGroupPresentInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupRenderPassBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2301,7 +2301,7 @@ void cvkReadJsonDeviceGroupRenderPassBeginInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2309,7 +2309,7 @@ void cvkReadJsonDeviceGroupSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupSwapchainCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2317,7 +2317,7 @@ void cvkReadJsonDeviceGroupSwapchainCreateInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceImageMemoryRequirements(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2325,7 +2325,7 @@ void cvkReadJsonDeviceImageMemoryRequirements(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceImageSubresourceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2333,7 +2333,7 @@ void cvkReadJsonDeviceImageSubresourceInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceMemoryCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2341,7 +2341,7 @@ void cvkReadJsonDeviceMemoryCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceMemoryImageCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2349,7 +2349,7 @@ void cvkReadJsonDeviceMemoryImageCopy(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceMemoryOpaqueCaptureAddressInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2357,7 +2357,7 @@ void cvkReadJsonDeviceMemoryOpaqueCaptureAddressInfo(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceMemoryOverallocationCreateInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2365,7 +2365,7 @@ void cvkReadJsonDeviceMemoryOverallocationCreateInfoAMD(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceMemoryReportCallbackData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2373,7 +2373,7 @@ void cvkReadJsonDeviceMemoryReportCallbackData(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceOrHostAddressConstAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2381,7 +2381,7 @@ void cvkReadJsonDeviceOrHostAddressConstAMDX(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceOrHostAddressConst(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2389,7 +2389,7 @@ void cvkReadJsonDeviceOrHostAddressConst(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceOrHostAddress(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2397,7 +2397,7 @@ void cvkReadJsonDeviceOrHostAddress(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDevicePipelineBinaryInternalCacheControl(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2405,7 +2405,7 @@ void cvkReadJsonDevicePipelineBinaryInternalCacheControl(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDevicePrivateDataCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2413,7 +2413,7 @@ void cvkReadJsonDevicePrivateDataCreateInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceQueueCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2421,7 +2421,7 @@ void cvkReadJsonDeviceQueueCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceQueueGlobalPriorityCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2429,7 +2429,7 @@ void cvkReadJsonDeviceQueueGlobalPriorityCreateInfo(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceQueueInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2437,7 +2437,7 @@ void cvkReadJsonDeviceQueueInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceQueueShaderCoreControlCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2445,7 +2445,7 @@ void cvkReadJsonDeviceQueueShaderCoreControlCreateInfoARM(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDeviceTensorMemoryRequirementsARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2453,7 +2453,7 @@ void cvkReadJsonDeviceTensorMemoryRequirementsARM(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDirectDriverLoadingInfoLUNARG(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2461,7 +2461,7 @@ void cvkReadJsonDirectDriverLoadingInfoLUNARG(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDirectDriverLoadingListLUNARG(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2469,7 +2469,7 @@ void cvkReadJsonDirectDriverLoadingListLUNARG(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDirectFBSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2477,7 +2477,7 @@ void cvkReadJsonDirectFBSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDispatchGraphCountInfoAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2485,7 +2485,7 @@ void cvkReadJsonDispatchGraphCountInfoAMDX(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDispatchGraphInfoAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2493,7 +2493,7 @@ void cvkReadJsonDispatchGraphInfoAMDX(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDispatchIndirect2Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2501,7 +2501,7 @@ void cvkReadJsonDispatchIndirect2Info(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDispatchIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2509,7 +2509,7 @@ void cvkReadJsonDispatchIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDispatchParametersARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2517,7 +2517,7 @@ void cvkReadJsonDispatchParametersARM(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDispatchTileInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2525,7 +2525,7 @@ void cvkReadJsonDispatchTileInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayEventInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2533,7 +2533,7 @@ void cvkReadJsonDisplayEventInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayModeCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2541,7 +2541,7 @@ void cvkReadJsonDisplayModeCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayModeParameters(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2549,7 +2549,7 @@ void cvkReadJsonDisplayModeParameters(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayModeProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2557,7 +2557,7 @@ void cvkReadJsonDisplayModeProperties2(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayModeProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2565,7 +2565,7 @@ void cvkReadJsonDisplayModeProperties(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayModeStereoPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2573,7 +2573,7 @@ void cvkReadJsonDisplayModeStereoPropertiesNV(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayNativeHdrSurfaceCapabilitiesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2581,7 +2581,7 @@ void cvkReadJsonDisplayNativeHdrSurfaceCapabilitiesAMD(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayPlaneCapabilities2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2589,7 +2589,7 @@ void cvkReadJsonDisplayPlaneCapabilities2(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayPlaneCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2597,7 +2597,7 @@ void cvkReadJsonDisplayPlaneCapabilities(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayPlaneInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2605,7 +2605,7 @@ void cvkReadJsonDisplayPlaneInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayPlaneProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2613,7 +2613,7 @@ void cvkReadJsonDisplayPlaneProperties2(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayPlaneProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2621,7 +2621,7 @@ void cvkReadJsonDisplayPlaneProperties(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayPowerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2629,7 +2629,7 @@ void cvkReadJsonDisplayPowerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayPresentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2637,7 +2637,7 @@ void cvkReadJsonDisplayPresentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2645,7 +2645,7 @@ void cvkReadJsonDisplayProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplayProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2653,7 +2653,7 @@ void cvkReadJsonDisplayProperties(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplaySurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2661,7 +2661,7 @@ void cvkReadJsonDisplaySurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDisplaySurfaceStereoCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2669,7 +2669,7 @@ void cvkReadJsonDisplaySurfaceStereoCreateInfoNV(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDrawIndexedIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2677,7 +2677,7 @@ void cvkReadJsonDrawIndexedIndirectCommand(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDrawIndirect2Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2685,7 +2685,7 @@ void cvkReadJsonDrawIndirect2Info(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDrawIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2693,7 +2693,7 @@ void cvkReadJsonDrawIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDrawIndirectCount2Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2701,7 +2701,7 @@ void cvkReadJsonDrawIndirectCount2Info(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDrawIndirectCountIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2709,7 +2709,7 @@ void cvkReadJsonDrawIndirectCountIndirectCommand(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDrawMeshTasksIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2717,7 +2717,7 @@ void cvkReadJsonDrawMeshTasksIndirectCommand(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDrawMeshTasksIndirectCommandNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2725,7 +2725,7 @@ void cvkReadJsonDrawMeshTasksIndirectCommandNV(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDrmFormatModifierProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2733,7 +2733,7 @@ void cvkReadJsonDrmFormatModifierProperties2(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDrmFormatModifierProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2741,7 +2741,7 @@ void cvkReadJsonDrmFormatModifierProperties(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDrmFormatModifierPropertiesList2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2749,7 +2749,7 @@ void cvkReadJsonDrmFormatModifierPropertiesList2(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonDrmFormatModifierPropertiesList(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2757,7 +2757,7 @@ void cvkReadJsonDrmFormatModifierPropertiesList(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonEventCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2765,7 +2765,7 @@ void cvkReadJsonEventCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExecutionGraphPipelineCreateInfoAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2773,7 +2773,7 @@ void cvkReadJsonExecutionGraphPipelineCreateInfoAMDX(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExecutionGraphPipelineScratchSizeAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2781,7 +2781,7 @@ void cvkReadJsonExecutionGraphPipelineScratchSizeAMDX(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportFenceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2789,7 +2789,7 @@ void cvkReadJsonExportFenceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportFenceWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2797,7 +2797,7 @@ void cvkReadJsonExportFenceWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportMemoryAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2805,7 +2805,7 @@ void cvkReadJsonExportMemoryAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportMemoryAllocateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2813,7 +2813,7 @@ void cvkReadJsonExportMemoryAllocateInfoNV(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportMemoryWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2821,7 +2821,7 @@ void cvkReadJsonExportMemoryWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportMemoryWin32HandleInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2829,7 +2829,7 @@ void cvkReadJsonExportMemoryWin32HandleInfoNV(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2837,7 +2837,7 @@ void cvkReadJsonExportMetalBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalCommandQueueInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2845,7 +2845,7 @@ void cvkReadJsonExportMetalCommandQueueInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalDeviceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2853,7 +2853,7 @@ void cvkReadJsonExportMetalDeviceInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalIOSurfaceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2861,7 +2861,7 @@ void cvkReadJsonExportMetalIOSurfaceInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalObjectCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2869,7 +2869,7 @@ void cvkReadJsonExportMetalObjectCreateInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalObjectsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2877,7 +2877,7 @@ void cvkReadJsonExportMetalObjectsInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalSharedEventInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2885,7 +2885,7 @@ void cvkReadJsonExportMetalSharedEventInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalTextureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2893,7 +2893,7 @@ void cvkReadJsonExportMetalTextureInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportSemaphoreCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2901,7 +2901,7 @@ void cvkReadJsonExportSemaphoreCreateInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExportSemaphoreWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2909,7 +2909,7 @@ void cvkReadJsonExportSemaphoreWin32HandleInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExtensionProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2917,7 +2917,7 @@ void cvkReadJsonExtensionProperties(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExtent2D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2925,7 +2925,7 @@ void cvkReadJsonExtent2D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExtent3D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2933,7 +2933,7 @@ void cvkReadJsonExtent3D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalBufferProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2941,7 +2941,7 @@ void cvkReadJsonExternalBufferProperties(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalComputeQueueCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2949,7 +2949,7 @@ void cvkReadJsonExternalComputeQueueCreateInfoNV(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalComputeQueueDataParamsNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2957,7 +2957,7 @@ void cvkReadJsonExternalComputeQueueDataParamsNV(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalComputeQueueDeviceCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2965,7 +2965,7 @@ void cvkReadJsonExternalComputeQueueDeviceCreateInfoNV(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalFenceProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2973,7 +2973,7 @@ void cvkReadJsonExternalFenceProperties(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalFormatANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2981,7 +2981,7 @@ void cvkReadJsonExternalFormatANDROID(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalFormatOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2989,7 +2989,7 @@ void cvkReadJsonExternalFormatOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalFormatQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -2997,7 +2997,7 @@ void cvkReadJsonExternalFormatQNX(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalImageFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3005,7 +3005,7 @@ void cvkReadJsonExternalImageFormatProperties(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalImageFormatPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3013,7 +3013,7 @@ void cvkReadJsonExternalImageFormatPropertiesNV(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalMemoryAcquireUnmodified(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3021,7 +3021,7 @@ void cvkReadJsonExternalMemoryAcquireUnmodified(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalMemoryBufferCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3029,7 +3029,7 @@ void cvkReadJsonExternalMemoryBufferCreateInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalMemoryImageCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3037,7 +3037,7 @@ void cvkReadJsonExternalMemoryImageCreateInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalMemoryImageCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3045,7 +3045,7 @@ void cvkReadJsonExternalMemoryImageCreateInfoNV(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalMemoryProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3053,7 +3053,7 @@ void cvkReadJsonExternalMemoryProperties(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalMemoryTensorCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3061,7 +3061,7 @@ void cvkReadJsonExternalMemoryTensorCreateInfoARM(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalSemaphoreProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3069,7 +3069,7 @@ void cvkReadJsonExternalSemaphoreProperties(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonExternalTensorPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3077,7 +3077,7 @@ void cvkReadJsonExternalTensorPropertiesARM(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFenceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3085,7 +3085,7 @@ void cvkReadJsonFenceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFenceGetFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3093,7 +3093,7 @@ void cvkReadJsonFenceGetFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFenceGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3101,7 +3101,7 @@ void cvkReadJsonFenceGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFilterCubicImageViewImageFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3109,7 +3109,7 @@ void cvkReadJsonFilterCubicImageViewImageFormatProperties(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3117,7 +3117,7 @@ void cvkReadJsonFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFormatProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3125,7 +3125,7 @@ void cvkReadJsonFormatProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFormatProperties3(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3133,7 +3133,7 @@ void cvkReadJsonFormatProperties3(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFormatProperties4(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3141,7 +3141,7 @@ void cvkReadJsonFormatProperties4(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFragmentShadingRateAttachmentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3149,7 +3149,7 @@ void cvkReadJsonFragmentShadingRateAttachmentInfo(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFrameBoundary(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3157,7 +3157,7 @@ void cvkReadJsonFrameBoundary(cvkJsonWork* pWork, const cvkJsonValue* pObject, v
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFrameBoundaryTensorsARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3165,7 +3165,7 @@ void cvkReadJsonFrameBoundaryTensorsARM(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFramebufferAttachmentImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3173,7 +3173,7 @@ void cvkReadJsonFramebufferAttachmentImageInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFramebufferAttachmentsCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3181,7 +3181,7 @@ void cvkReadJsonFramebufferAttachmentsCreateInfo(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFramebufferCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3189,7 +3189,7 @@ void cvkReadJsonFramebufferCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonFramebufferMixedSamplesCombinationNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3197,7 +3197,7 @@ void cvkReadJsonFramebufferMixedSamplesCombinationNV(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGeneratedCommandsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3205,7 +3205,7 @@ void cvkReadJsonGeneratedCommandsInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGeneratedCommandsInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3213,7 +3213,7 @@ void cvkReadJsonGeneratedCommandsInfoNV(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGeneratedCommandsMemoryRequirementsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3221,7 +3221,7 @@ void cvkReadJsonGeneratedCommandsMemoryRequirementsInfo(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGeneratedCommandsMemoryRequirementsInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3229,7 +3229,7 @@ void cvkReadJsonGeneratedCommandsMemoryRequirementsInfoNV(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGeneratedCommandsPipelineInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3237,7 +3237,7 @@ void cvkReadJsonGeneratedCommandsPipelineInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGeneratedCommandsShaderInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3245,7 +3245,7 @@ void cvkReadJsonGeneratedCommandsShaderInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGeometryAABBNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3253,7 +3253,7 @@ void cvkReadJsonGeometryAABBNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGeometryDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3261,7 +3261,7 @@ void cvkReadJsonGeometryDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGeometryNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3269,7 +3269,7 @@ void cvkReadJsonGeometryNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGeometryTrianglesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3277,7 +3277,7 @@ void cvkReadJsonGeometryTrianglesNV(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGetLatencyMarkerInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3285,7 +3285,7 @@ void cvkReadJsonGetLatencyMarkerInfoNV(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGpaDeviceClockModeInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3293,7 +3293,7 @@ void cvkReadJsonGpaDeviceClockModeInfoAMD(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGpaDeviceGetClockInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3301,7 +3301,7 @@ void cvkReadJsonGpaDeviceGetClockInfoAMD(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGpaPerfBlockPropertiesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3309,7 +3309,7 @@ void cvkReadJsonGpaPerfBlockPropertiesAMD(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGpaPerfCounterAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3317,7 +3317,7 @@ void cvkReadJsonGpaPerfCounterAMD(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGpaSampleBeginInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3325,7 +3325,7 @@ void cvkReadJsonGpaSampleBeginInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGpaSessionCreateInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3333,7 +3333,7 @@ void cvkReadJsonGpaSessionCreateInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGraphicsPipelineCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3341,7 +3341,7 @@ void cvkReadJsonGraphicsPipelineCreateInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGraphicsPipelineLibraryCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3349,7 +3349,7 @@ void cvkReadJsonGraphicsPipelineLibraryCreateInfo(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGraphicsPipelineShaderGroupsCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3357,7 +3357,7 @@ void cvkReadJsonGraphicsPipelineShaderGroupsCreateInfoNV(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonGraphicsShaderGroupCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3365,7 +3365,7 @@ void cvkReadJsonGraphicsShaderGroupCreateInfoNV(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonHdrMetadata(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3373,7 +3373,7 @@ void cvkReadJsonHdrMetadata(cvkJsonWork* pWork, const cvkJsonValue* pObject, voi
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonHdrVividDynamicMetadataHUAWEI(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3381,7 +3381,7 @@ void cvkReadJsonHdrVividDynamicMetadataHUAWEI(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonHeadlessSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3389,7 +3389,7 @@ void cvkReadJsonHeadlessSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonHostAddressRangeConst(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3397,7 +3397,7 @@ void cvkReadJsonHostAddressRangeConst(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonHostAddressRange(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3405,7 +3405,7 @@ void cvkReadJsonHostAddressRange(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonHostImageCopyDevicePerformanceQuery(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3413,7 +3413,7 @@ void cvkReadJsonHostImageCopyDevicePerformanceQuery(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonHostImageLayoutTransitionInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3421,7 +3421,7 @@ void cvkReadJsonHostImageLayoutTransitionInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIOSSurfaceCreateInfoMVK(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3429,7 +3429,7 @@ void cvkReadJsonIOSSurfaceCreateInfoMVK(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageAlignmentControlCreateInfoMESA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3437,7 +3437,7 @@ void cvkReadJsonImageAlignmentControlCreateInfoMESA(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageBlit(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3445,7 +3445,7 @@ void cvkReadJsonImageBlit(cvkJsonWork* pWork, const cvkJsonValue* pObject, void*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageBlit2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3453,7 +3453,7 @@ void cvkReadJsonImageBlit2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageCaptureDescriptorDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3461,7 +3461,7 @@ void cvkReadJsonImageCaptureDescriptorDataInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageCompressionControl(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3469,7 +3469,7 @@ void cvkReadJsonImageCompressionControl(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageCompressionProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3477,7 +3477,7 @@ void cvkReadJsonImageCompressionProperties(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageConstraintsInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3485,7 +3485,7 @@ void cvkReadJsonImageConstraintsInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3493,7 +3493,7 @@ void cvkReadJsonImageCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageCopy2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3501,7 +3501,7 @@ void cvkReadJsonImageCopy2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageCreateFlags2CreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3509,7 +3509,7 @@ void cvkReadJsonImageCreateFlags2CreateInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3517,7 +3517,7 @@ void cvkReadJsonImageCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageDescriptorInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3525,7 +3525,7 @@ void cvkReadJsonImageDescriptorInfo(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageDrmFormatModifierExplicitCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3533,7 +3533,7 @@ void cvkReadJsonImageDrmFormatModifierExplicitCreateInfo(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageDrmFormatModifierListCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3541,7 +3541,7 @@ void cvkReadJsonImageDrmFormatModifierListCreateInfo(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageDrmFormatModifierProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3549,7 +3549,7 @@ void cvkReadJsonImageDrmFormatModifierProperties(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageFormatConstraintsInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3557,7 +3557,7 @@ void cvkReadJsonImageFormatConstraintsInfoFUCHSIA(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageFormatListCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3565,7 +3565,7 @@ void cvkReadJsonImageFormatListCreateInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3573,7 +3573,7 @@ void cvkReadJsonImageFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageFormatProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3581,7 +3581,7 @@ void cvkReadJsonImageFormatProperties2(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageMemoryBarrier(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3589,7 +3589,7 @@ void cvkReadJsonImageMemoryBarrier(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageMemoryBarrier2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3597,7 +3597,7 @@ void cvkReadJsonImageMemoryBarrier2(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageMemoryRequirementsInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3605,7 +3605,7 @@ void cvkReadJsonImageMemoryRequirementsInfo2(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImagePipeSurfaceCreateInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3613,7 +3613,7 @@ void cvkReadJsonImagePipeSurfaceCreateInfoFUCHSIA(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImagePlaneMemoryRequirementsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3621,7 +3621,7 @@ void cvkReadJsonImagePlaneMemoryRequirementsInfo(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageResolve(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3629,7 +3629,7 @@ void cvkReadJsonImageResolve(cvkJsonWork* pWork, const cvkJsonValue* pObject, vo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageResolve2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3637,7 +3637,7 @@ void cvkReadJsonImageResolve2(cvkJsonWork* pWork, const cvkJsonValue* pObject, v
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageSparseMemoryRequirementsInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3645,7 +3645,7 @@ void cvkReadJsonImageSparseMemoryRequirementsInfo2(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageStencilUsage2CreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3653,7 +3653,7 @@ void cvkReadJsonImageStencilUsage2CreateInfo(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageStencilUsageCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3661,7 +3661,7 @@ void cvkReadJsonImageStencilUsageCreateInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageSubresource(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3669,7 +3669,7 @@ void cvkReadJsonImageSubresource(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageSubresource2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3677,7 +3677,7 @@ void cvkReadJsonImageSubresource2(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageSubresourceLayers(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3685,7 +3685,7 @@ void cvkReadJsonImageSubresourceLayers(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageSubresourceRange(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3693,7 +3693,7 @@ void cvkReadJsonImageSubresourceRange(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageSwapchainCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3701,7 +3701,7 @@ void cvkReadJsonImageSwapchainCreateInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageTilingControlCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3709,7 +3709,7 @@ void cvkReadJsonImageTilingControlCreateInfo(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageToMemoryCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3717,7 +3717,7 @@ void cvkReadJsonImageToMemoryCopy(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageUsageFlags2CreateInfoKHR(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3725,7 +3725,7 @@ void cvkReadJsonImageUsageFlags2CreateInfoKHR(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageViewASTCDecodeMode(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3733,7 +3733,7 @@ void cvkReadJsonImageViewASTCDecodeMode(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageViewAddressPropertiesNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3741,7 +3741,7 @@ void cvkReadJsonImageViewAddressPropertiesNVX(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageViewCaptureDescriptorDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3749,7 +3749,7 @@ void cvkReadJsonImageViewCaptureDescriptorDataInfo(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageViewCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3757,7 +3757,7 @@ void cvkReadJsonImageViewCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageViewHandleInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3765,7 +3765,7 @@ void cvkReadJsonImageViewHandleInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageViewMinLodCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3773,7 +3773,7 @@ void cvkReadJsonImageViewMinLodCreateInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageViewSampleWeightCreateInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3781,7 +3781,7 @@ void cvkReadJsonImageViewSampleWeightCreateInfoQCOM(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageViewSlicedCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3789,7 +3789,7 @@ void cvkReadJsonImageViewSlicedCreateInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageViewUsage2CreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3797,7 +3797,7 @@ void cvkReadJsonImageViewUsage2CreateInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImageViewUsageCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3805,7 +3805,7 @@ void cvkReadJsonImageViewUsageCreateInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportAndroidHardwareBufferInfoANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3813,7 +3813,7 @@ void cvkReadJsonImportAndroidHardwareBufferInfoANDROID(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportFenceFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3821,7 +3821,7 @@ void cvkReadJsonImportFenceFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportFenceWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3829,7 +3829,7 @@ void cvkReadJsonImportFenceWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportMemoryBufferCollectionFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3837,7 +3837,7 @@ void cvkReadJsonImportMemoryBufferCollectionFUCHSIA(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportMemoryFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3845,7 +3845,7 @@ void cvkReadJsonImportMemoryFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportMemoryHostPointerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3853,7 +3853,7 @@ void cvkReadJsonImportMemoryHostPointerInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportMemoryMetalHandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3861,7 +3861,7 @@ void cvkReadJsonImportMemoryMetalHandleInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportMemoryWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3869,7 +3869,7 @@ void cvkReadJsonImportMemoryWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportMemoryWin32HandleInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3877,7 +3877,7 @@ void cvkReadJsonImportMemoryWin32HandleInfoNV(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportMemoryZirconHandleInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3885,7 +3885,7 @@ void cvkReadJsonImportMemoryZirconHandleInfoFUCHSIA(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportMetalBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3893,7 +3893,7 @@ void cvkReadJsonImportMetalBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportMetalIOSurfaceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3901,7 +3901,7 @@ void cvkReadJsonImportMetalIOSurfaceInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportMetalSharedEventInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3909,7 +3909,7 @@ void cvkReadJsonImportMetalSharedEventInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportMetalTextureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3917,7 +3917,7 @@ void cvkReadJsonImportMetalTextureInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportNativeBufferInfoOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3925,7 +3925,7 @@ void cvkReadJsonImportNativeBufferInfoOHOS(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportScreenBufferInfoQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3933,7 +3933,7 @@ void cvkReadJsonImportScreenBufferInfoQNX(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportSemaphoreFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3941,7 +3941,7 @@ void cvkReadJsonImportSemaphoreFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportSemaphoreWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3949,7 +3949,7 @@ void cvkReadJsonImportSemaphoreWin32HandleInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonImportSemaphoreZirconHandleInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3957,7 +3957,7 @@ void cvkReadJsonImportSemaphoreZirconHandleInfoFUCHSIA(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsExecutionSetToken(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3965,7 +3965,7 @@ void cvkReadJsonIndirectCommandsExecutionSetToken(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsIndexBufferToken(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3973,7 +3973,7 @@ void cvkReadJsonIndirectCommandsIndexBufferToken(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsLayoutCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3981,7 +3981,7 @@ void cvkReadJsonIndirectCommandsLayoutCreateInfo(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsLayoutCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3989,7 +3989,7 @@ void cvkReadJsonIndirectCommandsLayoutCreateInfoNV(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsLayoutPushDataTokenNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -3997,7 +3997,7 @@ void cvkReadJsonIndirectCommandsLayoutPushDataTokenNV(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsLayoutToken(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4005,7 +4005,7 @@ void cvkReadJsonIndirectCommandsLayoutToken(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsLayoutTokenNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4013,7 +4013,7 @@ void cvkReadJsonIndirectCommandsLayoutTokenNV(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsPushConstantToken(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4021,7 +4021,7 @@ void cvkReadJsonIndirectCommandsPushConstantToken(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsStreamNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4029,7 +4029,7 @@ void cvkReadJsonIndirectCommandsStreamNV(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsTokenData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4037,7 +4037,7 @@ void cvkReadJsonIndirectCommandsTokenData(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsVertexBufferToken(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4045,7 +4045,7 @@ void cvkReadJsonIndirectCommandsVertexBufferToken(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectExecutionSetCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4053,7 +4053,7 @@ void cvkReadJsonIndirectExecutionSetCreateInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectExecutionSetInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4061,7 +4061,7 @@ void cvkReadJsonIndirectExecutionSetInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectExecutionSetPipelineInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4069,7 +4069,7 @@ void cvkReadJsonIndirectExecutionSetPipelineInfo(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectExecutionSetShaderInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4077,7 +4077,7 @@ void cvkReadJsonIndirectExecutionSetShaderInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonIndirectExecutionSetShaderLayoutInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4085,7 +4085,7 @@ void cvkReadJsonIndirectExecutionSetShaderLayoutInfo(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonInitializePerformanceApiInfoINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4093,7 +4093,7 @@ void cvkReadJsonInitializePerformanceApiInfoINTEL(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonInputAttachmentAspectReference(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4101,7 +4101,7 @@ void cvkReadJsonInputAttachmentAspectReference(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonInstanceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4109,7 +4109,7 @@ void cvkReadJsonInstanceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonLatencySleepInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4117,7 +4117,7 @@ void cvkReadJsonLatencySleepInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonLatencySleepModeInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4125,7 +4125,7 @@ void cvkReadJsonLatencySleepModeInfoNV(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonLatencySubmissionPresentIdNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4133,7 +4133,7 @@ void cvkReadJsonLatencySubmissionPresentIdNV(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonLatencySurfaceCapabilitiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4141,7 +4141,7 @@ void cvkReadJsonLatencySurfaceCapabilitiesNV(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonLatencyTimingsFrameReportNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4149,7 +4149,7 @@ void cvkReadJsonLatencyTimingsFrameReportNV(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonLayerProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4157,7 +4157,7 @@ void cvkReadJsonLayerProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonLayerSetting(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4165,7 +4165,7 @@ void cvkReadJsonLayerSetting(cvkJsonWork* pWork, const cvkJsonValue* pObject, vo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonLayerSettingsCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4173,7 +4173,7 @@ void cvkReadJsonLayerSettingsCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMacOSSurfaceCreateInfoMVK(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4181,7 +4181,7 @@ void cvkReadJsonMacOSSurfaceCreateInfoMVK(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMappedMemoryRange(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4189,7 +4189,7 @@ void cvkReadJsonMappedMemoryRange(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryAllocateFlagsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4197,7 +4197,7 @@ void cvkReadJsonMemoryAllocateFlagsInfo(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4205,7 +4205,7 @@ void cvkReadJsonMemoryAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryBarrier(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4213,7 +4213,7 @@ void cvkReadJsonMemoryBarrier(cvkJsonWork* pWork, const cvkJsonValue* pObject, v
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryBarrier2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4221,7 +4221,7 @@ void cvkReadJsonMemoryBarrier2(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryBarrierAccessFlags3(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4229,7 +4229,7 @@ void cvkReadJsonMemoryBarrierAccessFlags3(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryDedicatedAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4237,7 +4237,7 @@ void cvkReadJsonMemoryDedicatedAllocateInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryDedicatedAllocateInfoTensorARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4245,7 +4245,7 @@ void cvkReadJsonMemoryDedicatedAllocateInfoTensorARM(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryDedicatedRequirements(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4253,7 +4253,7 @@ void cvkReadJsonMemoryDedicatedRequirements(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryFdProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4261,7 +4261,7 @@ void cvkReadJsonMemoryFdProperties(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryGetAndroidHardwareBufferInfoANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4269,7 +4269,7 @@ void cvkReadJsonMemoryGetAndroidHardwareBufferInfoANDROID(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryGetFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4277,7 +4277,7 @@ void cvkReadJsonMemoryGetFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryGetMetalHandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4285,7 +4285,7 @@ void cvkReadJsonMemoryGetMetalHandleInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryGetNativeBufferInfoOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4293,7 +4293,7 @@ void cvkReadJsonMemoryGetNativeBufferInfoOHOS(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryGetRemoteAddressInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4301,7 +4301,7 @@ void cvkReadJsonMemoryGetRemoteAddressInfoNV(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4309,7 +4309,7 @@ void cvkReadJsonMemoryGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryGetZirconHandleInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4317,7 +4317,7 @@ void cvkReadJsonMemoryGetZirconHandleInfoFUCHSIA(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryHeap(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4325,7 +4325,7 @@ void cvkReadJsonMemoryHeap(cvkJsonWork* pWork, const cvkJsonValue* pObject, void
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryHostPointerProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4333,7 +4333,7 @@ void cvkReadJsonMemoryHostPointerProperties(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryMapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4341,7 +4341,7 @@ void cvkReadJsonMemoryMapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, v
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryMapPlacedInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4349,7 +4349,7 @@ void cvkReadJsonMemoryMapPlacedInfo(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryMarkerInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4357,7 +4357,7 @@ void cvkReadJsonMemoryMarkerInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryMetalHandleProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4365,7 +4365,7 @@ void cvkReadJsonMemoryMetalHandleProperties(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryOpaqueCaptureAddressAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4373,7 +4373,7 @@ void cvkReadJsonMemoryOpaqueCaptureAddressAllocateInfo(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryPriorityAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4381,7 +4381,7 @@ void cvkReadJsonMemoryPriorityAllocateInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryRangeBarrier(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4389,7 +4389,7 @@ void cvkReadJsonMemoryRangeBarrier(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryRangeBarriersInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4397,7 +4397,7 @@ void cvkReadJsonMemoryRangeBarriersInfo(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryRequirements(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4405,7 +4405,7 @@ void cvkReadJsonMemoryRequirements(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryRequirements2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4413,7 +4413,7 @@ void cvkReadJsonMemoryRequirements2(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryToImageCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4421,7 +4421,7 @@ void cvkReadJsonMemoryToImageCopy(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryType(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4429,7 +4429,7 @@ void cvkReadJsonMemoryType(cvkJsonWork* pWork, const cvkJsonValue* pObject, void
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryUnmapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4437,7 +4437,7 @@ void cvkReadJsonMemoryUnmapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryWin32HandleProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4445,7 +4445,7 @@ void cvkReadJsonMemoryWin32HandleProperties(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMemoryZirconHandlePropertiesFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4453,7 +4453,7 @@ void cvkReadJsonMemoryZirconHandlePropertiesFUCHSIA(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMetalSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4461,7 +4461,7 @@ void cvkReadJsonMetalSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMicromapBuildInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4469,7 +4469,7 @@ void cvkReadJsonMicromapBuildInfo(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMicromapBuildSizesInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4477,7 +4477,7 @@ void cvkReadJsonMicromapBuildSizesInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMicromapCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4485,7 +4485,7 @@ void cvkReadJsonMicromapCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMicromapTriangle(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4493,7 +4493,7 @@ void cvkReadJsonMicromapTriangle(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMicromapUsageEXT(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4501,7 +4501,7 @@ void cvkReadJsonMicromapUsageEXT(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMicromapUsage(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4509,7 +4509,7 @@ void cvkReadJsonMicromapUsage(cvkJsonWork* pWork, const cvkJsonValue* pObject, v
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMicromapVersionInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4517,7 +4517,7 @@ void cvkReadJsonMicromapVersionInfo(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMultiDrawIndexedInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4525,7 +4525,7 @@ void cvkReadJsonMultiDrawIndexedInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMultiDrawInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4533,7 +4533,7 @@ void cvkReadJsonMultiDrawInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, v
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMultisampleProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4541,7 +4541,7 @@ void cvkReadJsonMultisampleProperties(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMultisampledRenderToSingleSampledInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4549,7 +4549,7 @@ void cvkReadJsonMultisampledRenderToSingleSampledInfo(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMultiviewPerViewAttributesInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4557,7 +4557,7 @@ void cvkReadJsonMultiviewPerViewAttributesInfoNVX(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4565,7 +4565,7 @@ void cvkReadJsonMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMutableDescriptorTypeCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4573,7 +4573,7 @@ void cvkReadJsonMutableDescriptorTypeCreateInfo(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonMutableDescriptorTypeList(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4581,7 +4581,7 @@ void cvkReadJsonMutableDescriptorTypeList(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonNativeBufferFormatPropertiesOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4589,7 +4589,7 @@ void cvkReadJsonNativeBufferFormatPropertiesOHOS(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonNativeBufferPropertiesOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4597,7 +4597,7 @@ void cvkReadJsonNativeBufferPropertiesOHOS(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonNativeBufferUsageOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4605,7 +4605,7 @@ void cvkReadJsonNativeBufferUsageOHOS(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonOffset2D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4613,7 +4613,7 @@ void cvkReadJsonOffset2D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonOffset3D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4621,7 +4621,7 @@ void cvkReadJsonOffset3D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonOpaqueCaptureDataCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4629,7 +4629,7 @@ void cvkReadJsonOpaqueCaptureDataCreateInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonOpaqueCaptureDescriptorDataCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4637,7 +4637,7 @@ void cvkReadJsonOpaqueCaptureDescriptorDataCreateInfo(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonOpticalFlowExecuteInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4645,7 +4645,7 @@ void cvkReadJsonOpticalFlowExecuteInfoNV(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonOpticalFlowImageFormatInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4653,7 +4653,7 @@ void cvkReadJsonOpticalFlowImageFormatInfoNV(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonOpticalFlowImageFormatPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4661,7 +4661,7 @@ void cvkReadJsonOpticalFlowImageFormatPropertiesNV(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonOpticalFlowSessionCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4669,7 +4669,7 @@ void cvkReadJsonOpticalFlowSessionCreateInfoNV(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonOpticalFlowSessionCreatePrivateDataInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4677,7 +4677,7 @@ void cvkReadJsonOpticalFlowSessionCreatePrivateDataInfoNV(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonOutOfBandQueueTypeInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4685,7 +4685,7 @@ void cvkReadJsonOutOfBandQueueTypeInfoNV(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPartitionedAccelerationStructureFlagsNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4693,7 +4693,7 @@ void cvkReadJsonPartitionedAccelerationStructureFlagsNV(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPartitionedAccelerationStructureInstancesInputNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4701,7 +4701,7 @@ void cvkReadJsonPartitionedAccelerationStructureInstancesInputNV(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPartitionedAccelerationStructureUpdateInstanceDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4709,7 +4709,7 @@ void cvkReadJsonPartitionedAccelerationStructureUpdateInstanceDataNV(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPartitionedAccelerationStructureWriteInstanceDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4717,7 +4717,7 @@ void cvkReadJsonPartitionedAccelerationStructureWriteInstanceDataNV(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPartitionedAccelerationStructureWritePartitionTranslationDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4725,7 +4725,7 @@ void cvkReadJsonPartitionedAccelerationStructureWritePartitionTranslationDataNV(
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPastPresentationTiming(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4733,7 +4733,7 @@ void cvkReadJsonPastPresentationTiming(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPastPresentationTimingGOOGLE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4741,7 +4741,7 @@ void cvkReadJsonPastPresentationTimingGOOGLE(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPastPresentationTimingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4749,7 +4749,7 @@ void cvkReadJsonPastPresentationTimingInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPastPresentationTimingProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4757,7 +4757,7 @@ void cvkReadJsonPastPresentationTimingProperties(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerTileBeginInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4765,7 +4765,7 @@ void cvkReadJsonPerTileBeginInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerTileEndInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4773,7 +4773,7 @@ void cvkReadJsonPerTileEndInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerfHintInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4781,7 +4781,7 @@ void cvkReadJsonPerfHintInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceConfigurationAcquireInfoINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4789,7 +4789,7 @@ void cvkReadJsonPerformanceConfigurationAcquireInfoINTEL(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceCounterARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4797,7 +4797,7 @@ void cvkReadJsonPerformanceCounterARM(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceCounterDescriptionARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4805,7 +4805,7 @@ void cvkReadJsonPerformanceCounterDescriptionARM(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceCounterDescription(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4813,7 +4813,7 @@ void cvkReadJsonPerformanceCounterDescription(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceCounter(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4821,7 +4821,7 @@ void cvkReadJsonPerformanceCounter(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceCounterResult(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4829,7 +4829,7 @@ void cvkReadJsonPerformanceCounterResult(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceMarkerInfoINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4837,7 +4837,7 @@ void cvkReadJsonPerformanceMarkerInfoINTEL(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceOverrideInfoINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4845,7 +4845,7 @@ void cvkReadJsonPerformanceOverrideInfoINTEL(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceQuerySubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4853,7 +4853,7 @@ void cvkReadJsonPerformanceQuerySubmitInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceStreamMarkerInfoINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4861,7 +4861,7 @@ void cvkReadJsonPerformanceStreamMarkerInfoINTEL(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceValueDataINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4869,7 +4869,7 @@ void cvkReadJsonPerformanceValueDataINTEL(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceValueINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4877,7 +4877,7 @@ void cvkReadJsonPerformanceValueINTEL(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevice16BitStorageFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4885,7 +4885,7 @@ void cvkReadJsonPhysicalDevice16BitStorageFeatures(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevice4444FormatsFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4893,7 +4893,7 @@ void cvkReadJsonPhysicalDevice4444FormatsFeatures(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevice8BitStorageFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4901,7 +4901,7 @@ void cvkReadJsonPhysicalDevice8BitStorageFeatures(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceASTCDecodeFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4909,7 +4909,7 @@ void cvkReadJsonPhysicalDeviceASTCDecodeFeatures(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceAccelerationStructureFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4917,7 +4917,7 @@ void cvkReadJsonPhysicalDeviceAccelerationStructureFeatures(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceAccelerationStructureProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4925,7 +4925,7 @@ void cvkReadJsonPhysicalDeviceAccelerationStructureProperties(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceAddressBindingReportFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4933,7 +4933,7 @@ void cvkReadJsonPhysicalDeviceAddressBindingReportFeatures(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceAmigoProfilingFeaturesSEC(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4941,7 +4941,7 @@ void cvkReadJsonPhysicalDeviceAmigoProfilingFeaturesSEC(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceAntiLagFeaturesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4949,7 +4949,7 @@ void cvkReadJsonPhysicalDeviceAntiLagFeaturesAMD(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4957,7 +4957,7 @@ void cvkReadJsonPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeatures(cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceAttachmentFeedbackLoopLayoutFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4965,7 +4965,7 @@ void cvkReadJsonPhysicalDeviceAttachmentFeedbackLoopLayoutFeatures(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceBlendOperationAdvancedFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4973,7 +4973,7 @@ void cvkReadJsonPhysicalDeviceBlendOperationAdvancedFeatures(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceBlendOperationAdvancedProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4981,7 +4981,7 @@ void cvkReadJsonPhysicalDeviceBlendOperationAdvancedProperties(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceBorderColorSwizzleFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4989,7 +4989,7 @@ void cvkReadJsonPhysicalDeviceBorderColorSwizzleFeatures(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceBufferDeviceAddressAllocationAlignmentFeaturesVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -4997,7 +4997,7 @@ void cvkReadJsonPhysicalDeviceBufferDeviceAddressAllocationAlignmentFeaturesVALV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceBufferDeviceAddressAllocationAlignmentPropertiesVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5005,7 +5005,7 @@ void cvkReadJsonPhysicalDeviceBufferDeviceAddressAllocationAlignmentPropertiesVA
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceBufferDeviceAddressFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5013,7 +5013,7 @@ void cvkReadJsonPhysicalDeviceBufferDeviceAddressFeatures(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceBufferDeviceAddressFeaturesEXT(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5021,7 +5021,7 @@ void cvkReadJsonPhysicalDeviceBufferDeviceAddressFeaturesEXT(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceClusterAccelerationStructureFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5029,7 +5029,7 @@ void cvkReadJsonPhysicalDeviceClusterAccelerationStructureFeaturesNV(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceClusterAccelerationStructurePropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5037,7 +5037,7 @@ void cvkReadJsonPhysicalDeviceClusterAccelerationStructurePropertiesNV(cvkJsonWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceClusterCullingShaderFeaturesHUAWEI(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5045,7 +5045,7 @@ void cvkReadJsonPhysicalDeviceClusterCullingShaderFeaturesHUAWEI(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceClusterCullingShaderPropertiesHUAWEI(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5053,7 +5053,7 @@ void cvkReadJsonPhysicalDeviceClusterCullingShaderPropertiesHUAWEI(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceClusterCullingShaderVrsFeaturesHUAWEI(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5061,7 +5061,7 @@ void cvkReadJsonPhysicalDeviceClusterCullingShaderVrsFeaturesHUAWEI(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCoherentMemoryFeaturesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5069,7 +5069,7 @@ void cvkReadJsonPhysicalDeviceCoherentMemoryFeaturesAMD(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceColorWriteEnableFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5077,7 +5077,7 @@ void cvkReadJsonPhysicalDeviceColorWriteEnableFeatures(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCommandBufferInheritanceFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5085,7 +5085,7 @@ void cvkReadJsonPhysicalDeviceCommandBufferInheritanceFeaturesNV(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceComputeOccupancyPriorityFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5093,7 +5093,7 @@ void cvkReadJsonPhysicalDeviceComputeOccupancyPriorityFeaturesNV(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceComputeShaderDerivativesFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5101,7 +5101,7 @@ void cvkReadJsonPhysicalDeviceComputeShaderDerivativesFeatures(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceComputeShaderDerivativesProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5109,7 +5109,7 @@ void cvkReadJsonPhysicalDeviceComputeShaderDerivativesProperties(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceConditionalRenderingFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5117,7 +5117,7 @@ void cvkReadJsonPhysicalDeviceConditionalRenderingFeatures(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceConservativeRasterizationProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5125,7 +5125,7 @@ void cvkReadJsonPhysicalDeviceConservativeRasterizationProperties(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrix2FeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5133,7 +5133,7 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrix2FeaturesNV(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrix2PropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5141,7 +5141,7 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrix2PropertiesNV(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixConversionFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5149,7 +5149,7 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrixConversionFeaturesQCOM(cvkJsonWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5157,7 +5157,7 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV(cvkJsonWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5165,7 +5165,7 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrixFeatures(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5173,7 +5173,7 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrixFeaturesNV(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5181,7 +5181,7 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrixInfo2(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixMaintenance1Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5189,7 +5189,7 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrixMaintenance1Features(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5197,7 +5197,7 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrixProperties(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5205,7 +5205,7 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrixPropertiesNV(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeVectorFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5213,7 +5213,7 @@ void cvkReadJsonPhysicalDeviceCooperativeVectorFeaturesNV(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeVectorPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5221,7 +5221,7 @@ void cvkReadJsonPhysicalDeviceCooperativeVectorPropertiesNV(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCopyMemoryIndirectFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5229,7 +5229,7 @@ void cvkReadJsonPhysicalDeviceCopyMemoryIndirectFeatures(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCopyMemoryIndirectFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5237,7 +5237,7 @@ void cvkReadJsonPhysicalDeviceCopyMemoryIndirectFeaturesNV(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCopyMemoryIndirectProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5245,7 +5245,7 @@ void cvkReadJsonPhysicalDeviceCopyMemoryIndirectProperties(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCornerSampledImageFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5253,7 +5253,7 @@ void cvkReadJsonPhysicalDeviceCornerSampledImageFeaturesNV(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCoverageReductionModeFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5261,7 +5261,7 @@ void cvkReadJsonPhysicalDeviceCoverageReductionModeFeaturesNV(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCubicClampFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5269,7 +5269,7 @@ void cvkReadJsonPhysicalDeviceCubicClampFeaturesQCOM(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCubicWeightsFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5277,7 +5277,7 @@ void cvkReadJsonPhysicalDeviceCubicWeightsFeaturesQCOM(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCudaKernelLaunchFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5285,7 +5285,7 @@ void cvkReadJsonPhysicalDeviceCudaKernelLaunchFeaturesNV(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCudaKernelLaunchPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5293,7 +5293,7 @@ void cvkReadJsonPhysicalDeviceCudaKernelLaunchPropertiesNV(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCustomBorderColorFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5301,7 +5301,7 @@ void cvkReadJsonPhysicalDeviceCustomBorderColorFeatures(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCustomBorderColorProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5309,7 +5309,7 @@ void cvkReadJsonPhysicalDeviceCustomBorderColorProperties(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCustomResolveFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5317,7 +5317,7 @@ void cvkReadJsonPhysicalDeviceCustomResolveFeatures(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDataGraphFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5325,7 +5325,7 @@ void cvkReadJsonPhysicalDeviceDataGraphFeaturesARM(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDataGraphModelFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5333,7 +5333,7 @@ void cvkReadJsonPhysicalDeviceDataGraphModelFeaturesQCOM(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDataGraphNeuralAcceleratorStatisticsFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5341,7 +5341,7 @@ void cvkReadJsonPhysicalDeviceDataGraphNeuralAcceleratorStatisticsFeaturesARM(cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDataGraphOperationSupportARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5349,7 +5349,7 @@ void cvkReadJsonPhysicalDeviceDataGraphOperationSupportARM(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDataGraphOpticalFlowFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5357,7 +5357,7 @@ void cvkReadJsonPhysicalDeviceDataGraphOpticalFlowFeaturesARM(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDataGraphProcessingEngineARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5365,7 +5365,7 @@ void cvkReadJsonPhysicalDeviceDataGraphProcessingEngineARM(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5373,7 +5373,7 @@ void cvkReadJsonPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV(cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDenseGeometryFormatFeaturesAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5381,7 +5381,7 @@ void cvkReadJsonPhysicalDeviceDenseGeometryFormatFeaturesAMDX(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDepthBiasControlFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5389,7 +5389,7 @@ void cvkReadJsonPhysicalDeviceDepthBiasControlFeatures(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDepthClampControlFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5397,7 +5397,7 @@ void cvkReadJsonPhysicalDeviceDepthClampControlFeatures(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDepthClampZeroOneFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5405,7 +5405,7 @@ void cvkReadJsonPhysicalDeviceDepthClampZeroOneFeatures(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDepthClipControlFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5413,7 +5413,7 @@ void cvkReadJsonPhysicalDeviceDepthClipControlFeatures(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDepthClipEnableFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5421,7 +5421,7 @@ void cvkReadJsonPhysicalDeviceDepthClipEnableFeatures(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDepthStencilResolveProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5429,7 +5429,7 @@ void cvkReadJsonPhysicalDeviceDepthStencilResolveProperties(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorBufferDensityMapProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5437,7 +5437,7 @@ void cvkReadJsonPhysicalDeviceDescriptorBufferDensityMapProperties(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorBufferFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5445,7 +5445,7 @@ void cvkReadJsonPhysicalDeviceDescriptorBufferFeatures(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorBufferProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5453,7 +5453,7 @@ void cvkReadJsonPhysicalDeviceDescriptorBufferProperties(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorBufferTensorFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5461,7 +5461,7 @@ void cvkReadJsonPhysicalDeviceDescriptorBufferTensorFeaturesARM(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorBufferTensorPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5469,7 +5469,7 @@ void cvkReadJsonPhysicalDeviceDescriptorBufferTensorPropertiesARM(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorHeapFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5477,7 +5477,7 @@ void cvkReadJsonPhysicalDeviceDescriptorHeapFeatures(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorHeapProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5485,7 +5485,7 @@ void cvkReadJsonPhysicalDeviceDescriptorHeapProperties(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorHeapTensorPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5493,7 +5493,7 @@ void cvkReadJsonPhysicalDeviceDescriptorHeapTensorPropertiesARM(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorIndexingFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5501,7 +5501,7 @@ void cvkReadJsonPhysicalDeviceDescriptorIndexingFeatures(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorIndexingProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5509,7 +5509,7 @@ void cvkReadJsonPhysicalDeviceDescriptorIndexingProperties(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorPoolOverallocationFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5517,7 +5517,7 @@ void cvkReadJsonPhysicalDeviceDescriptorPoolOverallocationFeaturesNV(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorSetHostMappingFeaturesVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5525,7 +5525,7 @@ void cvkReadJsonPhysicalDeviceDescriptorSetHostMappingFeaturesVALVE(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDeviceAddressCommandsFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5533,7 +5533,7 @@ void cvkReadJsonPhysicalDeviceDeviceAddressCommandsFeatures(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsComputeFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5541,7 +5541,7 @@ void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsComputeFeaturesNV(cvkJsonWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5549,7 +5549,7 @@ void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsFeatures(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5557,7 +5557,7 @@ void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsFeaturesNV(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5565,7 +5565,7 @@ void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsProperties(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5573,7 +5573,7 @@ void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsPropertiesNV(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDeviceMemoryReportFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5581,7 +5581,7 @@ void cvkReadJsonPhysicalDeviceDeviceMemoryReportFeatures(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDiagnosticsConfigFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5589,7 +5589,7 @@ void cvkReadJsonPhysicalDeviceDiagnosticsConfigFeaturesNV(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDiscardRectangleProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5597,7 +5597,7 @@ void cvkReadJsonPhysicalDeviceDiscardRectangleProperties(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDisplacementMicromapFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5605,7 +5605,7 @@ void cvkReadJsonPhysicalDeviceDisplacementMicromapFeaturesNV(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDisplacementMicromapPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5613,7 +5613,7 @@ void cvkReadJsonPhysicalDeviceDisplacementMicromapPropertiesNV(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDriverProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5621,7 +5621,7 @@ void cvkReadJsonPhysicalDeviceDriverProperties(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDrmProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5629,7 +5629,7 @@ void cvkReadJsonPhysicalDeviceDrmProperties(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDynamicRenderingFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5637,7 +5637,7 @@ void cvkReadJsonPhysicalDeviceDynamicRenderingFeatures(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDynamicRenderingLocalReadFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5645,7 +5645,7 @@ void cvkReadJsonPhysicalDeviceDynamicRenderingLocalReadFeatures(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDynamicRenderingUnusedAttachmentsFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5653,7 +5653,7 @@ void cvkReadJsonPhysicalDeviceDynamicRenderingUnusedAttachmentsFeatures(cvkJsonW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceElapsedTimerQueryFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5661,7 +5661,7 @@ void cvkReadJsonPhysicalDeviceElapsedTimerQueryFeaturesQCOM(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExclusiveScissorFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5669,7 +5669,7 @@ void cvkReadJsonPhysicalDeviceExclusiveScissorFeaturesNV(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExtendedDynamicState2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5677,7 +5677,7 @@ void cvkReadJsonPhysicalDeviceExtendedDynamicState2Features(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExtendedDynamicState3Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5685,7 +5685,7 @@ void cvkReadJsonPhysicalDeviceExtendedDynamicState3Features(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExtendedDynamicState3Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5693,7 +5693,7 @@ void cvkReadJsonPhysicalDeviceExtendedDynamicState3Properties(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExtendedDynamicStateFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5701,7 +5701,7 @@ void cvkReadJsonPhysicalDeviceExtendedDynamicStateFeatures(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExtendedFlagsFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5709,7 +5709,7 @@ void cvkReadJsonPhysicalDeviceExtendedFlagsFeatures(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExtendedSparseAddressSpaceFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5717,7 +5717,7 @@ void cvkReadJsonPhysicalDeviceExtendedSparseAddressSpaceFeaturesNV(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExtendedSparseAddressSpacePropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5725,7 +5725,7 @@ void cvkReadJsonPhysicalDeviceExtendedSparseAddressSpacePropertiesNV(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5733,7 +5733,7 @@ void cvkReadJsonPhysicalDeviceExternalBufferInfo(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalComputeQueuePropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5741,7 +5741,7 @@ void cvkReadJsonPhysicalDeviceExternalComputeQueuePropertiesNV(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalFenceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5749,7 +5749,7 @@ void cvkReadJsonPhysicalDeviceExternalFenceInfo(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5757,7 +5757,7 @@ void cvkReadJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5765,7 +5765,7 @@ void cvkReadJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalImageFormatInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5773,7 +5773,7 @@ void cvkReadJsonPhysicalDeviceExternalImageFormatInfo(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalMemoryHostProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5781,7 +5781,7 @@ void cvkReadJsonPhysicalDeviceExternalMemoryHostProperties(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalMemoryRDMAFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5789,7 +5789,7 @@ void cvkReadJsonPhysicalDeviceExternalMemoryRDMAFeaturesNV(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5797,7 +5797,7 @@ void cvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalSemaphoreInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5805,7 +5805,7 @@ void cvkReadJsonPhysicalDeviceExternalSemaphoreInfo(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalTensorInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5813,7 +5813,7 @@ void cvkReadJsonPhysicalDeviceExternalTensorInfoARM(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFaultFeaturesEXT(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5821,7 +5821,7 @@ void cvkReadJsonPhysicalDeviceFaultFeaturesEXT(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFaultFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5829,7 +5829,7 @@ void cvkReadJsonPhysicalDeviceFaultFeatures(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFaultProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5837,7 +5837,7 @@ void cvkReadJsonPhysicalDeviceFaultProperties(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5845,7 +5845,7 @@ void cvkReadJsonPhysicalDeviceFeatures(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFeatures2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5853,7 +5853,7 @@ void cvkReadJsonPhysicalDeviceFeatures2(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFloatControlsProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5861,7 +5861,7 @@ void cvkReadJsonPhysicalDeviceFloatControlsProperties(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFormatPackFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5869,7 +5869,7 @@ void cvkReadJsonPhysicalDeviceFormatPackFeaturesARM(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMap2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5877,7 +5877,7 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMap2Features(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMap2Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5885,7 +5885,7 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMap2Properties(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMapFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5893,7 +5893,7 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMapFeatures(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMapLayeredFeaturesVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5901,7 +5901,7 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMapLayeredFeaturesVALVE(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMapLayeredPropertiesVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5909,7 +5909,7 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMapLayeredPropertiesVALVE(cvkJsonWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMapOffsetFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5917,7 +5917,7 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMapOffsetFeatures(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMapOffsetProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5925,7 +5925,7 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMapOffsetProperties(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMapProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5933,7 +5933,7 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMapProperties(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShaderBarycentricFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5941,7 +5941,7 @@ void cvkReadJsonPhysicalDeviceFragmentShaderBarycentricFeatures(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShaderBarycentricProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5949,7 +5949,7 @@ void cvkReadJsonPhysicalDeviceFragmentShaderBarycentricProperties(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShaderInterlockFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5957,7 +5957,7 @@ void cvkReadJsonPhysicalDeviceFragmentShaderInterlockFeatures(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShadingRateEnumsFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5965,7 +5965,7 @@ void cvkReadJsonPhysicalDeviceFragmentShadingRateEnumsFeaturesNV(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShadingRateEnumsPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5973,7 +5973,7 @@ void cvkReadJsonPhysicalDeviceFragmentShadingRateEnumsPropertiesNV(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShadingRateFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5981,7 +5981,7 @@ void cvkReadJsonPhysicalDeviceFragmentShadingRateFeatures(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShadingRate(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5989,7 +5989,7 @@ void cvkReadJsonPhysicalDeviceFragmentShadingRate(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShadingRateProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -5997,7 +5997,7 @@ void cvkReadJsonPhysicalDeviceFragmentShadingRateProperties(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFrameBoundaryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6005,7 +6005,7 @@ void cvkReadJsonPhysicalDeviceFrameBoundaryFeatures(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceGlobalPriorityQueryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6013,7 +6013,7 @@ void cvkReadJsonPhysicalDeviceGlobalPriorityQueryFeatures(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceGpaFeaturesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6021,7 +6021,7 @@ void cvkReadJsonPhysicalDeviceGpaFeaturesAMD(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceGpaProperties2AMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6029,7 +6029,7 @@ void cvkReadJsonPhysicalDeviceGpaProperties2AMD(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceGpaPropertiesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6037,7 +6037,7 @@ void cvkReadJsonPhysicalDeviceGpaPropertiesAMD(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceGraphicsPipelineLibraryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6045,7 +6045,7 @@ void cvkReadJsonPhysicalDeviceGraphicsPipelineLibraryFeatures(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceGraphicsPipelineLibraryProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6053,7 +6053,7 @@ void cvkReadJsonPhysicalDeviceGraphicsPipelineLibraryProperties(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceGroupProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6061,7 +6061,7 @@ void cvkReadJsonPhysicalDeviceGroupProperties(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceHdrVividFeaturesHUAWEI(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6069,7 +6069,7 @@ void cvkReadJsonPhysicalDeviceHdrVividFeaturesHUAWEI(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceHostImageCopyFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6077,7 +6077,7 @@ void cvkReadJsonPhysicalDeviceHostImageCopyFeatures(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceHostImageCopyProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6085,7 +6085,7 @@ void cvkReadJsonPhysicalDeviceHostImageCopyProperties(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceHostQueryResetFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6093,7 +6093,7 @@ void cvkReadJsonPhysicalDeviceHostQueryResetFeatures(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceIDProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6101,7 +6101,7 @@ void cvkReadJsonPhysicalDeviceIDProperties(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImage2DViewOf3DFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6109,7 +6109,7 @@ void cvkReadJsonPhysicalDeviceImage2DViewOf3DFeatures(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageAlignmentControlFeaturesMESA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6117,7 +6117,7 @@ void cvkReadJsonPhysicalDeviceImageAlignmentControlFeaturesMESA(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageAlignmentControlPropertiesMESA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6125,7 +6125,7 @@ void cvkReadJsonPhysicalDeviceImageAlignmentControlPropertiesMESA(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageCompressionControlFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6133,7 +6133,7 @@ void cvkReadJsonPhysicalDeviceImageCompressionControlFeatures(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageCompressionControlSwapchainFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6141,7 +6141,7 @@ void cvkReadJsonPhysicalDeviceImageCompressionControlSwapchainFeatures(cvkJsonWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageDrmFormatModifierInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6149,7 +6149,7 @@ void cvkReadJsonPhysicalDeviceImageDrmFormatModifierInfo(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageFormatInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6157,7 +6157,7 @@ void cvkReadJsonPhysicalDeviceImageFormatInfo2(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageProcessing2FeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6165,7 +6165,7 @@ void cvkReadJsonPhysicalDeviceImageProcessing2FeaturesQCOM(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageProcessing2PropertiesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6173,7 +6173,7 @@ void cvkReadJsonPhysicalDeviceImageProcessing2PropertiesQCOM(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageProcessing3FeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6181,7 +6181,7 @@ void cvkReadJsonPhysicalDeviceImageProcessing3FeaturesQCOM(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageProcessingFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6189,7 +6189,7 @@ void cvkReadJsonPhysicalDeviceImageProcessingFeaturesQCOM(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageProcessingPropertiesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6197,7 +6197,7 @@ void cvkReadJsonPhysicalDeviceImageProcessingPropertiesQCOM(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageRobustnessFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6205,7 +6205,7 @@ void cvkReadJsonPhysicalDeviceImageRobustnessFeatures(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageSlicedViewOf3DFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6213,7 +6213,7 @@ void cvkReadJsonPhysicalDeviceImageSlicedViewOf3DFeatures(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageTilingControlFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6221,7 +6221,7 @@ void cvkReadJsonPhysicalDeviceImageTilingControlFeatures(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageViewImageFormatInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6229,7 +6229,7 @@ void cvkReadJsonPhysicalDeviceImageViewImageFormatInfo(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageViewMinLodFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6237,7 +6237,7 @@ void cvkReadJsonPhysicalDeviceImageViewMinLodFeatures(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImagelessFramebufferFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6245,7 +6245,7 @@ void cvkReadJsonPhysicalDeviceImagelessFramebufferFeatures(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceIndexTypeUint8Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6253,7 +6253,7 @@ void cvkReadJsonPhysicalDeviceIndexTypeUint8Features(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceInheritedViewportScissorFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6261,7 +6261,7 @@ void cvkReadJsonPhysicalDeviceInheritedViewportScissorFeaturesNV(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceInlineUniformBlockFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6269,7 +6269,7 @@ void cvkReadJsonPhysicalDeviceInlineUniformBlockFeatures(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceInlineUniformBlockProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6277,7 +6277,7 @@ void cvkReadJsonPhysicalDeviceInlineUniformBlockProperties(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceInternallySynchronizedQueuesFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6285,7 +6285,7 @@ void cvkReadJsonPhysicalDeviceInternallySynchronizedQueuesFeatures(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceInvocationMaskFeaturesHUAWEI(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6293,7 +6293,7 @@ void cvkReadJsonPhysicalDeviceInvocationMaskFeaturesHUAWEI(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLayeredApiProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6301,7 +6301,7 @@ void cvkReadJsonPhysicalDeviceLayeredApiProperties(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLayeredApiPropertiesList(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6309,7 +6309,7 @@ void cvkReadJsonPhysicalDeviceLayeredApiPropertiesList(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLayeredApiVulkanProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6317,7 +6317,7 @@ void cvkReadJsonPhysicalDeviceLayeredApiVulkanProperties(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLayeredDriverPropertiesMSFT(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6325,7 +6325,7 @@ void cvkReadJsonPhysicalDeviceLayeredDriverPropertiesMSFT(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLegacyDitheringFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6333,7 +6333,7 @@ void cvkReadJsonPhysicalDeviceLegacyDitheringFeatures(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLegacyVertexAttributesFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6341,7 +6341,7 @@ void cvkReadJsonPhysicalDeviceLegacyVertexAttributesFeatures(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLegacyVertexAttributesProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6349,7 +6349,7 @@ void cvkReadJsonPhysicalDeviceLegacyVertexAttributesProperties(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLimits(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6357,7 +6357,7 @@ void cvkReadJsonPhysicalDeviceLimits(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLineRasterizationFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6365,7 +6365,7 @@ void cvkReadJsonPhysicalDeviceLineRasterizationFeatures(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLineRasterizationProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6373,7 +6373,7 @@ void cvkReadJsonPhysicalDeviceLineRasterizationProperties(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLinearColorAttachmentFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6381,7 +6381,7 @@ void cvkReadJsonPhysicalDeviceLinearColorAttachmentFeaturesNV(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance10Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6389,7 +6389,7 @@ void cvkReadJsonPhysicalDeviceMaintenance10Features(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance10Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6397,7 +6397,7 @@ void cvkReadJsonPhysicalDeviceMaintenance10Properties(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance11Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6405,7 +6405,7 @@ void cvkReadJsonPhysicalDeviceMaintenance11Features(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance3Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6413,7 +6413,7 @@ void cvkReadJsonPhysicalDeviceMaintenance3Properties(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance4Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6421,7 +6421,7 @@ void cvkReadJsonPhysicalDeviceMaintenance4Features(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance4Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6429,7 +6429,7 @@ void cvkReadJsonPhysicalDeviceMaintenance4Properties(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance5Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6437,7 +6437,7 @@ void cvkReadJsonPhysicalDeviceMaintenance5Features(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance5Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6445,7 +6445,7 @@ void cvkReadJsonPhysicalDeviceMaintenance5Properties(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance6Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6453,7 +6453,7 @@ void cvkReadJsonPhysicalDeviceMaintenance6Features(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance6Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6461,7 +6461,7 @@ void cvkReadJsonPhysicalDeviceMaintenance6Properties(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance7Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6469,7 +6469,7 @@ void cvkReadJsonPhysicalDeviceMaintenance7Features(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance7Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6477,7 +6477,7 @@ void cvkReadJsonPhysicalDeviceMaintenance7Properties(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance8Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6485,7 +6485,7 @@ void cvkReadJsonPhysicalDeviceMaintenance8Features(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance9Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6493,7 +6493,7 @@ void cvkReadJsonPhysicalDeviceMaintenance9Features(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance9Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6501,7 +6501,7 @@ void cvkReadJsonPhysicalDeviceMaintenance9Properties(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMapMemoryPlacedFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6509,7 +6509,7 @@ void cvkReadJsonPhysicalDeviceMapMemoryPlacedFeatures(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMapMemoryPlacedProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6517,7 +6517,7 @@ void cvkReadJsonPhysicalDeviceMapMemoryPlacedProperties(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMemoryBudgetProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6525,7 +6525,7 @@ void cvkReadJsonPhysicalDeviceMemoryBudgetProperties(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMemoryDecompressionFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6533,7 +6533,7 @@ void cvkReadJsonPhysicalDeviceMemoryDecompressionFeatures(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMemoryDecompressionProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6541,7 +6541,7 @@ void cvkReadJsonPhysicalDeviceMemoryDecompressionProperties(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMemoryPriorityFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6549,7 +6549,7 @@ void cvkReadJsonPhysicalDeviceMemoryPriorityFeatures(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMemoryProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6557,7 +6557,7 @@ void cvkReadJsonPhysicalDeviceMemoryProperties(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMemoryProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6565,7 +6565,7 @@ void cvkReadJsonPhysicalDeviceMemoryProperties2(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMeshShaderFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6573,7 +6573,7 @@ void cvkReadJsonPhysicalDeviceMeshShaderFeatures(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMeshShaderFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6581,7 +6581,7 @@ void cvkReadJsonPhysicalDeviceMeshShaderFeaturesNV(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMeshShaderProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6589,7 +6589,7 @@ void cvkReadJsonPhysicalDeviceMeshShaderProperties(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMeshShaderPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6597,7 +6597,7 @@ void cvkReadJsonPhysicalDeviceMeshShaderPropertiesNV(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultiDrawFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6605,7 +6605,7 @@ void cvkReadJsonPhysicalDeviceMultiDrawFeatures(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultiDrawProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6613,7 +6613,7 @@ void cvkReadJsonPhysicalDeviceMultiDrawProperties(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultisampledRenderToSingleSampledFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6621,7 +6621,7 @@ void cvkReadJsonPhysicalDeviceMultisampledRenderToSingleSampledFeatures(cvkJsonW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultisampledRenderToSwapchainFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6629,7 +6629,7 @@ void cvkReadJsonPhysicalDeviceMultisampledRenderToSwapchainFeatures(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultiviewFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6637,7 +6637,7 @@ void cvkReadJsonPhysicalDeviceMultiviewFeatures(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6645,7 +6645,7 @@ void cvkReadJsonPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX(cvkJsonWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6653,7 +6653,7 @@ void cvkReadJsonPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM(cvkJsonWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultiviewPerViewViewportsFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6661,7 +6661,7 @@ void cvkReadJsonPhysicalDeviceMultiviewPerViewViewportsFeaturesQCOM(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultiviewProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6669,7 +6669,7 @@ void cvkReadJsonPhysicalDeviceMultiviewProperties(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMutableDescriptorTypeFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6677,7 +6677,7 @@ void cvkReadJsonPhysicalDeviceMutableDescriptorTypeFeatures(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceNestedCommandBufferFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6685,7 +6685,7 @@ void cvkReadJsonPhysicalDeviceNestedCommandBufferFeatures(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceNestedCommandBufferProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6693,7 +6693,7 @@ void cvkReadJsonPhysicalDeviceNestedCommandBufferProperties(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceNonSeamlessCubeMapFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6701,7 +6701,7 @@ void cvkReadJsonPhysicalDeviceNonSeamlessCubeMapFeatures(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceOpacityMicromapFeaturesEXT(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6709,7 +6709,7 @@ void cvkReadJsonPhysicalDeviceOpacityMicromapFeaturesEXT(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceOpacityMicromapFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6717,7 +6717,7 @@ void cvkReadJsonPhysicalDeviceOpacityMicromapFeatures(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceOpacityMicromapPropertiesEXT(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6725,7 +6725,7 @@ void cvkReadJsonPhysicalDeviceOpacityMicromapPropertiesEXT(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceOpacityMicromapProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6733,7 +6733,7 @@ void cvkReadJsonPhysicalDeviceOpacityMicromapProperties(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceOpticalFlowFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6741,7 +6741,7 @@ void cvkReadJsonPhysicalDeviceOpticalFlowFeaturesNV(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceOpticalFlowPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6749,7 +6749,7 @@ void cvkReadJsonPhysicalDeviceOpticalFlowPropertiesNV(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePCIBusInfoProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6757,7 +6757,7 @@ void cvkReadJsonPhysicalDevicePCIBusInfoProperties(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePageableDeviceLocalMemoryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6765,7 +6765,7 @@ void cvkReadJsonPhysicalDevicePageableDeviceLocalMemoryFeatures(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePartitionedAccelerationStructureFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6773,7 +6773,7 @@ void cvkReadJsonPhysicalDevicePartitionedAccelerationStructureFeaturesNV(cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePartitionedAccelerationStructurePropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6781,7 +6781,7 @@ void cvkReadJsonPhysicalDevicePartitionedAccelerationStructurePropertiesNV(cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePerStageDescriptorSetFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6789,7 +6789,7 @@ void cvkReadJsonPhysicalDevicePerStageDescriptorSetFeaturesNV(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePerformanceCountersByRegionFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6797,7 +6797,7 @@ void cvkReadJsonPhysicalDevicePerformanceCountersByRegionFeaturesARM(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePerformanceCountersByRegionPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6805,7 +6805,7 @@ void cvkReadJsonPhysicalDevicePerformanceCountersByRegionPropertiesARM(cvkJsonWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePerformanceQueryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6813,7 +6813,7 @@ void cvkReadJsonPhysicalDevicePerformanceQueryFeatures(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePerformanceQueryProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6821,7 +6821,7 @@ void cvkReadJsonPhysicalDevicePerformanceQueryProperties(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineBinaryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6829,7 +6829,7 @@ void cvkReadJsonPhysicalDevicePipelineBinaryFeatures(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineBinaryProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6837,7 +6837,7 @@ void cvkReadJsonPhysicalDevicePipelineBinaryProperties(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineCacheIncrementalModeFeaturesSEC(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6845,7 +6845,7 @@ void cvkReadJsonPhysicalDevicePipelineCacheIncrementalModeFeaturesSEC(cvkJsonWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineCreationCacheControlFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6853,7 +6853,7 @@ void cvkReadJsonPhysicalDevicePipelineCreationCacheControlFeatures(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineExecutablePropertiesFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6861,7 +6861,7 @@ void cvkReadJsonPhysicalDevicePipelineExecutablePropertiesFeatures(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineLibraryGroupHandlesFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6869,7 +6869,7 @@ void cvkReadJsonPhysicalDevicePipelineLibraryGroupHandlesFeatures(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineOpacityMicromapFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6877,7 +6877,7 @@ void cvkReadJsonPhysicalDevicePipelineOpacityMicromapFeaturesARM(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelinePropertiesFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6885,7 +6885,7 @@ void cvkReadJsonPhysicalDevicePipelinePropertiesFeatures(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineProtectedAccessFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6893,7 +6893,7 @@ void cvkReadJsonPhysicalDevicePipelineProtectedAccessFeatures(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineRobustnessFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6901,7 +6901,7 @@ void cvkReadJsonPhysicalDevicePipelineRobustnessFeatures(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineRobustnessProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6909,7 +6909,7 @@ void cvkReadJsonPhysicalDevicePipelineRobustnessProperties(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePointClippingProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6917,7 +6917,7 @@ void cvkReadJsonPhysicalDevicePointClippingProperties(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePortabilitySubsetFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6925,7 +6925,7 @@ void cvkReadJsonPhysicalDevicePortabilitySubsetFeatures(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePortabilitySubsetProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6933,7 +6933,7 @@ void cvkReadJsonPhysicalDevicePortabilitySubsetProperties(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentBarrierFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6941,7 +6941,7 @@ void cvkReadJsonPhysicalDevicePresentBarrierFeaturesNV(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentId2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6949,7 +6949,7 @@ void cvkReadJsonPhysicalDevicePresentId2Features(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentIdFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6957,7 +6957,7 @@ void cvkReadJsonPhysicalDevicePresentIdFeatures(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentMeteringFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6965,7 +6965,7 @@ void cvkReadJsonPhysicalDevicePresentMeteringFeaturesNV(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentModeFifoLatestReadyFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6973,7 +6973,7 @@ void cvkReadJsonPhysicalDevicePresentModeFifoLatestReadyFeatures(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentTimingFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6981,7 +6981,7 @@ void cvkReadJsonPhysicalDevicePresentTimingFeatures(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentWait2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6989,7 +6989,7 @@ void cvkReadJsonPhysicalDevicePresentWait2Features(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentWaitFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -6997,7 +6997,7 @@ void cvkReadJsonPhysicalDevicePresentWaitFeatures(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePrimitiveRestartIndexFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7005,7 +7005,7 @@ void cvkReadJsonPhysicalDevicePrimitiveRestartIndexFeatures(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePrimitiveTopologyListRestartFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7013,7 +7013,7 @@ void cvkReadJsonPhysicalDevicePrimitiveTopologyListRestartFeatures(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePrimitivesGeneratedQueryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7021,7 +7021,7 @@ void cvkReadJsonPhysicalDevicePrimitivesGeneratedQueryFeatures(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePrivateDataBaseHandleFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7029,7 +7029,7 @@ void cvkReadJsonPhysicalDevicePrivateDataBaseHandleFeaturesNV(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePrivateDataFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7037,7 +7037,7 @@ void cvkReadJsonPhysicalDevicePrivateDataFeatures(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7045,7 +7045,7 @@ void cvkReadJsonPhysicalDeviceProperties(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7053,7 +7053,7 @@ void cvkReadJsonPhysicalDeviceProperties2(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceProtectedMemoryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7061,7 +7061,7 @@ void cvkReadJsonPhysicalDeviceProtectedMemoryFeatures(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceProtectedMemoryProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7069,7 +7069,7 @@ void cvkReadJsonPhysicalDeviceProtectedMemoryProperties(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceProvokingVertexFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7077,7 +7077,7 @@ void cvkReadJsonPhysicalDeviceProvokingVertexFeatures(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceProvokingVertexProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7085,7 +7085,7 @@ void cvkReadJsonPhysicalDeviceProvokingVertexProperties(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePushConstantBankFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7093,7 +7093,7 @@ void cvkReadJsonPhysicalDevicePushConstantBankFeaturesNV(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePushConstantBankPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7101,7 +7101,7 @@ void cvkReadJsonPhysicalDevicePushConstantBankPropertiesNV(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePushDescriptorProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7109,7 +7109,7 @@ void cvkReadJsonPhysicalDevicePushDescriptorProperties(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7117,7 +7117,7 @@ void cvkReadJsonPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM(cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceQueuePerfHintFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7125,7 +7125,7 @@ void cvkReadJsonPhysicalDeviceQueuePerfHintFeaturesQCOM(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceQueuePerfHintPropertiesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7133,7 +7133,7 @@ void cvkReadJsonPhysicalDeviceQueuePerfHintPropertiesQCOM(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRGBA10X6FormatsFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7141,7 +7141,7 @@ void cvkReadJsonPhysicalDeviceRGBA10X6FormatsFeatures(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRasterizationOrderAttachmentAccessFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7149,7 +7149,7 @@ void cvkReadJsonPhysicalDeviceRasterizationOrderAttachmentAccessFeatures(cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRawAccessChainsFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7157,7 +7157,7 @@ void cvkReadJsonPhysicalDeviceRawAccessChainsFeaturesNV(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayQueryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7165,7 +7165,7 @@ void cvkReadJsonPhysicalDeviceRayQueryFeatures(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7173,7 +7173,7 @@ void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderFeatures(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7181,7 +7181,7 @@ void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderFeaturesNV(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7189,7 +7189,7 @@ void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderProperties(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7197,7 +7197,7 @@ void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderPropertiesNV(cvkJsonWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingLinearSweptSpheresFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7205,7 +7205,7 @@ void cvkReadJsonPhysicalDeviceRayTracingLinearSweptSpheresFeaturesNV(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingMaintenance1Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7213,7 +7213,7 @@ void cvkReadJsonPhysicalDeviceRayTracingMaintenance1Features(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingMotionBlurFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7221,7 +7221,7 @@ void cvkReadJsonPhysicalDeviceRayTracingMotionBlurFeaturesNV(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingPipelineFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7229,7 +7229,7 @@ void cvkReadJsonPhysicalDeviceRayTracingPipelineFeatures(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingPipelineProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7237,7 +7237,7 @@ void cvkReadJsonPhysicalDeviceRayTracingPipelineProperties(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingPositionFetchFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7245,7 +7245,7 @@ void cvkReadJsonPhysicalDeviceRayTracingPositionFetchFeatures(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7253,7 +7253,7 @@ void cvkReadJsonPhysicalDeviceRayTracingPropertiesNV(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingValidationFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7261,7 +7261,7 @@ void cvkReadJsonPhysicalDeviceRayTracingValidationFeaturesNV(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRelaxedLineRasterizationFeaturesIMG(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7269,7 +7269,7 @@ void cvkReadJsonPhysicalDeviceRelaxedLineRasterizationFeaturesIMG(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRenderPassStripedFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7277,7 +7277,7 @@ void cvkReadJsonPhysicalDeviceRenderPassStripedFeaturesARM(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRenderPassStripedPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7285,7 +7285,7 @@ void cvkReadJsonPhysicalDeviceRenderPassStripedPropertiesARM(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRepresentativeFragmentTestFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7293,7 +7293,7 @@ void cvkReadJsonPhysicalDeviceRepresentativeFragmentTestFeaturesNV(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRobustness2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7301,7 +7301,7 @@ void cvkReadJsonPhysicalDeviceRobustness2Features(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRobustness2Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7309,7 +7309,7 @@ void cvkReadJsonPhysicalDeviceRobustness2Properties(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSampleLocationsProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7317,7 +7317,7 @@ void cvkReadJsonPhysicalDeviceSampleLocationsProperties(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSamplerFilterMinmaxProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7325,7 +7325,7 @@ void cvkReadJsonPhysicalDeviceSamplerFilterMinmaxProperties(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSamplerYcbcrConversionFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7333,7 +7333,7 @@ void cvkReadJsonPhysicalDeviceSamplerYcbcrConversionFeatures(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceScalarBlockLayoutFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7341,7 +7341,7 @@ void cvkReadJsonPhysicalDeviceScalarBlockLayoutFeatures(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSchedulingControlsDispatchParametersPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7349,7 +7349,7 @@ void cvkReadJsonPhysicalDeviceSchedulingControlsDispatchParametersPropertiesARM(
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSchedulingControlsFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7357,7 +7357,7 @@ void cvkReadJsonPhysicalDeviceSchedulingControlsFeaturesARM(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSchedulingControlsPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7365,7 +7365,7 @@ void cvkReadJsonPhysicalDeviceSchedulingControlsPropertiesARM(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSeparateDepthStencilLayoutsFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7373,7 +7373,7 @@ void cvkReadJsonPhysicalDeviceSeparateDepthStencilLayoutsFeatures(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShader64BitIndexingFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7381,7 +7381,7 @@ void cvkReadJsonPhysicalDeviceShader64BitIndexingFeatures(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderAbortFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7389,7 +7389,7 @@ void cvkReadJsonPhysicalDeviceShaderAbortFeatures(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderAbortProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7397,7 +7397,7 @@ void cvkReadJsonPhysicalDeviceShaderAbortProperties(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7405,7 +7405,7 @@ void cvkReadJsonPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderAtomicFloat2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7413,7 +7413,7 @@ void cvkReadJsonPhysicalDeviceShaderAtomicFloat2Features(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderAtomicFloatFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7421,7 +7421,7 @@ void cvkReadJsonPhysicalDeviceShaderAtomicFloatFeatures(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderAtomicInt64Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7429,7 +7429,7 @@ void cvkReadJsonPhysicalDeviceShaderAtomicInt64Features(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderBfloat16Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7437,7 +7437,7 @@ void cvkReadJsonPhysicalDeviceShaderBfloat16Features(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderClockFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7445,7 +7445,7 @@ void cvkReadJsonPhysicalDeviceShaderClockFeatures(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderConstantDataFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7453,7 +7453,7 @@ void cvkReadJsonPhysicalDeviceShaderConstantDataFeatures(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderCoreBuiltinsFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7461,7 +7461,7 @@ void cvkReadJsonPhysicalDeviceShaderCoreBuiltinsFeaturesARM(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderCoreBuiltinsPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7469,7 +7469,7 @@ void cvkReadJsonPhysicalDeviceShaderCoreBuiltinsPropertiesARM(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderCoreProperties2AMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7477,7 +7477,7 @@ void cvkReadJsonPhysicalDeviceShaderCoreProperties2AMD(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderCorePropertiesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7485,7 +7485,7 @@ void cvkReadJsonPhysicalDeviceShaderCorePropertiesAMD(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderCorePropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7493,7 +7493,7 @@ void cvkReadJsonPhysicalDeviceShaderCorePropertiesARM(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderDemoteToHelperInvocationFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7501,7 +7501,7 @@ void cvkReadJsonPhysicalDeviceShaderDemoteToHelperInvocationFeatures(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderDrawParametersFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7509,7 +7509,7 @@ void cvkReadJsonPhysicalDeviceShaderDrawParametersFeatures(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7517,7 +7517,7 @@ void cvkReadJsonPhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesAMD(cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderEnqueueFeaturesAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7525,7 +7525,7 @@ void cvkReadJsonPhysicalDeviceShaderEnqueueFeaturesAMDX(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderEnqueuePropertiesAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7533,7 +7533,7 @@ void cvkReadJsonPhysicalDeviceShaderEnqueuePropertiesAMDX(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderExpectAssumeFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7541,7 +7541,7 @@ void cvkReadJsonPhysicalDeviceShaderExpectAssumeFeatures(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderFloat16Int8Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7549,7 +7549,7 @@ void cvkReadJsonPhysicalDeviceShaderFloat16Int8Features(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderFloat8Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7557,7 +7557,7 @@ void cvkReadJsonPhysicalDeviceShaderFloat8Features(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderFloatControls2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7565,7 +7565,7 @@ void cvkReadJsonPhysicalDeviceShaderFloatControls2Features(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderFmaFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7573,7 +7573,7 @@ void cvkReadJsonPhysicalDeviceShaderFmaFeatures(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderImageAtomicInt64Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7581,7 +7581,7 @@ void cvkReadJsonPhysicalDeviceShaderImageAtomicInt64Features(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderImageFootprintFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7589,7 +7589,7 @@ void cvkReadJsonPhysicalDeviceShaderImageFootprintFeaturesNV(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderInstrumentationFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7597,7 +7597,7 @@ void cvkReadJsonPhysicalDeviceShaderInstrumentationFeaturesARM(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderInstrumentationPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7605,7 +7605,7 @@ void cvkReadJsonPhysicalDeviceShaderInstrumentationPropertiesARM(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderIntegerDotProductFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7613,7 +7613,7 @@ void cvkReadJsonPhysicalDeviceShaderIntegerDotProductFeatures(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderIntegerDotProductProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7621,7 +7621,7 @@ void cvkReadJsonPhysicalDeviceShaderIntegerDotProductProperties(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7629,7 +7629,7 @@ void cvkReadJsonPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderLongVectorFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7637,7 +7637,7 @@ void cvkReadJsonPhysicalDeviceShaderLongVectorFeatures(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderLongVectorProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7645,7 +7645,7 @@ void cvkReadJsonPhysicalDeviceShaderLongVectorProperties(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderMaximalReconvergenceFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7653,7 +7653,7 @@ void cvkReadJsonPhysicalDeviceShaderMaximalReconvergenceFeatures(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7661,7 +7661,7 @@ void cvkReadJsonPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE(cvkJsonWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderModuleIdentifierFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7669,7 +7669,7 @@ void cvkReadJsonPhysicalDeviceShaderModuleIdentifierFeatures(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderModuleIdentifierProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7677,7 +7677,7 @@ void cvkReadJsonPhysicalDeviceShaderModuleIdentifierProperties(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderMultipleWaitQueuesFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7685,7 +7685,7 @@ void cvkReadJsonPhysicalDeviceShaderMultipleWaitQueuesFeaturesQCOM(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderMultipleWaitQueuesPropertiesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7693,7 +7693,7 @@ void cvkReadJsonPhysicalDeviceShaderMultipleWaitQueuesPropertiesQCOM(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderOCPMicroscalingTypesFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7701,7 +7701,7 @@ void cvkReadJsonPhysicalDeviceShaderOCPMicroscalingTypesFeatures(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderObjectFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7709,7 +7709,7 @@ void cvkReadJsonPhysicalDeviceShaderObjectFeatures(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderObjectProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7717,7 +7717,7 @@ void cvkReadJsonPhysicalDeviceShaderObjectProperties(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderQuadControlFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7725,7 +7725,7 @@ void cvkReadJsonPhysicalDeviceShaderQuadControlFeatures(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderRelaxedExtendedInstructionFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7733,7 +7733,7 @@ void cvkReadJsonPhysicalDeviceShaderRelaxedExtendedInstructionFeatures(cvkJsonWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderReplicatedCompositesFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7741,7 +7741,7 @@ void cvkReadJsonPhysicalDeviceShaderReplicatedCompositesFeatures(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSMBuiltinsFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7749,7 +7749,7 @@ void cvkReadJsonPhysicalDeviceShaderSMBuiltinsFeaturesNV(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSMBuiltinsPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7757,7 +7757,7 @@ void cvkReadJsonPhysicalDeviceShaderSMBuiltinsPropertiesNV(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSplitBarrierFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7765,7 +7765,7 @@ void cvkReadJsonPhysicalDeviceShaderSplitBarrierFeatures(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSplitBarrierProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7773,7 +7773,7 @@ void cvkReadJsonPhysicalDeviceShaderSplitBarrierProperties(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSubgroupExtendedTypesFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7781,7 +7781,7 @@ void cvkReadJsonPhysicalDeviceShaderSubgroupExtendedTypesFeatures(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSubgroupPartitionedFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7789,7 +7789,7 @@ void cvkReadJsonPhysicalDeviceShaderSubgroupPartitionedFeatures(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSubgroupRotateFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7797,7 +7797,7 @@ void cvkReadJsonPhysicalDeviceShaderSubgroupRotateFeatures(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSubgroupUniformControlFlowFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7805,7 +7805,7 @@ void cvkReadJsonPhysicalDeviceShaderSubgroupUniformControlFlowFeatures(cvkJsonWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderTerminateInvocationFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7813,7 +7813,7 @@ void cvkReadJsonPhysicalDeviceShaderTerminateInvocationFeatures(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderTileImageFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7821,7 +7821,7 @@ void cvkReadJsonPhysicalDeviceShaderTileImageFeatures(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderTileImageProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7829,7 +7829,7 @@ void cvkReadJsonPhysicalDeviceShaderTileImageProperties(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderUniformBufferUnsizedArrayFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7837,7 +7837,7 @@ void cvkReadJsonPhysicalDeviceShaderUniformBufferUnsizedArrayFeatures(cvkJsonWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderUntypedPointersFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7845,7 +7845,7 @@ void cvkReadJsonPhysicalDeviceShaderUntypedPointersFeatures(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShadingRateImageFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7853,7 +7853,7 @@ void cvkReadJsonPhysicalDeviceShadingRateImageFeaturesNV(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShadingRateImagePropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7861,7 +7861,7 @@ void cvkReadJsonPhysicalDeviceShadingRateImagePropertiesNV(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSparseImageFormatInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7869,7 +7869,7 @@ void cvkReadJsonPhysicalDeviceSparseImageFormatInfo2(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSparseProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7877,7 +7877,7 @@ void cvkReadJsonPhysicalDeviceSparseProperties(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSubgroupProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7885,7 +7885,7 @@ void cvkReadJsonPhysicalDeviceSubgroupProperties(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSubgroupSizeControlFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7893,7 +7893,7 @@ void cvkReadJsonPhysicalDeviceSubgroupSizeControlFeatures(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSubgroupSizeControlProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7901,7 +7901,7 @@ void cvkReadJsonPhysicalDeviceSubgroupSizeControlProperties(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSubpassMergeFeedbackFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7909,7 +7909,7 @@ void cvkReadJsonPhysicalDeviceSubpassMergeFeedbackFeatures(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSubpassShadingFeaturesHUAWEI(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7917,7 +7917,7 @@ void cvkReadJsonPhysicalDeviceSubpassShadingFeaturesHUAWEI(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSubpassShadingPropertiesHUAWEI(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7925,7 +7925,7 @@ void cvkReadJsonPhysicalDeviceSubpassShadingPropertiesHUAWEI(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSurfaceInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7933,7 +7933,7 @@ void cvkReadJsonPhysicalDeviceSurfaceInfo2(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSwapchainMaintenance1Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7941,7 +7941,7 @@ void cvkReadJsonPhysicalDeviceSwapchainMaintenance1Features(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSynchronization2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7949,7 +7949,7 @@ void cvkReadJsonPhysicalDeviceSynchronization2Features(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTensorFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7957,7 +7957,7 @@ void cvkReadJsonPhysicalDeviceTensorFeaturesARM(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTensorPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7965,7 +7965,7 @@ void cvkReadJsonPhysicalDeviceTensorPropertiesARM(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTexelBufferAlignmentFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7973,7 +7973,7 @@ void cvkReadJsonPhysicalDeviceTexelBufferAlignmentFeatures(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTexelBufferAlignmentProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7981,7 +7981,7 @@ void cvkReadJsonPhysicalDeviceTexelBufferAlignmentProperties(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTextureCompressionASTC3DFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7989,7 +7989,7 @@ void cvkReadJsonPhysicalDeviceTextureCompressionASTC3DFeatures(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTextureCompressionASTCHDRFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -7997,7 +7997,7 @@ void cvkReadJsonPhysicalDeviceTextureCompressionASTCHDRFeatures(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceThrottleHintFeaturesSEC(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8005,7 +8005,7 @@ void cvkReadJsonPhysicalDeviceThrottleHintFeaturesSEC(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTileMemoryHeapFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8013,7 +8013,7 @@ void cvkReadJsonPhysicalDeviceTileMemoryHeapFeaturesQCOM(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTileMemoryHeapPropertiesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8021,7 +8021,7 @@ void cvkReadJsonPhysicalDeviceTileMemoryHeapPropertiesQCOM(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTilePropertiesFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8029,7 +8029,7 @@ void cvkReadJsonPhysicalDeviceTilePropertiesFeaturesQCOM(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTileShadingFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8037,7 +8037,7 @@ void cvkReadJsonPhysicalDeviceTileShadingFeaturesQCOM(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTileShadingPropertiesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8045,7 +8045,7 @@ void cvkReadJsonPhysicalDeviceTileShadingPropertiesQCOM(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTimelineSemaphoreFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8053,7 +8053,7 @@ void cvkReadJsonPhysicalDeviceTimelineSemaphoreFeatures(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTimelineSemaphoreProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8061,7 +8061,7 @@ void cvkReadJsonPhysicalDeviceTimelineSemaphoreProperties(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceToolProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8069,7 +8069,7 @@ void cvkReadJsonPhysicalDeviceToolProperties(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTransformFeedbackFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8077,7 +8077,7 @@ void cvkReadJsonPhysicalDeviceTransformFeedbackFeatures(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTransformFeedbackProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8085,7 +8085,7 @@ void cvkReadJsonPhysicalDeviceTransformFeedbackProperties(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceUnifiedImageLayoutsFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8093,7 +8093,7 @@ void cvkReadJsonPhysicalDeviceUnifiedImageLayoutsFeatures(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceUniformBufferStandardLayoutFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8101,7 +8101,7 @@ void cvkReadJsonPhysicalDeviceUniformBufferStandardLayoutFeatures(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVariablePointersFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8109,7 +8109,7 @@ void cvkReadJsonPhysicalDeviceVariablePointersFeatures(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVertexAttributeDivisorFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8117,7 +8117,7 @@ void cvkReadJsonPhysicalDeviceVertexAttributeDivisorFeatures(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVertexAttributeDivisorProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8125,7 +8125,7 @@ void cvkReadJsonPhysicalDeviceVertexAttributeDivisorProperties(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVertexAttributeDivisorPropertiesEXT(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8133,7 +8133,7 @@ void cvkReadJsonPhysicalDeviceVertexAttributeDivisorPropertiesEXT(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVertexAttributeRobustnessFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8141,7 +8141,7 @@ void cvkReadJsonPhysicalDeviceVertexAttributeRobustnessFeatures(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVertexInputDynamicStateFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8149,7 +8149,7 @@ void cvkReadJsonPhysicalDeviceVertexInputDynamicStateFeatures(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoDecodeVP9Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8157,7 +8157,7 @@ void cvkReadJsonPhysicalDeviceVideoDecodeVP9Features(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoEncodeAV1Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8165,7 +8165,7 @@ void cvkReadJsonPhysicalDeviceVideoEncodeAV1Features(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoEncodeFeedback2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8173,7 +8173,7 @@ void cvkReadJsonPhysicalDeviceVideoEncodeFeedback2Features(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoEncodeIntraRefreshFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8181,7 +8181,7 @@ void cvkReadJsonPhysicalDeviceVideoEncodeIntraRefreshFeatures(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoEncodeQualityLevelInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8189,7 +8189,7 @@ void cvkReadJsonPhysicalDeviceVideoEncodeQualityLevelInfo(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoEncodeQuantizationMapFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8197,7 +8197,7 @@ void cvkReadJsonPhysicalDeviceVideoEncodeQuantizationMapFeatures(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoEncodeRgbConversionFeaturesVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8205,7 +8205,7 @@ void cvkReadJsonPhysicalDeviceVideoEncodeRgbConversionFeaturesVALVE(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoFormatInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8213,7 +8213,7 @@ void cvkReadJsonPhysicalDeviceVideoFormatInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoMaintenance1Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8221,7 +8221,7 @@ void cvkReadJsonPhysicalDeviceVideoMaintenance1Features(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoMaintenance2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8229,7 +8229,7 @@ void cvkReadJsonPhysicalDeviceVideoMaintenance2Features(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan11Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8237,7 +8237,7 @@ void cvkReadJsonPhysicalDeviceVulkan11Features(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan11Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8245,7 +8245,7 @@ void cvkReadJsonPhysicalDeviceVulkan11Properties(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan12Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8253,7 +8253,7 @@ void cvkReadJsonPhysicalDeviceVulkan12Features(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan12Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8261,7 +8261,7 @@ void cvkReadJsonPhysicalDeviceVulkan12Properties(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan13Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8269,7 +8269,7 @@ void cvkReadJsonPhysicalDeviceVulkan13Features(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan13Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8277,7 +8277,7 @@ void cvkReadJsonPhysicalDeviceVulkan13Properties(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan14Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8285,7 +8285,7 @@ void cvkReadJsonPhysicalDeviceVulkan14Features(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan14Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8293,7 +8293,7 @@ void cvkReadJsonPhysicalDeviceVulkan14Properties(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkanMemoryModelFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8301,7 +8301,7 @@ void cvkReadJsonPhysicalDeviceVulkanMemoryModelFeatures(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceWorkgroupMemoryExplicitLayoutFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8309,7 +8309,7 @@ void cvkReadJsonPhysicalDeviceWorkgroupMemoryExplicitLayoutFeatures(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceYcbcr2Plane444FormatsFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8317,7 +8317,7 @@ void cvkReadJsonPhysicalDeviceYcbcr2Plane444FormatsFeatures(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceYcbcrDegammaFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8325,7 +8325,7 @@ void cvkReadJsonPhysicalDeviceYcbcrDegammaFeaturesQCOM(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceYcbcrImageArraysFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8333,7 +8333,7 @@ void cvkReadJsonPhysicalDeviceYcbcrImageArraysFeatures(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceZeroInitializeDeviceMemoryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8341,7 +8341,7 @@ void cvkReadJsonPhysicalDeviceZeroInitializeDeviceMemoryFeatures(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8349,7 +8349,7 @@ void cvkReadJsonPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineBinaryCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8357,7 +8357,7 @@ void cvkReadJsonPipelineBinaryCreateInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineBinaryDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8365,7 +8365,7 @@ void cvkReadJsonPipelineBinaryDataInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineBinaryData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8373,7 +8373,7 @@ void cvkReadJsonPipelineBinaryData(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineBinaryHandlesInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8381,7 +8381,7 @@ void cvkReadJsonPipelineBinaryHandlesInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineBinaryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8389,7 +8389,7 @@ void cvkReadJsonPipelineBinaryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineBinaryKey(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8397,7 +8397,7 @@ void cvkReadJsonPipelineBinaryKey(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineBinaryKeysAndData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8405,7 +8405,7 @@ void cvkReadJsonPipelineBinaryKeysAndData(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCacheCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8413,7 +8413,7 @@ void cvkReadJsonPipelineCacheCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCacheHeaderVersionDataGraphQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8421,7 +8421,7 @@ void cvkReadJsonPipelineCacheHeaderVersionDataGraphQCOM(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCacheHeaderVersionOne(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8429,7 +8429,7 @@ void cvkReadJsonPipelineCacheHeaderVersionOne(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineColorBlendAdvancedStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8437,7 +8437,7 @@ void cvkReadJsonPipelineColorBlendAdvancedStateCreateInfo(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineColorBlendAttachmentState(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8445,7 +8445,7 @@ void cvkReadJsonPipelineColorBlendAttachmentState(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineColorBlendStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8453,7 +8453,7 @@ void cvkReadJsonPipelineColorBlendStateCreateInfo(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineColorWriteCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8461,7 +8461,7 @@ void cvkReadJsonPipelineColorWriteCreateInfo(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCompilerControlCreateInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8469,7 +8469,7 @@ void cvkReadJsonPipelineCompilerControlCreateInfoAMD(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCoverageModulationStateCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8477,7 +8477,7 @@ void cvkReadJsonPipelineCoverageModulationStateCreateInfoNV(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCoverageReductionStateCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8485,7 +8485,7 @@ void cvkReadJsonPipelineCoverageReductionStateCreateInfoNV(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCoverageToColorStateCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8493,7 +8493,7 @@ void cvkReadJsonPipelineCoverageToColorStateCreateInfoNV(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCreateFlags2CreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8501,7 +8501,7 @@ void cvkReadJsonPipelineCreateFlags2CreateInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8509,7 +8509,7 @@ void cvkReadJsonPipelineCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCreationFeedback(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8517,7 +8517,7 @@ void cvkReadJsonPipelineCreationFeedback(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCreationFeedbackCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8525,7 +8525,7 @@ void cvkReadJsonPipelineCreationFeedbackCreateInfo(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineDepthStencilStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8533,7 +8533,7 @@ void cvkReadJsonPipelineDepthStencilStateCreateInfo(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineDiscardRectangleStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8541,7 +8541,7 @@ void cvkReadJsonPipelineDiscardRectangleStateCreateInfo(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineDynamicStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8549,7 +8549,7 @@ void cvkReadJsonPipelineDynamicStateCreateInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineExecutableInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8557,7 +8557,7 @@ void cvkReadJsonPipelineExecutableInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineExecutableInternalRepresentation(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8565,7 +8565,7 @@ void cvkReadJsonPipelineExecutableInternalRepresentation(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineExecutableProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8573,7 +8573,7 @@ void cvkReadJsonPipelineExecutableProperties(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineExecutableStatistic(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8581,7 +8581,7 @@ void cvkReadJsonPipelineExecutableStatistic(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineExecutableStatisticValue(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8589,7 +8589,7 @@ void cvkReadJsonPipelineExecutableStatisticValue(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineFragmentDensityMapLayeredCreateInfoVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8597,7 +8597,7 @@ void cvkReadJsonPipelineFragmentDensityMapLayeredCreateInfoVALVE(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineFragmentShadingRateEnumStateCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8605,7 +8605,7 @@ void cvkReadJsonPipelineFragmentShadingRateEnumStateCreateInfoNV(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineFragmentShadingRateStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8613,7 +8613,7 @@ void cvkReadJsonPipelineFragmentShadingRateStateCreateInfo(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineIndirectDeviceAddressInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8621,7 +8621,7 @@ void cvkReadJsonPipelineIndirectDeviceAddressInfoNV(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8629,7 +8629,7 @@ void cvkReadJsonPipelineInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, vo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineInputAssemblyStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8637,7 +8637,7 @@ void cvkReadJsonPipelineInputAssemblyStateCreateInfo(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineLayoutCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8645,7 +8645,7 @@ void cvkReadJsonPipelineLayoutCreateInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineLibraryCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8653,7 +8653,7 @@ void cvkReadJsonPipelineLibraryCreateInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineMultisampleStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8661,7 +8661,7 @@ void cvkReadJsonPipelineMultisampleStateCreateInfo(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelinePropertiesIdentifier(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8669,7 +8669,7 @@ void cvkReadJsonPipelinePropertiesIdentifier(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRasterizationConservativeStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8677,7 +8677,7 @@ void cvkReadJsonPipelineRasterizationConservativeStateCreateInfo(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRasterizationDepthClipStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8685,7 +8685,7 @@ void cvkReadJsonPipelineRasterizationDepthClipStateCreateInfo(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRasterizationLineStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8693,7 +8693,7 @@ void cvkReadJsonPipelineRasterizationLineStateCreateInfo(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRasterizationProvokingVertexStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8701,7 +8701,7 @@ void cvkReadJsonPipelineRasterizationProvokingVertexStateCreateInfo(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRasterizationStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8709,7 +8709,7 @@ void cvkReadJsonPipelineRasterizationStateCreateInfo(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRasterizationStateRasterizationOrderAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8717,7 +8717,7 @@ void cvkReadJsonPipelineRasterizationStateRasterizationOrderAMD(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRasterizationStateStreamCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8725,7 +8725,7 @@ void cvkReadJsonPipelineRasterizationStateStreamCreateInfo(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRenderingCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8733,7 +8733,7 @@ void cvkReadJsonPipelineRenderingCreateInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRepresentativeFragmentTestStateCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8741,7 +8741,7 @@ void cvkReadJsonPipelineRepresentativeFragmentTestStateCreateInfoNV(cvkJsonWork*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRobustnessCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8749,7 +8749,7 @@ void cvkReadJsonPipelineRobustnessCreateInfo(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineSampleLocationsStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8757,7 +8757,7 @@ void cvkReadJsonPipelineSampleLocationsStateCreateInfo(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineShaderStageCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8765,7 +8765,7 @@ void cvkReadJsonPipelineShaderStageCreateInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineShaderStageModuleIdentifierCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8773,7 +8773,7 @@ void cvkReadJsonPipelineShaderStageModuleIdentifierCreateInfo(cvkJsonWork* pWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineShaderStageNodeCreateInfoAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8781,7 +8781,7 @@ void cvkReadJsonPipelineShaderStageNodeCreateInfoAMDX(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineShaderStageRequiredSubgroupSizeCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8789,7 +8789,7 @@ void cvkReadJsonPipelineShaderStageRequiredSubgroupSizeCreateInfo(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineTessellationDomainOriginStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8797,7 +8797,7 @@ void cvkReadJsonPipelineTessellationDomainOriginStateCreateInfo(cvkJsonWork* pWo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineTessellationStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8805,7 +8805,7 @@ void cvkReadJsonPipelineTessellationStateCreateInfo(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineVertexInputDivisorStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8813,7 +8813,7 @@ void cvkReadJsonPipelineVertexInputDivisorStateCreateInfo(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineVertexInputStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8821,7 +8821,7 @@ void cvkReadJsonPipelineVertexInputStateCreateInfo(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportCoarseSampleOrderStateCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8829,7 +8829,7 @@ void cvkReadJsonPipelineViewportCoarseSampleOrderStateCreateInfoNV(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportDepthClampControlCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8837,7 +8837,7 @@ void cvkReadJsonPipelineViewportDepthClampControlCreateInfo(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportDepthClipControlCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8845,7 +8845,7 @@ void cvkReadJsonPipelineViewportDepthClipControlCreateInfo(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportExclusiveScissorStateCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8853,7 +8853,7 @@ void cvkReadJsonPipelineViewportExclusiveScissorStateCreateInfoNV(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportShadingRateImageStateCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8861,7 +8861,7 @@ void cvkReadJsonPipelineViewportShadingRateImageStateCreateInfoNV(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8869,7 +8869,7 @@ void cvkReadJsonPipelineViewportStateCreateInfo(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportSwizzleStateCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8877,7 +8877,7 @@ void cvkReadJsonPipelineViewportSwizzleStateCreateInfoNV(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportWScalingStateCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8885,7 +8885,7 @@ void cvkReadJsonPipelineViewportWScalingStateCreateInfoNV(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPresentFrameTokenGGP(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8893,7 +8893,7 @@ void cvkReadJsonPresentFrameTokenGGP(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPresentId2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8901,7 +8901,7 @@ void cvkReadJsonPresentId2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPresentId(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8909,7 +8909,7 @@ void cvkReadJsonPresentId(cvkJsonWork* pWork, const cvkJsonValue* pObject, void*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPresentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8917,7 +8917,7 @@ void cvkReadJsonPresentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, voi
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPresentRegion(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8925,7 +8925,7 @@ void cvkReadJsonPresentRegion(cvkJsonWork* pWork, const cvkJsonValue* pObject, v
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPresentRegions(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8933,7 +8933,7 @@ void cvkReadJsonPresentRegions(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPresentStageTime(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8941,7 +8941,7 @@ void cvkReadJsonPresentStageTime(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPresentTimeGOOGLE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8949,7 +8949,7 @@ void cvkReadJsonPresentTimeGOOGLE(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPresentTimesInfoGOOGLE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8957,7 +8957,7 @@ void cvkReadJsonPresentTimesInfoGOOGLE(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPresentTimingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8965,7 +8965,7 @@ void cvkReadJsonPresentTimingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPresentTimingSurfaceCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8973,7 +8973,7 @@ void cvkReadJsonPresentTimingSurfaceCapabilities(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPresentTimingsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8981,7 +8981,7 @@ void cvkReadJsonPresentTimingsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPresentWait2Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8989,7 +8989,7 @@ void cvkReadJsonPresentWait2Info(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPrivateDataSlotCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -8997,7 +8997,7 @@ void cvkReadJsonPrivateDataSlotCreateInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonProtectedSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9005,7 +9005,7 @@ void cvkReadJsonProtectedSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPushConstantBankInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9013,7 +9013,7 @@ void cvkReadJsonPushConstantBankInfoNV(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPushConstantRange(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9021,7 +9021,7 @@ void cvkReadJsonPushConstantRange(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPushConstantsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9029,7 +9029,7 @@ void cvkReadJsonPushConstantsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPushDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9037,7 +9037,7 @@ void cvkReadJsonPushDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, vo
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPushDescriptorSetInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9045,7 +9045,7 @@ void cvkReadJsonPushDescriptorSetInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonPushDescriptorSetWithTemplateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9053,7 +9053,7 @@ void cvkReadJsonPushDescriptorSetWithTemplateInfo(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueryLowLatencySupportNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9061,7 +9061,7 @@ void cvkReadJsonQueryLowLatencySupportNV(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueryPoolCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9069,7 +9069,7 @@ void cvkReadJsonQueryPoolCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueryPoolPerformanceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9077,7 +9077,7 @@ void cvkReadJsonQueryPoolPerformanceCreateInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueryPoolPerformanceQueryCreateInfoINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9085,7 +9085,7 @@ void cvkReadJsonQueryPoolPerformanceQueryCreateInfoINTEL(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueryPoolVideoEncodeFeedbackCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9093,7 +9093,7 @@ void cvkReadJsonQueryPoolVideoEncodeFeedbackCreateInfo(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueryPoolVideoEncodePerPartitionFeedbackCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9101,7 +9101,7 @@ void cvkReadJsonQueryPoolVideoEncodePerPartitionFeedbackCreateInfo(cvkJsonWork* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyCheckpointProperties2NV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9109,7 +9109,7 @@ void cvkReadJsonQueueFamilyCheckpointProperties2NV(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyCheckpointPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9117,7 +9117,7 @@ void cvkReadJsonQueueFamilyCheckpointPropertiesNV(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyDataGraphOpticalFlowPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9125,7 +9125,7 @@ void cvkReadJsonQueueFamilyDataGraphOpticalFlowPropertiesARM(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyDataGraphProcessingEnginePropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9133,7 +9133,7 @@ void cvkReadJsonQueueFamilyDataGraphProcessingEnginePropertiesARM(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyDataGraphPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9141,7 +9141,7 @@ void cvkReadJsonQueueFamilyDataGraphPropertiesARM(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyDataGraphTOSAPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9149,7 +9149,7 @@ void cvkReadJsonQueueFamilyDataGraphTOSAPropertiesARM(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyGlobalPriorityProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9157,7 +9157,7 @@ void cvkReadJsonQueueFamilyGlobalPriorityProperties(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyOptimalImageTransferGranularityProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9165,7 +9165,7 @@ void cvkReadJsonQueueFamilyOptimalImageTransferGranularityProperties(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyOwnershipTransferProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9173,7 +9173,7 @@ void cvkReadJsonQueueFamilyOwnershipTransferProperties(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9181,7 +9181,7 @@ void cvkReadJsonQueueFamilyProperties(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9189,7 +9189,7 @@ void cvkReadJsonQueueFamilyProperties2(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyQueryResultStatusProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9197,7 +9197,7 @@ void cvkReadJsonQueueFamilyQueryResultStatusProperties(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyVideoProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9205,7 +9205,7 @@ void cvkReadJsonQueueFamilyVideoProperties(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRayTracingPipelineClusterAccelerationStructureCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9213,7 +9213,7 @@ void cvkReadJsonRayTracingPipelineClusterAccelerationStructureCreateInfoNV(cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRayTracingPipelineCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9221,7 +9221,7 @@ void cvkReadJsonRayTracingPipelineCreateInfo(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRayTracingPipelineCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9229,7 +9229,7 @@ void cvkReadJsonRayTracingPipelineCreateInfoNV(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRayTracingPipelineInterfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9237,7 +9237,7 @@ void cvkReadJsonRayTracingPipelineInterfaceCreateInfo(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRayTracingShaderGroupCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9245,7 +9245,7 @@ void cvkReadJsonRayTracingShaderGroupCreateInfo(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRayTracingShaderGroupCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9253,7 +9253,7 @@ void cvkReadJsonRayTracingShaderGroupCreateInfoNV(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRect2D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9261,7 +9261,7 @@ void cvkReadJsonRect2D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRectLayer(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9269,7 +9269,7 @@ void cvkReadJsonRectLayer(cvkJsonWork* pWork, const cvkJsonValue* pObject, void*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRefreshCycleDurationGOOGLE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9277,7 +9277,7 @@ void cvkReadJsonRefreshCycleDurationGOOGLE(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonReleaseCapturedPipelineDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9285,7 +9285,7 @@ void cvkReadJsonReleaseCapturedPipelineDataInfo(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonReleaseSwapchainImagesInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9293,7 +9293,7 @@ void cvkReadJsonReleaseSwapchainImagesInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassAttachmentBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9301,7 +9301,7 @@ void cvkReadJsonRenderPassAttachmentBeginInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9309,7 +9309,7 @@ void cvkReadJsonRenderPassBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9317,7 +9317,7 @@ void cvkReadJsonRenderPassCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassCreateInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9325,7 +9325,7 @@ void cvkReadJsonRenderPassCreateInfo2(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassCreationControl(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9333,7 +9333,7 @@ void cvkReadJsonRenderPassCreationControl(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassCreationFeedbackCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9341,7 +9341,7 @@ void cvkReadJsonRenderPassCreationFeedbackCreateInfo(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassCreationFeedbackInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9349,7 +9349,7 @@ void cvkReadJsonRenderPassCreationFeedbackInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassFragmentDensityMapCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9357,7 +9357,7 @@ void cvkReadJsonRenderPassFragmentDensityMapCreateInfo(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassFragmentDensityMapOffsetEndInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9365,7 +9365,7 @@ void cvkReadJsonRenderPassFragmentDensityMapOffsetEndInfo(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassInputAttachmentAspectCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9373,7 +9373,7 @@ void cvkReadJsonRenderPassInputAttachmentAspectCreateInfo(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassMultiviewCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9381,7 +9381,7 @@ void cvkReadJsonRenderPassMultiviewCreateInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassPerformanceCountersByRegionBeginInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9389,7 +9389,7 @@ void cvkReadJsonRenderPassPerformanceCountersByRegionBeginInfoARM(cvkJsonWork* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassSampleLocationsBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9397,7 +9397,7 @@ void cvkReadJsonRenderPassSampleLocationsBeginInfo(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassStripeBeginInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9405,7 +9405,7 @@ void cvkReadJsonRenderPassStripeBeginInfoARM(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassStripeInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9413,7 +9413,7 @@ void cvkReadJsonRenderPassStripeInfoARM(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassStripeSubmitInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9421,7 +9421,7 @@ void cvkReadJsonRenderPassStripeSubmitInfoARM(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassSubpassFeedbackCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9429,7 +9429,7 @@ void cvkReadJsonRenderPassSubpassFeedbackCreateInfo(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassSubpassFeedbackInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9437,7 +9437,7 @@ void cvkReadJsonRenderPassSubpassFeedbackInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassTileShadingCreateInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9445,7 +9445,7 @@ void cvkReadJsonRenderPassTileShadingCreateInfoQCOM(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassTransformBeginInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9453,7 +9453,7 @@ void cvkReadJsonRenderPassTransformBeginInfoQCOM(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderingAreaInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9461,7 +9461,7 @@ void cvkReadJsonRenderingAreaInfo(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderingAttachmentFlagsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9469,7 +9469,7 @@ void cvkReadJsonRenderingAttachmentFlagsInfo(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderingAttachmentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9477,7 +9477,7 @@ void cvkReadJsonRenderingAttachmentInfo(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderingAttachmentLocationInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9485,7 +9485,7 @@ void cvkReadJsonRenderingAttachmentLocationInfo(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderingEndInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9493,7 +9493,7 @@ void cvkReadJsonRenderingEndInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderingFragmentDensityMapAttachmentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9501,7 +9501,7 @@ void cvkReadJsonRenderingFragmentDensityMapAttachmentInfo(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderingFragmentShadingRateAttachmentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9509,7 +9509,7 @@ void cvkReadJsonRenderingFragmentShadingRateAttachmentInfo(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9517,7 +9517,7 @@ void cvkReadJsonRenderingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, v
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonRenderingInputAttachmentIndexInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9525,7 +9525,7 @@ void cvkReadJsonRenderingInputAttachmentIndexInfo(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonResolveImageInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9533,7 +9533,7 @@ void cvkReadJsonResolveImageInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonResolveImageModeInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9541,7 +9541,7 @@ void cvkReadJsonResolveImageModeInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonResourceDescriptorData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9549,7 +9549,7 @@ void cvkReadJsonResourceDescriptorData(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonResourceDescriptorInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9557,7 +9557,7 @@ void cvkReadJsonResourceDescriptorInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSRTDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9565,7 +9565,7 @@ void cvkReadJsonSRTDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSampleLocation(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9573,7 +9573,7 @@ void cvkReadJsonSampleLocation(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSampleLocationsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9581,7 +9581,7 @@ void cvkReadJsonSampleLocationsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSamplerBlockMatchWindowCreateInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9589,7 +9589,7 @@ void cvkReadJsonSamplerBlockMatchWindowCreateInfoQCOM(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSamplerBorderColorComponentMappingCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9597,7 +9597,7 @@ void cvkReadJsonSamplerBorderColorComponentMappingCreateInfo(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSamplerCaptureDescriptorDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9605,7 +9605,7 @@ void cvkReadJsonSamplerCaptureDescriptorDataInfo(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSamplerCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9613,7 +9613,7 @@ void cvkReadJsonSamplerCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSamplerCubicWeightsCreateInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9621,7 +9621,7 @@ void cvkReadJsonSamplerCubicWeightsCreateInfoQCOM(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSamplerCustomBorderColorCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9629,7 +9629,7 @@ void cvkReadJsonSamplerCustomBorderColorCreateInfo(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSamplerCustomBorderColorIndexCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9637,7 +9637,7 @@ void cvkReadJsonSamplerCustomBorderColorIndexCreateInfo(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSamplerReductionModeCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9645,7 +9645,7 @@ void cvkReadJsonSamplerReductionModeCreateInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSamplerYcbcrConversionCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9653,7 +9653,7 @@ void cvkReadJsonSamplerYcbcrConversionCreateInfo(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSamplerYcbcrConversionImageFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9661,7 +9661,7 @@ void cvkReadJsonSamplerYcbcrConversionImageFormatProperties(cvkJsonWork* pWork, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSamplerYcbcrConversionInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9669,7 +9669,7 @@ void cvkReadJsonSamplerYcbcrConversionInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9677,7 +9677,7 @@ void cvkReadJsonSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM(cvkJsonWork* pW
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonScreenBufferFormatPropertiesQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9685,7 +9685,7 @@ void cvkReadJsonScreenBufferFormatPropertiesQNX(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonScreenBufferPropertiesQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9693,7 +9693,7 @@ void cvkReadJsonScreenBufferPropertiesQNX(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonScreenSurfaceCreateInfoQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9701,7 +9701,7 @@ void cvkReadJsonScreenSurfaceCreateInfoQNX(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9709,7 +9709,7 @@ void cvkReadJsonSemaphoreCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreGetFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9717,7 +9717,7 @@ void cvkReadJsonSemaphoreGetFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9725,7 +9725,7 @@ void cvkReadJsonSemaphoreGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreGetZirconHandleInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9733,7 +9733,7 @@ void cvkReadJsonSemaphoreGetZirconHandleInfoFUCHSIA(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreSignalInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9741,7 +9741,7 @@ void cvkReadJsonSemaphoreSignalInfo(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9749,7 +9749,7 @@ void cvkReadJsonSemaphoreSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreTypeCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9757,7 +9757,7 @@ void cvkReadJsonSemaphoreTypeCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreWaitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9765,7 +9765,7 @@ void cvkReadJsonSemaphoreWaitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSetDescriptorBufferOffsetsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9773,7 +9773,7 @@ void cvkReadJsonSetDescriptorBufferOffsetsInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSetLatencyMarkerInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9781,7 +9781,7 @@ void cvkReadJsonSetLatencyMarkerInfoNV(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSetPresentConfigNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9789,7 +9789,7 @@ void cvkReadJsonSetPresentConfigNV(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSetStateFlagsIndirectCommandNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9797,7 +9797,7 @@ void cvkReadJsonSetStateFlagsIndirectCommandNV(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonShaderCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9805,7 +9805,7 @@ void cvkReadJsonShaderCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonShaderDescriptorSetAndBindingMappingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9813,7 +9813,7 @@ void cvkReadJsonShaderDescriptorSetAndBindingMappingInfo(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonShaderInstrumentationCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9821,7 +9821,7 @@ void cvkReadJsonShaderInstrumentationCreateInfoARM(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonShaderInstrumentationMetricDataHeaderARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9829,7 +9829,7 @@ void cvkReadJsonShaderInstrumentationMetricDataHeaderARM(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonShaderInstrumentationMetricDescriptionARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9837,7 +9837,7 @@ void cvkReadJsonShaderInstrumentationMetricDescriptionARM(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonShaderModuleCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9845,7 +9845,7 @@ void cvkReadJsonShaderModuleCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonShaderModuleIdentifier(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9853,7 +9853,7 @@ void cvkReadJsonShaderModuleIdentifier(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonShaderModuleValidationCacheCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9861,7 +9861,7 @@ void cvkReadJsonShaderModuleValidationCacheCreateInfo(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonShaderResourceUsageAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9869,7 +9869,7 @@ void cvkReadJsonShaderResourceUsageAMD(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonShaderStatisticsInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9877,7 +9877,7 @@ void cvkReadJsonShaderStatisticsInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonShadingRatePaletteNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9885,7 +9885,7 @@ void cvkReadJsonShadingRatePaletteNV(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSharedPresentSurfaceCapabilities2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9893,7 +9893,7 @@ void cvkReadJsonSharedPresentSurfaceCapabilities2(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSharedPresentSurfaceCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9901,7 +9901,7 @@ void cvkReadJsonSharedPresentSurfaceCapabilities(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSparseBufferMemoryBindInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9909,7 +9909,7 @@ void cvkReadJsonSparseBufferMemoryBindInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSparseImageFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9917,7 +9917,7 @@ void cvkReadJsonSparseImageFormatProperties(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSparseImageFormatProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9925,7 +9925,7 @@ void cvkReadJsonSparseImageFormatProperties2(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSparseImageMemoryBind(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9933,7 +9933,7 @@ void cvkReadJsonSparseImageMemoryBind(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSparseImageMemoryBindInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9941,7 +9941,7 @@ void cvkReadJsonSparseImageMemoryBindInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSparseImageMemoryRequirements(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9949,7 +9949,7 @@ void cvkReadJsonSparseImageMemoryRequirements(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSparseImageMemoryRequirements2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9957,7 +9957,7 @@ void cvkReadJsonSparseImageMemoryRequirements2(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSparseImageOpaqueMemoryBindInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9965,7 +9965,7 @@ void cvkReadJsonSparseImageOpaqueMemoryBindInfo(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSparseMemoryBind(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9973,7 +9973,7 @@ void cvkReadJsonSparseMemoryBind(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSpecializationInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9981,7 +9981,7 @@ void cvkReadJsonSpecializationInfo(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSpecializationMapEntry(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9989,7 +9989,7 @@ void cvkReadJsonSpecializationMapEntry(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonStencilOpState(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -9997,7 +9997,7 @@ void cvkReadJsonStencilOpState(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonStreamDescriptorSurfaceCreateInfoGGP(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10005,7 +10005,7 @@ void cvkReadJsonStreamDescriptorSurfaceCreateInfoGGP(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonStridedDeviceAddressNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10013,7 +10013,7 @@ void cvkReadJsonStridedDeviceAddressNV(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonStridedDeviceAddressRange(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10021,7 +10021,7 @@ void cvkReadJsonStridedDeviceAddressRange(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonStridedDeviceAddressRegion(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10029,7 +10029,7 @@ void cvkReadJsonStridedDeviceAddressRegion(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10037,7 +10037,7 @@ void cvkReadJsonSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubmitInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10045,7 +10045,7 @@ void cvkReadJsonSubmitInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, voi
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubpassBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10053,7 +10053,7 @@ void cvkReadJsonSubpassBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubpassDependency(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10061,7 +10061,7 @@ void cvkReadJsonSubpassDependency(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubpassDependency2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10069,7 +10069,7 @@ void cvkReadJsonSubpassDependency2(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubpassDescription(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10077,7 +10077,7 @@ void cvkReadJsonSubpassDescription(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubpassDescription2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10085,7 +10085,7 @@ void cvkReadJsonSubpassDescription2(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubpassDescriptionDepthStencilResolve(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10093,7 +10093,7 @@ void cvkReadJsonSubpassDescriptionDepthStencilResolve(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubpassEndInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10101,7 +10101,7 @@ void cvkReadJsonSubpassEndInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubpassResolvePerformanceQuery(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10109,7 +10109,7 @@ void cvkReadJsonSubpassResolvePerformanceQuery(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubpassSampleLocations(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10117,7 +10117,7 @@ void cvkReadJsonSubpassSampleLocations(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubpassShadingPipelineCreateInfoHUAWEI(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10125,7 +10125,7 @@ void cvkReadJsonSubpassShadingPipelineCreateInfoHUAWEI(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubresourceHostMemcpySize(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10133,7 +10133,7 @@ void cvkReadJsonSubresourceHostMemcpySize(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubresourceLayout(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10141,7 +10141,7 @@ void cvkReadJsonSubresourceLayout(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubresourceLayout2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10149,7 +10149,7 @@ void cvkReadJsonSubresourceLayout2(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSubsampledImageFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10157,7 +10157,7 @@ void cvkReadJsonSubsampledImageFormatProperties(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCapabilities2EXT(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10165,7 +10165,7 @@ void cvkReadJsonSurfaceCapabilities2EXT(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCapabilities2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10173,7 +10173,7 @@ void cvkReadJsonSurfaceCapabilities2(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCapabilitiesFullScreenExclusive(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10181,7 +10181,7 @@ void cvkReadJsonSurfaceCapabilitiesFullScreenExclusive(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10189,7 +10189,7 @@ void cvkReadJsonSurfaceCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCapabilitiesPresentBarrierNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10197,7 +10197,7 @@ void cvkReadJsonSurfaceCapabilitiesPresentBarrierNV(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCapabilitiesPresentId2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10205,7 +10205,7 @@ void cvkReadJsonSurfaceCapabilitiesPresentId2(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCapabilitiesPresentWait2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10213,7 +10213,7 @@ void cvkReadJsonSurfaceCapabilitiesPresentWait2(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCreateInfoOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10221,7 +10221,7 @@ void cvkReadJsonSurfaceCreateInfoOHOS(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceFormat2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10229,7 +10229,7 @@ void cvkReadJsonSurfaceFormat2(cvkJsonWork* pWork, const cvkJsonValue* pObject, 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceFormat(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10237,7 +10237,7 @@ void cvkReadJsonSurfaceFormat(cvkJsonWork* pWork, const cvkJsonValue* pObject, v
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceFullScreenExclusiveInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10245,7 +10245,7 @@ void cvkReadJsonSurfaceFullScreenExclusiveInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceFullScreenExclusiveWin32Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10253,7 +10253,7 @@ void cvkReadJsonSurfaceFullScreenExclusiveWin32Info(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfacePresentModeCompatibility(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10261,7 +10261,7 @@ void cvkReadJsonSurfacePresentModeCompatibility(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfacePresentMode(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10269,7 +10269,7 @@ void cvkReadJsonSurfacePresentMode(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfacePresentScalingCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10277,7 +10277,7 @@ void cvkReadJsonSurfacePresentScalingCapabilities(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceProtectedCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10285,7 +10285,7 @@ void cvkReadJsonSurfaceProtectedCapabilities(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainCalibratedTimestampInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10293,7 +10293,7 @@ void cvkReadJsonSwapchainCalibratedTimestampInfo(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainCounterCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10301,7 +10301,7 @@ void cvkReadJsonSwapchainCounterCreateInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10309,7 +10309,7 @@ void cvkReadJsonSwapchainCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainDisplayNativeHdrCreateInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10317,7 +10317,7 @@ void cvkReadJsonSwapchainDisplayNativeHdrCreateInfoAMD(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainFlagsSurfaceCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10325,7 +10325,7 @@ void cvkReadJsonSwapchainFlagsSurfaceCapabilities(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainLatencyCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10333,7 +10333,7 @@ void cvkReadJsonSwapchainLatencyCreateInfoNV(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainPresentBarrierCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10341,7 +10341,7 @@ void cvkReadJsonSwapchainPresentBarrierCreateInfoNV(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainPresentFenceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10349,7 +10349,7 @@ void cvkReadJsonSwapchainPresentFenceInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainPresentModeInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10357,7 +10357,7 @@ void cvkReadJsonSwapchainPresentModeInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainPresentModesCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10365,7 +10365,7 @@ void cvkReadJsonSwapchainPresentModesCreateInfo(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainPresentScalingCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10373,7 +10373,7 @@ void cvkReadJsonSwapchainPresentScalingCreateInfo(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainTimeDomainProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10381,7 +10381,7 @@ void cvkReadJsonSwapchainTimeDomainProperties(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainTimingProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10389,7 +10389,7 @@ void cvkReadJsonSwapchainTimingProperties(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonSysmemColorSpaceFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10397,7 +10397,7 @@ void cvkReadJsonSysmemColorSpaceFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTensorCaptureDescriptorDataInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10405,7 +10405,7 @@ void cvkReadJsonTensorCaptureDescriptorDataInfoARM(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTensorCopyARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10413,7 +10413,7 @@ void cvkReadJsonTensorCopyARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, v
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTensorCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10421,7 +10421,7 @@ void cvkReadJsonTensorCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObj
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTensorDependencyInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10429,7 +10429,7 @@ void cvkReadJsonTensorDependencyInfoARM(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTensorDescriptionARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10437,7 +10437,7 @@ void cvkReadJsonTensorDescriptionARM(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTensorExplicitTilingFormatPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10445,7 +10445,7 @@ void cvkReadJsonTensorExplicitTilingFormatPropertiesARM(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTensorFormatPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10453,7 +10453,7 @@ void cvkReadJsonTensorFormatPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTensorMemoryBarrierARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10461,7 +10461,7 @@ void cvkReadJsonTensorMemoryBarrierARM(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTensorMemoryRequirementsInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10469,7 +10469,7 @@ void cvkReadJsonTensorMemoryRequirementsInfoARM(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTensorRollingBackingCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10477,7 +10477,7 @@ void cvkReadJsonTensorRollingBackingCreateInfoARM(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTensorViewCaptureDescriptorDataInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10485,7 +10485,7 @@ void cvkReadJsonTensorViewCaptureDescriptorDataInfoARM(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTensorViewCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10493,7 +10493,7 @@ void cvkReadJsonTensorViewCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTexelBufferDescriptorInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10501,7 +10501,7 @@ void cvkReadJsonTexelBufferDescriptorInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTextureLODGatherFormatPropertiesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10509,7 +10509,7 @@ void cvkReadJsonTextureLODGatherFormatPropertiesAMD(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonThrottleHintSubmitInfoSEC(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10517,7 +10517,7 @@ void cvkReadJsonThrottleHintSubmitInfoSEC(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTileMemoryBindInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10525,7 +10525,7 @@ void cvkReadJsonTileMemoryBindInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTileMemoryRequirementsQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10533,7 +10533,7 @@ void cvkReadJsonTileMemoryRequirementsQCOM(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTileMemorySizeInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10541,7 +10541,7 @@ void cvkReadJsonTileMemorySizeInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTilePropertiesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10549,7 +10549,7 @@ void cvkReadJsonTilePropertiesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTimelineSemaphoreSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10557,7 +10557,7 @@ void cvkReadJsonTimelineSemaphoreSubmitInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTraceRaysIndirectCommand2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10565,7 +10565,7 @@ void cvkReadJsonTraceRaysIndirectCommand2(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTraceRaysIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10573,7 +10573,7 @@ void cvkReadJsonTraceRaysIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonTransformMatrix(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10581,7 +10581,7 @@ void cvkReadJsonTransformMatrix(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonUbmSurfaceCreateInfoSEC(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10589,7 +10589,7 @@ void cvkReadJsonUbmSurfaceCreateInfoSEC(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonValidationCacheCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10597,7 +10597,7 @@ void cvkReadJsonValidationCacheCreateInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonValidationFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10605,7 +10605,7 @@ void cvkReadJsonValidationFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonValidationFlags(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10613,7 +10613,7 @@ void cvkReadJsonValidationFlags(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVertexInputAttributeDescription(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10621,7 +10621,7 @@ void cvkReadJsonVertexInputAttributeDescription(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVertexInputAttributeDescription2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10629,7 +10629,7 @@ void cvkReadJsonVertexInputAttributeDescription2(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVertexInputBindingDescription(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10637,7 +10637,7 @@ void cvkReadJsonVertexInputBindingDescription(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVertexInputBindingDescription2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10645,7 +10645,7 @@ void cvkReadJsonVertexInputBindingDescription2(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVertexInputBindingDivisorDescription(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10653,7 +10653,7 @@ void cvkReadJsonVertexInputBindingDivisorDescription(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonViSurfaceCreateInfoNN(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10661,7 +10661,7 @@ void cvkReadJsonViSurfaceCreateInfoNN(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoBeginCodingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10669,7 +10669,7 @@ void cvkReadJsonVideoBeginCodingInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10677,7 +10677,7 @@ void cvkReadJsonVideoCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoCodingControlInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10685,7 +10685,7 @@ void cvkReadJsonVideoCodingControlInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeAV1Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10693,7 +10693,7 @@ void cvkReadJsonVideoDecodeAV1Capabilities(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeAV1DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10701,7 +10701,7 @@ void cvkReadJsonVideoDecodeAV1DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeAV1InlineSessionParametersInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10709,7 +10709,7 @@ void cvkReadJsonVideoDecodeAV1InlineSessionParametersInfo(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeAV1PictureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10717,7 +10717,7 @@ void cvkReadJsonVideoDecodeAV1PictureInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeAV1ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10725,7 +10725,7 @@ void cvkReadJsonVideoDecodeAV1ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeAV1SessionParametersCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10733,7 +10733,7 @@ void cvkReadJsonVideoDecodeAV1SessionParametersCreateInfo(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10741,7 +10741,7 @@ void cvkReadJsonVideoDecodeCapabilities(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH264Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10749,7 +10749,7 @@ void cvkReadJsonVideoDecodeH264Capabilities(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH264DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10757,7 +10757,7 @@ void cvkReadJsonVideoDecodeH264DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH264InlineSessionParametersInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10765,7 +10765,7 @@ void cvkReadJsonVideoDecodeH264InlineSessionParametersInfo(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH264PictureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10773,7 +10773,7 @@ void cvkReadJsonVideoDecodeH264PictureInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH264ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10781,7 +10781,7 @@ void cvkReadJsonVideoDecodeH264ProfileInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH264SessionParametersAddInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10789,7 +10789,7 @@ void cvkReadJsonVideoDecodeH264SessionParametersAddInfo(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH264SessionParametersCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10797,7 +10797,7 @@ void cvkReadJsonVideoDecodeH264SessionParametersCreateInfo(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH265Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10805,7 +10805,7 @@ void cvkReadJsonVideoDecodeH265Capabilities(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH265DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10813,7 +10813,7 @@ void cvkReadJsonVideoDecodeH265DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH265InlineSessionParametersInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10821,7 +10821,7 @@ void cvkReadJsonVideoDecodeH265InlineSessionParametersInfo(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH265PictureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10829,7 +10829,7 @@ void cvkReadJsonVideoDecodeH265PictureInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH265ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10837,7 +10837,7 @@ void cvkReadJsonVideoDecodeH265ProfileInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH265SessionParametersAddInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10845,7 +10845,7 @@ void cvkReadJsonVideoDecodeH265SessionParametersAddInfo(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH265SessionParametersCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10853,7 +10853,7 @@ void cvkReadJsonVideoDecodeH265SessionParametersCreateInfo(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10861,7 +10861,7 @@ void cvkReadJsonVideoDecodeInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeUsageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10869,7 +10869,7 @@ void cvkReadJsonVideoDecodeUsageInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeVP9Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10877,7 +10877,7 @@ void cvkReadJsonVideoDecodeVP9Capabilities(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeVP9PictureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10885,7 +10885,7 @@ void cvkReadJsonVideoDecodeVP9PictureInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeVP9ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10893,7 +10893,7 @@ void cvkReadJsonVideoDecodeVP9ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10901,7 +10901,7 @@ void cvkReadJsonVideoEncodeAV1Capabilities(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10909,7 +10909,7 @@ void cvkReadJsonVideoEncodeAV1DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1FrameSize(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10917,7 +10917,7 @@ void cvkReadJsonVideoEncodeAV1FrameSize(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1GopRemainingFrameInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10925,7 +10925,7 @@ void cvkReadJsonVideoEncodeAV1GopRemainingFrameInfo(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1PictureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10933,7 +10933,7 @@ void cvkReadJsonVideoEncodeAV1PictureInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10941,7 +10941,7 @@ void cvkReadJsonVideoEncodeAV1ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1QIndex(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10949,7 +10949,7 @@ void cvkReadJsonVideoEncodeAV1QIndex(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1QualityLevelProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10957,7 +10957,7 @@ void cvkReadJsonVideoEncodeAV1QualityLevelProperties(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1QuantizationMapCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10965,7 +10965,7 @@ void cvkReadJsonVideoEncodeAV1QuantizationMapCapabilities(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1RateControlInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10973,7 +10973,7 @@ void cvkReadJsonVideoEncodeAV1RateControlInfo(cvkJsonWork* pWork, const cvkJsonV
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1RateControlLayerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10981,7 +10981,7 @@ void cvkReadJsonVideoEncodeAV1RateControlLayerInfo(cvkJsonWork* pWork, const cvk
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1SessionCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10989,7 +10989,7 @@ void cvkReadJsonVideoEncodeAV1SessionCreateInfo(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1SessionParametersCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -10997,7 +10997,7 @@ void cvkReadJsonVideoEncodeAV1SessionParametersCreateInfo(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11005,7 +11005,7 @@ void cvkReadJsonVideoEncodeCapabilities(cvkJsonWork* pWork, const cvkJsonValue* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeFeedback2Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11013,7 +11013,7 @@ void cvkReadJsonVideoEncodeFeedback2Capabilities(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11021,7 +11021,7 @@ void cvkReadJsonVideoEncodeH264Capabilities(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11029,7 +11029,7 @@ void cvkReadJsonVideoEncodeH264DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264FrameSize(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11037,7 +11037,7 @@ void cvkReadJsonVideoEncodeH264FrameSize(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264GopRemainingFrameInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11045,7 +11045,7 @@ void cvkReadJsonVideoEncodeH264GopRemainingFrameInfo(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264NaluSliceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11053,7 +11053,7 @@ void cvkReadJsonVideoEncodeH264NaluSliceInfo(cvkJsonWork* pWork, const cvkJsonVa
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264PictureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11061,7 +11061,7 @@ void cvkReadJsonVideoEncodeH264PictureInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11069,7 +11069,7 @@ void cvkReadJsonVideoEncodeH264ProfileInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264Qp(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11077,7 +11077,7 @@ void cvkReadJsonVideoEncodeH264Qp(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264QualityLevelProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11085,7 +11085,7 @@ void cvkReadJsonVideoEncodeH264QualityLevelProperties(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264QuantizationMapCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11093,7 +11093,7 @@ void cvkReadJsonVideoEncodeH264QuantizationMapCapabilities(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264RateControlInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11101,7 +11101,7 @@ void cvkReadJsonVideoEncodeH264RateControlInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264RateControlLayerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11109,7 +11109,7 @@ void cvkReadJsonVideoEncodeH264RateControlLayerInfo(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264SessionCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11117,7 +11117,7 @@ void cvkReadJsonVideoEncodeH264SessionCreateInfo(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264SessionParametersAddInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11125,7 +11125,7 @@ void cvkReadJsonVideoEncodeH264SessionParametersAddInfo(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264SessionParametersCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11133,7 +11133,7 @@ void cvkReadJsonVideoEncodeH264SessionParametersCreateInfo(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264SessionParametersFeedbackInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11141,7 +11141,7 @@ void cvkReadJsonVideoEncodeH264SessionParametersFeedbackInfo(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264SessionParametersGetInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11149,7 +11149,7 @@ void cvkReadJsonVideoEncodeH264SessionParametersGetInfo(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11157,7 +11157,7 @@ void cvkReadJsonVideoEncodeH265Capabilities(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11165,7 +11165,7 @@ void cvkReadJsonVideoEncodeH265DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265FrameSize(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11173,7 +11173,7 @@ void cvkReadJsonVideoEncodeH265FrameSize(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265GopRemainingFrameInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11181,7 +11181,7 @@ void cvkReadJsonVideoEncodeH265GopRemainingFrameInfo(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265NaluSliceSegmentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11189,7 +11189,7 @@ void cvkReadJsonVideoEncodeH265NaluSliceSegmentInfo(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265PictureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11197,7 +11197,7 @@ void cvkReadJsonVideoEncodeH265PictureInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11205,7 +11205,7 @@ void cvkReadJsonVideoEncodeH265ProfileInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265Qp(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11213,7 +11213,7 @@ void cvkReadJsonVideoEncodeH265Qp(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265QualityLevelProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11221,7 +11221,7 @@ void cvkReadJsonVideoEncodeH265QualityLevelProperties(cvkJsonWork* pWork, const 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265QuantizationMapCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11229,7 +11229,7 @@ void cvkReadJsonVideoEncodeH265QuantizationMapCapabilities(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265RateControlInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11237,7 +11237,7 @@ void cvkReadJsonVideoEncodeH265RateControlInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265RateControlLayerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11245,7 +11245,7 @@ void cvkReadJsonVideoEncodeH265RateControlLayerInfo(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265SessionCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11253,7 +11253,7 @@ void cvkReadJsonVideoEncodeH265SessionCreateInfo(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265SessionParametersAddInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11261,7 +11261,7 @@ void cvkReadJsonVideoEncodeH265SessionParametersAddInfo(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265SessionParametersCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11269,7 +11269,7 @@ void cvkReadJsonVideoEncodeH265SessionParametersCreateInfo(cvkJsonWork* pWork, c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265SessionParametersFeedbackInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11277,7 +11277,7 @@ void cvkReadJsonVideoEncodeH265SessionParametersFeedbackInfo(cvkJsonWork* pWork,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265SessionParametersGetInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11285,7 +11285,7 @@ void cvkReadJsonVideoEncodeH265SessionParametersGetInfo(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11293,7 +11293,7 @@ void cvkReadJsonVideoEncodeInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject,
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeIntraRefreshCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11301,7 +11301,7 @@ void cvkReadJsonVideoEncodeIntraRefreshCapabilities(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeIntraRefreshInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11309,7 +11309,7 @@ void cvkReadJsonVideoEncodeIntraRefreshInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeProfileRgbConversionInfoVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11317,7 +11317,7 @@ void cvkReadJsonVideoEncodeProfileRgbConversionInfoVALVE(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeQualityLevelInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11325,7 +11325,7 @@ void cvkReadJsonVideoEncodeQualityLevelInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeQualityLevelProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11333,7 +11333,7 @@ void cvkReadJsonVideoEncodeQualityLevelProperties(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeQuantizationMapCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11341,7 +11341,7 @@ void cvkReadJsonVideoEncodeQuantizationMapCapabilities(cvkJsonWork* pWork, const
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeQuantizationMapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11349,7 +11349,7 @@ void cvkReadJsonVideoEncodeQuantizationMapInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeQuantizationMapSessionParametersCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11357,7 +11357,7 @@ void cvkReadJsonVideoEncodeQuantizationMapSessionParametersCreateInfo(cvkJsonWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeRateControlInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11365,7 +11365,7 @@ void cvkReadJsonVideoEncodeRateControlInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeRateControlLayerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11373,7 +11373,7 @@ void cvkReadJsonVideoEncodeRateControlLayerInfo(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeRgbConversionCapabilitiesVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11381,7 +11381,7 @@ void cvkReadJsonVideoEncodeRgbConversionCapabilitiesVALVE(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeSessionIntraRefreshCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11389,7 +11389,7 @@ void cvkReadJsonVideoEncodeSessionIntraRefreshCreateInfo(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeSessionParametersFeedbackInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11397,7 +11397,7 @@ void cvkReadJsonVideoEncodeSessionParametersFeedbackInfo(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeSessionParametersGetInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11405,7 +11405,7 @@ void cvkReadJsonVideoEncodeSessionParametersGetInfo(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeSessionRgbConversionCreateInfoVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11413,7 +11413,7 @@ void cvkReadJsonVideoEncodeSessionRgbConversionCreateInfoVALVE(cvkJsonWork* pWor
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeUsageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11421,7 +11421,7 @@ void cvkReadJsonVideoEncodeUsageInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoEndCodingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11429,7 +11429,7 @@ void cvkReadJsonVideoEndCodingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoFormatAV1QuantizationMapProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11437,7 +11437,7 @@ void cvkReadJsonVideoFormatAV1QuantizationMapProperties(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoFormatH265QuantizationMapProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11445,7 +11445,7 @@ void cvkReadJsonVideoFormatH265QuantizationMapProperties(cvkJsonWork* pWork, con
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11453,7 +11453,7 @@ void cvkReadJsonVideoFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoFormatQuantizationMapProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11461,7 +11461,7 @@ void cvkReadJsonVideoFormatQuantizationMapProperties(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoInlineQueryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11469,7 +11469,7 @@ void cvkReadJsonVideoInlineQueryInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoPictureResourceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11477,7 +11477,7 @@ void cvkReadJsonVideoPictureResourceInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11485,7 +11485,7 @@ void cvkReadJsonVideoProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoProfileListInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11493,7 +11493,7 @@ void cvkReadJsonVideoProfileListInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoReferenceIntraRefreshInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11501,7 +11501,7 @@ void cvkReadJsonVideoReferenceIntraRefreshInfo(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoReferenceSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11509,7 +11509,7 @@ void cvkReadJsonVideoReferenceSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoSessionCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11517,7 +11517,7 @@ void cvkReadJsonVideoSessionCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoSessionMemoryRequirements(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11525,7 +11525,7 @@ void cvkReadJsonVideoSessionMemoryRequirements(cvkJsonWork* pWork, const cvkJson
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoSessionParametersCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11533,7 +11533,7 @@ void cvkReadJsonVideoSessionParametersCreateInfo(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonVideoSessionParametersUpdateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11541,7 +11541,7 @@ void cvkReadJsonVideoSessionParametersUpdateInfo(cvkJsonWork* pWork, const cvkJs
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonViewport(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11549,7 +11549,7 @@ void cvkReadJsonViewport(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* 
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonViewportSwizzleNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11557,7 +11557,7 @@ void cvkReadJsonViewportSwizzleNV(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonViewportWScalingNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11565,7 +11565,7 @@ void cvkReadJsonViewportWScalingNV(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonWaylandSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11573,7 +11573,7 @@ void cvkReadJsonWaylandSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonWin32KeyedMutexAcquireReleaseInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11581,7 +11581,7 @@ void cvkReadJsonWin32KeyedMutexAcquireReleaseInfo(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonWin32KeyedMutexAcquireReleaseInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11589,7 +11589,7 @@ void cvkReadJsonWin32KeyedMutexAcquireReleaseInfoNV(cvkJsonWork* pWork, const cv
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonWin32SurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11597,7 +11597,7 @@ void cvkReadJsonWin32SurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonWriteDescriptorSet(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11605,7 +11605,7 @@ void cvkReadJsonWriteDescriptorSet(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonWriteDescriptorSetAccelerationStructure(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11613,7 +11613,7 @@ void cvkReadJsonWriteDescriptorSetAccelerationStructure(cvkJsonWork* pWork, cons
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonWriteDescriptorSetAccelerationStructureNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11621,7 +11621,7 @@ void cvkReadJsonWriteDescriptorSetAccelerationStructureNV(cvkJsonWork* pWork, co
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonWriteDescriptorSetInlineUniformBlock(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11629,7 +11629,7 @@ void cvkReadJsonWriteDescriptorSetInlineUniformBlock(cvkJsonWork* pWork, const c
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonWriteDescriptorSetPartitionedAccelerationStructureNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11637,7 +11637,7 @@ void cvkReadJsonWriteDescriptorSetPartitionedAccelerationStructureNV(cvkJsonWork
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonWriteDescriptorSetTensorARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11645,7 +11645,7 @@ void cvkReadJsonWriteDescriptorSetTensorARM(cvkJsonWork* pWork, const cvkJsonVal
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonWriteIndirectExecutionSetPipeline(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11653,7 +11653,7 @@ void cvkReadJsonWriteIndirectExecutionSetPipeline(cvkJsonWork* pWork, const cvkJ
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonWriteIndirectExecutionSetShader(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11661,7 +11661,7 @@ void cvkReadJsonWriteIndirectExecutionSetShader(cvkJsonWork* pWork, const cvkJso
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonXYColor(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11669,7 +11669,7 @@ void cvkReadJsonXYColor(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* p
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonXcbSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
@@ -11677,7 +11677,7 @@ void cvkReadJsonXcbSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \param[in,out] pWork Bounded parse workspace.
  * \param[in] pObject JSON object to read.
  * \param[out] pOutput Storage for the typed Vulkan structure.
- * \retval None
+ * \retval None No value is returned.
  */
 void cvkReadJsonXlibSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 #endif

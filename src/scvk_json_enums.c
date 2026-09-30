@@ -84,10 +84,8 @@ extern SCVK_FORCE_INLINE double scvkParseJsonDouble(const scvkJsonValue* pValue)
 }
 extern SCVK_FORCE_INLINE VkAccessFlagBits scvkParseJsonAccessFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t         enumerant;
-    VkAccessFlagBits result;
-    uint32_t         index;
-    VkBool32         found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_ACCESS_INDIRECT_COMMAND_READ_BIT", (uint64_t)VK_ACCESS_INDIRECT_COMMAND_READ_BIT},
                                          {"VK_ACCESS_INDEX_READ_BIT", (uint64_t)VK_ACCESS_INDEX_READ_BIT},
@@ -110,43 +108,19 @@ extern SCVK_FORCE_INLINE VkAccessFlagBits scvkParseJsonAccessFlagBits(const scvk
                                          {"VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR", (uint64_t)VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR},
                                          {"VK_ACCESS_NONE_KHR", (uint64_t)VK_ACCESS_NONE_KHR}};
 
-    static const VkAccessFlagBits enumerants[] = {VK_ACCESS_INDIRECT_COMMAND_READ_BIT,
-                                                  VK_ACCESS_INDEX_READ_BIT,
-                                                  VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
-                                                  VK_ACCESS_UNIFORM_READ_BIT,
-                                                  VK_ACCESS_INPUT_ATTACHMENT_READ_BIT,
-                                                  VK_ACCESS_SHADER_READ_BIT,
-                                                  VK_ACCESS_SHADER_WRITE_BIT,
-                                                  VK_ACCESS_COLOR_ATTACHMENT_READ_BIT,
-                                                  VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                                  VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
-                                                  VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
-                                                  VK_ACCESS_TRANSFER_READ_BIT,
-                                                  VK_ACCESS_TRANSFER_WRITE_BIT,
-                                                  VK_ACCESS_HOST_READ_BIT,
-                                                  VK_ACCESS_HOST_WRITE_BIT,
-                                                  VK_ACCESS_MEMORY_READ_BIT,
-                                                  VK_ACCESS_MEMORY_WRITE_BIT,
-                                                  VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT,
-                                                  VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR,
-                                                  VK_ACCESS_NONE_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_ACCESS_INDIRECT_COMMAND_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_INDEX_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT) ||
+            (enumerant == (uint64_t)VK_ACCESS_UNIFORM_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_INPUT_ATTACHMENT_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_SHADER_READ_BIT) ||
+            (enumerant == (uint64_t)VK_ACCESS_SHADER_WRITE_BIT) || (enumerant == (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT) ||
+            (enumerant == (uint64_t)VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT) ||
+            (enumerant == (uint64_t)VK_ACCESS_TRANSFER_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_TRANSFER_WRITE_BIT) || (enumerant == (uint64_t)VK_ACCESS_HOST_READ_BIT) ||
+            (enumerant == (uint64_t)VK_ACCESS_HOST_WRITE_BIT) || (enumerant == (uint64_t)VK_ACCESS_MEMORY_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_MEMORY_WRITE_BIT) ||
+            (enumerant == (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT) || (enumerant == (uint64_t)VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR) ||
+            (enumerant == (uint64_t)VK_ACCESS_NONE_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkAccessFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkAcquireProfilingLockFlagBitsKHR scvkParseJsonAcquireProfilingLockFlagBits(const scvkJsonValue* pValue)
 {
@@ -158,96 +132,52 @@ extern SCVK_FORCE_INLINE VkAcquireProfilingLockFlagBitsKHR scvkParseJsonAcquireP
 }
 extern SCVK_FORCE_INLINE VkAttachmentDescriptionFlagBits scvkParseJsonAttachmentDescriptionFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                        enumerant;
-    VkAttachmentDescriptionFlagBits result;
-    uint32_t                        index;
-    VkBool32                        found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT", (uint64_t)VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT}};
 
-    static const VkAttachmentDescriptionFlagBits enumerants[] = {VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkAttachmentDescriptionFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkAttachmentLoadOp scvkParseJsonAttachmentLoadOp(const scvkJsonValue* pValue)
 {
-    uint64_t           enumerant;
-    VkAttachmentLoadOp result;
-    uint32_t           index;
-    VkBool32           found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_ATTACHMENT_LOAD_OP_LOAD", (uint64_t)VK_ATTACHMENT_LOAD_OP_LOAD},
                                          {"VK_ATTACHMENT_LOAD_OP_CLEAR", (uint64_t)VK_ATTACHMENT_LOAD_OP_CLEAR},
                                          {"VK_ATTACHMENT_LOAD_OP_DONT_CARE", (uint64_t)VK_ATTACHMENT_LOAD_OP_DONT_CARE}};
 
-    static const VkAttachmentLoadOp enumerants[] = {VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_LOAD_OP_DONT_CARE};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_ATTACHMENT_LOAD_OP_LOAD) || (enumerant == (uint64_t)VK_ATTACHMENT_LOAD_OP_CLEAR) || (enumerant == (uint64_t)VK_ATTACHMENT_LOAD_OP_DONT_CARE);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkAttachmentLoadOp)enumerant;
 }
 extern SCVK_FORCE_INLINE VkAttachmentStoreOp scvkParseJsonAttachmentStoreOp(const scvkJsonValue* pValue)
 {
-    uint64_t            enumerant;
-    VkAttachmentStoreOp result;
-    uint32_t            index;
-    VkBool32            found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_ATTACHMENT_STORE_OP_STORE", (uint64_t)VK_ATTACHMENT_STORE_OP_STORE}, {"VK_ATTACHMENT_STORE_OP_DONT_CARE", (uint64_t)VK_ATTACHMENT_STORE_OP_DONT_CARE}};
 
-    static const VkAttachmentStoreOp enumerants[] = {VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_STORE_OP_DONT_CARE};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_ATTACHMENT_STORE_OP_STORE) || (enumerant == (uint64_t)VK_ATTACHMENT_STORE_OP_DONT_CARE);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkAttachmentStoreOp)enumerant;
 }
 extern SCVK_FORCE_INLINE VkBlendFactor scvkParseJsonBlendFactor(const scvkJsonValue* pValue)
 {
-    uint64_t      enumerant;
-    VkBlendFactor result;
-    uint32_t      index;
-    VkBool32      found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_BLEND_FACTOR_ZERO", (uint64_t)VK_BLEND_FACTOR_ZERO},
                                          {"VK_BLEND_FACTOR_ONE", (uint64_t)VK_BLEND_FACTOR_ONE},
@@ -269,49 +199,23 @@ extern SCVK_FORCE_INLINE VkBlendFactor scvkParseJsonBlendFactor(const scvkJsonVa
                                          {"VK_BLEND_FACTOR_SRC1_ALPHA", (uint64_t)VK_BLEND_FACTOR_SRC1_ALPHA},
                                          {"VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA}};
 
-    static const VkBlendFactor enumerants[] = {VK_BLEND_FACTOR_ZERO,
-                                               VK_BLEND_FACTOR_ONE,
-                                               VK_BLEND_FACTOR_SRC_COLOR,
-                                               VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR,
-                                               VK_BLEND_FACTOR_DST_COLOR,
-                                               VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR,
-                                               VK_BLEND_FACTOR_SRC_ALPHA,
-                                               VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
-                                               VK_BLEND_FACTOR_DST_ALPHA,
-                                               VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA,
-                                               VK_BLEND_FACTOR_CONSTANT_COLOR,
-                                               VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR,
-                                               VK_BLEND_FACTOR_CONSTANT_ALPHA,
-                                               VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA,
-                                               VK_BLEND_FACTOR_SRC_ALPHA_SATURATE,
-                                               VK_BLEND_FACTOR_SRC1_COLOR,
-                                               VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR,
-                                               VK_BLEND_FACTOR_SRC1_ALPHA,
-                                               VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_BLEND_FACTOR_ZERO) || (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE) || (enumerant == (uint64_t)VK_BLEND_FACTOR_SRC_COLOR) ||
+            (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR) || (enumerant == (uint64_t)VK_BLEND_FACTOR_DST_COLOR) || (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR) ||
+            (enumerant == (uint64_t)VK_BLEND_FACTOR_SRC_ALPHA) || (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA) || (enumerant == (uint64_t)VK_BLEND_FACTOR_DST_ALPHA) ||
+            (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA) || (enumerant == (uint64_t)VK_BLEND_FACTOR_CONSTANT_COLOR) ||
+            (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR) || (enumerant == (uint64_t)VK_BLEND_FACTOR_CONSTANT_ALPHA) ||
+            (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA) || (enumerant == (uint64_t)VK_BLEND_FACTOR_SRC_ALPHA_SATURATE) || (enumerant == (uint64_t)VK_BLEND_FACTOR_SRC1_COLOR) ||
+            (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR) || (enumerant == (uint64_t)VK_BLEND_FACTOR_SRC1_ALPHA) || (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkBlendFactor)enumerant;
 }
 extern SCVK_FORCE_INLINE VkBlendOp scvkParseJsonBlendOp(const scvkJsonValue* pValue)
 {
-    uint64_t  enumerant;
-    VkBlendOp result;
-    uint32_t  index;
-    VkBool32  found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_BLEND_OP_ADD", (uint64_t)VK_BLEND_OP_ADD},
                                          {"VK_BLEND_OP_SUBTRACT", (uint64_t)VK_BLEND_OP_SUBTRACT},
@@ -365,111 +269,49 @@ extern SCVK_FORCE_INLINE VkBlendOp scvkParseJsonBlendOp(const scvkJsonValue* pVa
                                          {"VK_BLEND_OP_GREEN_EXT", (uint64_t)VK_BLEND_OP_GREEN_EXT},
                                          {"VK_BLEND_OP_BLUE_EXT", (uint64_t)VK_BLEND_OP_BLUE_EXT}};
 
-    static const VkBlendOp enumerants[] = {VK_BLEND_OP_ADD,
-                                           VK_BLEND_OP_SUBTRACT,
-                                           VK_BLEND_OP_REVERSE_SUBTRACT,
-                                           VK_BLEND_OP_MIN,
-                                           VK_BLEND_OP_MAX,
-                                           VK_BLEND_OP_ZERO_EXT,
-                                           VK_BLEND_OP_SRC_EXT,
-                                           VK_BLEND_OP_DST_EXT,
-                                           VK_BLEND_OP_SRC_OVER_EXT,
-                                           VK_BLEND_OP_DST_OVER_EXT,
-                                           VK_BLEND_OP_SRC_IN_EXT,
-                                           VK_BLEND_OP_DST_IN_EXT,
-                                           VK_BLEND_OP_SRC_OUT_EXT,
-                                           VK_BLEND_OP_DST_OUT_EXT,
-                                           VK_BLEND_OP_SRC_ATOP_EXT,
-                                           VK_BLEND_OP_DST_ATOP_EXT,
-                                           VK_BLEND_OP_XOR_EXT,
-                                           VK_BLEND_OP_MULTIPLY_EXT,
-                                           VK_BLEND_OP_SCREEN_EXT,
-                                           VK_BLEND_OP_OVERLAY_EXT,
-                                           VK_BLEND_OP_DARKEN_EXT,
-                                           VK_BLEND_OP_LIGHTEN_EXT,
-                                           VK_BLEND_OP_COLORDODGE_EXT,
-                                           VK_BLEND_OP_COLORBURN_EXT,
-                                           VK_BLEND_OP_HARDLIGHT_EXT,
-                                           VK_BLEND_OP_SOFTLIGHT_EXT,
-                                           VK_BLEND_OP_DIFFERENCE_EXT,
-                                           VK_BLEND_OP_EXCLUSION_EXT,
-                                           VK_BLEND_OP_INVERT_EXT,
-                                           VK_BLEND_OP_INVERT_RGB_EXT,
-                                           VK_BLEND_OP_LINEARDODGE_EXT,
-                                           VK_BLEND_OP_LINEARBURN_EXT,
-                                           VK_BLEND_OP_VIVIDLIGHT_EXT,
-                                           VK_BLEND_OP_LINEARLIGHT_EXT,
-                                           VK_BLEND_OP_PINLIGHT_EXT,
-                                           VK_BLEND_OP_HARDMIX_EXT,
-                                           VK_BLEND_OP_HSL_HUE_EXT,
-                                           VK_BLEND_OP_HSL_SATURATION_EXT,
-                                           VK_BLEND_OP_HSL_COLOR_EXT,
-                                           VK_BLEND_OP_HSL_LUMINOSITY_EXT,
-                                           VK_BLEND_OP_PLUS_EXT,
-                                           VK_BLEND_OP_PLUS_CLAMPED_EXT,
-                                           VK_BLEND_OP_PLUS_CLAMPED_ALPHA_EXT,
-                                           VK_BLEND_OP_PLUS_DARKER_EXT,
-                                           VK_BLEND_OP_MINUS_EXT,
-                                           VK_BLEND_OP_MINUS_CLAMPED_EXT,
-                                           VK_BLEND_OP_CONTRAST_EXT,
-                                           VK_BLEND_OP_INVERT_OVG_EXT,
-                                           VK_BLEND_OP_RED_EXT,
-                                           VK_BLEND_OP_GREEN_EXT,
-                                           VK_BLEND_OP_BLUE_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_BLEND_OP_ADD) || (enumerant == (uint64_t)VK_BLEND_OP_SUBTRACT) || (enumerant == (uint64_t)VK_BLEND_OP_REVERSE_SUBTRACT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_MIN) || (enumerant == (uint64_t)VK_BLEND_OP_MAX) || (enumerant == (uint64_t)VK_BLEND_OP_ZERO_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_SRC_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_DST_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_SRC_OVER_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_DST_OVER_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_SRC_IN_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_DST_IN_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_SRC_OUT_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_DST_OUT_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_SRC_ATOP_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_DST_ATOP_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_XOR_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_MULTIPLY_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_SCREEN_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_OVERLAY_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_DARKEN_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_LIGHTEN_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_COLORDODGE_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_COLORBURN_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_HARDLIGHT_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_SOFTLIGHT_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_DIFFERENCE_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_EXCLUSION_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_INVERT_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_INVERT_RGB_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_LINEARDODGE_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_LINEARBURN_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_VIVIDLIGHT_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_LINEARLIGHT_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_PINLIGHT_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_HARDMIX_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_HSL_HUE_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_HSL_SATURATION_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_HSL_COLOR_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_HSL_LUMINOSITY_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_PLUS_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_PLUS_CLAMPED_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_PLUS_CLAMPED_ALPHA_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_PLUS_DARKER_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_MINUS_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_MINUS_CLAMPED_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_CONTRAST_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_INVERT_OVG_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_RED_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OP_GREEN_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_BLUE_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkBlendOp)enumerant;
 }
 extern SCVK_FORCE_INLINE VkBlendOverlapEXT scvkParseJsonBlendOverlap(const scvkJsonValue* pValue)
 {
-    uint64_t          enumerant;
-    VkBlendOverlapEXT result;
-    uint32_t          index;
-    VkBool32          found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_BLEND_OVERLAP_UNCORRELATED_EXT", (uint64_t)VK_BLEND_OVERLAP_UNCORRELATED_EXT},
                                          {"VK_BLEND_OVERLAP_DISJOINT_EXT", (uint64_t)VK_BLEND_OVERLAP_DISJOINT_EXT},
                                          {"VK_BLEND_OVERLAP_CONJOINT_EXT", (uint64_t)VK_BLEND_OVERLAP_CONJOINT_EXT}};
 
-    static const VkBlendOverlapEXT enumerants[] = {VK_BLEND_OVERLAP_UNCORRELATED_EXT, VK_BLEND_OVERLAP_DISJOINT_EXT, VK_BLEND_OVERLAP_CONJOINT_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_BLEND_OVERLAP_UNCORRELATED_EXT) || (enumerant == (uint64_t)VK_BLEND_OVERLAP_DISJOINT_EXT) || (enumerant == (uint64_t)VK_BLEND_OVERLAP_CONJOINT_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkBlendOverlapEXT)enumerant;
 }
 extern SCVK_FORCE_INLINE VkBorderColor scvkParseJsonBorderColor(const scvkJsonValue* pValue)
 {
-    uint64_t      enumerant;
-    VkBorderColor result;
-    uint32_t      index;
-    VkBool32      found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK", (uint64_t)VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK},
                                          {"VK_BORDER_COLOR_INT_TRANSPARENT_BLACK", (uint64_t)VK_BORDER_COLOR_INT_TRANSPARENT_BLACK},
@@ -480,38 +322,19 @@ extern SCVK_FORCE_INLINE VkBorderColor scvkParseJsonBorderColor(const scvkJsonVa
                                          {"VK_BORDER_COLOR_FLOAT_CUSTOM_EXT", (uint64_t)VK_BORDER_COLOR_FLOAT_CUSTOM_EXT},
                                          {"VK_BORDER_COLOR_INT_CUSTOM_EXT", (uint64_t)VK_BORDER_COLOR_INT_CUSTOM_EXT}};
 
-    static const VkBorderColor enumerants[] = {VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK,
-                                               VK_BORDER_COLOR_INT_TRANSPARENT_BLACK,
-                                               VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK,
-                                               VK_BORDER_COLOR_INT_OPAQUE_BLACK,
-                                               VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
-                                               VK_BORDER_COLOR_INT_OPAQUE_WHITE,
-                                               VK_BORDER_COLOR_FLOAT_CUSTOM_EXT,
-                                               VK_BORDER_COLOR_INT_CUSTOM_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK) || (enumerant == (uint64_t)VK_BORDER_COLOR_INT_TRANSPARENT_BLACK) ||
+            (enumerant == (uint64_t)VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK) || (enumerant == (uint64_t)VK_BORDER_COLOR_INT_OPAQUE_BLACK) || (enumerant == (uint64_t)VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE) ||
+            (enumerant == (uint64_t)VK_BORDER_COLOR_INT_OPAQUE_WHITE) || (enumerant == (uint64_t)VK_BORDER_COLOR_FLOAT_CUSTOM_EXT) || (enumerant == (uint64_t)VK_BORDER_COLOR_INT_CUSTOM_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkBorderColor)enumerant;
 }
 extern SCVK_FORCE_INLINE VkBufferCreateFlagBits scvkParseJsonBufferCreateFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t               enumerant;
-    VkBufferCreateFlagBits result;
-    uint32_t               index;
-    VkBool32               found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_BUFFER_CREATE_SPARSE_BINDING_BIT", (uint64_t)VK_BUFFER_CREATE_SPARSE_BINDING_BIT},
                                          {"VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT", (uint64_t)VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT},
@@ -519,35 +342,19 @@ extern SCVK_FORCE_INLINE VkBufferCreateFlagBits scvkParseJsonBufferCreateFlagBit
                                          {"VK_BUFFER_CREATE_PROTECTED_BIT", (uint64_t)VK_BUFFER_CREATE_PROTECTED_BIT},
                                          {"VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT", (uint64_t)VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT}};
 
-    static const VkBufferCreateFlagBits enumerants[] = {VK_BUFFER_CREATE_SPARSE_BINDING_BIT,
-                                                        VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT,
-                                                        VK_BUFFER_CREATE_SPARSE_ALIASED_BIT,
-                                                        VK_BUFFER_CREATE_PROTECTED_BIT,
-                                                        VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_BUFFER_CREATE_SPARSE_BINDING_BIT) || (enumerant == (uint64_t)VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT) ||
+            (enumerant == (uint64_t)VK_BUFFER_CREATE_SPARSE_ALIASED_BIT) || (enumerant == (uint64_t)VK_BUFFER_CREATE_PROTECTED_BIT) ||
+            (enumerant == (uint64_t)VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkBufferCreateFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkBufferUsageFlagBits scvkParseJsonBufferUsageFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t              enumerant;
-    VkBufferUsageFlagBits result;
-    uint32_t              index;
-    VkBool32              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_BUFFER_USAGE_TRANSFER_SRC_BIT", (uint64_t)VK_BUFFER_USAGE_TRANSFER_SRC_BIT},
                                          {"VK_BUFFER_USAGE_TRANSFER_DST_BIT", (uint64_t)VK_BUFFER_USAGE_TRANSFER_DST_BIT},
@@ -560,99 +367,53 @@ extern SCVK_FORCE_INLINE VkBufferUsageFlagBits scvkParseJsonBufferUsageFlagBits(
                                          {"VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT},
                                          {"VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT", (uint64_t)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT}};
 
-    static const VkBufferUsageFlagBits enumerants[] = {VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                                                       VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-                                                       VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT,
-                                                       VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT,
-                                                       VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                                                       VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-                                                       VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-                                                       VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                                                       VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
-                                                       VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_BUFFER_USAGE_TRANSFER_SRC_BIT) || (enumerant == (uint64_t)VK_BUFFER_USAGE_TRANSFER_DST_BIT) ||
+            (enumerant == (uint64_t)VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT) || (enumerant == (uint64_t)VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT) ||
+            (enumerant == (uint64_t)VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT) || (enumerant == (uint64_t)VK_BUFFER_USAGE_STORAGE_BUFFER_BIT) || (enumerant == (uint64_t)VK_BUFFER_USAGE_INDEX_BUFFER_BIT) ||
+            (enumerant == (uint64_t)VK_BUFFER_USAGE_VERTEX_BUFFER_BIT) || (enumerant == (uint64_t)VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT) ||
+            (enumerant == (uint64_t)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkBufferUsageFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkChromaLocation scvkParseJsonChromaLocation(const scvkJsonValue* pValue)
 {
-    uint64_t         enumerant;
-    VkChromaLocation result;
-    uint32_t         index;
-    VkBool32         found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_CHROMA_LOCATION_COSITED_EVEN", (uint64_t)VK_CHROMA_LOCATION_COSITED_EVEN}, {"VK_CHROMA_LOCATION_MIDPOINT", (uint64_t)VK_CHROMA_LOCATION_MIDPOINT}};
 
-    static const VkChromaLocation enumerants[] = {VK_CHROMA_LOCATION_COSITED_EVEN, VK_CHROMA_LOCATION_MIDPOINT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_CHROMA_LOCATION_COSITED_EVEN) || (enumerant == (uint64_t)VK_CHROMA_LOCATION_MIDPOINT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkChromaLocation)enumerant;
 }
 extern SCVK_FORCE_INLINE VkColorComponentFlagBits scvkParseJsonColorComponentFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                 enumerant;
-    VkColorComponentFlagBits result;
-    uint32_t                 index;
-    VkBool32                 found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_COLOR_COMPONENT_R_BIT", (uint64_t)VK_COLOR_COMPONENT_R_BIT},
                                          {"VK_COLOR_COMPONENT_G_BIT", (uint64_t)VK_COLOR_COMPONENT_G_BIT},
                                          {"VK_COLOR_COMPONENT_B_BIT", (uint64_t)VK_COLOR_COMPONENT_B_BIT},
                                          {"VK_COLOR_COMPONENT_A_BIT", (uint64_t)VK_COLOR_COMPONENT_A_BIT}};
 
-    static const VkColorComponentFlagBits enumerants[] = {VK_COLOR_COMPONENT_R_BIT, VK_COLOR_COMPONENT_G_BIT, VK_COLOR_COMPONENT_B_BIT, VK_COLOR_COMPONENT_A_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_COLOR_COMPONENT_R_BIT) || (enumerant == (uint64_t)VK_COLOR_COMPONENT_G_BIT) || (enumerant == (uint64_t)VK_COLOR_COMPONENT_B_BIT) ||
+            (enumerant == (uint64_t)VK_COLOR_COMPONENT_A_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkColorComponentFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkColorSpaceKHR scvkParseJsonColorSpace(const scvkJsonValue* pValue)
 {
-    uint64_t        enumerant;
-    VkColorSpaceKHR result;
-    uint32_t        index;
-    VkBool32        found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_COLOR_SPACE_SRGB_NONLINEAR_KHR", (uint64_t)VK_COLOR_SPACE_SRGB_NONLINEAR_KHR},
                                          {"VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT", (uint64_t)VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT},
@@ -670,157 +431,80 @@ extern SCVK_FORCE_INLINE VkColorSpaceKHR scvkParseJsonColorSpace(const scvkJsonV
                                          {"VK_COLOR_SPACE_PASS_THROUGH_EXT", (uint64_t)VK_COLOR_SPACE_PASS_THROUGH_EXT},
                                          {"VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT", (uint64_t)VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT}};
 
-    static const VkColorSpaceKHR enumerants[] = {VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
-                                                 VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT,
-                                                 VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT,
-                                                 VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT,
-                                                 VK_COLOR_SPACE_DCI_P3_NONLINEAR_EXT,
-                                                 VK_COLOR_SPACE_BT709_LINEAR_EXT,
-                                                 VK_COLOR_SPACE_BT709_NONLINEAR_EXT,
-                                                 VK_COLOR_SPACE_BT2020_LINEAR_EXT,
-                                                 VK_COLOR_SPACE_HDR10_ST2084_EXT,
-                                                 VK_COLOR_SPACE_DOLBYVISION_EXT,
-                                                 VK_COLOR_SPACE_HDR10_HLG_EXT,
-                                                 VK_COLOR_SPACE_ADOBERGB_LINEAR_EXT,
-                                                 VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT,
-                                                 VK_COLOR_SPACE_PASS_THROUGH_EXT,
-                                                 VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) || (enumerant == (uint64_t)VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT) ||
+            (enumerant == (uint64_t)VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT) || (enumerant == (uint64_t)VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT) ||
+            (enumerant == (uint64_t)VK_COLOR_SPACE_DCI_P3_NONLINEAR_EXT) || (enumerant == (uint64_t)VK_COLOR_SPACE_BT709_LINEAR_EXT) || (enumerant == (uint64_t)VK_COLOR_SPACE_BT709_NONLINEAR_EXT) ||
+            (enumerant == (uint64_t)VK_COLOR_SPACE_BT2020_LINEAR_EXT) || (enumerant == (uint64_t)VK_COLOR_SPACE_HDR10_ST2084_EXT) || (enumerant == (uint64_t)VK_COLOR_SPACE_DOLBYVISION_EXT) ||
+            (enumerant == (uint64_t)VK_COLOR_SPACE_HDR10_HLG_EXT) || (enumerant == (uint64_t)VK_COLOR_SPACE_ADOBERGB_LINEAR_EXT) || (enumerant == (uint64_t)VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT) ||
+            (enumerant == (uint64_t)VK_COLOR_SPACE_PASS_THROUGH_EXT) || (enumerant == (uint64_t)VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkColorSpaceKHR)enumerant;
 }
 extern SCVK_FORCE_INLINE VkCommandBufferLevel scvkParseJsonCommandBufferLevel(const scvkJsonValue* pValue)
 {
-    uint64_t             enumerant;
-    VkCommandBufferLevel result;
-    uint32_t             index;
-    VkBool32             found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_COMMAND_BUFFER_LEVEL_PRIMARY", (uint64_t)VK_COMMAND_BUFFER_LEVEL_PRIMARY},
                                          {"VK_COMMAND_BUFFER_LEVEL_SECONDARY", (uint64_t)VK_COMMAND_BUFFER_LEVEL_SECONDARY}};
 
-    static const VkCommandBufferLevel enumerants[] = {VK_COMMAND_BUFFER_LEVEL_PRIMARY, VK_COMMAND_BUFFER_LEVEL_SECONDARY};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_COMMAND_BUFFER_LEVEL_PRIMARY) || (enumerant == (uint64_t)VK_COMMAND_BUFFER_LEVEL_SECONDARY);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkCommandBufferLevel)enumerant;
 }
 extern SCVK_FORCE_INLINE VkCommandBufferResetFlagBits scvkParseJsonCommandBufferResetFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                     enumerant;
-    VkCommandBufferResetFlagBits result;
-    uint32_t                     index;
-    VkBool32                     found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT", (uint64_t)VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT}};
 
-    static const VkCommandBufferResetFlagBits enumerants[] = {VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkCommandBufferResetFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkCommandBufferUsageFlagBits scvkParseJsonCommandBufferUsageFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                     enumerant;
-    VkCommandBufferUsageFlagBits result;
-    uint32_t                     index;
-    VkBool32                     found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT},
                                          {"VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT},
                                          {"VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT}};
 
-    static const VkCommandBufferUsageFlagBits enumerants[] = {VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-                                                              VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT,
-                                                              VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT) || (enumerant == (uint64_t)VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT) ||
+            (enumerant == (uint64_t)VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkCommandBufferUsageFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkCommandPoolCreateFlagBits scvkParseJsonCommandPoolCreateFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                    enumerant;
-    VkCommandPoolCreateFlagBits result;
-    uint32_t                    index;
-    VkBool32                    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_COMMAND_POOL_CREATE_TRANSIENT_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_TRANSIENT_BIT},
                                          {"VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT},
                                          {"VK_COMMAND_POOL_CREATE_PROTECTED_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_PROTECTED_BIT}};
 
-    static const VkCommandPoolCreateFlagBits enumerants[] = {VK_COMMAND_POOL_CREATE_TRANSIENT_BIT, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, VK_COMMAND_POOL_CREATE_PROTECTED_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_COMMAND_POOL_CREATE_TRANSIENT_BIT) || (enumerant == (uint64_t)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT) ||
+            (enumerant == (uint64_t)VK_COMMAND_POOL_CREATE_PROTECTED_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkCommandPoolCreateFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkCommandPoolResetFlagBits scvkParseJsonCommandPoolResetFlagBits(const scvkJsonValue* pValue)
 {
@@ -832,10 +516,8 @@ extern SCVK_FORCE_INLINE VkCommandPoolResetFlagBits scvkParseJsonCommandPoolRese
 }
 extern SCVK_FORCE_INLINE VkCompareOp scvkParseJsonCompareOp(const scvkJsonValue* pValue)
 {
-    uint64_t    enumerant;
-    VkCompareOp result;
-    uint32_t    index;
-    VkBool32    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_COMPARE_OP_NEVER", (uint64_t)VK_COMPARE_OP_NEVER},
                                          {"VK_COMPARE_OP_LESS", (uint64_t)VK_COMPARE_OP_LESS},
@@ -846,38 +528,19 @@ extern SCVK_FORCE_INLINE VkCompareOp scvkParseJsonCompareOp(const scvkJsonValue*
                                          {"VK_COMPARE_OP_GREATER_OR_EQUAL", (uint64_t)VK_COMPARE_OP_GREATER_OR_EQUAL},
                                          {"VK_COMPARE_OP_ALWAYS", (uint64_t)VK_COMPARE_OP_ALWAYS}};
 
-    static const VkCompareOp enumerants[] = {VK_COMPARE_OP_NEVER,
-                                             VK_COMPARE_OP_LESS,
-                                             VK_COMPARE_OP_EQUAL,
-                                             VK_COMPARE_OP_LESS_OR_EQUAL,
-                                             VK_COMPARE_OP_GREATER,
-                                             VK_COMPARE_OP_NOT_EQUAL,
-                                             VK_COMPARE_OP_GREATER_OR_EQUAL,
-                                             VK_COMPARE_OP_ALWAYS};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_COMPARE_OP_NEVER) || (enumerant == (uint64_t)VK_COMPARE_OP_LESS) || (enumerant == (uint64_t)VK_COMPARE_OP_EQUAL) ||
+            (enumerant == (uint64_t)VK_COMPARE_OP_LESS_OR_EQUAL) || (enumerant == (uint64_t)VK_COMPARE_OP_GREATER) || (enumerant == (uint64_t)VK_COMPARE_OP_NOT_EQUAL) ||
+            (enumerant == (uint64_t)VK_COMPARE_OP_GREATER_OR_EQUAL) || (enumerant == (uint64_t)VK_COMPARE_OP_ALWAYS);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkCompareOp)enumerant;
 }
 extern SCVK_FORCE_INLINE VkComponentSwizzle scvkParseJsonComponentSwizzle(const scvkJsonValue* pValue)
 {
-    uint64_t           enumerant;
-    VkComponentSwizzle result;
-    uint32_t           index;
-    VkBool32           found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_COMPONENT_SWIZZLE_IDENTITY", (uint64_t)VK_COMPONENT_SWIZZLE_IDENTITY},
                                          {"VK_COMPONENT_SWIZZLE_ZERO", (uint64_t)VK_COMPONENT_SWIZZLE_ZERO},
@@ -887,316 +550,170 @@ extern SCVK_FORCE_INLINE VkComponentSwizzle scvkParseJsonComponentSwizzle(const 
                                          {"VK_COMPONENT_SWIZZLE_B", (uint64_t)VK_COMPONENT_SWIZZLE_B},
                                          {"VK_COMPONENT_SWIZZLE_A", (uint64_t)VK_COMPONENT_SWIZZLE_A}};
 
-    static const VkComponentSwizzle enumerants[] =
-        {VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_ZERO, VK_COMPONENT_SWIZZLE_ONE, VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_IDENTITY) || (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_ZERO) || (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_ONE) ||
+            (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_R) || (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_G) || (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_B) ||
+            (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_A);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkComponentSwizzle)enumerant;
 }
 extern SCVK_FORCE_INLINE VkCompositeAlphaFlagBitsKHR scvkParseJsonCompositeAlphaFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                    enumerant;
-    VkCompositeAlphaFlagBitsKHR result;
-    uint32_t                    index;
-    VkBool32                    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR},
                                          {"VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR},
                                          {"VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR},
                                          {"VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR}};
 
-    static const VkCompositeAlphaFlagBitsKHR enumerants[] = {VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
-                                                             VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR,
-                                                             VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR,
-                                                             VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR) || (enumerant == (uint64_t)VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR) ||
+            (enumerant == (uint64_t)VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR) || (enumerant == (uint64_t)VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkCompositeAlphaFlagBitsKHR)enumerant;
 }
 extern SCVK_FORCE_INLINE VkConservativeRasterizationModeEXT scvkParseJsonConservativeRasterizationMode(const scvkJsonValue* pValue)
 {
-    uint64_t                           enumerant;
-    VkConservativeRasterizationModeEXT result;
-    uint32_t                           index;
-    VkBool32                           found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_CONSERVATIVE_RASTERIZATION_MODE_DISABLED_EXT", (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_DISABLED_EXT},
                                          {"VK_CONSERVATIVE_RASTERIZATION_MODE_OVERESTIMATE_EXT", (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_OVERESTIMATE_EXT},
                                          {"VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT", (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT}};
 
-    static const VkConservativeRasterizationModeEXT enumerants[] = {VK_CONSERVATIVE_RASTERIZATION_MODE_DISABLED_EXT,
-                                                                    VK_CONSERVATIVE_RASTERIZATION_MODE_OVERESTIMATE_EXT,
-                                                                    VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_DISABLED_EXT) || (enumerant == (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_OVERESTIMATE_EXT) ||
+            (enumerant == (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkConservativeRasterizationModeEXT)enumerant;
 }
 extern SCVK_FORCE_INLINE VkCullModeFlagBits scvkParseJsonCullModeFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t           enumerant;
-    VkCullModeFlagBits result;
-    uint32_t           index;
-    VkBool32           found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_CULL_MODE_NONE", (uint64_t)VK_CULL_MODE_NONE},
                                          {"VK_CULL_MODE_FRONT_BIT", (uint64_t)VK_CULL_MODE_FRONT_BIT},
                                          {"VK_CULL_MODE_BACK_BIT", (uint64_t)VK_CULL_MODE_BACK_BIT},
                                          {"VK_CULL_MODE_FRONT_AND_BACK", (uint64_t)VK_CULL_MODE_FRONT_AND_BACK}};
 
-    static const VkCullModeFlagBits enumerants[] = {VK_CULL_MODE_NONE, VK_CULL_MODE_FRONT_BIT, VK_CULL_MODE_BACK_BIT, VK_CULL_MODE_FRONT_AND_BACK};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_CULL_MODE_NONE) || (enumerant == (uint64_t)VK_CULL_MODE_FRONT_BIT) || (enumerant == (uint64_t)VK_CULL_MODE_BACK_BIT) ||
+            (enumerant == (uint64_t)VK_CULL_MODE_FRONT_AND_BACK);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkCullModeFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDebugUtilsMessageSeverityFlagBitsEXT scvkParseJsonDebugUtilsMessageSeverityFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                               enumerant;
-    VkDebugUtilsMessageSeverityFlagBitsEXT result;
-    uint32_t                               index;
-    VkBool32                               found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT},
                                          {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT},
                                          {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT},
                                          {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT}};
 
-    static const VkDebugUtilsMessageSeverityFlagBitsEXT enumerants[] = {VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT,
-                                                                        VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT,
-                                                                        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
-                                                                        VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) || (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) || (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDebugUtilsMessageSeverityFlagBitsEXT)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDebugUtilsMessageTypeFlagBitsEXT scvkParseJsonDebugUtilsMessageTypeFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                           enumerant;
-    VkDebugUtilsMessageTypeFlagBitsEXT result;
-    uint32_t                           index;
-    VkBool32                           found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT},
                                          {"VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT},
                                          {"VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT}};
 
-    static const VkDebugUtilsMessageTypeFlagBitsEXT enumerants[] = {VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT,
-                                                                    VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
-                                                                    VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT) || (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDebugUtilsMessageTypeFlagBitsEXT)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDependencyFlagBits scvkParseJsonDependencyFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t             enumerant;
-    VkDependencyFlagBits result;
-    uint32_t             index;
-    VkBool32             found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DEPENDENCY_BY_REGION_BIT", (uint64_t)VK_DEPENDENCY_BY_REGION_BIT},
                                          {"VK_DEPENDENCY_DEVICE_GROUP_BIT", (uint64_t)VK_DEPENDENCY_DEVICE_GROUP_BIT},
                                          {"VK_DEPENDENCY_VIEW_LOCAL_BIT", (uint64_t)VK_DEPENDENCY_VIEW_LOCAL_BIT}};
 
-    static const VkDependencyFlagBits enumerants[] = {VK_DEPENDENCY_BY_REGION_BIT, VK_DEPENDENCY_DEVICE_GROUP_BIT, VK_DEPENDENCY_VIEW_LOCAL_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DEPENDENCY_BY_REGION_BIT) || (enumerant == (uint64_t)VK_DEPENDENCY_DEVICE_GROUP_BIT) || (enumerant == (uint64_t)VK_DEPENDENCY_VIEW_LOCAL_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDependencyFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDescriptorBindingFlagBits scvkParseJsonDescriptorBindingFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                    enumerant;
-    VkDescriptorBindingFlagBits result;
-    uint32_t                    index;
-    VkBool32                    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT},
                                          {"VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT},
                                          {"VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT},
                                          {"VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT}};
 
-    static const VkDescriptorBindingFlagBits enumerants[] = {VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT,
-                                                             VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT,
-                                                             VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT,
-                                                             VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT) || (enumerant == (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT) ||
+            (enumerant == (uint64_t)VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT) || (enumerant == (uint64_t)VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDescriptorBindingFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDescriptorPoolCreateFlagBits scvkParseJsonDescriptorPoolCreateFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                       enumerant;
-    VkDescriptorPoolCreateFlagBits result;
-    uint32_t                       index;
-    VkBool32                       found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT", (uint64_t)VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT},
                                          {"VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT", (uint64_t)VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT}};
 
-    static const VkDescriptorPoolCreateFlagBits enumerants[] = {VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT, VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT) || (enumerant == (uint64_t)VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDescriptorPoolCreateFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDescriptorSetLayoutCreateFlagBits scvkParseJsonDescriptorSetLayoutCreateFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                            enumerant;
-    VkDescriptorSetLayoutCreateFlagBits result;
-    uint32_t                            index;
-    VkBool32                            found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT", (uint64_t)VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT}};
 
-    static const VkDescriptorSetLayoutCreateFlagBits enumerants[] = {VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDescriptorSetLayoutCreateFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDescriptorType scvkParseJsonDescriptorType(const scvkJsonValue* pValue)
 {
-    uint64_t         enumerant;
-    VkDescriptorType result;
-    uint32_t         index;
-    VkBool32         found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DESCRIPTOR_TYPE_SAMPLER", (uint64_t)VK_DESCRIPTOR_TYPE_SAMPLER},
                                          {"VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER", (uint64_t)VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER},
@@ -1210,252 +727,130 @@ extern SCVK_FORCE_INLINE VkDescriptorType scvkParseJsonDescriptorType(const scvk
                                          {"VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC", (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC},
                                          {"VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT", (uint64_t)VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT}};
 
-    static const VkDescriptorType enumerants[] = {VK_DESCRIPTOR_TYPE_SAMPLER,
-                                                  VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                                                  VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-                                                  VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
-                                                  VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER,
-                                                  VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER,
-                                                  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                                                  VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-                                                  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
-                                                  VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
-                                                  VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_SAMPLER) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE) ||
+            (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_IMAGE) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER) ||
+            (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER) ||
+            (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_BUFFER) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC) ||
+            (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDescriptorType)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDeviceEventTypeEXT scvkParseJsonDeviceEventType(const scvkJsonValue* pValue)
 {
-    uint64_t             enumerant;
-    VkDeviceEventTypeEXT result;
-    uint32_t             index;
-    VkBool32             found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DEVICE_EVENT_TYPE_DISPLAY_HOTPLUG_EXT", (uint64_t)VK_DEVICE_EVENT_TYPE_DISPLAY_HOTPLUG_EXT}};
 
-    static const VkDeviceEventTypeEXT enumerants[] = {VK_DEVICE_EVENT_TYPE_DISPLAY_HOTPLUG_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DEVICE_EVENT_TYPE_DISPLAY_HOTPLUG_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDeviceEventTypeEXT)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDeviceGroupPresentModeFlagBitsKHR scvkParseJsonDeviceGroupPresentModeFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                            enumerant;
-    VkDeviceGroupPresentModeFlagBitsKHR result;
-    uint32_t                            index;
-    VkBool32                            found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR},
                                          {"VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR},
                                          {"VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR},
                                          {"VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR}};
 
-    static const VkDeviceGroupPresentModeFlagBitsKHR enumerants[] = {VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR,
-                                                                     VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR,
-                                                                     VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR,
-                                                                     VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR) || (enumerant == (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR) ||
+            (enumerant == (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR) || (enumerant == (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDeviceGroupPresentModeFlagBitsKHR)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDeviceQueueCreateFlagBits scvkParseJsonDeviceQueueCreateFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                    enumerant;
-    VkDeviceQueueCreateFlagBits result;
-    uint32_t                    index;
-    VkBool32                    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT", (uint64_t)VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT}};
 
-    static const VkDeviceQueueCreateFlagBits enumerants[] = {VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDeviceQueueCreateFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDiscardRectangleModeEXT scvkParseJsonDiscardRectangleMode(const scvkJsonValue* pValue)
 {
-    uint64_t                  enumerant;
-    VkDiscardRectangleModeEXT result;
-    uint32_t                  index;
-    VkBool32                  found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT", (uint64_t)VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT},
                                          {"VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT", (uint64_t)VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT}};
 
-    static const VkDiscardRectangleModeEXT enumerants[] = {VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT, VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT) || (enumerant == (uint64_t)VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDiscardRectangleModeEXT)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDisplayEventTypeEXT scvkParseJsonDisplayEventType(const scvkJsonValue* pValue)
 {
-    uint64_t              enumerant;
-    VkDisplayEventTypeEXT result;
-    uint32_t              index;
-    VkBool32              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT", (uint64_t)VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT}};
 
-    static const VkDisplayEventTypeEXT enumerants[] = {VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDisplayEventTypeEXT)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDisplayPlaneAlphaFlagBitsKHR scvkParseJsonDisplayPlaneAlphaFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                       enumerant;
-    VkDisplayPlaneAlphaFlagBitsKHR result;
-    uint32_t                       index;
-    VkBool32                       found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR},
                                          {"VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR},
                                          {"VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR},
                                          {"VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR}};
 
-    static const VkDisplayPlaneAlphaFlagBitsKHR enumerants[] = {VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR,
-                                                                VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR,
-                                                                VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR,
-                                                                VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR) || (enumerant == (uint64_t)VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR) ||
+            (enumerant == (uint64_t)VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR) || (enumerant == (uint64_t)VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDisplayPlaneAlphaFlagBitsKHR)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDisplayPowerStateEXT scvkParseJsonDisplayPowerState(const scvkJsonValue* pValue)
 {
-    uint64_t               enumerant;
-    VkDisplayPowerStateEXT result;
-    uint32_t               index;
-    VkBool32               found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DISPLAY_POWER_STATE_OFF_EXT", (uint64_t)VK_DISPLAY_POWER_STATE_OFF_EXT},
                                          {"VK_DISPLAY_POWER_STATE_SUSPEND_EXT", (uint64_t)VK_DISPLAY_POWER_STATE_SUSPEND_EXT},
                                          {"VK_DISPLAY_POWER_STATE_ON_EXT", (uint64_t)VK_DISPLAY_POWER_STATE_ON_EXT}};
 
-    static const VkDisplayPowerStateEXT enumerants[] = {VK_DISPLAY_POWER_STATE_OFF_EXT, VK_DISPLAY_POWER_STATE_SUSPEND_EXT, VK_DISPLAY_POWER_STATE_ON_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DISPLAY_POWER_STATE_OFF_EXT) || (enumerant == (uint64_t)VK_DISPLAY_POWER_STATE_SUSPEND_EXT) || (enumerant == (uint64_t)VK_DISPLAY_POWER_STATE_ON_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDisplayPowerStateEXT)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDriverId scvkParseJsonDriverId(const scvkJsonValue* pValue)
 {
-    uint64_t   enumerant;
-    VkDriverId result;
-    uint32_t   index;
-    VkBool32   found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DRIVER_ID_AMD_PROPRIETARY", (uint64_t)VK_DRIVER_ID_AMD_PROPRIETARY},
                                          {"VK_DRIVER_ID_AMD_OPEN_SOURCE", (uint64_t)VK_DRIVER_ID_AMD_OPEN_SOURCE},
@@ -1488,60 +883,27 @@ extern SCVK_FORCE_INLINE VkDriverId scvkParseJsonDriverId(const scvkJsonValue* p
                                          {"VK_DRIVER_ID_MESA_GFXSTREAM", (uint64_t)VK_DRIVER_ID_MESA_GFXSTREAM},
                                          {"VK_DRIVER_ID_APE_SOFT", (uint64_t)VK_DRIVER_ID_APE_SOFT}};
 
-    static const VkDriverId enumerants[] = {VK_DRIVER_ID_AMD_PROPRIETARY,
-                                            VK_DRIVER_ID_AMD_OPEN_SOURCE,
-                                            VK_DRIVER_ID_MESA_RADV,
-                                            VK_DRIVER_ID_NVIDIA_PROPRIETARY,
-                                            VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS,
-                                            VK_DRIVER_ID_INTEL_OPEN_SOURCE_MESA,
-                                            VK_DRIVER_ID_IMAGINATION_PROPRIETARY,
-                                            VK_DRIVER_ID_QUALCOMM_PROPRIETARY,
-                                            VK_DRIVER_ID_ARM_PROPRIETARY,
-                                            VK_DRIVER_ID_GOOGLE_SWIFTSHADER,
-                                            VK_DRIVER_ID_GGP_PROPRIETARY,
-                                            VK_DRIVER_ID_BROADCOM_PROPRIETARY,
-                                            VK_DRIVER_ID_MESA_LLVMPIPE,
-                                            VK_DRIVER_ID_MOLTENVK,
-                                            VK_DRIVER_ID_COREAVI_PROPRIETARY,
-                                            VK_DRIVER_ID_JUICE_PROPRIETARY,
-                                            VK_DRIVER_ID_VERISILICON_PROPRIETARY,
-                                            VK_DRIVER_ID_MESA_TURNIP,
-                                            VK_DRIVER_ID_MESA_V3DV,
-                                            VK_DRIVER_ID_MESA_PANVK,
-                                            VK_DRIVER_ID_SAMSUNG_PROPRIETARY,
-                                            VK_DRIVER_ID_MESA_VENUS,
-                                            VK_DRIVER_ID_MESA_DOZEN,
-                                            VK_DRIVER_ID_MESA_NVK,
-                                            VK_DRIVER_ID_IMAGINATION_OPEN_SOURCE_MESA,
-                                            VK_DRIVER_ID_MESA_HONEYKRISP,
-                                            VK_DRIVER_ID_VULKAN_SC_EMULATION_ON_VULKAN,
-                                            VK_DRIVER_ID_MESA_KOSMICKRISP,
-                                            VK_DRIVER_ID_MESA_GFXSTREAM,
-                                            VK_DRIVER_ID_APE_SOFT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DRIVER_ID_AMD_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_AMD_OPEN_SOURCE) || (enumerant == (uint64_t)VK_DRIVER_ID_MESA_RADV) ||
+            (enumerant == (uint64_t)VK_DRIVER_ID_NVIDIA_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS) ||
+            (enumerant == (uint64_t)VK_DRIVER_ID_INTEL_OPEN_SOURCE_MESA) || (enumerant == (uint64_t)VK_DRIVER_ID_IMAGINATION_PROPRIETARY) ||
+            (enumerant == (uint64_t)VK_DRIVER_ID_QUALCOMM_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_ARM_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_GOOGLE_SWIFTSHADER) ||
+            (enumerant == (uint64_t)VK_DRIVER_ID_GGP_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_BROADCOM_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_MESA_LLVMPIPE) ||
+            (enumerant == (uint64_t)VK_DRIVER_ID_MOLTENVK) || (enumerant == (uint64_t)VK_DRIVER_ID_COREAVI_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_JUICE_PROPRIETARY) ||
+            (enumerant == (uint64_t)VK_DRIVER_ID_VERISILICON_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_MESA_TURNIP) || (enumerant == (uint64_t)VK_DRIVER_ID_MESA_V3DV) ||
+            (enumerant == (uint64_t)VK_DRIVER_ID_MESA_PANVK) || (enumerant == (uint64_t)VK_DRIVER_ID_SAMSUNG_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_MESA_VENUS) ||
+            (enumerant == (uint64_t)VK_DRIVER_ID_MESA_DOZEN) || (enumerant == (uint64_t)VK_DRIVER_ID_MESA_NVK) || (enumerant == (uint64_t)VK_DRIVER_ID_IMAGINATION_OPEN_SOURCE_MESA) ||
+            (enumerant == (uint64_t)VK_DRIVER_ID_MESA_HONEYKRISP) || (enumerant == (uint64_t)VK_DRIVER_ID_VULKAN_SC_EMULATION_ON_VULKAN) || (enumerant == (uint64_t)VK_DRIVER_ID_MESA_KOSMICKRISP) ||
+            (enumerant == (uint64_t)VK_DRIVER_ID_MESA_GFXSTREAM) || (enumerant == (uint64_t)VK_DRIVER_ID_APE_SOFT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDriverId)enumerant;
 }
 extern SCVK_FORCE_INLINE VkDynamicState scvkParseJsonDynamicState(const scvkJsonValue* pValue)
 {
-    uint64_t       enumerant;
-    VkDynamicState result;
-    uint32_t       index;
-    VkBool32       found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_DYNAMIC_STATE_VIEWPORT", (uint64_t)VK_DYNAMIC_STATE_VIEWPORT},
                                          {"VK_DYNAMIC_STATE_SCISSOR", (uint64_t)VK_DYNAMIC_STATE_SCISSOR},
@@ -1579,122 +941,61 @@ extern SCVK_FORCE_INLINE VkDynamicState scvkParseJsonDynamicState(const scvkJson
                                          {"VK_DYNAMIC_STATE_COLOR_WRITE_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_COLOR_WRITE_ENABLE_EXT},
                                          {"VK_DYNAMIC_STATE_LINE_STIPPLE_KHR", (uint64_t)VK_DYNAMIC_STATE_LINE_STIPPLE_KHR}};
 
-    static const VkDynamicState enumerants[] = {VK_DYNAMIC_STATE_VIEWPORT,
-                                                VK_DYNAMIC_STATE_SCISSOR,
-                                                VK_DYNAMIC_STATE_LINE_WIDTH,
-                                                VK_DYNAMIC_STATE_DEPTH_BIAS,
-                                                VK_DYNAMIC_STATE_BLEND_CONSTANTS,
-                                                VK_DYNAMIC_STATE_DEPTH_BOUNDS,
-                                                VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK,
-                                                VK_DYNAMIC_STATE_STENCIL_WRITE_MASK,
-                                                VK_DYNAMIC_STATE_STENCIL_REFERENCE,
-                                                VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT,
-                                                VK_DYNAMIC_STATE_DISCARD_RECTANGLE_ENABLE_EXT,
-                                                VK_DYNAMIC_STATE_DISCARD_RECTANGLE_MODE_EXT,
-                                                VK_DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT,
-                                                VK_DYNAMIC_STATE_FRAGMENT_SHADING_RATE_KHR,
-                                                VK_DYNAMIC_STATE_LINE_STIPPLE_EXT,
-                                                VK_DYNAMIC_STATE_CULL_MODE_EXT,
-                                                VK_DYNAMIC_STATE_FRONT_FACE_EXT,
-                                                VK_DYNAMIC_STATE_PRIMITIVE_TOPOLOGY_EXT,
-                                                VK_DYNAMIC_STATE_VIEWPORT_WITH_COUNT_EXT,
-                                                VK_DYNAMIC_STATE_SCISSOR_WITH_COUNT_EXT,
-                                                VK_DYNAMIC_STATE_VERTEX_INPUT_BINDING_STRIDE_EXT,
-                                                VK_DYNAMIC_STATE_DEPTH_TEST_ENABLE_EXT,
-                                                VK_DYNAMIC_STATE_DEPTH_WRITE_ENABLE_EXT,
-                                                VK_DYNAMIC_STATE_DEPTH_COMPARE_OP_EXT,
-                                                VK_DYNAMIC_STATE_DEPTH_BOUNDS_TEST_ENABLE_EXT,
-                                                VK_DYNAMIC_STATE_STENCIL_TEST_ENABLE_EXT,
-                                                VK_DYNAMIC_STATE_STENCIL_OP_EXT,
-                                                VK_DYNAMIC_STATE_VERTEX_INPUT_EXT,
-                                                VK_DYNAMIC_STATE_PATCH_CONTROL_POINTS_EXT,
-                                                VK_DYNAMIC_STATE_RASTERIZER_DISCARD_ENABLE_EXT,
-                                                VK_DYNAMIC_STATE_DEPTH_BIAS_ENABLE_EXT,
-                                                VK_DYNAMIC_STATE_LOGIC_OP_EXT,
-                                                VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE_EXT,
-                                                VK_DYNAMIC_STATE_COLOR_WRITE_ENABLE_EXT,
-                                                VK_DYNAMIC_STATE_LINE_STIPPLE_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_DYNAMIC_STATE_VIEWPORT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_SCISSOR) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_LINE_WIDTH) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_DEPTH_BIAS) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_BLEND_CONSTANTS) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_DEPTH_BOUNDS) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_STENCIL_WRITE_MASK) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_STENCIL_REFERENCE) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_DISCARD_RECTANGLE_ENABLE_EXT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_DISCARD_RECTANGLE_MODE_EXT) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_FRAGMENT_SHADING_RATE_KHR) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_LINE_STIPPLE_EXT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_CULL_MODE_EXT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_FRONT_FACE_EXT) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_PRIMITIVE_TOPOLOGY_EXT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_VIEWPORT_WITH_COUNT_EXT) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_SCISSOR_WITH_COUNT_EXT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_VERTEX_INPUT_BINDING_STRIDE_EXT) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_DEPTH_TEST_ENABLE_EXT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_DEPTH_WRITE_ENABLE_EXT) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_DEPTH_COMPARE_OP_EXT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_DEPTH_BOUNDS_TEST_ENABLE_EXT) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_STENCIL_TEST_ENABLE_EXT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_STENCIL_OP_EXT) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_VERTEX_INPUT_EXT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_PATCH_CONTROL_POINTS_EXT) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_RASTERIZER_DISCARD_ENABLE_EXT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_DEPTH_BIAS_ENABLE_EXT) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_LOGIC_OP_EXT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE_EXT) ||
+            (enumerant == (uint64_t)VK_DYNAMIC_STATE_COLOR_WRITE_ENABLE_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkDynamicState)enumerant;
 }
 extern SCVK_FORCE_INLINE VkEventCreateFlagBits scvkParseJsonEventCreateFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t              enumerant;
-    VkEventCreateFlagBits result;
-    uint32_t              index;
-    VkBool32              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_EVENT_CREATE_DEVICE_ONLY_BIT_KHR", (uint64_t)VK_EVENT_CREATE_DEVICE_ONLY_BIT_KHR}};
 
-    static const VkEventCreateFlagBits enumerants[] = {VK_EVENT_CREATE_DEVICE_ONLY_BIT_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_EVENT_CREATE_DEVICE_ONLY_BIT_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkEventCreateFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkExternalFenceFeatureFlagBits scvkParseJsonExternalFenceFeatureFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                       enumerant;
-    VkExternalFenceFeatureFlagBits result;
-    uint32_t                       index;
-    VkBool32                       found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT},
                                          {"VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT}};
 
-    static const VkExternalFenceFeatureFlagBits enumerants[] = {VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT, VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkExternalFenceFeatureFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkExternalFenceHandleTypeFlagBits scvkParseJsonExternalFenceHandleTypeFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                          enumerant;
-    VkExternalFenceHandleTypeFlagBits result;
-    uint32_t                          index;
-    VkBool32                          found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT},
                                          {"VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT},
@@ -1703,66 +1004,36 @@ extern SCVK_FORCE_INLINE VkExternalFenceHandleTypeFlagBits scvkParseJsonExternal
                                          {"VK_EXTERNAL_FENCE_HANDLE_TYPE_SCI_SYNC_OBJ_BIT_NV", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_SCI_SYNC_OBJ_BIT_NV},
                                          {"VK_EXTERNAL_FENCE_HANDLE_TYPE_SCI_SYNC_FENCE_BIT_NV", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_SCI_SYNC_FENCE_BIT_NV}};
 
-    static const VkExternalFenceHandleTypeFlagBits enumerants[] = {VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT,
-                                                                   VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT,
-                                                                   VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT,
-                                                                   VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT,
-                                                                   VK_EXTERNAL_FENCE_HANDLE_TYPE_SCI_SYNC_OBJ_BIT_NV,
-                                                                   VK_EXTERNAL_FENCE_HANDLE_TYPE_SCI_SYNC_FENCE_BIT_NV};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT) ||
+            (enumerant == (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT) ||
+            (enumerant == (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_SCI_SYNC_OBJ_BIT_NV) || (enumerant == (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_SCI_SYNC_FENCE_BIT_NV);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkExternalFenceHandleTypeFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkExternalMemoryFeatureFlagBits scvkParseJsonExternalMemoryFeatureFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                        enumerant;
-    VkExternalMemoryFeatureFlagBits result;
-    uint32_t                        index;
-    VkBool32                        found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT},
                                          {"VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT},
                                          {"VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT}};
 
-    static const VkExternalMemoryFeatureFlagBits enumerants[] = {VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT, VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT, VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT) ||
+            (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkExternalMemoryFeatureFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkExternalMemoryHandleTypeFlagBits scvkParseJsonExternalMemoryHandleTypeFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                           enumerant;
-    VkExternalMemoryHandleTypeFlagBits result;
-    uint32_t                           index;
-    VkBool32                           found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT},
                                          {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT},
@@ -1777,71 +1048,37 @@ extern SCVK_FORCE_INLINE VkExternalMemoryHandleTypeFlagBits scvkParseJsonExterna
                                          {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_SCI_BUF_BIT_NV", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_SCI_BUF_BIT_NV},
                                          {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_SCREEN_BUFFER_BIT_QNX", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_SCREEN_BUFFER_BIT_QNX}};
 
-    static const VkExternalMemoryHandleTypeFlagBits enumerants[] = {VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT,
-                                                                    VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT,
-                                                                    VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT,
-                                                                    VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT,
-                                                                    VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT,
-                                                                    VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT,
-                                                                    VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT,
-                                                                    VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
-                                                                    VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT,
-                                                                    VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT,
-                                                                    VK_EXTERNAL_MEMORY_HANDLE_TYPE_SCI_BUF_BIT_NV,
-                                                                    VK_EXTERNAL_MEMORY_HANDLE_TYPE_SCREEN_BUFFER_BIT_QNX};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT) ||
+            (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT) ||
+            (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT) ||
+            (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_SCI_BUF_BIT_NV) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_SCREEN_BUFFER_BIT_QNX);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkExternalMemoryHandleTypeFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkExternalSemaphoreFeatureFlagBits scvkParseJsonExternalSemaphoreFeatureFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                           enumerant;
-    VkExternalSemaphoreFeatureFlagBits result;
-    uint32_t                           index;
-    VkBool32                           found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT},
                                          {"VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT}};
 
-    static const VkExternalSemaphoreFeatureFlagBits enumerants[] = {VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT, VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkExternalSemaphoreFeatureFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkExternalSemaphoreHandleTypeFlagBits scvkParseJsonExternalSemaphoreHandleTypeFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                              enumerant;
-    VkExternalSemaphoreHandleTypeFlagBits result;
-    uint32_t                              index;
-    VkBool32                              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT},
                                          {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT},
@@ -1851,96 +1088,51 @@ extern SCVK_FORCE_INLINE VkExternalSemaphoreHandleTypeFlagBits scvkParseJsonExte
                                          {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT},
                                          {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SCI_SYNC_OBJ_BIT_NV", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SCI_SYNC_OBJ_BIT_NV}};
 
-    static const VkExternalSemaphoreHandleTypeFlagBits enumerants[] = {VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT,
-                                                                       VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT,
-                                                                       VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT,
-                                                                       VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT,
-                                                                       VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT,
-                                                                       VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT,
-                                                                       VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SCI_SYNC_OBJ_BIT_NV};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT) ||
+            (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT) ||
+            (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SCI_SYNC_OBJ_BIT_NV);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkExternalSemaphoreHandleTypeFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkFaultLevel scvkParseJsonFaultLevel(const scvkJsonValue* pValue)
 {
-    uint64_t     enumerant;
-    VkFaultLevel result;
-    uint32_t     index;
-    VkBool32     found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_FAULT_LEVEL_UNASSIGNED", (uint64_t)VK_FAULT_LEVEL_UNASSIGNED},
                                          {"VK_FAULT_LEVEL_CRITICAL", (uint64_t)VK_FAULT_LEVEL_CRITICAL},
                                          {"VK_FAULT_LEVEL_RECOVERABLE", (uint64_t)VK_FAULT_LEVEL_RECOVERABLE},
                                          {"VK_FAULT_LEVEL_WARNING", (uint64_t)VK_FAULT_LEVEL_WARNING}};
 
-    static const VkFaultLevel enumerants[] = {VK_FAULT_LEVEL_UNASSIGNED, VK_FAULT_LEVEL_CRITICAL, VK_FAULT_LEVEL_RECOVERABLE, VK_FAULT_LEVEL_WARNING};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_FAULT_LEVEL_UNASSIGNED) || (enumerant == (uint64_t)VK_FAULT_LEVEL_CRITICAL) || (enumerant == (uint64_t)VK_FAULT_LEVEL_RECOVERABLE) ||
+            (enumerant == (uint64_t)VK_FAULT_LEVEL_WARNING);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkFaultLevel)enumerant;
 }
 extern SCVK_FORCE_INLINE VkFaultQueryBehavior scvkParseJsonFaultQueryBehavior(const scvkJsonValue* pValue)
 {
-    uint64_t             enumerant;
-    VkFaultQueryBehavior result;
-    uint32_t             index;
-    VkBool32             found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_FAULT_QUERY_BEHAVIOR_GET_AND_CLEAR_ALL_FAULTS", (uint64_t)VK_FAULT_QUERY_BEHAVIOR_GET_AND_CLEAR_ALL_FAULTS}};
 
-    static const VkFaultQueryBehavior enumerants[] = {VK_FAULT_QUERY_BEHAVIOR_GET_AND_CLEAR_ALL_FAULTS};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_FAULT_QUERY_BEHAVIOR_GET_AND_CLEAR_ALL_FAULTS);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkFaultQueryBehavior)enumerant;
 }
 extern SCVK_FORCE_INLINE VkFaultType scvkParseJsonFaultType(const scvkJsonValue* pValue)
 {
-    uint64_t    enumerant;
-    VkFaultType result;
-    uint32_t    index;
-    VkBool32    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_FAULT_TYPE_INVALID", (uint64_t)VK_FAULT_TYPE_INVALID},
                                          {"VK_FAULT_TYPE_UNASSIGNED", (uint64_t)VK_FAULT_TYPE_UNASSIGNED},
@@ -1950,120 +1142,60 @@ extern SCVK_FORCE_INLINE VkFaultType scvkParseJsonFaultType(const scvkJsonValue*
                                          {"VK_FAULT_TYPE_COMMAND_BUFFER_FULL", (uint64_t)VK_FAULT_TYPE_COMMAND_BUFFER_FULL},
                                          {"VK_FAULT_TYPE_INVALID_API_USAGE", (uint64_t)VK_FAULT_TYPE_INVALID_API_USAGE}};
 
-    static const VkFaultType enumerants[] = {VK_FAULT_TYPE_INVALID,
-                                             VK_FAULT_TYPE_UNASSIGNED,
-                                             VK_FAULT_TYPE_IMPLEMENTATION,
-                                             VK_FAULT_TYPE_SYSTEM,
-                                             VK_FAULT_TYPE_PHYSICAL_DEVICE,
-                                             VK_FAULT_TYPE_COMMAND_BUFFER_FULL,
-                                             VK_FAULT_TYPE_INVALID_API_USAGE};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_FAULT_TYPE_INVALID) || (enumerant == (uint64_t)VK_FAULT_TYPE_UNASSIGNED) || (enumerant == (uint64_t)VK_FAULT_TYPE_IMPLEMENTATION) ||
+            (enumerant == (uint64_t)VK_FAULT_TYPE_SYSTEM) || (enumerant == (uint64_t)VK_FAULT_TYPE_PHYSICAL_DEVICE) || (enumerant == (uint64_t)VK_FAULT_TYPE_COMMAND_BUFFER_FULL) ||
+            (enumerant == (uint64_t)VK_FAULT_TYPE_INVALID_API_USAGE);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkFaultType)enumerant;
 }
 extern SCVK_FORCE_INLINE VkFenceCreateFlagBits scvkParseJsonFenceCreateFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t              enumerant;
-    VkFenceCreateFlagBits result;
-    uint32_t              index;
-    VkBool32              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_FENCE_CREATE_SIGNALED_BIT", (uint64_t)VK_FENCE_CREATE_SIGNALED_BIT}};
 
-    static const VkFenceCreateFlagBits enumerants[] = {VK_FENCE_CREATE_SIGNALED_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_FENCE_CREATE_SIGNALED_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkFenceCreateFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkFenceImportFlagBits scvkParseJsonFenceImportFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t              enumerant;
-    VkFenceImportFlagBits result;
-    uint32_t              index;
-    VkBool32              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_FENCE_IMPORT_TEMPORARY_BIT", (uint64_t)VK_FENCE_IMPORT_TEMPORARY_BIT}};
 
-    static const VkFenceImportFlagBits enumerants[] = {VK_FENCE_IMPORT_TEMPORARY_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_FENCE_IMPORT_TEMPORARY_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkFenceImportFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkFilter scvkParseJsonFilter(const scvkJsonValue* pValue)
 {
     uint64_t enumerant;
-    VkFilter result;
-    uint32_t index;
     VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_FILTER_NEAREST", (uint64_t)VK_FILTER_NEAREST}, {"VK_FILTER_LINEAR", (uint64_t)VK_FILTER_LINEAR}, {"VK_FILTER_CUBIC_EXT", (uint64_t)VK_FILTER_CUBIC_EXT}};
 
-    static const VkFilter enumerants[] = {VK_FILTER_NEAREST, VK_FILTER_LINEAR, VK_FILTER_CUBIC_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_FILTER_NEAREST) || (enumerant == (uint64_t)VK_FILTER_LINEAR) || (enumerant == (uint64_t)VK_FILTER_CUBIC_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkFilter)enumerant;
 }
 extern SCVK_FORCE_INLINE VkFormat scvkParseJsonFormat(const scvkJsonValue* pValue)
 {
     uint64_t enumerant;
-    VkFormat result;
-    uint32_t index;
     VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_FORMAT_UNDEFINED", (uint64_t)VK_FORMAT_UNDEFINED},
@@ -2306,269 +1438,102 @@ extern SCVK_FORCE_INLINE VkFormat scvkParseJsonFormat(const scvkJsonValue* pValu
                                          {"VK_FORMAT_A4R4G4B4_UNORM_PACK16_EXT", (uint64_t)VK_FORMAT_A4R4G4B4_UNORM_PACK16_EXT},
                                          {"VK_FORMAT_A4B4G4R4_UNORM_PACK16_EXT", (uint64_t)VK_FORMAT_A4B4G4R4_UNORM_PACK16_EXT}};
 
-    static const VkFormat enumerants[] = {VK_FORMAT_UNDEFINED,
-                                          VK_FORMAT_R4G4_UNORM_PACK8,
-                                          VK_FORMAT_R4G4B4A4_UNORM_PACK16,
-                                          VK_FORMAT_B4G4R4A4_UNORM_PACK16,
-                                          VK_FORMAT_R5G6B5_UNORM_PACK16,
-                                          VK_FORMAT_B5G6R5_UNORM_PACK16,
-                                          VK_FORMAT_R5G5B5A1_UNORM_PACK16,
-                                          VK_FORMAT_B5G5R5A1_UNORM_PACK16,
-                                          VK_FORMAT_A1R5G5B5_UNORM_PACK16,
-                                          VK_FORMAT_R8_UNORM,
-                                          VK_FORMAT_R8_SNORM,
-                                          VK_FORMAT_R8_USCALED,
-                                          VK_FORMAT_R8_SSCALED,
-                                          VK_FORMAT_R8_UINT,
-                                          VK_FORMAT_R8_SINT,
-                                          VK_FORMAT_R8_SRGB,
-                                          VK_FORMAT_R8G8_UNORM,
-                                          VK_FORMAT_R8G8_SNORM,
-                                          VK_FORMAT_R8G8_USCALED,
-                                          VK_FORMAT_R8G8_SSCALED,
-                                          VK_FORMAT_R8G8_UINT,
-                                          VK_FORMAT_R8G8_SINT,
-                                          VK_FORMAT_R8G8_SRGB,
-                                          VK_FORMAT_R8G8B8_UNORM,
-                                          VK_FORMAT_R8G8B8_SNORM,
-                                          VK_FORMAT_R8G8B8_USCALED,
-                                          VK_FORMAT_R8G8B8_SSCALED,
-                                          VK_FORMAT_R8G8B8_UINT,
-                                          VK_FORMAT_R8G8B8_SINT,
-                                          VK_FORMAT_R8G8B8_SRGB,
-                                          VK_FORMAT_B8G8R8_UNORM,
-                                          VK_FORMAT_B8G8R8_SNORM,
-                                          VK_FORMAT_B8G8R8_USCALED,
-                                          VK_FORMAT_B8G8R8_SSCALED,
-                                          VK_FORMAT_B8G8R8_UINT,
-                                          VK_FORMAT_B8G8R8_SINT,
-                                          VK_FORMAT_B8G8R8_SRGB,
-                                          VK_FORMAT_R8G8B8A8_UNORM,
-                                          VK_FORMAT_R8G8B8A8_SNORM,
-                                          VK_FORMAT_R8G8B8A8_USCALED,
-                                          VK_FORMAT_R8G8B8A8_SSCALED,
-                                          VK_FORMAT_R8G8B8A8_UINT,
-                                          VK_FORMAT_R8G8B8A8_SINT,
-                                          VK_FORMAT_R8G8B8A8_SRGB,
-                                          VK_FORMAT_B8G8R8A8_UNORM,
-                                          VK_FORMAT_B8G8R8A8_SNORM,
-                                          VK_FORMAT_B8G8R8A8_USCALED,
-                                          VK_FORMAT_B8G8R8A8_SSCALED,
-                                          VK_FORMAT_B8G8R8A8_UINT,
-                                          VK_FORMAT_B8G8R8A8_SINT,
-                                          VK_FORMAT_B8G8R8A8_SRGB,
-                                          VK_FORMAT_A8B8G8R8_UNORM_PACK32,
-                                          VK_FORMAT_A8B8G8R8_SNORM_PACK32,
-                                          VK_FORMAT_A8B8G8R8_USCALED_PACK32,
-                                          VK_FORMAT_A8B8G8R8_SSCALED_PACK32,
-                                          VK_FORMAT_A8B8G8R8_UINT_PACK32,
-                                          VK_FORMAT_A8B8G8R8_SINT_PACK32,
-                                          VK_FORMAT_A8B8G8R8_SRGB_PACK32,
-                                          VK_FORMAT_A2R10G10B10_UNORM_PACK32,
-                                          VK_FORMAT_A2R10G10B10_SNORM_PACK32,
-                                          VK_FORMAT_A2R10G10B10_USCALED_PACK32,
-                                          VK_FORMAT_A2R10G10B10_SSCALED_PACK32,
-                                          VK_FORMAT_A2R10G10B10_UINT_PACK32,
-                                          VK_FORMAT_A2R10G10B10_SINT_PACK32,
-                                          VK_FORMAT_A2B10G10R10_UNORM_PACK32,
-                                          VK_FORMAT_A2B10G10R10_SNORM_PACK32,
-                                          VK_FORMAT_A2B10G10R10_USCALED_PACK32,
-                                          VK_FORMAT_A2B10G10R10_SSCALED_PACK32,
-                                          VK_FORMAT_A2B10G10R10_UINT_PACK32,
-                                          VK_FORMAT_A2B10G10R10_SINT_PACK32,
-                                          VK_FORMAT_R16_UNORM,
-                                          VK_FORMAT_R16_SNORM,
-                                          VK_FORMAT_R16_USCALED,
-                                          VK_FORMAT_R16_SSCALED,
-                                          VK_FORMAT_R16_UINT,
-                                          VK_FORMAT_R16_SINT,
-                                          VK_FORMAT_R16_SFLOAT,
-                                          VK_FORMAT_R16G16_UNORM,
-                                          VK_FORMAT_R16G16_SNORM,
-                                          VK_FORMAT_R16G16_USCALED,
-                                          VK_FORMAT_R16G16_SSCALED,
-                                          VK_FORMAT_R16G16_UINT,
-                                          VK_FORMAT_R16G16_SINT,
-                                          VK_FORMAT_R16G16_SFLOAT,
-                                          VK_FORMAT_R16G16B16_UNORM,
-                                          VK_FORMAT_R16G16B16_SNORM,
-                                          VK_FORMAT_R16G16B16_USCALED,
-                                          VK_FORMAT_R16G16B16_SSCALED,
-                                          VK_FORMAT_R16G16B16_UINT,
-                                          VK_FORMAT_R16G16B16_SINT,
-                                          VK_FORMAT_R16G16B16_SFLOAT,
-                                          VK_FORMAT_R16G16B16A16_UNORM,
-                                          VK_FORMAT_R16G16B16A16_SNORM,
-                                          VK_FORMAT_R16G16B16A16_USCALED,
-                                          VK_FORMAT_R16G16B16A16_SSCALED,
-                                          VK_FORMAT_R16G16B16A16_UINT,
-                                          VK_FORMAT_R16G16B16A16_SINT,
-                                          VK_FORMAT_R16G16B16A16_SFLOAT,
-                                          VK_FORMAT_R32_UINT,
-                                          VK_FORMAT_R32_SINT,
-                                          VK_FORMAT_R32_SFLOAT,
-                                          VK_FORMAT_R32G32_UINT,
-                                          VK_FORMAT_R32G32_SINT,
-                                          VK_FORMAT_R32G32_SFLOAT,
-                                          VK_FORMAT_R32G32B32_UINT,
-                                          VK_FORMAT_R32G32B32_SINT,
-                                          VK_FORMAT_R32G32B32_SFLOAT,
-                                          VK_FORMAT_R32G32B32A32_UINT,
-                                          VK_FORMAT_R32G32B32A32_SINT,
-                                          VK_FORMAT_R32G32B32A32_SFLOAT,
-                                          VK_FORMAT_R64_UINT,
-                                          VK_FORMAT_R64_SINT,
-                                          VK_FORMAT_R64_SFLOAT,
-                                          VK_FORMAT_R64G64_UINT,
-                                          VK_FORMAT_R64G64_SINT,
-                                          VK_FORMAT_R64G64_SFLOAT,
-                                          VK_FORMAT_R64G64B64_UINT,
-                                          VK_FORMAT_R64G64B64_SINT,
-                                          VK_FORMAT_R64G64B64_SFLOAT,
-                                          VK_FORMAT_R64G64B64A64_UINT,
-                                          VK_FORMAT_R64G64B64A64_SINT,
-                                          VK_FORMAT_R64G64B64A64_SFLOAT,
-                                          VK_FORMAT_B10G11R11_UFLOAT_PACK32,
-                                          VK_FORMAT_E5B9G9R9_UFLOAT_PACK32,
-                                          VK_FORMAT_D16_UNORM,
-                                          VK_FORMAT_X8_D24_UNORM_PACK32,
-                                          VK_FORMAT_D32_SFLOAT,
-                                          VK_FORMAT_S8_UINT,
-                                          VK_FORMAT_D16_UNORM_S8_UINT,
-                                          VK_FORMAT_D24_UNORM_S8_UINT,
-                                          VK_FORMAT_D32_SFLOAT_S8_UINT,
-                                          VK_FORMAT_BC1_RGB_UNORM_BLOCK,
-                                          VK_FORMAT_BC1_RGB_SRGB_BLOCK,
-                                          VK_FORMAT_BC1_RGBA_UNORM_BLOCK,
-                                          VK_FORMAT_BC1_RGBA_SRGB_BLOCK,
-                                          VK_FORMAT_BC2_UNORM_BLOCK,
-                                          VK_FORMAT_BC2_SRGB_BLOCK,
-                                          VK_FORMAT_BC3_UNORM_BLOCK,
-                                          VK_FORMAT_BC3_SRGB_BLOCK,
-                                          VK_FORMAT_BC4_UNORM_BLOCK,
-                                          VK_FORMAT_BC4_SNORM_BLOCK,
-                                          VK_FORMAT_BC5_UNORM_BLOCK,
-                                          VK_FORMAT_BC5_SNORM_BLOCK,
-                                          VK_FORMAT_BC6H_UFLOAT_BLOCK,
-                                          VK_FORMAT_BC6H_SFLOAT_BLOCK,
-                                          VK_FORMAT_BC7_UNORM_BLOCK,
-                                          VK_FORMAT_BC7_SRGB_BLOCK,
-                                          VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK,
-                                          VK_FORMAT_ETC2_R8G8B8_SRGB_BLOCK,
-                                          VK_FORMAT_ETC2_R8G8B8A1_UNORM_BLOCK,
-                                          VK_FORMAT_ETC2_R8G8B8A1_SRGB_BLOCK,
-                                          VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK,
-                                          VK_FORMAT_ETC2_R8G8B8A8_SRGB_BLOCK,
-                                          VK_FORMAT_EAC_R11_UNORM_BLOCK,
-                                          VK_FORMAT_EAC_R11_SNORM_BLOCK,
-                                          VK_FORMAT_EAC_R11G11_UNORM_BLOCK,
-                                          VK_FORMAT_EAC_R11G11_SNORM_BLOCK,
-                                          VK_FORMAT_ASTC_4x4_UNORM_BLOCK,
-                                          VK_FORMAT_ASTC_4x4_SRGB_BLOCK,
-                                          VK_FORMAT_ASTC_5x4_UNORM_BLOCK,
-                                          VK_FORMAT_ASTC_5x4_SRGB_BLOCK,
-                                          VK_FORMAT_ASTC_5x5_UNORM_BLOCK,
-                                          VK_FORMAT_ASTC_5x5_SRGB_BLOCK,
-                                          VK_FORMAT_ASTC_6x5_UNORM_BLOCK,
-                                          VK_FORMAT_ASTC_6x5_SRGB_BLOCK,
-                                          VK_FORMAT_ASTC_6x6_UNORM_BLOCK,
-                                          VK_FORMAT_ASTC_6x6_SRGB_BLOCK,
-                                          VK_FORMAT_ASTC_8x5_UNORM_BLOCK,
-                                          VK_FORMAT_ASTC_8x5_SRGB_BLOCK,
-                                          VK_FORMAT_ASTC_8x6_UNORM_BLOCK,
-                                          VK_FORMAT_ASTC_8x6_SRGB_BLOCK,
-                                          VK_FORMAT_ASTC_8x8_UNORM_BLOCK,
-                                          VK_FORMAT_ASTC_8x8_SRGB_BLOCK,
-                                          VK_FORMAT_ASTC_10x5_UNORM_BLOCK,
-                                          VK_FORMAT_ASTC_10x5_SRGB_BLOCK,
-                                          VK_FORMAT_ASTC_10x6_UNORM_BLOCK,
-                                          VK_FORMAT_ASTC_10x6_SRGB_BLOCK,
-                                          VK_FORMAT_ASTC_10x8_UNORM_BLOCK,
-                                          VK_FORMAT_ASTC_10x8_SRGB_BLOCK,
-                                          VK_FORMAT_ASTC_10x10_UNORM_BLOCK,
-                                          VK_FORMAT_ASTC_10x10_SRGB_BLOCK,
-                                          VK_FORMAT_ASTC_12x10_UNORM_BLOCK,
-                                          VK_FORMAT_ASTC_12x10_SRGB_BLOCK,
-                                          VK_FORMAT_ASTC_12x12_UNORM_BLOCK,
-                                          VK_FORMAT_ASTC_12x12_SRGB_BLOCK,
-                                          VK_FORMAT_G8B8G8R8_422_UNORM,
-                                          VK_FORMAT_B8G8R8G8_422_UNORM,
-                                          VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM,
-                                          VK_FORMAT_G8_B8R8_2PLANE_420_UNORM,
-                                          VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM,
-                                          VK_FORMAT_G8_B8R8_2PLANE_422_UNORM,
-                                          VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM,
-                                          VK_FORMAT_R10X6_UNORM_PACK16,
-                                          VK_FORMAT_R10X6G10X6_UNORM_2PACK16,
-                                          VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16,
-                                          VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16,
-                                          VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16,
-                                          VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16,
-                                          VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16,
-                                          VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16,
-                                          VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16,
-                                          VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16,
-                                          VK_FORMAT_R12X4_UNORM_PACK16,
-                                          VK_FORMAT_R12X4G12X4_UNORM_2PACK16,
-                                          VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16,
-                                          VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16,
-                                          VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16,
-                                          VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16,
-                                          VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16,
-                                          VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16,
-                                          VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16,
-                                          VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16,
-                                          VK_FORMAT_G16B16G16R16_422_UNORM,
-                                          VK_FORMAT_B16G16R16G16_422_UNORM,
-                                          VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM,
-                                          VK_FORMAT_G16_B16R16_2PLANE_420_UNORM,
-                                          VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM,
-                                          VK_FORMAT_G16_B16R16_2PLANE_422_UNORM,
-                                          VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM,
-                                          VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK_EXT,
-                                          VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK_EXT,
-                                          VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK_EXT,
-                                          VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK_EXT,
-                                          VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK_EXT,
-                                          VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK_EXT,
-                                          VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK_EXT,
-                                          VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK_EXT,
-                                          VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK_EXT,
-                                          VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK_EXT,
-                                          VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK_EXT,
-                                          VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK_EXT,
-                                          VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT,
-                                          VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT,
-                                          VK_FORMAT_G8_B8R8_2PLANE_444_UNORM_EXT,
-                                          VK_FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16_EXT,
-                                          VK_FORMAT_G12X4_B12X4R12X4_2PLANE_444_UNORM_3PACK16_EXT,
-                                          VK_FORMAT_G16_B16R16_2PLANE_444_UNORM_EXT,
-                                          VK_FORMAT_A4R4G4B4_UNORM_PACK16_EXT,
-                                          VK_FORMAT_A4B4G4R4_UNORM_PACK16_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found =
+        (enumerant == (uint64_t)VK_FORMAT_UNDEFINED) || (enumerant == (uint64_t)VK_FORMAT_R4G4_UNORM_PACK8) || (enumerant == (uint64_t)VK_FORMAT_R4G4B4A4_UNORM_PACK16) ||
+        (enumerant == (uint64_t)VK_FORMAT_B4G4R4A4_UNORM_PACK16) || (enumerant == (uint64_t)VK_FORMAT_R5G6B5_UNORM_PACK16) || (enumerant == (uint64_t)VK_FORMAT_B5G6R5_UNORM_PACK16) ||
+        (enumerant == (uint64_t)VK_FORMAT_R5G5B5A1_UNORM_PACK16) || (enumerant == (uint64_t)VK_FORMAT_B5G5R5A1_UNORM_PACK16) || (enumerant == (uint64_t)VK_FORMAT_A1R5G5B5_UNORM_PACK16) ||
+        (enumerant == (uint64_t)VK_FORMAT_R8_UNORM) || (enumerant == (uint64_t)VK_FORMAT_R8_SNORM) || (enumerant == (uint64_t)VK_FORMAT_R8_USCALED) || (enumerant == (uint64_t)VK_FORMAT_R8_SSCALED) ||
+        (enumerant == (uint64_t)VK_FORMAT_R8_UINT) || (enumerant == (uint64_t)VK_FORMAT_R8_SINT) || (enumerant == (uint64_t)VK_FORMAT_R8_SRGB) || (enumerant == (uint64_t)VK_FORMAT_R8G8_UNORM) ||
+        (enumerant == (uint64_t)VK_FORMAT_R8G8_SNORM) || (enumerant == (uint64_t)VK_FORMAT_R8G8_USCALED) || (enumerant == (uint64_t)VK_FORMAT_R8G8_SSCALED) ||
+        (enumerant == (uint64_t)VK_FORMAT_R8G8_UINT) || (enumerant == (uint64_t)VK_FORMAT_R8G8_SINT) || (enumerant == (uint64_t)VK_FORMAT_R8G8_SRGB) ||
+        (enumerant == (uint64_t)VK_FORMAT_R8G8B8_UNORM) || (enumerant == (uint64_t)VK_FORMAT_R8G8B8_SNORM) || (enumerant == (uint64_t)VK_FORMAT_R8G8B8_USCALED) ||
+        (enumerant == (uint64_t)VK_FORMAT_R8G8B8_SSCALED) || (enumerant == (uint64_t)VK_FORMAT_R8G8B8_UINT) || (enumerant == (uint64_t)VK_FORMAT_R8G8B8_SINT) ||
+        (enumerant == (uint64_t)VK_FORMAT_R8G8B8_SRGB) || (enumerant == (uint64_t)VK_FORMAT_B8G8R8_UNORM) || (enumerant == (uint64_t)VK_FORMAT_B8G8R8_SNORM) ||
+        (enumerant == (uint64_t)VK_FORMAT_B8G8R8_USCALED) || (enumerant == (uint64_t)VK_FORMAT_B8G8R8_SSCALED) || (enumerant == (uint64_t)VK_FORMAT_B8G8R8_UINT) ||
+        (enumerant == (uint64_t)VK_FORMAT_B8G8R8_SINT) || (enumerant == (uint64_t)VK_FORMAT_B8G8R8_SRGB) || (enumerant == (uint64_t)VK_FORMAT_R8G8B8A8_UNORM) ||
+        (enumerant == (uint64_t)VK_FORMAT_R8G8B8A8_SNORM) || (enumerant == (uint64_t)VK_FORMAT_R8G8B8A8_USCALED) || (enumerant == (uint64_t)VK_FORMAT_R8G8B8A8_SSCALED) ||
+        (enumerant == (uint64_t)VK_FORMAT_R8G8B8A8_UINT) || (enumerant == (uint64_t)VK_FORMAT_R8G8B8A8_SINT) || (enumerant == (uint64_t)VK_FORMAT_R8G8B8A8_SRGB) ||
+        (enumerant == (uint64_t)VK_FORMAT_B8G8R8A8_UNORM) || (enumerant == (uint64_t)VK_FORMAT_B8G8R8A8_SNORM) || (enumerant == (uint64_t)VK_FORMAT_B8G8R8A8_USCALED) ||
+        (enumerant == (uint64_t)VK_FORMAT_B8G8R8A8_SSCALED) || (enumerant == (uint64_t)VK_FORMAT_B8G8R8A8_UINT) || (enumerant == (uint64_t)VK_FORMAT_B8G8R8A8_SINT) ||
+        (enumerant == (uint64_t)VK_FORMAT_B8G8R8A8_SRGB) || (enumerant == (uint64_t)VK_FORMAT_A8B8G8R8_UNORM_PACK32) || (enumerant == (uint64_t)VK_FORMAT_A8B8G8R8_SNORM_PACK32) ||
+        (enumerant == (uint64_t)VK_FORMAT_A8B8G8R8_USCALED_PACK32) || (enumerant == (uint64_t)VK_FORMAT_A8B8G8R8_SSCALED_PACK32) || (enumerant == (uint64_t)VK_FORMAT_A8B8G8R8_UINT_PACK32) ||
+        (enumerant == (uint64_t)VK_FORMAT_A8B8G8R8_SINT_PACK32) || (enumerant == (uint64_t)VK_FORMAT_A8B8G8R8_SRGB_PACK32) || (enumerant == (uint64_t)VK_FORMAT_A2R10G10B10_UNORM_PACK32) ||
+        (enumerant == (uint64_t)VK_FORMAT_A2R10G10B10_SNORM_PACK32) || (enumerant == (uint64_t)VK_FORMAT_A2R10G10B10_USCALED_PACK32) || (enumerant == (uint64_t)VK_FORMAT_A2R10G10B10_SSCALED_PACK32) ||
+        (enumerant == (uint64_t)VK_FORMAT_A2R10G10B10_UINT_PACK32) || (enumerant == (uint64_t)VK_FORMAT_A2R10G10B10_SINT_PACK32) || (enumerant == (uint64_t)VK_FORMAT_A2B10G10R10_UNORM_PACK32) ||
+        (enumerant == (uint64_t)VK_FORMAT_A2B10G10R10_SNORM_PACK32) || (enumerant == (uint64_t)VK_FORMAT_A2B10G10R10_USCALED_PACK32) || (enumerant == (uint64_t)VK_FORMAT_A2B10G10R10_SSCALED_PACK32) ||
+        (enumerant == (uint64_t)VK_FORMAT_A2B10G10R10_UINT_PACK32) || (enumerant == (uint64_t)VK_FORMAT_A2B10G10R10_SINT_PACK32) || (enumerant == (uint64_t)VK_FORMAT_R16_UNORM) ||
+        (enumerant == (uint64_t)VK_FORMAT_R16_SNORM) || (enumerant == (uint64_t)VK_FORMAT_R16_USCALED) || (enumerant == (uint64_t)VK_FORMAT_R16_SSCALED) ||
+        (enumerant == (uint64_t)VK_FORMAT_R16_UINT) || (enumerant == (uint64_t)VK_FORMAT_R16_SINT) || (enumerant == (uint64_t)VK_FORMAT_R16_SFLOAT) ||
+        (enumerant == (uint64_t)VK_FORMAT_R16G16_UNORM) || (enumerant == (uint64_t)VK_FORMAT_R16G16_SNORM) || (enumerant == (uint64_t)VK_FORMAT_R16G16_USCALED) ||
+        (enumerant == (uint64_t)VK_FORMAT_R16G16_SSCALED) || (enumerant == (uint64_t)VK_FORMAT_R16G16_UINT) || (enumerant == (uint64_t)VK_FORMAT_R16G16_SINT) ||
+        (enumerant == (uint64_t)VK_FORMAT_R16G16_SFLOAT) || (enumerant == (uint64_t)VK_FORMAT_R16G16B16_UNORM) || (enumerant == (uint64_t)VK_FORMAT_R16G16B16_SNORM) ||
+        (enumerant == (uint64_t)VK_FORMAT_R16G16B16_USCALED) || (enumerant == (uint64_t)VK_FORMAT_R16G16B16_SSCALED) || (enumerant == (uint64_t)VK_FORMAT_R16G16B16_UINT) ||
+        (enumerant == (uint64_t)VK_FORMAT_R16G16B16_SINT) || (enumerant == (uint64_t)VK_FORMAT_R16G16B16_SFLOAT) || (enumerant == (uint64_t)VK_FORMAT_R16G16B16A16_UNORM) ||
+        (enumerant == (uint64_t)VK_FORMAT_R16G16B16A16_SNORM) || (enumerant == (uint64_t)VK_FORMAT_R16G16B16A16_USCALED) || (enumerant == (uint64_t)VK_FORMAT_R16G16B16A16_SSCALED) ||
+        (enumerant == (uint64_t)VK_FORMAT_R16G16B16A16_UINT) || (enumerant == (uint64_t)VK_FORMAT_R16G16B16A16_SINT) || (enumerant == (uint64_t)VK_FORMAT_R16G16B16A16_SFLOAT) ||
+        (enumerant == (uint64_t)VK_FORMAT_R32_UINT) || (enumerant == (uint64_t)VK_FORMAT_R32_SINT) || (enumerant == (uint64_t)VK_FORMAT_R32_SFLOAT) || (enumerant == (uint64_t)VK_FORMAT_R32G32_UINT) ||
+        (enumerant == (uint64_t)VK_FORMAT_R32G32_SINT) || (enumerant == (uint64_t)VK_FORMAT_R32G32_SFLOAT) || (enumerant == (uint64_t)VK_FORMAT_R32G32B32_UINT) ||
+        (enumerant == (uint64_t)VK_FORMAT_R32G32B32_SINT) || (enumerant == (uint64_t)VK_FORMAT_R32G32B32_SFLOAT) || (enumerant == (uint64_t)VK_FORMAT_R32G32B32A32_UINT) ||
+        (enumerant == (uint64_t)VK_FORMAT_R32G32B32A32_SINT) || (enumerant == (uint64_t)VK_FORMAT_R32G32B32A32_SFLOAT) || (enumerant == (uint64_t)VK_FORMAT_R64_UINT) ||
+        (enumerant == (uint64_t)VK_FORMAT_R64_SINT) || (enumerant == (uint64_t)VK_FORMAT_R64_SFLOAT) || (enumerant == (uint64_t)VK_FORMAT_R64G64_UINT) ||
+        (enumerant == (uint64_t)VK_FORMAT_R64G64_SINT) || (enumerant == (uint64_t)VK_FORMAT_R64G64_SFLOAT) || (enumerant == (uint64_t)VK_FORMAT_R64G64B64_UINT) ||
+        (enumerant == (uint64_t)VK_FORMAT_R64G64B64_SINT) || (enumerant == (uint64_t)VK_FORMAT_R64G64B64_SFLOAT) || (enumerant == (uint64_t)VK_FORMAT_R64G64B64A64_UINT) ||
+        (enumerant == (uint64_t)VK_FORMAT_R64G64B64A64_SINT) || (enumerant == (uint64_t)VK_FORMAT_R64G64B64A64_SFLOAT) || (enumerant == (uint64_t)VK_FORMAT_B10G11R11_UFLOAT_PACK32) ||
+        (enumerant == (uint64_t)VK_FORMAT_E5B9G9R9_UFLOAT_PACK32) || (enumerant == (uint64_t)VK_FORMAT_D16_UNORM) || (enumerant == (uint64_t)VK_FORMAT_X8_D24_UNORM_PACK32) ||
+        (enumerant == (uint64_t)VK_FORMAT_D32_SFLOAT) || (enumerant == (uint64_t)VK_FORMAT_S8_UINT) || (enumerant == (uint64_t)VK_FORMAT_D16_UNORM_S8_UINT) ||
+        (enumerant == (uint64_t)VK_FORMAT_D24_UNORM_S8_UINT) || (enumerant == (uint64_t)VK_FORMAT_D32_SFLOAT_S8_UINT) || (enumerant == (uint64_t)VK_FORMAT_BC1_RGB_UNORM_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_BC1_RGB_SRGB_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_BC1_RGBA_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_BC1_RGBA_SRGB_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_BC2_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_BC2_SRGB_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_BC3_UNORM_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_BC3_SRGB_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_BC4_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_BC4_SNORM_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_BC5_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_BC5_SNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_BC6H_UFLOAT_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_BC6H_SFLOAT_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_BC7_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_BC7_SRGB_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ETC2_R8G8B8_SRGB_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ETC2_R8G8B8A1_UNORM_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_ETC2_R8G8B8A1_SRGB_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ETC2_R8G8B8A8_SRGB_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_EAC_R11_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_EAC_R11_SNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_EAC_R11G11_UNORM_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_EAC_R11G11_SNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_4x4_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_4x4_SRGB_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_5x4_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_5x4_SRGB_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_5x5_UNORM_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_5x5_SRGB_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_6x5_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_6x5_SRGB_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_6x6_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_6x6_SRGB_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_8x5_UNORM_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_8x5_SRGB_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_8x6_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_8x6_SRGB_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_8x8_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_8x8_SRGB_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_10x5_UNORM_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_10x5_SRGB_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_10x6_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_10x6_SRGB_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_10x8_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_10x8_SRGB_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_10x10_UNORM_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_10x10_SRGB_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_12x10_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_12x10_SRGB_BLOCK) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_12x12_UNORM_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_ASTC_12x12_SRGB_BLOCK) || (enumerant == (uint64_t)VK_FORMAT_G8B8G8R8_422_UNORM) ||
+        (enumerant == (uint64_t)VK_FORMAT_B8G8R8G8_422_UNORM) || (enumerant == (uint64_t)VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM) || (enumerant == (uint64_t)VK_FORMAT_G8_B8R8_2PLANE_420_UNORM) ||
+        (enumerant == (uint64_t)VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM) || (enumerant == (uint64_t)VK_FORMAT_G8_B8R8_2PLANE_422_UNORM) || (enumerant == (uint64_t)VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM) ||
+        (enumerant == (uint64_t)VK_FORMAT_R10X6_UNORM_PACK16) || (enumerant == (uint64_t)VK_FORMAT_R10X6G10X6_UNORM_2PACK16) || (enumerant == (uint64_t)VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16) ||
+        (enumerant == (uint64_t)VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16) || (enumerant == (uint64_t)VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16) ||
+        (enumerant == (uint64_t)VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16) || (enumerant == (uint64_t)VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16) ||
+        (enumerant == (uint64_t)VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16) || (enumerant == (uint64_t)VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16) ||
+        (enumerant == (uint64_t)VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16) || (enumerant == (uint64_t)VK_FORMAT_R12X4_UNORM_PACK16) ||
+        (enumerant == (uint64_t)VK_FORMAT_R12X4G12X4_UNORM_2PACK16) || (enumerant == (uint64_t)VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16) ||
+        (enumerant == (uint64_t)VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16) || (enumerant == (uint64_t)VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16) ||
+        (enumerant == (uint64_t)VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16) || (enumerant == (uint64_t)VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16) ||
+        (enumerant == (uint64_t)VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16) || (enumerant == (uint64_t)VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16) ||
+        (enumerant == (uint64_t)VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16) || (enumerant == (uint64_t)VK_FORMAT_G16B16G16R16_422_UNORM) ||
+        (enumerant == (uint64_t)VK_FORMAT_B16G16R16G16_422_UNORM) || (enumerant == (uint64_t)VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM) ||
+        (enumerant == (uint64_t)VK_FORMAT_G16_B16R16_2PLANE_420_UNORM) || (enumerant == (uint64_t)VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM) ||
+        (enumerant == (uint64_t)VK_FORMAT_G16_B16R16_2PLANE_422_UNORM) || (enumerant == (uint64_t)VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK_EXT) || (enumerant == (uint64_t)VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK_EXT) || (enumerant == (uint64_t)VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK_EXT) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK_EXT) || (enumerant == (uint64_t)VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK_EXT) || (enumerant == (uint64_t)VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK_EXT) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK_EXT) || (enumerant == (uint64_t)VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK_EXT) || (enumerant == (uint64_t)VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK_EXT) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK_EXT) || (enumerant == (uint64_t)VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK_EXT) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK_EXT) || (enumerant == (uint64_t)VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT) ||
+        (enumerant == (uint64_t)VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT) || (enumerant == (uint64_t)VK_FORMAT_G8_B8R8_2PLANE_444_UNORM_EXT) ||
+        (enumerant == (uint64_t)VK_FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16_EXT) || (enumerant == (uint64_t)VK_FORMAT_G12X4_B12X4R12X4_2PLANE_444_UNORM_3PACK16_EXT) ||
+        (enumerant == (uint64_t)VK_FORMAT_G16_B16R16_2PLANE_444_UNORM_EXT) || (enumerant == (uint64_t)VK_FORMAT_A4R4G4B4_UNORM_PACK16_EXT) ||
+        (enumerant == (uint64_t)VK_FORMAT_A4B4G4R4_UNORM_PACK16_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkFormat)enumerant;
 }
 extern SCVK_FORCE_INLINE VkFormatFeatureFlagBits scvkParseJsonFormatFeatureFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                enumerant;
-    VkFormatFeatureFlagBits result;
-    uint32_t                index;
-    VkBool32                found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {
         {"VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT", (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT},
@@ -2598,55 +1563,30 @@ extern SCVK_FORCE_INLINE VkFormatFeatureFlagBits scvkParseJsonFormatFeatureFlagB
         {"VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_EXT", (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_EXT},
         {"VK_FORMAT_FEATURE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_FORMAT_FEATURE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR}};
 
-    static const VkFormatFeatureFlagBits enumerants[] = {VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT,
-                                                         VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT,
-                                                         VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT,
-                                                         VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT,
-                                                         VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT,
-                                                         VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT,
-                                                         VK_FORMAT_FEATURE_VERTEX_BUFFER_BIT,
-                                                         VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT,
-                                                         VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT,
-                                                         VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT,
-                                                         VK_FORMAT_FEATURE_BLIT_SRC_BIT,
-                                                         VK_FORMAT_FEATURE_BLIT_DST_BIT,
-                                                         VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT,
-                                                         VK_FORMAT_FEATURE_TRANSFER_SRC_BIT,
-                                                         VK_FORMAT_FEATURE_TRANSFER_DST_BIT,
-                                                         VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT,
-                                                         VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT,
-                                                         VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT,
-                                                         VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT,
-                                                         VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT,
-                                                         VK_FORMAT_FEATURE_DISJOINT_BIT,
-                                                         VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT,
-                                                         VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT,
-                                                         VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_EXT,
-                                                         VK_FORMAT_FEATURE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT) ||
+            (enumerant == (uint64_t)VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT) ||
+            (enumerant == (uint64_t)VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT) ||
+            (enumerant == (uint64_t)VK_FORMAT_FEATURE_VERTEX_BUFFER_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT) ||
+            (enumerant == (uint64_t)VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT) ||
+            (enumerant == (uint64_t)VK_FORMAT_FEATURE_BLIT_SRC_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_BLIT_DST_BIT) ||
+            (enumerant == (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_TRANSFER_SRC_BIT) ||
+            (enumerant == (uint64_t)VK_FORMAT_FEATURE_TRANSFER_DST_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT) ||
+            (enumerant == (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT) ||
+            (enumerant == (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT) ||
+            (enumerant == (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT) ||
+            (enumerant == (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_DISJOINT_BIT) ||
+            (enumerant == (uint64_t)VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT) ||
+            (enumerant == (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_EXT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkFormatFeatureFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkFragmentShadingRateCombinerOpKHR scvkParseJsonFragmentShadingRateCombinerOp(const scvkJsonValue* pValue)
 {
-    uint64_t                           enumerant;
-    VkFragmentShadingRateCombinerOpKHR result;
-    uint32_t                           index;
-    VkBool32                           found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR", (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR},
                                          {"VK_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_KHR", (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_KHR},
@@ -2654,91 +1594,47 @@ extern SCVK_FORCE_INLINE VkFragmentShadingRateCombinerOpKHR scvkParseJsonFragmen
                                          {"VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MAX_KHR", (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MAX_KHR},
                                          {"VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MUL_KHR", (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MUL_KHR}};
 
-    static const VkFragmentShadingRateCombinerOpKHR enumerants[] = {VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR,
-                                                                    VK_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_KHR,
-                                                                    VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MIN_KHR,
-                                                                    VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MAX_KHR,
-                                                                    VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MUL_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR) || (enumerant == (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_KHR) ||
+            (enumerant == (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MIN_KHR) || (enumerant == (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MAX_KHR) ||
+            (enumerant == (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MUL_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkFragmentShadingRateCombinerOpKHR)enumerant;
 }
 extern SCVK_FORCE_INLINE VkFramebufferCreateFlagBits scvkParseJsonFramebufferCreateFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                    enumerant;
-    VkFramebufferCreateFlagBits result;
-    uint32_t                    index;
-    VkBool32                    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT", (uint64_t)VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT}};
 
-    static const VkFramebufferCreateFlagBits enumerants[] = {VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkFramebufferCreateFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkFrontFace scvkParseJsonFrontFace(const scvkJsonValue* pValue)
 {
-    uint64_t    enumerant;
-    VkFrontFace result;
-    uint32_t    index;
-    VkBool32    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_FRONT_FACE_COUNTER_CLOCKWISE", (uint64_t)VK_FRONT_FACE_COUNTER_CLOCKWISE}, {"VK_FRONT_FACE_CLOCKWISE", (uint64_t)VK_FRONT_FACE_CLOCKWISE}};
 
-    static const VkFrontFace enumerants[] = {VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_FRONT_FACE_CLOCKWISE};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_FRONT_FACE_COUNTER_CLOCKWISE) || (enumerant == (uint64_t)VK_FRONT_FACE_CLOCKWISE);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkFrontFace)enumerant;
 }
 extern SCVK_FORCE_INLINE VkImageAspectFlagBits scvkParseJsonImageAspectFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t              enumerant;
-    VkImageAspectFlagBits result;
-    uint32_t              index;
-    VkBool32              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_IMAGE_ASPECT_COLOR_BIT", (uint64_t)VK_IMAGE_ASPECT_COLOR_BIT},
                                          {"VK_IMAGE_ASPECT_DEPTH_BIT", (uint64_t)VK_IMAGE_ASPECT_DEPTH_BIT},
@@ -2752,41 +1648,21 @@ extern SCVK_FORCE_INLINE VkImageAspectFlagBits scvkParseJsonImageAspectFlagBits(
                                          {"VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT},
                                          {"VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT}};
 
-    static const VkImageAspectFlagBits enumerants[] = {VK_IMAGE_ASPECT_COLOR_BIT,
-                                                       VK_IMAGE_ASPECT_DEPTH_BIT,
-                                                       VK_IMAGE_ASPECT_STENCIL_BIT,
-                                                       VK_IMAGE_ASPECT_METADATA_BIT,
-                                                       VK_IMAGE_ASPECT_PLANE_0_BIT,
-                                                       VK_IMAGE_ASPECT_PLANE_1_BIT,
-                                                       VK_IMAGE_ASPECT_PLANE_2_BIT,
-                                                       VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT,
-                                                       VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT,
-                                                       VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT,
-                                                       VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_IMAGE_ASPECT_COLOR_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_DEPTH_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_STENCIL_BIT) ||
+            (enumerant == (uint64_t)VK_IMAGE_ASPECT_METADATA_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_PLANE_0_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_PLANE_1_BIT) ||
+            (enumerant == (uint64_t)VK_IMAGE_ASPECT_PLANE_2_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkImageAspectFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkImageCreateFlagBits scvkParseJsonImageCreateFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t              enumerant;
-    VkImageCreateFlagBits result;
-    uint32_t              index;
-    VkBool32              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_IMAGE_CREATE_SPARSE_BINDING_BIT", (uint64_t)VK_IMAGE_CREATE_SPARSE_BINDING_BIT},
                                          {"VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT", (uint64_t)VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT},
@@ -2802,43 +1678,23 @@ extern SCVK_FORCE_INLINE VkImageCreateFlagBits scvkParseJsonImageCreateFlagBits(
                                          {"VK_IMAGE_CREATE_DISJOINT_BIT", (uint64_t)VK_IMAGE_CREATE_DISJOINT_BIT},
                                          {"VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT", (uint64_t)VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT}};
 
-    static const VkImageCreateFlagBits enumerants[] = {VK_IMAGE_CREATE_SPARSE_BINDING_BIT,
-                                                       VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT,
-                                                       VK_IMAGE_CREATE_SPARSE_ALIASED_BIT,
-                                                       VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT,
-                                                       VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
-                                                       VK_IMAGE_CREATE_ALIAS_BIT,
-                                                       VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT,
-                                                       VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT,
-                                                       VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT,
-                                                       VK_IMAGE_CREATE_EXTENDED_USAGE_BIT,
-                                                       VK_IMAGE_CREATE_PROTECTED_BIT,
-                                                       VK_IMAGE_CREATE_DISJOINT_BIT,
-                                                       VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_IMAGE_CREATE_SPARSE_BINDING_BIT) || (enumerant == (uint64_t)VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT) ||
+            (enumerant == (uint64_t)VK_IMAGE_CREATE_SPARSE_ALIASED_BIT) || (enumerant == (uint64_t)VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT) ||
+            (enumerant == (uint64_t)VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT) || (enumerant == (uint64_t)VK_IMAGE_CREATE_ALIAS_BIT) ||
+            (enumerant == (uint64_t)VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT) || (enumerant == (uint64_t)VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT) ||
+            (enumerant == (uint64_t)VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT) || (enumerant == (uint64_t)VK_IMAGE_CREATE_EXTENDED_USAGE_BIT) ||
+            (enumerant == (uint64_t)VK_IMAGE_CREATE_PROTECTED_BIT) || (enumerant == (uint64_t)VK_IMAGE_CREATE_DISJOINT_BIT) ||
+            (enumerant == (uint64_t)VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkImageCreateFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkImageLayout scvkParseJsonImageLayout(const scvkJsonValue* pValue)
 {
-    uint64_t      enumerant;
-    VkImageLayout result;
-    uint32_t      index;
-    VkBool32      found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_IMAGE_LAYOUT_UNDEFINED", (uint64_t)VK_IMAGE_LAYOUT_UNDEFINED},
                                          {"VK_IMAGE_LAYOUT_GENERAL", (uint64_t)VK_IMAGE_LAYOUT_GENERAL},
@@ -2861,108 +1717,56 @@ extern SCVK_FORCE_INLINE VkImageLayout scvkParseJsonImageLayout(const scvkJsonVa
                                          {"VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL_KHR", (uint64_t)VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL_KHR},
                                          {"VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR", (uint64_t)VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR}};
 
-    static const VkImageLayout enumerants[] = {VK_IMAGE_LAYOUT_UNDEFINED,
-                                               VK_IMAGE_LAYOUT_GENERAL,
-                                               VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                               VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-                                               VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
-                                               VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                               VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                                               VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                                               VK_IMAGE_LAYOUT_PREINITIALIZED,
-                                               VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL,
-                                               VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL,
-                                               VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL,
-                                               VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL,
-                                               VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL,
-                                               VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL,
-                                               VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-                                               VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR,
-                                               VK_IMAGE_LAYOUT_FRAGMENT_SHADING_RATE_ATTACHMENT_OPTIMAL_KHR,
-                                               VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL_KHR,
-                                               VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_IMAGE_LAYOUT_UNDEFINED) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_GENERAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) ||
+            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL) ||
+            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) ||
+            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_PREINITIALIZED) ||
+            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL) ||
+            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL) ||
+            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL) ||
+            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR) ||
+            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_FRAGMENT_SHADING_RATE_ATTACHMENT_OPTIMAL_KHR) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL_KHR) ||
+            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkImageLayout)enumerant;
 }
 extern SCVK_FORCE_INLINE VkImageTiling scvkParseJsonImageTiling(const scvkJsonValue* pValue)
 {
-    uint64_t      enumerant;
-    VkImageTiling result;
-    uint32_t      index;
-    VkBool32      found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_IMAGE_TILING_OPTIMAL", (uint64_t)VK_IMAGE_TILING_OPTIMAL},
                                          {"VK_IMAGE_TILING_LINEAR", (uint64_t)VK_IMAGE_TILING_LINEAR},
                                          {"VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT", (uint64_t)VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT}};
 
-    static const VkImageTiling enumerants[] = {VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_TILING_LINEAR, VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_IMAGE_TILING_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_TILING_LINEAR) || (enumerant == (uint64_t)VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkImageTiling)enumerant;
 }
 extern SCVK_FORCE_INLINE VkImageType scvkParseJsonImageType(const scvkJsonValue* pValue)
 {
-    uint64_t    enumerant;
-    VkImageType result;
-    uint32_t    index;
-    VkBool32    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_IMAGE_TYPE_1D", (uint64_t)VK_IMAGE_TYPE_1D}, {"VK_IMAGE_TYPE_2D", (uint64_t)VK_IMAGE_TYPE_2D}, {"VK_IMAGE_TYPE_3D", (uint64_t)VK_IMAGE_TYPE_3D}};
 
-    static const VkImageType enumerants[] = {VK_IMAGE_TYPE_1D, VK_IMAGE_TYPE_2D, VK_IMAGE_TYPE_3D};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_IMAGE_TYPE_1D) || (enumerant == (uint64_t)VK_IMAGE_TYPE_2D) || (enumerant == (uint64_t)VK_IMAGE_TYPE_3D);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkImageType)enumerant;
 }
 extern SCVK_FORCE_INLINE VkImageUsageFlagBits scvkParseJsonImageUsageFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t             enumerant;
-    VkImageUsageFlagBits result;
-    uint32_t             index;
-    VkBool32             found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_IMAGE_USAGE_TRANSFER_SRC_BIT", (uint64_t)VK_IMAGE_USAGE_TRANSFER_SRC_BIT},
                                          {"VK_IMAGE_USAGE_TRANSFER_DST_BIT", (uint64_t)VK_IMAGE_USAGE_TRANSFER_DST_BIT},
@@ -2974,32 +1778,15 @@ extern SCVK_FORCE_INLINE VkImageUsageFlagBits scvkParseJsonImageUsageFlagBits(co
                                          {"VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT},
                                          {"VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR}};
 
-    static const VkImageUsageFlagBits enumerants[] = {VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
-                                                      VK_IMAGE_USAGE_TRANSFER_DST_BIT,
-                                                      VK_IMAGE_USAGE_SAMPLED_BIT,
-                                                      VK_IMAGE_USAGE_STORAGE_BIT,
-                                                      VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-                                                      VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-                                                      VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT,
-                                                      VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
-                                                      VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_IMAGE_USAGE_TRANSFER_SRC_BIT) || (enumerant == (uint64_t)VK_IMAGE_USAGE_TRANSFER_DST_BIT) || (enumerant == (uint64_t)VK_IMAGE_USAGE_SAMPLED_BIT) ||
+            (enumerant == (uint64_t)VK_IMAGE_USAGE_STORAGE_BIT) || (enumerant == (uint64_t)VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT) ||
+            (enumerant == (uint64_t)VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT) || (enumerant == (uint64_t)VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT) ||
+            (enumerant == (uint64_t)VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT) || (enumerant == (uint64_t)VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkImageUsageFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkImageViewCreateFlagBits scvkParseJsonImageViewCreateFlagBits(const scvkJsonValue* pValue)
 {
@@ -3011,10 +1798,8 @@ extern SCVK_FORCE_INLINE VkImageViewCreateFlagBits scvkParseJsonImageViewCreateF
 }
 extern SCVK_FORCE_INLINE VkImageViewType scvkParseJsonImageViewType(const scvkJsonValue* pValue)
 {
-    uint64_t        enumerant;
-    VkImageViewType result;
-    uint32_t        index;
-    VkBool32        found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_IMAGE_VIEW_TYPE_1D", (uint64_t)VK_IMAGE_VIEW_TYPE_1D},
                                          {"VK_IMAGE_VIEW_TYPE_2D", (uint64_t)VK_IMAGE_VIEW_TYPE_2D},
@@ -3024,56 +1809,31 @@ extern SCVK_FORCE_INLINE VkImageViewType scvkParseJsonImageViewType(const scvkJs
                                          {"VK_IMAGE_VIEW_TYPE_2D_ARRAY", (uint64_t)VK_IMAGE_VIEW_TYPE_2D_ARRAY},
                                          {"VK_IMAGE_VIEW_TYPE_CUBE_ARRAY", (uint64_t)VK_IMAGE_VIEW_TYPE_CUBE_ARRAY}};
 
-    static const VkImageViewType enumerants[] =
-        {VK_IMAGE_VIEW_TYPE_1D, VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_VIEW_TYPE_3D, VK_IMAGE_VIEW_TYPE_CUBE, VK_IMAGE_VIEW_TYPE_1D_ARRAY, VK_IMAGE_VIEW_TYPE_2D_ARRAY, VK_IMAGE_VIEW_TYPE_CUBE_ARRAY};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_1D) || (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_2D) || (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_3D) ||
+            (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_CUBE) || (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_1D_ARRAY) || (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_2D_ARRAY) ||
+            (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_CUBE_ARRAY);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkImageViewType)enumerant;
 }
 extern SCVK_FORCE_INLINE VkIndexType scvkParseJsonIndexType(const scvkJsonValue* pValue)
 {
-    uint64_t    enumerant;
-    VkIndexType result;
-    uint32_t    index;
-    VkBool32    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_INDEX_TYPE_UINT16", (uint64_t)VK_INDEX_TYPE_UINT16},
                                          {"VK_INDEX_TYPE_UINT32", (uint64_t)VK_INDEX_TYPE_UINT32},
                                          {"VK_INDEX_TYPE_UINT8_EXT", (uint64_t)VK_INDEX_TYPE_UINT8_EXT},
                                          {"VK_INDEX_TYPE_UINT8_KHR", (uint64_t)VK_INDEX_TYPE_UINT8_KHR}};
 
-    static const VkIndexType enumerants[] = {VK_INDEX_TYPE_UINT16, VK_INDEX_TYPE_UINT32, VK_INDEX_TYPE_UINT8_EXT, VK_INDEX_TYPE_UINT8_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_INDEX_TYPE_UINT16) || (enumerant == (uint64_t)VK_INDEX_TYPE_UINT32) || (enumerant == (uint64_t)VK_INDEX_TYPE_UINT8_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkIndexType)enumerant;
 }
 extern SCVK_FORCE_INLINE VkInstanceCreateFlagBits scvkParseJsonInstanceCreateFlagBits(const scvkJsonValue* pValue)
 {
@@ -3085,38 +1845,22 @@ extern SCVK_FORCE_INLINE VkInstanceCreateFlagBits scvkParseJsonInstanceCreateFla
 }
 extern SCVK_FORCE_INLINE VkInternalAllocationType scvkParseJsonInternalAllocationType(const scvkJsonValue* pValue)
 {
-    uint64_t                 enumerant;
-    VkInternalAllocationType result;
-    uint32_t                 index;
-    VkBool32                 found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE", (uint64_t)VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE}};
 
-    static const VkInternalAllocationType enumerants[] = {VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkInternalAllocationType)enumerant;
 }
 extern SCVK_FORCE_INLINE VkLayerSettingTypeEXT scvkParseJsonLayerSettingType(const scvkJsonValue* pValue)
 {
-    uint64_t              enumerant;
-    VkLayerSettingTypeEXT result;
-    uint32_t              index;
-    VkBool32              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_LAYER_SETTING_TYPE_BOOL32_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_BOOL32_EXT},
                                          {"VK_LAYER_SETTING_TYPE_INT32_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_INT32_EXT},
@@ -3127,38 +1871,19 @@ extern SCVK_FORCE_INLINE VkLayerSettingTypeEXT scvkParseJsonLayerSettingType(con
                                          {"VK_LAYER_SETTING_TYPE_FLOAT64_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_FLOAT64_EXT},
                                          {"VK_LAYER_SETTING_TYPE_STRING_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_STRING_EXT}};
 
-    static const VkLayerSettingTypeEXT enumerants[] = {VK_LAYER_SETTING_TYPE_BOOL32_EXT,
-                                                       VK_LAYER_SETTING_TYPE_INT32_EXT,
-                                                       VK_LAYER_SETTING_TYPE_INT64_EXT,
-                                                       VK_LAYER_SETTING_TYPE_UINT32_EXT,
-                                                       VK_LAYER_SETTING_TYPE_UINT64_EXT,
-                                                       VK_LAYER_SETTING_TYPE_FLOAT32_EXT,
-                                                       VK_LAYER_SETTING_TYPE_FLOAT64_EXT,
-                                                       VK_LAYER_SETTING_TYPE_STRING_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_BOOL32_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_INT32_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_INT64_EXT) ||
+            (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_UINT32_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_UINT64_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_FLOAT32_EXT) ||
+            (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_FLOAT64_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_STRING_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkLayerSettingTypeEXT)enumerant;
 }
 extern SCVK_FORCE_INLINE VkLogicOp scvkParseJsonLogicOp(const scvkJsonValue* pValue)
 {
-    uint64_t  enumerant;
-    VkLogicOp result;
-    uint32_t  index;
-    VkBool32  found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_LOGIC_OP_CLEAR", (uint64_t)VK_LOGIC_OP_CLEAR},
                                          {"VK_LOGIC_OP_AND", (uint64_t)VK_LOGIC_OP_AND},
@@ -3177,99 +1902,49 @@ extern SCVK_FORCE_INLINE VkLogicOp scvkParseJsonLogicOp(const scvkJsonValue* pVa
                                          {"VK_LOGIC_OP_NAND", (uint64_t)VK_LOGIC_OP_NAND},
                                          {"VK_LOGIC_OP_SET", (uint64_t)VK_LOGIC_OP_SET}};
 
-    static const VkLogicOp enumerants[] = {VK_LOGIC_OP_CLEAR,
-                                           VK_LOGIC_OP_AND,
-                                           VK_LOGIC_OP_AND_REVERSE,
-                                           VK_LOGIC_OP_COPY,
-                                           VK_LOGIC_OP_AND_INVERTED,
-                                           VK_LOGIC_OP_NO_OP,
-                                           VK_LOGIC_OP_XOR,
-                                           VK_LOGIC_OP_OR,
-                                           VK_LOGIC_OP_NOR,
-                                           VK_LOGIC_OP_EQUIVALENT,
-                                           VK_LOGIC_OP_INVERT,
-                                           VK_LOGIC_OP_OR_REVERSE,
-                                           VK_LOGIC_OP_COPY_INVERTED,
-                                           VK_LOGIC_OP_OR_INVERTED,
-                                           VK_LOGIC_OP_NAND,
-                                           VK_LOGIC_OP_SET};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_LOGIC_OP_CLEAR) || (enumerant == (uint64_t)VK_LOGIC_OP_AND) || (enumerant == (uint64_t)VK_LOGIC_OP_AND_REVERSE) || (enumerant == (uint64_t)VK_LOGIC_OP_COPY) ||
+            (enumerant == (uint64_t)VK_LOGIC_OP_AND_INVERTED) || (enumerant == (uint64_t)VK_LOGIC_OP_NO_OP) || (enumerant == (uint64_t)VK_LOGIC_OP_XOR) || (enumerant == (uint64_t)VK_LOGIC_OP_OR) ||
+            (enumerant == (uint64_t)VK_LOGIC_OP_NOR) || (enumerant == (uint64_t)VK_LOGIC_OP_EQUIVALENT) || (enumerant == (uint64_t)VK_LOGIC_OP_INVERT) ||
+            (enumerant == (uint64_t)VK_LOGIC_OP_OR_REVERSE) || (enumerant == (uint64_t)VK_LOGIC_OP_COPY_INVERTED) || (enumerant == (uint64_t)VK_LOGIC_OP_OR_INVERTED) ||
+            (enumerant == (uint64_t)VK_LOGIC_OP_NAND) || (enumerant == (uint64_t)VK_LOGIC_OP_SET);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkLogicOp)enumerant;
 }
 extern SCVK_FORCE_INLINE VkMemoryAllocateFlagBits scvkParseJsonMemoryAllocateFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                 enumerant;
-    VkMemoryAllocateFlagBits result;
-    uint32_t                 index;
-    VkBool32                 found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT},
                                          {"VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT},
                                          {"VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT}};
 
-    static const VkMemoryAllocateFlagBits enumerants[] = {VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT, VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT, VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT) || (enumerant == (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT) ||
+            (enumerant == (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkMemoryAllocateFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkMemoryHeapFlagBits scvkParseJsonMemoryHeapFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t             enumerant;
-    VkMemoryHeapFlagBits result;
-    uint32_t             index;
-    VkBool32             found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_MEMORY_HEAP_DEVICE_LOCAL_BIT", (uint64_t)VK_MEMORY_HEAP_DEVICE_LOCAL_BIT},
                                          {"VK_MEMORY_HEAP_MULTI_INSTANCE_BIT", (uint64_t)VK_MEMORY_HEAP_MULTI_INSTANCE_BIT},
                                          {"VK_MEMORY_HEAP_SEU_SAFE_BIT", (uint64_t)VK_MEMORY_HEAP_SEU_SAFE_BIT}};
 
-    static const VkMemoryHeapFlagBits enumerants[] = {VK_MEMORY_HEAP_DEVICE_LOCAL_BIT, VK_MEMORY_HEAP_MULTI_INSTANCE_BIT, VK_MEMORY_HEAP_SEU_SAFE_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) || (enumerant == (uint64_t)VK_MEMORY_HEAP_MULTI_INSTANCE_BIT) || (enumerant == (uint64_t)VK_MEMORY_HEAP_SEU_SAFE_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkMemoryHeapFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkMemoryMapFlagBits scvkParseJsonMemoryMapFlagBits(const scvkJsonValue* pValue)
 {
@@ -3281,10 +1956,8 @@ extern SCVK_FORCE_INLINE VkMemoryMapFlagBits scvkParseJsonMemoryMapFlagBits(cons
 }
 extern SCVK_FORCE_INLINE VkMemoryPropertyFlagBits scvkParseJsonMemoryPropertyFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                 enumerant;
-    VkMemoryPropertyFlagBits result;
-    uint32_t                 index;
-    VkBool32                 found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT", (uint64_t)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT},
                                          {"VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT", (uint64_t)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT},
@@ -3293,36 +1966,19 @@ extern SCVK_FORCE_INLINE VkMemoryPropertyFlagBits scvkParseJsonMemoryPropertyFla
                                          {"VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT", (uint64_t)VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT},
                                          {"VK_MEMORY_PROPERTY_PROTECTED_BIT", (uint64_t)VK_MEMORY_PROPERTY_PROTECTED_BIT}};
 
-    static const VkMemoryPropertyFlagBits enumerants[] = {VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                                                          VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-                                                          VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                                                          VK_MEMORY_PROPERTY_HOST_CACHED_BIT,
-                                                          VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT,
-                                                          VK_MEMORY_PROPERTY_PROTECTED_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) || (enumerant == (uint64_t)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) ||
+            (enumerant == (uint64_t)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) || (enumerant == (uint64_t)VK_MEMORY_PROPERTY_HOST_CACHED_BIT) ||
+            (enumerant == (uint64_t)VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT) || (enumerant == (uint64_t)VK_MEMORY_PROPERTY_PROTECTED_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkMemoryPropertyFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkObjectType scvkParseJsonObjectType(const scvkJsonValue* pValue)
 {
-    uint64_t     enumerant;
-    VkObjectType result;
-    uint32_t     index;
-    VkBool32     found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_OBJECT_TYPE_UNKNOWN", (uint64_t)VK_OBJECT_TYPE_UNKNOWN},
                                          {"VK_OBJECT_TYPE_INSTANCE", (uint64_t)VK_OBJECT_TYPE_INSTANCE},
@@ -3358,131 +2014,63 @@ extern SCVK_FORCE_INLINE VkObjectType scvkParseJsonObjectType(const scvkJsonValu
                                          {"VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT", (uint64_t)VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT},
                                          {"VK_OBJECT_TYPE_SEMAPHORE_SCI_SYNC_POOL_NV", (uint64_t)VK_OBJECT_TYPE_SEMAPHORE_SCI_SYNC_POOL_NV}};
 
-    static const VkObjectType enumerants[] = {VK_OBJECT_TYPE_UNKNOWN,
-                                              VK_OBJECT_TYPE_INSTANCE,
-                                              VK_OBJECT_TYPE_PHYSICAL_DEVICE,
-                                              VK_OBJECT_TYPE_DEVICE,
-                                              VK_OBJECT_TYPE_QUEUE,
-                                              VK_OBJECT_TYPE_SEMAPHORE,
-                                              VK_OBJECT_TYPE_COMMAND_BUFFER,
-                                              VK_OBJECT_TYPE_FENCE,
-                                              VK_OBJECT_TYPE_DEVICE_MEMORY,
-                                              VK_OBJECT_TYPE_BUFFER,
-                                              VK_OBJECT_TYPE_IMAGE,
-                                              VK_OBJECT_TYPE_EVENT,
-                                              VK_OBJECT_TYPE_QUERY_POOL,
-                                              VK_OBJECT_TYPE_BUFFER_VIEW,
-                                              VK_OBJECT_TYPE_IMAGE_VIEW,
-                                              VK_OBJECT_TYPE_SHADER_MODULE,
-                                              VK_OBJECT_TYPE_PIPELINE_CACHE,
-                                              VK_OBJECT_TYPE_PIPELINE_LAYOUT,
-                                              VK_OBJECT_TYPE_RENDER_PASS,
-                                              VK_OBJECT_TYPE_PIPELINE,
-                                              VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT,
-                                              VK_OBJECT_TYPE_SAMPLER,
-                                              VK_OBJECT_TYPE_DESCRIPTOR_POOL,
-                                              VK_OBJECT_TYPE_DESCRIPTOR_SET,
-                                              VK_OBJECT_TYPE_FRAMEBUFFER,
-                                              VK_OBJECT_TYPE_COMMAND_POOL,
-                                              VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION,
-                                              VK_OBJECT_TYPE_SURFACE_KHR,
-                                              VK_OBJECT_TYPE_SWAPCHAIN_KHR,
-                                              VK_OBJECT_TYPE_DISPLAY_KHR,
-                                              VK_OBJECT_TYPE_DISPLAY_MODE_KHR,
-                                              VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT,
-                                              VK_OBJECT_TYPE_SEMAPHORE_SCI_SYNC_POOL_NV};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_OBJECT_TYPE_UNKNOWN) || (enumerant == (uint64_t)VK_OBJECT_TYPE_INSTANCE) || (enumerant == (uint64_t)VK_OBJECT_TYPE_PHYSICAL_DEVICE) ||
+            (enumerant == (uint64_t)VK_OBJECT_TYPE_DEVICE) || (enumerant == (uint64_t)VK_OBJECT_TYPE_QUEUE) || (enumerant == (uint64_t)VK_OBJECT_TYPE_SEMAPHORE) ||
+            (enumerant == (uint64_t)VK_OBJECT_TYPE_COMMAND_BUFFER) || (enumerant == (uint64_t)VK_OBJECT_TYPE_FENCE) || (enumerant == (uint64_t)VK_OBJECT_TYPE_DEVICE_MEMORY) ||
+            (enumerant == (uint64_t)VK_OBJECT_TYPE_BUFFER) || (enumerant == (uint64_t)VK_OBJECT_TYPE_IMAGE) || (enumerant == (uint64_t)VK_OBJECT_TYPE_EVENT) ||
+            (enumerant == (uint64_t)VK_OBJECT_TYPE_QUERY_POOL) || (enumerant == (uint64_t)VK_OBJECT_TYPE_BUFFER_VIEW) || (enumerant == (uint64_t)VK_OBJECT_TYPE_IMAGE_VIEW) ||
+            (enumerant == (uint64_t)VK_OBJECT_TYPE_SHADER_MODULE) || (enumerant == (uint64_t)VK_OBJECT_TYPE_PIPELINE_CACHE) || (enumerant == (uint64_t)VK_OBJECT_TYPE_PIPELINE_LAYOUT) ||
+            (enumerant == (uint64_t)VK_OBJECT_TYPE_RENDER_PASS) || (enumerant == (uint64_t)VK_OBJECT_TYPE_PIPELINE) || (enumerant == (uint64_t)VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT) ||
+            (enumerant == (uint64_t)VK_OBJECT_TYPE_SAMPLER) || (enumerant == (uint64_t)VK_OBJECT_TYPE_DESCRIPTOR_POOL) || (enumerant == (uint64_t)VK_OBJECT_TYPE_DESCRIPTOR_SET) ||
+            (enumerant == (uint64_t)VK_OBJECT_TYPE_FRAMEBUFFER) || (enumerant == (uint64_t)VK_OBJECT_TYPE_COMMAND_POOL) || (enumerant == (uint64_t)VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION) ||
+            (enumerant == (uint64_t)VK_OBJECT_TYPE_SURFACE_KHR) || (enumerant == (uint64_t)VK_OBJECT_TYPE_SWAPCHAIN_KHR) || (enumerant == (uint64_t)VK_OBJECT_TYPE_DISPLAY_KHR) ||
+            (enumerant == (uint64_t)VK_OBJECT_TYPE_DISPLAY_MODE_KHR) || (enumerant == (uint64_t)VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT) ||
+            (enumerant == (uint64_t)VK_OBJECT_TYPE_SEMAPHORE_SCI_SYNC_POOL_NV);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkObjectType)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPeerMemoryFeatureFlagBits scvkParseJsonPeerMemoryFeatureFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                    enumerant;
-    VkPeerMemoryFeatureFlagBits result;
-    uint32_t                    index;
-    VkBool32                    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT},
                                          {"VK_PEER_MEMORY_FEATURE_COPY_DST_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_DST_BIT},
                                          {"VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT},
                                          {"VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT}};
 
-    static const VkPeerMemoryFeatureFlagBits enumerants[] = {VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT,
-                                                             VK_PEER_MEMORY_FEATURE_COPY_DST_BIT,
-                                                             VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT,
-                                                             VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT) || (enumerant == (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_DST_BIT) ||
+            (enumerant == (uint64_t)VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT) || (enumerant == (uint64_t)VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPeerMemoryFeatureFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPerformanceCounterDescriptionFlagBitsKHR scvkParseJsonPerformanceCounterDescriptionFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                                   enumerant;
-    VkPerformanceCounterDescriptionFlagBitsKHR result;
-    uint32_t                                   index;
-    VkBool32                                   found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR},
                                          {"VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR},
                                          {"VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR},
                                          {"VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR}};
 
-    static const VkPerformanceCounterDescriptionFlagBitsKHR enumerants[] = {VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR,
-                                                                            VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR,
-                                                                            VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR,
-                                                                            VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPerformanceCounterDescriptionFlagBitsKHR)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPerformanceCounterScopeKHR scvkParseJsonPerformanceCounterScope(const scvkJsonValue* pValue)
 {
-    uint64_t                     enumerant;
-    VkPerformanceCounterScopeKHR result;
-    uint32_t                     index;
-    VkBool32                     found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_BUFFER_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_BUFFER_KHR},
                                          {"VK_PERFORMANCE_COUNTER_SCOPE_RENDER_PASS_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_RENDER_PASS_KHR},
@@ -3491,36 +2079,18 @@ extern SCVK_FORCE_INLINE VkPerformanceCounterScopeKHR scvkParseJsonPerformanceCo
                                          {"VK_QUERY_SCOPE_RENDER_PASS_KHR", (uint64_t)VK_QUERY_SCOPE_RENDER_PASS_KHR},
                                          {"VK_QUERY_SCOPE_COMMAND_KHR", (uint64_t)VK_QUERY_SCOPE_COMMAND_KHR}};
 
-    static const VkPerformanceCounterScopeKHR enumerants[] = {VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_BUFFER_KHR,
-                                                              VK_PERFORMANCE_COUNTER_SCOPE_RENDER_PASS_KHR,
-                                                              VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_KHR,
-                                                              VK_QUERY_SCOPE_COMMAND_BUFFER_KHR,
-                                                              VK_QUERY_SCOPE_RENDER_PASS_KHR,
-                                                              VK_QUERY_SCOPE_COMMAND_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_BUFFER_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_RENDER_PASS_KHR) ||
+            (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPerformanceCounterScopeKHR)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPerformanceCounterStorageKHR scvkParseJsonPerformanceCounterStorage(const scvkJsonValue* pValue)
 {
-    uint64_t                       enumerant;
-    VkPerformanceCounterStorageKHR result;
-    uint32_t                       index;
-    VkBool32                       found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR},
                                          {"VK_PERFORMANCE_COUNTER_STORAGE_INT64_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_INT64_KHR},
@@ -3529,36 +2099,19 @@ extern SCVK_FORCE_INLINE VkPerformanceCounterStorageKHR scvkParseJsonPerformance
                                          {"VK_PERFORMANCE_COUNTER_STORAGE_FLOAT32_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_FLOAT32_KHR},
                                          {"VK_PERFORMANCE_COUNTER_STORAGE_FLOAT64_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_FLOAT64_KHR}};
 
-    static const VkPerformanceCounterStorageKHR enumerants[] = {VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR,
-                                                                VK_PERFORMANCE_COUNTER_STORAGE_INT64_KHR,
-                                                                VK_PERFORMANCE_COUNTER_STORAGE_UINT32_KHR,
-                                                                VK_PERFORMANCE_COUNTER_STORAGE_UINT64_KHR,
-                                                                VK_PERFORMANCE_COUNTER_STORAGE_FLOAT32_KHR,
-                                                                VK_PERFORMANCE_COUNTER_STORAGE_FLOAT64_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_INT64_KHR) ||
+            (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_UINT32_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_UINT64_KHR) ||
+            (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_FLOAT32_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_FLOAT64_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPerformanceCounterStorageKHR)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPerformanceCounterUnitKHR scvkParseJsonPerformanceCounterUnit(const scvkJsonValue* pValue)
 {
-    uint64_t                    enumerant;
-    VkPerformanceCounterUnitKHR result;
-    uint32_t                    index;
-    VkBool32                    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR},
                                          {"VK_PERFORMANCE_COUNTER_UNIT_PERCENTAGE_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_PERCENTAGE_KHR},
@@ -3572,41 +2125,22 @@ extern SCVK_FORCE_INLINE VkPerformanceCounterUnitKHR scvkParseJsonPerformanceCou
                                          {"VK_PERFORMANCE_COUNTER_UNIT_HERTZ_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_HERTZ_KHR},
                                          {"VK_PERFORMANCE_COUNTER_UNIT_CYCLES_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_CYCLES_KHR}};
 
-    static const VkPerformanceCounterUnitKHR enumerants[] = {VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR,
-                                                             VK_PERFORMANCE_COUNTER_UNIT_PERCENTAGE_KHR,
-                                                             VK_PERFORMANCE_COUNTER_UNIT_NANOSECONDS_KHR,
-                                                             VK_PERFORMANCE_COUNTER_UNIT_BYTES_KHR,
-                                                             VK_PERFORMANCE_COUNTER_UNIT_BYTES_PER_SECOND_KHR,
-                                                             VK_PERFORMANCE_COUNTER_UNIT_KELVIN_KHR,
-                                                             VK_PERFORMANCE_COUNTER_UNIT_WATTS_KHR,
-                                                             VK_PERFORMANCE_COUNTER_UNIT_VOLTS_KHR,
-                                                             VK_PERFORMANCE_COUNTER_UNIT_AMPS_KHR,
-                                                             VK_PERFORMANCE_COUNTER_UNIT_HERTZ_KHR,
-                                                             VK_PERFORMANCE_COUNTER_UNIT_CYCLES_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_PERCENTAGE_KHR) ||
+            (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_NANOSECONDS_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_BYTES_KHR) ||
+            (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_BYTES_PER_SECOND_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_KELVIN_KHR) ||
+            (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_WATTS_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_VOLTS_KHR) ||
+            (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_AMPS_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_HERTZ_KHR) ||
+            (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_CYCLES_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPerformanceCounterUnitKHR)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPhysicalDeviceType scvkParseJsonPhysicalDeviceType(const scvkJsonValue* pValue)
 {
-    uint64_t             enumerant;
-    VkPhysicalDeviceType result;
-    uint32_t             index;
-    VkBool32             found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PHYSICAL_DEVICE_TYPE_OTHER", (uint64_t)VK_PHYSICAL_DEVICE_TYPE_OTHER},
                                          {"VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU", (uint64_t)VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU},
@@ -3614,142 +2148,71 @@ extern SCVK_FORCE_INLINE VkPhysicalDeviceType scvkParseJsonPhysicalDeviceType(co
                                          {"VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU", (uint64_t)VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU},
                                          {"VK_PHYSICAL_DEVICE_TYPE_CPU", (uint64_t)VK_PHYSICAL_DEVICE_TYPE_CPU}};
 
-    static const VkPhysicalDeviceType enumerants[] = {VK_PHYSICAL_DEVICE_TYPE_OTHER,
-                                                      VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU,
-                                                      VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU,
-                                                      VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU,
-                                                      VK_PHYSICAL_DEVICE_TYPE_CPU};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PHYSICAL_DEVICE_TYPE_OTHER) || (enumerant == (uint64_t)VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) ||
+            (enumerant == (uint64_t)VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) || (enumerant == (uint64_t)VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU) || (enumerant == (uint64_t)VK_PHYSICAL_DEVICE_TYPE_CPU);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPhysicalDeviceType)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPipelineBindPoint scvkParseJsonPipelineBindPoint(const scvkJsonValue* pValue)
 {
-    uint64_t            enumerant;
-    VkPipelineBindPoint result;
-    uint32_t            index;
-    VkBool32            found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PIPELINE_BIND_POINT_GRAPHICS", (uint64_t)VK_PIPELINE_BIND_POINT_GRAPHICS}, {"VK_PIPELINE_BIND_POINT_COMPUTE", (uint64_t)VK_PIPELINE_BIND_POINT_COMPUTE}};
 
-    static const VkPipelineBindPoint enumerants[] = {VK_PIPELINE_BIND_POINT_GRAPHICS, VK_PIPELINE_BIND_POINT_COMPUTE};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PIPELINE_BIND_POINT_GRAPHICS) || (enumerant == (uint64_t)VK_PIPELINE_BIND_POINT_COMPUTE);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPipelineBindPoint)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPipelineCacheCreateFlagBits scvkParseJsonPipelineCacheCreateFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                      enumerant;
-    VkPipelineCacheCreateFlagBits result;
-    uint32_t                      index;
-    VkBool32                      found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PIPELINE_CACHE_CREATE_READ_ONLY_BIT", (uint64_t)VK_PIPELINE_CACHE_CREATE_READ_ONLY_BIT},
                                          {"VK_PIPELINE_CACHE_CREATE_USE_APPLICATION_STORAGE_BIT", (uint64_t)VK_PIPELINE_CACHE_CREATE_USE_APPLICATION_STORAGE_BIT}};
 
-    static const VkPipelineCacheCreateFlagBits enumerants[] = {VK_PIPELINE_CACHE_CREATE_READ_ONLY_BIT, VK_PIPELINE_CACHE_CREATE_USE_APPLICATION_STORAGE_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PIPELINE_CACHE_CREATE_READ_ONLY_BIT) || (enumerant == (uint64_t)VK_PIPELINE_CACHE_CREATE_USE_APPLICATION_STORAGE_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPipelineCacheCreateFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPipelineCacheHeaderVersion scvkParseJsonPipelineCacheHeaderVersion(const scvkJsonValue* pValue)
 {
-    uint64_t                     enumerant;
-    VkPipelineCacheHeaderVersion result;
-    uint32_t                     index;
-    VkBool32                     found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PIPELINE_CACHE_HEADER_VERSION_ONE", (uint64_t)VK_PIPELINE_CACHE_HEADER_VERSION_ONE},
                                          {"VK_PIPELINE_CACHE_HEADER_VERSION_SAFETY_CRITICAL_ONE", (uint64_t)VK_PIPELINE_CACHE_HEADER_VERSION_SAFETY_CRITICAL_ONE}};
 
-    static const VkPipelineCacheHeaderVersion enumerants[] = {VK_PIPELINE_CACHE_HEADER_VERSION_ONE, VK_PIPELINE_CACHE_HEADER_VERSION_SAFETY_CRITICAL_ONE};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PIPELINE_CACHE_HEADER_VERSION_ONE) || (enumerant == (uint64_t)VK_PIPELINE_CACHE_HEADER_VERSION_SAFETY_CRITICAL_ONE);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPipelineCacheHeaderVersion)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPipelineCacheValidationVersion scvkParseJsonPipelineCacheValidationVersion(const scvkJsonValue* pValue)
 {
-    uint64_t                         enumerant;
-    VkPipelineCacheValidationVersion result;
-    uint32_t                         index;
-    VkBool32                         found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PIPELINE_CACHE_VALIDATION_VERSION_SAFETY_CRITICAL_ONE", (uint64_t)VK_PIPELINE_CACHE_VALIDATION_VERSION_SAFETY_CRITICAL_ONE}};
 
-    static const VkPipelineCacheValidationVersion enumerants[] = {VK_PIPELINE_CACHE_VALIDATION_VERSION_SAFETY_CRITICAL_ONE};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PIPELINE_CACHE_VALIDATION_VERSION_SAFETY_CRITICAL_ONE);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPipelineCacheValidationVersion)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPipelineColorBlendStateCreateFlagBits scvkParseJsonPipelineColorBlendStateCreateFlagBits(const scvkJsonValue* pValue)
 {
@@ -3761,37 +2224,21 @@ extern SCVK_FORCE_INLINE VkPipelineColorBlendStateCreateFlagBits scvkParseJsonPi
 }
 extern SCVK_FORCE_INLINE VkPipelineCreateFlagBits scvkParseJsonPipelineCreateFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                 enumerant;
-    VkPipelineCreateFlagBits result;
-    uint32_t                 index;
-    VkBool32                 found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT", (uint64_t)VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT},
                                          {"VK_PIPELINE_CREATE_DISPATCH_BASE_BIT", (uint64_t)VK_PIPELINE_CREATE_DISPATCH_BASE_BIT},
                                          {"VK_PIPELINE_CREATE_DISPATCH_BASE", (uint64_t)VK_PIPELINE_CREATE_DISPATCH_BASE},
                                          {"VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT", (uint64_t)VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT}};
 
-    static const VkPipelineCreateFlagBits enumerants[] = {VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT,
-                                                          VK_PIPELINE_CREATE_DISPATCH_BASE_BIT,
-                                                          VK_PIPELINE_CREATE_DISPATCH_BASE,
-                                                          VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT) || (enumerant == (uint64_t)VK_PIPELINE_CREATE_DISPATCH_BASE_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPipelineCreateFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPipelineDepthStencilStateCreateFlagBits scvkParseJsonPipelineDepthStencilStateCreateFlagBits(const scvkJsonValue* pValue)
 {
@@ -3811,68 +2258,37 @@ extern SCVK_FORCE_INLINE VkPipelineLayoutCreateFlagBits scvkParseJsonPipelineLay
 }
 extern SCVK_FORCE_INLINE VkPipelineMatchControl scvkParseJsonPipelineMatchControl(const scvkJsonValue* pValue)
 {
-    uint64_t               enumerant;
-    VkPipelineMatchControl result;
-    uint32_t               index;
-    VkBool32               found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PIPELINE_MATCH_CONTROL_APPLICATION_UUID_EXACT_MATCH", (uint64_t)VK_PIPELINE_MATCH_CONTROL_APPLICATION_UUID_EXACT_MATCH}};
 
-    static const VkPipelineMatchControl enumerants[] = {VK_PIPELINE_MATCH_CONTROL_APPLICATION_UUID_EXACT_MATCH};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PIPELINE_MATCH_CONTROL_APPLICATION_UUID_EXACT_MATCH);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPipelineMatchControl)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPipelineShaderStageCreateFlagBits scvkParseJsonPipelineShaderStageCreateFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                            enumerant;
-    VkPipelineShaderStageCreateFlagBits result;
-    uint32_t                            index;
-    VkBool32                            found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT", (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT},
                                          {"VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT", (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT}};
 
-    static const VkPipelineShaderStageCreateFlagBits enumerants[] = {VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT,
-                                                                     VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT) || (enumerant == (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPipelineShaderStageCreateFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPipelineStageFlagBits scvkParseJsonPipelineStageFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                enumerant;
-    VkPipelineStageFlagBits result;
-    uint32_t                index;
-    VkBool32                found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT", (uint64_t)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
                                          {"VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT", (uint64_t)VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT},
@@ -3894,108 +2310,55 @@ extern SCVK_FORCE_INLINE VkPipelineStageFlagBits scvkParseJsonPipelineStageFlagB
                                          {"VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR},
                                          {"VK_PIPELINE_STAGE_NONE_KHR", (uint64_t)VK_PIPELINE_STAGE_NONE_KHR}};
 
-    static const VkPipelineStageFlagBits enumerants[] = {VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                                                         VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT,
-                                                         VK_PIPELINE_STAGE_VERTEX_INPUT_BIT,
-                                                         VK_PIPELINE_STAGE_VERTEX_SHADER_BIT,
-                                                         VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT,
-                                                         VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT,
-                                                         VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT,
-                                                         VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                                                         VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
-                                                         VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
-                                                         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                                         VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-                                                         VK_PIPELINE_STAGE_TRANSFER_BIT,
-                                                         VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-                                                         VK_PIPELINE_STAGE_HOST_BIT,
-                                                         VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,
-                                                         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                                                         VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR,
-                                                         VK_PIPELINE_STAGE_NONE_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_VERTEX_INPUT_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_STAGE_VERTEX_SHADER_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_TRANSFER_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_STAGE_HOST_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_ALL_COMMANDS_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_NONE_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPipelineStageFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPointClippingBehavior scvkParseJsonPointClippingBehavior(const scvkJsonValue* pValue)
 {
-    uint64_t                enumerant;
-    VkPointClippingBehavior result;
-    uint32_t                index;
-    VkBool32                found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES", (uint64_t)VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES},
                                          {"VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_ONLY", (uint64_t)VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_ONLY}};
 
-    static const VkPointClippingBehavior enumerants[] = {VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES, VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_ONLY};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES) || (enumerant == (uint64_t)VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_ONLY);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPointClippingBehavior)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPolygonMode scvkParseJsonPolygonMode(const scvkJsonValue* pValue)
 {
-    uint64_t      enumerant;
-    VkPolygonMode result;
-    uint32_t      index;
-    VkBool32      found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_POLYGON_MODE_FILL", (uint64_t)VK_POLYGON_MODE_FILL},
                                          {"VK_POLYGON_MODE_LINE", (uint64_t)VK_POLYGON_MODE_LINE},
                                          {"VK_POLYGON_MODE_POINT", (uint64_t)VK_POLYGON_MODE_POINT}};
 
-    static const VkPolygonMode enumerants[] = {VK_POLYGON_MODE_FILL, VK_POLYGON_MODE_LINE, VK_POLYGON_MODE_POINT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_POLYGON_MODE_FILL) || (enumerant == (uint64_t)VK_POLYGON_MODE_LINE) || (enumerant == (uint64_t)VK_POLYGON_MODE_POINT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPolygonMode)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPresentModeKHR scvkParseJsonPresentMode(const scvkJsonValue* pValue)
 {
-    uint64_t         enumerant;
-    VkPresentModeKHR result;
-    uint32_t         index;
-    VkBool32         found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PRESENT_MODE_IMMEDIATE_KHR", (uint64_t)VK_PRESENT_MODE_IMMEDIATE_KHR},
                                          {"VK_PRESENT_MODE_MAILBOX_KHR", (uint64_t)VK_PRESENT_MODE_MAILBOX_KHR},
@@ -4004,36 +2367,19 @@ extern SCVK_FORCE_INLINE VkPresentModeKHR scvkParseJsonPresentMode(const scvkJso
                                          {"VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR", (uint64_t)VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR},
                                          {"VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR", (uint64_t)VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR}};
 
-    static const VkPresentModeKHR enumerants[] = {VK_PRESENT_MODE_IMMEDIATE_KHR,
-                                                  VK_PRESENT_MODE_MAILBOX_KHR,
-                                                  VK_PRESENT_MODE_FIFO_KHR,
-                                                  VK_PRESENT_MODE_FIFO_RELAXED_KHR,
-                                                  VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR,
-                                                  VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PRESENT_MODE_IMMEDIATE_KHR) || (enumerant == (uint64_t)VK_PRESENT_MODE_MAILBOX_KHR) || (enumerant == (uint64_t)VK_PRESENT_MODE_FIFO_KHR) ||
+            (enumerant == (uint64_t)VK_PRESENT_MODE_FIFO_RELAXED_KHR) || (enumerant == (uint64_t)VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR) ||
+            (enumerant == (uint64_t)VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPresentModeKHR)enumerant;
 }
 extern SCVK_FORCE_INLINE VkPrimitiveTopology scvkParseJsonPrimitiveTopology(const scvkJsonValue* pValue)
 {
-    uint64_t            enumerant;
-    VkPrimitiveTopology result;
-    uint32_t            index;
-    VkBool32            found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_PRIMITIVE_TOPOLOGY_POINT_LIST", (uint64_t)VK_PRIMITIVE_TOPOLOGY_POINT_LIST},
                                          {"VK_PRIMITIVE_TOPOLOGY_LINE_LIST", (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_LIST},
@@ -4047,69 +2393,35 @@ extern SCVK_FORCE_INLINE VkPrimitiveTopology scvkParseJsonPrimitiveTopology(cons
                                          {"VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY", (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY},
                                          {"VK_PRIMITIVE_TOPOLOGY_PATCH_LIST", (uint64_t)VK_PRIMITIVE_TOPOLOGY_PATCH_LIST}};
 
-    static const VkPrimitiveTopology enumerants[] = {VK_PRIMITIVE_TOPOLOGY_POINT_LIST,
-                                                     VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
-                                                     VK_PRIMITIVE_TOPOLOGY_LINE_STRIP,
-                                                     VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-                                                     VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP,
-                                                     VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN,
-                                                     VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY,
-                                                     VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY,
-                                                     VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY,
-                                                     VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY,
-                                                     VK_PRIMITIVE_TOPOLOGY_PATCH_LIST};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_POINT_LIST) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_LIST) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_STRIP) ||
+            (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP) ||
+            (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY) ||
+            (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY) ||
+            (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_PATCH_LIST);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkPrimitiveTopology)enumerant;
 }
 extern SCVK_FORCE_INLINE VkQueryControlFlagBits scvkParseJsonQueryControlFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t               enumerant;
-    VkQueryControlFlagBits result;
-    uint32_t               index;
-    VkBool32               found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_QUERY_CONTROL_PRECISE_BIT", (uint64_t)VK_QUERY_CONTROL_PRECISE_BIT}};
 
-    static const VkQueryControlFlagBits enumerants[] = {VK_QUERY_CONTROL_PRECISE_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_QUERY_CONTROL_PRECISE_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkQueryControlFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkQueryPipelineStatisticFlagBits scvkParseJsonQueryPipelineStatisticFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                         enumerant;
-    VkQueryPipelineStatisticFlagBits result;
-    uint32_t                         index;
-    VkBool32                         found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {
         {"VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_VERTICES_BIT", (uint64_t)VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_VERTICES_BIT},
@@ -4124,34 +2436,17 @@ extern SCVK_FORCE_INLINE VkQueryPipelineStatisticFlagBits scvkParseJsonQueryPipe
         {"VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT", (uint64_t)VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT},
         {"VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT", (uint64_t)VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT}};
 
-    static const VkQueryPipelineStatisticFlagBits enumerants[] = {VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_VERTICES_BIT,
-                                                                  VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_PRIMITIVES_BIT,
-                                                                  VK_QUERY_PIPELINE_STATISTIC_VERTEX_SHADER_INVOCATIONS_BIT,
-                                                                  VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_INVOCATIONS_BIT,
-                                                                  VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_PRIMITIVES_BIT,
-                                                                  VK_QUERY_PIPELINE_STATISTIC_CLIPPING_INVOCATIONS_BIT,
-                                                                  VK_QUERY_PIPELINE_STATISTIC_CLIPPING_PRIMITIVES_BIT,
-                                                                  VK_QUERY_PIPELINE_STATISTIC_FRAGMENT_SHADER_INVOCATIONS_BIT,
-                                                                  VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_CONTROL_SHADER_PATCHES_BIT,
-                                                                  VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT,
-                                                                  VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_VERTICES_BIT) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_PRIMITIVES_BIT) ||
+            (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_VERTEX_SHADER_INVOCATIONS_BIT) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_INVOCATIONS_BIT) ||
+            (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_PRIMITIVES_BIT) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_CLIPPING_INVOCATIONS_BIT) ||
+            (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_CLIPPING_PRIMITIVES_BIT) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_FRAGMENT_SHADER_INVOCATIONS_BIT) ||
+            (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_CONTROL_SHADER_PATCHES_BIT) ||
+            (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkQueryPipelineStatisticFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkQueryPoolCreateFlagBits scvkParseJsonQueryPoolCreateFlagBits(const scvkJsonValue* pValue)
 {
@@ -4163,96 +2458,57 @@ extern SCVK_FORCE_INLINE VkQueryPoolCreateFlagBits scvkParseJsonQueryPoolCreateF
 }
 extern SCVK_FORCE_INLINE VkQueryResultFlagBits scvkParseJsonQueryResultFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t              enumerant;
-    VkQueryResultFlagBits result;
-    uint32_t              index;
-    VkBool32              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_QUERY_RESULT_64_BIT", (uint64_t)VK_QUERY_RESULT_64_BIT},
                                          {"VK_QUERY_RESULT_WAIT_BIT", (uint64_t)VK_QUERY_RESULT_WAIT_BIT},
                                          {"VK_QUERY_RESULT_WITH_AVAILABILITY_BIT", (uint64_t)VK_QUERY_RESULT_WITH_AVAILABILITY_BIT},
                                          {"VK_QUERY_RESULT_PARTIAL_BIT", (uint64_t)VK_QUERY_RESULT_PARTIAL_BIT}};
 
-    static const VkQueryResultFlagBits enumerants[] = {VK_QUERY_RESULT_64_BIT, VK_QUERY_RESULT_WAIT_BIT, VK_QUERY_RESULT_WITH_AVAILABILITY_BIT, VK_QUERY_RESULT_PARTIAL_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_QUERY_RESULT_64_BIT) || (enumerant == (uint64_t)VK_QUERY_RESULT_WAIT_BIT) || (enumerant == (uint64_t)VK_QUERY_RESULT_WITH_AVAILABILITY_BIT) ||
+            (enumerant == (uint64_t)VK_QUERY_RESULT_PARTIAL_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkQueryResultFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkQueryType scvkParseJsonQueryType(const scvkJsonValue* pValue)
 {
-    uint64_t    enumerant;
-    VkQueryType result;
-    uint32_t    index;
-    VkBool32    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_QUERY_TYPE_OCCLUSION", (uint64_t)VK_QUERY_TYPE_OCCLUSION},
                                          {"VK_QUERY_TYPE_PIPELINE_STATISTICS", (uint64_t)VK_QUERY_TYPE_PIPELINE_STATISTICS},
                                          {"VK_QUERY_TYPE_TIMESTAMP", (uint64_t)VK_QUERY_TYPE_TIMESTAMP},
                                          {"VK_QUERY_TYPE_PERFORMANCE_QUERY_KHR", (uint64_t)VK_QUERY_TYPE_PERFORMANCE_QUERY_KHR}};
 
-    static const VkQueryType enumerants[] = {VK_QUERY_TYPE_OCCLUSION, VK_QUERY_TYPE_PIPELINE_STATISTICS, VK_QUERY_TYPE_TIMESTAMP, VK_QUERY_TYPE_PERFORMANCE_QUERY_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_QUERY_TYPE_OCCLUSION) || (enumerant == (uint64_t)VK_QUERY_TYPE_PIPELINE_STATISTICS) || (enumerant == (uint64_t)VK_QUERY_TYPE_TIMESTAMP) ||
+            (enumerant == (uint64_t)VK_QUERY_TYPE_PERFORMANCE_QUERY_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkQueryType)enumerant;
 }
 extern SCVK_FORCE_INLINE VkQueueFlagBits scvkParseJsonQueueFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t        enumerant;
-    VkQueueFlagBits result;
-    uint32_t        index;
-    VkBool32        found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_QUEUE_GRAPHICS_BIT", (uint64_t)VK_QUEUE_GRAPHICS_BIT},
                                          {"VK_QUEUE_COMPUTE_BIT", (uint64_t)VK_QUEUE_COMPUTE_BIT},
                                          {"VK_QUEUE_TRANSFER_BIT", (uint64_t)VK_QUEUE_TRANSFER_BIT},
                                          {"VK_QUEUE_PROTECTED_BIT", (uint64_t)VK_QUEUE_PROTECTED_BIT}};
 
-    static const VkQueueFlagBits enumerants[] = {VK_QUEUE_GRAPHICS_BIT, VK_QUEUE_COMPUTE_BIT, VK_QUEUE_TRANSFER_BIT, VK_QUEUE_PROTECTED_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_QUEUE_GRAPHICS_BIT) || (enumerant == (uint64_t)VK_QUEUE_COMPUTE_BIT) || (enumerant == (uint64_t)VK_QUEUE_TRANSFER_BIT) ||
+            (enumerant == (uint64_t)VK_QUEUE_PROTECTED_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkQueueFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkRefreshObjectFlagBitsKHR scvkParseJsonRefreshObjectFlagBits(const scvkJsonValue* pValue)
 {
@@ -4272,10 +2528,8 @@ extern SCVK_FORCE_INLINE VkRenderPassCreateFlagBits scvkParseJsonRenderPassCreat
 }
 extern SCVK_FORCE_INLINE VkResolveModeFlagBits scvkParseJsonResolveModeFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t              enumerant;
-    VkResolveModeFlagBits result;
-    uint32_t              index;
-    VkBool32              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_RESOLVE_MODE_NONE", (uint64_t)VK_RESOLVE_MODE_NONE},
                                          {"VK_RESOLVE_MODE_SAMPLE_ZERO_BIT", (uint64_t)VK_RESOLVE_MODE_SAMPLE_ZERO_BIT},
@@ -4283,30 +2537,17 @@ extern SCVK_FORCE_INLINE VkResolveModeFlagBits scvkParseJsonResolveModeFlagBits(
                                          {"VK_RESOLVE_MODE_MIN_BIT", (uint64_t)VK_RESOLVE_MODE_MIN_BIT},
                                          {"VK_RESOLVE_MODE_MAX_BIT", (uint64_t)VK_RESOLVE_MODE_MAX_BIT}};
 
-    static const VkResolveModeFlagBits enumerants[] = {VK_RESOLVE_MODE_NONE, VK_RESOLVE_MODE_SAMPLE_ZERO_BIT, VK_RESOLVE_MODE_AVERAGE_BIT, VK_RESOLVE_MODE_MIN_BIT, VK_RESOLVE_MODE_MAX_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_RESOLVE_MODE_NONE) || (enumerant == (uint64_t)VK_RESOLVE_MODE_SAMPLE_ZERO_BIT) || (enumerant == (uint64_t)VK_RESOLVE_MODE_AVERAGE_BIT) ||
+            (enumerant == (uint64_t)VK_RESOLVE_MODE_MIN_BIT) || (enumerant == (uint64_t)VK_RESOLVE_MODE_MAX_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkResolveModeFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkResult scvkParseJsonResult(const scvkJsonValue* pValue)
 {
     uint64_t enumerant;
-    VkResult result;
-    uint32_t index;
     VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SUCCESS", (uint64_t)VK_SUCCESS},
@@ -4343,63 +2584,27 @@ extern SCVK_FORCE_INLINE VkResult scvkParseJsonResult(const scvkJsonValue* pValu
                                          {"VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT", (uint64_t)VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT},
                                          {"VK_ERROR_NOT_PERMITTED_KHR", (uint64_t)VK_ERROR_NOT_PERMITTED_KHR}};
 
-    static const VkResult enumerants[] = {VK_SUCCESS,
-                                          VK_NOT_READY,
-                                          VK_TIMEOUT,
-                                          VK_EVENT_SET,
-                                          VK_EVENT_RESET,
-                                          VK_INCOMPLETE,
-                                          VK_ERROR_OUT_OF_HOST_MEMORY,
-                                          VK_ERROR_OUT_OF_DEVICE_MEMORY,
-                                          VK_ERROR_INITIALIZATION_FAILED,
-                                          VK_ERROR_DEVICE_LOST,
-                                          VK_ERROR_MEMORY_MAP_FAILED,
-                                          VK_ERROR_LAYER_NOT_PRESENT,
-                                          VK_ERROR_EXTENSION_NOT_PRESENT,
-                                          VK_ERROR_FEATURE_NOT_PRESENT,
-                                          VK_ERROR_INCOMPATIBLE_DRIVER,
-                                          VK_ERROR_TOO_MANY_OBJECTS,
-                                          VK_ERROR_FORMAT_NOT_SUPPORTED,
-                                          VK_ERROR_FRAGMENTED_POOL,
-                                          VK_ERROR_UNKNOWN,
-                                          VK_ERROR_VALIDATION_FAILED,
-                                          VK_ERROR_OUT_OF_POOL_MEMORY,
-                                          VK_ERROR_INVALID_EXTERNAL_HANDLE,
-                                          VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS,
-                                          VK_ERROR_FRAGMENTATION,
-                                          VK_ERROR_INVALID_PIPELINE_CACHE_DATA,
-                                          VK_ERROR_NO_PIPELINE_MATCH,
-                                          VK_ERROR_SURFACE_LOST_KHR,
-                                          VK_ERROR_NATIVE_WINDOW_IN_USE_KHR,
-                                          VK_SUBOPTIMAL_KHR,
-                                          VK_ERROR_OUT_OF_DATE_KHR,
-                                          VK_ERROR_INCOMPATIBLE_DISPLAY_KHR,
-                                          VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT,
-                                          VK_ERROR_NOT_PERMITTED_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SUCCESS) || (enumerant == (uint64_t)VK_NOT_READY) || (enumerant == (uint64_t)VK_TIMEOUT) || (enumerant == (uint64_t)VK_EVENT_SET) ||
+            (enumerant == (uint64_t)VK_EVENT_RESET) || (enumerant == (uint64_t)VK_INCOMPLETE) || (enumerant == (uint64_t)VK_ERROR_OUT_OF_HOST_MEMORY) ||
+            (enumerant == (uint64_t)VK_ERROR_OUT_OF_DEVICE_MEMORY) || (enumerant == (uint64_t)VK_ERROR_INITIALIZATION_FAILED) || (enumerant == (uint64_t)VK_ERROR_DEVICE_LOST) ||
+            (enumerant == (uint64_t)VK_ERROR_MEMORY_MAP_FAILED) || (enumerant == (uint64_t)VK_ERROR_LAYER_NOT_PRESENT) || (enumerant == (uint64_t)VK_ERROR_EXTENSION_NOT_PRESENT) ||
+            (enumerant == (uint64_t)VK_ERROR_FEATURE_NOT_PRESENT) || (enumerant == (uint64_t)VK_ERROR_INCOMPATIBLE_DRIVER) || (enumerant == (uint64_t)VK_ERROR_TOO_MANY_OBJECTS) ||
+            (enumerant == (uint64_t)VK_ERROR_FORMAT_NOT_SUPPORTED) || (enumerant == (uint64_t)VK_ERROR_FRAGMENTED_POOL) || (enumerant == (uint64_t)VK_ERROR_UNKNOWN) ||
+            (enumerant == (uint64_t)VK_ERROR_VALIDATION_FAILED) || (enumerant == (uint64_t)VK_ERROR_OUT_OF_POOL_MEMORY) || (enumerant == (uint64_t)VK_ERROR_INVALID_EXTERNAL_HANDLE) ||
+            (enumerant == (uint64_t)VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS) || (enumerant == (uint64_t)VK_ERROR_FRAGMENTATION) || (enumerant == (uint64_t)VK_ERROR_INVALID_PIPELINE_CACHE_DATA) ||
+            (enumerant == (uint64_t)VK_ERROR_NO_PIPELINE_MATCH) || (enumerant == (uint64_t)VK_ERROR_SURFACE_LOST_KHR) || (enumerant == (uint64_t)VK_ERROR_NATIVE_WINDOW_IN_USE_KHR) ||
+            (enumerant == (uint64_t)VK_SUBOPTIMAL_KHR) || (enumerant == (uint64_t)VK_ERROR_OUT_OF_DATE_KHR) || (enumerant == (uint64_t)VK_ERROR_INCOMPATIBLE_DISPLAY_KHR) ||
+            (enumerant == (uint64_t)VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT) || (enumerant == (uint64_t)VK_ERROR_NOT_PERMITTED_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkResult)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSampleCountFlagBits scvkParseJsonSampleCountFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t              enumerant;
-    VkSampleCountFlagBits result;
-    uint32_t              index;
-    VkBool32              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SAMPLE_COUNT_1_BIT", (uint64_t)VK_SAMPLE_COUNT_1_BIT},
                                          {"VK_SAMPLE_COUNT_2_BIT", (uint64_t)VK_SAMPLE_COUNT_2_BIT},
@@ -4409,32 +2614,19 @@ extern SCVK_FORCE_INLINE VkSampleCountFlagBits scvkParseJsonSampleCountFlagBits(
                                          {"VK_SAMPLE_COUNT_32_BIT", (uint64_t)VK_SAMPLE_COUNT_32_BIT},
                                          {"VK_SAMPLE_COUNT_64_BIT", (uint64_t)VK_SAMPLE_COUNT_64_BIT}};
 
-    static const VkSampleCountFlagBits enumerants[] =
-        {VK_SAMPLE_COUNT_1_BIT, VK_SAMPLE_COUNT_2_BIT, VK_SAMPLE_COUNT_4_BIT, VK_SAMPLE_COUNT_8_BIT, VK_SAMPLE_COUNT_16_BIT, VK_SAMPLE_COUNT_32_BIT, VK_SAMPLE_COUNT_64_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SAMPLE_COUNT_1_BIT) || (enumerant == (uint64_t)VK_SAMPLE_COUNT_2_BIT) || (enumerant == (uint64_t)VK_SAMPLE_COUNT_4_BIT) ||
+            (enumerant == (uint64_t)VK_SAMPLE_COUNT_8_BIT) || (enumerant == (uint64_t)VK_SAMPLE_COUNT_16_BIT) || (enumerant == (uint64_t)VK_SAMPLE_COUNT_32_BIT) ||
+            (enumerant == (uint64_t)VK_SAMPLE_COUNT_64_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSampleCountFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSamplerAddressMode scvkParseJsonSamplerAddressMode(const scvkJsonValue* pValue)
 {
-    uint64_t             enumerant;
-    VkSamplerAddressMode result;
-    uint32_t             index;
-    VkBool32             found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SAMPLER_ADDRESS_MODE_REPEAT", (uint64_t)VK_SAMPLER_ADDRESS_MODE_REPEAT},
                                          {"VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT", (uint64_t)VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT},
@@ -4442,28 +2634,14 @@ extern SCVK_FORCE_INLINE VkSamplerAddressMode scvkParseJsonSamplerAddressMode(co
                                          {"VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER", (uint64_t)VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER},
                                          {"VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE", (uint64_t)VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE}};
 
-    static const VkSamplerAddressMode enumerants[] = {VK_SAMPLER_ADDRESS_MODE_REPEAT,
-                                                      VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT,
-                                                      VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
-                                                      VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
-                                                      VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SAMPLER_ADDRESS_MODE_REPEAT) || (enumerant == (uint64_t)VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT) ||
+            (enumerant == (uint64_t)VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE) || (enumerant == (uint64_t)VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER) ||
+            (enumerant == (uint64_t)VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSamplerAddressMode)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSamplerCreateFlagBits scvkParseJsonSamplerCreateFlagBits(const scvkJsonValue* pValue)
 {
@@ -4475,68 +2653,38 @@ extern SCVK_FORCE_INLINE VkSamplerCreateFlagBits scvkParseJsonSamplerCreateFlagB
 }
 extern SCVK_FORCE_INLINE VkSamplerMipmapMode scvkParseJsonSamplerMipmapMode(const scvkJsonValue* pValue)
 {
-    uint64_t            enumerant;
-    VkSamplerMipmapMode result;
-    uint32_t            index;
-    VkBool32            found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SAMPLER_MIPMAP_MODE_NEAREST", (uint64_t)VK_SAMPLER_MIPMAP_MODE_NEAREST}, {"VK_SAMPLER_MIPMAP_MODE_LINEAR", (uint64_t)VK_SAMPLER_MIPMAP_MODE_LINEAR}};
 
-    static const VkSamplerMipmapMode enumerants[] = {VK_SAMPLER_MIPMAP_MODE_NEAREST, VK_SAMPLER_MIPMAP_MODE_LINEAR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SAMPLER_MIPMAP_MODE_NEAREST) || (enumerant == (uint64_t)VK_SAMPLER_MIPMAP_MODE_LINEAR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSamplerMipmapMode)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSamplerReductionMode scvkParseJsonSamplerReductionMode(const scvkJsonValue* pValue)
 {
-    uint64_t               enumerant;
-    VkSamplerReductionMode result;
-    uint32_t               index;
-    VkBool32               found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE", (uint64_t)VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE},
                                          {"VK_SAMPLER_REDUCTION_MODE_MIN", (uint64_t)VK_SAMPLER_REDUCTION_MODE_MIN},
                                          {"VK_SAMPLER_REDUCTION_MODE_MAX", (uint64_t)VK_SAMPLER_REDUCTION_MODE_MAX}};
 
-    static const VkSamplerReductionMode enumerants[] = {VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE, VK_SAMPLER_REDUCTION_MODE_MIN, VK_SAMPLER_REDUCTION_MODE_MAX};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE) || (enumerant == (uint64_t)VK_SAMPLER_REDUCTION_MODE_MIN) || (enumerant == (uint64_t)VK_SAMPLER_REDUCTION_MODE_MAX);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSamplerReductionMode)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSamplerYcbcrModelConversion scvkParseJsonSamplerYcbcrModelConversion(const scvkJsonValue* pValue)
 {
-    uint64_t                      enumerant;
-    VkSamplerYcbcrModelConversion result;
-    uint32_t                      index;
-    VkBool32                      found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY", (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY},
                                          {"VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY", (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY},
@@ -4544,180 +2692,93 @@ extern SCVK_FORCE_INLINE VkSamplerYcbcrModelConversion scvkParseJsonSamplerYcbcr
                                          {"VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601", (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601},
                                          {"VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020", (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020}};
 
-    static const VkSamplerYcbcrModelConversion enumerants[] = {VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY,
-                                                               VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY,
-                                                               VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709,
-                                                               VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601,
-                                                               VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY) || (enumerant == (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY) ||
+            (enumerant == (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709) || (enumerant == (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601) ||
+            (enumerant == (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSamplerYcbcrModelConversion)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSamplerYcbcrRange scvkParseJsonSamplerYcbcrRange(const scvkJsonValue* pValue)
 {
-    uint64_t            enumerant;
-    VkSamplerYcbcrRange result;
-    uint32_t            index;
-    VkBool32            found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SAMPLER_YCBCR_RANGE_ITU_FULL", (uint64_t)VK_SAMPLER_YCBCR_RANGE_ITU_FULL},
                                          {"VK_SAMPLER_YCBCR_RANGE_ITU_NARROW", (uint64_t)VK_SAMPLER_YCBCR_RANGE_ITU_NARROW}};
 
-    static const VkSamplerYcbcrRange enumerants[] = {VK_SAMPLER_YCBCR_RANGE_ITU_FULL, VK_SAMPLER_YCBCR_RANGE_ITU_NARROW};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SAMPLER_YCBCR_RANGE_ITU_FULL) || (enumerant == (uint64_t)VK_SAMPLER_YCBCR_RANGE_ITU_NARROW);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSamplerYcbcrRange)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSemaphoreImportFlagBits scvkParseJsonSemaphoreImportFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                  enumerant;
-    VkSemaphoreImportFlagBits result;
-    uint32_t                  index;
-    VkBool32                  found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SEMAPHORE_IMPORT_TEMPORARY_BIT", (uint64_t)VK_SEMAPHORE_IMPORT_TEMPORARY_BIT}};
 
-    static const VkSemaphoreImportFlagBits enumerants[] = {VK_SEMAPHORE_IMPORT_TEMPORARY_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SEMAPHORE_IMPORT_TEMPORARY_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSemaphoreImportFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSemaphoreType scvkParseJsonSemaphoreType(const scvkJsonValue* pValue)
 {
-    uint64_t        enumerant;
-    VkSemaphoreType result;
-    uint32_t        index;
-    VkBool32        found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SEMAPHORE_TYPE_BINARY", (uint64_t)VK_SEMAPHORE_TYPE_BINARY}, {"VK_SEMAPHORE_TYPE_TIMELINE", (uint64_t)VK_SEMAPHORE_TYPE_TIMELINE}};
 
-    static const VkSemaphoreType enumerants[] = {VK_SEMAPHORE_TYPE_BINARY, VK_SEMAPHORE_TYPE_TIMELINE};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SEMAPHORE_TYPE_BINARY) || (enumerant == (uint64_t)VK_SEMAPHORE_TYPE_TIMELINE);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSemaphoreType)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSemaphoreWaitFlagBits scvkParseJsonSemaphoreWaitFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                enumerant;
-    VkSemaphoreWaitFlagBits result;
-    uint32_t                index;
-    VkBool32                found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SEMAPHORE_WAIT_ANY_BIT", (uint64_t)VK_SEMAPHORE_WAIT_ANY_BIT}};
 
-    static const VkSemaphoreWaitFlagBits enumerants[] = {VK_SEMAPHORE_WAIT_ANY_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SEMAPHORE_WAIT_ANY_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSemaphoreWaitFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkShaderFloatControlsIndependence scvkParseJsonShaderFloatControlsIndependence(const scvkJsonValue* pValue)
 {
-    uint64_t                          enumerant;
-    VkShaderFloatControlsIndependence result;
-    uint32_t                          index;
-    VkBool32                          found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY", (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY},
                                          {"VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL", (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL},
                                          {"VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE", (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE}};
 
-    static const VkShaderFloatControlsIndependence enumerants[] = {VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY,
-                                                                   VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL,
-                                                                   VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY) || (enumerant == (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL) ||
+            (enumerant == (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkShaderFloatControlsIndependence)enumerant;
 }
 extern SCVK_FORCE_INLINE VkShaderStageFlagBits scvkParseJsonShaderStageFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t              enumerant;
-    VkShaderStageFlagBits result;
-    uint32_t              index;
-    VkBool32              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SHADER_STAGE_VERTEX_BIT", (uint64_t)VK_SHADER_STAGE_VERTEX_BIT},
                                          {"VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT", (uint64_t)VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT},
@@ -4728,96 +2789,49 @@ extern SCVK_FORCE_INLINE VkShaderStageFlagBits scvkParseJsonShaderStageFlagBits(
                                          {"VK_SHADER_STAGE_ALL_GRAPHICS", (uint64_t)VK_SHADER_STAGE_ALL_GRAPHICS},
                                          {"VK_SHADER_STAGE_ALL", (uint64_t)VK_SHADER_STAGE_ALL}};
 
-    static const VkShaderStageFlagBits enumerants[] = {VK_SHADER_STAGE_VERTEX_BIT,
-                                                       VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT,
-                                                       VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
-                                                       VK_SHADER_STAGE_GEOMETRY_BIT,
-                                                       VK_SHADER_STAGE_FRAGMENT_BIT,
-                                                       VK_SHADER_STAGE_COMPUTE_BIT,
-                                                       VK_SHADER_STAGE_ALL_GRAPHICS,
-                                                       VK_SHADER_STAGE_ALL};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SHADER_STAGE_VERTEX_BIT) || (enumerant == (uint64_t)VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT) ||
+            (enumerant == (uint64_t)VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT) || (enumerant == (uint64_t)VK_SHADER_STAGE_GEOMETRY_BIT) || (enumerant == (uint64_t)VK_SHADER_STAGE_FRAGMENT_BIT) ||
+            (enumerant == (uint64_t)VK_SHADER_STAGE_COMPUTE_BIT) || (enumerant == (uint64_t)VK_SHADER_STAGE_ALL_GRAPHICS) || (enumerant == (uint64_t)VK_SHADER_STAGE_ALL);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkShaderStageFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSharingMode scvkParseJsonSharingMode(const scvkJsonValue* pValue)
 {
-    uint64_t      enumerant;
-    VkSharingMode result;
-    uint32_t      index;
-    VkBool32      found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SHARING_MODE_EXCLUSIVE", (uint64_t)VK_SHARING_MODE_EXCLUSIVE}, {"VK_SHARING_MODE_CONCURRENT", (uint64_t)VK_SHARING_MODE_CONCURRENT}};
 
-    static const VkSharingMode enumerants[] = {VK_SHARING_MODE_EXCLUSIVE, VK_SHARING_MODE_CONCURRENT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SHARING_MODE_EXCLUSIVE) || (enumerant == (uint64_t)VK_SHARING_MODE_CONCURRENT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSharingMode)enumerant;
 }
 extern SCVK_FORCE_INLINE VkStencilFaceFlagBits scvkParseJsonStencilFaceFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t              enumerant;
-    VkStencilFaceFlagBits result;
-    uint32_t              index;
-    VkBool32              found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_STENCIL_FACE_FRONT_BIT", (uint64_t)VK_STENCIL_FACE_FRONT_BIT},
                                          {"VK_STENCIL_FACE_BACK_BIT", (uint64_t)VK_STENCIL_FACE_BACK_BIT},
                                          {"VK_STENCIL_FACE_FRONT_AND_BACK", (uint64_t)VK_STENCIL_FACE_FRONT_AND_BACK}};
 
-    static const VkStencilFaceFlagBits enumerants[] = {VK_STENCIL_FACE_FRONT_BIT, VK_STENCIL_FACE_BACK_BIT, VK_STENCIL_FACE_FRONT_AND_BACK};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_STENCIL_FACE_FRONT_BIT) || (enumerant == (uint64_t)VK_STENCIL_FACE_BACK_BIT) || (enumerant == (uint64_t)VK_STENCIL_FACE_FRONT_AND_BACK);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkStencilFaceFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkStencilOp scvkParseJsonStencilOp(const scvkJsonValue* pValue)
 {
-    uint64_t    enumerant;
-    VkStencilOp result;
-    uint32_t    index;
-    VkBool32    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_STENCIL_OP_KEEP", (uint64_t)VK_STENCIL_OP_KEEP},
                                          {"VK_STENCIL_OP_ZERO", (uint64_t)VK_STENCIL_OP_ZERO},
@@ -4828,38 +2842,19 @@ extern SCVK_FORCE_INLINE VkStencilOp scvkParseJsonStencilOp(const scvkJsonValue*
                                          {"VK_STENCIL_OP_INCREMENT_AND_WRAP", (uint64_t)VK_STENCIL_OP_INCREMENT_AND_WRAP},
                                          {"VK_STENCIL_OP_DECREMENT_AND_WRAP", (uint64_t)VK_STENCIL_OP_DECREMENT_AND_WRAP}};
 
-    static const VkStencilOp enumerants[] = {VK_STENCIL_OP_KEEP,
-                                             VK_STENCIL_OP_ZERO,
-                                             VK_STENCIL_OP_REPLACE,
-                                             VK_STENCIL_OP_INCREMENT_AND_CLAMP,
-                                             VK_STENCIL_OP_DECREMENT_AND_CLAMP,
-                                             VK_STENCIL_OP_INVERT,
-                                             VK_STENCIL_OP_INCREMENT_AND_WRAP,
-                                             VK_STENCIL_OP_DECREMENT_AND_WRAP};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_STENCIL_OP_KEEP) || (enumerant == (uint64_t)VK_STENCIL_OP_ZERO) || (enumerant == (uint64_t)VK_STENCIL_OP_REPLACE) ||
+            (enumerant == (uint64_t)VK_STENCIL_OP_INCREMENT_AND_CLAMP) || (enumerant == (uint64_t)VK_STENCIL_OP_DECREMENT_AND_CLAMP) || (enumerant == (uint64_t)VK_STENCIL_OP_INVERT) ||
+            (enumerant == (uint64_t)VK_STENCIL_OP_INCREMENT_AND_WRAP) || (enumerant == (uint64_t)VK_STENCIL_OP_DECREMENT_AND_WRAP);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkStencilOp)enumerant;
 }
 extern SCVK_FORCE_INLINE VkStructureType scvkParseJsonStructureType(const scvkJsonValue* pValue)
 {
-    uint64_t        enumerant;
-    VkStructureType result;
-    uint32_t        index;
-    VkBool32        found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {
         {"VK_STRUCTURE_TYPE_APPLICATION_INFO", (uint64_t)VK_STRUCTURE_TYPE_APPLICATION_INFO},
@@ -5199,366 +3194,192 @@ extern SCVK_FORCE_INLINE VkStructureType scvkParseJsonStructureType(const scvkJs
         {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_KHR", (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_KHR},
         {"VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR", (uint64_t)VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR}};
 
-    static const VkStructureType enumerants[] = {VK_STRUCTURE_TYPE_APPLICATION_INFO,
-                                                 VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_SUBMIT_INFO,
-                                                 VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-                                                 VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
-                                                 VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_EVENT_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-                                                 VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-                                                 VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET,
-                                                 VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-                                                 VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO,
-                                                 VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-                                                 VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-                                                 VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
-                                                 VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-                                                 VK_STRUCTURE_TYPE_MEMORY_BARRIER,
-                                                 VK_STRUCTURE_TYPE_LOADER_INSTANCE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO,
-                                                 VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO,
-                                                 VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS,
-                                                 VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO,
-                                                 VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO,
-                                                 VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO,
-                                                 VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO,
-                                                 VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO,
-                                                 VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2,
-                                                 VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2,
-                                                 VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
-                                                 VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2,
-                                                 VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2,
-                                                 VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2,
-                                                 VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO,
-                                                 VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO,
-                                                 VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO,
-                                                 VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO,
-                                                 VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT,
-                                                 VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO,
-                                                 VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO,
-                                                 VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES,
-                                                 VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO,
-                                                 VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO,
-                                                 VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
-                                                 VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO,
-                                                 VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO,
-                                                 VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO,
-                                                 VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES,
-                                                 VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2,
-                                                 VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2,
-                                                 VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2,
-                                                 VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2,
-                                                 VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2,
-                                                 VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO,
-                                                 VK_STRUCTURE_TYPE_SUBPASS_END_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE,
-                                                 VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES,
-                                                 VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO,
-                                                 VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES,
-                                                 VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_STENCIL_LAYOUT,
-                                                 VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_SC_1_0_FEATURES,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_SC_1_0_PROPERTIES,
-                                                 VK_STRUCTURE_TYPE_DEVICE_OBJECT_RESERVATION_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_COMMAND_POOL_MEMORY_RESERVATION_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_COMMAND_POOL_MEMORY_CONSUMPTION,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_POOL_SIZE,
-                                                 VK_STRUCTURE_TYPE_FAULT_DATA,
-                                                 VK_STRUCTURE_TYPE_FAULT_CALLBACK_INFO,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_OFFLINE_CREATE_INFO,
-                                                 VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR,
-                                                 VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_PRIVATE_VENDOR_INFO_PLACEHOLDER_OFFSET_0_NV,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR,
-                                                 VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR,
-                                                 VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT,
-                                                 VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_DEPTH_CLIP_STATE_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_HDR_METADATA_EXT,
-                                                 VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR,
-                                                 VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR,
-                                                 VK_STRUCTURE_TYPE_QUERY_POOL_PERFORMANCE_CREATE_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_SUBMIT_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_ACQUIRE_PROFILING_LOCK_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_KHR,
-                                                 VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_DESCRIPTION_KHR,
-                                                 VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_RESERVATION_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR,
-                                                 VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR,
-                                                 VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR,
-                                                 VK_STRUCTURE_TYPE_DISPLAY_PROPERTIES_2_KHR,
-                                                 VK_STRUCTURE_TYPE_DISPLAY_PLANE_PROPERTIES_2_KHR,
-                                                 VK_STRUCTURE_TYPE_DISPLAY_MODE_PROPERTIES_2_KHR,
-                                                 VK_STRUCTURE_TYPE_DISPLAY_PLANE_INFO_2_KHR,
-                                                 VK_STRUCTURE_TYPE_DISPLAY_PLANE_CAPABILITIES_2_KHR,
-                                                 VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-                                                 VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT,
-                                                 VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_IMAGE_FORMAT_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_FILTER_CUBIC_IMAGE_VIEW_IMAGE_FORMAT_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR,
-                                                 VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR,
-                                                 VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_REQUIRED_SUBGROUP_SIZE_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_ATOMIC_INT64_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_REFRESH_OBJECT_LIST_KHR,
-                                                 VK_STRUCTURE_TYPE_MEMORY_BARRIER_2_KHR,
-                                                 VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2_KHR,
-                                                 VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2_KHR,
-                                                 VK_STRUCTURE_TYPE_DEPENDENCY_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_SUBMIT_INFO_2_KHR,
-                                                 VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_2_PLANE_444_FORMATS_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ROBUSTNESS_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_COPY_BUFFER_INFO_2_KHR,
-                                                 VK_STRUCTURE_TYPE_COPY_IMAGE_INFO_2_KHR,
-                                                 VK_STRUCTURE_TYPE_COPY_BUFFER_TO_IMAGE_INFO_2_KHR,
-                                                 VK_STRUCTURE_TYPE_COPY_IMAGE_TO_BUFFER_INFO_2_KHR,
-                                                 VK_STRUCTURE_TYPE_BLIT_IMAGE_INFO_2_KHR,
-                                                 VK_STRUCTURE_TYPE_RESOLVE_IMAGE_INFO_2_KHR,
-                                                 VK_STRUCTURE_TYPE_BUFFER_COPY_2_KHR,
-                                                 VK_STRUCTURE_TYPE_IMAGE_COPY_2_KHR,
-                                                 VK_STRUCTURE_TYPE_IMAGE_BLIT_2_KHR,
-                                                 VK_STRUCTURE_TYPE_BUFFER_IMAGE_COPY_2_KHR,
-                                                 VK_STRUCTURE_TYPE_IMAGE_RESOLVE_2_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_4444_FORMATS_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_INPUT_DYNAMIC_STATE_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT,
-                                                 VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-                                                 VK_STRUCTURE_TYPE_IMPORT_FENCE_SCI_SYNC_INFO_NV,
-                                                 VK_STRUCTURE_TYPE_EXPORT_FENCE_SCI_SYNC_INFO_NV,
-                                                 VK_STRUCTURE_TYPE_FENCE_GET_SCI_SYNC_INFO_NV,
-                                                 VK_STRUCTURE_TYPE_SCI_SYNC_ATTRIBUTES_INFO_NV,
-                                                 VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_SCI_SYNC_INFO_NV,
-                                                 VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_SCI_SYNC_INFO_NV,
-                                                 VK_STRUCTURE_TYPE_SEMAPHORE_GET_SCI_SYNC_INFO_NV,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SCI_SYNC_FEATURES_NV,
-                                                 VK_STRUCTURE_TYPE_IMPORT_MEMORY_SCI_BUF_INFO_NV,
-                                                 VK_STRUCTURE_TYPE_EXPORT_MEMORY_SCI_BUF_INFO_NV,
-                                                 VK_STRUCTURE_TYPE_MEMORY_GET_SCI_BUF_INFO_NV,
-                                                 VK_STRUCTURE_TYPE_MEMORY_SCI_BUF_PROPERTIES_NV,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_SCI_BUF_FEATURES_NV,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SCI_BUF_FEATURES_NV,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_2_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COLOR_WRITE_ENABLE_FEATURES_EXT,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_COLOR_WRITE_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_APPLICATION_PARAMETERS_EXT,
-                                                 VK_STRUCTURE_TYPE_SEMAPHORE_SCI_SYNC_POOL_CREATE_INFO_NV,
-                                                 VK_STRUCTURE_TYPE_SEMAPHORE_SCI_SYNC_CREATE_INFO_NV,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SCI_SYNC_2_FEATURES_NV,
-                                                 VK_STRUCTURE_TYPE_DEVICE_SEMAPHORE_SCI_SYNC_POOL_RESERVATION_CREATE_INFO_NV,
-                                                 VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_KHR,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR,
-                                                 VK_STRUCTURE_TYPE_SCREEN_BUFFER_PROPERTIES_QNX,
-                                                 VK_STRUCTURE_TYPE_SCREEN_BUFFER_FORMAT_PROPERTIES_QNX,
-                                                 VK_STRUCTURE_TYPE_IMPORT_SCREEN_BUFFER_INFO_QNX,
-                                                 VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_QNX,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_SCREEN_BUFFER_FEATURES_QNX,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR,
-                                                 VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_KHR,
-                                                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_KHR,
-                                                 VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found =
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_APPLICATION_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SUBMIT_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_FENCE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_EVENT_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MEMORY_BARRIER) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_LOADER_INSTANCE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SUBPASS_END_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_STENCIL_LAYOUT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_SC_1_0_FEATURES) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_SC_1_0_PROPERTIES) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_OBJECT_RESERVATION_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_COMMAND_POOL_MEMORY_RESERVATION_CREATE_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_COMMAND_POOL_MEMORY_CONSUMPTION) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_POOL_SIZE) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_FAULT_DATA) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_FAULT_CALLBACK_INFO) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_OFFLINE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PRESENT_INFO_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PRIVATE_VENDOR_INFO_PLACEHOLDER_OFFSET_0_NV) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_DEPTH_CLIP_STATE_CREATE_INFO_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_HDR_METADATA_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_QUERY_POOL_PERFORMANCE_CREATE_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_SUBMIT_INFO_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_ACQUIRE_PROFILING_LOCK_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_DESCRIPTION_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_RESERVATION_INFO_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DISPLAY_PROPERTIES_2_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DISPLAY_PLANE_PROPERTIES_2_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DISPLAY_MODE_PROPERTIES_2_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DISPLAY_PLANE_INFO_2_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DISPLAY_PLANE_CAPABILITIES_2_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_IMAGE_FORMAT_INFO_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_FILTER_CUBIC_IMAGE_VIEW_IMAGE_FORMAT_PROPERTIES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_REQUIRED_SUBGROUP_SIZE_CREATE_INFO_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_ATOMIC_INT64_FEATURES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_FEATURES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_PROPERTIES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_REFRESH_OBJECT_LIST_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MEMORY_BARRIER_2_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEPENDENCY_INFO_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SUBMIT_INFO_2_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_2_PLANE_444_FORMATS_FEATURES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ROBUSTNESS_FEATURES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_COPY_BUFFER_INFO_2_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_COPY_IMAGE_INFO_2_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_COPY_BUFFER_TO_IMAGE_INFO_2_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_COPY_IMAGE_TO_BUFFER_INFO_2_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BLIT_IMAGE_INFO_2_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_RESOLVE_IMAGE_INFO_2_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BUFFER_COPY_2_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_COPY_2_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_BLIT_2_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_BUFFER_IMAGE_COPY_2_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMAGE_RESOLVE_2_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_4444_FORMATS_FEATURES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_INPUT_DYNAMIC_STATE_FEATURES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMPORT_FENCE_SCI_SYNC_INFO_NV) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_EXPORT_FENCE_SCI_SYNC_INFO_NV) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_FENCE_GET_SCI_SYNC_INFO_NV) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SCI_SYNC_ATTRIBUTES_INFO_NV) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_SCI_SYNC_INFO_NV) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_SCI_SYNC_INFO_NV) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SEMAPHORE_GET_SCI_SYNC_INFO_NV) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SCI_SYNC_FEATURES_NV) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMPORT_MEMORY_SCI_BUF_INFO_NV) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_EXPORT_MEMORY_SCI_BUF_INFO_NV) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MEMORY_GET_SCI_BUF_INFO_NV) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MEMORY_SCI_BUF_PROPERTIES_NV) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_SCI_BUF_FEATURES_NV) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_2_FEATURES_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COLOR_WRITE_ENABLE_FEATURES_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_COLOR_WRITE_CREATE_INFO_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_APPLICATION_PARAMETERS_EXT) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SEMAPHORE_SCI_SYNC_POOL_CREATE_INFO_NV) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SEMAPHORE_SCI_SYNC_CREATE_INFO_NV) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SCI_SYNC_2_FEATURES_NV) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_SEMAPHORE_SCI_SYNC_POOL_RESERVATION_CREATE_INFO_NV) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_KHR) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SCREEN_BUFFER_PROPERTIES_QNX) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SCREEN_BUFFER_FORMAT_PROPERTIES_QNX) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_IMPORT_SCREEN_BUFFER_INFO_QNX) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_QNX) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_SCREEN_BUFFER_FEATURES_QNX) ||
+        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkStructureType)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSubgroupFeatureFlagBits scvkParseJsonSubgroupFeatureFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                  enumerant;
-    VkSubgroupFeatureFlagBits result;
-    uint32_t                  index;
-    VkBool32                  found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SUBGROUP_FEATURE_BASIC_BIT", (uint64_t)VK_SUBGROUP_FEATURE_BASIC_BIT},
                                          {"VK_SUBGROUP_FEATURE_VOTE_BIT", (uint64_t)VK_SUBGROUP_FEATURE_VOTE_BIT},
@@ -5569,60 +3390,29 @@ extern SCVK_FORCE_INLINE VkSubgroupFeatureFlagBits scvkParseJsonSubgroupFeatureF
                                          {"VK_SUBGROUP_FEATURE_CLUSTERED_BIT", (uint64_t)VK_SUBGROUP_FEATURE_CLUSTERED_BIT},
                                          {"VK_SUBGROUP_FEATURE_QUAD_BIT", (uint64_t)VK_SUBGROUP_FEATURE_QUAD_BIT}};
 
-    static const VkSubgroupFeatureFlagBits enumerants[] = {VK_SUBGROUP_FEATURE_BASIC_BIT,
-                                                           VK_SUBGROUP_FEATURE_VOTE_BIT,
-                                                           VK_SUBGROUP_FEATURE_ARITHMETIC_BIT,
-                                                           VK_SUBGROUP_FEATURE_BALLOT_BIT,
-                                                           VK_SUBGROUP_FEATURE_SHUFFLE_BIT,
-                                                           VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT,
-                                                           VK_SUBGROUP_FEATURE_CLUSTERED_BIT,
-                                                           VK_SUBGROUP_FEATURE_QUAD_BIT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_BASIC_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_VOTE_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_ARITHMETIC_BIT) ||
+            (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_BALLOT_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_SHUFFLE_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT) ||
+            (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_CLUSTERED_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_QUAD_BIT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSubgroupFeatureFlagBits)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSubpassContents scvkParseJsonSubpassContents(const scvkJsonValue* pValue)
 {
-    uint64_t          enumerant;
-    VkSubpassContents result;
-    uint32_t          index;
-    VkBool32          found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SUBPASS_CONTENTS_INLINE", (uint64_t)VK_SUBPASS_CONTENTS_INLINE},
                                          {"VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS", (uint64_t)VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS}};
 
-    static const VkSubpassContents enumerants[] = {VK_SUBPASS_CONTENTS_INLINE, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SUBPASS_CONTENTS_INLINE) || (enumerant == (uint64_t)VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSubpassContents)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSubpassDescriptionFlagBits scvkParseJsonSubpassDescriptionFlagBits(const scvkJsonValue* pValue)
 {
@@ -5634,39 +3424,23 @@ extern SCVK_FORCE_INLINE VkSubpassDescriptionFlagBits scvkParseJsonSubpassDescri
 }
 extern SCVK_FORCE_INLINE VkSurfaceCounterFlagBitsEXT scvkParseJsonSurfaceCounterFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                    enumerant;
-    VkSurfaceCounterFlagBitsEXT result;
-    uint32_t                    index;
-    VkBool32                    found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SURFACE_COUNTER_VBLANK_BIT_EXT", (uint64_t)VK_SURFACE_COUNTER_VBLANK_BIT_EXT},
                                          {"VK_SURFACE_COUNTER_VBLANK_EXT", (uint64_t)VK_SURFACE_COUNTER_VBLANK_EXT}};
 
-    static const VkSurfaceCounterFlagBitsEXT enumerants[] = {VK_SURFACE_COUNTER_VBLANK_BIT_EXT, VK_SURFACE_COUNTER_VBLANK_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SURFACE_COUNTER_VBLANK_BIT_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSurfaceCounterFlagBitsEXT)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSurfaceTransformFlagBitsKHR scvkParseJsonSurfaceTransformFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                      enumerant;
-    VkSurfaceTransformFlagBitsKHR result;
-    uint32_t                      index;
-    VkBool32                      found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR},
                                          {"VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR},
@@ -5678,71 +3452,38 @@ extern SCVK_FORCE_INLINE VkSurfaceTransformFlagBitsKHR scvkParseJsonSurfaceTrans
                                          {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR},
                                          {"VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR}};
 
-    static const VkSurfaceTransformFlagBitsKHR enumerants[] = {VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
-                                                               VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR,
-                                                               VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR,
-                                                               VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR,
-                                                               VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR,
-                                                               VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR,
-                                                               VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR,
-                                                               VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR,
-                                                               VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) || (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR) ||
+            (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR) || (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR) ||
+            (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR) || (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR) ||
+            (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR) || (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR) ||
+            (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSurfaceTransformFlagBitsKHR)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSwapchainCreateFlagBitsKHR scvkParseJsonSwapchainCreateFlagBits(const scvkJsonValue* pValue)
 {
-    uint64_t                     enumerant;
-    VkSwapchainCreateFlagBitsKHR result;
-    uint32_t                     index;
-    VkBool32                     found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR},
                                          {"VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR},
                                          {"VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR}};
 
-    static const VkSwapchainCreateFlagBitsKHR enumerants[] = {VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR,
-                                                              VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR,
-                                                              VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR) || (enumerant == (uint64_t)VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR) ||
+            (enumerant == (uint64_t)VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSwapchainCreateFlagBitsKHR)enumerant;
 }
 extern SCVK_FORCE_INLINE VkSystemAllocationScope scvkParseJsonSystemAllocationScope(const scvkJsonValue* pValue)
 {
-    uint64_t                enumerant;
-    VkSystemAllocationScope result;
-    uint32_t                index;
-    VkBool32                found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_SYSTEM_ALLOCATION_SCOPE_COMMAND", (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_COMMAND},
                                          {"VK_SYSTEM_ALLOCATION_SCOPE_OBJECT", (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_OBJECT},
@@ -5750,95 +3491,51 @@ extern SCVK_FORCE_INLINE VkSystemAllocationScope scvkParseJsonSystemAllocationSc
                                          {"VK_SYSTEM_ALLOCATION_SCOPE_DEVICE", (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_DEVICE},
                                          {"VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE", (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE}};
 
-    static const VkSystemAllocationScope enumerants[] = {VK_SYSTEM_ALLOCATION_SCOPE_COMMAND,
-                                                         VK_SYSTEM_ALLOCATION_SCOPE_OBJECT,
-                                                         VK_SYSTEM_ALLOCATION_SCOPE_CACHE,
-                                                         VK_SYSTEM_ALLOCATION_SCOPE_DEVICE,
-                                                         VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_COMMAND) || (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_OBJECT) || (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_CACHE) ||
+            (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_DEVICE) || (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkSystemAllocationScope)enumerant;
 }
 extern SCVK_FORCE_INLINE VkTessellationDomainOrigin scvkParseJsonTessellationDomainOrigin(const scvkJsonValue* pValue)
 {
-    uint64_t                   enumerant;
-    VkTessellationDomainOrigin result;
-    uint32_t                   index;
-    VkBool32                   found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT", (uint64_t)VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT},
                                          {"VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT", (uint64_t)VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT}};
 
-    static const VkTessellationDomainOrigin enumerants[] = {VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT, VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT) || (enumerant == (uint64_t)VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkTessellationDomainOrigin)enumerant;
 }
 extern SCVK_FORCE_INLINE VkTimeDomainKHR scvkParseJsonTimeDomain(const scvkJsonValue* pValue)
 {
-    uint64_t        enumerant;
-    VkTimeDomainKHR result;
-    uint32_t        index;
-    VkBool32        found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_TIME_DOMAIN_DEVICE_KHR", (uint64_t)VK_TIME_DOMAIN_DEVICE_KHR},
                                          {"VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR", (uint64_t)VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR},
                                          {"VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_KHR", (uint64_t)VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_KHR},
                                          {"VK_TIME_DOMAIN_QUERY_PERFORMANCE_COUNTER_KHR", (uint64_t)VK_TIME_DOMAIN_QUERY_PERFORMANCE_COUNTER_KHR}};
 
-    static const VkTimeDomainKHR enumerants[] = {VK_TIME_DOMAIN_DEVICE_KHR, VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR, VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_KHR, VK_TIME_DOMAIN_QUERY_PERFORMANCE_COUNTER_KHR};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_TIME_DOMAIN_DEVICE_KHR) || (enumerant == (uint64_t)VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR) || (enumerant == (uint64_t)VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_KHR) ||
+            (enumerant == (uint64_t)VK_TIME_DOMAIN_QUERY_PERFORMANCE_COUNTER_KHR);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkTimeDomainKHR)enumerant;
 }
 extern SCVK_FORCE_INLINE VkValidationFeatureDisableEXT scvkParseJsonValidationFeatureDisable(const scvkJsonValue* pValue)
 {
-    uint64_t                      enumerant;
-    VkValidationFeatureDisableEXT result;
-    uint32_t                      index;
-    VkBool32                      found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_VALIDATION_FEATURE_DISABLE_ALL_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_ALL_EXT},
                                          {"VK_VALIDATION_FEATURE_DISABLE_SHADERS_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_SHADERS_EXT},
@@ -5849,38 +3546,20 @@ extern SCVK_FORCE_INLINE VkValidationFeatureDisableEXT scvkParseJsonValidationFe
                                          {"VK_VALIDATION_FEATURE_DISABLE_UNIQUE_HANDLES_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_UNIQUE_HANDLES_EXT},
                                          {"VK_VALIDATION_FEATURE_DISABLE_SHADER_VALIDATION_CACHE_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_SHADER_VALIDATION_CACHE_EXT}};
 
-    static const VkValidationFeatureDisableEXT enumerants[] = {VK_VALIDATION_FEATURE_DISABLE_ALL_EXT,
-                                                               VK_VALIDATION_FEATURE_DISABLE_SHADERS_EXT,
-                                                               VK_VALIDATION_FEATURE_DISABLE_THREAD_SAFETY_EXT,
-                                                               VK_VALIDATION_FEATURE_DISABLE_API_PARAMETERS_EXT,
-                                                               VK_VALIDATION_FEATURE_DISABLE_OBJECT_LIFETIMES_EXT,
-                                                               VK_VALIDATION_FEATURE_DISABLE_CORE_CHECKS_EXT,
-                                                               VK_VALIDATION_FEATURE_DISABLE_UNIQUE_HANDLES_EXT,
-                                                               VK_VALIDATION_FEATURE_DISABLE_SHADER_VALIDATION_CACHE_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_ALL_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_SHADERS_EXT) ||
+            (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_THREAD_SAFETY_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_API_PARAMETERS_EXT) ||
+            (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_OBJECT_LIFETIMES_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_CORE_CHECKS_EXT) ||
+            (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_UNIQUE_HANDLES_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_SHADER_VALIDATION_CACHE_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkValidationFeatureDisableEXT)enumerant;
 }
 extern SCVK_FORCE_INLINE VkValidationFeatureEnableEXT scvkParseJsonValidationFeatureEnable(const scvkJsonValue* pValue)
 {
-    uint64_t                     enumerant;
-    VkValidationFeatureEnableEXT result;
-    uint32_t                     index;
-    VkBool32                     found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT", (uint64_t)VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT},
                                          {"VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT", (uint64_t)VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT},
@@ -5888,35 +3567,19 @@ extern SCVK_FORCE_INLINE VkValidationFeatureEnableEXT scvkParseJsonValidationFea
                                          {"VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT", (uint64_t)VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT},
                                          {"VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT", (uint64_t)VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT}};
 
-    static const VkValidationFeatureEnableEXT enumerants[] = {VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT,
-                                                              VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT,
-                                                              VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT,
-                                                              VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT,
-                                                              VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT) ||
+            (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT) ||
+            (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkValidationFeatureEnableEXT)enumerant;
 }
 extern SCVK_FORCE_INLINE VkVendorId scvkParseJsonVendorId(const scvkJsonValue* pValue)
 {
-    uint64_t   enumerant;
-    VkVendorId result;
-    uint32_t   index;
-    VkBool32   found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_VENDOR_ID_KHRONOS", (uint64_t)VK_VENDOR_ID_KHRONOS},
                                          {"VK_VENDOR_ID_VIV", (uint64_t)VK_VENDOR_ID_VIV},
@@ -5928,53 +3591,28 @@ extern SCVK_FORCE_INLINE VkVendorId scvkParseJsonVendorId(const scvkJsonValue* p
                                          {"VK_VENDOR_ID_MOBILEYE", (uint64_t)VK_VENDOR_ID_MOBILEYE},
                                          {"VK_VENDOR_ID_APE", (uint64_t)VK_VENDOR_ID_APE}};
 
-    static const VkVendorId enumerants[] =
-        {VK_VENDOR_ID_KHRONOS, VK_VENDOR_ID_VIV, VK_VENDOR_ID_VSI, VK_VENDOR_ID_KAZAN, VK_VENDOR_ID_CODEPLAY, VK_VENDOR_ID_MESA, VK_VENDOR_ID_POCL, VK_VENDOR_ID_MOBILEYE, VK_VENDOR_ID_APE};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_VENDOR_ID_KHRONOS) || (enumerant == (uint64_t)VK_VENDOR_ID_VIV) || (enumerant == (uint64_t)VK_VENDOR_ID_VSI) || (enumerant == (uint64_t)VK_VENDOR_ID_KAZAN) ||
+            (enumerant == (uint64_t)VK_VENDOR_ID_CODEPLAY) || (enumerant == (uint64_t)VK_VENDOR_ID_MESA) || (enumerant == (uint64_t)VK_VENDOR_ID_POCL) ||
+            (enumerant == (uint64_t)VK_VENDOR_ID_MOBILEYE) || (enumerant == (uint64_t)VK_VENDOR_ID_APE);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkVendorId)enumerant;
 }
 extern SCVK_FORCE_INLINE VkVertexInputRate scvkParseJsonVertexInputRate(const scvkJsonValue* pValue)
 {
-    uint64_t          enumerant;
-    VkVertexInputRate result;
-    uint32_t          index;
-    VkBool32          found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const scvkJsonName table[] = {{"VK_VERTEX_INPUT_RATE_VERTEX", (uint64_t)VK_VERTEX_INPUT_RATE_VERTEX}, {"VK_VERTEX_INPUT_RATE_INSTANCE", (uint64_t)VK_VERTEX_INPUT_RATE_INSTANCE}};
 
-    static const VkVertexInputRate enumerants[] = {VK_VERTEX_INPUT_RATE_VERTEX, VK_VERTEX_INPUT_RATE_INSTANCE};
-
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_VERTEX_INPUT_RATE_VERTEX) || (enumerant == (uint64_t)VK_VERTEX_INPUT_RATE_INSTANCE);
     SCVK_ASSERT(found);
 
-    return result;
+    return (VkVertexInputRate)enumerant;
 }
 extern SCVK_FORCE_INLINE VkAccessFlags scvkParseJsonAccessFlags(const scvkJsonValue* pValue)
 {

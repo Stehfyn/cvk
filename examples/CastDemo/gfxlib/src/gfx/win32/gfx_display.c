@@ -6,7 +6,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <windows.h>
+#include <Windows.h>
 
 #include "gfx/gfx_display_internal.h"
 #include "os/os_assert.h"
@@ -61,7 +61,7 @@ static LRESULT CALLBACK ProcessWindowMessage(HWND window, UINT message, WPARAM w
  *
  * \param[in] pCreateInfo        Non-NULL configuration selecting a supported display kind
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void ValidateCreateInfo(const Gfx_Display_CreateInfo_t* pCreateInfo);
 
@@ -72,7 +72,7 @@ static void ValidateCreateInfo(const Gfx_Display_CreateInfo_t* pCreateInfo);
  * \param[out] pDisplay           Receives client dimensions, module handle, and window handle
  * \param[in]  pCreateInfo        Requested client extent
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_CreateInfo_t* pCreateInfo);
 
@@ -83,7 +83,7 @@ static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_Cre
  * \param[out] pDisplay           Zero-initialized display storage to initialize as running
  * \param[in]  pCreateInfo        Valid display-kind selection
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static void CreateDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_CreateInfo_t* pCreateInfo);
 

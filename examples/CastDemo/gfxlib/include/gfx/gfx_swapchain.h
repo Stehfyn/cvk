@@ -83,7 +83,7 @@ typedef struct Gfx_Swapchain_s Gfx_Swapchain_t;
  * \param[out] swapchain       Receives a non-NULL swapchain retained for process lifetime
  * \param[in]  createInfo      Non-NULL configuration with a compatible target surface
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Gfx_Swapchain_Create(Gfx_Swapchain_t** swapchain, const Gfx_Swapchain_CreateInfo_t* createInfo);
 
@@ -95,7 +95,7 @@ void Gfx_Swapchain_Create(Gfx_Swapchain_t** swapchain, const Gfx_Swapchain_Creat
  * \param[in]     timeout        Vulkan slot-completion timeout in nanoseconds
  * \param[out]    image          Receives the acquired backing image owned by swapchain
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Gfx_Swapchain_AcquireNextImage(Gfx_Swapchain_t* swapchain, uint64_t timeout, Gfx_Image_t** image);
 
@@ -106,7 +106,7 @@ void Gfx_Swapchain_AcquireNextImage(Gfx_Swapchain_t* swapchain, uint64_t timeout
  * \param[in,out] swapchain      Non-NULL swapchain from which image was acquired
  * \param[in,out] image          Acquired image with recorded or submitted pixel writes
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 void Gfx_Swapchain_SubmitImage(Gfx_Swapchain_t* swapchain, Gfx_Image_t* image);
 

@@ -61,8 +61,6 @@
 #define SEEK_INTERVAL_MS        (60)   /* newest scrub position goes out at most this often */
 #define SEEK_CONFIRM_MS         (2000) /* hold the target until the receiver reports near it */
 #define SEEK_CONFIRM_TOLERANCE  (1.5)
-#define SCRUB_TO_PROXY_MS       (140)  /* sustained scrub before dropping to the low-res proxy */
-#define SETTLE_MS               (1400) /* quiet time before upgrading back to full quality */
 #define JSON_VALUE_CAPACITY     (4096)
 #define LOAD_PAYLOAD_CAPACITY     (20000)
 #define SESSION_RUN_IDLE          (0)
@@ -85,6 +83,13 @@
 #define SEEK_FRACTION_DIGITS      (3)
 #define LEAVE_DEADLINE_MS         (1000)
 #define LEAVE_RECEIVE_MS          (200)
+#define SESSION_TIME_ROUND_HALF   (0.5)
+#define SESSION_LOG_CAPACITY      (1600)
+#define SESSION_STATUS_NAME_CAPACITY (32)
+#define SESSION_ERROR_REASON_CAPACITY (128)
+#define SESSION_CHANNEL_ERROR_CAPACITY (256)
+#define SESSION_SEEK_MOTION_TOLERANCE (0.30)
+#define SESSION_PLAY_AFTER_SEEK_TIMEOUT_MS (3000)
 
 /*=================================================================================================
 ** 3.2 Types
@@ -202,7 +207,7 @@ typedef struct CastSession_State_s
  * \param[out] state    Required persistent implementation storage
  * \param[in]  config   Required validated caller configuration
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void InitializeState(CastSession_State_t* state, const CastSessionConfig* config);
 
@@ -478,7 +483,7 @@ static FORCE_INLINE bool_t OnReceiverStatus(CastSession_State_t*   session,
  *
  * \param[in,out] pSession   Required runner-owned state
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static void Leave(CastSession_State_t* pSession);
 
@@ -698,7 +703,7 @@ static FORCE_INLINE MillisecondPosition_t GetMilliseconds(float64_t seconds)
         {
             seconds = 0.0;
         }
-        rounded        = (seconds * UTL_CHROMECAST_MILLISECONDS_PER_SECOND) + 0.5;
+        rounded        = (seconds * UTL_CHROMECAST_MILLISECONDS_PER_SECOND) + SESSION_TIME_ROUND_HALF;
         position.valid = (rounded < LOAD_MILLISECONDS_LIMIT);
         if (position.valid)
         {
@@ -717,7 +722,7 @@ static FORCE_INLINE MillisecondPosition_t GetMilliseconds(float64_t seconds)
 static void Log(CastSession_State_t* pSession, const char* pFormat, ...)
 {
     va_list arguments;
-    char    text[1600];
+    char    text[SESSION_LOG_CAPACITY];
 
     text[0] = '\0';
     va_start(arguments, pFormat);
@@ -1291,59 +1296,30 @@ static CastPlayerState GetStateFromName(const char* pName, int loading)
     return loading ? CAST_STATE_LOADING : CAST_STATE_IDLE;
 }
 
-/*************************************************************************************************/
-/**
- * \par Details:
- *  Interprets the receiver's media status, reconciles pending load/seek state and
- *  updates the playback snapshot published to the event callback.
- */
-static int OnMediaStatus(CastSession_State_t* pSession, const cvkJsonDocument* pDocument, const cvkJsonValue* pRoot)
+static void TrackSeekMotion(CastSession_State_t* pSession, const cvkJsonDocument* pDocument, const cvkJsonValue* pStatus)
 {
-    const cvkJsonValue* pList   = cvkGetJsonMember(pDocument, pRoot, "status");
-    const cvkJsonValue* pStatus = cvkGetJsonElement(pDocument, pList, 0);
-    const cvkJsonValue* pDuration;
-    const cvkJsonValue* pExtended;
-    char                name[32];
-    char                idleReason[32];
-    char                extendedName[32];
-    int                 changed;
+    const double rawTime = cvkGetJsonDouble(cvkGetJsonMember(pDocument, pStatus, "currentTime"));
+    char rawState[SESSION_STATUS_NAME_CAPACITY];
 
-    if (pSession->loadPending)
+    CopyJsonString(cvkGetJsonMember(pDocument, pStatus, "playerState"), rawState, sizeof(rawState));
+    if (pSession->measurePending && 0 == strcmp(rawState, "BUFFERING"))
     {
-        pSession->loadPending = 0;
-        return Load(pSession);
+        pSession->measureRebuffered = 1; /* the "PLAYING" was optimistic; it stalled again */
     }
-    if (NULL == pStatus)
+    /* The eye sees motion only when the reported time actually advances past the target. */
+    if (pSession->measurePending && 0 == strcmp(rawState, "PLAYING") &&
+        rawTime > pSession->measureTarget + SESSION_SEEK_MOTION_TOLERANCE)
     {
-        return 1;
+        Log(pSession,
+            "  seek->motion %llu ms%s",
+            (unsigned long long)(GetTickCount64() - pSession->measureSince),
+            pSession->measureRebuffered ? " (re-buffered once)" : "");
+        pSession->measurePending = 0;
     }
-    pSession->mediaSessionId  = cvkGetJsonInt64(cvkGetJsonMember(pDocument, pStatus, "mediaSessionId"));
-    pSession->status.hasMedia = (0 != pSession->mediaSessionId);
-    if (pSession->awaitingLoad && 0 != pSession->mediaSessionId &&
-        pSession->mediaSessionId != pSession->preLoadSessionId)
-    {
-        pSession->awaitingLoad = 0; /* the new media session is live; seeks may resume on it */
-    }
-    {
-        const double rawTime = cvkGetJsonDouble(cvkGetJsonMember(pDocument, pStatus, "currentTime"));
-        char rawState[32];
+}
 
-        CopyJsonString(cvkGetJsonMember(pDocument, pStatus, "playerState"), rawState, sizeof(rawState));
-        if (pSession->measurePending && 0 == strcmp(rawState, "BUFFERING"))
-        {
-            pSession->measureRebuffered = 1; /* the "PLAYING" was optimistic; it stalled again */
-        }
-        /* The eye sees motion only when the reported time actually advances past the target. */
-        if (pSession->measurePending && 0 == strcmp(rawState, "PLAYING") && rawTime > pSession->measureTarget + 0.30)
-        {
-            Log(pSession,
-                "  seek->motion %llu ms%s",
-                (unsigned long long)(GetTickCount64() - pSession->measureSince),
-                pSession->measureRebuffered ? " (re-buffered once)" : "");
-            pSession->measurePending = 0;
-        }
-    }
-    pSession->status.currentTime = cvkGetJsonDouble(cvkGetJsonMember(pDocument, pStatus, "currentTime"));
+static void ReconcileSeekTime(CastSession_State_t* pSession)
+{
     if (pSession->seekQueued)
     {
         pSession->status.currentTime = pSession->seekQueuedSeconds; /* a newer target is about to go out */
@@ -1369,6 +1345,69 @@ static int OnMediaStatus(CastSession_State_t* pSession, const cvkJsonDocument* p
             pSession->status.currentTime = pSession->seekTarget; /* stale report from before the seek */
         }
     }
+}
+
+static void ResumeAfterSeek(CastSession_State_t* pSession)
+{
+    bool_t resumeResolved;
+
+    if (!pSession->wantPlayAfterSeek || pSession->seekPending)
+    {
+        return;
+    }
+    resumeResolved = (CAST_STATE_PLAYING == pSession->status.state);
+    if (CAST_STATE_PAUSED == pSession->status.state)
+    {
+        Log(pSession, "seek landed paused; sending PLAY so audio and video keep running");
+        (void)SendMediaCommand(pSession, UTL_CHROMECAST_COMMAND_PLAY);
+        resumeResolved = TRUE;
+    }
+    if (!resumeResolved)
+    {
+        resumeResolved = (GetTickCount64() - pSession->playAfterSeekSince > SESSION_PLAY_AFTER_SEEK_TIMEOUT_MS);
+    }
+    if (resumeResolved)
+    {
+        pSession->wantPlayAfterSeek = 0;
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Interprets the receiver's media status, reconciles pending load/seek state and
+ *  updates the playback snapshot published to the event callback.
+ */
+static int OnMediaStatus(CastSession_State_t* pSession, const cvkJsonDocument* pDocument, const cvkJsonValue* pRoot)
+{
+    const cvkJsonValue* pList   = cvkGetJsonMember(pDocument, pRoot, "status");
+    const cvkJsonValue* pStatus = cvkGetJsonElement(pDocument, pList, 0);
+    const cvkJsonValue* pDuration;
+    const cvkJsonValue* pExtended;
+    char                name[SESSION_STATUS_NAME_CAPACITY];
+    char                idleReason[SESSION_STATUS_NAME_CAPACITY];
+    char                extendedName[SESSION_STATUS_NAME_CAPACITY];
+    int                 changed;
+
+    if (pSession->loadPending)
+    {
+        pSession->loadPending = 0;
+        return Load(pSession);
+    }
+    if (NULL == pStatus)
+    {
+        return 1;
+    }
+    pSession->mediaSessionId  = cvkGetJsonInt64(cvkGetJsonMember(pDocument, pStatus, "mediaSessionId"));
+    pSession->status.hasMedia = (0 != pSession->mediaSessionId);
+    if (pSession->awaitingLoad && 0 != pSession->mediaSessionId &&
+        pSession->mediaSessionId != pSession->preLoadSessionId)
+    {
+        pSession->awaitingLoad = 0; /* the new media session is live; seeks may resume on it */
+    }
+    TrackSeekMotion(pSession, pDocument, pStatus);
+    pSession->status.currentTime = cvkGetJsonDouble(cvkGetJsonMember(pDocument, pStatus, "currentTime"));
+    ReconcileSeekTime(pSession);
     pDuration = cvkGetJsonMember(pDocument, cvkGetJsonMember(pDocument, pStatus, "media"), "duration");
     if (NULL != pDuration && CVK_JSON_NUMBER == pDuration->kind)
     {
@@ -1393,25 +1432,8 @@ static int OnMediaStatus(CastSession_State_t* pSession, const cvkJsonDocument* p
     }
     (void)CRT_Format_Copy(pSession->status.stateName, (uint32_t)sizeof(pSession->status.stateName), name);
     pSession->status.state = GetStateFromName(name, 0 == strcmp(name, "LOADING"));
-    /* A resuming seek should leave the receiver playing; some receivers land it paused after a
-    ** burst of scrub seeks and hold audio muted. Once the seek has landed, force PLAY. */
-    if (pSession->wantPlayAfterSeek && !pSession->seekPending)
-    {
-        if (CAST_STATE_PLAYING == pSession->status.state)
-        {
-            pSession->wantPlayAfterSeek = 0;
-        }
-        else if (CAST_STATE_PAUSED == pSession->status.state)
-        {
-            Log(pSession, "seek landed paused; sending PLAY so audio and video keep running");
-            (void)SendMediaCommand(pSession, UTL_CHROMECAST_COMMAND_PLAY);
-            pSession->wantPlayAfterSeek = 0;
-        }
-        else if (GetTickCount64() - pSession->playAfterSeekSince > 3000)
-        {
-            pSession->wantPlayAfterSeek = 0; /* give up quietly if it never settles */
-        }
-    }
+    /* A resuming seek should leave the receiver playing after it lands. */
+    ResumeAfterSeek(pSession);
     if (changed && idleReason[0])
     {
         Log(pSession, "%s %s", name, idleReason);
@@ -1446,7 +1468,7 @@ static void ExplainMediaError(CastSession_State_t*   pSession,
                               const char*            pType)
 {
     const cvkJsonValue* pCode = cvkGetJsonMember(pDocument, pRoot, "detailedErrorCode");
-    char reason[128];
+    char reason[SESSION_ERROR_REASON_CAPACITY];
 
     CopyJsonString(cvkGetJsonMember(pDocument, pRoot, "reason"), reason, sizeof(reason));
     if (NULL != pCode)
@@ -1527,7 +1549,7 @@ static int HandleMessage(CastSession_State_t* pSession, const Utl_CastV2_Message
         }
         if (cvkJsonStringEquals(pType, "LAUNCH_ERROR"))
         {
-            char reason[128];
+            char reason[SESSION_ERROR_REASON_CAPACITY];
 
             CopyJsonString(cvkGetJsonMember(&document, pRoot, "reason"), reason, sizeof(reason));
             Log(pSession, "the receiver refused to launch the media receiver: %s", reason);
@@ -1544,7 +1566,7 @@ static int HandleMessage(CastSession_State_t* pSession, const Utl_CastV2_Message
         if (cvkJsonStringEquals(pType, "LOAD_FAILED") || cvkJsonStringEquals(pType, "LOAD_CANCELLED") ||
             cvkJsonStringEquals(pType, "INVALID_REQUEST") || cvkJsonStringEquals(pType, "ERROR"))
         {
-            char type[32];
+            char type[SESSION_STATUS_NAME_CAPACITY];
 
             CopyJsonString(pType, type, sizeof(type));
             ExplainMediaError(pSession, &document, pRoot, type);
@@ -1605,6 +1627,31 @@ static void Leave(CastSession_State_t* pSession)
     }
 }
 
+/* Records a scrub gesture and coalesces proxy seeks to its newest position. */
+static void QueueScrub(CastSession_State_t* pSession, double seconds)
+{
+    const ULONGLONG now = GetTickCount64();
+
+    if (!pSession->scrubbing)
+    {
+        pSession->scrubbing = 1;
+        pSession->playingBeforeScrub =
+            (CAST_STATE_PLAYING == pSession->status.state || CAST_STATE_BUFFERING == pSession->status.state);
+        pSession->scrubRunSince = now;
+    }
+    pSession->lastActivityTick = now;
+    if (pSession->onProxy)
+    {
+        /* Coalesce to the newest position; the proxy is the loaded stream, so this is a
+        ** plain in-stream SEEK with no reload. Paused during the drag, resumed on release. */
+        pSession->seekQueued        = 1;
+        pSession->seekQueuedSeconds = seconds;
+        pSession->seekQueuedResume  = 0;
+    }
+    /* Before the proxy is loaded there is nothing cheap to seek: do NOT scrub the deep full
+    ** stream (it bounces the picture and re-buffers). The one-time switch handles it. */
+}
+
 /* Applies queued commands. Returns 0 when a STOP was requested, -1 when sending failed. */
 /*************************************************************************************************/
 /**
@@ -1630,7 +1677,7 @@ static int ProcessCommands(CastSession_State_t* pSession)
             return 1;
         }
         ReleaseSRWLockExclusive(&pSession->commandLock);
-        switch (command.command)
+        switch ((int)command.command)
         {
         case CAST_COMMAND_PLAY:
             ok = SendMediaCommand(pSession, UTL_CHROMECAST_COMMAND_PLAY);
@@ -1646,29 +1693,8 @@ static int ProcessCommands(CastSession_State_t* pSession)
                     : UTL_CHROMECAST_COMMAND_PLAY);
             break;
         case CAST_COMMAND_SCRUB:
-        {
-            const ULONGLONG now = GetTickCount64();
-
-            if (!pSession->scrubbing)
-            {
-                pSession->scrubbing = 1;
-                pSession->playingBeforeScrub =
-                    (CAST_STATE_PLAYING == pSession->status.state || CAST_STATE_BUFFERING == pSession->status.state);
-                pSession->scrubRunSince = now;
-            }
-            pSession->lastActivityTick = now;
-            if (pSession->onProxy)
-            {
-                /* Coalesce to the newest position; the proxy is the loaded stream, so this is a
-                ** plain in-stream SEEK with no reload. Paused during the drag, resumed on release. */
-                pSession->seekQueued        = 1;
-                pSession->seekQueuedSeconds = command.seconds;
-                pSession->seekQueuedResume  = 0;
-            }
-            /* Before the proxy is loaded there is nothing cheap to seek: do NOT scrub the deep full
-            ** stream (it bounces the picture and re-buffers). The one-time switch handles it. */
+            QueueScrub(pSession, command.seconds);
             break;
-        }
         case CAST_COMMAND_SEEK:
         {
             /* A discrete seek ends the gesture. It is always an in-stream SEEK (no LOAD): on the
@@ -1720,7 +1746,7 @@ static int ProcessCommands(CastSession_State_t* pSession)
  */
 static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
 {
-    char                     error[256];
+    char                     error[SESSION_CHANNEL_ERROR_CAPACITY];
     Utl_Chromecast_Command_t launch;
     bool_t                   connected;
     bool_t                   launched;

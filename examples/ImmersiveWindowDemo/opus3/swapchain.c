@@ -1,3 +1,5 @@
+// CDX supplies D2D, D3D and DXGI declarations that conflict with the SDK headers.
+// NOLINTBEGIN(misc-include-cleaner)
 /*
  * swapchain.c -- the composition swap chain: the D3D11 device, the DXGI flip-model swap chain sized to
  * the desktop, the Direct2D context that draws into its back buffer, and the DirectComposition visual
@@ -8,7 +10,9 @@
  */
 
 #pragma runtime_checks("", off)
+#if defined(_MSC_VER) && !defined(__clang__)
 #pragma check_stack(off)
+#endif
 #pragma strict_gs_check(off)
 
 #ifndef WIN32_LEAN_AND_MEAN
@@ -18,17 +22,23 @@
 #define COBJMACROS
 #endif
 
-#include <windows.h>
-#include <initguid.h>
+#include <Windows.h> // IWYU pragma: keep
+#include <initguid.h> // IWYU pragma: keep
+#include <windef.h>
+#include <minwindef.h>
+#include <winerror.h>
+#include <Unknwnbase.h>
 #include "swapchain.h"
 #include "nt_assert.h"
+#include "cd3d11.h"
 #include "cdxgi.h"
 
 /* Swap chain: FLIP_DISCARD, presented immediately (tearing + mode switch allowed) with the frame-latency
    waitable object. It is sized to the desktop once and clipped by the window, so it is never resized. */
 #define SWAPCHAIN_FLAGS             (DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING | DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH | DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT)
-#define SWAPCHAIN_BUFFERS           5u
-#define SWAPCHAIN_MAX_FRAME_LATENCY 1u
+#define SWAPCHAIN_BUFFERS           5U
+#define SWAPCHAIN_MAX_FRAME_LATENCY 1U
+#define SWAPCHAIN_BITMAP_DPI        96.0F
 
 /* Stand up the GPU stack: the D3D11 device, the composition swap chain with one frame of latency, and a
    Direct2D device context targeting its back buffer. */
@@ -54,7 +64,7 @@ void InitSwapChain(SWAPCHAIN* pSwapChain, IDXGIAdapter* adapter)
         driverType = D3D_DRIVER_TYPE_HARDWARE;
     }
     cd3d11SetupDevice1(adapter, driverType, NULL, D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_VIDEO_SUPPORT, &pSwapChain->device, &pSwapChain->dxgiDevice, NULL, NULL);
-    cdxgiCreateFactory2(0u, &pFactory);
+    cdxgiCreateFactory2(0U, &pFactory);
     cdxgiFactoryGetPrimaryOutputSize((IDXGIFactory1*)pFactory, &desktopWidth, &desktopHeight);
     cdxgiSetupCompositionSwapChain2(pFactory,
                                     (IUnknown*)pSwapChain->dxgiDevice,
@@ -74,9 +84,9 @@ void InitSwapChain(SWAPCHAIN* pSwapChain, IDXGIAdapter* adapter)
     cd2dSetupDefaultDeviceContext(pD2DDevice, &pSwapChain->context);
     cdxgiUnknownReleaseSafe((IUnknown*)pD2DDevice);
 
-    cdxgiSwapChainGetBufferAsSurface((IDXGISwapChain*)pSwapChain->swapChain, 0u, &pBackBuffer);
+    cdxgiSwapChainGetBufferAsSurface((IDXGISwapChain*)pSwapChain->swapChain, 0U, &pBackBuffer);
     cd2dInitPixelFormat(&pixelFormat, DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
-    cd2dInitBitmapProperties1(&bp, pixelFormat, 96.0f, 96.0f, (D2D1_BITMAP_OPTIONS)(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW), NULL);
+    cd2dInitBitmapProperties1(&bp, pixelFormat, SWAPCHAIN_BITMAP_DPI, SWAPCHAIN_BITMAP_DPI, (D2D1_BITMAP_OPTIONS)(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW), NULL); // NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange): bitmap options are flags.
     cd2dDeviceContextCreateBitmapFromDxgiSurface(pSwapChain->context, pBackBuffer, &bp, &pTarget);
     cdxgiUnknownReleaseSafe((IUnknown*)pBackBuffer);
     cd2dDeviceContextSetTargetBitmap(pSwapChain->context, pTarget);
@@ -97,16 +107,16 @@ BOOL PresentSwapChain(SWAPCHAIN* pSwapChain, BOOL fRestart, BOOL fVSync)
     {
         uFlags |= DXGI_PRESENT_RESTART;
     }
-    hrFirst = IDXGISwapChain1_Present(pSwapChain->swapChain, 0u, uFlags);
+    hrFirst = IDXGISwapChain1_Present(pSwapChain->swapChain, 0U, uFlags);
     ++pSwapChain->presentCount;
 
     if (fRestart || fVSync)
     {
-        hrSecond = IDXGISwapChain1_Present(pSwapChain->swapChain, 1u, DXGI_PRESENT_DO_NOT_SEQUENCE);
+        hrSecond = IDXGISwapChain1_Present(pSwapChain->swapChain, 1U, DXGI_PRESENT_DO_NOT_SEQUENCE);
     }
     else
     {
-        hrSecond = IDXGISwapChain1_Present(pSwapChain->swapChain, 0u, DXGI_PRESENT_ALLOW_TEARING | DXGI_PRESENT_DO_NOT_WAIT);
+        hrSecond = IDXGISwapChain1_Present(pSwapChain->swapChain, 0U, DXGI_PRESENT_ALLOW_TEARING | DXGI_PRESENT_DO_NOT_WAIT);
     }
     ++pSwapChain->presentCount;
 
@@ -125,3 +135,4 @@ void DestroySwapChain(SWAPCHAIN* pSwapChain)
     cdxgiUnknownReleaseSafe((IUnknown*)pSwapChain->dxgiDevice);
     cdxgiUnknownReleaseSafe((IUnknown*)pSwapChain->device);
 }
+// NOLINTEND(misc-include-cleaner)

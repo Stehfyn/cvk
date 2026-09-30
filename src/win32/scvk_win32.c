@@ -10,6 +10,7 @@
 #include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_sc_core.h>
 #include <vulkan/vulkan_win32.h>
+#include <windef.h>
 #include <winnt.h>
 
 extern SCVK_FORCE_INLINE void scvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display)

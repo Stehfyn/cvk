@@ -96,7 +96,7 @@ typedef struct Proxy_State_s
  *
  * \param[out] state   Required fresh private storage
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void InitializeState(Proxy_State_t* state);
 
@@ -146,7 +146,7 @@ static FORCE_INLINE bool_t WriteUrl(Proxy_State_t* state);
  *
  * \param[in,out] context   Stable Proxy_t owner fixed at worker initialization
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void RunJob(void* context);
 

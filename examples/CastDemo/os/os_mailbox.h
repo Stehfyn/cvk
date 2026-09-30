@@ -79,7 +79,7 @@ typedef struct OS_Mailbox_s
  *
  * \param[out] mailbox   Required quiescent metadata with three retained payload slots
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void OS_Mailbox_Initialize(OS_Mailbox_t* mailbox);
 
@@ -130,7 +130,7 @@ uint32_t OS_Mailbox_GetReadIndex(const OS_Mailbox_t* mailbox);
  *
  * \param[in,out] mailbox   Required initialized producer-side metadata
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 void OS_Mailbox_Publish(OS_Mailbox_t* mailbox);
 

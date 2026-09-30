@@ -192,7 +192,7 @@ static FORCE_INLINE bool_t GetIntegerMagnitude(uint64_t* magnitude, const JsonIn
  * \param[in,out] number   Initialized summary
  * \param[in]     digit    Numeric digit, not an ASCII character
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void AppendIntegerDigit(JsonInteger_t* number, uint32_t digit);
 
@@ -211,7 +211,7 @@ static FORCE_INLINE void AppendIntegerDigit(JsonInteger_t* number, uint32_t digi
  * \param[in,out] number   Initialized summary
  * \param[in,out] cursor   Remaining validated exponent bytes
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void ReadIntegerExponent(JsonInteger_t* number, JsonCursor_t* cursor);
 
@@ -301,7 +301,7 @@ static FORCE_INLINE bool_t Reserve(Utl_Json_Writer_t* writer, uint64_t bytes);
  * \param[in,out] writer   Preflighted writer
  * \param[in]     text     Disjoint counted source
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void EmitBytes(Utl_Json_Writer_t* writer, Utl_Json_Text_t text);
 
@@ -318,7 +318,7 @@ static FORCE_INLINE void EmitBytes(Utl_Json_Writer_t* writer, Utl_Json_Text_t te
  * \param[in,out] writer   Preflighted writer
  * \param[in]     value    Syntax byte
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void EmitByte(Utl_Json_Writer_t* writer, byte_t value);
 
@@ -335,7 +335,7 @@ static FORCE_INLINE void EmitByte(Utl_Json_Writer_t* writer, byte_t value);
  * \param[in,out] writer   Preflighted writer
  * \param[in]     text     Valid disjoint UTF-8
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void EmitString(Utl_Json_Writer_t* writer, Utl_Json_Text_t text);
 
@@ -366,7 +366,7 @@ static FORCE_INLINE bool_t PrepareValue(Utl_Json_Writer_t* writer, uint32_t byte
  *
  * \param[in,out] writer   Preflighted value position
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void EmitPrefix(Utl_Json_Writer_t* writer);
 
@@ -382,7 +382,7 @@ static FORCE_INLINE void EmitPrefix(Utl_Json_Writer_t* writer);
  *
  * \param[in,out] writer   Preflighted value position
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CompleteValue(Utl_Json_Writer_t* writer);
 
@@ -559,7 +559,7 @@ static FORCE_INLINE bool_t IsDecodedEqual(Utl_Json_Text_t encoded, Utl_Json_Text
  *
  * \param[in,out] cursor   Valid counted source cursor
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void SkipJsonSpace(JsonCursor_t* cursor);
 
@@ -628,7 +628,7 @@ static FORCE_INLINE bool_t ReadJsonNumber(JsonCursor_t* cursor, Utl_Json_Text_t*
  * \param[in,out] parser      Exclusive valid parser state
  * \param[in]     container   Whether the record opens a new object or array
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void AppendJsonValue(JsonParser_t* parser, bool_t container);
 
@@ -647,7 +647,7 @@ static FORCE_INLINE void AppendJsonValue(JsonParser_t* parser, bool_t container)
  * \param[in,out] parser   Valid parser at the next value
  * \param[in]     name     Raw object-member name, or an absent span
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void ReadJsonValue(JsonParser_t* parser, Utl_Json_Text_t name);
 
@@ -665,7 +665,7 @@ static FORCE_INLINE void ReadJsonValue(JsonParser_t* parser, Utl_Json_Text_t nam
  *
  * \param[in,out] parser   Valid parser with an open parent
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void ReadJsonChild(JsonParser_t* parser);
 
@@ -683,7 +683,7 @@ static FORCE_INLINE void ReadJsonChild(JsonParser_t* parser);
  *
  * \param[in,out] parser   Open-container parser after whitespace
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void ReadJsonContainerStep(JsonParser_t* parser);
 

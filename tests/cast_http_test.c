@@ -402,7 +402,7 @@ static const char_t          c_dateText[][UTL_HTTP_DATE_BYTE_COUNT + 1] = {"Sun,
  * \param[in] passed   Expected condition
  * \param[in] line     Source line
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void Check(bool_t passed, uint32_t line);
 
@@ -411,7 +411,7 @@ static FORCE_INLINE void Check(bool_t passed, uint32_t line);
  * \brief Checks counted heads, prefix truncation, field lookup and output preservation.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CheckHeads(void);
 
@@ -420,7 +420,7 @@ static void CheckHeads(void);
  * \brief Checks independent framing and connection vectors.
  *
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CheckFraming(void);
 
@@ -428,7 +428,7 @@ static void CheckFraming(void);
 /**
  * \brief Checks Gregorian dates, fixed-width output and capacity failure.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CheckDates(void);
 
@@ -436,7 +436,7 @@ static void CheckDates(void);
 /**
  * \brief Checks incremental scan progress and terminal-state preservation.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static void CheckIncremental(void);
 

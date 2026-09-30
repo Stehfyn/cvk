@@ -146,7 +146,7 @@ typedef struct CastConsole_s
  *  - 001 Both initialized owners shall remain live and Winsock shall remain available until closure succeeds.
  *  - 002 Failed releases shall retain ownership and be retried; the console polling wait remains an open timing defect.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CloseNetworkResources(CastConsole_t* app);
 
@@ -162,7 +162,7 @@ static FORCE_INLINE void CloseNetworkResources(CastConsole_t* app);
  *  - 002 The caller shall stop proxy publication and acquire worker completion before entry.
  *  - 003 Failed native releases shall retain owner storage and be retried on later shutdown polls.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CloseSessionResources(CastConsole_t* app);
 
@@ -181,7 +181,7 @@ static FORCE_INLINE void CloseSessionResources(CastConsole_t* app);
  * \param[in,out] proxy    Required initialized proxy owner
  * \param[in,out] server   Required pointer to a possibly NULL server owner
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CloseServingResources(Proxy_t* proxy, MediaServer** server);
 

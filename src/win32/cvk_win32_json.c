@@ -4,8 +4,8 @@
 #include "cvk/cvk.h"
 #include "cvk/cvk_json.h"
 #include "cvk/internal/cvk_json_work.h"
+#include "vk_diagnostic.h"
 #include <stdint.h>
-#include <string.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_win32.h>
 
@@ -139,7 +139,7 @@ void cvkReadJsonD3D12FenceSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
     pContext = pWork->pContext;
     pInfo    = (VkD3D12FenceSubmitInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR;
 
@@ -181,7 +181,7 @@ void cvkReadJsonExportFenceWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkExportFenceWin32HandleInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR;
 
@@ -205,7 +205,7 @@ void cvkReadJsonExportMemoryWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkExportMemoryWin32HandleInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
 
@@ -229,7 +229,7 @@ void cvkReadJsonExportMemoryWin32HandleInfoNV(cvkJsonWork* pWork, const cvkJsonV
     pContext = pWork->pContext;
     pInfo    = (VkExportMemoryWin32HandleInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_NV;
 
@@ -253,7 +253,7 @@ void cvkReadJsonExportSemaphoreWin32HandleInfo(cvkJsonWork* pWork, const cvkJson
     pContext = pWork->pContext;
     pInfo    = (VkExportSemaphoreWin32HandleInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
 
@@ -277,7 +277,7 @@ void cvkReadJsonFenceGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* 
     pContext = pWork->pContext;
     pInfo    = (VkFenceGetWin32HandleInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR;
 
@@ -313,7 +313,7 @@ void cvkReadJsonImportFenceWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkImportFenceWin32HandleInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR;
 
@@ -353,7 +353,7 @@ void cvkReadJsonImportMemoryWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkImportMemoryWin32HandleInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
 
@@ -382,7 +382,7 @@ void cvkReadJsonImportMemoryWin32HandleInfoNV(cvkJsonWork* pWork, const cvkJsonV
     pContext = pWork->pContext;
     pInfo    = (VkImportMemoryWin32HandleInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_NV;
 
@@ -409,7 +409,7 @@ void cvkReadJsonImportSemaphoreWin32HandleInfo(cvkJsonWork* pWork, const cvkJson
     pContext = pWork->pContext;
     pInfo    = (VkImportSemaphoreWin32HandleInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
 
@@ -449,7 +449,7 @@ void cvkReadJsonMemoryGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue*
     pContext = pWork->pContext;
     pInfo    = (VkMemoryGetWin32HandleInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
 
@@ -485,7 +485,7 @@ void cvkReadJsonMemoryWin32HandleProperties(cvkJsonWork* pWork, const cvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkMemoryWin32HandlePropertiesKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR;
 
@@ -512,7 +512,7 @@ void cvkReadJsonSemaphoreGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonVal
     pContext = pWork->pContext;
     pInfo    = (VkSemaphoreGetWin32HandleInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR;
 
@@ -548,7 +548,7 @@ void cvkReadJsonSurfaceCapabilitiesFullScreenExclusive(cvkJsonWork* pWork, const
     pContext = pWork->pContext;
     pInfo    = (VkSurfaceCapabilitiesFullScreenExclusiveEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT;
 
@@ -575,7 +575,7 @@ void cvkReadJsonSurfaceFullScreenExclusiveInfo(cvkJsonWork* pWork, const cvkJson
     pContext = pWork->pContext;
     pInfo    = (VkSurfaceFullScreenExclusiveInfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
 
@@ -604,7 +604,7 @@ void cvkReadJsonSurfaceFullScreenExclusiveWin32Info(cvkJsonWork* pWork, const cv
     pContext = pWork->pContext;
     pInfo    = (VkSurfaceFullScreenExclusiveWin32InfoEXT*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
 
@@ -628,7 +628,7 @@ void cvkReadJsonWin32KeyedMutexAcquireReleaseInfo(cvkJsonWork* pWork, const cvkJ
     pContext = pWork->pContext;
     pInfo    = (VkWin32KeyedMutexAcquireReleaseInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR;
 
@@ -685,7 +685,7 @@ void cvkReadJsonWin32KeyedMutexAcquireReleaseInfoNV(cvkJsonWork* pWork, const cv
     pContext = pWork->pContext;
     pInfo    = (VkWin32KeyedMutexAcquireReleaseInfoNV*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV;
 
@@ -742,7 +742,7 @@ void cvkReadJsonWin32SurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* p
     pContext = pWork->pContext;
     pInfo    = (VkWin32SurfaceCreateInfoKHR*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 
@@ -757,37 +757,21 @@ void cvkReadJsonWin32SurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* p
 }
 extern CVK_FORCE_INLINE VkFullScreenExclusiveEXT cvkParseJsonFullScreenExclusive(const cvkJsonValue* pValue)
 {
-    uint64_t                 enumerant;
-    VkFullScreenExclusiveEXT result;
-    uint32_t                 index;
-    VkBool32                 found;
+    uint64_t enumerant;
+    VkBool32 found;
 
     static const cvkJsonName table[] = {{"VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT},
                                         {"VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT},
                                         {"VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT},
                                         {"VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT}};
 
-    static const VkFullScreenExclusiveEXT enumerants[] = {VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT,
-                                                          VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT,
-                                                          VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT,
-                                                          VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT};
-
     enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    result = enumerants[0];
-    found  = VK_FALSE;
-    for (index = 0; index < VK_COUNT_OF(enumerants); ++index)
-    {
-        if (enumerant == (uint64_t)enumerants[index])
-        {
-            result = enumerants[index];
-            found  = VK_TRUE;
-            break;
-        }
-    }
+    found = (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT) || (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT) ||
+            (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT) || (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT);
     CVK_ASSERT(found);
 
-    return result;
+    return (VkFullScreenExclusiveEXT)enumerant;
 }
 extern CVK_FORCE_INLINE VkWin32SurfaceCreateFlagsKHR cvkParseJsonWin32SurfaceCreateFlags(const cvkJsonValue* pValue)
 {

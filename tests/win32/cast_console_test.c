@@ -86,7 +86,7 @@ typedef struct ConsoleFixture_s
  *
  * \param[out] fixture   Required lifetime storage
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void InitializeFixture(ConsoleFixture_t* fixture);
 
@@ -100,7 +100,7 @@ static FORCE_INLINE void InitializeFixture(ConsoleFixture_t* fixture);
  * \param[in,out] console   Initialized owner
  * \param[in]     expected  EMPTY, IGNORED or FAILED
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckPreservedKey(OS_Console_t* console, OS_Console_ReadResult_t expected);
 
@@ -113,7 +113,7 @@ static FORCE_INLINE void CheckPreservedKey(OS_Console_t* console, OS_Console_Rea
  *
  * \param[in,out] fixture   Initialized exclusive console owner
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckInput(ConsoleFixture_t* fixture);
 
@@ -126,7 +126,7 @@ static FORCE_INLINE void CheckInput(ConsoleFixture_t* fixture);
  *
  * \param[in,out] fixture   Initialized owners after input exercise
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void CheckClosure(ConsoleFixture_t* fixture);
 
@@ -137,7 +137,7 @@ static FORCE_INLINE void CheckClosure(ConsoleFixture_t* fixture);
  * \par Details:
  *  Optional input stays unavailable through repeated successful closure.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckAbsentInput(void);
 

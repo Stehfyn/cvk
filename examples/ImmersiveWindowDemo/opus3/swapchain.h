@@ -1,13 +1,11 @@
-#pragma once
+#ifndef IMMERSIVE_OPUS3_SWAPCHAIN_H
+#define IMMERSIVE_OPUS3_SWAPCHAIN_H
 
-#include <windows.h>
-#pragma warning(push)
-#pragma warning(disable : 4201) /* nameless struct/union in the DirectX headers */
+#include <Windows.h>
 #include <d3d11.h>
 #include <dxgi1_3.h>
 #include <cd2d.h>
 #include <cdcomp.h>
-#pragma warning(pop)
 
 /* The presenter's GPU stack: a BGRA/video-capable D3D11 device, a desktop-sized premultiplied
    FLIP_DISCARD composition swap chain with one frame of latency, a Direct2D device context targeting its
@@ -41,3 +39,5 @@ PresentSwapChain(
     SWAPCHAIN* swapChain,
     BOOL       restart,
     BOOL       vsync);
+
+#endif /* IMMERSIVE_OPUS3_SWAPCHAIN_H */

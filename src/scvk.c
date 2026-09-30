@@ -12,6 +12,7 @@
 #include "vk_diagnostic.h"
 #include <string.h>
 #include <vulkan/vulkan_sc_core.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <vulkan/vk_platform.h>
 
@@ -670,15 +671,14 @@ extern SCVK_FORCE_INLINE void scvkInitCopyDescriptorSet(VkCopyDescriptorSet* pIn
 }
 extern SCVK_FORCE_INLINE void scvkInitDebugUtilsLabel(VkDebugUtilsLabelEXT* pInfo, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
-    VkDebugUtilsLabelEXT initialized_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-        .pNext      = pNext,
-        .pLabelName = pLabelName,
-        .color      = {0}
-    };
+    VkDebugUtilsLabelEXT initialized_info;
+    scvkZeroMemory(&initialized_info, sizeof(initialized_info));
 
-    (void)memcpy(initialized_info.color, color, sizeof(initialized_info.color));
+    initialized_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+    initialized_info.pNext      = pNext;
+    initialized_info.pLabelName = pLabelName;
+
+    scvkCopyMemory(initialized_info.color, color, sizeof(initialized_info.color));
 
     (*pInfo) = initialized_info;
 }
@@ -1564,16 +1564,14 @@ extern SCVK_FORCE_INLINE void scvkInitImageBlit(VkImageBlit*             pInfo,
                                                 VkImageSubresourceLayers dstSubresource,
                                                 const VkOffset3D         dstOffsets[SCVK_IMAGE_BLIT_OFFSETS_COUNT])
 {
-    VkImageBlit initialized_info =
-    {
-        .srcSubresource = srcSubresource,
-        .dstSubresource = dstSubresource,
-        .srcOffsets     = {0},
-        .dstOffsets     = {0}
-    };
+    VkImageBlit initialized_info;
+    scvkZeroMemory(&initialized_info, sizeof(initialized_info));
 
-    (void)memcpy(initialized_info.srcOffsets, srcOffsets, sizeof(initialized_info.srcOffsets));
-    (void)memcpy(initialized_info.dstOffsets, dstOffsets, sizeof(initialized_info.dstOffsets));
+    initialized_info.srcSubresource = srcSubresource;
+    initialized_info.dstSubresource = dstSubresource;
+
+    scvkCopyMemory(initialized_info.srcOffsets, srcOffsets, sizeof(initialized_info.srcOffsets));
+    scvkCopyMemory(initialized_info.dstOffsets, dstOffsets, sizeof(initialized_info.dstOffsets));
 
     (*pInfo) = initialized_info;
 }
@@ -3066,16 +3064,15 @@ extern SCVK_FORCE_INLINE void scvkInitPipelineCacheHeaderVersionOne(VkPipelineCa
                                                                     uint32_t                         deviceID,
                                                                     const uint8_t                    pipelineCacheUUID[VK_UUID_SIZE])
 {
-    VkPipelineCacheHeaderVersionOne initialized_info =
-    {
-        .headerSize        = headerSize,
-        .headerVersion     = headerVersion,
-        .vendorID          = vendorID,
-        .deviceID          = deviceID,
-        .pipelineCacheUUID = {0}
-    };
+    VkPipelineCacheHeaderVersionOne initialized_info;
+    scvkZeroMemory(&initialized_info, sizeof(initialized_info));
 
-    (void)memcpy(initialized_info.pipelineCacheUUID, pipelineCacheUUID, sizeof(initialized_info.pipelineCacheUUID));
+    initialized_info.headerSize    = headerSize;
+    initialized_info.headerVersion = headerVersion;
+    initialized_info.vendorID      = vendorID;
+    initialized_info.deviceID      = deviceID;
+
+    scvkCopyMemory(initialized_info.pipelineCacheUUID, pipelineCacheUUID, sizeof(initialized_info.pipelineCacheUUID));
 
     (*pInfo) = initialized_info;
 }
@@ -3106,18 +3103,17 @@ extern SCVK_FORCE_INLINE void scvkInitPipelineCacheSafetyCriticalIndexEntry(VkPi
                                                                             uint32_t                                 stageIndexStride,
                                                                             uint64_t                                 stageIndexOffset)
 {
-    VkPipelineCacheSafetyCriticalIndexEntry initialized_info =
-    {
-        .pipelineMemorySize = pipelineMemorySize,
-        .jsonSize           = jsonSize,
-        .jsonOffset         = jsonOffset,
-        .stageIndexCount    = stageIndexCount,
-        .stageIndexStride   = stageIndexStride,
-        .stageIndexOffset   = stageIndexOffset,
-        .pipelineIdentifier = {0}
-    };
+    VkPipelineCacheSafetyCriticalIndexEntry initialized_info;
+    scvkZeroMemory(&initialized_info, sizeof(initialized_info));
 
-    (void)memcpy(initialized_info.pipelineIdentifier, pipelineIdentifier, sizeof(initialized_info.pipelineIdentifier));
+    initialized_info.pipelineMemorySize = pipelineMemorySize;
+    initialized_info.jsonSize           = jsonSize;
+    initialized_info.jsonOffset         = jsonOffset;
+    initialized_info.stageIndexCount    = stageIndexCount;
+    initialized_info.stageIndexStride   = stageIndexStride;
+    initialized_info.stageIndexOffset   = stageIndexOffset;
+
+    scvkCopyMemory(initialized_info.pipelineIdentifier, pipelineIdentifier, sizeof(initialized_info.pipelineIdentifier));
 
     (*pInfo) = initialized_info;
 }
@@ -3175,19 +3171,18 @@ extern SCVK_FORCE_INLINE void scvkInitPipelineColorBlendStateCreateInfo(VkPipeli
                                                                         const VkPipelineColorBlendAttachmentState* pAttachments,
                                                                         const float                                blendConstants[SCVK_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO_CONSTANTS_COUNT])
 {
-    VkPipelineColorBlendStateCreateInfo initialized_info =
-    {
-        .sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
-        .pNext           = pNext,
-        .flags           = flags,
-        .logicOpEnable   = logicOpEnable,
-        .logicOp         = logicOp,
-        .attachmentCount = attachmentCount,
-        .pAttachments    = pAttachments,
-        .blendConstants  = {0}
-    };
+    VkPipelineColorBlendStateCreateInfo initialized_info;
+    scvkZeroMemory(&initialized_info, sizeof(initialized_info));
 
-    (void)memcpy(initialized_info.blendConstants, blendConstants, sizeof(initialized_info.blendConstants));
+    initialized_info.sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+    initialized_info.pNext           = pNext;
+    initialized_info.flags           = flags;
+    initialized_info.logicOpEnable   = logicOpEnable;
+    initialized_info.logicOp         = logicOp;
+    initialized_info.attachmentCount = attachmentCount;
+    initialized_info.pAttachments    = pAttachments;
+
+    scvkCopyMemory(initialized_info.blendConstants, blendConstants, sizeof(initialized_info.blendConstants));
 
     (*pInfo) = initialized_info;
 }
@@ -3268,15 +3263,14 @@ extern SCVK_FORCE_INLINE void scvkInitPipelineFragmentShadingRateStateCreateInfo
     VkExtent2D                                       fragmentSize,
     const VkFragmentShadingRateCombinerOpKHR         combinerOps[SCVK_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR_OPS_COUNT])
 {
-    VkPipelineFragmentShadingRateStateCreateInfoKHR initialized_info =
-    {
-        .sType        = VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR,
-        .pNext        = pNext,
-        .fragmentSize = fragmentSize,
-        .combinerOps  = {0}
-    };
+    VkPipelineFragmentShadingRateStateCreateInfoKHR initialized_info;
+    scvkZeroMemory(&initialized_info, sizeof(initialized_info));
 
-    (void)memcpy(initialized_info.combinerOps, combinerOps, sizeof(initialized_info.combinerOps));
+    initialized_info.sType        = VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR;
+    initialized_info.pNext        = pNext;
+    initialized_info.fragmentSize = fragmentSize;
+
+    scvkCopyMemory(initialized_info.combinerOps, combinerOps, sizeof(initialized_info.combinerOps));
 
     (*pInfo) = initialized_info;
 }
@@ -3343,16 +3337,15 @@ extern SCVK_FORCE_INLINE void scvkInitPipelineOfflineCreateInfo(VkPipelineOfflin
                                                                 VkPipelineMatchControl       matchControl,
                                                                 VkDeviceSize                 poolEntrySize)
 {
-    VkPipelineOfflineCreateInfo initialized_info =
-    {
-        .sType              = VK_STRUCTURE_TYPE_PIPELINE_OFFLINE_CREATE_INFO,
-        .pNext              = pNext,
-        .matchControl       = matchControl,
-        .poolEntrySize      = poolEntrySize,
-        .pipelineIdentifier = {0}
-    };
+    VkPipelineOfflineCreateInfo initialized_info;
+    scvkZeroMemory(&initialized_info, sizeof(initialized_info));
 
-    (void)memcpy(initialized_info.pipelineIdentifier, pipelineIdentifier, sizeof(initialized_info.pipelineIdentifier));
+    initialized_info.sType         = VK_STRUCTURE_TYPE_PIPELINE_OFFLINE_CREATE_INFO;
+    initialized_info.pNext         = pNext;
+    initialized_info.matchControl  = matchControl;
+    initialized_info.poolEntrySize = poolEntrySize;
+
+    scvkCopyMemory(initialized_info.pipelineIdentifier, pipelineIdentifier, sizeof(initialized_info.pipelineIdentifier));
 
     (*pInfo) = initialized_info;
 }
@@ -4373,34 +4366,25 @@ extern SCVK_FORCE_INLINE void scvkInitXYColor(VkXYColorEXT* pInfo, float x, floa
 }
 extern SCVK_FORCE_INLINE void scvkInitClearColorValueFloat32(VkClearColorValue* pInfo, const float float32[SCVK_CLEAR_COLOR_VALUE_32_COUNT])
 {
-    VkClearColorValue initialized_info =
-    {
-        .float32 = {0}
-    };
-
-    (void)memcpy(initialized_info.float32, float32, sizeof(initialized_info.float32));
+    VkClearColorValue initialized_info;
+    scvkZeroMemory(&initialized_info, sizeof(initialized_info));
+    scvkCopyMemory(initialized_info.float32, float32, sizeof(initialized_info.float32));
 
     (*pInfo) = initialized_info;
 }
 extern SCVK_FORCE_INLINE void scvkInitClearColorValueInt32(VkClearColorValue* pInfo, const int32_t int32[SCVK_CLEAR_COLOR_VALUE_32_COUNT])
 {
-    VkClearColorValue initialized_info =
-    {
-        .int32 = {0}
-    };
-
-    (void)memcpy(initialized_info.int32, int32, sizeof(initialized_info.int32));
+    VkClearColorValue initialized_info;
+    scvkZeroMemory(&initialized_info, sizeof(initialized_info));
+    scvkCopyMemory(initialized_info.int32, int32, sizeof(initialized_info.int32));
 
     (*pInfo) = initialized_info;
 }
 extern SCVK_FORCE_INLINE void scvkInitClearColorValueUint32(VkClearColorValue* pInfo, const uint32_t uint32[SCVK_CLEAR_COLOR_VALUE_32_COUNT])
 {
-    VkClearColorValue initialized_info =
-    {
-        .uint32 = {0}
-    };
-
-    (void)memcpy(initialized_info.uint32, uint32, sizeof(initialized_info.uint32));
+    VkClearColorValue initialized_info;
+    scvkZeroMemory(&initialized_info, sizeof(initialized_info));
+    scvkCopyMemory(initialized_info.uint32, uint32, sizeof(initialized_info.uint32));
 
     (*pInfo) = initialized_info;
 }
@@ -4589,15 +4573,15 @@ extern SCVK_FORCE_INLINE void scvkBindImageMemory2(VkDevice device, uint32_t bin
 }
 extern SCVK_FORCE_INLINE void scvkCmdBeginDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
-    VkDebugUtilsLabelEXT label_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-        .pNext      = pNext,
-        .pLabelName = pLabelName,
-        .color      = {0}
-    };
+    VkDebugUtilsLabelEXT label_info;
 
-    (void)memcpy(label_info.color, color, sizeof(label_info.color));
+    scvkZeroMemory(&label_info, sizeof(label_info));
+
+    label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+    label_info.pNext      = pNext;
+    label_info.pLabelName = pLabelName;
+
+    scvkCopyMemory(label_info.color, color, sizeof(label_info.color));
     vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &label_info);
 }
 extern SCVK_FORCE_INLINE void scvkCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags)
@@ -4844,15 +4828,15 @@ extern SCVK_FORCE_INLINE void scvkCmdFillBuffer(VkCommandBuffer commandBuffer, V
 }
 extern SCVK_FORCE_INLINE void scvkCmdInsertDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
-    VkDebugUtilsLabelEXT label_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-        .pNext      = pNext,
-        .pLabelName = pLabelName,
-        .color      = {0}
-    };
+    VkDebugUtilsLabelEXT label_info;
 
-    (void)memcpy(label_info.color, color, sizeof(label_info.color));
+    scvkZeroMemory(&label_info, sizeof(label_info));
+
+    label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+    label_info.pNext      = pNext;
+    label_info.pLabelName = pLabelName;
+
+    scvkCopyMemory(label_info.color, color, sizeof(label_info.color));
     vkCmdInsertDebugUtilsLabelEXT(commandBuffer, &label_info);
 }
 extern SCVK_FORCE_INLINE void scvkCmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents)
@@ -5989,11 +5973,12 @@ extern SCVK_FORCE_INLINE void scvkGetBufferMemoryRequirements(VkDevice device, V
 }
 extern SCVK_FORCE_INLINE void scvkGetBufferMemoryRequirements2(VkDevice device, const VkBufferMemoryRequirementsInfo2* pInfo, void* pNext, VkMemoryRequirements2* pMemoryRequirements)
 {
-    VkMemoryRequirements2 memory_requirements =
-    {
-        .sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2,
-        .pNext = pNext
-    };
+    VkMemoryRequirements2 memory_requirements;
+
+    scvkZeroMemory(&memory_requirements, sizeof(memory_requirements));
+
+    memory_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
+    memory_requirements.pNext = pNext;
 
     vkGetBufferMemoryRequirements2(device, pInfo, &memory_requirements);
 
@@ -6016,11 +6001,12 @@ extern SCVK_FORCE_INLINE void scvkGetCalibratedTimestamps(VkDevice device, uint3
 }
 extern SCVK_FORCE_INLINE void scvkGetCommandPoolMemoryConsumption(VkDevice device, VkCommandPool commandPool, VkCommandBuffer commandBuffer, void* pNext, VkCommandPoolMemoryConsumption* pConsumption)
 {
-    VkCommandPoolMemoryConsumption consumption =
-    {
-        .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_MEMORY_CONSUMPTION,
-        .pNext = pNext
-    };
+    VkCommandPoolMemoryConsumption consumption;
+
+    scvkZeroMemory(&consumption, sizeof(consumption));
+
+    consumption.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_MEMORY_CONSUMPTION;
+    consumption.pNext = pNext;
 
     vkGetCommandPoolMemoryConsumption(device, commandPool, commandBuffer, &consumption);
 
@@ -6046,11 +6032,10 @@ extern SCVK_FORCE_INLINE void scvkGetDescriptorSetLayoutSupport(VkDevice        
         .pBindings    = pBindings
     };
 
-    support = (VkDescriptorSetLayoutSupport)
-    {
-        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT,
-        .pNext = pSupportNext
-    };
+    scvkZeroMemory(&support, sizeof(support));
+
+    support.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT;
+    support.pNext = pSupportNext;
 
     vkGetDescriptorSetLayoutSupport(device, &create_info, &support);
 
@@ -6066,11 +6051,12 @@ extern SCVK_FORCE_INLINE void scvkGetDeviceGroupPeerMemoryFeatures(VkDevice     
 }
 extern SCVK_FORCE_INLINE void scvkGetDeviceGroupPresentCapabilities(VkDevice device, void* pNext, VkDeviceGroupPresentCapabilitiesKHR* pDeviceGroupPresentCapabilities)
 {
-    VkDeviceGroupPresentCapabilitiesKHR device_group_present_capabilities =
-    {
-        .sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR,
-        .pNext = pNext
-    };
+    VkDeviceGroupPresentCapabilitiesKHR device_group_present_capabilities;
+
+    scvkZeroMemory(&device_group_present_capabilities, sizeof(device_group_present_capabilities));
+
+    device_group_present_capabilities.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR;
+    device_group_present_capabilities.pNext = pNext;
 
     SCVK_CHECK(vkGetDeviceGroupPresentCapabilitiesKHR(device, &device_group_present_capabilities));
 
@@ -6171,11 +6157,12 @@ extern SCVK_FORCE_INLINE void scvkGetDisplayPlaneCapabilities2(VkPhysicalDevice 
                                                                void*                           pNext,
                                                                VkDisplayPlaneCapabilities2KHR* pCapabilities)
 {
-    VkDisplayPlaneCapabilities2KHR capabilities =
-    {
-        .sType = VK_STRUCTURE_TYPE_DISPLAY_PLANE_CAPABILITIES_2_KHR,
-        .pNext = pNext
-    };
+    VkDisplayPlaneCapabilities2KHR capabilities;
+
+    scvkZeroMemory(&capabilities, sizeof(capabilities));
+
+    capabilities.sType = VK_STRUCTURE_TYPE_DISPLAY_PLANE_CAPABILITIES_2_KHR;
+    capabilities.pNext = pNext;
 
     SCVK_CHECK(vkGetDisplayPlaneCapabilities2KHR(physicalDevice, pDisplayPlaneInfo, &capabilities));
 
@@ -6252,11 +6239,12 @@ extern SCVK_FORCE_INLINE VkResult scvkGetFenceStatus(VkDevice device, VkFence fe
 }
 extern SCVK_FORCE_INLINE void scvkGetImageDrmFormatModifierProperties(VkDevice device, VkImage image, void* pNext, VkImageDrmFormatModifierPropertiesEXT* pProperties)
 {
-    VkImageDrmFormatModifierPropertiesEXT properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT,
-        .pNext = pNext
-    };
+    VkImageDrmFormatModifierPropertiesEXT properties;
+
+    scvkZeroMemory(&properties, sizeof(properties));
+
+    properties.sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT;
+    properties.pNext = pNext;
 
     SCVK_CHECK(vkGetImageDrmFormatModifierPropertiesEXT(device, image, &properties));
 
@@ -6268,11 +6256,12 @@ extern SCVK_FORCE_INLINE void scvkGetImageMemoryRequirements(VkDevice device, Vk
 }
 extern SCVK_FORCE_INLINE void scvkGetImageMemoryRequirements2(VkDevice device, const VkImageMemoryRequirementsInfo2* pInfo, void* pNext, VkMemoryRequirements2* pMemoryRequirements)
 {
-    VkMemoryRequirements2 memory_requirements =
-    {
-        .sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2,
-        .pNext = pNext
-    };
+    VkMemoryRequirements2 memory_requirements;
+
+    scvkZeroMemory(&memory_requirements, sizeof(memory_requirements));
+
+    memory_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
+    memory_requirements.pNext = pNext;
 
     vkGetImageMemoryRequirements2(device, pInfo, &memory_requirements);
 
@@ -6305,11 +6294,12 @@ extern SCVK_FORCE_INLINE void scvkGetMemoryFd(VkDevice device, const void* pNext
 }
 extern SCVK_FORCE_INLINE void scvkGetMemoryFdProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, int fd, void* pNext, VkMemoryFdPropertiesKHR* pMemoryFdProperties)
 {
-    VkMemoryFdPropertiesKHR memory_fd_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR,
-        .pNext = pNext
-    };
+    VkMemoryFdPropertiesKHR memory_fd_properties;
+
+    scvkZeroMemory(&memory_fd_properties, sizeof(memory_fd_properties));
+
+    memory_fd_properties.sType = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR;
+    memory_fd_properties.pNext = pNext;
 
     SCVK_CHECK(vkGetMemoryFdPropertiesKHR(device, handleType, fd, &memory_fd_properties));
 
@@ -6321,11 +6311,12 @@ extern SCVK_FORCE_INLINE void scvkGetMemoryHostPointerProperties(VkDevice       
                                                                  void*                              pNext,
                                                                  VkMemoryHostPointerPropertiesEXT*  pMemoryHostPointerProperties)
 {
-    VkMemoryHostPointerPropertiesEXT memory_host_pointer_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT,
-        .pNext = pNext
-    };
+    VkMemoryHostPointerPropertiesEXT memory_host_pointer_properties;
+
+    scvkZeroMemory(&memory_host_pointer_properties, sizeof(memory_host_pointer_properties));
+
+    memory_host_pointer_properties.sType = VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT;
+    memory_host_pointer_properties.pNext = pNext;
 
     SCVK_CHECK(vkGetMemoryHostPointerPropertiesEXT(device, handleType, pHostPointer, &memory_host_pointer_properties));
 
@@ -6420,11 +6411,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalBufferProperties(VkPh
                                                                             void*                                     pNext,
                                                                             VkExternalBufferProperties*               pExternalBufferProperties)
 {
-    VkExternalBufferProperties external_buffer_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES,
-        .pNext = pNext
-    };
+    VkExternalBufferProperties external_buffer_properties;
+
+    scvkZeroMemory(&external_buffer_properties, sizeof(external_buffer_properties));
+
+    external_buffer_properties.sType = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES;
+    external_buffer_properties.pNext = pNext;
 
     vkGetPhysicalDeviceExternalBufferProperties(physicalDevice, pExternalBufferInfo, &external_buffer_properties);
 
@@ -6435,11 +6427,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalFenceProperties(VkPhy
                                                                            void*                                    pNext,
                                                                            VkExternalFenceProperties*               pExternalFenceProperties)
 {
-    VkExternalFenceProperties external_fence_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES,
-        .pNext = pNext
-    };
+    VkExternalFenceProperties external_fence_properties;
+
+    scvkZeroMemory(&external_fence_properties, sizeof(external_fence_properties));
+
+    external_fence_properties.sType = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES;
+    external_fence_properties.pNext = pNext;
 
     vkGetPhysicalDeviceExternalFenceProperties(physicalDevice, pExternalFenceInfo, &external_fence_properties);
 
@@ -6450,11 +6443,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalSemaphoreProperties(V
                                                                                void*                                        pNext,
                                                                                VkExternalSemaphoreProperties*               pExternalSemaphoreProperties)
 {
-    VkExternalSemaphoreProperties external_semaphore_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES,
-        .pNext = pNext
-    };
+    VkExternalSemaphoreProperties external_semaphore_properties;
+
+    scvkZeroMemory(&external_semaphore_properties, sizeof(external_semaphore_properties));
+
+    external_semaphore_properties.sType = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES;
+    external_semaphore_properties.pNext = pNext;
 
     vkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, pExternalSemaphoreInfo, &external_semaphore_properties);
 
@@ -6482,11 +6476,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceFormatProperties(VkPhysicalDe
 }
 extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceFormatProperties2(VkPhysicalDevice physicalDevice, VkFormat format, void* pNext, VkFormatProperties2* pFormatProperties)
 {
-    VkFormatProperties2 format_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2,
-        .pNext = pNext
-    };
+    VkFormatProperties2 format_properties;
+
+    scvkZeroMemory(&format_properties, sizeof(format_properties));
+
+    format_properties.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
+    format_properties.pNext = pNext;
 
     vkGetPhysicalDeviceFormatProperties2(physicalDevice, format, &format_properties);
 
@@ -6538,11 +6533,10 @@ extern SCVK_FORCE_INLINE VkResult scvkGetPhysicalDeviceImageFormatProperties2(Vk
     VkImageFormatProperties2 image_format_properties;
     VkResult                 result;
 
-    image_format_properties = (VkImageFormatProperties2)
-    {
-        .sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2,
-        .pNext = pNext
-    };
+    scvkZeroMemory(&image_format_properties, sizeof(image_format_properties));
+
+    image_format_properties.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
+    image_format_properties.pNext = pNext;
 
     result = vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, &image_format_properties);
     SCVK_ASSERT((VK_SUCCESS == result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result));
@@ -6560,11 +6554,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceMemoryProperties(VkPhysicalDe
 }
 extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceMemoryProperties2* pMemoryProperties)
 {
-    VkPhysicalDeviceMemoryProperties2 memory_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceMemoryProperties2 memory_properties;
+
+    scvkZeroMemory(&memory_properties, sizeof(memory_properties));
+
+    memory_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
+    memory_properties.pNext = pNext;
 
     vkGetPhysicalDeviceMemoryProperties2(physicalDevice, &memory_properties);
 
@@ -6575,11 +6570,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceMultisampleProperties(VkPhysi
                                                                          void*                       pNext,
                                                                          VkMultisamplePropertiesEXT* pMultisampleProperties)
 {
-    VkMultisamplePropertiesEXT multisample_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT,
-        .pNext = pNext
-    };
+    VkMultisamplePropertiesEXT multisample_properties;
+
+    scvkZeroMemory(&multisample_properties, sizeof(multisample_properties));
+
+    multisample_properties.sType = VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT;
+    multisample_properties.pNext = pNext;
 
     vkGetPhysicalDeviceMultisamplePropertiesEXT(physicalDevice, samples, &multisample_properties);
 
@@ -6605,11 +6601,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceProperties(VkPhysicalDevice p
 }
 extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceProperties2* pProperties)
 {
-    VkPhysicalDeviceProperties2 properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceProperties2 properties;
+
+    scvkZeroMemory(&properties, sizeof(properties));
+
+    properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+    properties.pNext = pNext;
 
     vkGetPhysicalDeviceProperties2(physicalDevice, &properties);
 
@@ -6693,11 +6690,10 @@ extern SCVK_FORCE_INLINE VkResult scvkGetPhysicalDeviceSurfaceCapabilities2EXT(V
     VkSurfaceCapabilities2EXT surface_capabilities;
     VkResult                  result;
 
-    surface_capabilities = (VkSurfaceCapabilities2EXT)
-    {
-        .sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT,
-        .pNext = pNext
-    };
+    scvkZeroMemory(&surface_capabilities, sizeof(surface_capabilities));
+
+    surface_capabilities.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT;
+    surface_capabilities.pNext = pNext;
 
     result = vkGetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice, surface, &surface_capabilities);
     SCVK_ASSERT((VK_SUCCESS == result) || (VK_ERROR_SURFACE_LOST_KHR == result));
@@ -6717,11 +6713,10 @@ extern SCVK_FORCE_INLINE VkResult scvkGetPhysicalDeviceSurfaceCapabilities2(VkPh
     VkSurfaceCapabilities2KHR surface_capabilities;
     VkResult                  result;
 
-    surface_capabilities = (VkSurfaceCapabilities2KHR)
-    {
-        .sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR,
-        .pNext = pNext
-    };
+    scvkZeroMemory(&surface_capabilities, sizeof(surface_capabilities));
+
+    surface_capabilities.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
+    surface_capabilities.pNext = pNext;
 
     result = vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, &surface_capabilities);
     SCVK_ASSERT((VK_SUCCESS == result) || (VK_ERROR_SURFACE_LOST_KHR == result));
@@ -6909,15 +6904,15 @@ extern SCVK_FORCE_INLINE void scvkMapMemory(VkDevice device, VkDeviceMemory memo
 }
 extern SCVK_FORCE_INLINE void scvkQueueBeginDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
-    VkDebugUtilsLabelEXT label_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-        .pNext      = pNext,
-        .pLabelName = pLabelName,
-        .color      = {0}
-    };
+    VkDebugUtilsLabelEXT label_info;
 
-    (void)memcpy(label_info.color, color, sizeof(label_info.color));
+    scvkZeroMemory(&label_info, sizeof(label_info));
+
+    label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+    label_info.pNext      = pNext;
+    label_info.pLabelName = pLabelName;
+
+    scvkCopyMemory(label_info.color, color, sizeof(label_info.color));
     vkQueueBeginDebugUtilsLabelEXT(queue, &label_info);
 }
 extern SCVK_FORCE_INLINE void scvkQueueEndDebugUtilsLabel(VkQueue queue)
@@ -6926,15 +6921,15 @@ extern SCVK_FORCE_INLINE void scvkQueueEndDebugUtilsLabel(VkQueue queue)
 }
 extern SCVK_FORCE_INLINE void scvkQueueInsertDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
-    VkDebugUtilsLabelEXT label_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
-        .pNext      = pNext,
-        .pLabelName = pLabelName,
-        .color      = {0}
-    };
+    VkDebugUtilsLabelEXT label_info;
 
-    (void)memcpy(label_info.color, color, sizeof(label_info.color));
+    scvkZeroMemory(&label_info, sizeof(label_info));
+
+    label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+    label_info.pNext      = pNext;
+    label_info.pLabelName = pLabelName;
+
+    scvkCopyMemory(label_info.color, color, sizeof(label_info.color));
     vkQueueInsertDebugUtilsLabelEXT(queue, &label_info);
 }
 extern SCVK_FORCE_INLINE VkResult scvkQueuePresent(VkQueue               queue,
@@ -9521,16 +9516,16 @@ extern SCVK_FORCE_INLINE void scvkCreateComputePipelineWithOfflineInfo(VkDevice 
                                                                        const VkAllocationCallbacks*    pAllocator,
                                                                        VkPipeline*                     pPipeline)
 {
-    VkPipelineOfflineCreateInfo create_info =
-    {
-        .sType              = VK_STRUCTURE_TYPE_PIPELINE_OFFLINE_CREATE_INFO,
-        .pNext              = pNext,
-        .matchControl       = matchControl,
-        .poolEntrySize      = poolEntrySize,
-        .pipelineIdentifier = {0}
-    };
+    VkPipelineOfflineCreateInfo create_info;
 
-    (void)memcpy(create_info.pipelineIdentifier, pipelineIdentifier, sizeof(create_info.pipelineIdentifier));
+    scvkZeroMemory(&create_info, sizeof(create_info));
+
+    create_info.sType         = VK_STRUCTURE_TYPE_PIPELINE_OFFLINE_CREATE_INFO;
+    create_info.pNext         = pNext;
+    create_info.matchControl  = matchControl;
+    create_info.poolEntrySize = poolEntrySize;
+
+    scvkCopyMemory(create_info.pipelineIdentifier, pipelineIdentifier, sizeof(create_info.pipelineIdentifier));
     scvkCreateComputePipeline(device, pipelineCache, &create_info, flags, stage, layout, basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
 }
 extern SCVK_FORCE_INLINE void scvkCreateGraphicsPipelineWithDiscardRectangleStateInfo(VkDevice                                      device,
@@ -9618,15 +9613,15 @@ extern SCVK_FORCE_INLINE void scvkCreateGraphicsPipelineWithFragmentShadingRateS
                                                                                          const VkAllocationCallbacks*                  pAllocator,
                                                                                          VkPipeline*                                   pPipeline)
 {
-    VkPipelineFragmentShadingRateStateCreateInfoKHR create_info =
-    {
-        .sType        = VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR,
-        .pNext        = pNext,
-        .fragmentSize = fragmentSize,
-        .combinerOps  = {0}
-    };
+    VkPipelineFragmentShadingRateStateCreateInfoKHR create_info;
 
-    (void)memcpy(create_info.combinerOps, combinerOps, sizeof(create_info.combinerOps));
+    scvkZeroMemory(&create_info, sizeof(create_info));
+
+    create_info.sType        = VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR;
+    create_info.pNext        = pNext;
+    create_info.fragmentSize = fragmentSize;
+
+    scvkCopyMemory(create_info.combinerOps, combinerOps, sizeof(create_info.combinerOps));
     scvkCreateGraphicsPipeline(device,
                                pipelineCache,
                                &create_info,
@@ -9676,16 +9671,16 @@ extern SCVK_FORCE_INLINE void scvkCreateGraphicsPipelineWithOfflineInfo(VkDevice
                                                                         const VkAllocationCallbacks*                  pAllocator,
                                                                         VkPipeline*                                   pPipeline)
 {
-    VkPipelineOfflineCreateInfo create_info =
-    {
-        .sType              = VK_STRUCTURE_TYPE_PIPELINE_OFFLINE_CREATE_INFO,
-        .pNext              = pNext,
-        .matchControl       = matchControl,
-        .poolEntrySize      = poolEntrySize,
-        .pipelineIdentifier = {0}
-    };
+    VkPipelineOfflineCreateInfo create_info;
 
-    (void)memcpy(create_info.pipelineIdentifier, pipelineIdentifier, sizeof(create_info.pipelineIdentifier));
+    scvkZeroMemory(&create_info, sizeof(create_info));
+
+    create_info.sType         = VK_STRUCTURE_TYPE_PIPELINE_OFFLINE_CREATE_INFO;
+    create_info.pNext         = pNext;
+    create_info.matchControl  = matchControl;
+    create_info.poolEntrySize = poolEntrySize;
+
+    scvkCopyMemory(create_info.pipelineIdentifier, pipelineIdentifier, sizeof(create_info.pipelineIdentifier));
     scvkCreateGraphicsPipeline(device,
                                pipelineCache,
                                &create_info,
@@ -10050,11 +10045,12 @@ extern SCVK_FORCE_INLINE void scvkGetBufferMemoryDedicatedRequirements(VkDevice 
                                                                        VkMemoryDedicatedRequirements* pMemoryDedicatedRequirements)
 {
     VkMemoryRequirements2         memory_requirements;
-    VkMemoryDedicatedRequirements requirements =
-    {
-        .sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS,
-        .pNext = pMemoryDedicatedRequirementsNext
-    };
+    VkMemoryDedicatedRequirements requirements;
+
+    scvkZeroMemory(&requirements, sizeof(requirements));
+
+    requirements.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
+    requirements.pNext = pMemoryDedicatedRequirementsNext;
 
     scvkGetBufferMemoryRequirementsInfo2(device, pInfoNext, buffer, &requirements, &memory_requirements);
 
@@ -10069,11 +10065,12 @@ extern SCVK_FORCE_INLINE void scvkGetDescriptorSetVariableDescriptorCountLayoutS
                                                                                        VkDescriptorSetVariableDescriptorCountLayoutSupport* pDescriptorSetVariableDescriptorCountLayoutSupport)
 {
     VkDescriptorSetLayoutSupport                        support;
-    VkDescriptorSetVariableDescriptorCountLayoutSupport ext_support =
-    {
-        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT,
-        .pNext = pDescriptorSetVariableDescriptorCountLayoutSupportNext
-    };
+    VkDescriptorSetVariableDescriptorCountLayoutSupport ext_support;
+
+    scvkZeroMemory(&ext_support, sizeof(ext_support));
+
+    ext_support.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT;
+    ext_support.pNext = pDescriptorSetVariableDescriptorCountLayoutSupportNext;
 
     scvkGetDescriptorSetLayoutSupport(device, pCreateInfoNext, flags, bindingCount, pBindings, &ext_support, &support);
 
@@ -10086,11 +10083,12 @@ extern SCVK_FORCE_INLINE void scvkGetImageMemoryDedicatedRequirements(VkDevice  
                                                                       VkMemoryDedicatedRequirements* pMemoryDedicatedRequirements)
 {
     VkMemoryRequirements2         memory_requirements;
-    VkMemoryDedicatedRequirements requirements =
-    {
-        .sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS,
-        .pNext = pMemoryDedicatedRequirementsNext
-    };
+    VkMemoryDedicatedRequirements requirements;
+
+    scvkZeroMemory(&requirements, sizeof(requirements));
+
+    requirements.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
+    requirements.pNext = pMemoryDedicatedRequirementsNext;
 
     scvkGetImageMemoryRequirementsInfo2(device, pInfoNext, image, &requirements, &memory_requirements);
 
@@ -10684,13 +10682,14 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceDrmFormatModifierPropertiesLi
                                                                                    VkDrmFormatModifierPropertiesListEXT* pDrmFormatModifierPropertiesList)
 {
     VkFormatProperties2                  format_properties;
-    VkDrmFormatModifierPropertiesListEXT drm_format_modifier_properties_list =
-    {
-        .sType                        = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT,
-        .pNext                        = pNext,
-        .drmFormatModifierCount       = drmFormatModifierCount,
-        .pDrmFormatModifierProperties = pDrmFormatModifierProperties
-    };
+    VkDrmFormatModifierPropertiesListEXT drm_format_modifier_properties_list;
+
+    scvkZeroMemory(&drm_format_modifier_properties_list, sizeof(drm_format_modifier_properties_list));
+
+    drm_format_modifier_properties_list.sType                        = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT;
+    drm_format_modifier_properties_list.pNext                        = pNext;
+    drm_format_modifier_properties_list.drmFormatModifierCount       = drmFormatModifierCount;
+    drm_format_modifier_properties_list.pDrmFormatModifierProperties = pDrmFormatModifierProperties;
 
     scvkGetPhysicalDeviceFormatProperties2(physicalDevice, format, &drm_format_modifier_properties_list, &format_properties);
 
@@ -10708,11 +10707,12 @@ extern SCVK_FORCE_INLINE VkResult scvkGetPhysicalDeviceExternalImageFormatProper
 {
     VkResult                        result;
     VkImageFormatProperties2        image_format_properties;
-    VkExternalImageFormatProperties properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES,
-        .pNext = pExternalImageFormatPropertiesNext
-    };
+    VkExternalImageFormatProperties properties;
+
+    scvkZeroMemory(&properties, sizeof(properties));
+
+    properties.sType = VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES;
+    properties.pNext = pExternalImageFormatPropertiesNext;
 
     result = scvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &properties, &image_format_properties);
 
@@ -10732,11 +10732,12 @@ extern SCVK_FORCE_INLINE VkResult scvkGetPhysicalDeviceFilterCubicImageViewImage
 {
     VkResult                                       result;
     VkImageFormatProperties2                       image_format_properties;
-    VkFilterCubicImageViewImageFormatPropertiesEXT properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_FILTER_CUBIC_IMAGE_VIEW_IMAGE_FORMAT_PROPERTIES_EXT,
-        .pNext = pFilterCubicImageViewImageFormatPropertiesNext
-    };
+    VkFilterCubicImageViewImageFormatPropertiesEXT properties;
+
+    scvkZeroMemory(&properties, sizeof(properties));
+
+    properties.sType = VK_STRUCTURE_TYPE_FILTER_CUBIC_IMAGE_VIEW_IMAGE_FORMAT_PROPERTIES_EXT;
+    properties.pNext = pFilterCubicImageViewImageFormatPropertiesNext;
 
     result = scvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &properties, &image_format_properties);
 
@@ -10756,11 +10757,12 @@ extern SCVK_FORCE_INLINE VkResult scvkGetPhysicalDeviceSamplerYcbcrConversionIma
 {
     VkResult                                      result;
     VkImageFormatProperties2                      image_format_properties;
-    VkSamplerYcbcrConversionImageFormatProperties properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES,
-        .pNext = pSamplerYcbcrConversionImageFormatPropertiesNext
-    };
+    VkSamplerYcbcrConversionImageFormatProperties properties;
+
+    scvkZeroMemory(&properties, sizeof(properties));
+
+    properties.sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES;
+    properties.pNext = pSamplerYcbcrConversionImageFormatPropertiesNext;
 
     result = scvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &properties, &image_format_properties);
 
@@ -10773,11 +10775,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceMemoryBudgetProperties(VkPhys
                                                                           VkPhysicalDeviceMemoryBudgetPropertiesEXT* pPhysicalDeviceMemoryBudgetProperties)
 {
     VkPhysicalDeviceMemoryProperties2         memory_properties;
-    VkPhysicalDeviceMemoryBudgetPropertiesEXT properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceMemoryBudgetPropertiesEXT properties;
+
+    scvkZeroMemory(&properties, sizeof(properties));
+
+    properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT;
+    properties.pNext = pNext;
 
     scvkGetPhysicalDeviceMemoryProperties2(physicalDevice, &properties, &memory_properties);
 
@@ -10788,11 +10791,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceBlendOperationAdvancedPropert
                                                                                     VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT* pPhysicalDeviceBlendOperationAdvancedProperties)
 {
     VkPhysicalDeviceProperties2                         properties;
-    VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -10803,11 +10807,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceConservativeRasterizationProp
                                                                                        VkPhysicalDeviceConservativeRasterizationPropertiesEXT* pPhysicalDeviceConservativeRasterizationProperties)
 {
     VkPhysicalDeviceProperties2                            properties;
-    VkPhysicalDeviceConservativeRasterizationPropertiesEXT ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceConservativeRasterizationPropertiesEXT ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -10818,11 +10823,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceCustomBorderColorProperties(V
                                                                                VkPhysicalDeviceCustomBorderColorPropertiesEXT* pPhysicalDeviceCustomBorderColorProperties)
 {
     VkPhysicalDeviceProperties2                    properties;
-    VkPhysicalDeviceCustomBorderColorPropertiesEXT ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceCustomBorderColorPropertiesEXT ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -10833,11 +10839,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceDepthStencilResolveProperties
                                                                                  VkPhysicalDeviceDepthStencilResolveProperties* pPhysicalDeviceDepthStencilResolveProperties)
 {
     VkPhysicalDeviceProperties2                   properties;
-    VkPhysicalDeviceDepthStencilResolveProperties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceDepthStencilResolveProperties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -10848,11 +10855,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceDescriptorIndexingProperties(
                                                                                 VkPhysicalDeviceDescriptorIndexingProperties* pPhysicalDeviceDescriptorIndexingProperties)
 {
     VkPhysicalDeviceProperties2                  properties;
-    VkPhysicalDeviceDescriptorIndexingProperties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceDescriptorIndexingProperties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -10863,11 +10871,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceDiscardRectangleProperties(Vk
                                                                               VkPhysicalDeviceDiscardRectanglePropertiesEXT* pPhysicalDeviceDiscardRectangleProperties)
 {
     VkPhysicalDeviceProperties2                   properties;
-    VkPhysicalDeviceDiscardRectanglePropertiesEXT ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceDiscardRectanglePropertiesEXT ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -10876,11 +10885,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceDiscardRectangleProperties(Vk
 extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceDriverProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceDriverProperties* pPhysicalDeviceDriverProperties)
 {
     VkPhysicalDeviceProperties2      properties;
-    VkPhysicalDeviceDriverProperties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceDriverProperties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -10891,11 +10901,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalMemoryHostProperties(
                                                                                 VkPhysicalDeviceExternalMemoryHostPropertiesEXT* pPhysicalDeviceExternalMemoryHostProperties)
 {
     VkPhysicalDeviceProperties2                     properties;
-    VkPhysicalDeviceExternalMemoryHostPropertiesEXT ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceExternalMemoryHostPropertiesEXT ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -10906,11 +10917,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceFloatControlsProperties(VkPhy
                                                                            VkPhysicalDeviceFloatControlsProperties* pPhysicalDeviceFloatControlsProperties)
 {
     VkPhysicalDeviceProperties2             properties;
-    VkPhysicalDeviceFloatControlsProperties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceFloatControlsProperties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -10921,11 +10933,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceFragmentShadingRateProperties
                                                                                  VkPhysicalDeviceFragmentShadingRatePropertiesKHR* pPhysicalDeviceFragmentShadingRateProperties)
 {
     VkPhysicalDeviceProperties2                      properties;
-    VkPhysicalDeviceFragmentShadingRatePropertiesKHR ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceFragmentShadingRatePropertiesKHR ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -10934,11 +10947,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceFragmentShadingRateProperties
 extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceIDProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceIDProperties* pPhysicalDeviceIDProperties)
 {
     VkPhysicalDeviceProperties2  properties;
-    VkPhysicalDeviceIDProperties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceIDProperties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -10947,11 +10961,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceIDProperties(VkPhysicalDevice
 extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceMaintenance3Properties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceMaintenance3Properties* pPhysicalDeviceMaintenance3Properties)
 {
     VkPhysicalDeviceProperties2            properties;
-    VkPhysicalDeviceMaintenance3Properties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceMaintenance3Properties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -10960,11 +10975,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceMaintenance3Properties(VkPhys
 extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceMultiviewProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceMultiviewProperties* pPhysicalDeviceMultiviewProperties)
 {
     VkPhysicalDeviceProperties2         properties;
-    VkPhysicalDeviceMultiviewProperties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceMultiviewProperties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -10973,11 +10989,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceMultiviewProperties(VkPhysica
 extern SCVK_FORCE_INLINE void scvkGetPhysicalDevicePCIBusInfoProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDevicePCIBusInfoPropertiesEXT* pPhysicalDevicePCIBusInfoProperties)
 {
     VkPhysicalDeviceProperties2             properties;
-    VkPhysicalDevicePCIBusInfoPropertiesEXT ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDevicePCIBusInfoPropertiesEXT ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -10988,11 +11005,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDevicePerformanceQueryProperties(Vk
                                                                               VkPhysicalDevicePerformanceQueryPropertiesKHR* pPhysicalDevicePerformanceQueryProperties)
 {
     VkPhysicalDeviceProperties2                   properties;
-    VkPhysicalDevicePerformanceQueryPropertiesKHR ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR,
-        .pNext = pNext
-    };
+    VkPhysicalDevicePerformanceQueryPropertiesKHR ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -11003,11 +11021,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDevicePointClippingProperties(VkPhy
                                                                            VkPhysicalDevicePointClippingProperties* pPhysicalDevicePointClippingProperties)
 {
     VkPhysicalDeviceProperties2             properties;
-    VkPhysicalDevicePointClippingProperties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDevicePointClippingProperties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -11018,11 +11037,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceProtectedMemoryProperties(VkP
                                                                              VkPhysicalDeviceProtectedMemoryProperties* pPhysicalDeviceProtectedMemoryProperties)
 {
     VkPhysicalDeviceProperties2               properties;
-    VkPhysicalDeviceProtectedMemoryProperties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceProtectedMemoryProperties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -11033,11 +11053,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceSampleLocationsProperties(VkP
                                                                              VkPhysicalDeviceSampleLocationsPropertiesEXT* pPhysicalDeviceSampleLocationsProperties)
 {
     VkPhysicalDeviceProperties2                  properties;
-    VkPhysicalDeviceSampleLocationsPropertiesEXT ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceSampleLocationsPropertiesEXT ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -11048,11 +11069,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceSamplerFilterMinmaxProperties
                                                                                  VkPhysicalDeviceSamplerFilterMinmaxProperties* pPhysicalDeviceSamplerFilterMinmaxProperties)
 {
     VkPhysicalDeviceProperties2                   properties;
-    VkPhysicalDeviceSamplerFilterMinmaxProperties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceSamplerFilterMinmaxProperties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -11061,11 +11083,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceSamplerFilterMinmaxProperties
 extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceSubgroupProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceSubgroupProperties* pPhysicalDeviceSubgroupProperties)
 {
     VkPhysicalDeviceProperties2        properties;
-    VkPhysicalDeviceSubgroupProperties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceSubgroupProperties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -11076,11 +11099,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceTimelineSemaphoreProperties(V
                                                                                VkPhysicalDeviceTimelineSemaphoreProperties* pPhysicalDeviceTimelineSemaphoreProperties)
 {
     VkPhysicalDeviceProperties2                 properties;
-    VkPhysicalDeviceTimelineSemaphoreProperties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceTimelineSemaphoreProperties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -11089,11 +11113,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceTimelineSemaphoreProperties(V
 extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceVulkan11Properties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceVulkan11Properties* pPhysicalDeviceVulkan11Properties)
 {
     VkPhysicalDeviceProperties2        properties;
-    VkPhysicalDeviceVulkan11Properties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceVulkan11Properties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -11102,11 +11127,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceVulkan11Properties(VkPhysical
 extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceVulkan12Properties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceVulkan12Properties* pPhysicalDeviceVulkan12Properties)
 {
     VkPhysicalDeviceProperties2        properties;
-    VkPhysicalDeviceVulkan12Properties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceVulkan12Properties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -11115,11 +11141,12 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceVulkan12Properties(VkPhysical
 extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceVulkanSC10Properties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceVulkanSC10Properties* pPhysicalDeviceVulkanSC10Properties)
 {
     VkPhysicalDeviceProperties2          properties;
-    VkPhysicalDeviceVulkanSC10Properties ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_SC_1_0_PROPERTIES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceVulkanSC10Properties ext_properties;
+
+    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_SC_1_0_PROPERTIES;
+    ext_properties.pNext = pNext;
 
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -11133,11 +11160,12 @@ extern SCVK_FORCE_INLINE VkResult scvkGetPhysicalDeviceSharedPresentSurfaceCapab
 {
     VkResult                              result;
     VkSurfaceCapabilities2KHR             surface_capabilities;
-    VkSharedPresentSurfaceCapabilitiesKHR capabilities =
-    {
-        .sType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR,
-        .pNext = pSharedPresentSurfaceCapabilitiesNext
-    };
+    VkSharedPresentSurfaceCapabilitiesKHR capabilities;
+
+    scvkZeroMemory(&capabilities, sizeof(capabilities));
+
+    capabilities.sType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR;
+    capabilities.pNext = pSharedPresentSurfaceCapabilitiesNext;
 
     result = scvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &capabilities, &surface_capabilities);
 
@@ -13217,7 +13245,7 @@ extern SCVK_FORCE_INLINE void scvkWriteMemory(VkDevice device, VkDeviceMemory me
     SCVK_ASSERT(VK_WHOLE_SIZE != size);
 
     scvkMapMemory(device, memory, offset, size, flags, &mapped);
-    (void)memcpy(mapped, pData, (size_t)size);
+    scvkCopyMemory(mapped, pData, (size_t)size);
     scvkFlushMappedMemoryRange(device, pRangeNext, memory, offset, size);
     scvkUnmapMemory(device, memory);
 }
@@ -13229,7 +13257,7 @@ extern SCVK_FORCE_INLINE void scvkReadMemory(VkDevice device, VkDeviceMemory mem
 
     scvkMapMemory(device, memory, offset, size, flags, &mapped);
     scvkInvalidateMappedMemoryRange(device, pRangeNext, memory, offset, size);
-    (void)memcpy(pData, mapped, (size_t)size);
+    scvkCopyMemory(pData, mapped, (size_t)size);
     scvkUnmapMemory(device, memory);
 }
 extern SCVK_FORCE_INLINE void scvkWriteCoherentMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, const void* pData)
@@ -13239,7 +13267,7 @@ extern SCVK_FORCE_INLINE void scvkWriteCoherentMemory(VkDevice device, VkDeviceM
     SCVK_ASSERT(VK_WHOLE_SIZE != size);
 
     scvkMapMemory(device, memory, offset, size, flags, &mapped);
-    (void)memcpy(mapped, pData, (size_t)size);
+    scvkCopyMemory(mapped, pData, (size_t)size);
     scvkUnmapMemory(device, memory);
 }
 extern SCVK_FORCE_INLINE void scvkReadCoherentMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void* pData)
@@ -13249,7 +13277,7 @@ extern SCVK_FORCE_INLINE void scvkReadCoherentMemory(VkDevice device, VkDeviceMe
     SCVK_ASSERT(VK_WHOLE_SIZE != size);
 
     scvkMapMemory(device, memory, offset, size, flags, &mapped);
-    (void)memcpy(pData, mapped, (size_t)size);
+    scvkCopyMemory(pData, mapped, (size_t)size);
     scvkUnmapMemory(device, memory);
 }
 extern SCVK_FORCE_INLINE uint32_t scvkGetWorkgroupCount(uint32_t itemCount, uint32_t itemsPerInvocation, uint32_t localSize)

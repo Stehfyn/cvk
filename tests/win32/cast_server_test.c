@@ -76,7 +76,7 @@ static MediaServer_Workspace_t g_serving;
  *  - 001 Rejection shall precede native socket creation and work without Winsock startup.
  *  - 002 Error text shall distinguish invalid input from a later native startup failure.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckRejectedBind(void);
 
@@ -109,7 +109,7 @@ static FORCE_INLINE SOCKET ConnectClient(uint16_t port);
  * \param[in] text     Complete readable request bytes
  * \param[in] count    Exact readable extent
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void SendText(SOCKET client, const char_t* text, uint32_t count);
 
@@ -126,7 +126,7 @@ static FORCE_INLINE void SendText(SOCKET client, const char_t* text, uint32_t co
  *
  * \param[in] client   Exclusive connected fixture socket
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void ReadHead(SOCKET client);
 
@@ -144,7 +144,7 @@ static FORCE_INLINE void ReadHead(SOCKET client);
  *
  * \param[in,out] owner   Required live server pointer
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void StopServer(MediaServer** owner);
 
@@ -160,7 +160,7 @@ static FORCE_INLINE void StopServer(MediaServer** owner);
  *  - 002 A client shall remain reusable across more than one server read-poll interval.
  *  - 003 Clients shall remain open until server shutdown proves that their workers ended.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckClients(void);
 
@@ -175,7 +175,7 @@ static FORCE_INLINE void CheckClients(void);
  *  - 001 An excess listener shall fail without changing existing identities or pool storage.
  *  - 002 A successfully retired slot shall accept another representation.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckListenerCapacity(void);
 
@@ -190,7 +190,7 @@ static FORCE_INLINE void CheckListenerCapacity(void);
  *  - 001 Every startup worker shall first hold one persistent client.
  *  - 002 Ending one client shall permit the queued peer to obtain a valid response.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckClientCapacity(void);
 

@@ -118,7 +118,7 @@ typedef struct Utl_Srt_Reader_s
  * \param[in]  input       Stable complete source; NULL only for zero byteCount
  * \param[in]  byteCount   Readable source extent
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void Utl_Srt_InitializeReader(Utl_Srt_Reader_t* reader, const byte_t* input, uint32_t byteCount);
 

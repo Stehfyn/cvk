@@ -107,7 +107,7 @@ typedef struct GpuDevice
  *
  * \param[out] pDevice   Fresh storage retained through every device borrower and Destroy
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 void GpuDevice_Initialize(GpuDevice* pDevice);
 
@@ -152,7 +152,7 @@ GpuDevice* GpuDevice_Create(GpuDevice* pDevice,
  *
  * \param[in,out] pDevice   Optional device whose borrowers have all stopped
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 void GpuDevice_Destroy(GpuDevice* pDevice);
 

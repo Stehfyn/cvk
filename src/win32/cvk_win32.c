@@ -6,6 +6,7 @@
 #include "cvk/cvk.h"
 #include "cvk/win32/cvk_win32.h"
 #include <volk.h>
+#include "vk_diagnostic.h"
 #include <memoryapi.h>
 #include <minwinbase.h>
 #include <minwindef.h>
@@ -14,6 +15,7 @@
 #include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_win32.h>
+#include <windef.h>
 #include <winnt.h>
 
 extern CVK_FORCE_INLINE void cvkInitD3D12FenceSubmitInfo(VkD3D12FenceSubmitInfoKHR* pInfo,
@@ -334,11 +336,12 @@ extern CVK_FORCE_INLINE void cvkGetMemoryWin32HandleProperties(VkDevice         
                                                                void*                              pNext,
                                                                VkMemoryWin32HandlePropertiesKHR*  pMemoryWin32HandleProperties)
 {
-    VkMemoryWin32HandlePropertiesKHR memory_win32_handle_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR,
-        .pNext = pNext
-    };
+    VkMemoryWin32HandlePropertiesKHR memory_win32_handle_properties;
+
+    cvkZeroMemory(&memory_win32_handle_properties, sizeof(memory_win32_handle_properties));
+
+    memory_win32_handle_properties.sType = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR;
+    memory_win32_handle_properties.pNext = pNext;
 
     CVK_CHECK(vkGetMemoryWin32HandlePropertiesKHR(device, handleType, handle, &memory_win32_handle_properties));
 
@@ -1077,11 +1080,12 @@ extern CVK_FORCE_INLINE VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesFullScre
 {
     VkResult                                    result;
     VkSurfaceCapabilities2KHR                   surface_capabilities;
-    VkSurfaceCapabilitiesFullScreenExclusiveEXT surface_capabilities_full_screen_exclusive =
-    {
-        .sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT,
-        .pNext = pSurfaceCapabilitiesFullScreenExclusiveNext
-    };
+    VkSurfaceCapabilitiesFullScreenExclusiveEXT surface_capabilities_full_screen_exclusive;
+
+    cvkZeroMemory(&surface_capabilities_full_screen_exclusive, sizeof(surface_capabilities_full_screen_exclusive));
+
+    surface_capabilities_full_screen_exclusive.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT;
+    surface_capabilities_full_screen_exclusive.pNext = pSurfaceCapabilitiesFullScreenExclusiveNext;
 
     result = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_capabilities_full_screen_exclusive, &surface_capabilities);
 

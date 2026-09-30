@@ -6,6 +6,8 @@
 #include "cvk/cvk.h"
 #include "cvk/provisional/cvk_provisional.h"
 #include <volk.h>
+#include "vk_diagnostic.h"
+#include <stddef.h>
 #include <stdint.h>
 #include <vulkan/vulkan_beta.h>
 #include <vulkan/vulkan_core.h>
@@ -608,11 +610,12 @@ extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceCudaKernelLaunchPropertiesNV(Vk
                                                                               VkPhysicalDeviceCudaKernelLaunchPropertiesNV* pPhysicalDeviceCudaKernelLaunchPropertiesNV)
 {
     VkPhysicalDeviceProperties2                  properties;
-    VkPhysicalDeviceCudaKernelLaunchPropertiesNV ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAUNCH_PROPERTIES_NV,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceCudaKernelLaunchPropertiesNV ext_properties;
+
+    cvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAUNCH_PROPERTIES_NV;
+    ext_properties.pNext = pNext;
 
     cvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -623,11 +626,12 @@ extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceDisplacementMicromapPropertiesN
                                                                                   VkPhysicalDeviceDisplacementMicromapPropertiesNV* pPhysicalDeviceDisplacementMicromapPropertiesNV)
 {
     VkPhysicalDeviceProperties2                      properties;
-    VkPhysicalDeviceDisplacementMicromapPropertiesNV ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISPLACEMENT_MICROMAP_PROPERTIES_NV,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceDisplacementMicromapPropertiesNV ext_properties;
+
+    cvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISPLACEMENT_MICROMAP_PROPERTIES_NV;
+    ext_properties.pNext = pNext;
 
     cvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -638,11 +642,12 @@ extern CVK_FORCE_INLINE void cvkGetPhysicalDevicePortabilitySubsetProperties(VkP
                                                                              VkPhysicalDevicePortabilitySubsetPropertiesKHR* pPhysicalDevicePortabilitySubsetProperties)
 {
     VkPhysicalDeviceProperties2                    properties;
-    VkPhysicalDevicePortabilitySubsetPropertiesKHR ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_KHR,
-        .pNext = pNext
-    };
+    VkPhysicalDevicePortabilitySubsetPropertiesKHR ext_properties;
+
+    cvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_KHR;
+    ext_properties.pNext = pNext;
 
     cvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -653,11 +658,12 @@ extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceShaderEnqueuePropertiesAMDX(VkP
                                                                              VkPhysicalDeviceShaderEnqueuePropertiesAMDX* pPhysicalDeviceShaderEnqueuePropertiesAMDX)
 {
     VkPhysicalDeviceProperties2                 properties;
-    VkPhysicalDeviceShaderEnqueuePropertiesAMDX ext_properties =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_PROPERTIES_AMDX,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceShaderEnqueuePropertiesAMDX ext_properties;
+
+    cvkZeroMemory(&ext_properties, sizeof(ext_properties));
+
+    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_PROPERTIES_AMDX;
+    ext_properties.pNext = pNext;
 
     cvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 

@@ -171,7 +171,7 @@ static const Range_t c_nameAdditional[] = {
  *
  * \param[in] text   Borrowed representation to inspect
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void AssertText(Utl_Xml_Text_t text);
 
@@ -427,7 +427,7 @@ static FORCE_INLINE bool_t AppendAttribute(Reader_t* reader, Utl_Xml_Node_t* nod
  *
  * \param[in,out] cursor   Bounded position
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void ReadWhitespace(Cursor_t* cursor);
 

@@ -1,6 +1,7 @@
-#pragma once
+#ifndef IMMERSIVE_OPUS3_DPI_H
+#define IMMERSIVE_OPUS3_DPI_H
 
-#include <windows.h>
+#include <Windows.h>
 
 /* DPI scaling, in one place. The caption's metrics are authored in DIPs (1/96 inch) and scaled to the
    window's DPI here; every other metric is asked of the system at that DPI (GetSystemMetricsForDpi,
@@ -21,7 +22,7 @@ static FORCEINLINE LONG DpiScaleFloor(UINT dpi)
 
 static FORCEINLINE LONG DpiScaleCeil(UINT dpi)
 {
-    return (LONG)((dpi + USER_DEFAULT_SCREEN_DPI - 1u) / USER_DEFAULT_SCREEN_DPI);
+    return (LONG)((dpi + USER_DEFAULT_SCREEN_DPI - 1U) / USER_DEFAULT_SCREEN_DPI);
 }
 
 /* The exact DIP-to-pixel factor: Direct2D drawing, which is done in pixels on a 96-DPI context. */
@@ -29,3 +30,5 @@ static FORCEINLINE FLOAT DpiScale(UINT dpi)
 {
     return (FLOAT)dpi / (FLOAT)USER_DEFAULT_SCREEN_DPI;
 }
+
+#endif

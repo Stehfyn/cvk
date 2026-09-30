@@ -3,8 +3,8 @@
 #include "cvk/screen/cvk_screen_json.h"
 #include "cvk/cvk_json.h"
 #include "cvk/internal/cvk_json_work.h"
+#include "vk_diagnostic.h"
 #include <stdint.h>
-#include <string.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_screen.h>
 
@@ -22,7 +22,7 @@ void cvkReadJsonExternalFormatQNX(cvkJsonWork* pWork, const cvkJsonValue* pObjec
     pContext = pWork->pContext;
     pInfo    = (VkExternalFormatQNX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_QNX;
 
@@ -49,7 +49,7 @@ void cvkReadJsonImportScreenBufferInfoQNX(cvkJsonWork* pWork, const cvkJsonValue
     pContext = pWork->pContext;
     pInfo    = (VkImportScreenBufferInfoQNX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_SCREEN_BUFFER_INFO_QNX;
 
@@ -73,7 +73,7 @@ void cvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(cvkJsonWork*
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_SCREEN_BUFFER_FEATURES_QNX;
 
@@ -100,7 +100,7 @@ void cvkReadJsonScreenBufferFormatPropertiesQNX(cvkJsonWork* pWork, const cvkJso
     pContext = pWork->pContext;
     pInfo    = (VkScreenBufferFormatPropertiesQNX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_FORMAT_PROPERTIES_QNX;
 
@@ -166,7 +166,7 @@ void cvkReadJsonScreenBufferPropertiesQNX(cvkJsonWork* pWork, const cvkJsonValue
     pContext = pWork->pContext;
     pInfo    = (VkScreenBufferPropertiesQNX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_PROPERTIES_QNX;
 
@@ -197,7 +197,7 @@ void cvkReadJsonScreenSurfaceCreateInfoQNX(cvkJsonWork* pWork, const cvkJsonValu
     pContext = pWork->pContext;
     pInfo    = (VkScreenSurfaceCreateInfoQNX*)pOutput;
 
-    (void)memset(pInfo, 0, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SCREEN_SURFACE_CREATE_INFO_QNX;
 

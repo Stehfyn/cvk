@@ -84,7 +84,7 @@ static const char_t        c_lastType[]  = "video/webm";
  *
  * \param[out] fixture   Required retained test state
  *
- * \retval     None
+ * \retval     None No value is returned.
  */
 static FORCE_INLINE void InitializeFixture(Fixture_t* fixture);
 
@@ -101,7 +101,7 @@ static FORCE_INLINE void InitializeFixture(Fixture_t* fixture);
  *
  * \param[in,out] fixture   Required initialized fixture
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void PublishValue(Fixture_t* fixture);
 
@@ -118,7 +118,7 @@ static FORCE_INLINE void PublishValue(Fixture_t* fixture);
  *
  * \param[in,out] fixture   Required initialized fixture
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 static FORCE_INLINE void TakeValue(Fixture_t* fixture);
 
@@ -133,7 +133,7 @@ static FORCE_INLINE void TakeValue(Fixture_t* fixture);
  *  - 001 Every sequence shall begin empty and finish with repeated draining attempts.
  *  - 002 No expected slot indexes shall be derived from the implementation's rotation algorithm.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckTransitions(void);
 
@@ -149,7 +149,7 @@ static FORCE_INLINE void CheckTransitions(void);
  *
  * \param[in] media   Required acquired maximum-size pair
  *
- * \retval    None
+ * \retval    None No value is returned.
  */
 static FORCE_INLINE void CheckLongPair(const CastMedia_t* media);
 
@@ -166,7 +166,7 @@ static FORCE_INLINE void CheckLongPair(const CastMedia_t* media);
  *  - 003 The next successful acquisition shall return the latest complete pair.
  *  - 004 Quiescent initialization shall discard pending publications.
  *
- * \retval None
+ * \retval None No value is returned.
  */
 static FORCE_INLINE void CheckMedia(void);
 

@@ -190,7 +190,7 @@ bool_t CastSession_IsRunning(const CastSession_t* session);
  * \param[in,out] session   Initialized idle lifetime owner
  * \param[in]     config    Configuration copied by value; referenced keyframes and callback context stay borrowed
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 void CastSession_Prepare(CastSession_t* session, const CastSessionConfig* config);
 
@@ -248,7 +248,7 @@ uint32_t CastSession_WriteLoad(const CastSessionConfig* config,
  * \param[in]     pUrl           Required URL, fewer than 1200 bytes excluding its terminator
  * \param[in]     pContentType   Required MIME type, fewer than 64 bytes excluding its terminator
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 void CastSession_SetProxy(CastSession_t* owner, const char* pUrl, const char* pContentType);
 
@@ -270,7 +270,7 @@ void CastSession_SetProxy(CastSession_t* owner, const char* pUrl, const char* pC
  * \param[in]     url           Required URL, fewer than 1200 bytes excluding its terminator
  * \param[in]     contentType   Required MIME type, fewer than 64 bytes excluding its terminator
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 void CastSession_ReplaceMedia(CastSession_t* owner, const char* url, const char* contentType);
 
@@ -325,7 +325,7 @@ bool_t CastSession_Post(CastSession_t* owner, CastCommand command, double second
  *
  * \param[in,out] session   Required initialized owner with no active users
  *
- * \retval        None
+ * \retval        None No value is returned.
  */
 void CastSession_Reset(CastSession_t* session);
 
