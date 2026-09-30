@@ -36,11 +36,13 @@ static FORCE_INLINE void* AllocateTableBytes(size_t bytes)
 
 static FORCE_INLINE void* AllocateZeroedTable(size_t count, size_t elementSize)
 {
+    size_t bytes = count * elementSize;
+
     if (0 != elementSize && count > SIZE_MAX / elementSize)
     {
         return NULL;
     }
-    return HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, count * elementSize);
+    return HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, bytes);
 }
 
 static FORCE_INLINE void ReleaseTableBytes(void* address)
@@ -232,12 +234,46 @@ static FORCE_INLINE uint64_t Be64(const byte_t* p)
 static FORCE_INLINE int ReadAt(HANDLE hFile, uint64_t offset, void* pOut, DWORD size)
 {
     LARGE_INTEGER position;
+    DWORD         read;
+    bool_t        moved;
+    bool_t        readOk;
+    bool_t        complete;
+    bool_t        valid;
+    DWORD         requested;
+    byte_t        discard = 0;
+    void*         destination;
 
-    DWORD         read = 0;
-
+    if (0 == size)
+    {
+        return 1;
+    }
     position.QuadPart = (LONGLONG)offset;
-    return SetFilePointerEx(hFile, position, NULL, FILE_BEGIN) && ReadFile(hFile, pOut, size, &read, NULL) &&
-           read == size;
+    read              = 0;
+    moved             = !!SetFilePointerEx(hFile, position, NULL, FILE_BEGIN);
+    requested         = moved ? size : 0;
+    destination       = moved ? pOut : &discard;
+    readOk            = !!ReadFile(hFile, destination, requested, &read, NULL);
+    complete = (size == read);
+    valid = readOk && complete;
+    return moved && valid;
+}
+
+static FORCE_INLINE uint32_t ReadSelectedSample(Mp4Demux* pDemux, const Mp4Sample* pSample, byte_t* pBuffer, uint32_t capacity)
+{
+    Mp4Sample       empty;
+    const Mp4Sample* selected;
+    uint32_t        size;
+    bool_t          valid;
+    bool_t          read;
+
+    empty.offset = 0;
+    empty.size   = 0;
+    selected     = (NULL != pSample) ? pSample : &empty;
+    size         = selected->size;
+    valid        = (NULL != pSample) && (size <= capacity);
+    size         = valid ? size : 0;
+    read         = ReadAt(pDemux->hFile, selected->offset, pBuffer, size);
+    return (valid && read) ? size : 0;
 }
 
 /* Reads the box header at offset within parentEnd. Returns 0 at the end or on a bad size. */
@@ -254,6 +290,7 @@ static FORCE_INLINE bool_t ReadBox(HANDLE hFile, uint64_t offset, uint64_t paren
     bool_t                is_valid;
     uint64_t              remaining;
     bool_t                has_header;
+    bool_t                read;
     DWORD                 read_bytes;
     byte_t                bytes[UTL_MPEG4_MAX_BOX_HEADER_BYTES];
     Utl_Mpeg4_Span_t      prefix;
@@ -266,26 +303,17 @@ static FORCE_INLINE bool_t ReadBox(HANDLE hFile, uint64_t offset, uint64_t paren
     offset_in_parent = (offset <= parentEnd);
     parent_in_file   = (parentEnd <= fileEnd);
     is_valid         = offset_in_parent && parent_in_file;
+    remaining        = offset_in_parent ? parentEnd - offset : 0;
+    has_header       = is_valid && (UTL_MPEG4_BOX_HEADER_BYTES <= remaining);
+    read_bytes       = (DWORD)((remaining < UTL_MPEG4_MAX_BOX_HEADER_BYTES) ? remaining : UTL_MPEG4_MAX_BOX_HEADER_BYTES);
+    read_bytes       = has_header ? read_bytes : 0;
+    read             = ReadAt(hFile, offset, bytes, read_bytes);
+    is_valid         = has_header && read;
     if (is_valid)
     {
-        remaining  = parentEnd - offset;
-        has_header = (UTL_MPEG4_BOX_HEADER_BYTES <= remaining);
-        is_valid   = has_header;
-        if (has_header)
-        {
-            read_bytes = UTL_MPEG4_MAX_BOX_HEADER_BYTES;
-            if (remaining < read_bytes)
-            {
-                read_bytes = (DWORD)remaining;
-            }
-            is_valid = ReadAt(hFile, offset, bytes, read_bytes);
-            if (is_valid)
-            {
-                prefix.data      = bytes;
-                prefix.byteCount = read_bytes;
-                is_valid         = Utl_Mpeg4_ReadBoxHeader(&header, prefix, remaining, fileEnd - offset);
-            }
-        }
+        prefix.data      = bytes;
+        prefix.byteCount = read_bytes;
+        is_valid         = Utl_Mpeg4_ReadBoxHeader(&header, prefix, remaining, fileEnd - offset);
     }
     if (is_valid)
     {
@@ -371,6 +399,9 @@ static int ParseAvcC(Mp4Demux* pDemux, const byte_t* pData, size_t size)
     for (i = 0; i < count; ++i)
     {
         uint16_t length;
+        uint16_t remaining;
+        byte_t* destination;
+        const byte_t* source;
 
         if (position + 2 > size)
         {
@@ -382,9 +413,17 @@ static int ParseAvcC(Mp4Demux* pDemux, const byte_t* pData, size_t size)
         {
             return 0;
         }
+        destination = pDemux->sps;
+        source      = pData + position;
         if (0 == pDemux->spsSize && length <= MAX_PARAM_SET)
         {
-            CRT_Memory_Copy(pDemux->sps, pData + position, length);
+            remaining = length;
+            for (; 0 < remaining; --remaining)
+            {
+                *destination = *source;
+                ++destination;
+                ++source;
+            }
             pDemux->spsSize = length;
         }
         position += length;
@@ -397,6 +436,9 @@ static int ParseAvcC(Mp4Demux* pDemux, const byte_t* pData, size_t size)
     for (i = 0; i < count; ++i)
     {
         uint16_t length;
+        uint16_t remaining;
+        byte_t* destination;
+        const byte_t* source;
 
         if (position + 2 > size)
         {
@@ -408,9 +450,17 @@ static int ParseAvcC(Mp4Demux* pDemux, const byte_t* pData, size_t size)
         {
             return 0;
         }
+        destination = pDemux->pps;
+        source      = pData + position;
         if (0 == pDemux->ppsSize && length <= MAX_PARAM_SET)
         {
-            CRT_Memory_Copy(pDemux->pps, pData + position, length);
+            remaining = length;
+            for (; 0 < remaining; --remaining)
+            {
+                *destination = *source;
+                ++destination;
+                ++source;
+            }
             pDemux->ppsSize = length;
         }
         position += length;
@@ -1201,11 +1251,7 @@ extern FORCE_INLINE uint32_t Mp4Demux_ReadSample(Mp4Demux* pDemux, unsigned inde
 {
     const Mp4Sample* pSample = Mp4Demux_GetSample(pDemux, index);
 
-    if (NULL == pSample || pSample->size > capacity)
-    {
-        return 0;
-    }
-    return ReadAt(pDemux->hFile, pSample->offset, pBuffer, pSample->size) ? pSample->size : 0;
+    return ReadSelectedSample(pDemux, pSample, pBuffer, capacity);
 }
 
 /*************************************************************************************************/
@@ -1217,11 +1263,7 @@ extern FORCE_INLINE uint32_t Mp4Demux_ReadAudioSample(Mp4Demux* pDemux, unsigned
 {
     const Mp4Sample* pSample = Mp4Demux_GetAudioSample(pDemux, index);
 
-    if (NULL == pSample || pSample->size > capacity)
-    {
-        return 0;
-    }
-    return ReadAt(pDemux->hFile, pSample->offset, pBuffer, pSample->size) ? pSample->size : 0;
+    return ReadSelectedSample(pDemux, pSample, pBuffer, capacity);
 }
 
 static int FindTextTrackBoxes(HANDLE file, const Box* pTrack, Box* pMdia, Box* pStbl)
@@ -1367,12 +1409,19 @@ static int EmitTextSamples(HANDLE file, const Box* pStbl, uint64_t fileEnd,
     }
     for (i = 0; i < count; ++i)
     {
-        double start = ((double)samples[i].compositionTime / timescale) + shift;
-        double end = start + ((double)samples[i].duration / timescale);
+        Mp4Sample sample;
+        double start;
+        double end;
+        bool_t hasInterval;
+        bool_t accepted;
 
-        if (samples[i].size > MP4_SUBTITLE_SAMPLE_CAPACITY || samples[i].offset > fileEnd ||
-            samples[i].size > fileEnd - samples[i].offset ||
-            !ReadAt(file, samples[i].offset, data, samples[i].size))
+        sample = samples[i];
+        start = ((double)sample.compositionTime / timescale) + shift;
+        end = start + ((double)sample.duration / timescale);
+
+        if (MP4_SUBTITLE_SAMPLE_CAPACITY < sample.size || fileEnd < sample.offset ||
+            fileEnd - sample.offset < sample.size ||
+            !ReadAt(file, sample.offset, data, sample.size))
         {
             goto done;
         }
@@ -1384,7 +1433,13 @@ static int EmitTextSamples(HANDLE file, const Box* pStbl, uint64_t fileEnd,
         {
             start = 0;
         }
-        if (end > start && !callback(pUser, start, end, data, samples[i].size))
+        hasInterval = (start < end);
+        accepted = TRUE;
+        if (hasInterval)
+        {
+            accepted = callback(pUser, start, end, data, sample.size);
+        }
+        if (!accepted)
         {
             goto done;
         }

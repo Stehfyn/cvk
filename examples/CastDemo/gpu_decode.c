@@ -956,10 +956,17 @@ extern FORCE_INLINE void GpuDecode_Destroy(GpuDecoder* pDecoder)
             }
             cvkDestroyVideoSessionParametersSafe(pDecoder->device, pDecoder->parameters, NULL);
             cvkDestroyVideoSessionSafe(pDecoder->device, pDecoder->session, NULL);
-            for (index = 0; index < MAX_SESSION_MEMORY; ++index)
-            {
-                cvkFreeMemorySafe(pDecoder->device, pDecoder->sessionMemory[index], NULL);
-            }
+#if MAX_SESSION_MEMORY != 8
+#error Update session memory teardown when slot count changes.
+#endif
+            cvkFreeMemorySafe(pDecoder->device, pDecoder->sessionMemory[0], NULL);
+            cvkFreeMemorySafe(pDecoder->device, pDecoder->sessionMemory[1], NULL);
+            cvkFreeMemorySafe(pDecoder->device, pDecoder->sessionMemory[2], NULL);
+            cvkFreeMemorySafe(pDecoder->device, pDecoder->sessionMemory[3], NULL);
+            cvkFreeMemorySafe(pDecoder->device, pDecoder->sessionMemory[4], NULL);
+            cvkFreeMemorySafe(pDecoder->device, pDecoder->sessionMemory[MAX_SESSION_MEMORY - 3], NULL);
+            cvkFreeMemorySafe(pDecoder->device, pDecoder->sessionMemory[MAX_SESSION_MEMORY - 2], NULL);
+            cvkFreeMemorySafe(pDecoder->device, pDecoder->sessionMemory[MAX_SESSION_MEMORY - 1], NULL);
         }
         CRT_Memory_Set(pDecoder, 0, sizeof(*pDecoder));
         if (NULL != owner)

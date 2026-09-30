@@ -797,17 +797,19 @@ static FORCE_INLINE bool_t IsRawEqual(Utl_Xml_Text_t first, Utl_Xml_Text_t secon
     const byte_t* firstData;
     const byte_t* secondData;
     uint32_t     byteCount;
+    uint32_t     compareCount;
     bool_t equal;
+    int32_t comparison;
+    byte_t empty;
 
-    firstData  = first.data;
-    secondData = second.data;
-    byteCount  = first.byteCount;
-    equal = (byteCount == second.byteCount);
-    if (equal && (0 < byteCount))
-    {
-        equal = (0 == CRT_Memory_Compare(firstData, secondData, byteCount));
-    }
-    return equal;
+    empty        = 0;
+    byteCount    = first.byteCount;
+    equal        = (byteCount == second.byteCount);
+    compareCount = byteCount & ((uint32_t)0 - (uint32_t)equal);
+    firstData    = (0 < compareCount) ? first.data : &empty;
+    secondData   = (0 < compareCount) ? second.data : &empty;
+    comparison   = CRT_Memory_Compare(firstData, secondData, compareCount);
+    return equal && (0 == comparison);
 }
 
 /*************************************************************************************************/
@@ -1142,7 +1144,7 @@ static FORCE_INLINE Utl_Xml_Node_t* AppendNode(Reader_t* reader, Utl_Xml_NodeKin
     else
     {
         node = &document->storage.nodes[document->nodeCount];
-        CRT_Memory_Set(node, 0, sizeof(Utl_Xml_Node_t));
+        (*node) = (Utl_Xml_Node_t){0};
         node->kind   = kind;
         node->parent = reader->parent;
         ++document->nodeCount;
@@ -1457,7 +1459,7 @@ static FORCE_INLINE bool_t ReadAttribute(Cursor_t* cursor, Utl_Xml_Attribute_t* 
     uint32_t quote;
     uint32_t first;
     uint32_t count;
-    CRT_Memory_Set(attribute, 0, sizeof(Utl_Xml_Attribute_t));
+    (*attribute) = (Utl_Xml_Attribute_t){0};
     valid = ReadName(cursor, &attribute->name);
     if (valid)
     {

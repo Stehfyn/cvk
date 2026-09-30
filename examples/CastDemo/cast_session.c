@@ -771,6 +771,8 @@ static FORCE_INLINE bool_t SendJson(CastSession_State_t*       session,
     Utl_Json_Text_t      namespace_text;
     Utl_CastV2_Message_t message;
     bool_t               sent;
+    CastChannel*         channel;
+    const char*          channelError;
 
     namespace_text = Utl_Chromecast_GetNamespace(nameSpace);
     LOGASSERT(0 < namespace_text.byteCount);
@@ -795,10 +797,12 @@ static FORCE_INLINE bool_t SendJson(CastSession_State_t*       session,
             (int32_t)byteCount,
             (const char_t*)payload);
     }
-    sent = CastChannel_Send(session->pChannel, &message);
+    channel = session->pChannel;
+    sent = CastChannel_Send(channel, &message);
+    channelError = CastChannel_GetError(channel);
     if (!sent)
     {
-        Log(session, "cast: %s", CastChannel_GetError(session->pChannel));
+        Log(session, "cast: %s", channelError);
     }
     return sent;
 }
@@ -1101,7 +1105,9 @@ static FORCE_INLINE void CopyJsonString(const cvkJsonValue* pValue, char* pOut, 
     bool_t   has_value;
     bool_t   is_string;
     uint64_t length;
-    const void* text;
+    uint64_t remaining;
+    const char* source;
+    char* destination;
 
     LOGASSERT(NULL != pOut);
     LOGASSERT(0 < capacity);
@@ -1113,17 +1119,21 @@ static FORCE_INLINE void CopyJsonString(const cvkJsonValue* pValue, char* pOut, 
         is_string = (CVK_JSON_STRING == pValue->kind);
         if (is_string)
         {
-            text = pValue->pText;
+            source = pValue->pText;
             length = pValue->textLength;
             if (capacity <= length)
             {
                 length = capacity - 1;
             }
-            if (0 < length)
+            destination = pOut;
+            remaining   = length;
+            for (; 0 < remaining; --remaining)
             {
-                CRT_Memory_Copy(pOut, text, length);
+                *destination = *source;
+                ++destination;
+                ++source;
             }
-            pOut[length] = 0;
+            *destination = 0;
         }
     }
 }
@@ -1839,6 +1849,7 @@ static int ServiceSessionIteration(CastSession_State_t* pSession,
 {
     const CastMedia_t* update;
     int commands;
+    bool_t valid;
 
     if (!ServiceSessionTimers(pSession, now, pLastHeartbeat, pLastPoll))
     {
@@ -1855,12 +1866,20 @@ static int ServiceSessionIteration(CastSession_State_t* pSession,
         Log(pSession, "proxy ready: switching over for instant, buffer-free seeking");
     }
     commands = ProcessCommands(pSession);
-    if (commands < 0 || !FlushSeek(pSession, now) ||
-        !ApplyReplacement(pSession) || !SwitchToProxy(pSession))
+    valid = (0 <= commands);
+    if (valid)
     {
-        return -1;
+        valid = FlushSeek(pSession, now);
     }
-    return commands;
+    if (valid)
+    {
+        valid = ApplyReplacement(pSession);
+    }
+    if (valid)
+    {
+        valid = SwitchToProxy(pSession);
+    }
+    return valid ? commands : -1;
 }
 
 static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
@@ -1920,13 +1939,16 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
     for (;;)
     {
         Utl_CastV2_Message_t message;
-        const int          received = CastChannel_Receive(pSession->pChannel, &message, RECEIVE_SLICE_MS);
+        int                received;
         ULONGLONG          now;
         int                commands;
+        const char*        channelError;
 
+        channel = pSession->pChannel;
+        received = CastChannel_Receive(channel, &message, RECEIVE_SLICE_MS);
         if (received < 0)
         {
-            pReason = CastChannel_GetError(pSession->pChannel);
+            pReason = CastChannel_GetError(channel);
             Log(pSession, "cast: %s", pReason);
             goto done;
         }
@@ -1944,11 +1966,11 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
             break;
         }
         now = GetTickCount64();
-        channel = pSession->pChannel;
+        channelError = CastChannel_GetError(channel);
         commands = ServiceSessionIteration(pSession, now, &lastHeartbeat, &lastPoll, &proxyAnnounced);
         if (commands < 0)
         {
-            pReason = CastChannel_GetError(channel);
+            pReason = channelError;
             goto done;
         }
         if (0 == commands)
@@ -2155,8 +2177,7 @@ uint32_t CastSession_WriteLoad(const CastSessionConfig* config,
         subtitle.name.data             = (const byte_t*)LOAD_SUBTITLE_NAME;
         subtitle.name.byteCount        = sizeof(LOAD_SUBTITLE_NAME) - 1;
         subtitle.language.data         = (const byte_t*)config->subtitleLanguage;
-        subtitle.language.byteCount =
-            Utl_Unicode_GetUtf8StringByteCount(config->subtitleLanguage, sizeof(config->subtitleLanguage));
+        subtitle.language.byteCount    = Utl_Unicode_GetUtf8StringByteCount(config->subtitleLanguage, sizeof(config->subtitleLanguage));
         valid_subtitle = (UTL_UNICODE_NO_TERMINATOR != subtitle.language.byteCount);
         if (0 == subtitle.language.byteCount)
         {
@@ -2248,9 +2269,9 @@ extern FORCE_INLINE bool_t CastSession_Post(CastSession_t* owner, CastCommand co
     bool_t               accepted;
 
     LOGASSERT(NULL != owner);
+    pSession = owner->state;
     LOGASSERT(CastSession_IsPrepared(owner));
 
-    pSession = owner->state;
     AcquireSRWLockExclusive(&pSession->commandLock);
     accepted = CastCommands_Push(&pSession->commands, command, seconds);
     ReleaseSRWLockExclusive(&pSession->commandLock);

@@ -449,6 +449,11 @@ static DWORD WINAPI ProducerThread(LPVOID pParameter)
             break;
         }
         p_slot = &pTranscoder->ring[pTranscoder->head];
+        p_sample = Mp4Demux_GetSample(pTranscoder->demux, pTranscoder->sampleIndex);
+        bytes    = Mp4Demux_ReadSample(pTranscoder->demux,
+                                      pTranscoder->sampleIndex,
+                                      pTranscoder->sampleBuffer,
+                                      pTranscoder->sampleCapacity);
         if (pTranscoder->sampleIndex >= pTranscoder->sampleCount)
         {
             p_slot->eof       = 1;
@@ -456,11 +461,6 @@ static DWORD WINAPI ProducerThread(LPVOID pParameter)
             ReleaseSemaphore(pTranscoder->filledSlots, 1, NULL);
             break;
         }
-        p_sample = Mp4Demux_GetSample(pTranscoder->demux, pTranscoder->sampleIndex);
-        bytes    = Mp4Demux_ReadSample(pTranscoder->demux,
-                                       pTranscoder->sampleIndex,
-                                       pTranscoder->sampleBuffer,
-                                       pTranscoder->sampleCapacity);
         ++pTranscoder->sampleIndex;
         if (0 == bytes || !GpuDecode_DecodeFrame(pTranscoder->decoder, pTranscoder->sampleBuffer, bytes))
         {
@@ -667,10 +667,14 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
     uint64_t                         workspace_bytes;
     uint64_t                         offset;
     GpuTranscoder*                   pTranscoder;
+    GpuDevice*                       device;
+    unsigned                         sampleCount;
     char                             device_report[GPU_TRANSCODE_DEVICE_REPORT_CAPACITY];
     char                             decode_report[GPU_TRANSCODE_CODEC_REPORT_CAPACITY];
     char                             encode_report[GPU_TRANSCODE_CODEC_REPORT_CAPACITY];
+    GpuTranscodeConfig               config;
 
+    config = *pConfig;
     if (reportCapacity > 0)
     {
         pReport[0] = 0;
@@ -681,6 +685,7 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
         Report(pReport, reportCapacity, "not an AVC MP4\n");
         return NULL;
     }
+    sampleCount = Mp4Demux_GetSampleCount(p_demux);
     if (!H264_ParseSps(Mp4Demux_GetSps(p_demux, &sps_size), sps_size, &sps, &source_width, &source_height) ||
         !H264_ParsePps(Mp4Demux_GetPps(p_demux, &pps_size), pps_size, &pps))
     {
@@ -689,12 +694,12 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
         return NULL;
     }
 
-    if ((0 == source_width) || (UINT32_MAX == pConfig->width))
+    if ((0 == source_width) || (UINT32_MAX == config.width))
     {
         Mp4Demux_Close(p_demux);
         return NULL;
     }
-    out_width = (pConfig->width + 1U) & ~1U;
+    out_width = (config.width + 1U) & ~1U;
     if (out_width < GPU_TRANSCODE_MIN_WIDTH)
     {
         out_width = GPU_TRANSCODE_MIN_WIDTH;
@@ -741,23 +746,24 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
     CRT_Memory_Set(pTranscoder, 0, sizeof(*pTranscoder));
     pTranscoder->owner = deviceStorage;
     deviceStorage->transcoderBusy = TRUE;
-    pTranscoder->config         = (*pConfig);
+    pTranscoder->config         = config;
     pTranscoder->demux          = p_demux;
     pTranscoder->outWidth       = out_width;
     pTranscoder->outHeight      = out_height;
     pTranscoder->sourceWidth    = source_width;
     pTranscoder->sourceHeight   = source_height;
-    pTranscoder->sampleCount    = Mp4Demux_GetSampleCount(p_demux);
+    pTranscoder->sampleCount    = sampleCount;
     pTranscoder->sampleCapacity = GPU_SAMPLE_BUFFER_CAPACITY;
     pTranscoder->frameCapacity  = frame_bytes;
     pTranscoder->device         = GpuDevice_Create(deviceStorage, TRUE, TRUE, device_report, sizeof(device_report));
+    device                      = pTranscoder->device;
     Report(pReport, reportCapacity, "device: %s", device_report);
-    if (NULL == pTranscoder->device)
+    if (NULL == device)
     {
         GpuTranscode_Close(pTranscoder);
         return NULL;
     }
-    pTranscoder->decoder       = GpuDecode_Create(pTranscoder->device,
+    pTranscoder->decoder       = GpuDecode_Create(device,
                                                   &sps,
                                                   &pps,
                                                   source_width,
@@ -766,13 +772,13 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
                                                   Mp4Demux_GetNalLengthSize(p_demux),
                                                   decode_report,
                                                   sizeof(decode_report));
-    pTranscoder->encoder = GpuEncode_Create(pTranscoder->device,
+    pTranscoder->encoder = GpuEncode_Create(device,
                                             out_width,
                                             out_height,
-                                            pConfig->bitrateKbps,
-                                            pConfig->gopLength,
-                                            pConfig->qpIntra,
-                                            pConfig->qpInter,
+                                             config.bitrateKbps,
+                                             config.gopLength,
+                                             config.qpIntra,
+                                             config.qpInter,
                                             GPU_TRANSCODE_DEFAULT_MOTION,
                                             1,
                                             encode_report,
@@ -812,11 +818,11 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
            out_height,
            source_width,
            source_height,
-           pTranscoder->sampleCount,
-           pConfig->qpIntra,
-           pConfig->qpInter,
-           pConfig->gopLength,
-           pConfig->motionAdaptive ? "on" : "off");
+            sampleCount,
+            config.qpIntra,
+            config.qpInter,
+            config.gopLength,
+            config.motionAdaptive ? "on" : "off");
     return pTranscoder;
 }
 

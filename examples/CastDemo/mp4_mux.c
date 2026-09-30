@@ -813,21 +813,24 @@ static FORCE_INLINE bool_t WriteFileBytes(Mp4Mux* mux, const void* data, uint32_
 {
     HANDLE file;
     bool_t valid;
+    bool_t wrote;
+    bool_t complete;
     DWORD  written;
+    byte_t discard = 0;
+    const void* source;
 
     LOGASSERT(NULL != mux);
     file = mux->file;
     valid = !mux->failed;
+    source = (0 < count) ? data : &discard;
     if (valid)
     {
-        if (0 < count)
-        {
-            LOGASSERT(NULL != data);
-            written     = 0;
-            valid       = !!WriteFile(file, data, count, &written, NULL);
-            valid       = valid && (count == written);
-            mux->failed = !valid;
-        }
+        LOGASSERT(0 == count || NULL != data);
+        written     = 0;
+        wrote       = !!WriteFile(file, source, count, &written, NULL);
+        complete    = (count == written);
+        valid       = (0 == count) || (wrote && complete);
+        mux->failed = !valid;
     }
     return valid;
 }
@@ -911,6 +914,12 @@ static FORCE_INLINE bool_t WriteFileType(Mp4Mux* mux, bool_t fragmented)
 static FORCE_INLINE void StoreParameterSet(const byte_t* pData, uint32_t size, byte_t* pOut, uint32_t* pOutSize)
 {
     uint32_t start;
+    uint32_t byte_count;
+    uint32_t copy_count;
+    bool_t   fits;
+    byte_t   empty;
+    byte_t*  destination;
+    const byte_t* source;
 
     start = 0;
     if (size >= 4 && 0 == pData[0] && 0 == pData[1] && 0 == pData[2] && 1 == pData[3])
@@ -921,13 +930,19 @@ static FORCE_INLINE void StoreParameterSet(const byte_t* pData, uint32_t size, b
     {
         start = 3;
     }
-    if (size - start > MAX_PARAM_BYTES)
+    byte_count  = size - start;
+    fits        = (byte_count <= MAX_PARAM_BYTES);
+    copy_count  = fits ? byte_count : 0;
+    empty       = 0;
+    destination = fits ? pOut : &empty;
+    source      = (fits && 0 < byte_count) ? pData + start : &empty;
+    CRT_Memory_Copy(destination, source, copy_count);
+    if (!fits)
     {
         *pOutSize = 0;
         return;
     }
-    CRT_Memory_Copy(pOut, pData + start, size - start);
-    *pOutSize = size - start;
+    *pOutSize = byte_count;
 }
 
 /*************************************************************************************************/
@@ -979,6 +994,10 @@ static uint32_t AppendAvcc(MuxBuffer* pBuffer, const byte_t* pData, uint32_t siz
     uint32_t total;
     uint32_t i;
     uint32_t nal_start;
+    uint32_t tail_count;
+    bool_t   has_tail;
+    byte_t   empty;
+    const byte_t* tail_data;
 
     original  = pBuffer->size;
     total     = 0;
@@ -1008,11 +1027,15 @@ static uint32_t AppendAvcc(MuxBuffer* pBuffer, const byte_t* pData, uint32_t siz
             ++i;
         }
     }
-    if (nal_start > 0 && nal_start < size)
+    has_tail   = (0 < nal_start) && (nal_start < size);
+    tail_count = has_tail ? size - nal_start : 0;
+    empty      = 0;
+    tail_data  = (NULL != pData) ? pData + nal_start : &empty;
+    if (has_tail)
     {
-        BufferU32(pBuffer, size - nal_start);
-        BufferBytes(pBuffer, pData + nal_start, size - nal_start);
+        BufferU32(pBuffer, tail_count);
     }
+    BufferBytes(pBuffer, tail_data, tail_count);
     if (!pBuffer->failed)
     {
         total = pBuffer->size - original;

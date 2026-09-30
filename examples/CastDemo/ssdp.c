@@ -1041,6 +1041,7 @@ static FORCE_INLINE void CollectResponses(Ssdp_t* discovery, uint32_t capacity, 
     fd_set         readable;
     int32_t        status;
     uint32_t       error;
+    uint32_t       receivedBytes;
 
     state   = discovery->state;
     started = GetTickCount64();
@@ -1068,13 +1069,11 @@ static FORCE_INLINE void CollectResponses(Ssdp_t* discovery, uint32_t capacity, 
             break;
         }
         status = recvfrom(state->socket, (char_t*)state->response, DISCOVERY_RESPONSE_CAPACITY, 0, NULL, NULL);
-        if (0 < status)
+        error = (SOCKET_ERROR == status) ? (uint32_t)WSAGetLastError() : 0;
+        receivedBytes = (0 < status) ? (uint32_t)status : 0;
+        ReadResponse(state, receivedBytes);
+        if (SOCKET_ERROR == status)
         {
-            ReadResponse(state, (uint32_t)status);
-        }
-        else if (SOCKET_ERROR == status)
-        {
-            error = (uint32_t)WSAGetLastError();
             if ((WSAEWOULDBLOCK != error) && (WSAEMSGSIZE != error))
             {
                 RecordError(discovery, error);

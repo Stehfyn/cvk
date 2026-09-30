@@ -76,10 +76,19 @@ extern FORCE_INLINE void OS_Mailbox_Initialize(OS_Mailbox_t* mailbox)
  */
 extern FORCE_INLINE uint32_t OS_Mailbox_GetWriteIndex(const OS_Mailbox_t* mailbox)
 {
-    LOGASSERT(NULL != mailbox);
-    LOGASSERT(OS_MAILBOX_SLOT_COUNT > mailbox->writer);
+    uint32_t writer;
 
-    return mailbox->writer;
+    LOGASSERT(NULL != mailbox);
+    writer = mailbox->writer;
+    switch (writer)
+    {
+        case MAILBOX_INITIAL_READER: return MAILBOX_INITIAL_READER;
+        case MAILBOX_INITIAL_MIDDLE: return MAILBOX_INITIAL_MIDDLE;
+        case MAILBOX_INITIAL_WRITER: return MAILBOX_INITIAL_WRITER;
+        default:
+            LOGASSERT(FALSE);
+            return MAILBOX_INITIAL_WRITER;
+    }
 }
 
 /*************************************************************************************************/
@@ -89,11 +98,20 @@ extern FORCE_INLINE uint32_t OS_Mailbox_GetWriteIndex(const OS_Mailbox_t* mailbo
  */
 extern FORCE_INLINE uint32_t OS_Mailbox_GetReadIndex(const OS_Mailbox_t* mailbox)
 {
-    LOGASSERT(NULL != mailbox);
-    LOGASSERT(mailbox->readable);
-    LOGASSERT(OS_MAILBOX_SLOT_COUNT > mailbox->reader);
+    uint32_t reader;
 
-    return mailbox->reader;
+    LOGASSERT(NULL != mailbox);
+    reader = mailbox->reader;
+    LOGASSERT(mailbox->readable);
+    switch (reader)
+    {
+        case MAILBOX_INITIAL_READER: return MAILBOX_INITIAL_READER;
+        case MAILBOX_INITIAL_MIDDLE: return MAILBOX_INITIAL_MIDDLE;
+        case MAILBOX_INITIAL_WRITER: return MAILBOX_INITIAL_WRITER;
+        default:
+            LOGASSERT(FALSE);
+            return MAILBOX_INITIAL_READER;
+    }
 }
 
 /*************************************************************************************************/

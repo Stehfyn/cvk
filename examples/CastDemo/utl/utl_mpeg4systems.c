@@ -18,7 +18,6 @@
 #include "utl/utl_mpeg4.h"
 #include "utl/utl_mpeg4systems.h"
 #include "utl/utl_unicode.h"
-#include "crt/crt_memory.h"
 #include "os/os_assert.h"
 #include "os/os_compiler.h"
 #include "os/os_types.h"
@@ -374,16 +373,20 @@ static FORCE_INLINE bool_t ReadInteger(uint32_t* value, DescriptorCursor_t* curs
     LOGASSERT(0 < width);
     LOGASSERT(width <= INTEGER_BYTES);
     fits = (width <= cursor->bytes.byteCount - cursor->offset);
+    read = FALSE;
     if (fits)
     {
         bytes.data      = &cursor->bytes.data[cursor->offset];
         bytes.byteCount = width;
         read            = Utl_Mpeg4_ReadUnsigned(&candidate, bytes);
         LOGASSERT(read);
-        cursor->offset += width;
-        *value         = (uint32_t)candidate;
+        if (read)
+        {
+            cursor->offset += width;
+            *value         = (uint32_t)candidate;
+        }
     }
-    return fits;
+    return read;
 }
 
 /*************************************************************************************************/
@@ -839,8 +842,9 @@ extern FORCE_INLINE uint32_t Utl_Mpeg4Systems_WriteDescriptor(const Utl_Mpeg4Sys
     uint32_t           written;
     DescriptorPrefix_t prefix;
     uint32_t           cursor;
-    byte_t             empty = 0;
+    byte_t*            destination;
     const byte_t*      payload;
+    uint32_t           remaining;
 
     LOGASSERT(NULL != output);
     count     = Utl_Mpeg4Systems_GetDescriptorByteCount(descriptor);
@@ -853,8 +857,15 @@ extern FORCE_INLINE uint32_t Utl_Mpeg4Systems_WriteDescriptor(const Utl_Mpeg4Sys
         prefix.tag          = descriptor->tag;
         prefix.payloadBytes = descriptor->payload.byteCount;
         cursor              = WritePrefix(output, &prefix);
-        payload = (0 < descriptor->payload.byteCount) ? descriptor->payload.data : &empty;
-        CRT_Memory_Copy(&output[cursor], payload, descriptor->payload.byteCount);
+        destination = &output[cursor];
+        payload     = descriptor->payload.data;
+        remaining   = descriptor->payload.byteCount;
+        for (; 0 < remaining; --remaining)
+        {
+            *destination = *payload;
+            ++destination;
+            ++payload;
+        }
         written = count;
     }
     return written;
@@ -878,8 +889,9 @@ extern FORCE_INLINE uint32_t Utl_Mpeg4Systems_WriteDecoderConfig(const Utl_Mpeg4
     uint32_t            cursor;
     Utl_Mpeg4_Integer_t field;
     uint32_t            flags;
-    byte_t              empty = 0;
+    byte_t*             destination;
     const byte_t*       children;
+    uint32_t            remaining;
 
     LOGASSERT(NULL != output);
     count     = Utl_Mpeg4Systems_GetDecoderConfigByteCount(config);
@@ -912,8 +924,15 @@ extern FORCE_INLINE uint32_t Utl_Mpeg4Systems_WriteDecoderConfig(const Utl_Mpeg4
         field.value     = config->averageBitrate;
         field.byteCount = INTEGER_BYTES;
         WriteInteger(output, &cursor, field);
-        children = (0 < config->children.byteCount) ? config->children.data : &empty;
-        CRT_Memory_Copy(&output[cursor], children, config->children.byteCount);
+        destination = &output[cursor];
+        children    = config->children.data;
+        remaining   = config->children.byteCount;
+        for (; 0 < remaining; --remaining)
+        {
+            *destination = *children;
+            ++destination;
+            ++children;
+        }
         written = count;
     }
     return written;
@@ -938,8 +957,9 @@ extern FORCE_INLINE uint32_t Utl_Mpeg4Systems_WriteElementaryStream(const Utl_Mp
     DescriptorPrefix_t  prefix;
     uint32_t            cursor;
     Utl_Mpeg4_Integer_t field;
-    byte_t              empty = 0;
+    byte_t*             destination;
     const byte_t*       payload;
+    uint32_t            remaining;
 
     LOGASSERT(NULL != output);
     count     = Utl_Mpeg4Systems_GetElementaryStreamByteCount(stream);
@@ -986,8 +1006,15 @@ extern FORCE_INLINE uint32_t Utl_Mpeg4Systems_WriteElementaryStream(const Utl_Mp
             field.value     = stream->url.byteCount;
             field.byteCount = 1;
             WriteInteger(output, &cursor, field);
-            payload = (0 < stream->url.byteCount) ? stream->url.data : &empty;
-            CRT_Memory_Copy(&output[cursor], payload, stream->url.byteCount);
+            destination = &output[cursor];
+            payload     = stream->url.data;
+            remaining   = stream->url.byteCount;
+            for (; 0 < remaining; --remaining)
+            {
+                *destination = *payload;
+                ++destination;
+                ++payload;
+            }
             cursor += stream->url.byteCount;
         }
         if (stream->hasClock)
@@ -996,8 +1023,15 @@ extern FORCE_INLINE uint32_t Utl_Mpeg4Systems_WriteElementaryStream(const Utl_Mp
             field.byteCount = IDENTIFIER_BYTES;
             WriteInteger(output, &cursor, field);
         }
-        payload = (0 < stream->children.byteCount) ? stream->children.data : &empty;
-        CRT_Memory_Copy(&output[cursor], payload, stream->children.byteCount);
+        destination = &output[cursor];
+        payload     = stream->children.data;
+        remaining   = stream->children.byteCount;
+        for (; 0 < remaining; --remaining)
+        {
+            *destination = *payload;
+            ++destination;
+            ++payload;
+        }
         written = count;
     }
     return written;

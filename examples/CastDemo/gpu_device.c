@@ -14,12 +14,12 @@
 
 #ifndef NDEBUG
 #include "vk_diagnostic.h"
+#include "crt/crt_memory.h"
 #endif
 #include "gpu_device.h"
 #include "os/os_types.h"
 #include "os/os_assert.h"
 #include "os/os_compiler.h"
-#include "crt/crt_memory.h"
 #include "utl/utl_decimal.h"
 
 #include <vulkan/vulkan_core.h>
@@ -276,17 +276,35 @@ static FORCE_INLINE void WriteReportText(Report_t* report, const void* text, uin
     uint32_t available;
     bool_t   fits;
     uint32_t copied;
+    uint32_t used;
+    uint32_t capacity;
+    char_t*  bytes;
+    uint32_t remaining;
+    char_t* destination;
+    const char_t* source;
 
     LOGASSERT(NULL != report);
     LOGASSERT(NULL != text);
-    LOGASSERT(NULL != report->bytes);
-    LOGASSERT(report->used < report->capacity);
-    available = report->capacity - report->used - 1;
+    used     = report->used;
+    capacity = report->capacity;
+    bytes    = report->bytes;
+    LOGASSERT(NULL != bytes);
+    LOGASSERT(used < capacity);
+    available = capacity - used - 1;
     fits      = (byteCount <= available);
     copied    = fits ? byteCount : available;
-    CRT_Memory_Copy(&report->bytes[report->used], text, copied);
-    report->used                += copied;
-    report->bytes[report->used]  = REPORT_TERMINATOR;
+    destination = &bytes[used];
+    source      = (const char_t*)text;
+    remaining   = copied;
+    for (; 0 < remaining; --remaining)
+    {
+        *destination = *source;
+        ++destination;
+        ++source;
+    }
+    used        += copied;
+    report->used = used;
+    *destination = REPORT_TERMINATOR;
 }
 
 /*************************************************************************************************/

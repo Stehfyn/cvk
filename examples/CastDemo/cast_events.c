@@ -17,7 +17,6 @@
 #include "os/os_atomic.h"
 #include "os/os_mailbox.h"
 #include "os/os_types.h"
-#include "crt/crt_memory.h"
 #include <stdint.h>
 
 /*=================================================================================================
@@ -168,7 +167,7 @@ extern FORCE_INLINE bool_t CastEvents_Publish(CastEvents_t*     events,
             if (NULL != status)
             {
                 slot = OS_Mailbox_GetWriteIndex(&events->status.channel);
-                CRT_Memory_Copy(&events->status.values[slot], status, sizeof(CastStatus));
+                events->status.values[slot] = (*status);
                 OS_Mailbox_Publish(&events->status.channel);
                 accepted = TRUE;
             }
@@ -222,7 +221,7 @@ extern FORCE_INLINE bool_t CastEvents_Take(CastEvents_t* events, CastEvents_Snap
     if (has_status)
     {
         slot = OS_Mailbox_GetReadIndex(&events->status.channel);
-        CRT_Memory_Copy(&snapshot->status, &events->status.values[slot], sizeof(CastStatus));
+        snapshot->status = events->status.values[slot];
         present |= CAST_EVENTS_STATUS;
     }
     has_log = OS_Mailbox_TryTake(&events->log.channel);

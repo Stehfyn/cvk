@@ -1179,6 +1179,7 @@ static FORCE_INLINE void DestroyControlPaint(App* app)
 static FORCE_INLINE HWND CreateChild(App* pApp, LPCTSTR pClass, LPCTSTR pText, DWORD style, DWORD exStyle, int id)
 {
     HWND child;
+    HRESULT themeStatus;
     if ((0 == lstrcmp(pClass, WC_BUTTON)) && ((style & BS_TYPEMASK) != BS_AUTOCHECKBOX))
     {
         style = (style & ~(DWORD)BS_TYPEMASK) | (DWORD)BS_OWNERDRAW;
@@ -1195,7 +1196,8 @@ static FORCE_INLINE HWND CreateChild(App* pApp, LPCTSTR pClass, LPCTSTR pText, D
                             (HMENU)(INT_PTR)id, // NOLINT(performance-no-int-to-ptr): Win32 child control IDs use the HMENU slot.
                             pApp->hInstance,
                             NULL);
-    LOGASSERT(SUCCEEDED(SetWindowTheme(child, L"DarkMode_Explorer", NULL)));
+    themeStatus = SetWindowTheme(child, L"DarkMode_Explorer", NULL);
+    LOGASSERT(SUCCEEDED(themeStatus));
 
     return child;
 }
@@ -2678,6 +2680,7 @@ static bool_t PrepareCastAudio(App* pApp, const WCHAR* source,
 {
     bool_t needs_gain;
     TCHAR message[GUI_ERROR_CAPACITY];
+    HWND gainControl = pApp->hGain;
 
     (void)CopyAscii(pApp->originalUrl, ARRAYSIZE(pApp->originalUrl),
                     pConfig->contentUrl, ARRAYSIZE(pConfig->contentUrl));
@@ -2696,7 +2699,7 @@ static bool_t PrepareCastAudio(App* pApp, const WCHAR* source,
         return FALSE;
     }
     needs_gain = !!pApp->audioNeedsConversion ||
-                 (GUI_ORIGINAL_GAIN_PERCENT != SendMessage(pApp->hGain, TBM_GETPOS, 0, 0));
+                 (GUI_ORIGINAL_GAIN_PERCENT != SendMessage(gainControl, TBM_GETPOS, 0, 0));
     if (needs_gain)
     {
         pApp->pendingConfig = *pConfig;

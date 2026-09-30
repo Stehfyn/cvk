@@ -113,7 +113,7 @@ target_compile_definitions(cast-session PUBLIC UNICODE _UNICODE)
 set_source_files_properties(gpu_probe.c PROPERTIES COMPILE_DEFINITIONS "WIN32_LEAN_AND_MEAN")
 set_source_files_properties(audio_gain.c PROPERTIES COMPILE_DEFINITIONS "COBJMACROS;WIN32_LEAN_AND_MEAN")
 set_source_files_properties(cast_session.c PROPERTIES COMPILE_DEFINITIONS "WIN32_LEAN_AND_MEAN")
-target_link_libraries(cast-session PUBLIC cast-formats cast-network cvk volk::volk vk-diagnostic ws2_32 mswsock secur32 winhttp mfplat mfreadwrite mfuuid ole32 propsys)
+target_link_libraries(cast-session PUBLIC cast-formats cast-network cvk volk::volk vk-diagnostic cmf ws2_32 mswsock secur32 winhttp mfplat mfreadwrite mfuuid ole32 propsys)
 
 add_executable(CastDemo WIN32 cast_gui.c os/win32/os_entry.c)
 target_compile_definitions(CastDemo PRIVATE UNICODE _UNICODE)

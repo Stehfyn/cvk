@@ -112,6 +112,8 @@ extern FORCE_INLINE bool_t OS_Memory_Initialize(OS_Memory_t* memory, uint64_t by
     SIZE_T   maximum = 0;
     SIZE_T   increase = 0;
     HANDLE   process;
+    void*    address;
+    SIZE_T   allocationBytes;
 
     LOGASSERT(NULL != memory);
     LOGASSERT(0 < byteCount);
@@ -154,15 +156,17 @@ extern FORCE_INLINE bool_t OS_Memory_Initialize(OS_Memory_t* memory, uint64_t by
         RecordError(memory, error);
         return FALSE;
     }
+    allocationBytes = (SIZE_T)byteCount;
     memory->workingSetIncrease = increase;
-    memory->address       = VirtualAlloc(NULL, (SIZE_T)byteCount, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-    allocated             = (NULL != memory->address);
+    address               = VirtualAlloc(NULL, allocationBytes, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    memory->address       = address;
+    allocated             = (NULL != address);
     if (allocated)
     {
         memory->byteCount     = byteCount;
         memory->unlockPending = TRUE;
-        CRT_Memory_Set(memory->address, 0, byteCount);
-        locked = !!VirtualLock(memory->address, (SIZE_T)byteCount);
+        CRT_Memory_Set(address, 0, byteCount);
+        locked = !!VirtualLock(address, allocationBytes);
         if (locked)
         {
             memory->ready = TRUE;
@@ -265,16 +269,20 @@ extern FORCE_INLINE bool_t OS_Memory_TryClose(OS_Memory_t* memory)
     SIZE_T   maximum;
     SIZE_T   decrease;
     HANDLE   process;
+    void*    address;
+    SIZE_T   byteCount;
 
     LOGASSERT(NULL != memory);
 
     memory->ready = FALSE;
-    has_region    = (NULL != memory->address);
+    address       = memory->address;
+    byteCount     = (SIZE_T)memory->byteCount;
+    has_region    = (NULL != address);
     if (has_region)
     {
         if (memory->unlockPending)
         {
-            unlocked = !!VirtualUnlock(memory->address, (SIZE_T)memory->byteCount);
+            unlocked = !!VirtualUnlock(address, byteCount);
             if (unlocked)
             {
                 memory->unlockPending = FALSE;
@@ -285,7 +293,7 @@ extern FORCE_INLINE bool_t OS_Memory_TryClose(OS_Memory_t* memory)
                 RecordError(memory, error);
             }
         }
-        released = !!VirtualFree(memory->address, 0, MEM_RELEASE);
+        released = !!VirtualFree(address, 0, MEM_RELEASE);
         if (released)
         {
             memory->address       = NULL;

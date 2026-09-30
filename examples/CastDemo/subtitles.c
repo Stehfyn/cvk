@@ -503,14 +503,21 @@ static FORCE_INLINE bool_t CopyAscii(char* output, uint32_t capacity, const char
 static FORCE_INLINE bool_t HasCapacity(const Text* text, uint32_t byteCount)
 {
     bool_t fits;
+    bool_t within;
+    uint32_t capacity;
+    uint32_t used;
+    uint32_t available;
 
     LOGASSERT(NULL != text);
+    capacity  = text->capacity;
+    used      = text->size;
+    within    = (used < capacity);
+    available = within ? capacity - used : 0;
+    fits      = within && (byteCount < available);
     LOGASSERT(NULL != text->data);
-    LOGASSERT(0 < text->capacity);
-    LOGASSERT(SUBTITLE_TEXT_CAPACITY >= text->capacity);
-    LOGASSERT(text->size < text->capacity);
-
-    fits = (byteCount < text->capacity - text->size);
+    LOGASSERT(0 < capacity);
+    LOGASSERT(SUBTITLE_TEXT_CAPACITY >= capacity);
+    LOGASSERT(within);
 
     return fits;
 }
@@ -636,7 +643,12 @@ static FORCE_INLINE int Append(Text* text, const byte_t* data, uint64_t size)
     safe_count    = count & ((uint32_t)0 - (uint32_t)can_copy);
     destination   = can_copy ? text->data + text->size : &discard_output;
     source        = can_copy ? data : &discard_input;
-    CRT_Memory_Copy(destination, source, safe_count);
+    for (; 0 < safe_count; --safe_count)
+    {
+        *destination = *source;
+        ++destination;
+        ++source;
+    }
     if (can_copy)
     {
         text->size             += count;

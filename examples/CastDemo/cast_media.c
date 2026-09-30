@@ -10,7 +10,6 @@
 
 #include "cast_media.h"
 #include "os/os_compiler.h"
-#include "crt/crt_memory.h"
 #include "os/os_assert.h"
 #include "os/os_mailbox.h"
 #include "os/os_types.h"
@@ -73,6 +72,9 @@ extern FORCE_INLINE void CastMedia_Publish(CastMedia_Channel_t* channel, const c
     bool_t       valid_type;
     uint32_t     index;
     CastMedia_t* media;
+    char_t*      destination;
+    const char_t* source;
+    uint32_t     remaining;
 
     LOGASSERT(NULL != channel);
     LOGASSERT(NULL != url);
@@ -86,8 +88,24 @@ extern FORCE_INLINE void CastMedia_Publish(CastMedia_Channel_t* channel, const c
     LOGASSERT(valid_type);
     index = OS_Mailbox_GetWriteIndex(&channel->mailbox);
     media = &channel->values[index];
-    CRT_Memory_Copy(media->url, url, (uint64_t)url_count + 1);
-    CRT_Memory_Copy(media->type, type, (uint64_t)type_count + 1);
+    destination = media->url;
+    source      = url;
+    remaining   = url_count + 1;
+    for (; 0 < remaining; --remaining)
+    {
+        *destination = *source;
+        ++destination;
+        ++source;
+    }
+    destination = media->type;
+    source      = type;
+    remaining   = type_count + 1;
+    for (; 0 < remaining; --remaining)
+    {
+        *destination = *source;
+        ++destination;
+        ++source;
+    }
     media->urlByteCount  = url_count;
     media->typeByteCount = type_count;
     OS_Mailbox_Publish(&channel->mailbox);

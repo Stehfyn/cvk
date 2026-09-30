@@ -1010,8 +1010,17 @@ static FORCE_INLINE bool_t ReadExponent(JsonCursor_t* cursor)
 static FORCE_INLINE bool_t Reserve(Utl_Json_Writer_t* writer, uint64_t bytes)
 {
     bool_t fits;
-    fits = (bytes <= writer->capacity - writer->used);
-    LOGASSERT(writer->used <= writer->capacity);
+    bool_t within;
+    uint32_t capacity;
+    uint32_t used;
+    uint32_t available;
+
+    capacity  = writer->capacity;
+    used      = writer->used;
+    within    = (used <= capacity);
+    available = within ? capacity - used : 0;
+    fits      = within && (bytes <= available);
+    LOGASSERT(within);
     if (!fits)
     {
         writer->status = UTL_JSON_OUTPUT_EXHAUSTED;
@@ -1029,16 +1038,34 @@ static FORCE_INLINE void EmitBytes(Utl_Json_Writer_t* writer, Utl_Json_Text_t te
     bool_t has_output;
     bool_t has_text;
     bool_t can_copy;
+    uint32_t capacity;
+    uint32_t used;
+    byte_t* buffer;
+    byte_t* destination;
+    const byte_t* source;
+    uint32_t remaining;
 
-    LOGASSERT(text.byteCount <= writer->capacity - writer->used);
-    has_output = (NULL != writer->buffer);
+    capacity   = writer->capacity;
+    used       = writer->used;
+    buffer     = writer->buffer;
+    LOGASSERT(text.byteCount <= capacity - used);
+    has_output = (NULL != buffer);
     has_text   = (0 < text.byteCount);
     can_copy   = has_output && has_text;
     if (can_copy)
     {
-        CRT_Memory_Copy(&writer->buffer[writer->used], text.data, text.byteCount);
+        LOGASSERT(NULL != text.data);
+        destination = &buffer[used];
+        source      = text.data;
+        remaining   = text.byteCount;
+        for (; 0 < remaining; --remaining)
+        {
+            *destination = *source;
+            ++destination;
+            ++source;
+        }
     }
-    writer->used += text.byteCount;
+    writer->used = used + text.byteCount;
 }
 
 /*************************************************************************************************/

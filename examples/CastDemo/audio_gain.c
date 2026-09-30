@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <Unknwnbase.h>
 #include <mfobjects.h>
 #include <combaseapi.h>
 #include <objbase.h>
@@ -24,9 +25,11 @@
 #include <winerror.h>
 #include <winnt.h>
 #include <wtypes.h>
+#include <cmf.h>
 #include "crt/crt_format.h"
 #include "audio_gain.h"
 #include "os/os_compiler.h"
+#include "os/os_types.h"
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -39,6 +42,8 @@
 #define AUDIO_GAIN_SURROUND_CHANNELS    (6U)
 #define AUDIO_GAIN_RATE_44100           (44100U)
 #define AUDIO_GAIN_RATE_48000           (48000U)
+#define AUDIO_GAIN_DEFAULT_AVERAGE_BITRATE  (24000U)
+#define AUDIO_GAIN_SURROUND_AVERAGE_BITRATE (72000U)
 #define AUDIO_GAIN_MAX_SAMPLE_100NS     (100000000)
 #define AUDIO_GAIN_PROGRESS_INCOMPLETE  (99)
 #define AUDIO_GAIN_ERROR_STEP_LENGTH    (140)
@@ -51,12 +56,6 @@
         {                                                                                                              \
             goto done;                                                                                                 \
         }                                                                                                              \
-    }
-#define RELEASE(type, value)                                                                                           \
-    if (value)                                                                                                         \
-    {                                                                                                                  \
-        type##_Release(value);                                                                                         \
-        (value) = NULL;                                                                                                \
     }
 
 /*=================================================================================================
@@ -79,11 +78,7 @@
 ** 4. PRIVATE FUNCTIONS
 **===============================================================================================*/
 
-static FORCE_INLINE HRESULT FindAudioStreams(IMFSourceReader* reader,
-                                IMFMediaType** ppVideo,
-                                IMFMediaType** ppNativeAudio,
-                                DWORD* pVideoIn,
-                                DWORD* pAudioIn)
+static FORCE_INLINE HRESULT FindAudioStreams(IMFSourceReader* reader, IMFMediaType** ppVideo, IMFMediaType** ppNativeAudio, DWORD* pVideoIn, DWORD* pAudioIn)
 {
     DWORD i;
 
@@ -114,13 +109,12 @@ static FORCE_INLINE HRESULT FindAudioStreams(IMFSourceReader* reader,
         }
         else
         {
-            IMFMediaType_Release(type);
+            cmfUnknownReleaseSafe((IUnknown*)type);
         }
     }
 }
 
-static FORCE_INLINE HRESULT CreatePcmType(IMFSourceReader* reader, DWORD audioIn,
-                              UINT32 channels, UINT32 rate, IMFMediaType** ppPcm)
+static FORCE_INLINE HRESULT CreatePcmType(IMFSourceReader* reader, DWORD audioIn, UINT32 channels, UINT32 rate, IMFMediaType** ppPcm)
 {
     IMFMediaType* pcm;
     HRESULT hr;
@@ -132,40 +126,45 @@ static FORCE_INLINE HRESULT CreatePcmType(IMFSourceReader* reader, DWORD audioIn
     HRESULT alignmentStatus;
     HRESULT averageStatus;
     HRESULT status;
+    HRESULT setStatus;
+    HRESULT currentStatus;
+    IMFMediaType* current;
+    IMFMediaType* released = NULL;
+    bool_t set;
 
     *ppPcm = NULL;
     hr = MFCreateMediaType(ppPcm);
     pcm = *ppPcm;
-    if (FAILED(hr))
+    if (SUCCEEDED(hr))
     {
-        return hr;
+        majorStatus = IMFMediaType_SetGUID(pcm, &MF_MT_MAJOR_TYPE, &MFMediaType_Audio);
+        subtypeStatus = IMFMediaType_SetGUID(pcm, &MF_MT_SUBTYPE, &MFAudioFormat_PCM);
+        channelsStatus = IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_NUM_CHANNELS, channels);
+        rateStatus = IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_SAMPLES_PER_SECOND, rate);
+        bitsStatus = IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_BITS_PER_SAMPLE, 16);
+        alignmentStatus = IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_BLOCK_ALIGNMENT, channels * 2);
+        averageStatus = IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_AVG_BYTES_PER_SECOND, rate * channels * 2);
+        status = majorStatus;
+        status = FAILED(status) ? status : subtypeStatus;
+        status = FAILED(status) ? status : channelsStatus;
+        status = FAILED(status) ? status : rateStatus;
+        status = FAILED(status) ? status : bitsStatus;
+        status = FAILED(status) ? status : alignmentStatus;
+        status = FAILED(status) ? status : averageStatus;
+        hr = status;
     }
-    majorStatus = IMFMediaType_SetGUID(pcm, &MF_MT_MAJOR_TYPE, &MFMediaType_Audio);
-    subtypeStatus = IMFMediaType_SetGUID(pcm, &MF_MT_SUBTYPE, &MFAudioFormat_PCM);
-    channelsStatus = IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_NUM_CHANNELS, channels);
-    rateStatus = IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_SAMPLES_PER_SECOND, rate);
-    bitsStatus = IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_BITS_PER_SAMPLE, 16);
-    alignmentStatus = IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_BLOCK_ALIGNMENT, channels * 2);
-    averageStatus = IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_AVG_BYTES_PER_SECOND, rate * channels * 2);
-    status = majorStatus;
-    status = FAILED(status) ? status : subtypeStatus;
-    status = FAILED(status) ? status : channelsStatus;
-    status = FAILED(status) ? status : rateStatus;
-    status = FAILED(status) ? status : bitsStatus;
-    status = FAILED(status) ? status : alignmentStatus;
-    status = FAILED(status) ? status : averageStatus;
-    if (FAILED(status))
+    if (SUCCEEDED(hr))
     {
-        return status;
+        setStatus     = IMFSourceReader_SetCurrentMediaType(reader, audioIn, NULL, pcm);
+        current       = NULL;
+        currentStatus = IMFSourceReader_GetCurrentMediaType(reader, audioIn, &current);
+        set = SUCCEEDED(setStatus);
+        released = set ? pcm : current;
+        *ppPcm = set ? current : pcm;
+        hr = set ? currentStatus : setStatus;
     }
-    hr = IMFSourceReader_SetCurrentMediaType(reader, audioIn, NULL, pcm);
-    if (FAILED(hr))
-    {
-        return hr;
-    }
-    IMFMediaType_Release(pcm);
-    *ppPcm = NULL;
-    return IMFSourceReader_GetCurrentMediaType(reader, audioIn, ppPcm);
+    cmfUnknownReleaseSafe((IUnknown*)released);
+    return hr;
 }
 
 static FORCE_INLINE HRESULT CreateAacType(UINT32 channels, UINT32 rate, IMFMediaType** ppAac)
@@ -178,37 +177,41 @@ static FORCE_INLINE HRESULT CreateAacType(UINT32 channels, UINT32 rate, IMFMedia
     HRESULT rateStatus;
     HRESULT bitsStatus;
     HRESULT averageStatus;
-    HRESULT profileStatus = S_OK;
+    HRESULT profileStatus;
     HRESULT payloadStatus;
     HRESULT status;
+    UINT32 averageBitrate;
 
     *ppAac = NULL;
     hr = MFCreateMediaType(ppAac);
     aac = *ppAac;
-    if (FAILED(hr))
+    profileStatus = S_OK;
+    averageBitrate = (AUDIO_GAIN_SURROUND_CHANNELS == channels)
+                         ? AUDIO_GAIN_SURROUND_AVERAGE_BITRATE
+                         : AUDIO_GAIN_DEFAULT_AVERAGE_BITRATE;
+    if (SUCCEEDED(hr))
     {
-        return hr;
+        majorStatus = IMFMediaType_SetGUID(aac, &MF_MT_MAJOR_TYPE, &MFMediaType_Audio);
+        subtypeStatus = IMFMediaType_SetGUID(aac, &MF_MT_SUBTYPE, &MFAudioFormat_AAC);
+        channelsStatus = IMFMediaType_SetUINT32(aac, &MF_MT_AUDIO_NUM_CHANNELS, channels);
+        rateStatus = IMFMediaType_SetUINT32(aac, &MF_MT_AUDIO_SAMPLES_PER_SECOND, rate);
+        bitsStatus = IMFMediaType_SetUINT32(aac, &MF_MT_AUDIO_BITS_PER_SAMPLE, 16);
+        averageStatus = IMFMediaType_SetUINT32(aac, &MF_MT_AUDIO_AVG_BYTES_PER_SECOND, averageBitrate);
+        if (AUDIO_GAIN_SURROUND_CHANNELS == channels)
+        {
+            profileStatus = IMFMediaType_SetUINT32(aac, &MF_MT_AAC_AUDIO_PROFILE_LEVEL_INDICATION, 0x2a);
+        }
+        payloadStatus = IMFMediaType_SetUINT32(aac, &MF_MT_AAC_PAYLOAD_TYPE, 0);
+        status = majorStatus;
+        status = FAILED(status) ? status : subtypeStatus;
+        status = FAILED(status) ? status : channelsStatus;
+        status = FAILED(status) ? status : rateStatus;
+        status = FAILED(status) ? status : bitsStatus;
+        status = FAILED(status) ? status : averageStatus;
+        status = FAILED(status) ? status : profileStatus;
+        hr = FAILED(status) ? status : payloadStatus;
     }
-    majorStatus = IMFMediaType_SetGUID(aac, &MF_MT_MAJOR_TYPE, &MFMediaType_Audio);
-    subtypeStatus = IMFMediaType_SetGUID(aac, &MF_MT_SUBTYPE, &MFAudioFormat_AAC);
-    channelsStatus = IMFMediaType_SetUINT32(aac, &MF_MT_AUDIO_NUM_CHANNELS, channels);
-    rateStatus = IMFMediaType_SetUINT32(aac, &MF_MT_AUDIO_SAMPLES_PER_SECOND, rate);
-    bitsStatus = IMFMediaType_SetUINT32(aac, &MF_MT_AUDIO_BITS_PER_SAMPLE, 16);
-    averageStatus = IMFMediaType_SetUINT32(aac, &MF_MT_AUDIO_AVG_BYTES_PER_SECOND,
-                                             channels == AUDIO_GAIN_SURROUND_CHANNELS ? 72000 : 24000);
-    if (channels == AUDIO_GAIN_SURROUND_CHANNELS)
-    {
-        profileStatus = IMFMediaType_SetUINT32(aac, &MF_MT_AAC_AUDIO_PROFILE_LEVEL_INDICATION, 0x2a);
-    }
-    payloadStatus = IMFMediaType_SetUINT32(aac, &MF_MT_AAC_PAYLOAD_TYPE, 0);
-    status = majorStatus;
-    status = FAILED(status) ? status : subtypeStatus;
-    status = FAILED(status) ? status : channelsStatus;
-    status = FAILED(status) ? status : rateStatus;
-    status = FAILED(status) ? status : bitsStatus;
-    status = FAILED(status) ? status : averageStatus;
-    status = FAILED(status) ? status : profileStatus;
-    return FAILED(status) ? status : payloadStatus;
+    return hr;
 }
 
 static FORCE_INLINE HRESULT CreateConversionWriter(const TCHAR* dest,
@@ -227,110 +230,115 @@ static FORCE_INLINE HRESULT CreateConversionWriter(const TCHAR* dest,
     HRESULT audioAddStatus;
     HRESULT videoTypeStatus;
     HRESULT audioTypeStatus;
-    HRESULT status;
+    DWORD videoStream;
+    DWORD audioStream;
 
     *ppAttributes = NULL;
+    *ppWriter = NULL;
+    *pVideoOut = 0;
+    *pAudioOut = 0;
     hr = MFCreateAttributes(ppAttributes, 2);
     attributes = *ppAttributes;
-    if (FAILED(hr))
+    if (SUCCEEDED(hr))
     {
-        return hr;
+        hr = IMFAttributes_SetUINT32(attributes, &MF_SINK_WRITER_DISABLE_THROTTLING, TRUE);
     }
-    hr = IMFAttributes_SetUINT32(attributes, &MF_SINK_WRITER_DISABLE_THROTTLING, TRUE);
-    if (FAILED(hr))
+    if (SUCCEEDED(hr))
     {
-        return hr;
+        hr = MFCreateSinkWriterFromURL(dest, NULL, attributes, ppWriter);
     }
-    *ppWriter = NULL;
-    hr = MFCreateSinkWriterFromURL(dest, NULL, attributes, ppWriter);
     writer = *ppWriter;
-    if (FAILED(hr))
+    if (SUCCEEDED(hr))
     {
-        return hr;
+        videoAddStatus = IMFSinkWriter_AddStream(writer, video, pVideoOut);
+        audioAddStatus = IMFSinkWriter_AddStream(writer, aac, pAudioOut);
+        hr = FAILED(videoAddStatus) ? videoAddStatus : audioAddStatus;
     }
-    videoAddStatus = IMFSinkWriter_AddStream(writer, video, pVideoOut);
-    audioAddStatus = IMFSinkWriter_AddStream(writer, aac, pAudioOut);
-    status = FAILED(videoAddStatus) ? videoAddStatus : audioAddStatus;
-    if (FAILED(status))
+    videoStream = *pVideoOut;
+    audioStream = *pAudioOut;
+    if (SUCCEEDED(hr))
     {
-        return status;
+        videoTypeStatus = IMFSinkWriter_SetInputMediaType(writer, videoStream, video, NULL);
+        audioTypeStatus = IMFSinkWriter_SetInputMediaType(writer, audioStream, pcm, NULL);
+        hr = FAILED(videoTypeStatus) ? videoTypeStatus : audioTypeStatus;
     }
-    videoTypeStatus = IMFSinkWriter_SetInputMediaType(writer, *pVideoOut, video, NULL);
-    audioTypeStatus = IMFSinkWriter_SetInputMediaType(writer, *pAudioOut, pcm, NULL);
-    status = FAILED(videoTypeStatus) ? videoTypeStatus : audioTypeStatus;
-    if (FAILED(status))
+    if (SUCCEEDED(hr))
     {
-        return status;
+        hr = IMFSinkWriter_BeginWriting(writer);
     }
-    return IMFSinkWriter_BeginWriting(writer);
+    return hr;
 }
 
-static FORCE_INLINE HRESULT EnsureVideoDecodeTime(IMFSample* sample, LONGLONG time,
-                                      LONGLONG* pNextVideoDecodeTime,
-                                      int* pHaveVideoDecodeTime)
+static FORCE_INLINE HRESULT EnsureVideoDecodeTime(IMFSample* sample, LONGLONG time, LONGLONG* pNextVideoDecodeTime, int* pHaveVideoDecodeTime)
 {
     UINT64 decode = 0;
     LONGLONG sampleDuration = 0;
     HRESULT hr;
     HRESULT decodeStatus;
+    bool_t needsTimestamp;
+    bool_t hasDuration;
+    bool_t validDuration;
+    bool_t canSet;
+    bool_t invalidDuration;
 
     decodeStatus = IMFSample_GetUINT64(sample, &MFSampleExtension_DecodeTimestamp, &decode);
     hr = IMFSample_GetSampleDuration(sample, &sampleDuration);
-    if (SUCCEEDED(decodeStatus))
+    needsTimestamp  = FAILED(decodeStatus);
+    hasDuration     = SUCCEEDED(hr);
+    validDuration   = (0 < sampleDuration && AUDIO_GAIN_MAX_SAMPLE_100NS >= sampleDuration);
+    canSet          = needsTimestamp && hasDuration && validDuration;
+    invalidDuration = needsTimestamp && hasDuration && !validDuration;
+    if (canSet)
     {
-        return S_OK;
+        if (!*pHaveVideoDecodeTime)
+        {
+            *pNextVideoDecodeTime = time;
+        }
+        hr = IMFSample_SetUINT64(sample, &MFSampleExtension_DecodeTimestamp, (UINT64)*pNextVideoDecodeTime);
+        if (SUCCEEDED(hr))
+        {
+            *pNextVideoDecodeTime += sampleDuration;
+            *pHaveVideoDecodeTime = 1;
+        }
     }
-    if (FAILED(hr))
+    if (invalidDuration)
     {
-        return hr;
+        hr = MF_E_INVALIDMEDIATYPE;
     }
-    if (sampleDuration <= 0 || sampleDuration > AUDIO_GAIN_MAX_SAMPLE_100NS)
-    {
-        return MF_E_INVALIDMEDIATYPE;
-    }
-    if (!*pHaveVideoDecodeTime)
-    {
-        *pNextVideoDecodeTime = time;
-    }
-    hr = IMFSample_SetUINT64(sample, &MFSampleExtension_DecodeTimestamp, (UINT64)*pNextVideoDecodeTime);
-    if (SUCCEEDED(hr))
-    {
-        *pNextVideoDecodeTime += sampleDuration;
-        *pHaveVideoDecodeTime = 1;
-    }
-    return hr;
+    return needsTimestamp ? hr : S_OK;
 }
 
 static HRESULT ApplyGainToSample(IMFSample* sample, unsigned percent)
 {
-    IMFMediaBuffer* buffer = NULL;
+    IMFMediaBuffer* buffer;
     BYTE* bytes;
     DWORD length;
-    HRESULT hr = IMFSample_ConvertToContiguousBuffer(sample, &buffer);
+    HRESULT hr;
 
-    if (FAILED(hr))
-    {
-        return hr;
-    }
-    hr = IMFMediaBuffer_Lock(buffer, &bytes, NULL, &length);
+    buffer = NULL;
+    hr = IMFSample_ConvertToContiguousBuffer(sample, &buffer);
     if (SUCCEEDED(hr))
     {
-        if (((uintptr_t)bytes % sizeof(int16_t)) != 0)
+        hr = IMFMediaBuffer_Lock(buffer, &bytes, NULL, &length);
+        if (SUCCEEDED(hr))
         {
-            (void)IMFMediaBuffer_Unlock(buffer);
-            hr = MF_E_INVALIDMEDIATYPE;
-        }
-        else
-        {
+            if (((uintptr_t)bytes % sizeof(int16_t)) != 0)
+            {
+                (void)IMFMediaBuffer_Unlock(buffer);
+                hr = MF_E_INVALIDMEDIATYPE;
+            }
+            else
+            {
 #ifdef __clang__
-            AudioGain_Apply((int16_t*)__builtin_assume_aligned(bytes, sizeof(int16_t)), length / sizeof(int16_t), percent);
+                AudioGain_Apply((int16_t*)__builtin_assume_aligned(bytes, sizeof(int16_t)), length / sizeof(int16_t), percent);
 #else
-            AudioGain_Apply((int16_t*)bytes, length / sizeof(int16_t), percent);
+                AudioGain_Apply((int16_t*)bytes, length / sizeof(int16_t), percent);
 #endif
-            hr = IMFMediaBuffer_Unlock(buffer);
+                hr = IMFMediaBuffer_Unlock(buffer);
+            }
         }
     }
-    IMFMediaBuffer_Release(buffer);
+    cmfUnknownReleaseSafe((IUnknown*)buffer);
     return hr;
 }
 
@@ -347,14 +355,21 @@ static FORCE_INLINE HRESULT WriteConversionSample(IMFSinkWriter* writer,
                                      int* pHaveVideoDecodeTime,
                                      const char** ppStep)
 {
-    HRESULT hr = S_OK;
+    HRESULT hr;
+    bool_t is_video;
+    bool_t is_audio;
+    DWORD output_stream;
 
-    if (stream == videoIn)
+    hr = S_OK;
+    is_video = (videoIn == stream);
+    is_audio = (audioIn == stream);
+    output_stream = is_audio ? audioOut : videoOut;
+    if (is_video)
     {
         *ppStep = "EnsureVideoDecodeTime";
         hr = EnsureVideoDecodeTime(sample, time, pNextVideoDecodeTime, pHaveVideoDecodeTime);
     }
-    if (SUCCEEDED(hr) && stream == audioIn)
+    else if (is_audio)
     {
         *ppStep = "ApplyGainToSample";
         hr = ApplyGainToSample(sample, percent);
@@ -362,14 +377,12 @@ static FORCE_INLINE HRESULT WriteConversionSample(IMFSinkWriter* writer,
     if (SUCCEEDED(hr))
     {
         *ppStep = "IMFSinkWriter_WriteSample";
-        hr = IMFSinkWriter_WriteSample(writer, stream == audioIn ? audioOut : videoOut, sample);
+        hr = IMFSinkWriter_WriteSample(writer, output_stream, sample);
     }
     return hr;
 }
 
-static FORCE_INLINE HRESULT MarkConversionStreamEnd(IMFSourceReader* reader, DWORD stream,
-                                       DWORD videoIn, DWORD audioIn,
-                                       int* pVideoEnd, int* pAudioEnd)
+static FORCE_INLINE HRESULT MarkConversionStreamEnd(IMFSourceReader* reader, DWORD stream, DWORD videoIn, DWORD audioIn, int* pVideoEnd, int* pAudioEnd)
 {
     if (stream == videoIn)
     {
@@ -392,18 +405,14 @@ static FORCE_INLINE void UpdateConversionProgress(volatile long* progress, LONGL
     }
 }
 
-static FORCE_INLINE HRESULT ReadConversionSample(IMFSourceReader* reader,
-                                    DWORD* pStream,
-                                    DWORD* pFlags,
-                                    LONGLONG* pTime,
-                                    IMFSample** ppSample)
+static FORCE_INLINE HRESULT ReadConversionSample(IMFSourceReader* reader, DWORD* pStream, DWORD* pFlags, LONGLONG* pTime, IMFSample** ppSample)
 {
     HRESULT hr;
     IMFSample* sample;
+    IMFSample* released;
 
     *ppSample = NULL;
-    hr = IMFSourceReader_ReadSample(reader, (DWORD)MF_SOURCE_READER_ANY_STREAM,
-                                    0, pStream, pFlags, pTime, ppSample);
+    hr = IMFSourceReader_ReadSample(reader, (DWORD)MF_SOURCE_READER_ANY_STREAM, 0, pStream, pFlags, pTime, ppSample);
     sample = *ppSample;
     if (SUCCEEDED(hr) && (*pFlags & MF_SOURCE_READERF_ERROR))
     {
@@ -413,9 +422,10 @@ static FORCE_INLINE HRESULT ReadConversionSample(IMFSourceReader* reader,
     {
         hr = MF_E_INVALIDMEDIATYPE;
     }
-    if (FAILED(hr) && NULL != sample)
+    released = FAILED(hr) ? sample : NULL;
+    cmfUnknownReleaseSafe((IUnknown*)released);
+    if (FAILED(hr))
     {
-        IMFSample_Release(sample);
         *ppSample = NULL;
     }
     return hr;
@@ -468,10 +478,8 @@ static HRESULT ProcessConversion(IMFSourceReader* reader,
         }
         if (NULL != sample)
         {
-            hr = WriteConversionSample(writer, sample, stream, videoIn, audioIn,
-                                       videoOut, audioOut, time, percent,
-                                       &nextVideoDecodeTime, &haveVideoDecodeTime, ppStep);
-            IMFSample_Release(sample);
+            hr = WriteConversionSample(writer, sample, stream, videoIn, audioIn, videoOut, audioOut, time, percent, &nextVideoDecodeTime, &haveVideoDecodeTime, ppStep);
+            cmfUnknownReleaseSafe((IUnknown*)sample);
             if (FAILED(hr))
             {
                 break;
@@ -480,8 +488,7 @@ static HRESULT ProcessConversion(IMFSourceReader* reader,
         else if (flags & MF_SOURCE_READERF_STREAMTICK)
         {
             *ppStep = "IMFSinkWriter_SendStreamTick";
-            hr = IMFSinkWriter_SendStreamTick(writer,
-                                              stream == audioIn ? audioOut : videoOut, time);
+            hr = IMFSinkWriter_SendStreamTick(writer, stream == audioIn ? audioOut : videoOut, time);
             if (FAILED(hr))
             {
                 break;
@@ -518,74 +525,97 @@ static HRESULT PrepareAudioInput(const TCHAR* source,
     HRESULT hr;
     HRESULT channels_status;
     HRESULT rate_status;
+    HRESULT video_type_status;
     HRESULT video_selection_status;
     HRESULT audio_selection_status;
+    bool_t valid_channels;
+    bool_t valid_rate;
+    DWORD videoStream;
+    DWORD audioStream;
+    UINT32 channels = 0;
+    UINT32 rate = 0;
 
     *ppStep = "MFCreateSourceReaderFromURL";
     *ppReader = NULL;
     *ppVideo = NULL;
     *ppNativeAudio = NULL;
+    *pVideoIn = 0;
+    *pAudioIn = 0;
+    *pChannels = 0;
+    *pRate = 0;
     hr = MFCreateSourceReaderFromURL(source, NULL, ppReader);
     reader = *ppReader;
-    if (FAILED(hr))
+    if (SUCCEEDED(hr))
     {
-        return hr;
+        *ppStep = "IMFSourceReader_SetStreamSelection";
+        hr = IMFSourceReader_SetStreamSelection(reader, (DWORD)MF_SOURCE_READER_ALL_STREAMS, FALSE);
     }
-    *ppStep = "IMFSourceReader_SetStreamSelection";
-    hr = IMFSourceReader_SetStreamSelection(reader, (DWORD)MF_SOURCE_READER_ALL_STREAMS, FALSE);
-    if (FAILED(hr))
+    if (SUCCEEDED(hr))
     {
-        return hr;
+        *ppStep = "FindAudioStreams";
+        hr = FindAudioStreams(reader, ppVideo, ppNativeAudio, pVideoIn, pAudioIn);
     }
-    *ppStep = "FindAudioStreams";
-    hr = FindAudioStreams(reader, ppVideo, ppNativeAudio, pVideoIn, pAudioIn);
     video = *ppVideo;
     nativeAudio = *ppNativeAudio;
-    if (FAILED(hr))
+    videoStream = *pVideoIn;
+    audioStream = *pAudioIn;
+    if (SUCCEEDED(hr) && (NULL == video || NULL == nativeAudio))
     {
-        return hr;
+        hr = MF_E_INVALIDMEDIATYPE;
     }
-    if (NULL == video || NULL == nativeAudio)
+    if (SUCCEEDED(hr))
     {
-        return MF_E_INVALIDMEDIATYPE;
+        channels_status = IMFMediaType_GetUINT32(nativeAudio, &MF_MT_AUDIO_NUM_CHANNELS, pChannels);
+        rate_status = IMFMediaType_GetUINT32(nativeAudio, &MF_MT_AUDIO_SAMPLES_PER_SECOND, pRate);
+        channels = *pChannels;
+        rate = *pRate;
+        if (FAILED(channels_status))
+        {
+            *ppStep = "IMFMediaType_GetUINT32(channels)";
+            hr = channels_status;
+        }
+        else if (FAILED(rate_status))
+        {
+            *ppStep = "IMFMediaType_GetUINT32(rate)";
+            hr = rate_status;
+        }
     }
-    channels_status = IMFMediaType_GetUINT32(nativeAudio, &MF_MT_AUDIO_NUM_CHANNELS, pChannels);
-    rate_status = IMFMediaType_GetUINT32(nativeAudio, &MF_MT_AUDIO_SAMPLES_PER_SECOND, pRate);
-    if (FAILED(channels_status))
+    if (SUCCEEDED(hr))
     {
-        *ppStep = "IMFMediaType_GetUINT32(channels)";
-        return channels_status;
+        valid_channels = (1 == channels || 2 == channels || AUDIO_GAIN_SURROUND_CHANNELS == channels);
+        valid_rate = (AUDIO_GAIN_RATE_44100 == rate || AUDIO_GAIN_RATE_48000 == rate);
+        if (!valid_channels || !valid_rate)
+        {
+            hr = MF_E_INVALIDMEDIATYPE;
+        }
     }
-    if (FAILED(rate_status))
+    if (SUCCEEDED(hr))
     {
-        *ppStep = "IMFMediaType_GetUINT32(rate)";
-        return rate_status;
+        *ppStep = "IMFSourceReader_SetCurrentMediaType(video)";
+        video_type_status      = IMFSourceReader_SetCurrentMediaType(reader, videoStream, NULL, video);
+        video_selection_status = IMFSourceReader_SetStreamSelection(reader, videoStream, TRUE);
+        audio_selection_status = IMFSourceReader_SetStreamSelection(reader, audioStream, TRUE);
+        if (FAILED(video_type_status))
+        {
+            hr = video_type_status;
+        }
+        else if (FAILED(video_selection_status))
+        {
+            *ppStep = "IMFSourceReader_SetStreamSelection(video)";
+            hr = video_selection_status;
+        }
+        else if (FAILED(audio_selection_status))
+        {
+            *ppStep = "IMFSourceReader_SetStreamSelection(audio)";
+            hr = audio_selection_status;
+        }
     }
-    if ((*pChannels != 1 && *pChannels != 2 && *pChannels != AUDIO_GAIN_SURROUND_CHANNELS) ||
-        (*pRate != AUDIO_GAIN_RATE_44100 && *pRate != AUDIO_GAIN_RATE_48000))
+    if (SUCCEEDED(hr))
     {
-        return MF_E_INVALIDMEDIATYPE;
+        *ppStep = "CreatePcmType";
+        hr = CreatePcmType(reader, audioStream, channels, rate, ppPcm);
     }
-    *ppStep = "IMFSourceReader_SetCurrentMediaType(video)";
-    hr = IMFSourceReader_SetCurrentMediaType(reader, *pVideoIn, NULL, video);
-    if (FAILED(hr))
-    {
-        return hr;
-    }
-    video_selection_status = IMFSourceReader_SetStreamSelection(reader, *pVideoIn, TRUE);
-    audio_selection_status = IMFSourceReader_SetStreamSelection(reader, *pAudioIn, TRUE);
-    if (FAILED(video_selection_status))
-    {
-        *ppStep = "IMFSourceReader_SetStreamSelection(video)";
-        return video_selection_status;
-    }
-    if (FAILED(audio_selection_status))
-    {
-        *ppStep = "IMFSourceReader_SetStreamSelection(audio)";
-        return audio_selection_status;
-    }
-    *ppStep = "CreatePcmType";
-    return CreatePcmType(reader, *pAudioIn, *pChannels, *pRate, ppPcm);
+    return hr;
 }
 
 static FORCE_INLINE LONGLONG ReadPresentationDuration(IMFSourceReader* reader)
@@ -619,31 +649,16 @@ static FORCE_INLINE void ReportConversionFailure(char* error, size_t errorCapaci
     }
 }
 
-static FORCE_INLINE void ReleaseAudioTypes(IMFMediaType** ppVideo,
-                              IMFMediaType** ppNativeAudio,
-                              IMFMediaType** ppPcm,
-                              IMFMediaType** ppAac)
+static FORCE_INLINE void ReleaseAudioTypes(IMFMediaType** ppVideo, IMFMediaType** ppNativeAudio, IMFMediaType** ppPcm, IMFMediaType** ppAac)
 {
-    if (NULL != *ppVideo)
-    {
-        IMFMediaType_Release(*ppVideo);
-        *ppVideo = NULL;
-    }
-    if (NULL != *ppNativeAudio)
-    {
-        IMFMediaType_Release(*ppNativeAudio);
-        *ppNativeAudio = NULL;
-    }
-    if (NULL != *ppPcm)
-    {
-        IMFMediaType_Release(*ppPcm);
-        *ppPcm = NULL;
-    }
-    if (NULL != *ppAac)
-    {
-        IMFMediaType_Release(*ppAac);
-        *ppAac = NULL;
-    }
+    cmfUnknownReleaseSafe((IUnknown*)*ppVideo);
+    cmfUnknownReleaseSafe((IUnknown*)*ppNativeAudio);
+    cmfUnknownReleaseSafe((IUnknown*)*ppPcm);
+    cmfUnknownReleaseSafe((IUnknown*)*ppAac);
+    *ppVideo       = NULL;
+    *ppNativeAudio = NULL;
+    *ppPcm         = NULL;
+    *ppAac         = NULL;
 }
 
 /*=================================================================================================
@@ -729,8 +744,8 @@ done:
                                (unsigned long)hr,
                                step);
     }
-    RELEASE(IMFMediaType, type)
-    RELEASE(IMFSourceReader, reader)
+    cmfUnknownReleaseSafe((IUnknown*)type);
+    cmfUnknownReleaseSafe((IUnknown*)reader);
     if (started)
     {
         MFShutdown();
@@ -750,13 +765,7 @@ done:
  *  preserving presentation timestamps. Cancellation and errors release the COM
  *  objects and delete the incomplete output file.
  */
-int AudioGain_Convert(const TCHAR* source,
-                      const TCHAR* dest,
-                      unsigned       percent,
-                      volatile long* cancel,
-                      volatile long* progress,
-                      char*          error,
-                      size_t         errorCapacity)
+int AudioGain_Convert(const TCHAR* source, const TCHAR* dest, unsigned percent, volatile long* cancel, volatile long* progress, char* error, size_t errorCapacity)
 {
     IMFSourceReader* reader = NULL;
     IMFSinkWriter*   writer = NULL;
@@ -788,13 +797,11 @@ int AudioGain_Convert(const TCHAR* source,
     }
     TRY(MFStartup(MF_VERSION, MFSTARTUP_FULL))
     started = 1;
-    TRY(PrepareAudioInput(source, &reader, &video, &nativeAudio, &pcm,
-                          &videoIn, &audioIn, &channels, &rate, &step))
+    TRY(PrepareAudioInput(source, &reader, &video, &nativeAudio, &pcm, &videoIn, &audioIn, &channels, &rate, &step))
     TRY(CreateAacType(channels, rate, &aac))
     TRY(CreateConversionWriter(dest, video, pcm, aac, &attributes, &writer, &videoOut, &audioOut))
     duration = ReadPresentationDuration(reader);
-    TRY(ProcessConversion(reader, writer, videoIn, audioIn, videoOut, audioOut,
-                          percent, cancel, progress, duration, &step))
+    TRY(ProcessConversion(reader, writer, videoIn, audioIn, videoOut, audioOut, percent, cancel, progress, duration, &step))
     TRY(IMFSinkWriter_Finalize(writer))
     if (ConversionCancelled(cancel))
     {
@@ -811,10 +818,10 @@ done:
     {
         ReportConversionFailure(error, errorCapacity, hr, step);
     }
-    RELEASE(IMFSinkWriter, writer)
-    RELEASE(IMFSourceReader, reader)
+    cmfUnknownReleaseSafe((IUnknown*)writer);
+    cmfUnknownReleaseSafe((IUnknown*)reader);
     ReleaseAudioTypes(&video, &nativeAudio, &pcm, &aac);
-    RELEASE(IMFAttributes, attributes)
+    cmfUnknownReleaseSafe((IUnknown*)attributes);
     if (started)
     {
         MFShutdown();

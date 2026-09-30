@@ -1327,15 +1327,17 @@ extern FORCE_INLINE uint32_t Utl_Mpeg4_GetIntegerByteCount(Utl_Mpeg4_Integer_t f
 extern FORCE_INLINE uint32_t Utl_Mpeg4_GetBitWriterByteCount(const Utl_Mpeg4_BitWriter_t* writer)
 {
     uint32_t count;
+    uint64_t position;
+    uint32_t capacity;
+    bool_t   valid;
 
     LOGASSERT(NULL != writer);
-    LOGASSERT(writer->position <= (uint64_t)writer->capacity * BYTE_BITS);
-    count = 0;
-    if (writer->valid)
-    {
-        count = (uint32_t)((writer->position + BYTE_BITS - 1) / BYTE_BITS);
-    }
-    return count;
+    position = writer->position;
+    capacity = writer->capacity;
+    valid    = writer->valid;
+    count    = (uint32_t)((position + BYTE_BITS - 1) / BYTE_BITS);
+    LOGASSERT(position <= (uint64_t)capacity * BYTE_BITS);
+    return valid ? count : 0;
 }
 
 /*************************************************************************************************/
@@ -2136,32 +2138,43 @@ extern FORCE_INLINE void Utl_Mpeg4_WriteAlignedBytes(Utl_Mpeg4_BitWriter_t* writ
     bool_t   aligned;
     bool_t   valid_alignment;
     uint64_t position;
+    bool_t   position_fits;
     bool_t   fits;
     bool_t   can_write;
     bool_t   has_output;
     bool_t   nonempty;
     bool_t   copy;
+    uint32_t copy_count;
+    uint32_t capacity;
+    byte_t*  output;
+    byte_t*  destination;
+    const byte_t* source;
+    byte_t   discard;
 
     LOGASSERT(NULL != writer);
     AssertSpan(bytes);
+    capacity        = writer->capacity;
+    output          = writer->output;
     inactive        = !writer->valid;
     aligned         = (0 == (writer->position % BYTE_BITS));
     valid_alignment = inactive || aligned;
+    position_fits   = (writer->position <= (uint64_t)capacity * BYTE_BITS);
+    position        = writer->position / BYTE_BITS;
+    fits            = position_fits && (bytes.byteCount <= capacity - position);
+    can_write       = writer->valid && valid_alignment && fits;
+    has_output      = (NULL != output);
+    nonempty        = (0 < bytes.byteCount);
+    copy            = can_write && has_output && nonempty;
+    copy_count      = copy ? bytes.byteCount : 0;
+    discard         = 0;
+    destination     = copy ? &output[position] : &discard;
+    source          = copy ? bytes.data : &discard;
+    CRT_Memory_Copy(destination, source, copy_count);
     LOGASSERT(valid_alignment);
-    LOGASSERT(writer->position <= (uint64_t)writer->capacity * BYTE_BITS);
-    position      = writer->position / BYTE_BITS;
-    fits          = (bytes.byteCount <= writer->capacity - position);
-    can_write     = writer->valid && fits;
+    LOGASSERT(position_fits);
     writer->valid = can_write;
     if (can_write)
     {
-        has_output = (NULL != writer->output);
-        nonempty   = (0 < bytes.byteCount);
-        copy       = has_output && nonempty;
-        if (copy)
-        {
-            CRT_Memory_Copy(&writer->output[position], bytes.data, bytes.byteCount);
-        }
         writer->position += (uint64_t)bytes.byteCount * BYTE_BITS;
     }
 }

@@ -1001,12 +1001,8 @@ static FORCE_INLINE bool_t SendResponse(Connection_t* connection, const CastHttp
     socket = connection->socket;
     output = connection->response;
     count = CastHttp_WriteResponse(response, output, RESPONSE_CAPACITY);
-    sent  = (0 < count);
-    if (sent)
-    {
-        sent = SendAll(socket, output, count);
-    }
-    return sent;
+    sent = SendAll(socket, output, count);
+    return sent && (0 < count);
 }
 
 /*************************************************************************************************/
@@ -1380,6 +1376,9 @@ static FORCE_INLINE void ServeConnection(void* parameter)
     int32_t       send_buffer;
     bool_t        active;
     uint32_t      consumed;
+    uint32_t      remaining;
+    byte_t*       destination;
+    const byte_t* source;
     connection              = (Connection_t*)parameter;
     no_delay                = TRUE;
     send_buffer             = SEND_BUFFER_SIZE;
@@ -1415,7 +1414,15 @@ static FORCE_INLINE void ServeConnection(void* parameter)
             consumed = connection->http.reader.head.byteCount;
             LOGASSERT(consumed <= connection->requestUsed);
             connection->requestUsed -= consumed;
-            CRT_Memory_Move(connection->request, connection->request + consumed, connection->requestUsed);
+            destination = connection->request;
+            source      = connection->request + consumed;
+            remaining   = connection->requestUsed;
+            for (; 0 < remaining; --remaining)
+            {
+                *destination = *source;
+                ++destination;
+                ++source;
+            }
             CastHttp_InitializeRequest(&connection->http, connection->fields, REQUEST_FIELD_CAPACITY);
         }
     }

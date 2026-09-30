@@ -324,19 +324,22 @@ static FORCE_INLINE bool_t ReadAt(HANDLE hFile, uint64_t offset, void* pOut, DWO
     bool_t        valid;
     bool_t        read;
     bool_t        complete;
+    DWORD         requested;
+    DWORD         origin;
+    byte_t        discard = 0;
+    void*         destination;
 
     LOGASSERT(NULL != pOut);
-    position.QuadPart = (LONGLONG)offset;
+    position.QuadPart = (0 == size) ? 0 : (LONGLONG)offset;
+    origin            = (0 == size) ? FILE_CURRENT : FILE_BEGIN;
     received          = 0;
-    moved             = SetFilePointerEx(hFile, position, NULL, FILE_BEGIN);
-    valid             = FALSE;
-    if (moved)
-    {
-        read     = ReadFile(hFile, pOut, size, &received, NULL);
-        complete = (received == size);
-        valid    = read && complete;
-    }
-    return valid;
+    moved             = SetFilePointerEx(hFile, position, NULL, origin);
+    requested         = moved ? size : 0;
+    destination       = moved ? pOut : &discard;
+    read              = ReadFile(hFile, destination, requested, &received, NULL);
+    complete          = (received == size);
+    valid             = read && complete;
+    return (0 == size) || (moved && valid);
 }
 
 /* Reads the box header at offset. Returns 0 at the end of the parent or on a malformed size. */
@@ -353,6 +356,7 @@ static FORCE_INLINE bool_t ReadBox(HANDLE hFile, uint64_t offset, uint64_t paren
     bool_t                is_valid;
     uint64_t              remaining;
     bool_t                has_header;
+    bool_t                read;
     DWORD                 read_bytes;
     byte_t                bytes[UTL_MPEG4_MAX_BOX_HEADER_BYTES];
     Utl_Mpeg4_Span_t      prefix;
@@ -365,6 +369,8 @@ static FORCE_INLINE bool_t ReadBox(HANDLE hFile, uint64_t offset, uint64_t paren
     offset_in_parent = (offset <= parentEnd);
     parent_in_file   = (parentEnd <= fileEnd);
     is_valid         = offset_in_parent && parent_in_file;
+    remaining        = 0;
+    read_bytes       = 0;
     if (is_valid)
     {
         remaining  = parentEnd - offset;
@@ -377,14 +383,15 @@ static FORCE_INLINE bool_t ReadBox(HANDLE hFile, uint64_t offset, uint64_t paren
             {
                 read_bytes = (DWORD)remaining;
             }
-            is_valid = ReadAt(hFile, offset, bytes, read_bytes);
-            if (is_valid)
-            {
-                prefix.data      = bytes;
-                prefix.byteCount = read_bytes;
-                is_valid         = Utl_Mpeg4_ReadBoxHeader(&header, prefix, remaining, fileEnd - offset);
-            }
         }
+    }
+    read     = ReadAt(hFile, offset, bytes, read_bytes);
+    is_valid = is_valid && read;
+    if (is_valid)
+    {
+        prefix.data      = bytes;
+        prefix.byteCount = read_bytes;
+        is_valid         = Utl_Mpeg4_ReadBoxHeader(&header, prefix, remaining, fileEnd - offset);
     }
     if (is_valid)
     {
@@ -468,6 +475,8 @@ static FORCE_INLINE bool_t ReadTable(TableReader_t* reader, HANDLE file, const B
     byte_t                  bytes[UTL_MPEG4_SAMPLE_TABLE_HEADER_BYTES];
     Utl_Mpeg4_Span_t        prefix;
     Utl_Mpeg4_BoxPayload_t  payload;
+    DWORD                   read_bytes;
+    bool_t                  read;
 
     LOGASSERT(NULL != reader);
     LOGASSERT(NULL != box);
@@ -476,10 +485,9 @@ static FORCE_INLINE bool_t ReadTable(TableReader_t* reader, HANDLE file, const B
     payload_bytes = box->end - box->payload;
     has_header    = (UTL_MPEG4_SAMPLE_TABLE_HEADER_BYTES <= payload_bytes);
     valid         = has_header;
-    if (valid)
-    {
-        valid = ReadAt(file, box->payload, bytes, sizeof(bytes));
-    }
+    read_bytes    = valid ? sizeof(bytes) : 0;
+    read          = ReadAt(file, box->payload, bytes, read_bytes);
+    valid         = valid && read;
     if (valid)
     {
         prefix.data       = bytes;

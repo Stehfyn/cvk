@@ -421,21 +421,44 @@ static FORCE_INLINE int AppendDecryptedBuffers(CastChannel* pChannel,
     *pExtraLength = 0;
     for (index = 0; index < 4; ++index)
     {
-        if (SECBUFFER_DATA == buffers[index].BufferType && buffers[index].cbBuffer > 0)
+        const SecBuffer* buffer;
+        uint32_t         type;
+        uint32_t         length;
+        void*            data;
+        uint64_t         used;
+        uint32_t         remaining;
+        byte_t*          destination;
+        const byte_t*    source;
+
+        buffer = &buffers[index];
+        type   = buffer->BufferType;
+        length = buffer->cbBuffer;
+        data   = buffer->pvBuffer;
+        used   = pChannel->plainUsed;
+
+        if (SECBUFFER_DATA == type && 0 < length)
         {
-            if (pChannel->plainUsed > PLAINTEXT_CAPACITY ||
-                buffers[index].cbBuffer > PLAINTEXT_CAPACITY - pChannel->plainUsed)
+            if (PLAINTEXT_CAPACITY < used || PLAINTEXT_CAPACITY - used < length)
             {
                 SetError(pChannel->error, sizeof(pChannel->error), "frame exceeds the CASTV2 limit", 0);
                 return 0;
             }
-            CRT_Memory_Copy(pChannel->plain + pChannel->plainUsed, buffers[index].pvBuffer, buffers[index].cbBuffer);
-            pChannel->plainUsed += buffers[index].cbBuffer;
+            LOGASSERT(NULL != data);
+            destination = pChannel->plain + (uint32_t)used;
+            source      = (const byte_t*)data;
+            remaining   = length;
+            for (; 0 < remaining; --remaining)
+            {
+                *destination = *source;
+                ++destination;
+                ++source;
+            }
+            pChannel->plainUsed = (size_t)(used + length);
         }
-        else if (SECBUFFER_EXTRA == buffers[index].BufferType && buffers[index].cbBuffer > 0)
+        else if (SECBUFFER_EXTRA == type && 0 < length)
         {
-            *ppExtra = (const byte_t*)buffers[index].pvBuffer;
-            *pExtraLength = buffers[index].cbBuffer;
+            *ppExtra = (const byte_t*)data;
+            *pExtraLength = length;
         }
     }
     return 1;
@@ -498,7 +521,20 @@ static int DecryptBuffered(CastChannel* pChannel)
         }
         if (extraLength > 0)
         {
-            CRT_Memory_Move(pChannel->incoming, pExtra, extraLength); /* the extra bytes live inside incoming */
+            byte_t* destination;
+            const byte_t* source;
+            uint32_t remaining;
+
+            LOGASSERT(NULL != pExtra);
+            destination = pChannel->incoming;
+            source      = pExtra;
+            remaining   = extraLength;
+            for (; 0 < remaining; --remaining)
+            {
+                *destination = *source;
+                ++destination;
+                ++source;
+            }
         }
         pChannel->incomingUsed = extraLength;
         frame_state           = Utl_CastV2_InspectFrame(&frame_bytes, pChannel->plain, (uint32_t)pChannel->plainUsed);
@@ -764,11 +800,22 @@ static int ReceiveCiphertext(CastChannel* pChannel, ULONGLONG deadline)
 int CastChannel_Receive(CastChannel* pChannel, Utl_CastV2_Message_t* pMessage, unsigned timeoutMs)
 {
     const ULONGLONG deadline = GetTickCount64() + timeoutMs;
+    size_t remaining;
+    byte_t* destination;
+    const byte_t* source;
 
     /* Drop the frame handed out by the previous call. */
     if (pChannel->plainConsumed > 0)
     {
-        CRT_Memory_Move(pChannel->plain, pChannel->plain + pChannel->plainConsumed, pChannel->plainUsed - pChannel->plainConsumed);
+        destination = pChannel->plain;
+        source      = pChannel->plain + pChannel->plainConsumed;
+        remaining   = pChannel->plainUsed - pChannel->plainConsumed;
+        for (; 0 < remaining; --remaining)
+        {
+            *destination = *source;
+            ++destination;
+            ++source;
+        }
         pChannel->plainUsed -= pChannel->plainConsumed;
         pChannel->plainConsumed = 0;
     }

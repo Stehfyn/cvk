@@ -417,18 +417,19 @@ Vint(const byte_t* data, uint64_t limit, uint64_t* cursor, uint64_t* value, bool
     bool_t              cursor_in_bounds;
     bool_t              is_valid;
     Utl_Matroska_Vint_t result;
+    uint64_t            safe_cursor;
+    uint64_t            remaining;
 
     cursor_in_bounds = ((*cursor) < limit);
-    is_valid         = cursor_in_bounds;
+    safe_cursor      = cursor_in_bounds ? (*cursor) : limit;
+    remaining        = limit - safe_cursor;
+    is_valid         = Utl_Matroska_ReadVint(&result, data + safe_cursor, remaining);
+    is_valid         = cursor_in_bounds && is_valid;
     if (is_valid)
     {
-        is_valid = Utl_Matroska_ReadVint(&result, data + (*cursor), limit - (*cursor));
-        if (is_valid)
+        if (id)
         {
-            if (id)
-            {
-                is_valid = (UTL_MATROSKA_MAX_ID_BYTES >= result.byteCount);
-            }
+            is_valid = (UTL_MATROSKA_MAX_ID_BYTES >= result.byteCount);
         }
         if (is_valid)
         {
