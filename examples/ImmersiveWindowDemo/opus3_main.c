@@ -52,6 +52,7 @@
 #include "caption.h"
 #include "opus3_main.h"
 #include "cdxgi.h"
+#include "cdcomp.h"
 
 NTSYSCALLAPI NTSTATUS NTAPI NtDelayExecution(BOOLEAN Alertable, PLARGE_INTEGER DelayInterval);
 

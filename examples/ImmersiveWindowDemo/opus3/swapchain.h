@@ -12,7 +12,7 @@
 /* The presenter's GPU stack: a BGRA/video-capable D3D11 device, a desktop-sized premultiplied
    FLIP_DISCARD composition swap chain with one frame of latency, a Direct2D device context targeting its
    back buffer, and the DirectComposition device / target / visual that bind the swap chain to the
-   window. Zero-initialize, then InitSwapChain and BindSwapChain, in that order. */
+   window. Zero-initialize, then call InitSwapChain before binding the DirectComposition visual. */
 typedef struct SWAPCHAIN
 {
     ID3D11Device*        device;

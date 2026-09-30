@@ -44,7 +44,6 @@ void InitSwapChain(SWAPCHAIN* pSwapChain, IDXGIAdapter* adapter)
     D3D_DRIVER_TYPE         driverType;
     UINT                    desktopWidth;
     UINT                    desktopHeight;
-    HDC                     hdc;
 
     if (NULL != adapter)
     {
@@ -54,26 +53,21 @@ void InitSwapChain(SWAPCHAIN* pSwapChain, IDXGIAdapter* adapter)
     {
         driverType = D3D_DRIVER_TYPE_HARDWARE;
     }
-    cdx11SetupDevice(adapter, driverType, NULL, D3D11_CREATE_DEVICE_VIDEO_SUPPORT | D3D11_CREATE_DEVICE_BGRA_SUPPORT, &pSwapChain->device, NULL, NULL);
-    ASSERT(SUCCEEDED(cdxgiUnknownQueryInterfaceAsDevice1((IUnknown*)pSwapChain->device, &pSwapChain->dxgiDevice)));
+    cdx11SetupDevice1(adapter, driverType, NULL, D3D11_CREATE_DEVICE_VIDEO_SUPPORT | D3D11_CREATE_DEVICE_BGRA_SUPPORT, &pSwapChain->device, &pSwapChain->dxgiDevice, NULL, NULL);
     cdxgiCreateFactory2(0u, &pFactory);
 
-    hdc = GetDC(NULL);
-    ASSERT(hdc);
-    desktopWidth  = (UINT)GetDeviceCaps(hdc, DESKTOPHORZRES);
-    desktopHeight = (UINT)GetDeviceCaps(hdc, DESKTOPVERTRES);
-    ASSERT(ReleaseDC(NULL, hdc));
+    cdxgiFactoryGetPrimaryOutputSize((IDXGIFactory1*)pFactory, &desktopWidth, &desktopHeight);
 
-    cdxgiSetupCompositionSwapChain(pFactory,
-                                   (IUnknown*)pSwapChain->dxgiDevice,
-                                   desktopWidth,
-                                   desktopHeight,
-                                   DXGI_FORMAT_B8G8R8A8_UNORM,
-                                   SWAPCHAIN_BUFFERS,
-                                   DXGI_SWAP_EFFECT_FLIP_DISCARD,
-                                   SWAPCHAIN_FLAGS,
-                                   &pSwapChain->swapChain);
-    ASSERT(SUCCEEDED(cdxgiUnknownQueryInterfaceAsSwapChain2((IUnknown*)pSwapChain->swapChain, &pSwapChain2)));
+    cdxgiSetupCompositionSwapChain2(pFactory,
+                                    (IUnknown*)pSwapChain->dxgiDevice,
+                                    desktopWidth,
+                                    desktopHeight,
+                                    DXGI_FORMAT_B8G8R8A8_UNORM,
+                                    SWAPCHAIN_BUFFERS,
+                                    DXGI_SWAP_EFFECT_FLIP_DISCARD,
+                                    SWAPCHAIN_FLAGS,
+                                    &pSwapChain->swapChain,
+                                    &pSwapChain2);
     cdxgiSwapChainSetMaximumFrameLatency(pSwapChain2, SWAPCHAIN_MAX_FRAME_LATENCY);
     cdxgiUnknownReleaseSafe((IUnknown*)pSwapChain2);
     cdxgiUnknownReleaseSafe((IUnknown*)pFactory);

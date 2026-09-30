@@ -6,6 +6,7 @@
 #include "dpi.h"
 #include "nt_assert.h"
 #include "versionhelpersx.h"
+#include "cdcomp.h"
 #include <windowsx.h>
 #include <dwmapi.h>
 
