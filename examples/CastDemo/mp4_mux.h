@@ -9,14 +9,14 @@
 
 #include "os/os_types.h"
 #include <stdint.h>
-#include <wchar.h>
+#include <tchar.h>
 
 typedef struct Mp4Mux Mp4Mux;
 
 /* Opens pPath and begins the file. sps/pps are the encoder's parameter sets (Annex-B or raw NAL,
 ** without start codes). hasAudio adds an AAC track described by asc (AudioSpecificConfig). Returns
 ** NULL on failure. */
-Mp4Mux* Mp4Mux_Create(const wchar_t* pPath,
+Mp4Mux* Mp4Mux_Create(const TCHAR* pPath,
                       unsigned       width,
                       unsigned       height,
                       const byte_t* pSps,
@@ -35,7 +35,7 @@ Mp4Mux* Mp4Mux_Create(const wchar_t* pPath,
 ** fragments are appended by Mp4Mux_FlushFragment as they are produced, so the file is playable and
 ** seekable within its produced range almost immediately. fullDurationSeconds is the whole timeline
 ** (from the source) so the receiver shows the complete seek bar. Returns NULL on failure. */
-Mp4Mux* Mp4Mux_CreateFragmented(const wchar_t* pPath,
+Mp4Mux* Mp4Mux_CreateFragmented(const TCHAR* pPath,
                                 unsigned       width,
                                 unsigned       height,
                                 const byte_t* pSps,

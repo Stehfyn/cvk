@@ -9,11 +9,16 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <windows.h>
+#include <Windows.h> // IWYU pragma: keep
+#include <minwindef.h>
+#include <fileapi.h>
+#include <winbase.h>
+#include <handleapi.h>
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <winnt.h>
 
 #include "mp4_demux.h"
 #include "utl/utl_mpeg4.h"
@@ -848,7 +853,7 @@ static void ParseAudioTrack(Mp4Demux* pDemux, HANDLE hFile, const Box* pMdia)
  *  Allocates the demux owner and reads movie tracks, requiring a usable video
  *  track and timescale before returning the open source.
  */
-Mp4Demux* Mp4Demux_Open(const wchar_t* pFile)
+Mp4Demux* Mp4Demux_Open(const TCHAR* pFile)
 {
     Mp4Demux*     pDemux = (Mp4Demux*)calloc(1, sizeof(*pDemux));
     LARGE_INTEGER size;
@@ -861,7 +866,7 @@ Mp4Demux* Mp4Demux_Open(const wchar_t* pFile)
         return NULL;
     }
     pDemux->hFile =
-        CreateFileW(pFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
+        CreateFile(pFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
     if (INVALID_HANDLE_VALUE == pDemux->hFile || !GetFileSizeEx(pDemux->hFile, &size))
     {
         Mp4Demux_Close(pDemux);
@@ -1108,9 +1113,9 @@ uint32_t Mp4Demux_ReadAudioSample(Mp4Demux* pDemux, unsigned index, byte_t* pBuf
  *  Locates the requested timed-text track, applies the supported edit-list timing
  *  and dispatches nonempty sample intervals while temporary sample storage is valid.
  */
-int Mp4Demux_ReadTextTrack(const wchar_t* pFile, unsigned index, char language[4], Mp4TextProc callback, void* pUser)
+int Mp4Demux_ReadTextTrack(const TCHAR* pFile, unsigned index, char language[4], Mp4TextProc callback, void* pUser)
 {
-    HANDLE file = CreateFileW(pFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
+    HANDLE file = CreateFile(pFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
     LARGE_INTEGER size;
     Box           root, moov, trak, mvhd;
     uint64_t offset;

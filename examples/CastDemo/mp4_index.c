@@ -9,6 +9,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
+#include <Windows.h> // IWYU pragma: keep
 #include <minwindef.h>
 #include <fileapi.h>
 #include <winbase.h>
@@ -910,7 +911,7 @@ unsigned Mp4Index_ReadKeyframes(const TCHAR* pFile, double* pTimes, unsigned cap
     count = 0;
     if (!empty)
     {
-        file  = CreateFileW(pFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
+        file  = CreateFile(pFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
         valid = (INVALID_HANDLE_VALUE != file);
         if (valid)
         {

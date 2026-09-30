@@ -46,6 +46,7 @@ typedef struct OS_Memory_s
     uint64_t byteCount;     ///< Requested region extent, retained through partial closure.
     bool_t   ready;         ///< Residency acquired and no shutdown attempt made.
     bool_t   unlockPending; ///< An unlock attempt remains required or uncertain.
+    uint64_t workingSetIncrease; ///< Process quota raised for this region, pending restoration on close.
     uint32_t error;         ///< First native failure; zero initially.
 } OS_Memory_t;
 

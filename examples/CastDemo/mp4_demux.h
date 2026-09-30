@@ -9,7 +9,7 @@
 
 #include "os/os_types.h"
 #include <stdint.h>
-#include <wchar.h>
+#include <tchar.h>
 
 typedef struct Mp4Sample
 {
@@ -36,7 +36,7 @@ typedef struct Mp4Demux Mp4Demux;
 typedef int             (*Mp4TextProc)(void* pUser, double start, double end, const byte_t* pData, uint32_t size);
 
 /* Opens the file and reads the sample tables. Returns NULL if it is not an AVC MP4. */
-Mp4Demux* Mp4Demux_Open(const wchar_t* pFile);
+Mp4Demux* Mp4Demux_Open(const TCHAR* pFile);
 
 /* Video track parameters. */
 unsigned Mp4Demux_GetWidth(const Mp4Demux* pDemux);
@@ -78,7 +78,7 @@ uint32_t Mp4Demux_ReadSample(Mp4Demux* pDemux, unsigned index, byte_t* pBuffer, 
 
 uint32_t Mp4Demux_ReadAudioSample(Mp4Demux* pDemux, unsigned index, byte_t* pBuffer, uint32_t capacity);
 
-int Mp4Demux_ReadTextTrack(const wchar_t* pFile, unsigned index, char language[4], Mp4TextProc callback, void* pUser);
+int Mp4Demux_ReadTextTrack(const TCHAR* pFile, unsigned index, char language[4], Mp4TextProc callback, void* pUser);
 
 void Mp4Demux_Close(Mp4Demux* pDemux);
 

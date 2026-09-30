@@ -2,12 +2,13 @@
 ** and rate control, per-frame encode of downscaled frames, and bitstream read-back. The input
 ** picture format is whatever the driver advertises for encode source images, so the per-frame
 ** upload is driven by that format's plane layout rather than assuming one pixel format. */
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h> // IWYU pragma: keep
 #include <vulkan/vulkan_core.h>
 #include <vk_video/vulkan_video_codec_h264std.h>
 #include "os/os_types.h"
 #include <minwindef.h>
 #include <vk_video/vulkan_video_codec_h264std_encode.h>
-#define WIN32_LEAN_AND_MEAN
 
 #include <stdarg.h>
 #include <stdint.h>

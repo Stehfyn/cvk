@@ -2022,7 +2022,7 @@ static FORCE_INLINE void CommitFragment(Mp4Mux* mux, const FragmentLayout_t* lay
  *  Allocates the mux owner, opens shared-read output and writes the file-type box
  *  followed by an mdat header whose size will be patched during finalization.
  */
-Mp4Mux* Mp4Mux_Create(const wchar_t* pPath,
+Mp4Mux* Mp4Mux_Create(const TCHAR* pPath,
                       unsigned       width,
                       unsigned       height,
                       const byte_t*  pSps,
@@ -2046,7 +2046,7 @@ Mp4Mux* Mp4Mux_Create(const wchar_t* pPath,
         return NULL;
     }
     InitializeFragmentStorage(pMux);
-    pMux->file = CreateFileW(pPath,
+    pMux->file = CreateFile(pPath,
                              GENERIC_WRITE,
                              FILE_SHARE_READ,
                              NULL,
@@ -2097,7 +2097,7 @@ Mp4Mux* Mp4Mux_Create(const wchar_t* pPath,
  *  Allocates fragment state, stores codec configuration and writes the init
  *  segment before returning shared-read output.
  */
-Mp4Mux* Mp4Mux_CreateFragmented(const wchar_t* pPath,
+Mp4Mux* Mp4Mux_CreateFragmented(const TCHAR* pPath,
                                 unsigned       width,
                                 unsigned       height,
                                 const byte_t*  pSps,
@@ -2121,7 +2121,7 @@ Mp4Mux* Mp4Mux_CreateFragmented(const wchar_t* pPath,
         return NULL;
     }
     InitializeFragmentStorage(pMux);
-    pMux->file = CreateFileW(pPath,
+    pMux->file = CreateFile(pPath,
                              GENERIC_WRITE,
                              FILE_SHARE_READ,
                              NULL,

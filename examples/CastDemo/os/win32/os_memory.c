@@ -19,6 +19,7 @@
 #include <basetsd.h>
 #include <minwindef.h>
 #include <memoryapi.h>
+#include <processthreadsapi.h>
 #include <errhandlingapi.h>
 #include <winerror.h>
 #include <winnt.h>
@@ -34,6 +35,8 @@
 **
 ** 3.1 Macros
 **===============================================================================================*/
+
+#define OS_MEMORY_WORKING_SET_MARGIN (1024ULL * 1024ULL)
 
 /*=================================================================================================
 ** 3.2 Types
@@ -104,6 +107,11 @@ extern FORCE_INLINE bool_t OS_Memory_Initialize(OS_Memory_t* memory, uint64_t by
     uint32_t error;
     bool_t   allocated;
     bool_t   locked;
+    bool_t   quotaReady;
+    SIZE_T   minimum = 0;
+    SIZE_T   maximum = 0;
+    SIZE_T   increase = 0;
+    HANDLE   process;
 
     LOGASSERT(NULL != memory);
     LOGASSERT(0 < byteCount);
@@ -113,7 +121,38 @@ extern FORCE_INLINE bool_t OS_Memory_Initialize(OS_Memory_t* memory, uint64_t by
     memory->byteCount     = 0;
     memory->ready         = FALSE;
     memory->unlockPending = FALSE;
+    memory->workingSetIncrease = 0;
     memory->error         = 0;
+    error   = ERROR_ARITHMETIC_OVERFLOW;
+    process = GetCurrentProcess();
+    quotaReady = (byteCount <= (UINTPTR_MAX - OS_MEMORY_WORKING_SET_MARGIN));
+    if (quotaReady)
+    {
+        increase = (SIZE_T)(byteCount + OS_MEMORY_WORKING_SET_MARGIN);
+        quotaReady = !!GetProcessWorkingSetSize(process, &minimum, &maximum);
+        if (!quotaReady)
+        {
+            error = GetLastError();
+        }
+    }
+    if (quotaReady)
+    {
+        quotaReady = (minimum <= (UINTPTR_MAX - increase)) && (maximum <= (UINTPTR_MAX - increase));
+    }
+    if (quotaReady)
+    {
+        quotaReady = !!SetProcessWorkingSetSize(process, minimum + increase, maximum + increase);
+        if (!quotaReady)
+        {
+            error = GetLastError();
+        }
+    }
+    if (!quotaReady)
+    {
+        RecordError(memory, error);
+        return FALSE;
+    }
+    memory->workingSetIncrease = increase;
     memory->address       = VirtualAlloc(NULL, (SIZE_T)byteCount, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
     allocated             = (NULL != memory->address);
     if (allocated)
@@ -216,9 +255,14 @@ extern FORCE_INLINE bool_t OS_Memory_TryClose(OS_Memory_t* memory)
 {
     bool_t   has_region;
     bool_t   unlocked;
+    bool_t   quotaReady;
     uint32_t error;
     bool_t   released;
     bool_t   closed;
+    SIZE_T   minimum;
+    SIZE_T   maximum;
+    SIZE_T   decrease;
+    HANDLE   process;
 
     LOGASSERT(NULL != memory);
 
@@ -252,7 +296,30 @@ extern FORCE_INLINE bool_t OS_Memory_TryClose(OS_Memory_t* memory)
             RecordError(memory, error);
         }
     }
-    closed = (NULL == memory->address);
+    if ((NULL == memory->address) && (0 < memory->workingSetIncrease))
+    {
+        process    = GetCurrentProcess();
+        decrease   = (SIZE_T)memory->workingSetIncrease;
+        quotaReady = !!GetProcessWorkingSetSize(process, &minimum, &maximum);
+        if (quotaReady)
+        {
+            quotaReady = (decrease <= minimum) && (decrease <= maximum);
+        }
+        if (quotaReady)
+        {
+            quotaReady = !!SetProcessWorkingSetSize(process, minimum - decrease, maximum - decrease);
+        }
+        if (quotaReady)
+        {
+            memory->workingSetIncrease = 0;
+        }
+        else
+        {
+            error = GetLastError();
+            RecordError(memory, error);
+        }
+    }
+    closed = (NULL == memory->address) && (0 == memory->workingSetIncrease);
 
     return closed;
 }

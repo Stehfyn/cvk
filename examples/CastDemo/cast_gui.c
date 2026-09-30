@@ -14,12 +14,42 @@
 #include <shellapi.h>
 #include <Uxtheme.h>
 #include <dwmapi.h>
-#include <tchar.h>
+#include <winnt.h>
+#include <windef.h>
+#include <intsafe.h>
+#include <minwindef.h>
+#include <basetsd.h>
+#include <errhandlingapi.h>
+#include <winerror.h>
+#include <WinBase.h>
+#include <stringapiset.h>
+#include <WinNls.h>
+#include <dcommon.h>
+#include <dxgiformat.h>
+#include <Unknwnbase.h>
+#include <WinUser.h>
+#include <minwinbase.h>
+#include <windowsx.h>
+#include <wingdi.h>
+#include <processthreadsapi.h>
+#include <fileapi.h>
+#include <handleapi.h>
+#include <sysinfoapi.h>
+#include <dxgi1_6.h>
+#include <dxgi.h>
+#include <combaseapi.h>
+#include <objbase.h>
+#include <synchapi.h>
+#include <libloaderapi.h>
 
 #include <stdint.h>
 #include <stddef.h>
 
 #include "cast_media.h"
+#include "gpu_device.h"
+#include "gpu_transcode.h"
+#include <swapchain.h>
+#include <cdcomp.h>
 #include "cast_session.h"
 #include "os/os_assert.h"
 #include "os/os_memory.h"
@@ -935,7 +965,7 @@ static FORCE_INLINE void FormatTime(double seconds, LPTSTR pOut, uint32_t capaci
     {
         total = INT32_MAX;
     }
-    NativeText_Initialize(&text, pOut, (uint32_t)capacity);
+    NativeText_Initialize(&text, pOut, capacity);
     if (3600 <= total)
     {
         NativeText_AppendUnsigned(&text, (uint32_t)(total / 3600), 1);
@@ -980,17 +1010,20 @@ static FORCE_INLINE void InitControlPaint(App* app)
 
 static FORCE_INLINE void UpdateControlTextFormat(App* app)
 {
+    int fontSize;
+
     cdwUnknownReleaseSafe((IUnknown*)app->trimmingSign);
     cdwUnknownReleaseSafe((IUnknown*)app->textFormat);
     app->trimmingSign = NULL;
     app->textFormat   = NULL;
+    fontSize = Scale(app, 13);
     cdwFactoryCreateTextFormat(app->textFactory,
                                L"Segoe UI",
                                NULL,
                                DWRITE_FONT_WEIGHT_NORMAL,
                                DWRITE_FONT_STYLE_NORMAL,
                                DWRITE_FONT_STRETCH_NORMAL,
-                               (FLOAT)Scale(app, 13),
+                               (FLOAT)fontSize,
                                L"",
                                &app->textFormat);
     cdwTextFormatSetParagraphAlignment(app->textFormat, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
@@ -1080,7 +1113,7 @@ static FORCE_INLINE HWND CreateChild(App* pApp, LPCTSTR pClass, LPCTSTR pText, D
     HWND child;
     if ((0 == lstrcmp(pClass, WC_BUTTON)) && ((style & BS_TYPEMASK) != BS_AUTOCHECKBOX))
     {
-        style = (style & ~BS_TYPEMASK) | BS_OWNERDRAW;
+        style = (style & ~(DWORD)BS_TYPEMASK) | (DWORD)BS_OWNERDRAW;
     }
     child = CreateWindowEx(exStyle,
                             pClass,
@@ -1288,7 +1321,7 @@ static FORCE_INLINE void PaintDarkCombo(HWND hWnd, HDC dc, App* pApp)
     DrawSubtitleItem(hWnd, text, (int)SendMessage(hWnd, CB_GETCURSEL, 0, 0), ODS_COMBOBOXEDIT | (enabled ? 0 : ODS_DISABLED), pApp);
     border = focused && enabled ? &c_castAccentColor : &c_castBorderColor;
     DrawControlRect(pApp, &client, border);
-    x = client.right - arrowWidth / 2;
+    x          = client.right - (arrowWidth / 2);
     y = (client.top + client.bottom) / 2;
     left.x = (FLOAT)(x - Scale(pApp, 4));
     left.y = (FLOAT)(y - Scale(pApp, 2));
@@ -1465,7 +1498,7 @@ static FORCE_INLINE void Layout(App* pApp)
     const int labelH  = Scale(pApp, 18);
     const int timeW   = Scale(pApp, 150);
     const int valueW  = Scale(pApp, 108);
-    const int cfgH    = labelH + gap + 5 * (rowH + gap); /* label + res + qp + gop + motion + actions */
+    const int cfgH               = labelH + gap + (5 * (rowH + gap)); /* label + res + qp + gop + motion + actions */
     const int labelOffset = Scale(pApp, 4);
     const int buttonOffset = Scale(pApp, 2);
     const int listMinHeight = Scale(pApp, 60);
@@ -1507,7 +1540,7 @@ static FORCE_INLINE void Layout(App* pApp)
     int       listH;
 
     GetClientRect(pApp->hWnd, &client);
-    width = client.right - 2 * margin;
+    width               = client.right - (2 * margin);
     sliderX = margin + valueW + gap;
     sliderWidth = width - valueW - gap;
     buttonX = client.right - margin - buttonW;
@@ -1531,8 +1564,8 @@ static FORCE_INLINE void Layout(App* pApp)
     motionValueX = client.right - margin - motionValueWidth;
     receiverColumnWidth = width - addressColumnWidth - modelColumnWidth - columnPadding;
     /* bottom-up: config panel, status, toolbar, hint, cast, file; the list takes the rest */
-    listH = client.bottom - pApp->immersiveWindow.metrics.cyCaption - (margin + labelH + gap) -
-            5 * (gap + rowH) - (gap + labelH) - (gap + cfgH) - margin;
+    listH = client.bottom - pApp->immersiveWindow.metrics.cyCaption - (margin + labelH + gap) - (5 * (gap + rowH)) -
+            (gap + labelH) - (gap + cfgH) - margin;
     if (listH < listMinHeight)
     {
         listH = listMinHeight;
@@ -1743,14 +1776,12 @@ static FORCE_INLINE void CreateControls(App* pApp)
     LVCOLUMN                           column;
     const CastGui_ControlDefinition_t* control;
     HWND                               child;
-    HWND*                              destination;
 
     for (index = 0; index < ARRAYSIZE(c_controls); ++index)
     {
         control = &c_controls[index];
         child   = CreateChild(pApp, control->windowClass, control->text, control->style, control->extendedStyle, control->id);
-        destination = (HWND*)((byte_t*)pApp + control->destinationOffset);
-        (*destination) = child;
+        CRT_Memory_Copy((byte_t*)pApp + control->destinationOffset, (const byte_t*)&child, sizeof(HWND));
     }
 
     SetWindowSubclass(pApp->hSubtitle, DarkComboProc, DARK_COMBO_SUBCLASS_ID, (DWORD_PTR)pApp);
@@ -1786,7 +1817,14 @@ static FORCE_INLINE void CreateControls(App* pApp)
     ListView_InsertColumn(pApp->hList, 1, &column);
     column.pszText = TEXT("Model");
     ListView_InsertColumn(pApp->hList, 2, &column);
-    SetWindowSubclass(ListView_GetHeader(pApp->hList), DarkHeaderProc, DARK_HEADER_SUBCLASS_ID, (DWORD_PTR)pApp);
+    {
+        LRESULT headerResult;
+        HWND    header;
+
+        headerResult = SendMessage(pApp->hList, LVM_GETHEADER, 0, 0);
+        header       = (HWND)headerResult;
+        SetWindowSubclass(header, DarkHeaderProc, DARK_HEADER_SUBCLASS_ID, (DWORD_PTR)pApp);
+    }
     SendMessage(pApp->hSeek, TBM_SETRANGE, TRUE, MAKELPARAM(0, SEEK_RANGE));
     /* A click on the channel should jump to the cursor and scrub, not page toward it. */
     SetWindowSubclass(pApp->hSeek, SeekBarProc, SEEK_BAR_SUBCLASS_ID, (DWORD_PTR)pApp);
@@ -1878,8 +1916,8 @@ static FORCE_INLINE void OnDiscovered(App* pApp, const DiscoveryResult* pResult)
         item.iItem   = (int)index;
         item.pszText = nativeName;
         ListView_InsertItem(pApp->hList, &item);
-        ListView_SetItemText(pApp->hList, (int)index, 1, nativeAddress);
-        ListView_SetItemText(pApp->hList, (int)index, 2, nativeModel);
+        ListView_SetItemText(pApp->hList, (int)index, 1, nativeAddress)
+        ListView_SetItemText(pApp->hList, (int)index, 2, nativeModel)
         if ((preferred < 0) &&
             ContainsNoCase(pDevice->friendlyName, ARRAYSIZE(pDevice->friendlyName), PREFERRED_DEVICE, ARRAYSIZE(PREFERRED_DEVICE) - 1))
         {
@@ -1890,7 +1928,7 @@ static FORCE_INLINE void OnDiscovered(App* pApp, const DiscoveryResult* pResult)
     {
         const int select = (preferred >= 0) ? preferred : 0;
 
-        ListView_SetItemState(pApp->hList, select, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+        ListView_SetItemState(pApp->hList, select, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED)
         NativeText_Initialize(&writer, text, ARRAYSIZE(text));
         NativeText_AppendUnsigned(&writer, pApp->devices.count, 1);
         NativeText_AppendString(&writer, TEXT(" receiver"));
@@ -1979,7 +2017,9 @@ static FORCE_INLINE void RefreshSubtitles(App* pApp)
         mediaSource[0] = L'\0';
     }
     if (0 == lstrcmp(source, pApp->subtitleSource))
+    {
         return;
+    }
     (void)lstrcpyn(pApp->subtitleSource, source, ARRAYSIZE(pApp->subtitleSource));
     isRemote = sourceReady && (4 <= length) &&
                (CSTR_EQUAL == CompareString(LOCALE_INVARIANT, NORM_IGNORECASE, source, 4, TEXT("http"), 4));
@@ -3023,7 +3063,10 @@ static FORCE_INLINE void ShowPosition(App* pApp, double seconds)
         {
             seconds = pApp->status.duration;
         }
-        SendMessage(pApp->hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)(seconds / pApp->status.duration * SEEK_RANGE + 0.5));
+        SendMessage(pApp->hSeek,
+                    TBM_SETPOS,
+                    TRUE,
+                    (LPARAM)(LONG)((seconds / pApp->status.duration * SEEK_RANGE) + 0.5));
     }
     else
     {
@@ -3253,7 +3296,7 @@ static FORCE_INLINE void SeekToRatio(App* pApp, double ratio, int final)
         ratio = 1.0;
     }
     seconds = pApp->status.duration * ratio;
-    SendMessage(pApp->hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)(ratio * SEEK_RANGE + 0.5));
+    SendMessage(pApp->hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)((ratio * SEEK_RANGE) + 0.5));
     if (final)
     {
         pApp->seeking = 0;
@@ -3422,7 +3465,7 @@ static FORCE_INLINE LRESULT CALLBACK SeekBarProc(HWND hWnd, UINT message, WPARAM
  *  Translates keyboard-driven slider movement into a final seek; mouse thumb
  *  tracking is handled by the subclass.
  */
-static FORCE_INLINE void OnSeekScroll(App* pApp, int code)
+static FORCE_INLINE void OnSeekScroll(App* pApp, UINT code)
 {
     const int position = (int)SendMessage(pApp->hSeek, TBM_GETPOS, 0, 0);
 
@@ -3583,10 +3626,11 @@ static FORCE_INLINE BOOL CastWindow_OnEraseBackground(HWND hWnd, HDC dc)
 static FORCE_INLINE HBRUSH CastWindow_ControlColor(HWND hWnd, HDC dc, HWND hControl, int type)
 {
     App* pApp;
+    int  field;
 
     pApp = GetApp(hWnd);
 
-    int field = type == CTLCOLOR_EDIT || type == CTLCOLOR_LISTBOX || hControl == pApp->hSubtitle;
+    field = (type == CTLCOLOR_EDIT) || (type == CTLCOLOR_LISTBOX) || (hControl == pApp->hSubtitle);
     SetTextColor(dc, IsWindowEnabled(hControl) ? DARK_TEXT : DARK_MUTED);
     SetBkColor(dc, field ? DARK_FIELD : DARK_BACKGROUND);
     return field ? pApp->fieldBrush : pApp->backgroundBrush;
@@ -3671,7 +3715,6 @@ static FORCE_INLINE void CastWindow_OnDrawItem(HWND hWnd, const DRAWITEMSTRUCT* 
         DrawControlRect(pApp, &rect, &c_castAccentColor);
     }
     EndControlPaint(pApp);
-    return;
 }
 
 /*************************************************************************************************/
@@ -3857,7 +3900,6 @@ static FORCE_INLINE void CastWindow_OnTimer(HWND hWnd, UINT id)
             ScheduleGain(pApp);
         }
     }
-    return;
 }
 
 /*************************************************************************************************/

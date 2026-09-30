@@ -1,6 +1,6 @@
 /* gpu_transcode.c - Stage 1: Vulkan Video H.264 encode/decode capability detection through cvk. */
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include <Windows.h>
 
 #include <stdarg.h>
 #include <string.h>
@@ -35,8 +35,6 @@ static void Report(char* pReport, size_t capacity, const char* pFormat, ...)
 }
 
 /* ---- The full decode -> downscale -> encode proxy pipeline. ---------------------------------- */
-
-#include <stdlib.h>
 
 #include "mp4_demux.h"
 #include "h264_params.h"
@@ -77,6 +75,7 @@ struct GpuTranscoder
     unsigned           sampleCount;
     byte_t*            sampleBuffer;
     uint32_t           sampleCapacity;
+    uint64_t           frameCapacity;
     byte_t*            dstLuma;
     byte_t*            dstChroma;
     GpuTranscodeConfig config;
@@ -87,7 +86,6 @@ struct GpuTranscoder
     /* Decode-ahead pipeline: the producer thread decodes into a bounded ring while the caller's
     ** thread downscales and encodes, so the decode and encode engines run in parallel. */
     FrameSlot     ring[PIPELINE_SLOTS];
-    uint32_t      planeCount; /* successful plane acquisitions retained for partial-startup cleanup */
     HANDLE        emptySlots;  /* counts ring slots the producer may fill */
     HANDLE        filledSlots; /* counts ring slots the consumer may drain */
     HANDLE        producerThread;
@@ -134,9 +132,9 @@ static void DownscaleFrame(const FrameSlot* pSrc, byte_t* pDstLuma, byte_t* pDst
     chroma_stride = pSrc->chromaStride;
     src_chroma_w  = pSrc->chromaWidth;
     src_chroma_h  = pSrc->chromaHeight;
-    p_cb          = pSrc->planes + (size_t)luma_stride * sh;
-    p_cr          = pSrc->chromaInterleaved ? p_cb : (p_cb + (size_t)chroma_stride * src_chroma_h);
-    cb_step       = pSrc->chromaInterleaved ? 2u : 1u; /* interleaved Cb/Cr vs a planar Cb plane */
+    p_cb          = pSrc->planes + ((size_t)luma_stride * sh);
+    p_cr          = pSrc->chromaInterleaved ? p_cb : (p_cb + ((size_t)chroma_stride * src_chroma_h));
+    cb_step       = pSrc->chromaInterleaved ? 2U : 1U; /* interleaved Cb/Cr vs a planar Cb plane */
 
     for (oy = 0; oy < oh; ++oy)
     {
@@ -145,10 +143,10 @@ static void DownscaleFrame(const FrameSlot* pSrc, byte_t* pDstLuma, byte_t* pDst
         unsigned ox;
 
         sy0 = oy * sh / oh;
-        sy1 = (oy + 1u) * sh / oh;
+        sy1 = (oy + 1U) * sh / oh;
         if (sy1 <= sy0)
         {
-            sy1 = sy0 + 1u;
+            sy1 = sy0 + 1U;
         }
         for (ox = 0; ox < ow; ++ox)
         {
@@ -159,10 +157,10 @@ static void DownscaleFrame(const FrameSlot* pSrc, byte_t* pDstLuma, byte_t* pDst
             uint32_t count;
 
             sx0 = ox * sw / ow;
-            sx1 = (ox + 1u) * sw / ow;
+            sx1 = (ox + 1U) * sw / ow;
             if (sx1 <= sx0)
             {
-                sx1 = sx0 + 1u;
+                sx1 = sx0 + 1U;
             }
             sum   = 0;
             count = 0;
@@ -172,16 +170,16 @@ static void DownscaleFrame(const FrameSlot* pSrc, byte_t* pDstLuma, byte_t* pDst
 
                 for (sx = sx0; sx < sx1 && sx < sw; ++sx)
                 {
-                    sum += p_luma[(size_t)sy * luma_stride + sx];
+                    sum += p_luma[((size_t)sy * luma_stride) + sx];
                     ++count;
                 }
             }
-            pDstLuma[(size_t)oy * ow + ox] = (uint8_t)(sum / (count ? count : 1u));
+            pDstLuma[((size_t)oy * ow) + ox] = (uint8_t)(sum / (count ? count : 1U));
         }
     }
 
-    dst_chroma_w = (ow + 1u) / 2u;
-    dst_chroma_h = (oh + 1u) / 2u;
+    dst_chroma_w = (ow + 1U) / 2U;
+    dst_chroma_h = (oh + 1U) / 2U;
     for (oy = 0; oy < dst_chroma_h; ++oy)
     {
         unsigned cy0;
@@ -189,10 +187,10 @@ static void DownscaleFrame(const FrameSlot* pSrc, byte_t* pDstLuma, byte_t* pDst
         unsigned ox;
 
         cy0 = oy * src_chroma_h / dst_chroma_h;
-        cy1 = (oy + 1u) * src_chroma_h / dst_chroma_h;
+        cy1 = (oy + 1U) * src_chroma_h / dst_chroma_h;
         if (cy1 <= cy0)
         {
-            cy1 = cy0 + 1u;
+            cy1 = cy0 + 1U;
         }
         for (ox = 0; ox < dst_chroma_w; ++ox)
         {
@@ -204,10 +202,10 @@ static void DownscaleFrame(const FrameSlot* pSrc, byte_t* pDstLuma, byte_t* pDst
             uint32_t count;
 
             cx0 = ox * src_chroma_w / dst_chroma_w;
-            cx1 = (ox + 1u) * src_chroma_w / dst_chroma_w;
+            cx1 = (ox + 1U) * src_chroma_w / dst_chroma_w;
             if (cx1 <= cx0)
             {
-                cx1 = cx0 + 1u;
+                cx1 = cx0 + 1U;
             }
             sum_cb = 0;
             sum_cr = 0;
@@ -218,13 +216,14 @@ static void DownscaleFrame(const FrameSlot* pSrc, byte_t* pDstLuma, byte_t* pDst
 
                 for (cx = cx0; cx < cx1 && cx < src_chroma_w; ++cx)
                 {
-                    sum_cb += p_cb[(uint64_t)cy * chroma_stride + (uint64_t)cx * cb_step];
-                    sum_cr += p_cr[(uint64_t)cy * chroma_stride + (uint64_t)cx * cb_step + (pSrc->chromaInterleaved ? 1 : 0)];
+                    sum_cb += p_cb[((uint64_t)cy * chroma_stride) + ((uint64_t)cx * cb_step)];
+                    sum_cr += p_cr[((uint64_t)cy * chroma_stride) + ((uint64_t)cx * cb_step) +
+                                   (pSrc->chromaInterleaved ? 1 : 0)];
                     ++count;
                 }
             }
-            pDstChroma[((size_t)oy * dst_chroma_w + ox) * 2u]      = (uint8_t)(sum_cb / (count ? count : 1u));
-            pDstChroma[((size_t)oy * dst_chroma_w + ox) * 2u + 1u] = (uint8_t)(sum_cr / (count ? count : 1u));
+            pDstChroma[(((size_t)oy * dst_chroma_w) + ox) * 2U]        = (uint8_t)(sum_cb / (count ? count : 1U));
+            pDstChroma[((((size_t)oy * dst_chroma_w) + ox) * 2U) + 1U] = (uint8_t)(sum_cr / (count ? count : 1U));
         }
     }
 }
@@ -281,8 +280,8 @@ static double EstimateMotion(const byte_t* pPrev,
                     int a;
                     int b;
 
-                    a         = pCurr[((uint64_t)by + yz) * width + (uint64_t)bx + xz];
-                    b         = pPrev[((uint64_t)by + yz) * width + (uint64_t)bx + xz];
+                    a         = pCurr[(((uint64_t)by + yz) * width) + (uint64_t)bx + xz];
+                    b         = pPrev[(((uint64_t)by + yz) * width) + (uint64_t)bx + xz];
                     best_sad += (uint32_t)(a > b ? a - b : b - a);
                 }
             }
@@ -313,8 +312,8 @@ static double EstimateMotion(const byte_t* pPrev,
                             int a;
                             int b;
 
-                            a    = pCurr[((uint64_t)by + y) * width + (uint64_t)bx + x];
-                            b    = pPrev[(uint64_t)((int64_t)by + y + dy) * width + (uint64_t)((int64_t)bx + x + dx)];
+                            a    = pCurr[(((uint64_t)by + y) * width) + (uint64_t)bx + x];
+                            b    = pPrev[((uint64_t)((int64_t)by + y + dy) * width) + (uint64_t)((int64_t)bx + x + dx)];
                             sad += (uint32_t)(a > b ? a - b : b - a);
                         }
                     }
@@ -368,6 +367,7 @@ static DWORD WINAPI ProducerThread(LPVOID pParameter)
         DecodedFrame     df;
         size_t           luma_bytes;
         size_t           chroma_bytes;
+        uint64_t         chroma_copy_bytes;
         uint32_t         bytes;
 
         WaitForSingleObject(pTranscoder->emptySlots, INFINITE);
@@ -379,7 +379,7 @@ static DWORD WINAPI ProducerThread(LPVOID pParameter)
         if (pTranscoder->sampleIndex >= pTranscoder->sampleCount)
         {
             p_slot->eof       = 1;
-            pTranscoder->head = (pTranscoder->head + 1u) % PIPELINE_SLOTS;
+            pTranscoder->head = (pTranscoder->head + 1U) % PIPELINE_SLOTS;
             ReleaseSemaphore(pTranscoder->filledSlots, 1, NULL);
             break;
         }
@@ -392,14 +392,24 @@ static DWORD WINAPI ProducerThread(LPVOID pParameter)
         if (0 == bytes || !GpuDecode_DecodeFrame(pTranscoder->decoder, pTranscoder->sampleBuffer, bytes))
         {
             p_slot->eof       = 1;
-            pTranscoder->head = (pTranscoder->head + 1u) % PIPELINE_SLOTS;
+            pTranscoder->head = (pTranscoder->head + 1U) % PIPELINE_SLOTS;
             ReleaseSemaphore(pTranscoder->filledSlots, 1, NULL);
             break;
         }
         GpuDecode_GetFrame(pTranscoder->decoder, &df);
         luma_bytes   = (size_t)df.lumaStride * df.height;
         chroma_bytes = (size_t)df.chromaStride * df.chromaHeight;
-        memcpy(p_slot->planes, df.pLuma, luma_bytes + (df.chromaInterleaved ? chroma_bytes : chroma_bytes * 2u));
+        if (((uint64_t)luma_bytes > pTranscoder->frameCapacity) ||
+            ((uint64_t)chroma_bytes >
+             ((pTranscoder->frameCapacity - luma_bytes) / (df.chromaInterleaved ? 1ULL : 2ULL))))
+        {
+            p_slot->eof       = 1;
+            pTranscoder->head = (pTranscoder->head + 1U) % PIPELINE_SLOTS;
+            ReleaseSemaphore(pTranscoder->filledSlots, 1, NULL);
+            break;
+        }
+        chroma_copy_bytes = df.chromaInterleaved ? chroma_bytes : (2ULL * chroma_bytes);
+        CRT_Memory_Copy(p_slot->planes, df.pLuma, luma_bytes + chroma_copy_bytes);
         p_slot->width             = df.width;
         p_slot->height            = df.height;
         p_slot->lumaStride        = df.lumaStride;
@@ -409,7 +419,7 @@ static DWORD WINAPI ProducerThread(LPVOID pParameter)
         p_slot->chromaInterleaved = df.chromaInterleaved;
         p_slot->sourceKeyframe    = (NULL != p_sample && p_sample->keyframe) ? 1 : 0;
         p_slot->eof               = 0;
-        pTranscoder->head         = (pTranscoder->head + 1u) % PIPELINE_SLOTS;
+        pTranscoder->head         = (pTranscoder->head + 1U) % PIPELINE_SLOTS;
         ReleaseSemaphore(pTranscoder->filledSlots, 1, NULL);
     }
     return 0;
@@ -579,6 +589,14 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
     StdVideoH264PictureParameterSet  pps;
     unsigned                         out_width;
     unsigned                         out_height;
+    uint64_t                         output_height;
+    uint64_t                         source_pixels;
+    uint64_t                         proxy_pixels;
+    uint64_t                         frame_bytes;
+    uint64_t                         luma_bytes;
+    uint64_t                         chroma_bytes;
+    uint64_t                         workspace_bytes;
+    uint64_t                         offset;
     GpuTranscoder*                   pTranscoder;
     char                             device_report[256];
     char                             decode_report[512];
@@ -602,16 +620,47 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
         return NULL;
     }
 
-    out_width = (pConfig->width + 1u) & ~1u;
-    if (out_width < 16u)
+    if ((0 == source_width) || (UINT32_MAX == pConfig->width))
     {
-        out_width = 16u;
+        Mp4Demux_Close(p_demux);
+        return NULL;
     }
-    out_height = (unsigned)(((uint64_t)out_width * source_height + source_width / 2u) / source_width);
-    out_height = (out_height + 1u) & ~1u;
-    if (out_height < 2u)
+    out_width = (pConfig->width + 1U) & ~1U;
+    if (out_width < 16U)
     {
-        out_height = 2u;
+        out_width = 16U;
+    }
+    output_height = (((uint64_t)out_width * source_height) + (source_width / 2U)) / source_width;
+    if (output_height >= UINT32_MAX)
+    {
+        Mp4Demux_Close(p_demux);
+        return NULL;
+    }
+    out_height = (unsigned)output_height;
+    out_height = (out_height + 1U) & ~1U;
+    if (out_height < 2U)
+    {
+        out_height = 2U;
+    }
+
+    source_pixels = (uint64_t)source_width * source_height;
+    proxy_pixels  = (uint64_t)out_width * out_height;
+    if ((source_pixels > GPU_FRAME_STORAGE_CAPACITY / (PIPELINE_SLOTS * 2U)) ||
+        (proxy_pixels > GPU_FRAME_STORAGE_CAPACITY / 2U))
+    {
+        Report(pReport, reportCapacity, "frame dimensions exceed resident workspace\n");
+        Mp4Demux_Close(p_demux);
+        return NULL;
+    }
+    frame_bytes     = source_pixels * 2U;
+    luma_bytes      = proxy_pixels;
+    chroma_bytes    = (((uint64_t)out_width + 1U) / 2U) * 2U * (((uint64_t)out_height + 1U) / 2U);
+    workspace_bytes = (PIPELINE_SLOTS * frame_bytes) + (2U * luma_bytes) + chroma_bytes;
+    if (GPU_FRAME_STORAGE_CAPACITY < workspace_bytes)
+    {
+        Report(pReport, reportCapacity, "frame dimensions exceed resident workspace\n");
+        Mp4Demux_Close(p_demux);
+        return NULL;
     }
 
     if ((NULL == deviceStorage) || deviceStorage->transcoderBusy)
@@ -623,7 +672,6 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
     CRT_Memory_Set(pTranscoder, 0, sizeof(*pTranscoder));
     pTranscoder->owner = deviceStorage;
     deviceStorage->transcoderBusy = TRUE;
-    pTranscoder->planeCount     = 0;
     pTranscoder->config         = (*pConfig);
     pTranscoder->demux          = p_demux;
     pTranscoder->outWidth       = out_width;
@@ -632,6 +680,7 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
     pTranscoder->sourceHeight   = source_height;
     pTranscoder->sampleCount    = Mp4Demux_GetSampleCount(p_demux);
     pTranscoder->sampleCapacity = GPU_SAMPLE_BUFFER_CAPACITY;
+    pTranscoder->frameCapacity  = frame_bytes;
     pTranscoder->device         = GpuDevice_Create(deviceStorage, TRUE, TRUE, device_report, sizeof(device_report));
     Report(pReport, reportCapacity, "device: %s", device_report);
     if (NULL == pTranscoder->device)
@@ -639,15 +688,15 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
         GpuTranscode_Close(pTranscoder);
         return NULL;
     }
-    pTranscoder->decoder = GpuDecode_Create(pTranscoder->device,
-                                            &sps,
-                                            &pps,
-                                            source_width,
-                                            source_height,
-                                            sps.max_num_ref_frames + 2u,
-                                            Mp4Demux_GetNalLengthSize(p_demux),
-                                            decode_report,
-                                            sizeof(decode_report));
+    pTranscoder->decoder       = GpuDecode_Create(pTranscoder->device,
+                                                  &sps,
+                                                  &pps,
+                                                  source_width,
+                                                  source_height,
+                                                  sps.max_num_ref_frames + 2U,
+                                                  Mp4Demux_GetNalLengthSize(p_demux),
+                                                  decode_report,
+                                                  sizeof(decode_report));
     pTranscoder->encoder = GpuEncode_Create(pTranscoder->device,
                                             out_width,
                                             out_height,
@@ -660,32 +709,28 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
                                             encode_report,
                                             sizeof(encode_report));
     pTranscoder->sampleBuffer = deviceStorage->sampleBuffer;
-    pTranscoder->dstLuma      = (byte_t*)malloc((size_t)out_width * out_height);
-    pTranscoder->dstChroma    = (byte_t*)malloc((((uint64_t)out_width + 1) / 2) * 2 * (((uint64_t)out_height + 1) / 2));
-    pTranscoder->prevLuma     = (byte_t*)malloc((size_t)out_width * out_height);
+    offset                 = 0;
+    pTranscoder->dstLuma   = &deviceStorage->frameStorage[offset];
+    offset                += luma_bytes;
+    pTranscoder->dstChroma = &deviceStorage->frameStorage[offset];
+    offset                += chroma_bytes;
+    pTranscoder->prevLuma  = &deviceStorage->frameStorage[offset];
+    offset                += luma_bytes;
     {
         unsigned slot;
 
         for (slot = 0; slot < PIPELINE_SLOTS; ++slot)
         {
-            pTranscoder->ring[slot].planes =
-                (byte_t*)malloc((size_t)source_width * source_height * 2u); /* luma + chroma, 4:2:0 or 4:2:2 */
-            if (NULL == pTranscoder->ring[slot].planes)
-            {
-                Report(pReport, reportCapacity, "transcoder ring allocation failed\n");
-                GpuTranscode_Close(pTranscoder);
-                return NULL;
-            }
-            ++pTranscoder->planeCount;
+            pTranscoder->ring[slot].planes = &deviceStorage->frameStorage[offset];
+            offset += frame_bytes;
         }
     }
     pTranscoder->emptySlots  = CreateSemaphore(NULL, PIPELINE_SLOTS, PIPELINE_SLOTS, NULL);
     pTranscoder->filledSlots = CreateSemaphore(NULL, 0, PIPELINE_SLOTS, NULL);
     Report(pReport, reportCapacity, "decode: %s", decode_report);
     Report(pReport, reportCapacity, "encode: %s", encode_report);
-    if (NULL == pTranscoder->decoder || NULL == pTranscoder->encoder || NULL == pTranscoder->sampleBuffer ||
-        NULL == pTranscoder->dstLuma || NULL == pTranscoder->dstChroma || NULL == pTranscoder->prevLuma ||
-        NULL == pTranscoder->emptySlots || NULL == pTranscoder->filledSlots)
+    if (NULL == pTranscoder->decoder || NULL == pTranscoder->encoder || NULL == pTranscoder->emptySlots ||
+        NULL == pTranscoder->filledSlots)
     {
         Report(pReport, reportCapacity, "transcoder resource allocation failed\n");
         GpuTranscode_Close(pTranscoder);
@@ -770,7 +815,7 @@ unsigned GpuTranscode_SeekKeyframe(GpuTranscoder* pTranscoder, unsigned approxFr
 
     if (approxFrame >= pTranscoder->sampleCount)
     {
-        approxFrame = pTranscoder->sampleCount ? pTranscoder->sampleCount - 1u : 0u;
+        approxFrame = pTranscoder->sampleCount ? pTranscoder->sampleCount - 1U : 0U;
     }
     for (index = approxFrame; index > 0; --index)
     {
@@ -841,7 +886,7 @@ const byte_t* GpuTranscode_ReadNextFrame(GpuTranscoder* pTranscoder, uint32_t* p
                                                  pTranscoder->outHeight,
                                                  &residual);
         pTranscoder->lastMotion = motion;
-        bump                    = (int)((1.0 - motion) * (pTranscoder->config.motionStrength / 100.0) * 8.0 + 0.5);
+        bump                    = (int)(((1.0 - motion) * (pTranscoder->config.motionStrength / 100.0) * 8.0) + 0.5);
         qp_override             = pTranscoder->config.qpInter + bump;
         if (qp_override > 50)
         {
@@ -856,7 +901,7 @@ const byte_t* GpuTranscode_ReadNextFrame(GpuTranscoder* pTranscoder, uint32_t* p
                                   pTranscoder->dstLuma,
                                   pTranscoder->outWidth,
                                   pTranscoder->dstChroma,
-                                  ((pTranscoder->outWidth + 1u) / 2u) * 2u,
+                                  ((pTranscoder->outWidth + 1U) / 2U) * 2U,
                                   force_idr,
                                   qp_override,
                                   pSize);
@@ -867,7 +912,7 @@ const byte_t* GpuTranscode_ReadNextFrame(GpuTranscoder* pTranscoder, uint32_t* p
     {
         *pKeyframe = GpuEncode_IsLastFrameKeyframe(pTranscoder->encoder); /* actual IDR, incl. GOP boundaries */
     }
-    pTranscoder->tail = (pTranscoder->tail + 1u) % PIPELINE_SLOTS;
+    pTranscoder->tail = (pTranscoder->tail + 1U) % PIPELINE_SLOTS;
     ReleaseSemaphore(pTranscoder->emptySlots, 1, NULL); /* slot free only after the downscale read it */
     return coded;
 }
@@ -880,9 +925,14 @@ const byte_t* GpuTranscode_ReadNextFrame(GpuTranscoder* pTranscoder, uint32_t* p
  */
 void GpuTranscode_Close(GpuTranscoder* pTranscoder)
 {
-    unsigned slot;
+    GpuDevice* owner;
 
     if (NULL == pTranscoder)
+    {
+        return;
+    }
+    owner = pTranscoder->owner;
+    if (NULL == owner)
     {
         return;
     }
@@ -921,21 +971,8 @@ void GpuTranscode_Close(GpuTranscoder* pTranscoder)
     {
         Mp4Demux_Close(pTranscoder->demux);
     }
-    for (;;)
-    {
-        if (0 == pTranscoder->planeCount)
-        {
-            break;
-        }
-        slot = pTranscoder->planeCount - 1;
-        free(pTranscoder->ring[slot].planes);
-        pTranscoder->ring[slot].planes = NULL;
-        pTranscoder->planeCount        = slot;
-    }
-    free(pTranscoder->dstLuma);
-    free(pTranscoder->dstChroma);
-    free(pTranscoder->prevLuma);
-    pTranscoder->owner->transcoderBusy = FALSE;
+    CRT_Memory_Set(pTranscoder, 0, sizeof(*pTranscoder));
+    owner->transcoderBusy = FALSE;
 }
 
 /*************************************************************************************************/
@@ -1002,7 +1039,7 @@ int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
     FindNalOfType(header, header_size, 8, &pps, &pps_size);
     video_timescale = Mp4Demux_GetTimescale(pTiming);
     total_samples   = Mp4Demux_GetSampleCount(pTiming);
-    start_index     = (startFrame > 0) ? GpuTranscode_SeekKeyframe(pTranscoder, startFrame) : 0u;
+    start_index     = (startFrame > 0) ? GpuTranscode_SeekKeyframe(pTranscoder, startFrame) : 0U;
     end_index       = (maxFrames > 0 && start_index + maxFrames < total_samples) ? start_index + maxFrames : total_samples;
     audio_samples   = Mp4Demux_GetAudioSampleCount(pTiming);
     audio_timescale = Mp4Demux_GetAudioTimescale(pTiming);
@@ -1120,7 +1157,7 @@ int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
            reportCapacity,
            "proxy mp4: %s, avg motion %d%% (%u video frames from %u)\n",
            ok ? "ok" : "failed",
-           (int)(produced ? motion_accum / produced * 100.0 + 0.5 : 0.0),
+           (int)(produced ? (motion_accum / produced * 100.0) + 0.5 : 0.0),
            produced,
            start_index);
     Mp4Mux_Destroy(pMux);
@@ -1210,7 +1247,7 @@ int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
         GpuTranscode_Close(pTranscoder);
         return 0;
     }
-    p_last        = (total_samples > 0) ? Mp4Demux_GetSample(pTiming, total_samples - 1u) : NULL;
+    p_last        = (total_samples > 0) ? Mp4Demux_GetSample(pTiming, total_samples - 1U) : NULL;
     full_duration = (NULL != p_last && video_timescale > 0)
                         ? (double)(p_last->decodeTime + p_last->duration) / video_timescale
                         : 0.0;
@@ -1279,7 +1316,7 @@ int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
                 /* Start serving only once several seconds of content are on disk: a receiver that
                 ** loads a barely-started file rejects it. The transcode runs well ahead of playback,
                 ** so it keeps growing past the viewer from here. */
-                if (!first_fragment_sent && NULL != onReady && head_ticks >= (uint64_t)8u * video_timescale)
+                if (!first_fragment_sent && NULL != onReady && head_ticks >= (uint64_t)8U * video_timescale)
                 {
                     first_fragment_sent = 1;
                     onReady(pUser);
