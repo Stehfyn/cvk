@@ -6,6 +6,7 @@
 #include <windows.h>
 
 #include <stdarg.h>
+#include <stdint.h>
 #include <string.h>
 
 #include <vulkan/vulkan.h>
@@ -386,7 +387,7 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu,
     {
         return NULL;
     }
-    pEncoder = (GpuEncoder*)pGpu->encoderStorage.bytes;
+    pEncoder = (GpuEncoder*)&pGpu->encoderStorage;
     CRT_Memory_Set(pEncoder, 0, sizeof(*pEncoder));
     pEncoder->owner = pGpu;
     pGpu->encoderBusy = TRUE;

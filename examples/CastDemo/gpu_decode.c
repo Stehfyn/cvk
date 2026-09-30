@@ -5,6 +5,7 @@
 #include <windows.h>
 
 #include <stdarg.h>
+#include <stdint.h>
 #include <string.h>
 
 #include <vulkan/vulkan.h>
@@ -268,7 +269,7 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
     {
         return NULL;
     }
-    pDecoder = (GpuDecoder*)pGpu->decoderStorage.bytes;
+    pDecoder = (GpuDecoder*)&pGpu->decoderStorage;
     CRT_Memory_Set(pDecoder, 0, sizeof(*pDecoder));
     pDecoder->owner = pGpu;
     pGpu->decoderBusy = TRUE;
@@ -481,19 +482,10 @@ const byte_t* GpuDecode_GetLuma(const GpuDecoder* pDecoder, unsigned* pWidth, un
     VkExtent3D   plane_extents[MAX_IMAGE_PLANES];
     VkDeviceSize size;
 
-    (void)cvkCalculateFormatPlaneLayouts(pDecoder->pictureFormat,
-                                         pDecoder->displayWidth,
-                                         pDecoder->displayHeight,
-                                         1,
-                                         1,
-                                         1,
-                                         plane_offsets,
-                                         plane_strides,
-                                         plane_extents,
-                                         &size);
-    *pWidth  = pDecoder->displayWidth;
-    *pHeight = pDecoder->displayHeight;
-    *pStride = plane_strides[0]; /* row bytes of the luma plane as the format defines it */
+    (void)cvkCalculateFormatPlaneLayouts(pDecoder->pictureFormat, pDecoder->displayWidth, pDecoder->displayHeight, 1, 1, 1, plane_offsets, plane_strides, plane_extents, &size);
+    (*pWidth)  = pDecoder->displayWidth;
+    (*pHeight) = pDecoder->displayHeight;
+    (*pStride) = plane_strides[0]; /* row bytes of the luma plane as the format defines it */
     return (const byte_t*)pDecoder->readbackMapped + plane_offsets[0];
 }
 
@@ -515,21 +507,12 @@ const byte_t* GpuDecode_GetNv12(const GpuDecoder* pDecoder,
     VkExtent3D   plane_extents[MAX_IMAGE_PLANES];
     VkDeviceSize size;
 
-    (void)cvkCalculateFormatPlaneLayouts(pDecoder->pictureFormat,
-                                         pDecoder->displayWidth,
-                                         pDecoder->displayHeight,
-                                         1,
-                                         1,
-                                         1,
-                                         plane_offsets,
-                                         plane_strides,
-                                         plane_extents,
-                                         &size);
-    *pWidth        = pDecoder->displayWidth;
-    *pHeight       = pDecoder->displayHeight;
-    *pLumaStride   = plane_strides[0];
-    *pChromaStride = plane_strides[1];
-    *ppChroma      = (const byte_t*)pDecoder->readbackMapped + plane_offsets[1];
+    (void)cvkCalculateFormatPlaneLayouts(pDecoder->pictureFormat, pDecoder->displayWidth, pDecoder->displayHeight, 1, 1, 1, plane_offsets, plane_strides, plane_extents, &size);
+    (*pWidth)        = pDecoder->displayWidth;
+    (*pHeight)       = pDecoder->displayHeight;
+    (*pLumaStride)   = plane_strides[0];
+    (*pChromaStride) = plane_strides[1];
+    (*ppChroma)      = (const byte_t*)pDecoder->readbackMapped + plane_offsets[1];
     return (const byte_t*)pDecoder->readbackMapped + plane_offsets[0];
 }
 
@@ -870,12 +853,7 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t 
                                                 copy_regions,
                                                 &transfer_bytes,
                                                 &aspect_mask);
-    cvkCmdCopyImageToBuffer(pDecoder->transferCmd,
-                            pDecoder->outputImage,
-                            VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                            pDecoder->readback,
-                            region_count,
-                            copy_regions);
+    cvkCmdCopyImageToBuffer(pDecoder->transferCmd, pDecoder->outputImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, pDecoder->readback, region_count, copy_regions);
     cvkEndCommandBuffer(pDecoder->transferCmd);
 
     wait_stage = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
@@ -925,7 +903,7 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t 
             }
             pDecoder->dpb[oldest_slot].active = 0;
         }
-        memset(&p_slot->refInfo, 0, sizeof(p_slot->refInfo));
+        (void)memset(&p_slot->refInfo, 0, sizeof(p_slot->refInfo));
         p_slot->refInfo.FrameNum       = (uint16_t)header.frameNum;
         p_slot->refInfo.PicOrderCnt[0] = poc;
         p_slot->refInfo.PicOrderCnt[1] = poc;
@@ -941,94 +919,46 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t 
  */
 void GpuDecode_Destroy(GpuDecoder* pDecoder)
 {
-    uint32_t i;
+    GpuDevice* owner;
+    uint32_t   index;
+    bool_t     hasDecoder;
 
-    if (NULL == pDecoder)
+    hasDecoder = (NULL != pDecoder);
+    if (hasDecoder)
     {
-        return;
+        owner = pDecoder->owner;
+        if (VK_NULL_HANDLE != pDecoder->device)
+        {
+            cvkDeviceWaitIdle(pDecoder->device);
+            cvkDestroySemaphoreSafe(pDecoder->device, pDecoder->decodeDone, NULL);
+            cvkDestroyFenceSafe(pDecoder->device, pDecoder->decodeFence, NULL);
+            cvkDestroyFenceSafe(pDecoder->device, pDecoder->transferFence, NULL);
+            cvkDestroyCommandPoolSafe(pDecoder->device, pDecoder->decodePool, NULL);
+            cvkDestroyCommandPoolSafe(pDecoder->device, pDecoder->transferPool, NULL);
+            cvkDestroyBufferSafe(pDecoder->device, pDecoder->readback, NULL);
+            cvkFreeMemorySafe(pDecoder->device, pDecoder->readbackMemory, NULL);
+            cvkDestroyBufferSafe(pDecoder->device, pDecoder->bitstream, NULL);
+            cvkFreeMemorySafe(pDecoder->device, pDecoder->bitstreamMemory, NULL);
+            cvkDestroyImageViewSafe(pDecoder->device, pDecoder->outputView, NULL);
+            cvkDestroyImageSafe(pDecoder->device, pDecoder->outputImage, NULL);
+            cvkFreeMemorySafe(pDecoder->device, pDecoder->outputMemory, NULL);
+            for (index = 0; index < MAX_DPB_SLOTS; ++index)
+            {
+                cvkDestroyImageViewSafe(pDecoder->device, pDecoder->dpbView[index], NULL);
+                cvkDestroyImageSafe(pDecoder->device, pDecoder->dpbImage[index], NULL);
+                cvkFreeMemorySafe(pDecoder->device, pDecoder->dpbMemory[index], NULL);
+            }
+            cvkDestroyVideoSessionParametersSafe(pDecoder->device, pDecoder->parameters, NULL);
+            cvkDestroyVideoSessionSafe(pDecoder->device, pDecoder->session, NULL);
+            for (index = 0; index < MAX_SESSION_MEMORY; ++index)
+            {
+                cvkFreeMemorySafe(pDecoder->device, pDecoder->sessionMemory[index], NULL);
+            }
+        }
+        CRT_Memory_Set(pDecoder, 0, sizeof(*pDecoder));
+        if (NULL != owner)
+        {
+            owner->decoderBusy = FALSE;
+        }
     }
-    if (VK_NULL_HANDLE != pDecoder->device)
-    {
-        cvkDeviceWaitIdle(pDecoder->device);
-        if (VK_NULL_HANDLE != pDecoder->decodeDone)
-        {
-            cvkDestroySemaphore(pDecoder->device, pDecoder->decodeDone, NULL);
-        }
-        if (VK_NULL_HANDLE != pDecoder->decodeFence)
-        {
-            cvkDestroyFence(pDecoder->device, pDecoder->decodeFence, NULL);
-        }
-        if (VK_NULL_HANDLE != pDecoder->transferFence)
-        {
-            cvkDestroyFence(pDecoder->device, pDecoder->transferFence, NULL);
-        }
-        if (VK_NULL_HANDLE != pDecoder->decodePool)
-        {
-            cvkDestroyCommandPool(pDecoder->device, pDecoder->decodePool, NULL);
-        }
-        if (VK_NULL_HANDLE != pDecoder->transferPool)
-        {
-            cvkDestroyCommandPool(pDecoder->device, pDecoder->transferPool, NULL);
-        }
-        if (VK_NULL_HANDLE != pDecoder->readback)
-        {
-            cvkDestroyBuffer(pDecoder->device, pDecoder->readback, NULL);
-        }
-        if (VK_NULL_HANDLE != pDecoder->readbackMemory)
-        {
-            cvkFreeMemory(pDecoder->device, pDecoder->readbackMemory, NULL);
-        }
-        if (VK_NULL_HANDLE != pDecoder->bitstream)
-        {
-            cvkDestroyBuffer(pDecoder->device, pDecoder->bitstream, NULL);
-        }
-        if (VK_NULL_HANDLE != pDecoder->bitstreamMemory)
-        {
-            cvkFreeMemory(pDecoder->device, pDecoder->bitstreamMemory, NULL);
-        }
-        if (VK_NULL_HANDLE != pDecoder->outputView)
-        {
-            cvkDestroyImageView(pDecoder->device, pDecoder->outputView, NULL);
-        }
-        if (VK_NULL_HANDLE != pDecoder->outputImage)
-        {
-            cvkDestroyImage(pDecoder->device, pDecoder->outputImage, NULL);
-        }
-        if (VK_NULL_HANDLE != pDecoder->outputMemory)
-        {
-            cvkFreeMemory(pDecoder->device, pDecoder->outputMemory, NULL);
-        }
-        for (i = 0; i < pDecoder->maxDpbSlots; ++i)
-        {
-            if (VK_NULL_HANDLE != pDecoder->dpbView[i])
-            {
-                cvkDestroyImageView(pDecoder->device, pDecoder->dpbView[i], NULL);
-            }
-            if (VK_NULL_HANDLE != pDecoder->dpbImage[i])
-            {
-                cvkDestroyImage(pDecoder->device, pDecoder->dpbImage[i], NULL);
-            }
-            if (VK_NULL_HANDLE != pDecoder->dpbMemory[i])
-            {
-                cvkFreeMemory(pDecoder->device, pDecoder->dpbMemory[i], NULL);
-            }
-        }
-        if (VK_NULL_HANDLE != pDecoder->parameters)
-        {
-            cvkDestroyVideoSessionParameters(pDecoder->device, pDecoder->parameters, NULL);
-        }
-        if (VK_NULL_HANDLE != pDecoder->session)
-        {
-            cvkDestroyVideoSession(pDecoder->device, pDecoder->session, NULL);
-        }
-        for (i = 0; i < pDecoder->sessionMemoryCount; ++i)
-        {
-            if (VK_NULL_HANDLE != pDecoder->sessionMemory[i])
-            {
-                cvkFreeMemory(pDecoder->device, pDecoder->sessionMemory[i], NULL);
-            }
-        }
-        /* The device and instance belong to the shared GpuDevice, not to the decoder. */
-    }
-    pDecoder->owner->decoderBusy = FALSE;
 }

@@ -27,6 +27,8 @@
 **===============================================================================================*/
 
 #define GPU_SESSION_STORAGE_CAPACITY (65536U)
+#define GPU_AUDIO_BUFFER_CAPACITY    (65536U)
+#define GPU_SAMPLE_BUFFER_CAPACITY   (8U * 1024U * 1024U)
 
 /*=================================================================================================
 ** 3.2 Types
@@ -53,6 +55,8 @@ typedef struct GpuDevice
         uint64_t alignment;
         byte_t   bytes[GPU_SESSION_STORAGE_CAPACITY];
     } transcoderStorage; ///< Startup-owned storage for one transcode session.
+    byte_t                  audioBuffer[GPU_AUDIO_BUFFER_CAPACITY]; ///< Reused AAC sample workspace.
+    byte_t                  sampleBuffer[GPU_SAMPLE_BUFFER_CAPACITY]; ///< Reused encoded source sample workspace.
     bool_t                  decoderBusy; ///< One decoder may borrow the storage at a time.
     bool_t                  encoderBusy; ///< One encoder may borrow the storage at a time.
     bool_t                  transcoderBusy; ///< One transcoder may borrow the storage at a time.

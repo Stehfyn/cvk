@@ -467,7 +467,7 @@ static int CopyAudioUntil(Mp4Demux* pDemux, Mp4Mux* pMux, unsigned* pIndex, byte
         {
             break;
         }
-        bytes = Mp4Demux_ReadAudioSample(pDemux, *pIndex, pBuffer, 64u * 1024u);
+        bytes = Mp4Demux_ReadAudioSample(pDemux, *pIndex, pBuffer, GPU_AUDIO_BUFFER_CAPACITY);
         if (0 == bytes || 0 == pSample->duration || !Mp4Mux_AddAudio(pMux, pBuffer, bytes, pSample->duration))
         {
             return 0;
@@ -619,7 +619,7 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const wchar_t* pFile,
         Mp4Demux_Close(p_demux);
         return NULL;
     }
-    pTranscoder = (GpuTranscoder*)deviceStorage->transcoderStorage.bytes;
+    pTranscoder = (GpuTranscoder*)&deviceStorage->transcoderStorage;
     CRT_Memory_Set(pTranscoder, 0, sizeof(*pTranscoder));
     pTranscoder->owner = deviceStorage;
     deviceStorage->transcoderBusy = TRUE;
@@ -631,7 +631,7 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const wchar_t* pFile,
     pTranscoder->sourceWidth    = source_width;
     pTranscoder->sourceHeight   = source_height;
     pTranscoder->sampleCount    = Mp4Demux_GetSampleCount(p_demux);
-    pTranscoder->sampleCapacity = 8u * 1024u * 1024u;
+    pTranscoder->sampleCapacity = GPU_SAMPLE_BUFFER_CAPACITY;
     pTranscoder->device         = GpuDevice_Create(deviceStorage, TRUE, TRUE, device_report, sizeof(device_report));
     Report(pReport, reportCapacity, "device: %s", device_report);
     if (NULL == pTranscoder->device)
@@ -659,7 +659,7 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const wchar_t* pFile,
                                             1,
                                             encode_report,
                                             sizeof(encode_report));
-    pTranscoder->sampleBuffer = (byte_t*)malloc(pTranscoder->sampleCapacity);
+    pTranscoder->sampleBuffer = deviceStorage->sampleBuffer;
     pTranscoder->dstLuma      = (byte_t*)malloc((size_t)out_width * out_height);
     pTranscoder->dstChroma    = (byte_t*)malloc((((uint64_t)out_width + 1) / 2) * 2 * (((uint64_t)out_height + 1) / 2));
     pTranscoder->prevLuma     = (byte_t*)malloc((size_t)out_width * out_height);
@@ -932,7 +932,6 @@ void GpuTranscode_Close(GpuTranscoder* pTranscoder)
         pTranscoder->ring[slot].planes = NULL;
         pTranscoder->planeCount        = slot;
     }
-    free(pTranscoder->sampleBuffer);
     free(pTranscoder->dstLuma);
     free(pTranscoder->dstChroma);
     free(pTranscoder->prevLuma);
@@ -1040,11 +1039,11 @@ int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
         return 0;
     }
 
-    audio_buffer = has_audio ? (byte_t*)malloc(64u * 1024u) : NULL;
+    audio_buffer = deviceStorage->audioBuffer;
     audio_index  = 0;
     produced     = 0;
     motion_accum = 0.0;
-    ok           = !has_audio || NULL != audio_buffer;
+    ok           = TRUE;
 
     /* Skip audio that precedes the (possibly seeked) start so the clip's tracks begin together. */
     if (has_audio && video_timescale > 0 && audio_timescale > 0 && start_index > 0)
@@ -1124,7 +1123,6 @@ int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
            (int)(produced ? motion_accum / produced * 100.0 + 0.5 : 0.0),
            produced,
            start_index);
-    free(audio_buffer);
     Mp4Mux_Destroy(pMux);
     Mp4Demux_Close(pTiming);
     GpuTranscode_Close(pTranscoder);
@@ -1240,13 +1238,13 @@ int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
         return 0;
     }
 
-    audio_buffer        = has_audio ? (byte_t*)malloc(64u * 1024u) : NULL;
+    audio_buffer        = deviceStorage->audioBuffer;
     audio_index         = 0;
     produced            = 0;
     fragments           = 0;
     first_fragment_sent = 0;
     head_ticks          = 0;
-    ok                  = !has_audio || NULL != audio_buffer;
+    ok                  = TRUE;
     for (frame = 0; ok && frame < total_samples && (0 == maxFrames || frame < maxFrames); ++frame)
     {
         const byte_t*    coded;
@@ -1318,7 +1316,6 @@ int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
            ok ? "ok" : "failed",
            produced,
            fragments);
-    free(audio_buffer);
     Mp4Mux_Destroy(pMux);
     Mp4Demux_Close(pTiming);
     GpuTranscode_Close(pTranscoder);
