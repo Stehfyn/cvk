@@ -26,7 +26,14 @@
 #include <vk_video/vulkan_video_codec_h265std_encode.h>
 #include <vk_video/vulkan_video_codec_vp9std.h>
 #include <vk_video/vulkan_video_codec_vp9std_decode.h>
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4710 5045)
+#endif
 #include <vulkan/utility/vk_format_utils.h>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 #include <vulkan/vk_platform.h>
 
 /*=================================================================================================

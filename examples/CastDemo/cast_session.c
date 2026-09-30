@@ -63,6 +63,9 @@
 #define SEEK_CONFIRM_TOLERANCE  (1.5)
 #define JSON_VALUE_CAPACITY     (4096)
 #define LOAD_PAYLOAD_CAPACITY     (20000)
+#if LOAD_PAYLOAD_CAPACITY > UINT16_MAX
+#error Cast payload count exceeds uint16_t
+#endif
 #define SESSION_RUN_IDLE          (0)
 #define SESSION_RUN_ACTIVE        (1)
 #define SESSION_RUN_COMPLETE      (2)
@@ -323,7 +326,7 @@ static FORCE_INLINE bool_t SendJson(CastSession_State_t*       session,
                                     Utl_Chromecast_Namespace_t nameSpace,
                                     Utl_Json_Text_t            destination,
                                     const byte_t*              payload,
-                                    uint32_t                   byteCount);
+                                    uint16_t                   byteCount);
 
 /*************************************************************************************************/
 /**
@@ -763,13 +766,12 @@ static FORCE_INLINE bool_t SendJson(CastSession_State_t*       session,
                                     Utl_Chromecast_Namespace_t nameSpace,
                                     Utl_Json_Text_t            destination,
                                     const byte_t*              payload,
-                                    uint32_t                   byteCount)
+                                    uint16_t                   byteCount)
 {
     Utl_Json_Text_t      namespace_text;
     Utl_CastV2_Message_t message;
     bool_t               sent;
 
-    LOGASSERT(byteCount <= UTL_CASTV2_MAX_BODY);
     namespace_text = Utl_Chromecast_GetNamespace(nameSpace);
     LOGASSERT(0 < namespace_text.byteCount);
     LOGASSERT(0 < destination.byteCount);
@@ -822,7 +824,7 @@ static FORCE_INLINE bool_t SendCommand(CastSession_State_t*            session,
     if (encoded)
     {
         name_space = Utl_Chromecast_GetCommandNamespace(command->kind);
-        sent       = SendJson(session, name_space, destination, session->loadPayload, byte_count);
+        sent       = SendJson(session, name_space, destination, session->loadPayload, (uint16_t)byte_count);
     }
     return sent;
 }
@@ -906,7 +908,7 @@ static FORCE_INLINE bool_t LoadMedia(CastSession_State_t* pSession,
                             UTL_CHROMECAST_NAMESPACE_MEDIA,
                             pSession->transportId,
                             pSession->loadPayload,
-                            byte_count);
+                            (uint16_t)byte_count);
     }
     if (is_valid)
     {

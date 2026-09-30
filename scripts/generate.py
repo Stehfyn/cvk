@@ -2906,6 +2906,15 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 
     @staticmethod
     def source_include(header: str) -> str:
+        if header == "<vulkan/utility/vk_format_utils.h>":
+            return ("#ifdef _MSC_VER\n"
+                    "#pragma warning(push)\n"
+                    "#pragma warning(disable : 4710 5045)\n"
+                    "#endif\n"
+                    f"#include {header}\n"
+                    "#ifdef _MSC_VER\n"
+                    "#pragma warning(pop)\n"
+                    "#endif\n")
         return f"#include {header}\n"
 
 def load_policy(path: str) -> dict:
