@@ -10,9 +10,7 @@
 
 #include <windows.h>
 
-#include <share.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -75,7 +73,7 @@ typedef struct MuxBuffer
 
 struct Mp4Mux
 {
-    FILE*      file;
+    HANDLE     file;
     unsigned   width;
     unsigned   height;
     byte_t     sps[MAX_PARAM_BYTES];
@@ -339,7 +337,7 @@ static FORCE_INLINE bool_t GetFragmentDuration(uint64_t*                        
  * \par Requirements:
  *  - 001 Empty data shall perform no native operation.
  *  - 002 A failed mux shall perform no later write.
- *  - 003 Native output remains a CRT and synchronous-I/O boundary pending OS migration.
+ *  - 003 Native output remains a synchronous-I/O boundary pending OS migration.
  *
  * \param[in,out] mux     Required initialized mux
  * \param[in]     data    Readable bytes, nullable for zero count
@@ -349,6 +347,8 @@ static FORCE_INLINE bool_t GetFragmentDuration(uint64_t*                        
  * \retval FALSE Sticky or native failure.
  */
 static FORCE_INLINE bool_t WriteFileBytes(Mp4Mux* mux, const void* data, uint32_t count);
+static FORCE_INLINE int64_t GetFileOffset(HANDLE file);
+static FORCE_INLINE bool_t SetFileOffset(HANDLE file, int64_t offset);
 
 /*************************************************************************************************/
 /**
@@ -741,6 +741,7 @@ static void BufferMatrix(MuxBuffer* pBuffer)
 static FORCE_INLINE bool_t WriteFileBytes(Mp4Mux* mux, const void* data, uint32_t count)
 {
     bool_t valid;
+    DWORD  written;
 
     LOGASSERT(NULL != mux);
     valid = !mux->failed;
@@ -749,11 +750,41 @@ static FORCE_INLINE bool_t WriteFileBytes(Mp4Mux* mux, const void* data, uint32_
         if (0 < count)
         {
             LOGASSERT(NULL != data);
-            valid       = (1 == fwrite(data, count, 1, mux->file));
+            written     = 0;
+            valid       = !!WriteFile(mux->file, data, count, &written, NULL);
+            valid       = valid && (count == written);
             mux->failed = !valid;
         }
     }
     return valid;
+}
+
+/*************************************************************************************************/
+/** \par Details: Reads the current 64-bit native output position. */
+static FORCE_INLINE int64_t GetFileOffset(HANDLE file)
+{
+    LARGE_INTEGER distance;
+    LARGE_INTEGER position;
+    bool_t        valid;
+
+    distance.QuadPart = 0;
+    valid = !!SetFilePointerEx(file, distance, &position, FILE_CURRENT);
+    if (!valid)
+    {
+        return -1;
+    }
+    return position.QuadPart;
+}
+
+/*************************************************************************************************/
+/** \par Details: Moves the native output to an existing absolute position. */
+static FORCE_INLINE bool_t SetFileOffset(HANDLE file, int64_t offset)
+{
+    LARGE_INTEGER distance;
+
+    LOGASSERT(0 <= offset);
+    distance.QuadPart = offset;
+    return !!SetFilePointerEx(file, distance, NULL, FILE_BEGIN);
 }
 
 /*************************************************************************************************/
@@ -1657,7 +1688,7 @@ static FORCE_INLINE bool_t WriteProgressiveVideo(Mp4Mux*          mux,
     uint64_t         next_count;
     MuxSample*       sample;
 
-    offset = _ftelli64(mux->file);
+    offset = GetFileOffset(mux->file);
     valid  = (0 <= offset);
     total  = 0;
     index  = 0;
@@ -1757,7 +1788,7 @@ static FORCE_INLINE bool_t WriteProgressiveAudio(Mp4Mux* mux, Utl_Mpeg4_Span_t b
     bool_t     valid;
     MuxSample* sample;
 
-    offset = _ftelli64(mux->file);
+    offset = GetFileOffset(mux->file);
     valid  = (0 <= offset);
     if (valid)
     {
@@ -1933,7 +1964,6 @@ static FORCE_INLINE bool_t WriteFragmentLayout(Mp4Mux* mux, const FragmentLayout
     uint32_t written;
     bool_t   valid;
     byte_t   header[UTL_MPEG4_MAX_BOX_HEADER_BYTES];
-    int      flushed;
 
     LOGASSERT(NULL != mux);
     LOGASSERT(NULL != layout);
@@ -1959,8 +1989,7 @@ static FORCE_INLINE bool_t WriteFragmentLayout(Mp4Mux* mux, const FragmentLayout
     }
     if (valid)
     {
-        flushed = fflush(mux->file);
-        valid   = (0 == flushed);
+        valid = !!FlushFileBuffers(mux->file);
     }
     return valid;
 }
@@ -2017,11 +2046,14 @@ Mp4Mux* Mp4Mux_Create(const wchar_t* pPath,
         return NULL;
     }
     InitializeFragmentStorage(pMux);
-    pMux->file =
-        _wfsopen(pPath,
-                 L"wb",
-                 _SH_DENYWR); /* shared read so the media server can stream the file while it is still being written */
-    if (NULL == pMux->file)
+    pMux->file = CreateFileW(pPath,
+                             GENERIC_WRITE,
+                             FILE_SHARE_READ,
+                             NULL,
+                             CREATE_ALWAYS,
+                             FILE_ATTRIBUTE_NORMAL,
+                             NULL);
+    if (INVALID_HANDLE_VALUE == pMux->file)
     {
         free(pMux);
         return NULL;
@@ -2048,7 +2080,7 @@ Mp4Mux* Mp4Mux_Create(const wchar_t* pPath,
     }
 
     /* mdat: size patched on finish; samples stream in after this header. */
-    pMux->mdatStart = _ftelli64(pMux->file);
+    pMux->mdatStart = GetFileOffset(pMux->file);
     memset(mdat_header, 0, sizeof(mdat_header));
     memcpy(mdat_header + 4, "mdat", 4);
     if (!WriteFileBytes(pMux, mdat_header, sizeof(mdat_header)))
@@ -2089,11 +2121,14 @@ Mp4Mux* Mp4Mux_CreateFragmented(const wchar_t* pPath,
         return NULL;
     }
     InitializeFragmentStorage(pMux);
-    pMux->file =
-        _wfsopen(pPath,
-                 L"wb",
-                 _SH_DENYWR); /* shared read so the media server can stream the file while it is still being written */
-    if (NULL == pMux->file)
+    pMux->file = CreateFileW(pPath,
+                             GENERIC_WRITE,
+                             FILE_SHARE_READ,
+                             NULL,
+                             CREATE_ALWAYS,
+                             FILE_ATTRIBUTE_NORMAL,
+                             NULL);
+    if (INVALID_HANDLE_VALUE == pMux->file)
     {
         free(pMux);
         return NULL;
@@ -2119,7 +2154,7 @@ Mp4Mux* Mp4Mux_CreateFragmented(const wchar_t* pPath,
         Mp4Mux_Destroy(pMux);
         return NULL;
     }
-    (void)fflush(pMux->file);
+    (void)FlushFileBuffers(pMux->file);
     return pMux;
 }
 
@@ -2261,8 +2296,8 @@ int Mp4Mux_Finish(Mp4Mux* pMux)
     if (pMux->fragmented)
     {
         (void)Mp4Mux_FlushFragment(pMux); /* emit any trailing samples */
-        (void)fflush(pMux->file);
-        return !pMux->failed;
+        ok = !!FlushFileBuffers(pMux->file);
+        return ok && (!pMux->failed);
     }
     if (pMux->failed || 0 == pMux->videoCount)
     {
@@ -2270,13 +2305,17 @@ int Mp4Mux_Finish(Mp4Mux* pMux)
     }
 
     /* Patch the streamed mdat's size field. */
-    mdat_end  = _ftelli64(pMux->file);
+    mdat_end  = GetFileOffset(pMux->file);
+    if ((0 > mdat_end) || (mdat_end < pMux->mdatStart))
+    {
+        return 0;
+    }
     mdat_size = (uint64_t)(mdat_end - pMux->mdatStart);
     if (mdat_size > 0xFFFFFFFFu)
     {
         return 0; /* the proxy is not expected to exceed 4 GiB */
     }
-    if (0 != _fseeki64(pMux->file, pMux->mdatStart, SEEK_SET))
+    if (!SetFileOffset(pMux->file, pMux->mdatStart))
     {
         return 0;
     }
@@ -2284,7 +2323,7 @@ int Mp4Mux_Finish(Mp4Mux* pMux)
     patch[1] = (uint8_t)(mdat_size >> 16);
     patch[2] = (uint8_t)(mdat_size >> 8);
     patch[3] = (uint8_t)mdat_size;
-    if (!WriteFileBytes(pMux, patch, 4) || 0 != _fseeki64(pMux->file, mdat_end, SEEK_SET))
+    if ((!WriteFileBytes(pMux, patch, 4)) || (!SetFileOffset(pMux->file, mdat_end)))
     {
         return 0;
     }
@@ -2350,9 +2389,9 @@ void Mp4Mux_Destroy(Mp4Mux* pMux)
     {
         return;
     }
-    if (NULL != pMux->file)
+    if ((NULL != pMux->file) && (INVALID_HANDLE_VALUE != pMux->file))
     {
-        (void)fclose(pMux->file);
+        (void)CloseHandle(pMux->file);
     }
     free(pMux->video);
     free(pMux->audio);

@@ -12,16 +12,12 @@
 #include <commdlg.h>
 #include <ole2.h>
 #include <shellapi.h>
-#include <windowsx.h>
 #include <Uxtheme.h>
 #include <dwmapi.h>
 #include <tchar.h>
 
-#include <stdio.h>
 #include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <wchar.h>
+#include <stddef.h>
 
 #include "cast_media.h"
 #include "cast_session.h"
@@ -155,6 +151,14 @@ typedef struct NativeText
     bool_t   complete;
 } NativeText;
 
+typedef struct ByteText
+{
+    char*    buffer;
+    uint32_t capacity;
+    uint32_t count;
+    bool_t   complete;
+} ByteText;
+
 typedef struct App
 {
     HINSTANCE hInstance;
@@ -184,7 +188,7 @@ typedef struct App
     byte_t                subtitleScratch[SUBTITLE_TEXT_CAPACITY];
     byte_t                subtitleOutput[SUBTITLE_TEXT_CAPACITY];
     unsigned              subtitleCount;
-    WCHAR                 subtitleSource[1024];
+    TCHAR                 subtitleSource[1024];
     WCHAR                 originalSource[MAX_PATH];
     char                  originalUrl[1200], originalType[64];
     OS_Thread_t gainWorker;
@@ -231,7 +235,7 @@ typedef struct App
     SessionEvents   events;
     int             closing;
     int             finishPending;
-    WCHAR           finishReason[CAST_EVENTS_TEXT_CAPACITY];
+    TCHAR           finishReason[CAST_EVENTS_TEXT_CAPACITY];
     int             discovering;
     /* the active session */
     CastSession_t  session;  ///< Storage established at startup and reused by every cast.
@@ -258,6 +262,17 @@ typedef struct App
     bool_t windowDestroyed; ///< UI-owned completion of the native window lifetime.
 } App;
 
+/** Fixed native child-window definition, with its destination in the application context. */
+typedef struct CastGui_ControlDefinition_s
+{
+    size_t  destinationOffset; ///< Offset of the receiving HWND member in App.
+    LPCTSTR windowClass;       ///< Native window class in the active character set.
+    LPCTSTR text;              ///< Initial caption in the active character set.
+    DWORD   style;             ///< Control-specific child-window styles.
+    DWORD   extendedStyle;     ///< Extended child-window styles.
+    int     id;                ///< Notification ID owned by the immersive window.
+} CastGui_ControlDefinition_t;
+
 #define POSITION_TIMER   (1)
 #define POSITION_TICK_MS (50)
 #define SUBTITLE_TIMER   (2)
@@ -274,6 +289,61 @@ typedef struct App
 #define DARK_FIELD      RGB(36, 39, 46)
 #define DARK_TEXT       RGB(232, 235, 240)
 #define DARK_MUTED      RGB(151, 160, 174)
+
+/** Fixed controls in creation and tab order. Layout and runtime state are applied after creation. */
+static const CastGui_ControlDefinition_t c_controls[] = {
+    {offsetof(App, hListLabel), WC_STATIC, TEXT("Cast receivers on this network"), SS_LEFT, 0, ID_LIST_LABEL},
+    {offsetof(App, hRefresh), WC_BUTTON, TEXT("Refresh"), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_REFRESH},
+    {offsetof(App, hWindowsCast), WC_BUTTON, TEXT("Windows Cast..."), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_WINDOWS_CAST},
+    {offsetof(App, hList),
+     WC_LISTVIEW,
+     TEXT(""),
+     LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_TABSTOP,
+     WS_EX_CLIENTEDGE,
+     ID_LIST},
+    {offsetof(App, hFileLabel), WC_STATIC, TEXT("Video"), SS_LEFT, 0, ID_FILE_LABEL},
+    {offsetof(App, hFile), WC_EDIT, TEXT(""), ES_AUTOHSCROLL | WS_TABSTOP, WS_EX_CLIENTEDGE, ID_FILE},
+    {offsetof(App, hBrowse), WC_BUTTON, TEXT("Browse..."), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_BROWSE},
+    {offsetof(App, hSubtitleLabel), WC_STATIC, TEXT("Subtitles"), SS_LEFT, 0, ID_SUBTITLE_LABEL},
+    {offsetof(App, hSubtitle),
+     WC_COMBOBOX,
+     TEXT(""),
+     CBS_DROPDOWNLIST | CBS_OWNERDRAWFIXED | CBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP,
+     0,
+     ID_SUBTITLE},
+    {offsetof(App, hSubtitleBrowse), WC_BUTTON, TEXT("Browse..."), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_SUBTITLE_BROWSE},
+    {offsetof(App, hGainLabel), WC_STATIC, TEXT("Audio gain 100%"), SS_LEFT, 0, ID_GAIN_LABEL},
+    {offsetof(App, hGain), TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_GAIN},
+    {offsetof(App, hGainState), WC_STATIC, TEXT("Original audio"), SS_RIGHT | SS_ENDELLIPSIS, 0, ID_GAIN_STATE},
+    {offsetof(App, hCast), WC_BUTTON, TEXT("Cast"), BS_DEFPUSHBUTTON | WS_TABSTOP, 0, ID_CAST},
+    {offsetof(App, hHint),
+     WC_STATIC,
+     TEXT("A file is served to the receiver over HTTP from this PC; an http(s) URL is sent as is."),
+     SS_LEFT | SS_ENDELLIPSIS,
+     0,
+     ID_HINT},
+    {offsetof(App, hPlayPause), WC_BUTTON, TEXT("Play"), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_PLAY_PAUSE},
+    {offsetof(App, hStop), WC_BUTTON, TEXT("Stop"), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_STOP},
+    {offsetof(App, hSeek), TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | TBS_BOTH | WS_TABSTOP, 0, ID_SEEK},
+    {offsetof(App, hTime), WC_STATIC, TEXT(""), SS_RIGHT, 0, ID_TIME},
+    {offsetof(App, hStatus), WC_STATIC, TEXT(""), SS_LEFT | SS_ENDELLIPSIS, 0, ID_STATUS},
+    {offsetof(App, hCfgLabel),
+     WC_STATIC,
+     TEXT("Proxy transcoder - adjust, then Preview to test quality on the receiver"),
+     SS_LEFT | SS_ENDELLIPSIS,
+     0,
+     ID_CFG_LABEL},
+    {offsetof(App, hResValue), WC_STATIC, TEXT(""), SS_LEFT, 0, ID_RES_VALUE},
+    {offsetof(App, hResSlider), TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_RES_SLIDER},
+    {offsetof(App, hQpValue), WC_STATIC, TEXT(""), SS_LEFT, 0, ID_QP_VALUE},
+    {offsetof(App, hQpSlider), TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_QP_SLIDER},
+    {offsetof(App, hGopValue), WC_STATIC, TEXT(""), SS_LEFT, 0, ID_GOP_VALUE},
+    {offsetof(App, hGopSlider), TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_GOP_SLIDER},
+    {offsetof(App, hMotionCheck), WC_BUTTON, TEXT("Optical flow"), BS_AUTOCHECKBOX | WS_TABSTOP, 0, ID_MOTION_CHECK},
+    {offsetof(App, hMotionSlider), TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_MOTION_SLIDER},
+    {offsetof(App, hMotionValue), WC_STATIC, TEXT(""), SS_LEFT, 0, ID_MOTION_VALUE},
+    {offsetof(App, hPreview), WC_BUTTON, TEXT("Preview"), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_PREVIEW},
+    {offsetof(App, hCfgReadout), WC_STATIC, TEXT(""), SS_LEFT | SS_ENDELLIPSIS, 0, ID_CFG_READOUT}};
 
 /*************************************************************************************************/
 /**
@@ -326,7 +396,7 @@ static FORCE_INLINE void SeekBar_OnLButtonUp(HWND hWnd, int x, int y, UINT keyFl
 static FORCE_INLINE void RefreshSubtitles(App* pApp);
 static FORCE_INLINE void ScheduleGain(App* app);
 static FORCE_INLINE void OnPreviewDone(HWND hWnd, const PreviewResult* pResult);
-static FORCE_INLINE void FinishSession(App* pApp, const WCHAR* pReason);
+static FORCE_INLINE void FinishSession(App* pApp, LPCTSTR pReason);
 
 /*************************************************************************************************/
 /**
@@ -393,7 +463,7 @@ static FORCE_INLINE bool_t DeleteUtf16File(const WCHAR* path);
  */
 static FORCE_INLINE bool_t ReadControlText(HWND control, WCHAR* output, uint32_t capacity)
 {
-    TCHAR  native[GUI_NATIVE_TEXT_CAPACITY];
+    TCHAR   native[GUI_NATIVE_TEXT_CAPACITY];
     int32_t length;
     bool_t  fits;
     bool_t  read;
@@ -515,7 +585,7 @@ static FORCE_INLINE void Utf8ToNative(const char* pText, LPTSTR pNative, uint32_
  * \par Details:
  *  Converts a terminated Windows string into UTF-8; failure clears the output.
  */
-static FORCE_INLINE void ToUtf8(const wchar_t* pText, char* pOut, size_t capacity)
+static FORCE_INLINE void ToUtf8(const WCHAR* pText, char* pOut, uint32_t capacity)
 {
     if (0 == WideCharToMultiByte(CP_UTF8, 0, pText, -1, pOut, (int)capacity, NULL, NULL))
     {
@@ -579,6 +649,7 @@ static FORCE_INLINE void NativeText_AppendUnsigned(NativeText* text, uint32_t va
     uint32_t count;
     uint32_t digit;
 
+    LOGASSERT((0 < minDigits) && (minDigits <= ARRAYSIZE(digits)));
     count = 0;
     for (;;)
     {
@@ -614,24 +685,231 @@ static FORCE_INLINE void NativeText_AppendSigned(NativeText* text, int32_t value
     NativeText_AppendUnsigned(text, magnitude, 1);
 }
 
+static FORCE_INLINE bool_t CopyUtf16(WCHAR* output, uint32_t outputCapacity, const WCHAR* input, uint32_t inputCapacity)
+{
+    uint32_t count;
+    bool_t   fits;
+
+    LOGASSERT(NULL != output);
+    LOGASSERT(0 < outputCapacity);
+    count = Utl_Unicode_GetUtf16StringUnitCount((const uint16_t*)input, inputCapacity);
+    fits  = (UTL_UNICODE_NO_TERMINATOR != count) && (count < outputCapacity);
+    if (fits)
+    {
+        CRT_Memory_Copy(output, input, ((uint64_t)count + 1) * sizeof(WCHAR));
+    }
+    else
+    {
+        output[0] = L'\0';
+    }
+    return fits;
+}
+
+static FORCE_INLINE bool_t Utf16StartsWithNoCase(const WCHAR* text, uint32_t capacity, const WCHAR* prefix, uint32_t prefixLength)
+{
+    uint32_t count;
+    bool_t   matches;
+
+    count   = Utl_Unicode_GetUtf16StringUnitCount((const uint16_t*)text, capacity);
+    matches = (UTL_UNICODE_NO_TERMINATOR != count) && (prefixLength <= count);
+    if (matches)
+    {
+        matches = (CSTR_EQUAL == CompareStringOrdinal(text, (int32_t)prefixLength, prefix, (int32_t)prefixLength, TRUE));
+    }
+    return matches;
+}
+
+static FORCE_INLINE const WCHAR* Utf16FindLast(const WCHAR* text, uint32_t capacity, WCHAR character)
+{
+    const WCHAR* result;
+    uint32_t     count;
+    uint32_t     index;
+
+    result = NULL;
+    count  = Utl_Unicode_GetUtf16StringUnitCount((const uint16_t*)text, capacity);
+    if (UTL_UNICODE_NO_TERMINATOR != count)
+    {
+        for (index = 0; index < count; ++index)
+        {
+            if (character == text[index])
+            {
+                result = &text[index];
+            }
+        }
+    }
+    return result;
+}
+
+static FORCE_INLINE bool_t Utf16Contains(const WCHAR* text, uint32_t capacity, WCHAR character)
+{
+    uint32_t count;
+    uint32_t index;
+    bool_t   found;
+
+    found = FALSE;
+    count = Utl_Unicode_GetUtf16StringUnitCount((const uint16_t*)text, capacity);
+    if (UTL_UNICODE_NO_TERMINATOR != count)
+    {
+        for (index = 0; index < count; ++index)
+        {
+            if (character == text[index])
+            {
+                found = TRUE;
+                break;
+            }
+        }
+    }
+    return found;
+}
+
+static FORCE_INLINE void ByteText_Initialize(ByteText* text, char* buffer, uint32_t capacity)
+{
+    LOGASSERT(NULL != text);
+    LOGASSERT(NULL != buffer);
+    LOGASSERT(0 < capacity);
+
+    text->buffer   = buffer;
+    text->capacity = capacity;
+    text->count    = 0;
+    text->complete = TRUE;
+    buffer[0]      = '\0';
+}
+
+static FORCE_INLINE void ByteText_AppendCharacter(ByteText* text, char character)
+{
+    bool_t has_space;
+
+    has_space = (text->count < (text->capacity - 1));
+    if (has_space)
+    {
+        text->buffer[text->count] = character;
+        ++text->count;
+        text->buffer[text->count] = '\0';
+    }
+    else
+    {
+        text->complete = FALSE;
+    }
+}
+
+static FORCE_INLINE void ByteText_AppendString(ByteText* text, const char* value, uint32_t valueCapacity)
+{
+    uint32_t index;
+    bool_t   terminated;
+
+    terminated = FALSE;
+    for (index = 0; index < valueCapacity; ++index)
+    {
+        if ('\0' == value[index])
+        {
+            terminated = TRUE;
+            break;
+        }
+        ByteText_AppendCharacter(text, value[index]);
+    }
+    text->complete = text->complete && terminated;
+}
+
+static FORCE_INLINE void ByteText_AppendUnsigned(ByteText* text, uint32_t value)
+{
+    byte_t   digits[20];
+    uint32_t count;
+    uint32_t index;
+
+    count = Utl_Decimal_WriteUint64(value, digits, ARRAYSIZE(digits));
+    for (index = 0; index < count; ++index)
+    {
+        ByteText_AppendCharacter(text, (char)digits[index]);
+    }
+}
+
+static FORCE_INLINE bool_t CopyAscii(char* output, uint32_t outputCapacity, const char* input, uint32_t inputCapacity)
+{
+    ByteText text;
+
+    ByteText_Initialize(&text, output, outputCapacity);
+    ByteText_AppendString(&text, input, inputCapacity);
+    return text.complete;
+}
+
+static FORCE_INLINE const char* FindAscii(const char* text, uint32_t capacity, const char* token, uint32_t tokenLength)
+{
+    const char* result;
+    uint32_t    index;
+    uint32_t    offset;
+    bool_t      matches;
+
+    result = NULL;
+    for (index = 0; (index < capacity) && ('\0' != text[index]); ++index)
+    {
+        matches = (tokenLength <= (capacity - index));
+        if (matches)
+        {
+            for (offset = 0; offset < tokenLength; ++offset)
+            {
+                if (token[offset] != text[index + offset])
+                {
+                    matches = FALSE;
+                    break;
+                }
+            }
+        }
+        if (matches)
+        {
+            result = &text[index];
+            break;
+        }
+    }
+    return result;
+}
+
 /*************************************************************************************************/
 /**
  * \par Details:
  *  Searches successive byte positions using a case-insensitive prefix comparison.
  */
-static FORCE_INLINE int ContainsNoCase(const char* pHaystack, const char* pNeedle)
+static FORCE_INLINE char FoldAscii(char value)
 {
-    const size_t needleLength = strlen(pNeedle);
-    size_t index;
+    char result;
 
-    for (index = 0; pHaystack[index]; ++index)
+    result = value;
+    if (('A' <= value) && (value <= 'Z'))
     {
-        if (0 == _strnicmp(pHaystack + index, pNeedle, needleLength))
+        result = (char)(value + ('a' - 'A'));
+    }
+    return result;
+}
+
+static FORCE_INLINE bool_t ContainsNoCase(const char* haystack, uint32_t capacity, const char* needle, uint32_t needleLength)
+{
+    uint32_t index;
+    uint32_t offset;
+    bool_t   found;
+
+    found = FALSE;
+    for (index = 0; (index < capacity) && ('\0' != haystack[index]); ++index)
+    {
+        bool_t matches;
+
+        matches = (needleLength <= (capacity - index));
+        if (matches)
         {
-            return 1;
+            for (offset = 0; offset < needleLength; ++offset)
+            {
+                if (FoldAscii(haystack[index + offset]) != FoldAscii(needle[offset]))
+                {
+                    matches = FALSE;
+                    break;
+                }
+            }
+        }
+        if (matches)
+        {
+            found = TRUE;
+            break;
         }
     }
-    return 0;
+    return found;
 }
 
 /*************************************************************************************************/
@@ -640,12 +918,24 @@ static FORCE_INLINE int ContainsNoCase(const char* pHaystack, const char* pNeedl
  *  Rounds to the nearest second and includes an hours field only for durations
  *  of at least one hour.
  */
-static FORCE_INLINE void FormatTime(double seconds, LPTSTR pOut, size_t capacity)
+static FORCE_INLINE void FormatTime(double seconds, LPTSTR pOut, uint32_t capacity)
 {
     int32_t    total;
     NativeText text;
+    bool_t     positive;
+    bool_t     fits;
 
-    total = (int32_t)(seconds + 0.5);
+    positive = (0.0 < seconds);
+    fits     = (seconds < ((double)INT32_MAX - 1.0));
+    total    = 0;
+    if (positive && fits)
+    {
+        total = (int32_t)(seconds + 0.5);
+    }
+    else if (positive)
+    {
+        total = INT32_MAX;
+    }
     NativeText_Initialize(&text, pOut, (uint32_t)capacity);
     if (3600 <= total)
     {
@@ -655,7 +945,7 @@ static FORCE_INLINE void FormatTime(double seconds, LPTSTR pOut, size_t capacity
     }
     else
     {
-        NativeText_AppendSigned(&text, total / 60);
+        NativeText_AppendUnsigned(&text, (uint32_t)(total / 60), 1);
     }
     NativeText_AppendCharacter(&text, TEXT(':'));
     NativeText_AppendUnsigned(&text, (uint32_t)(total % 60), 2);
@@ -680,8 +970,8 @@ static FORCE_INLINE void InitControlPaint(App* app)
     cd2dFactoryCreateDCRenderTarget(app->paintFactory,
                                     D2D1_RENDER_TARGET_TYPE_DEFAULT,
                                     format,
-                                    96.0F,
-                                    96.0F,
+                                    (FLOAT)USER_DEFAULT_SCREEN_DPI,
+                                    (FLOAT)USER_DEFAULT_SCREEN_DPI,
                                     D2D1_RENDER_TARGET_USAGE_NONE,
                                     D2D1_FEATURE_LEVEL_DEFAULT,
                                     &app->paintTarget);
@@ -694,7 +984,7 @@ static FORCE_INLINE void UpdateControlTextFormat(App* app)
     cdwUnknownReleaseSafe((IUnknown*)app->trimmingSign);
     cdwUnknownReleaseSafe((IUnknown*)app->textFormat);
     app->trimmingSign = NULL;
-    app->textFormat = NULL;
+    app->textFormat   = NULL;
     cdwFactoryCreateTextFormat(app->textFactory,
                                L"Segoe UI",
                                NULL,
@@ -789,8 +1079,10 @@ static FORCE_INLINE void DestroyControlPaint(App* app)
 static FORCE_INLINE HWND CreateChild(App* pApp, LPCTSTR pClass, LPCTSTR pText, DWORD style, DWORD exStyle, int id)
 {
     HWND child;
-    if ((0 == lstrcmp(pClass, TEXT("BUTTON"))) && (style & BS_TYPEMASK) != BS_AUTOCHECKBOX)
+    if ((0 == lstrcmp(pClass, WC_BUTTON)) && ((style & BS_TYPEMASK) != BS_AUTOCHECKBOX))
+    {
         style = (style & ~BS_TYPEMASK) | BS_OWNERDRAW;
+    }
     child = CreateWindowEx(exStyle,
                             pClass,
                             pText,
@@ -803,7 +1095,8 @@ static FORCE_INLINE HWND CreateChild(App* pApp, LPCTSTR pClass, LPCTSTR pText, D
                             (HMENU)(INT_PTR)id,
                             pApp->hInstance,
                             NULL);
-    SetWindowTheme(child, L"DarkMode_Explorer", NULL);
+    LOGASSERT(SUCCEEDED(SetWindowTheme(child, L"DarkMode_Explorer", NULL)));
+
     return child;
 }
 
@@ -825,16 +1118,19 @@ static FORCE_INLINE void PaintDarkHeader(HWND hWnd, HDC dc, App* pApp)
     FillControlRect(pApp, &client, &c_castFieldColor);
     for (int i = 0; i < Header_GetItemCount(hWnd); ++i)
     {
-        TCHAR   native[128];
-        HDITEM  item;
-        RECT    rect, divider;
+        TCHAR                 native[128];
+        HDITEM                item;
+        RECT                  rect;
+        RECT                  divider;
         DWRITE_TEXT_ALIGNMENT alignment;
         ZeroMemory(&item, sizeof(item));
         item.mask       = HDI_TEXT | HDI_FORMAT;
         item.pszText    = native;
         item.cchTextMax = 128;
         if (!Header_GetItem(hWnd, i, &item) || !Header_GetItemRect(hWnd, i, &rect))
+        {
             continue;
+        }
         divider      = rect;
         divider.left = divider.right - 1;
         FillControlRect(pApp, &divider, &c_castBackgroundColor);
@@ -923,13 +1219,13 @@ static FORCE_INLINE LRESULT CALLBACK DarkHeaderProc(HWND hWnd, UINT message, WPA
  */
 static FORCE_INLINE void DrawSubtitleItem(HWND combo, RECT rect, int index, UINT state, App* pApp)
 {
-    TCHAR     text[512] = {0};
-    bool_t selected;
+    TCHAR               text[512] = {0};
+    bool_t              selected;
     const D2D1_COLOR_F* fill;
     const D2D1_COLOR_F* foreground;
 
-    selected = (0 != (state & ODS_SELECTED)) && (0 == (state & ODS_COMBOBOXEDIT));
-    fill = selected ? &c_castSelectedColor : &c_castFieldColor;
+    selected   = (0 != (state & ODS_SELECTED)) && (0 == (state & ODS_COMBOBOXEDIT));
+    fill       = selected ? &c_castSelectedColor : &c_castFieldColor;
     foreground = (0 != (state & ODS_DISABLED)) ? &c_castMutedColor : &c_castTextColor;
     FillControlRect(pApp, &rect, fill);
     if (index >= 0)
@@ -971,17 +1267,19 @@ static FORCE_INLINE void PaintSubtitleItem(HWND combo, HDC dc, RECT bounds, int 
  */
 static FORCE_INLINE void PaintDarkCombo(HWND hWnd, HDC dc, App* pApp)
 {
-    RECT      client, text;
-    const int enabled    = IsWindowEnabled(hWnd);
-    const int focused    = GetFocus() == hWnd;
-    const int arrowWidth = Scale(pApp, 24);
+    const int           enabled    = IsWindowEnabled(hWnd);
+    const int           focused    = GetFocus() == hWnd;
+    const int           arrowWidth = Scale(pApp, 24);
+    RECT                client;
+    RECT                text;
     const D2D1_COLOR_F* border;
     const D2D1_COLOR_F* foreground;
-    D2D1_POINT_2F left;
-    D2D1_POINT_2F middle;
-    D2D1_POINT_2F right;
-    int x;
-    int y;
+    D2D1_POINT_2F       left;
+    D2D1_POINT_2F       middle;
+    D2D1_POINT_2F       right;
+    int                 x;
+    int                 y;
+
     GetClientRect(hWnd, &client);
     BeginControlPaint(pApp, dc, &client);
     FillControlRect(pApp, &client, &c_castFieldColor);
@@ -1159,7 +1457,7 @@ static FORCE_INLINE void ApplyFont(App* pApp)
  */
 static FORCE_INLINE void Layout(App* pApp)
 {
-    RECT client;
+    RECT      client;
     const int margin  = Scale(pApp, 12);
     const int gap     = Scale(pApp, 8);
     const int rowH    = Scale(pApp, 24);
@@ -1180,34 +1478,34 @@ static FORCE_INLINE void Layout(App* pApp)
     const int addressColumnWidth = Scale(pApp, 120);
     const int modelColumnWidth = Scale(pApp, 90);
     const int columnPadding = Scale(pApp, 24);
-    int width;
-    int sliderX;
-    int sliderWidth;
-    int buttonX;
-    int refreshX;
-    int browseX;
-    int labelY;
-    int headerY;
-    int buttonY;
-    int listLabelWidth;
-    int fileX;
-    int fileWidth;
-    int subtitleX;
-    int subtitleWidth;
-    int gainX;
-    int gainWidth;
-    int gainStateX;
-    int hintX;
-    int hintWidth;
-    int stopX;
-    int seekX;
-    int seekWidth;
-    int timeX;
-    int motionSliderWidth;
-    int motionValueX;
-    int receiverColumnWidth;
-    int y;
-    int listH;
+    int       width;
+    int       sliderX;
+    int       sliderWidth;
+    int       buttonX;
+    int       refreshX;
+    int       browseX;
+    int       labelY;
+    int       headerY;
+    int       buttonY;
+    int       listLabelWidth;
+    int       fileX;
+    int       fileWidth;
+    int       subtitleX;
+    int       subtitleWidth;
+    int       gainX;
+    int       gainWidth;
+    int       gainStateX;
+    int       hintX;
+    int       hintWidth;
+    int       stopX;
+    int       seekX;
+    int       seekWidth;
+    int       timeX;
+    int       motionSliderWidth;
+    int       motionValueX;
+    int       receiverColumnWidth;
+    int       y;
+    int       listH;
 
     GetClientRect(pApp->hWnd, &client);
     width = client.right - 2 * margin;
@@ -1313,24 +1611,56 @@ static FORCE_INLINE void Layout(App* pApp)
  */
 static FORCE_INLINE void UpdateControls(App* pApp)
 {
-    const int haveSession = (NULL != pApp->pSession);
-    const int busy        = haveSession || pApp->preparingAudio;
-    const int haveDevice  = (-1 != ListView_GetNextItem(pApp->hList, -1, LVNI_SELECTED));
-    const int haveFile    = (GetWindowTextLength(pApp->hFile) > 0);
-    const int playing     = (CAST_STATE_PLAYING == pApp->status.state || CAST_STATE_BUFFERING == pApp->status.state);
+    int32_t selected;
+    int32_t fileLength;
+    bool_t  hasSession;
+    bool_t  preparingAudio;
+    bool_t  busy;
+    bool_t  hasDevice;
+    bool_t  hasFile;
+    bool_t  hasMedia;
+    bool_t  hasDuration;
+    bool_t  hasOriginalSource;
+    bool_t  playing;
+    bool_t  canCast;
+    bool_t  canStop;
+    bool_t  canPause;
+    bool_t  canSeek;
+    bool_t  canPreview;
+    bool_t  canGain;
+    LPCTSTR playCaption;
 
-    EnableWindow(pApp->hCast, !busy && haveDevice && haveFile);
-    EnableWindow(pApp->hRefresh, !pApp->discovering);
-    EnableWindow(pApp->hStop, busy && !pApp->stopping);
-    EnableWindow(pApp->hPlayPause, haveSession && pApp->status.hasMedia);
-    EnableWindow(pApp->hSeek, haveSession && pApp->status.hasMedia && pApp->status.duration > 0);
-    EnableWindow(pApp->hSubtitle, !busy);
-    EnableWindow(pApp->hSubtitleBrowse, !busy);
-    EnableWindow(pApp->hFile, !busy);
-    EnableWindow(pApp->hBrowse, !busy);
-    EnableWindow(pApp->hPreview, !pApp->preparingAudio && !pApp->previewBusy);
-    EnableWindow(pApp->hGain, !haveSession || pApp->originalSource[0]);
-    (void)SetWindowText(pApp->hPlayPause, playing ? TEXT("Pause") : TEXT("Play"));
+    selected          = ListView_GetNextItem(pApp->hList, -1, LVNI_SELECTED);
+    fileLength        = GetWindowTextLength(pApp->hFile);
+    hasSession        = (NULL != pApp->pSession);
+    preparingAudio    = !!pApp->preparingAudio;
+    busy              = hasSession || preparingAudio;
+    hasDevice         = (-1 != selected);
+    hasFile           = (0 < fileLength);
+    hasMedia          = !!pApp->status.hasMedia;
+    hasDuration       = (0.0 < pApp->status.duration);
+    hasOriginalSource = (L'\0' != pApp->originalSource[0]);
+    playing           = (CAST_STATE_PLAYING == pApp->status.state) || (CAST_STATE_BUFFERING == pApp->status.state);
+    canCast           = (!busy) && hasDevice && hasFile;
+    canStop           = busy && (!pApp->stopping);
+    canPause          = hasSession && hasMedia;
+    canSeek           = canPause && hasDuration;
+    canPreview        = (!preparingAudio) && (!pApp->previewBusy);
+    canGain           = (!hasSession) || hasOriginalSource;
+    playCaption       = playing ? TEXT("Pause") : TEXT("Play");
+
+    (void)EnableWindow(pApp->hCast, canCast);
+    (void)EnableWindow(pApp->hRefresh, !pApp->discovering);
+    (void)EnableWindow(pApp->hStop, canStop);
+    (void)EnableWindow(pApp->hPlayPause, canPause);
+    (void)EnableWindow(pApp->hSeek, canSeek);
+    (void)EnableWindow(pApp->hSubtitle, !busy);
+    (void)EnableWindow(pApp->hSubtitleBrowse, !busy);
+    (void)EnableWindow(pApp->hFile, !busy);
+    (void)EnableWindow(pApp->hBrowse, !busy);
+    (void)EnableWindow(pApp->hPreview, canPreview);
+    (void)EnableWindow(pApp->hGain, canGain);
+    (void)SetWindowText(pApp->hPlayPause, playCaption);
 }
 
 /* Rewrites the slider value captions from the current transcoder config. */
@@ -1341,7 +1671,7 @@ static FORCE_INLINE void UpdateControls(App* pApp)
  */
 static FORCE_INLINE void UpdateConfigLabels(App* pApp)
 {
-    TCHAR text[96];
+    TCHAR      text[96];
     NativeText writer;
 
     NativeText_Initialize(&writer, text, ARRAYSIZE(text));
@@ -1374,11 +1704,13 @@ static FORCE_INLINE void UpdateConfigLabels(App* pApp)
  */
 static FORCE_INLINE void ReadConfigFromSliders(App* pApp)
 {
-    int width;
-    int qp;
+    int    width;
+    int    qp;
+    int    qpIntra;
+    bool_t motionAdaptive;
 
     width = (int)SendMessage(pApp->hResSlider, TBM_GETPOS, 0, 0);
-    width = ((width + 8) / 16) * 16; /* proxy width is a multiple of 16 */
+    width = (((width + 8) / 16) * 16); /* proxy width is a multiple of 16 */
     if (width < 240)
     {
         width = 240;
@@ -1386,10 +1718,16 @@ static FORCE_INLINE void ReadConfigFromSliders(App* pApp)
     pApp->transcode.width          = (unsigned)width;
     qp                             = (int)SendMessage(pApp->hQpSlider, TBM_GETPOS, 0, 0);
     pApp->transcode.qpInter        = qp;
-    pApp->transcode.qpIntra        = (qp - 4 > 1) ? qp - 4 : 1; /* keyframes a little sharper */
+    qpIntra                        = qp - 4;
+    if (qpIntra < 1)
+    {
+        qpIntra = 1;
+    }
+    pApp->transcode.qpIntra        = qpIntra; /* keyframes a little sharper */
     pApp->transcode.gopLength      = (unsigned)SendMessage(pApp->hGopSlider, TBM_GETPOS, 0, 0);
     pApp->transcode.motionStrength = (int)SendMessage(pApp->hMotionSlider, TBM_GETPOS, 0, 0);
-    pApp->transcode.motionAdaptive = (BST_CHECKED == SendMessage(pApp->hMotionCheck, BM_GETCHECK, 0, 0)) ? 1 : 0;
+    motionAdaptive                 = (BST_CHECKED == SendMessage(pApp->hMotionCheck, BM_GETCHECK, 0, 0));
+    pApp->transcode.motionAdaptive = motionAdaptive;
     EnableWindow(pApp->hMotionSlider, pApp->transcode.motionAdaptive);
     UpdateConfigLabels(pApp);
 }
@@ -1402,77 +1740,33 @@ static FORCE_INLINE void ReadConfigFromSliders(App* pApp)
  */
 static FORCE_INLINE void CreateControls(App* pApp)
 {
-    LVCOLUMN column;
+    uint32_t                           index;
+    LVCOLUMN                           column;
+    const CastGui_ControlDefinition_t* control;
+    HWND                               child;
+    HWND*                              destination;
 
-    pApp->hListLabel   = CreateChild(pApp, WC_STATIC, TEXT("Cast receivers on this network"), SS_LEFT, 0, ID_LIST_LABEL);
-    pApp->hRefresh     = CreateChild(pApp, WC_BUTTON, TEXT("Refresh"), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_REFRESH);
-    pApp->hWindowsCast = CreateChild(pApp, WC_BUTTON, TEXT("Windows Cast..."), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_WINDOWS_CAST);
-    pApp->hList        = CreateChild(pApp,
-                                     WC_LISTVIEW,
-                                     TEXT(""),
-                                     LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_TABSTOP,
-                                     WS_EX_CLIENTEDGE,
-                                     ID_LIST);
-    pApp->hFileLabel     = CreateChild(pApp, WC_STATIC, TEXT("Video"), SS_LEFT, 0, ID_FILE_LABEL);
-    pApp->hFile          = CreateChild(pApp, WC_EDIT, TEXT(""), ES_AUTOHSCROLL | WS_TABSTOP, WS_EX_CLIENTEDGE, ID_FILE);
-    pApp->hBrowse        = CreateChild(pApp, WC_BUTTON, TEXT("Browse..."), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_BROWSE);
-    pApp->hSubtitleLabel = CreateChild(pApp, WC_STATIC, TEXT("Subtitles"), SS_LEFT, 0, ID_SUBTITLE_LABEL);
-    pApp->hSubtitle      = CreateChild(pApp,
-                                       WC_COMBOBOX,
-                                       TEXT(""),
-                                       CBS_DROPDOWNLIST | CBS_OWNERDRAWFIXED | CBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP,
-                                       0,
-                                       ID_SUBTITLE);
+    for (index = 0; index < ARRAYSIZE(c_controls); ++index)
+    {
+        control = &c_controls[index];
+        child   = CreateChild(pApp, control->windowClass, control->text, control->style, control->extendedStyle, control->id);
+        destination = (HWND*)((byte_t*)pApp + control->destinationOffset);
+        (*destination) = child;
+    }
+
     SetWindowSubclass(pApp->hSubtitle, DarkComboProc, DARK_COMBO_SUBCLASS_ID, (DWORD_PTR)pApp);
-    pApp->hSubtitleBrowse =
-        CreateChild(pApp, WC_BUTTON, TEXT("Browse..."), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_SUBTITLE_BROWSE);
     SendMessage(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)TEXT("Automatic"));
     SendMessage(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)TEXT("Off"));
     SendMessage(pApp->hSubtitle, CB_SETCURSEL, 0, 0);
-    pApp->hGainLabel = CreateChild(pApp, WC_STATIC, TEXT("Audio gain 100%"), SS_LEFT, 0, ID_GAIN_LABEL);
-    pApp->hGain      = CreateChild(pApp, TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_GAIN);
     SendMessage(pApp->hGain, TBM_SETRANGE, TRUE, MAKELPARAM(0, 400));
     SendMessage(pApp->hGain, TBM_SETPOS, TRUE, 100);
     SendMessage(pApp->hGain, TBM_SETPAGESIZE, 0, 25);
-    pApp->hGainState = CreateChild(pApp, WC_STATIC, TEXT("Original audio"), SS_RIGHT | SS_ENDELLIPSIS, 0, ID_GAIN_STATE);
-    pApp->hCast      = CreateChild(pApp, WC_BUTTON, TEXT("Cast"), BS_DEFPUSHBUTTON | WS_TABSTOP, 0, ID_CAST);
-    pApp->hHint      = CreateChild(pApp,
-                              WC_STATIC,
-                              TEXT("A file is served to the receiver over HTTP from this PC; an http(s) URL is sent as is."),
-                              SS_LEFT | SS_ENDELLIPSIS,
-                              0,
-                              ID_HINT);
-    pApp->hPlayPause = CreateChild(pApp, WC_BUTTON, TEXT("Play"), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_PLAY_PAUSE);
-    pApp->hStop      = CreateChild(pApp, WC_BUTTON, TEXT("Stop"), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_STOP);
-    pApp->hSeek      = CreateChild(pApp, TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | TBS_BOTH | WS_TABSTOP, 0, ID_SEEK);
-    pApp->hTime      = CreateChild(pApp, WC_STATIC, TEXT(""), SS_RIGHT, 0, ID_TIME);
-    pApp->hStatus    = CreateChild(pApp, WC_STATIC, TEXT(""), SS_LEFT | SS_ENDELLIPSIS, 0, ID_STATUS);
     ListView_SetBkColor(pApp->hList, DARK_FIELD);
     ListView_SetTextBkColor(pApp->hList, DARK_FIELD);
     ListView_SetTextColor(pApp->hList, DARK_TEXT);
 
     /* Transcoder (proxy) configuration panel: sliders whose settings drive the GPU proxy encode. */
     GpuTranscode_InitializeConfig(&pApp->transcode);
-    pApp->hCfgLabel = CreateChild(pApp,
-                                   WC_STATIC,
-                                   TEXT("Proxy transcoder - adjust, then Preview to test quality on the receiver"),
-                                   SS_LEFT | SS_ENDELLIPSIS,
-                                   0,
-                                   ID_CFG_LABEL);
-    pApp->hResValue  = CreateChild(pApp, WC_STATIC, TEXT(""), SS_LEFT, 0, ID_RES_VALUE);
-    pApp->hResSlider = CreateChild(pApp, TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_RES_SLIDER);
-    pApp->hQpValue   = CreateChild(pApp, WC_STATIC, TEXT(""), SS_LEFT, 0, ID_QP_VALUE);
-    pApp->hQpSlider  = CreateChild(pApp, TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_QP_SLIDER);
-    pApp->hGopValue  = CreateChild(pApp, WC_STATIC, TEXT(""), SS_LEFT, 0, ID_GOP_VALUE);
-    pApp->hGopSlider = CreateChild(pApp, TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_GOP_SLIDER);
-    pApp->hMotionCheck =
-        CreateChild(pApp, WC_BUTTON, TEXT("Optical flow"), BS_AUTOCHECKBOX | WS_TABSTOP, 0, ID_MOTION_CHECK);
-    pApp->hMotionSlider =
-        CreateChild(pApp, TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_MOTION_SLIDER);
-    pApp->hMotionValue = CreateChild(pApp, WC_STATIC, TEXT(""), SS_LEFT, 0, ID_MOTION_VALUE);
-    pApp->hPreview     = CreateChild(pApp, WC_BUTTON, TEXT("Preview"), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_PREVIEW);
-    pApp->hCfgReadout  = CreateChild(pApp, WC_STATIC, TEXT(""), SS_LEFT | SS_ENDELLIPSIS, 0, ID_CFG_READOUT);
-
     SendMessage(pApp->hResSlider, TBM_SETRANGE, TRUE, MAKELPARAM(320, 1920));
     SendMessage(pApp->hResSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.width);
     SendMessage(pApp->hQpSlider, TBM_SETRANGE, TRUE, MAKELPARAM(18, 40));
@@ -1515,8 +1809,7 @@ static FORCE_INLINE void DiscoveryJob(void* pParameter)
 {
     App* pApp = (App*)pParameter;
 
-    pApp->discovered.count =
-        Ssdp_DiscoverCastDevices(&pApp->discovery, pApp->discovered.devices, CAST_MAX_DEVICES, DISCOVERY_MS);
+    pApp->discovered.count = Ssdp_DiscoverCastDevices(&pApp->discovery, pApp->discovered.devices, CAST_MAX_DEVICES, DISCOVERY_MS);
     pApp->discovered.error = Ssdp_GetError(&pApp->discovery);
 }
 
@@ -1552,10 +1845,10 @@ static FORCE_INLINE void StartDiscovery(App* pApp)
  */
 static FORCE_INLINE void OnDiscovered(App* pApp, const DiscoveryResult* pResult)
 {
-    unsigned index;
-    int      preferred = -1;
-    TCHAR  text[160];
-    bool_t failed;
+    unsigned   index;
+    int        preferred = -1;
+    TCHAR      text[160];
+    bool_t     failed;
     NativeText writer;
 
     pApp->discovering = 0;
@@ -1588,7 +1881,8 @@ static FORCE_INLINE void OnDiscovered(App* pApp, const DiscoveryResult* pResult)
         ListView_InsertItem(pApp->hList, &item);
         ListView_SetItemText(pApp->hList, (int)index, 1, nativeAddress);
         ListView_SetItemText(pApp->hList, (int)index, 2, nativeModel);
-        if (preferred < 0 && ContainsNoCase(pDevice->friendlyName, PREFERRED_DEVICE))
+        if ((preferred < 0) &&
+            ContainsNoCase(pDevice->friendlyName, ARRAYSIZE(pDevice->friendlyName), PREFERRED_DEVICE, ARRAYSIZE(PREFERRED_DEVICE) - 1))
         {
             preferred = (int)index;
         }
@@ -1662,16 +1956,35 @@ static FORCE_INLINE void SessionJob(void* context)
  */
 static FORCE_INLINE void RefreshSubtitles(App* pApp)
 {
-    WCHAR      source[1024];
-    TCHAR      automatic[380];
-    TCHAR      label[320];
+    TCHAR        source[1024];
+    WCHAR        mediaSource[1024];
+    TCHAR        automatic[380];
+    TCHAR        label[320];
     const WCHAR* selectedLabel;
-    NativeText writer;
-    (void)ReadControlText(pApp->hFile, source, 1024);
-    if (!wcscmp(source, pApp->subtitleSource))
+    NativeText   writer;
+    bool_t       sourceReady;
+    bool_t       isRemote;
+    int32_t      length;
+    int32_t      readLength;
+
+    length      = GetWindowTextLength(pApp->hFile);
+    sourceReady = (0 <= length) && (length < (int32_t)ARRAYSIZE(source));
+    if (sourceReady)
+    {
+        readLength  = GetWindowText(pApp->hFile, source, ARRAYSIZE(source));
+        sourceReady = (0 <= readLength) && OS_Text_ReadNative((uint16_t*)mediaSource, ARRAYSIZE(mediaSource), source);
+    }
+    if (!sourceReady)
+    {
+        source[0]      = TEXT('\0');
+        mediaSource[0] = L'\0';
+    }
+    if (0 == lstrcmp(source, pApp->subtitleSource))
         return;
-    wcscpy_s(pApp->subtitleSource, 1024, source);
-    pApp->subtitleCount = _wcsnicmp(source, L"http", 4) ? Subtitles_Find(source, pApp->subtitles) : 0;
+    (void)lstrcpyn(pApp->subtitleSource, source, ARRAYSIZE(pApp->subtitleSource));
+    isRemote = sourceReady && (4 <= length) &&
+               (CSTR_EQUAL == CompareString(LOCALE_INVARIANT, NORM_IGNORECASE, source, 4, TEXT("http"), 4));
+    pApp->subtitleCount = isRemote ? 0 : Subtitles_Find(mediaSource, pApp->subtitles);
     SendMessage(pApp->hSubtitle, CB_RESETCONTENT, 0, 0);
     selectedLabel = (0 < pApp->subtitleCount) ? pApp->subtitles[0].label : L"no supported subtitles found";
     (void)OS_Text_WriteNative(label, ARRAYSIZE(label), (const uint16_t*)selectedLabel);
@@ -1681,7 +1994,9 @@ static FORCE_INLINE void RefreshSubtitles(App* pApp)
     (void)SendMessage(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)automatic);
     SendMessage(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)TEXT("Off"));
     for (unsigned i = 0; i < pApp->subtitleCount; ++i)
+    {
         (void)AddComboText(pApp->hSubtitle, pApp->subtitles[i].label);
+    }
     SendMessage(pApp->hSubtitle, CB_SETCURSEL, 0, 0);
 }
 
@@ -1697,6 +2012,8 @@ static FORCE_INLINE void BrowseSubtitles(App* pApp)
     TCHAR        nativePath[MAX_PATH];
     WCHAR        path[MAX_PATH];
     bool_t       converted;
+    bool_t       selected;
+    bool_t       hasCapacity;
 
     RefreshSubtitles(pApp);
     ZeroMemory(&dialog, sizeof(dialog));
@@ -1708,7 +2025,9 @@ static FORCE_INLINE void BrowseSubtitles(App* pApp)
     dialog.nMaxFile    = MAX_PATH;
     dialog.lpstrTitle  = TEXT("Choose subtitles");
     dialog.Flags       = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
-    if (GetOpenFileName(&dialog) && pApp->subtitleCount < SUBTITLE_MAX_TRACKS)
+    selected    = !!GetOpenFileName(&dialog);
+    hasCapacity = (pApp->subtitleCount < SUBTITLE_MAX_TRACKS);
+    if (selected && hasCapacity)
     {
         converted = OS_Text_ReadNative((uint16_t*)path, MAX_PATH, nativePath);
         if (converted)
@@ -1774,16 +2093,16 @@ static FORCE_INLINE void CancelGain(App* app)
  */
 static FORCE_INLINE void StartGain(App* app)
 {
-    uint32_t percent;
-    bool_t   has_session;
-    bool_t   has_source;
-    bool_t   can_prepare;
-    bool_t   use_original;
-    DWORD    length;
-    WCHAR    directory[MAX_PATH];
-    TCHAR    nativeDirectory[MAX_PATH];
-    bool_t   valid_path;
-    int32_t  written;
+    uint32_t   percent;
+    bool_t     has_session;
+    bool_t     has_source;
+    bool_t     can_prepare;
+    bool_t     use_original;
+    DWORD      length;
+    TCHAR      nativeDirectory[MAX_PATH];
+    TCHAR      nativePath[MAX_PATH];
+    NativeText pathWriter;
+    bool_t     valid_path;
 
     LOGASSERT(!app->gainBusy);
     LOGASSERT(!app->closing);
@@ -1810,18 +2129,18 @@ static FORCE_INLINE void StartGain(App* app)
             valid_path = (0 < length) && (length < MAX_PATH);
             if (valid_path)
             {
-                valid_path = OS_Text_ReadNative((uint16_t*)directory, MAX_PATH, nativeDirectory);
-            }
-            if (valid_path)
-            {
-                written = _snwprintf_s(app->gainOutput,
-                                          MAX_PATH,
-                                          _TRUNCATE,
-                                          L"%lscvkcast_gain_%lu_%u.mp4",
-                                          directory,
-                                          GetCurrentProcessId(),
-                                          app->gainSerial);
-                valid_path = (0 <= written);
+                NativeText_Initialize(&pathWriter, nativePath, ARRAYSIZE(nativePath));
+                NativeText_AppendString(&pathWriter, nativeDirectory);
+                NativeText_AppendString(&pathWriter, TEXT("cvkcast_gain_"));
+                NativeText_AppendUnsigned(&pathWriter, GetCurrentProcessId(), 1);
+                NativeText_AppendCharacter(&pathWriter, TEXT('_'));
+                NativeText_AppendUnsigned(&pathWriter, app->gainSerial, 1);
+                NativeText_AppendString(&pathWriter, TEXT(".mp4"));
+                valid_path = pathWriter.complete;
+                if (valid_path)
+                {
+                    valid_path = OS_Text_ReadNative((uint16_t*)app->gainOutput, MAX_PATH, nativePath);
+                }
             }
             if (valid_path)
             {
@@ -1830,11 +2149,10 @@ static FORCE_INLINE void StartGain(App* app)
                 (void)InterlockedExchange(&app->gainProgress, 0);
                 app->gainActiveSerial = app->gainSerial;
                 app->gainBusy         = OS_Thread_Submit(&app->gainWorker);
-                SetWindowText(app->hGainState,
-                              app->gainBusy ? TEXT("Preparing gain...") : TEXT("Cannot start audio worker"));
+                SetWindowText(app->hGainState, app->gainBusy ? TEXT("Preparing gain...") : TEXT("Cannot start audio worker"));
                 if ((!app->gainBusy) && app->preparingAudio)
                 {
-                    FinishSession(app, L"Cannot start audio preparation.");
+                    FinishSession(app, TEXT("Cannot start audio preparation."));
                 }
             }
             else
@@ -1842,7 +2160,7 @@ static FORCE_INLINE void StartGain(App* app)
                 SetWindowText(app->hGainState, TEXT("Cannot create gain file"));
                 if (app->preparingAudio)
                 {
-                    FinishSession(app, L"Cannot create the audio preparation file.");
+                    FinishSession(app, TEXT("Cannot create the audio preparation file."));
                 }
             }
         }
@@ -2011,10 +2329,10 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
     LOGASSERT(serial == app->gainSerial);
     if ((!app->pSession && !app->preparingAudio) || !app->gainOk)
     {
-        WCHAR message[GAIN_ERROR_CAPACITY];
+        TCHAR message[GAIN_ERROR_CAPACITY];
 
-        Utf8ToWide(app->gainError, message, GAIN_ERROR_CAPACITY);
-        (void)WriteControlText(app->hGainState, L"Audio preparation failed");
+        Utf8ToNative(app->gainError, message, GAIN_ERROR_CAPACITY);
+        (void)SetWindowText(app->hGainState, TEXT("Audio preparation failed"));
         if (app->preparingAudio)
         {
             FinishSession(app, message);
@@ -2022,7 +2340,7 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
         else
         {
             CancelGain(app);
-            (void)WriteControlText(app->hStatus, message);
+            SetStatus(app, message);
         }
         return;
     }
@@ -2044,9 +2362,9 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
         CancelGain(app);
         if (app->preparingAudio)
         {
-            FinishSession(app, L"Cannot serve prepared audio.");
+            FinishSession(app, TEXT("Cannot serve prepared audio."));
         }
-        (void)WriteControlText(app->hGainState, L"Cannot serve audio gain");
+        (void)SetWindowText(app->hGainState, TEXT("Cannot serve audio gain"));
         return;
     }
     variant->server = MediaServer_Start(&app->serving, app->gainOutput, NULL, 0, GAIN_MEDIA_TYPE, error, sizeof(error));
@@ -2055,12 +2373,12 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
         CancelGain(app);
         if (app->preparingAudio)
         {
-            FinishSession(app, L"Cannot serve prepared audio.");
+            FinishSession(app, TEXT("Cannot serve prepared audio."));
         }
-        (void)WriteControlText(app->hGainState, L"Cannot serve audio gain");
+        (void)SetWindowText(app->hGainState, TEXT("Cannot serve audio gain"));
         return;
     }
-    wcscpy_s(variant->path, MAX_PATH, app->gainOutput);
+    (void)CopyUtf16(variant->path, MAX_PATH, app->gainOutput, ARRAYSIZE(app->gainOutput));
     app->gainOutput[0] = 0;
     variant->next      = app->gainVariants;
     app->gainVariants  = variant;
@@ -2078,18 +2396,18 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
         app->sessionBusy = OS_Thread_Submit(&app->sessionWorker);
         if (!app->sessionBusy)
         {
-            FinishSession(app, L"Cannot start the Cast session.");
+            FinishSession(app, TEXT("Cannot start the Cast session."));
             return;
         }
         app->preparingAudio = 0;
         ZeroMemory(&app->status, sizeof(app->status));
         UpdateControls(app);
-        (void)WriteControlText(app->hGainState, L"AAC audio ready");
+        (void)SetWindowText(app->hGainState, TEXT("AAC audio ready"));
     }
     else
     {
         CastSession_ReplaceMedia(app->pSession, url, GAIN_MEDIA_TYPE);
-        (void)WriteControlText(app->hGainState, L"Gain ready - switching");
+        (void)SetWindowText(app->hGainState, TEXT("Gain ready - switching"));
     }
 }
 
@@ -2100,7 +2418,7 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
  *  audio conversion. Normal casting may also start a scrub proxy; previews use
  *  the supplied transcoded file directly.
  */
-static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int buildProxy)
+static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, uint32_t sourceCapacity, int buildProxy)
 {
     int32_t              selected;
     uint32_t             deviceCount;
@@ -2135,6 +2453,8 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int 
     bool_t               needs_gain;
     bool_t               has_proxy_source;
     bool_t               start_proxy;
+    bool_t               source_copied;
+    ByteText             urlWriter;
 
     selected              = ListView_GetNextItem(pApp->hList, -1, LVNI_SELECTED);
     deviceCount           = pApp->devices.count;
@@ -2161,8 +2481,8 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int 
     pDevice               = &pApp->devices.devices[safeSelected];
     if (can_start)
     {
-        wcscpy_s(source, sizeof(source) / sizeof(source[0]), pSourceIn);
-        source_ready = (L'\0' != source[0]);
+        source_copied = CopyUtf16(source, ARRAYSIZE(source), pSourceIn, sourceCapacity);
+        source_ready  = source_copied && (L'\0' != source[0]);
     }
 
     vtt            = NULL;
@@ -2172,7 +2492,7 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int 
     if (source_ready)
     {
         ZeroMemory(&config, sizeof(config));
-        (void)snprintf(config.host, sizeof(config.host), "%s", pDevice->host);
+        (void)CopyAscii(config.host, ARRAYSIZE(config.host), pDevice->host, ARRAYSIZE(pDevice->host));
         config.callback = OnSessionEvent;
         config.pUser    = &pApp->events;
     }
@@ -2216,30 +2536,39 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int 
     if (subtitle_ready)
     {
         pApp->originalSource[0] = L'\0';
-        is_remote = (0 == _wcsnicmp(source, L"http://", 7)) ||
-                    (0 == _wcsnicmp(source, L"https://", 8));
+        is_remote = Utf16StartsWithNoCase(source, ARRAYSIZE(source), L"http://", 7) ||
+                    Utf16StartsWithNoCase(source, ARRAYSIZE(source), L"https://", 8);
         if (is_remote)
         {
-            const wchar_t* pExtension;
+            const WCHAR* pExtension;
+            const char*    contentType;
+            bool_t         hasExtension;
+            bool_t         extensionIsPath;
 
-            pExtension = wcsrchr(source, L'.');
+            pExtension      = Utf16FindLast(source, ARRAYSIZE(source), L'.');
+            hasExtension    = (NULL != pExtension);
+            extensionIsPath = FALSE;
+            if (hasExtension)
+            {
+                extensionIsPath = Utf16Contains(pExtension, (uint32_t)((source + ARRAYSIZE(source)) - pExtension), L'/');
+            }
             ToUtf8(source, config.contentUrl, sizeof(config.contentUrl));
             ToUtf8(source, config.title, sizeof(config.title));
-            (void)snprintf(config.contentType,
-                           sizeof(config.contentType),
-                           "%s",
-                           (NULL != pExtension && NULL == wcschr(pExtension, L'/'))
-                               ? MediaServer_GetContentTypeForExtension(pExtension)
-                               : "video/mp4");
+            contentType = "video/mp4";
+            if (hasExtension && (!extensionIsPath))
+            {
+                contentType = MediaServer_GetContentTypeForExtension(pExtension);
+            }
+            (void)CopyAscii(config.contentType, ARRAYSIZE(config.contentType), contentType, CAST_SESSION_TYPE_CAPACITY);
         }
         else
         {
-            const wchar_t* pName;
-            const wchar_t* pExtension;
-            char           extension[16];
+            const WCHAR* pName;
+            const WCHAR* pExtension;
+            char         extension[16];
 
-            pName      = wcsrchr(source, L'\\');
-            pExtension = wcsrchr(source, L'.');
+            pName      = Utf16FindLast(source, ARRAYSIZE(source), L'\\');
+            pExtension = Utf16FindLast(source, ARRAYSIZE(source), L'.');
             pName      = (NULL != pName) ? pName + 1 : source;
             if ((NULL != pExtension) && (pExtension < pName))
             {
@@ -2247,16 +2576,9 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int 
             }
             ToUtf8(pName, config.title, sizeof(config.title));
             ToUtf8(NULL != pExtension ? pExtension : L"", extension, sizeof(extension));
-            (void)snprintf(config.contentType,
-                           sizeof(config.contentType),
-                           "%s",
-                           MediaServer_GetContentTypeForExtension(pExtension));
+            (void)CopyAscii(config.contentType, ARRAYSIZE(config.contentType), MediaServer_GetContentTypeForExtension(pExtension), CAST_SESSION_TYPE_CAPACITY);
             config.servingLocally = 1;
-            route_ready = CastNetwork_ReadLocalAddress(&pApp->routeNetwork,
-                                                       pDevice->host,
-                                                       sizeof(pDevice->host),
-                                                       localAddress,
-                                                       sizeof(localAddress));
+            route_ready   = CastNetwork_ReadLocalAddress(&pApp->routeNetwork, pDevice->host, sizeof(pDevice->host), localAddress, sizeof(localAddress));
             content_ready = route_ready;
             if (!route_ready)
             {
@@ -2273,22 +2595,23 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int 
                                                                vttSize,
                                                                error,
                                                                sizeof(error));
-                server_ready = (NULL != pApp->pServer);
+                server_ready  = (NULL != pApp->pServer);
                 content_ready = server_ready;
                 if (server_ready)
                 {
-                    (void)snprintf(config.contentUrl,
-                                   sizeof(config.contentUrl),
-                                   "http://%s:%u/media%s",
-                                   localAddress,
-                                   (unsigned)MediaServer_GetPort(pApp->pServer),
-                                   extension);
+                    ByteText_Initialize(&urlWriter, config.contentUrl, ARRAYSIZE(config.contentUrl));
+                    ByteText_AppendString(&urlWriter, "http://", ARRAYSIZE("http://"));
+                    ByteText_AppendString(&urlWriter, localAddress, ARRAYSIZE(localAddress));
+                    ByteText_AppendCharacter(&urlWriter, ':');
+                    ByteText_AppendUnsigned(&urlWriter, MediaServer_GetPort(pApp->pServer));
+                    ByteText_AppendString(&urlWriter, "/media", ARRAYSIZE("/media"));
+                    ByteText_AppendString(&urlWriter, extension, ARRAYSIZE(extension));
                     config.keyframeCount = Mp4Index_ReadKeyframes(source, pApp->keyframes, MP4_INDEX_MAX_KEYFRAMES);
                     config.pKeyframes    = pApp->keyframes;
-                    wcscpy_s(pApp->proxySource, MAX_PATH, source);
-                    (void)snprintf(pApp->proxyLocal, sizeof(pApp->proxyLocal), "%s", localAddress);
+                    (void)CopyUtf16(pApp->proxySource, MAX_PATH, source, ARRAYSIZE(source));
+                    (void)CopyAscii(pApp->proxyLocal, ARRAYSIZE(pApp->proxyLocal), localAddress, ARRAYSIZE(localAddress));
                     pApp->proxyPort = (unsigned short)(MediaServer_GetPort(pApp->pServer) + 1);
-                    wcscpy_s(pApp->originalSource, MAX_PATH, source);
+                    (void)CopyUtf16(pApp->originalSource, MAX_PATH, source, ARRAYSIZE(source));
                 }
                 else
                 {
@@ -2331,19 +2654,23 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int 
     }
     if (content_ready && has_subtitles)
     {
-        (void)snprintf(config.subtitleUrl,
-                       sizeof(config.subtitleUrl),
-                       "http://%s:%u/subtitles.vtt",
-                       localAddress,
-                       (unsigned)MediaServer_GetPort(pApp->pServer));
-        (void)snprintf(config.subtitleLanguage, sizeof(config.subtitleLanguage), "%s", subtitle->language);
+        ByteText_Initialize(&urlWriter, config.subtitleUrl, ARRAYSIZE(config.subtitleUrl));
+        ByteText_AppendString(&urlWriter, "http://", ARRAYSIZE("http://"));
+        ByteText_AppendString(&urlWriter, localAddress, ARRAYSIZE(localAddress));
+        ByteText_AppendCharacter(&urlWriter, ':');
+        ByteText_AppendUnsigned(&urlWriter, MediaServer_GetPort(pApp->pServer));
+        ByteText_AppendString(&urlWriter, "/subtitles.vtt", ARRAYSIZE("/subtitles.vtt"));
+        (void)CopyAscii(config.subtitleLanguage,
+                        ARRAYSIZE(config.subtitleLanguage),
+                        subtitle->language,
+                        ARRAYSIZE(subtitle->language));
     }
 
     audio_ready = content_ready;
     if (content_ready)
     {
-        (void)snprintf(pApp->originalUrl, sizeof(pApp->originalUrl), "%s", config.contentUrl);
-        (void)snprintf(pApp->originalType, sizeof(pApp->originalType), "%s", config.contentType);
+        (void)CopyAscii(pApp->originalUrl, ARRAYSIZE(pApp->originalUrl), config.contentUrl, ARRAYSIZE(config.contentUrl));
+        (void)CopyAscii(pApp->originalType, ARRAYSIZE(pApp->originalType), config.contentType, ARRAYSIZE(config.contentType));
         pApp->audioNeedsConversion = 0;
         has_proxy_source = wants_proxy && (L'\0' != pApp->originalSource[0]);
         if (has_proxy_source)
@@ -2351,9 +2678,9 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int 
             pApp->audioNeedsConversion = AudioGain_NeedsConversion(source, error, sizeof(error));
             if (0 > pApp->audioNeedsConversion)
             {
-                WCHAR message[256];
+                TCHAR message[256];
 
-                Utf8ToWide(error, message, 256);
+                Utf8ToNative(error, message, 256);
                 FinishSession(pApp, message);
                 audio_ready = FALSE;
             }
@@ -2387,7 +2714,7 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int 
         session_started  = !!pApp->sessionBusy;
         if (!session_started)
         {
-            FinishSession(pApp, L"Cannot start the Cast session.");
+            FinishSession(pApp, TEXT("Cannot start the Cast session."));
         }
     }
     if (session_started)
@@ -2433,7 +2760,7 @@ static FORCE_INLINE void StartCast(App* pApp)
     WCHAR source[1024];
 
     (void)ReadControlText(pApp->hFile, source, ARRAYSIZE(source));
-    StartCastSource(pApp, source, 1);
+    StartCastSource(pApp, source, ARRAYSIZE(source), 1);
 }
 
 /* A short transcode of the source at the current settings, run on a worker thread so the sliders
@@ -2448,11 +2775,11 @@ static FORCE_INLINE void PreviewJobRun(void* context)
 {
     PreviewJob*    pJob    = (PreviewJob*)context;
     PreviewResult* pResult = pJob->pResult;
-    char        report[1800];
-    const char* pMarker;
+    char           report[1800];
+    const char*    pMarker;
 
     ZeroMemory(pResult, sizeof(*pResult));
-    wcscpy_s(pResult->path, MAX_PATH, pJob->dest);
+    (void)CopyUtf16(pResult->path, MAX_PATH, pJob->dest, ARRAYSIZE(pJob->dest));
     pResult->ok = GpuTranscode_WriteMp4(&pJob->gpuDevice,
                                         pJob->source,
                                         pJob->dest,
@@ -2468,13 +2795,17 @@ static FORCE_INLINE void PreviewJobRun(void* context)
         TCHAR         nativePath[MAX_PATH];
         bool_t        nativePathReady;
         unsigned      produced;
-        double        motion;
+        int32_t       motionPercent;
+        uint64_t      parsed;
+        uint32_t      digitsRead;
+        uint32_t      digitCount;
+        bool_t        numberReady;
         LARGE_INTEGER size;
 
         produced = 0;
-        motion   = 0.0;
+        motionPercent = 0;
         /* The report ends with "... (N video frames from S)"; pull the frame count and motion. */
-        pMarker = strstr(report, "video frames from");
+        pMarker = FindAscii(report, ARRAYSIZE(report), "video frames from", ARRAYSIZE("video frames from") - 1);
         if (NULL != pMarker)
         {
             const char* pDigits;
@@ -2501,16 +2832,29 @@ static FORCE_INLINE void PreviewJobRun(void* context)
                 }
                 --pDigits;
             }
-            produced = (unsigned)atoi(pDigits);
+            digitCount  = (uint32_t)(pMarker - pDigits);
+            numberReady = Utl_Decimal_ReadUint64(&parsed, &digitsRead, (const byte_t*)pDigits, digitCount);
+            if (numberReady && (digitsRead == digitCount) && (parsed <= UINT32_MAX))
+            {
+                produced = (unsigned)parsed;
+            }
         }
-        pMarker = strstr(report, "avg motion ");
+        pMarker = FindAscii(report, ARRAYSIZE(report), "avg motion ", ARRAYSIZE("avg motion ") - 1);
         if (NULL != pMarker)
         {
-            motion = atof(pMarker + 11) / 100.0;
+            const char* pDigits;
+
+            pDigits     = pMarker + (ARRAYSIZE("avg motion ") - 1);
+            digitCount  = (uint32_t)((report + ARRAYSIZE(report)) - pDigits);
+            numberReady = Utl_Decimal_ReadUint64(&parsed, &digitsRead, (const byte_t*)pDigits, digitCount);
+            if (numberReady && (parsed <= INT32_MAX))
+            {
+                motionPercent = (int32_t)parsed;
+            }
         }
         pResult->width         = pJob->config.width;
         pResult->frames        = produced;
-        pResult->motionPercent = (int)(motion * 100.0 + 0.5);
+        pResult->motionPercent = motionPercent;
         size.QuadPart          = 0;
         nativePathReady = OS_Text_WriteNative(nativePath, MAX_PATH, (const uint16_t*)pJob->dest);
         hFile = INVALID_HANDLE_VALUE;
@@ -2540,61 +2884,98 @@ static FORCE_INLINE void StartPreview(App* pApp)
 {
     WCHAR       source[MAX_PATH];
     DWORD       length;
-    WCHAR       temp[MAX_PATH];
     TCHAR       nativeTemp[MAX_PATH];
-    bool_t      converted;
+    TCHAR       nativePath[MAX_PATH];
+    NativeText  pathWriter;
     PreviewJob* pJob;
     int         position;
     double      ratio;
+    double      duration;
+    bool_t      isClosing;
+    bool_t      previewBusy;
+    bool_t      preparingAudio;
+    bool_t      canPrepare;
+    bool_t      sourceRead;
+    bool_t      hasSource;
+    bool_t      isRemote;
+    bool_t      hasLocalSource;
+    bool_t      pathReady;
+    bool_t      sourceCopied;
+    bool_t      hasDuration;
+    bool_t      hasPosition;
+    bool_t      submitted;
 
-    if (pApp->closing || pApp->previewBusy || pApp->preparingAudio)
+    isClosing       = !!pApp->closing;
+    previewBusy     = !!pApp->previewBusy;
+    preparingAudio  = !!pApp->preparingAudio;
+    canPrepare      = (!isClosing) && (!previewBusy) && (!preparingAudio);
+    hasLocalSource  = FALSE;
+    pathReady       = FALSE;
+    pJob            = &pApp->previewJob;
+    if (canPrepare)
     {
-        return;
+        sourceRead    = ReadControlText(pApp->hFile, source, ARRAYSIZE(source));
+        hasSource     = sourceRead && (L'\0' != source[0]);
+        isRemote      = hasSource && Utf16StartsWithNoCase(source, ARRAYSIZE(source), L"http", 4);
+        hasLocalSource = hasSource && (!isRemote);
+        if (!hasLocalSource)
+        {
+            (void)SetWindowText(pApp->hCfgReadout, TEXT("Preview needs a local video file."));
+        }
     }
-    (void)ReadControlText(pApp->hFile, source, MAX_PATH);
-    if (0 == source[0] || 0 == _wcsnicmp(source, L"http", 4))
+    if (hasLocalSource)
     {
-        (void)WriteControlText(pApp->hCfgReadout, L"Preview needs a local video file.");
-        return;
+        ReadConfigFromSliders(pApp);
+        length    = GetTempPath(MAX_PATH, nativeTemp);
+        pathReady = (0 < length) && (length < MAX_PATH);
+        if (pathReady)
+        {
+            NativeText_Initialize(&pathWriter, nativePath, ARRAYSIZE(nativePath));
+            NativeText_AppendString(&pathWriter, nativeTemp);
+            NativeText_AppendString(&pathWriter, TEXT("cvkcast_preview_"));
+            NativeText_AppendUnsigned(&pathWriter, GetCurrentProcessId(), 1);
+            NativeText_AppendString(&pathWriter, TEXT(".mp4"));
+            pathReady = pathWriter.complete;
+        }
+        if (pathReady)
+        {
+            pathReady = OS_Text_ReadNative((uint16_t*)pJob->dest, MAX_PATH, nativePath);
+        }
+        if (pathReady)
+        {
+            sourceCopied = CopyUtf16(pJob->source, MAX_PATH, source, ARRAYSIZE(source));
+            pathReady    = sourceCopied;
+        }
     }
-    ReadConfigFromSliders(pApp);
-    length = GetTempPath(MAX_PATH, nativeTemp);
-    converted = (0 < length) && (length < MAX_PATH);
-    if (converted)
+    if (pathReady)
     {
-        converted = OS_Text_ReadNative((uint16_t*)temp, MAX_PATH, nativeTemp);
-    }
-    if (!converted)
-    {
-        return;
-    }
-    length = (DWORD)lstrlenW(temp);
-    if (length > MAX_PATH - 40)
-    {
-        return;
-    }
-    pJob = &pApp->previewJob;
-    wcscpy_s(pJob->source, MAX_PATH, source);
-    (void)_snwprintf_s(temp + length, MAX_PATH - length, _TRUNCATE, L"cvkcast_preview_%lu.mp4", GetCurrentProcessId());
-    wcscpy_s(pJob->dest, MAX_PATH, temp);
-    pJob->config        = pApp->transcode;
-    pJob->hWnd          = pApp->hWnd;
-    pJob->pResult       = &pApp->previewResult;
-    pApp->previewCancel = 0;
-    pJob->pCancel       = &pApp->previewCancel;
-    /* Start the clip near the current playback position (or a quarter in), snapped to a keyframe. */
-    position         = (int)SendMessage(pApp->hSeek, TBM_GETPOS, 0, 0);
-    ratio            = (pApp->status.duration > 0 && position > 0) ? (double)position / SEEK_RANGE : 0.25;
-    pJob->startFrame = (unsigned)(ratio * 24.0 * (pApp->status.duration > 0 ? pApp->status.duration : 600.0));
-    pJob->frames     = 8u * 24u; /* about eight seconds at ~24 fps */
+        pJob->config        = pApp->transcode;
+        pJob->hWnd          = pApp->hWnd;
+        pJob->pResult       = &pApp->previewResult;
+        pApp->previewCancel = 0;
+        pJob->pCancel       = &pApp->previewCancel;
+        /* Start near the current playback position, or a quarter in. */
+        position    = (int)SendMessage(pApp->hSeek, TBM_GETPOS, 0, 0);
+        hasDuration = (0.0 < pApp->status.duration);
+        hasPosition = (0 < position);
+        duration    = hasDuration ? pApp->status.duration : 600.0;
+        ratio       = 0.25;
+        if (hasDuration && hasPosition)
+        {
+            ratio = ((double)position / (double)SEEK_RANGE);
+        }
+        pJob->startFrame = (unsigned)((ratio * 24.0) * duration);
+        pJob->frames     = 8 * 24;
 
-    pApp->previewBusy = 1;
-    EnableWindow(pApp->hPreview, FALSE);
-    (void)WriteControlText(pApp->hCfgReadout, L"Building preview\x2026");
-    if (!OS_Thread_Submit(&pApp->previewWorker))
-    {
-        pApp->previewBusy = 0;
-        EnableWindow(pApp->hPreview, TRUE);
+        pApp->previewBusy = TRUE;
+        (void)EnableWindow(pApp->hPreview, FALSE);
+        (void)SetWindowText(pApp->hCfgReadout, TEXT("Building preview..."));
+        submitted = OS_Thread_Submit(&pApp->previewWorker);
+        if (!submitted)
+        {
+            pApp->previewBusy = FALSE;
+            (void)EnableWindow(pApp->hPreview, TRUE);
+        }
     }
 }
 
@@ -2607,7 +2988,7 @@ static FORCE_INLINE void StopCast(App* pApp)
 {
     if (pApp->preparingAudio)
     {
-        FinishSession(pApp, L"Audio preparation cancelled.");
+        FinishSession(pApp, TEXT("Audio preparation cancelled."));
         return;
     }
     if (NULL != pApp->pSession && !pApp->stopping)
@@ -2695,9 +3076,24 @@ static FORCE_INLINE void OnStatus(App* pApp, const CastStatus* pStatus)
  */
 static FORCE_INLINE void OnPositionTimer(App* pApp)
 {
-    if (NULL != pApp->pSession && CAST_STATE_PLAYING == pApp->status.state && pApp->status.hasMedia && !pApp->seeking)
+    bool_t   hasSession;
+    bool_t   playing;
+    bool_t   hasMedia;
+    bool_t   seeking;
+    bool_t   advancePosition;
+    uint64_t elapsed;
+    double   seconds;
+
+    hasSession      = (NULL != pApp->pSession);
+    playing         = (CAST_STATE_PLAYING == pApp->status.state);
+    hasMedia        = !!pApp->status.hasMedia;
+    seeking         = !!pApp->seeking;
+    advancePosition = hasSession && playing && hasMedia && (!seeking);
+    if (advancePosition)
     {
-        ShowPosition(pApp, pApp->status.currentTime + (double)(GetTickCount64() - pApp->statusTick) / 1000.0);
+        elapsed = GetTickCount64() - pApp->statusTick;
+        seconds = pApp->status.currentTime + ((double)elapsed / 1000.0);
+        ShowPosition(pApp, seconds);
     }
 }
 
@@ -2708,7 +3104,7 @@ static FORCE_INLINE void OnPositionTimer(App* pApp)
  *  Defers session destruction until its callback has returned, then stops serving
  *  and conversion resources and clears session UI state.
  */
-static FORCE_INLINE void FinishSession(App* pApp, const WCHAR* pReason)
+static FORCE_INLINE void FinishSession(App* pApp, LPCTSTR pReason)
 {
     bool_t       session_complete;
     bool_t       session_failed;
@@ -2770,7 +3166,7 @@ static FORCE_INLINE void FinishSession(App* pApp, const WCHAR* pReason)
         saved_reason        = (pReason == pApp->finishReason);
         if (has_reason && (!saved_reason))
         {
-            wcscpy_s(pApp->finishReason, CAST_EVENTS_TEXT_CAPACITY, pReason);
+            (void)lstrcpyn(pApp->finishReason, pReason, CAST_EVENTS_TEXT_CAPACITY);
         }
     }
     else
@@ -2785,15 +3181,15 @@ static FORCE_INLINE void FinishSession(App* pApp, const WCHAR* pReason)
         pApp->preparingAudio       = 0;
         pApp->audioNeedsConversion = 0;
         ZeroMemory(&pApp->pendingConfig, sizeof(pApp->pendingConfig));
-        (void)WriteControlText(pApp->hGainState, L"");
+        (void)SetWindowText(pApp->hGainState, TEXT(""));
         pApp->stopping      = 0;
         pApp->finishPending = 0;
         ZeroMemory(&pApp->status, sizeof(pApp->status));
         SendMessage(pApp->hSeek, TBM_SETPOS, TRUE, 0);
-        (void)WriteControlText(pApp->hTime, L"");
+        (void)SetWindowText(pApp->hTime, TEXT(""));
         if (NULL != pReason)
         {
-            (void)WriteControlText(pApp->hStatus, pReason);
+            SetStatus(pApp, pReason);
         }
         UpdateControls(pApp);
     }
@@ -2808,7 +3204,6 @@ static FORCE_INLINE void FinishSession(App* pApp, const WCHAR* pReason)
 static FORCE_INLINE void PollSessionEvents(App* pApp)
 {
     CastEvents_Snapshot_t snapshot;
-    WCHAR                 text[CAST_EVENTS_TEXT_CAPACITY];
     TCHAR                 nativeText[CAST_EVENTS_TEXT_CAPACITY];
 
     if (CastEvents_Take(&pApp->events.mailbox, &snapshot))
@@ -2824,8 +3219,8 @@ static FORCE_INLINE void PollSessionEvents(App* pApp)
         }
         if (snapshot.present & CAST_EVENTS_ENDED)
         {
-            Utf8ToWide(snapshot.reason, text, CAST_EVENTS_TEXT_CAPACITY);
-            FinishSession(pApp, text);
+            Utf8ToNative(snapshot.reason, nativeText, CAST_EVENTS_TEXT_CAPACITY);
+            FinishSession(pApp, nativeText);
         }
     }
     if (pApp->finishPending)
@@ -2870,9 +3265,9 @@ static FORCE_INLINE void SeekToRatio(App* pApp, double ratio, int final)
     }
     else
     {
-        TCHAR preview[32];
-        TCHAR duration[32];
-        TCHAR text[96];
+        TCHAR      preview[32];
+        TCHAR      duration[32];
+        TCHAR      text[96];
         NativeText writer;
 
         pApp->seeking = 1;
@@ -3051,9 +3446,16 @@ static FORCE_INLINE void Browse(App* pApp)
     OPENFILENAME dialog;
     int32_t      length;
     bool_t       is_url;
+    bool_t       fits;
 
-    length = GetWindowText(pApp->hFile, file, ARRAYSIZE(file));
-    is_url = (4 <= length) &&
+    length  = GetWindowTextLength(pApp->hFile);
+    fits    = (0 <= length) && (length < (int32_t)ARRAYSIZE(file));
+    file[0] = TEXT('\0');
+    if (fits)
+    {
+        (void)GetWindowText(pApp->hFile, file, ARRAYSIZE(file));
+    }
+    is_url = fits && (4 <= length) &&
              (CSTR_EQUAL == CompareString(LOCALE_INVARIANT, NORM_IGNORECASE, file, 4, TEXT("http"), 4));
     if (is_url)
     {
@@ -3115,7 +3517,7 @@ static FORCE_INLINE BOOL CastWindow_OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
     bool_t   execution_ready;
     bool_t   workers_ready;
 
-    (void)pCreate;
+    UNREFERENCED_PARAMETER(pCreate);
 
     pApp        = GetApp(hWnd);
     pApp->hWnd  = hWnd;
@@ -3238,13 +3640,13 @@ static FORCE_INLINE void CastWindow_OnMeasureItem(HWND hWnd, MEASUREITEMSTRUCT* 
  */
 static FORCE_INLINE void CastWindow_OnDrawItem(HWND hWnd, const DRAWITEMSTRUCT* item)
 {
-    App* pApp;
-    RECT rect;
+    App*                pApp;
+    RECT                rect;
     const D2D1_COLOR_F* fill;
     const D2D1_COLOR_F* foreground;
+    TCHAR               label[128];
 
     pApp = GetApp(hWnd);
-    TCHAR label[128];
     if (item->CtlType == ODT_COMBOBOX && item->CtlID == ID_SUBTITLE)
     {
         PaintSubtitleItem(item->hwndItem,
@@ -3295,7 +3697,7 @@ static FORCE_INLINE void PollJobs(App* app)
     failed = (OS_THREAD_FAILED == OS_Thread_GetState(&app->sessionWorker));
     if (app->sessionBusy && failed)
     {
-        FinishSession(app, L"Session worker stopped.");
+        FinishSession(app, TEXT("Session worker stopped."));
     }
 
     if (app->gainBusy)
@@ -3450,7 +3852,9 @@ static FORCE_INLINE void CastWindow_OnTimer(HWND hWnd, UINT id)
     {
         KillTimer(hWnd, SUBTITLE_TIMER);
         if (!pApp->closing && !pApp->finishPending && !pApp->gainBusy && !pApp->pSession && !pApp->preparingAudio)
+        {
             RefreshSubtitles(pApp);
+        }
     }
     else if (id == GAIN_TIMER)
     {
@@ -3489,7 +3893,6 @@ static FORCE_INLINE void CastWindow_OnGetMinMaxInfo(HWND hWnd, MINMAXINFO* pInfo
     App* pApp;
 
     pApp = GetApp(hWnd);
-    (void)hWnd;
 
     pInfo->ptMinTrackSize.x = Scale(pApp, 620);
     pInfo->ptMinTrackSize.y = Scale(pApp, 584) + pApp->immersiveWindow.metrics.cyCaption;
@@ -3505,10 +3908,11 @@ static FORCE_INLINE void CastWindow_OnDpiChanged(HWND hWnd, UINT dpiX, UINT dpiY
 {
     App* pApp;
 
+    UNREFERENCED_PARAMETER(dpiX);
+    UNREFERENCED_PARAMETER(pSuggested);
+
     pApp = GetApp(hWnd);
     pApp->dpi = dpiY;
-    (void)dpiX;
-    (void)pSuggested;
     ApplyFont(pApp);
     Layout(pApp);
 }
@@ -3642,8 +4046,9 @@ static FORCE_INLINE void CastWindow_OnHScroll(HWND hWnd, HWND hControl, UINT cod
 {
     App* pApp;
 
+    UNREFERENCED_PARAMETER(position);
+
     pApp = GetApp(hWnd);
-    (void)position;
 
     if (hControl == pApp->hGain)
     {
@@ -3656,9 +4061,13 @@ static FORCE_INLINE void CastWindow_OnHScroll(HWND hWnd, HWND hControl, UINT cod
         NativeText_AppendCharacter(&writer, TEXT('%'));
         (void)SetWindowText(pApp->hGainLabel, text);
         if (pApp->pSession || pApp->preparingAudio)
+        {
             SetTimer(hWnd, GAIN_TIMER, 500, NULL);
+        }
         else
+        {
             (void)SetWindowText(pApp->hGainState, (100 == percent) ? TEXT("Original audio") : TEXT("Applies during playback"));
+        }
     }
     else if (hControl == pApp->hSeek)
     {
@@ -3682,7 +4091,6 @@ static FORCE_INLINE void OnPreviewDone(HWND hWnd, const PreviewResult* pResult)
     App* pApp;
 
     pApp = GetApp(hWnd);
-    (void)hWnd;
 
     pApp->previewBusy = 0;
     EnableWindow(pApp->hPreview, !pApp->preparingAudio);
@@ -3704,7 +4112,7 @@ static FORCE_INLINE void OnPreviewDone(HWND hWnd, const PreviewResult* pResult)
         /* Show the transcoded clip on the receiver: no proxy, since the clip is the output. */
         if (NULL == pApp->pSession)
         {
-            StartCastSource(pApp, pResult->path, 0);
+            StartCastSource(pApp, pResult->path, ARRAYSIZE(pResult->path), 0);
         }
     }
     else
@@ -3754,7 +4162,6 @@ static FORCE_INLINE void CastWindow_OnDestroy(HWND hWnd)
     App* pApp;
 
     pApp = GetApp(hWnd);
-    (void)hWnd;
 
     pApp->windowDestroyed = TRUE;
     PostQuitMessage(0);
@@ -3999,19 +4406,26 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
  *  Retains the context outside the window procedure until all workers and the
  *  native window have stopped using it. Native memory-release failure is retried.
  */
-int APIENTRY _tWinMain(_In_ HINSTANCE instance,
-                      _In_opt_ HINSTANCE previousInstance,
-                      _In_ LPTSTR commandLine,
-                      _In_ int showCommand)
+uint32_t OS_Application_Main(void)
 {
     OS_Memory_t memory;
     bool_t      ready;
     int32_t     result;
     App*        app;
     bool_t      closed;
+    HINSTANCE   instance;
+    STARTUPINFO startup;
+    int32_t     showCommand;
 
-    UNREFERENCED_PARAMETER(previousInstance);
-    UNREFERENCED_PARAMETER(commandLine);
+    instance    = (HINSTANCE)GetModuleHandle(NULL);
+    showCommand = SW_SHOWDEFAULT;
+    ZeroMemory(&startup, sizeof(startup));
+    startup.cb = sizeof(startup);
+    GetStartupInfo(&startup);
+    if (0 != (startup.dwFlags & STARTF_USESHOWWINDOW))
+    {
+        showCommand = startup.wShowWindow;
+    }
 
     ready  = OS_Memory_Initialize(&memory, sizeof(App));
     result = 1;
@@ -4030,5 +4444,5 @@ int APIENTRY _tWinMain(_In_ HINSTANCE instance,
         }
         Sleep(POSITION_TICK_MS);
     }
-    return result;
+    return (uint32_t)result;
 }

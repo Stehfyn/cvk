@@ -40,11 +40,7 @@ void GpuTranscode_InitializeConfig(GpuTranscodeConfig* pConfig);
 
 /* Opens the source and creates the GPU decode and encode sessions for the given settings. Returns
 ** NULL on failure with a reason in pReport. */
-GpuTranscoder* GpuTranscode_Open(GpuDevice*                deviceStorage,
-                                 const wchar_t*            pFile,
-                                 const GpuTranscodeConfig* pConfig,
-                                 char*                     pReport,
-                                 size_t                    reportCapacity);
+GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const wchar_t* pFile, const GpuTranscodeConfig* pConfig, char* pReport, size_t reportCapacity);
 
 /* The average inter-frame motion of the most recently produced frame (0..1), from the optical-flow
 ** estimator. Meaningful only when motionAdaptive is set. */

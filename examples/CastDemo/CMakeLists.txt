@@ -115,7 +115,7 @@ set_source_files_properties(audio_gain.c PROPERTIES COMPILE_DEFINITIONS "COBJMAC
 set_source_files_properties(cast_session.c PROPERTIES COMPILE_DEFINITIONS "WIN32_LEAN_AND_MEAN")
 target_link_libraries(cast-session PUBLIC cast-formats cast-network cvk volk::volk vk-diagnostic ws2_32 mswsock secur32 winhttp mfplat mfreadwrite mfuuid ole32 propsys)
 
-add_executable(CastDemo WIN32 cast_gui.c)
+add_executable(CastDemo WIN32 cast_gui.c os/win32/os_entry.c)
 target_compile_definitions(CastDemo PRIVATE UNICODE _UNICODE)
 target_link_libraries(CastDemo PRIVATE cast-session cast-text-unicode immersive-opus3-window cdw
     comctl32 comdlg32 shell32 ole32 user32 gdi32 uxtheme dwmapi
@@ -148,6 +148,7 @@ if(MSVC)
     target_link_libraries(cast-no-crt INTERFACE cast-formats crt-abi BufferOverflowU kernel32)
     target_compile_options(cast-no-crt INTERFACE /GS- /Zl)
     target_link_options(cast-no-crt INTERFACE /NODEFAULTLIB /ENTRY:WinMainStartup)
+    target_link_libraries(CastDemo PRIVATE cast-no-crt)
 
     add_executable(cvk-cast-console-test "${PROJECT_SOURCE_DIR}/tests/win32/cast_console_test.c"
         os/win32/os_entry.c)

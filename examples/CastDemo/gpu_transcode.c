@@ -564,11 +564,7 @@ void GpuTranscode_InitializeConfig(GpuTranscodeConfig* pConfig)
  *  Opens the source and creates its shared GPU device, decoder, encoder and
  *  frame-ring storage. Failed resource setup unwinds through Close.
  */
-GpuTranscoder* GpuTranscode_Open(GpuDevice*                deviceStorage,
-                                 const wchar_t*            pFile,
-                                 const GpuTranscodeConfig* pConfig,
-                                 char*                     pReport,
-                                 size_t                    reportCapacity)
+GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const wchar_t* pFile, const GpuTranscodeConfig* pConfig, char* pReport, size_t reportCapacity)
 {
     Mp4Demux*                        p_demux;
     uint32_t                         sps_size;
@@ -621,7 +617,7 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice*                deviceStorage,
         return NULL;
     }
     pTranscoder->planeCount     = 0;
-    pTranscoder->config         = *pConfig;
+    pTranscoder->config         = (*pConfig);
     pTranscoder->demux          = p_demux;
     pTranscoder->outWidth       = out_width;
     pTranscoder->outHeight      = out_height;
@@ -637,29 +633,28 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice*                deviceStorage,
         return NULL;
     }
     pTranscoder->decoder = GpuDecode_Create(pTranscoder->device,
-                                                 &sps,
-                                                 &pps,
-                                                 source_width,
-                                                 source_height,
-                                                 sps.max_num_ref_frames + 2u,
-                                                 Mp4Demux_GetNalLengthSize(p_demux),
-                                                 decode_report,
-                                                 sizeof(decode_report));
+                                            &sps,
+                                            &pps,
+                                            source_width,
+                                            source_height,
+                                            sps.max_num_ref_frames + 2u,
+                                            Mp4Demux_GetNalLengthSize(p_demux),
+                                            decode_report,
+                                            sizeof(decode_report));
     pTranscoder->encoder = GpuEncode_Create(pTranscoder->device,
-                                                 out_width,
-                                                 out_height,
-                                                 pConfig->bitrateKbps,
-                                                 pConfig->gopLength,
-                                                 pConfig->qpIntra,
-                                                 pConfig->qpInter,
-                                                 30,
-                                                 1,
-                                                 encode_report,
-                                                 sizeof(encode_report));
+                                            out_width,
+                                            out_height,
+                                            pConfig->bitrateKbps,
+                                            pConfig->gopLength,
+                                            pConfig->qpIntra,
+                                            pConfig->qpInter,
+                                            30,
+                                            1,
+                                            encode_report,
+                                            sizeof(encode_report));
     pTranscoder->sampleBuffer = (byte_t*)malloc(pTranscoder->sampleCapacity);
     pTranscoder->dstLuma      = (byte_t*)malloc((size_t)out_width * out_height);
-    pTranscoder->dstChroma    =
-        (byte_t*)malloc((((uint64_t)out_width + 1) / 2) * 2 * (((uint64_t)out_height + 1) / 2));
+    pTranscoder->dstChroma    = (byte_t*)malloc((((uint64_t)out_width + 1) / 2) * 2 * (((uint64_t)out_height + 1) / 2));
     pTranscoder->prevLuma     = (byte_t*)malloc((size_t)out_width * out_height);
     {
         unsigned slot;
@@ -1298,11 +1293,7 @@ int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
 
         if (has_audio)
         {
-            ok = CopyAudioUntil(pTiming,
-                                pMux,
-                                &audio_index,
-                                audio_buffer,
-                                (double)(p_video->decodeTime + duration) / video_timescale);
+            ok = CopyAudioUntil(pTiming, pMux, &audio_index, audio_buffer, (double)(p_video->decodeTime + duration) / video_timescale);
         }
     }
 

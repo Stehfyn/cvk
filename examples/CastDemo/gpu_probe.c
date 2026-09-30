@@ -48,18 +48,16 @@
  */
 typedef struct GpuProbe_Storage_s
 {
-    VkInstance              instance;       ///< Native instance retained until destruction can be issued.
-    bool_t                  loader;         ///< Exclusive loader lifetime acquired by this probe.
-    uint32_t                deviceCount;    ///< Fully returned physical-device records.
-    uint32_t                extensionCount; ///< Fully returned extension records for the current device.
-    uint32_t                familyCount;    ///< Fully returned queue-family records for the current device.
-    VkPhysicalDevice        devices[CVK_MAX_PHYSICAL_DEVICES];         ///< Fixed enumeration output.
-    VkExtensionProperties   extensions[CVK_MAX_PROPERTIES];            ///< Reused per-device extension output.
-    VkQueueFamilyProperties families[CVK_MAX_QUEUE_FAMILY_PROPERTIES]; ///< Reused queue metadata.
-    VkQueueFamilyProperties2
-        videoFamilies[CVK_MAX_QUEUE_FAMILY_PROPERTIES]; ///< Base workspace for the codec-property query.
-    VkQueueFamilyVideoPropertiesKHR
-        video[CVK_MAX_QUEUE_FAMILY_PROPERTIES]; ///< Codec operations linked into family records.
+    VkInstance                      instance;                                       ///< Native instance retained until destruction can be issued.
+    bool_t                          loader;                                         ///< Exclusive loader lifetime acquired by this probe.
+    uint32_t                        deviceCount;                                    ///< Fully returned physical-device records.
+    uint32_t                        extensionCount;                                 ///< Fully returned extension records for the current device.
+    uint32_t                        familyCount;                                    ///< Fully returned queue-family records for the current device.
+    VkPhysicalDevice                devices[CVK_MAX_PHYSICAL_DEVICES];              ///< Fixed enumeration output.
+    VkExtensionProperties           extensions[CVK_MAX_PROPERTIES];                 ///< Reused per-device extension output.
+    VkQueueFamilyProperties         families[CVK_MAX_QUEUE_FAMILY_PROPERTIES];      ///< Reused queue metadata.
+    VkQueueFamilyProperties2        videoFamilies[CVK_MAX_QUEUE_FAMILY_PROPERTIES]; ///< Base workspace for the codec-property query.
+    VkQueueFamilyVideoPropertiesKHR video[CVK_MAX_QUEUE_FAMILY_PROPERTIES];         ///< Codec operations linked into family records.
 } GpuProbe_Storage_t;
 
 /*************************************************************************************************/

@@ -26,9 +26,7 @@
 #include <sysinfoapi.h>
 #include <profileapi.h>
 #include <WinBase.h>
-
-#include <stdio.h>
-#include <wchar.h>
+#include <stringapiset.h>
 
 #include "media_server.h"
 #include "cast_http.h"
@@ -2221,8 +2219,8 @@ const char* MediaServer_GetContentTypeForExtension(const uint16_t* pExtension)
 {
     static const struct
     {
-        const wchar_t* pExtension;
-        const char*    pType;
+        LPCWCH      pExtension;
+        const char* pType;
     } kTypes[] = {
         {L".mp4", "video/mp4"},
         {L".m4v", "video/mp4"},
@@ -2241,12 +2239,18 @@ const char* MediaServer_GetContentTypeForExtension(const uint16_t* pExtension)
         {L".gif", "image/gif"},
     };
     uint32_t index;
+    bool_t   matches_extension;
 
     if (NULL != pExtension)
     {
-        for (index = 0; index < sizeof(kTypes) / sizeof(kTypes[0]); ++index)
+        for (index = 0; index < ARRAYSIZE(kTypes); ++index)
         {
-            if (0 == _wcsicmp(pExtension, kTypes[index].pExtension))
+            matches_extension = (CSTR_EQUAL == CompareStringOrdinal((LPCWCH)pExtension,
+                                                                    -1,
+                                                                    kTypes[index].pExtension,
+                                                                    -1,
+                                                                    TRUE));
+            if (matches_extension)
             {
                 return kTypes[index].pType;
             }

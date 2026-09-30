@@ -13,9 +13,8 @@
 **===============================================================================================*/
 
 #include <windows.h>
+#include <stringapiset.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 #include <wchar.h>
 #include "subtitles.h"
 #include "mp4_demux.h"
@@ -26,6 +25,7 @@
 #include "utl/utl_srt.h"
 #include "utl/utl_unicode.h"
 #include "utl/utl_webvtt.h"
+#include "utl/utl_decimal.h"
 #include "crt/crt_memory.h"
 
 /*=================================================================================================
@@ -50,6 +50,7 @@
 #define SUBTITLE_CHAR_TAB               ('\t')
 #define SUBTITLE_NEWLINE                ("\n")
 #define SUBTITLE_MP4_LANGUAGE_CAPACITY  (4)
+#define SUBTITLE_UINT64_DIGITS           (20)
 #define SUBTITLE_LOAD_ERROR                                                                                            \
     ("Cannot read subtitles: invalid input or storage capacity exceeded. "                                             \
      "Use UTF-8/UTF-16 SRT or WebVTT, MP4 tx3g, or MKV UTF-8/SubRip text.")
@@ -96,6 +97,13 @@ typedef struct Conversion_s
 /*=================================================================================================
 ** 3.5 Static function prototypes
 **===============================================================================================*/
+
+static FORCE_INLINE const WCHAR* FindLastWide(const WCHAR* text, WCHAR character);
+static FORCE_INLINE bool_t AppendWide(WCHAR* output, uint32_t capacity, const WCHAR* input);
+static FORCE_INLINE bool_t CopyWide(WCHAR* output, uint32_t capacity, const WCHAR* input);
+static FORCE_INLINE bool_t AppendAsciiWide(WCHAR* output, uint32_t capacity, const char* input);
+static FORCE_INLINE bool_t AppendUnsignedWide(WCHAR* output, uint32_t capacity, uint64_t value);
+static FORCE_INLINE bool_t CopyAscii(char* output, uint32_t capacity, const char* input);
 
 /*************************************************************************************************/
 /**
@@ -323,7 +331,7 @@ static FORCE_INLINE bool_t ConvertSubRip(Conversion_t* conversion);
  *  - 001 The caller shall supply initialized exclusive storage and a stable file selection.
  *  - 002 Input must fit output capacity with termination space before reading.
  *  - 003 Every opened file shall be closed before conversion; any I/O failure shall fail this attempt.
- *  - 004 The caller shall invalidate partial output after failure; file resources still belong to the CRT.
+ *  - 004 The caller shall invalidate partial output after failure; file handles close before conversion.
  *
  * \param[in,out] workspace   Initialized scratch and output
  * \param[in]     track       Required initialized selection
@@ -354,6 +362,131 @@ static FORCE_INLINE void WriteLoadError(char_t* error, uint32_t capacity);
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
 **===============================================================================================*/
+
+/*************************************************************************************************/
+/** \par Details: Finds the last matching native UTF-16 code unit in terminated text. */
+static FORCE_INLINE const WCHAR* FindLastWide(const WCHAR* text, WCHAR character)
+{
+    const WCHAR* found;
+    uint32_t     index;
+
+    LOGASSERT(NULL != text);
+    found = NULL;
+    for (index = 0; L'\0' != text[index]; ++index)
+    {
+        if (character == text[index])
+        {
+            found = &text[index];
+        }
+    }
+    return found;
+}
+
+/*************************************************************************************************/
+/** \par Details: Appends terminated native text while retaining the destination terminator. */
+static FORCE_INLINE bool_t AppendWide(WCHAR* output, uint32_t capacity, const WCHAR* input)
+{
+    uint32_t used;
+    uint32_t index;
+    bool_t   complete;
+
+    LOGASSERT(NULL != output);
+    LOGASSERT(NULL != input);
+    LOGASSERT(0 < capacity);
+    for (used = 0; (used < capacity) && (L'\0' != output[used]); ++used)
+    {
+    }
+    LOGASSERT(used < capacity);
+    for (index = 0; (L'\0' != input[index]) && ((used + 1) < capacity); ++index)
+    {
+        output[used] = input[index];
+        ++used;
+    }
+    output[used] = L'\0';
+    complete     = (L'\0' == input[index]);
+    return complete;
+}
+
+/*************************************************************************************************/
+/** \par Details: Copies terminated native text with bounded truncation. */
+static FORCE_INLINE bool_t CopyWide(WCHAR* output, uint32_t capacity, const WCHAR* input)
+{
+    LOGASSERT(NULL != output);
+    LOGASSERT(0 < capacity);
+    output[0] = L'\0';
+    return AppendWide(output, capacity, input);
+}
+
+/*************************************************************************************************/
+/** \par Details: Widens ASCII display fragments into a bounded native label. */
+static FORCE_INLINE bool_t AppendAsciiWide(WCHAR* output, uint32_t capacity, const char* input)
+{
+    uint32_t used;
+    uint32_t index;
+    bool_t   complete;
+
+    LOGASSERT(NULL != output);
+    LOGASSERT(NULL != input);
+    LOGASSERT(0 < capacity);
+    for (used = 0; (used < capacity) && (L'\0' != output[used]); ++used)
+    {
+    }
+    LOGASSERT(used < capacity);
+    for (index = 0; ('\0' != input[index]) && ((used + 1) < capacity); ++index)
+    {
+        output[used] = (WCHAR)(byte_t)input[index];
+        ++used;
+    }
+    output[used] = L'\0';
+    complete     = ('\0' == input[index]);
+    return complete;
+}
+
+/*************************************************************************************************/
+/** \par Details: Uses the counted decimal writer for a bounded native label. */
+static FORCE_INLINE bool_t AppendUnsignedWide(WCHAR* output, uint32_t capacity, uint64_t value)
+{
+    byte_t   digits[SUBTITLE_UINT64_DIGITS];
+    uint32_t digitCount;
+    uint32_t used;
+    uint32_t index;
+    bool_t   fits;
+
+    digitCount = Utl_Decimal_WriteUint64(value, digits, ARRAYSIZE(digits));
+    for (used = 0; (used < capacity) && (L'\0' != output[used]); ++used)
+    {
+    }
+    LOGASSERT(used < capacity);
+    fits = (digitCount < (capacity - used));
+    if (fits)
+    {
+        for (index = 0; index < digitCount; ++index)
+        {
+            output[used + index] = (WCHAR)digits[index];
+        }
+        output[used + digitCount] = L'\0';
+    }
+    return fits;
+}
+
+/*************************************************************************************************/
+/** \par Details: Copies a terminated ASCII field with bounded truncation. */
+static FORCE_INLINE bool_t CopyAscii(char* output, uint32_t capacity, const char* input)
+{
+    uint32_t index;
+    bool_t   complete;
+
+    LOGASSERT(NULL != output);
+    LOGASSERT(NULL != input);
+    LOGASSERT(0 < capacity);
+    for (index = 0; ('\0' != input[index]) && ((index + 1) < capacity); ++index)
+    {
+        output[index] = input[index];
+    }
+    output[index] = '\0';
+    complete      = ('\0' == input[index]);
+    return complete;
+}
 
 /*************************************************************************************************/
 /**
@@ -563,42 +696,73 @@ static FORCE_INLINE unsigned FindFiles(const wchar_t* directory,
                                        unsigned       count)
 {
     WIN32_FIND_DATAW entry;
-    wchar_t          pattern[260], path[260];
-    HANDLE find;
-    if (_snwprintf_s(pattern, 260, _TRUNCATE, L"%ls*", directory) < 0)
+    WCHAR            pattern[260];
+    WCHAR            path[260];
+    HANDLE           find;
+    bool_t           pattern_fits;
+
+    pattern_fits = CopyWide(pattern, ARRAYSIZE(pattern), directory);
+    if (pattern_fits)
+    {
+        pattern_fits = AppendWide(pattern, ARRAYSIZE(pattern), L"*");
+    }
+    if (!pattern_fits)
+    {
         return count;
+    }
     find = FindFirstFileW(pattern, &entry);
-    if (find == INVALID_HANDLE_VALUE)
+    if (INVALID_HANDLE_VALUE == find)
+    {
         return count;
+    }
     for (;;)
     {
-        const wchar_t* extension;
-        uint32_t       stem_length;
-        bool_t         is_directory;
-        bool_t         is_subtitle;
-        bool_t         matches_stem;
-        bool_t         path_fits;
+        const WCHAR* extension;
+        uint32_t     stem_length;
+        uint32_t     name_length;
+        bool_t       is_directory;
+        bool_t       is_subtitle;
+        bool_t       is_srt;
+        bool_t       is_vtt;
+        bool_t       matches_stem;
+        bool_t       path_fits;
 
         if (count >= SUBTITLE_MAX_TRACKS)
         {
             break;
         }
-        extension    = wcsrchr(entry.cFileName, L'.');
-        stem_length  = stem ? (uint32_t)wcslen(stem) : 0;
+        extension    = FindLastWide(entry.cFileName, L'.');
+        stem_length  = (NULL != stem) ? (uint32_t)lstrlenW(stem) : 0;
+        name_length  = (uint32_t)lstrlenW(entry.cFileName);
         is_directory = !!(entry.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
         is_subtitle  = FALSE;
         matches_stem = TRUE;
-        if (extension)
+        if (NULL != extension)
         {
-            is_subtitle = !_wcsicmp(extension, L".srt") || !_wcsicmp(extension, L".vtt");
+            is_srt      = (CSTR_EQUAL == CompareStringOrdinal(extension, -1, L".srt", -1, TRUE));
+            is_vtt      = (CSTR_EQUAL == CompareStringOrdinal(extension, -1, L".vtt", -1, TRUE));
+            is_subtitle = is_srt || is_vtt;
         }
-        if (stem)
+        if (NULL != stem)
         {
-            matches_stem = !_wcsnicmp(entry.cFileName, stem, stem_length) && (L'.' == entry.cFileName[stem_length]);
+            matches_stem = (stem_length < name_length);
+            if (matches_stem)
+            {
+                matches_stem = (CSTR_EQUAL == CompareStringOrdinal(entry.cFileName,
+                                                                   (int32_t)stem_length,
+                                                                   stem,
+                                                                   (int32_t)stem_length,
+                                                                   TRUE));
+                matches_stem = matches_stem && (L'.' == entry.cFileName[stem_length]);
+            }
         }
-        if (!is_directory && is_subtitle && matches_stem)
+        if ((!is_directory) && is_subtitle && matches_stem)
         {
-            path_fits = _snwprintf_s(path, 260, _TRUNCATE, L"%ls%ls", directory, entry.cFileName) >= 0;
+            path_fits = CopyWide(path, ARRAYSIZE(path), directory);
+            if (path_fits)
+            {
+                path_fits = AppendWide(path, ARRAYSIZE(path), entry.cFileName);
+            }
             if (path_fits)
             {
                 Subtitles_InitializeFileTrack(path, &tracks[count]);
@@ -918,50 +1082,39 @@ static FORCE_INLINE bool_t ConvertSubRip(Conversion_t* conversion)
 /**
  * \par Details:
  *  Sidecar bytes borrow the output buffer until decoded into separate scratch.
- *  Every opened FILE is closed before conversion; all I/O failures invalidate
- *  this attempt. CRT file resources remain a separate allocation/lifetime defect.
+ *  Every native file handle is closed before conversion; all I/O failures
+ *  invalidate this attempt.
  */
 static FORCE_INLINE bool_t ReadSidecar(Subtitles_Workspace_t* workspace, const SubtitleTrack* track)
 {
-    FILE*    file;
-    int32_t  length;
-    uint32_t count;
-    int32_t  opened;
-    bool_t   valid;
-    int32_t  seek_result;
-    uint64_t read_count;
-    int32_t  closed;
+    HANDLE        file;
+    LARGE_INTEGER length;
+    uint32_t      count;
+    DWORD         read_count;
+    bool_t        valid;
+    bool_t        closed;
 
-    file   = NULL;
-    length = 0;
-    count  = 0;
-    opened = _wfopen_s(&file, track->path, L"rb");
-    valid  = (0 == opened) && (NULL != file);
+    file  = CreateFileW(track->path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    valid = (INVALID_HANDLE_VALUE != file);
     if (valid)
     {
-        seek_result = fseek(file, 0, SEEK_END);
-        valid       = (0 == seek_result);
+        valid = !!GetFileSizeEx(file, &length);
     }
     if (valid)
     {
-        length = ftell(file);
-        valid  = (0 < length) && ((uint64_t)length < workspace->capacity);
+        valid = (0 < length.QuadPart) && ((uint64_t)length.QuadPart < workspace->capacity);
     }
     if (valid)
     {
-        seek_result = fseek(file, 0, SEEK_SET);
-        valid       = (0 == seek_result);
+        count      = (uint32_t)length.QuadPart;
+        read_count = 0;
+        valid      = !!ReadFile(file, workspace->output, count, &read_count, NULL);
+        valid      = valid && (count == read_count);
     }
-    if (valid)
+    if (INVALID_HANDLE_VALUE != file)
     {
-        count      = (uint32_t)length;
-        read_count = fread(workspace->output, 1, count, file);
-        valid      = (count == read_count);
-    }
-    if (NULL != file)
-    {
-        closed = fclose(file);
-        valid  = valid && (0 == closed);
+        closed = !!CloseHandle(file);
+        valid  = valid && closed;
     }
     if (valid)
     {
@@ -1026,33 +1179,54 @@ void Subtitles_Initialize(Subtitles_Workspace_t* workspace, byte_t* source, byte
  */
 void Subtitles_InitializeFileTrack(const wchar_t* path, SubtitleTrack* track)
 {
-    const wchar_t* name;
-    wchar_t        stem[260];
-    const wchar_t* dot;
+    const WCHAR* name;
+    WCHAR        stem[260];
+    const WCHAR* dot;
+    uint32_t     name_length;
+    uint32_t     index;
+    bool_t       is_language;
+
     LOGASSERT(NULL != path);
     LOGASSERT(NULL != track);
 
-    name = wcsrchr(path, L'\\');
-    memset(track, 0, sizeof(*track));
+    name = FindLastWide(path, L'\\');
+    CRT_Memory_Set(track, 0, sizeof((*track)));
     track->embedded = -1;
-    wcsncpy_s(track->path, 260, path, _TRUNCATE);
-    name = name ? name + 1 : path;
-    wcsncpy_s(track->label, 320, name, _TRUNCATE);
-    wcsncpy_s(stem, 260, name, _TRUNCATE);
-    dot = wcsrchr(stem, L'.');
-    if (dot)
-        stem[dot - stem] = 0;
-    name = wcsrchr(stem, L'.');
-    name = name ? name + 1 : stem;
-    strcpy_s(track->language, 16, "und");
-    if (wcslen(name) == 2 || wcslen(name) == 3)
+    (void)CopyWide(track->path, ARRAYSIZE(track->path), path);
+    if (NULL != name)
     {
-        unsigned i;
-        for (i = 0; name[i] >= L'a' && name[i] <= L'z'; ++i)
-        {
-        }
-        if (!name[i])
-            WideCharToMultiByte(CP_UTF8, 0, name, -1, track->language, 16, NULL, NULL);
+        ++name;
+    }
+    else
+    {
+        name = path;
+    }
+    (void)CopyWide(track->label, ARRAYSIZE(track->label), name);
+    (void)CopyWide(stem, ARRAYSIZE(stem), name);
+    dot = FindLastWide(stem, L'.');
+    if (NULL != dot)
+    {
+        stem[dot - stem] = L'\0';
+    }
+    name = FindLastWide(stem, L'.');
+    if (NULL != name)
+    {
+        ++name;
+    }
+    else
+    {
+        name = stem;
+    }
+    (void)CopyAscii(track->language, ARRAYSIZE(track->language), "und");
+    name_length = (uint32_t)lstrlenW(name);
+    is_language = (2 == name_length) || (3 == name_length);
+    for (index = 0; is_language && (index < name_length); ++index)
+    {
+        is_language = (L'a' <= name[index]) && (L'z' >= name[index]);
+    }
+    if (is_language)
+    {
+        (void)WideCharToMultiByte(CP_UTF8, 0, name, -1, track->language, ARRAYSIZE(track->language), NULL, NULL);
     }
 }
 
@@ -1090,59 +1264,100 @@ uint32_t Subtitles_GetByteCount(const Subtitles_Workspace_t* workspace)
  */
 uint32_t Subtitles_Find(const wchar_t* media, SubtitleTrack tracks[SUBTITLE_MAX_TRACKS])
 {
-    wchar_t  directory[260], stem[260], subs[260];
-    wchar_t* slash;
-    wchar_t* dot;
-    unsigned count = 0, i;
-    DWORD pathLength;
+    WCHAR    directory[260];
+    WCHAR    stem[260];
+    WCHAR    subs[260];
+    WCHAR*   slash;
+    const WCHAR* dot;
+    uint32_t count;
+    uint32_t index;
+    uint32_t media_length;
+    DWORD    pathLength;
+    bool_t   stem_fits;
+    bool_t   subs_fits;
+
     LOGASSERT(NULL != media);
     LOGASSERT(NULL != tracks);
 
-    if (!*media || wcslen(media) >= 260)
+    media_length = (uint32_t)lstrlenW(media);
+    if ((L'\0' == media[0]) || (ARRAYSIZE(directory) <= media_length))
+    {
         return 0;
-    pathLength = GetFullPathNameW(media, 260, directory, NULL);
-    if (!pathLength || pathLength >= 260)
+    }
+    pathLength = GetFullPathNameW(media, ARRAYSIZE(directory), directory, NULL);
+    if ((0 == pathLength) || (ARRAYSIZE(directory) <= pathLength))
+    {
         return 0;
-    slash = wcsrchr(directory, L'\\');
-    if (!slash)
+    }
+    slash = (WCHAR*)FindLastWide(directory, L'\\');
+    if (NULL == slash)
+    {
         return 0;
-    wcscpy_s(stem, 260, slash + 1);
-    slash[1] = 0;
-    dot      = wcsrchr(stem, L'.');
-    if (dot)
-        *dot = 0;
+    }
+    stem_fits = CopyWide(stem, ARRAYSIZE(stem), slash + 1);
+    if (!stem_fits)
+    {
+        return 0;
+    }
+    slash[1] = L'\0';
+    dot      = FindLastWide(stem, L'.');
+    if (NULL != dot)
+    {
+        stem[dot - stem] = L'\0';
+    }
+    count = 0;
     count = FindFiles(directory, stem, tracks, count);
-    if (_snwprintf_s(subs, 260, _TRUNCATE, L"%lsSubs\\", directory) >= 0)
+    subs_fits = CopyWide(subs, ARRAYSIZE(subs), directory);
+    if (subs_fits)
+    {
+        subs_fits = AppendWide(subs, ARRAYSIZE(subs), L"Subs\\");
+    }
+    if (subs_fits)
+    {
         count = FindFiles(subs, NULL, tracks, count);
-    for (i = 0; count < SUBTITLE_MAX_TRACKS; ++i)
+    }
+    for (index = 0; count < SUBTITLE_MAX_TRACKS; ++index)
     {
         char language[4];
-        if (!Mp4Demux_ReadTextTrack(media, i, language, NULL, NULL))
+
+        if (!Mp4Demux_ReadTextTrack(media, index, language, NULL, NULL))
+        {
             break;
+        }
         Subtitles_InitializeFileTrack(media, &tracks[count]);
-        tracks[count].embedded = (int)i;
-        strcpy_s(tracks[count].language, 16, language);
-        _snwprintf_s(tracks[count].label, 320, _TRUNCATE, L"Embedded %u (%hs)", i + 1, language);
+        tracks[count].embedded = (int32_t)index;
+        (void)CopyAscii(tracks[count].language, ARRAYSIZE(tracks[count].language), language);
+        (void)CopyWide(tracks[count].label, ARRAYSIZE(tracks[count].label), L"Embedded ");
+        (void)AppendUnsignedWide(tracks[count].label, ARRAYSIZE(tracks[count].label), (uint64_t)index + 1);
+        (void)AppendWide(tracks[count].label, ARRAYSIZE(tracks[count].label), L" (");
+        (void)AppendAsciiWide(tracks[count].label, ARRAYSIZE(tracks[count].label), language);
+        (void)AppendWide(tracks[count].label, ARRAYSIZE(tracks[count].label), L")");
         ++count;
     }
     {
         MkvSubtitleTrack mkv[SUBTITLE_MAX_TRACKS];
-        unsigned         total = MkvSubtitles_Find(media, mkv, SUBTITLE_MAX_TRACKS - count);
-        for (i = 0; i < total; ++i)
+        uint32_t         total;
+
+        total = MkvSubtitles_Find(media, mkv, SUBTITLE_MAX_TRACKS - count);
+        for (index = 0; index < total; ++index)
         {
-            wchar_t name[256] = {0};
+            WCHAR name[256];
+
+            name[0] = L'\0';
             Subtitles_InitializeFileTrack(media, &tracks[count]);
-            tracks[count].matroskaTrack = mkv[i].number;
-            strcpy_s(tracks[count].language, 16, mkv[i].language);
-            MultiByteToWideChar(CP_UTF8, 0, mkv[i].name, -1, name, 256);
-            _snwprintf_s(tracks[count].label,
-                         320,
-                         _TRUNCATE,
-                         L"MKV track %llu (%hs)%ls%ls",
-                         (unsigned long long)mkv[i].number,
-                         mkv[i].language,
-                         name[0] ? L" - " : L"",
-                         name);
+            tracks[count].matroskaTrack = mkv[index].number;
+            (void)CopyAscii(tracks[count].language, ARRAYSIZE(tracks[count].language), mkv[index].language);
+            (void)MultiByteToWideChar(CP_UTF8, 0, mkv[index].name, -1, name, ARRAYSIZE(name));
+            (void)CopyWide(tracks[count].label, ARRAYSIZE(tracks[count].label), L"MKV track ");
+            (void)AppendUnsignedWide(tracks[count].label, ARRAYSIZE(tracks[count].label), mkv[index].number);
+            (void)AppendWide(tracks[count].label, ARRAYSIZE(tracks[count].label), L" (");
+            (void)AppendAsciiWide(tracks[count].label, ARRAYSIZE(tracks[count].label), mkv[index].language);
+            (void)AppendWide(tracks[count].label, ARRAYSIZE(tracks[count].label), L")");
+            if (L'\0' != name[0])
+            {
+                (void)AppendWide(tracks[count].label, ARRAYSIZE(tracks[count].label), L" - ");
+                (void)AppendWide(tracks[count].label, ARRAYSIZE(tracks[count].label), name);
+            }
             ++count;
         }
     }
