@@ -648,6 +648,8 @@ static FORCE_INLINE void BufferBytes(MuxBuffer* buffer, const void* data, uint32
     const void* source;
     bool_t   failed;
     uint32_t capacity;
+    bool_t   needs_growth;
+    bool_t   grow;
 
     LOGASSERT(NULL != buffer);
     failed      = buffer->failed;
@@ -659,8 +661,10 @@ static FORCE_INLINE void BufferBytes(MuxBuffer* buffer, const void* data, uint32
     fits = (count <= UINT32_MAX - buffer->size);
     bounded_count = count & ((uint32_t)0 - (uint32_t)fits);
     required = buffer->size + bounded_count;
+    needs_growth = (capacity < required);
+    grow = !failed && needs_growth;
     grown = TRUE;
-    if (!failed && capacity < required)
+    if (grow)
     {
         grown = GrowBuffer(buffer, required);
     }
@@ -2390,8 +2394,13 @@ extern FORCE_INLINE int Mp4Mux_AddAudio(Mp4Mux* pMux, const byte_t* pData, uint3
  */
 int Mp4Mux_Finish(Mp4Mux* pMux)
 {
+    int64_t   mdat_start;
     int64_t   mdat_end;
     uint64_t  mdat_size;
+    bool_t    positioned;
+    bool_t    ordered;
+    bool_t    fits;
+    bool_t    patchable;
     byte_t    patch[4];
     MuxBuffer buffer;
     uint32_t  movie_timescale;
@@ -2413,17 +2422,18 @@ int Mp4Mux_Finish(Mp4Mux* pMux)
     }
 
     /* Patch the streamed mdat's size field. */
-    mdat_end  = GetFileOffset(pMux->file);
-    if ((0 > mdat_end) || (mdat_end < pMux->mdatStart))
+    mdat_start = pMux->mdatStart;
+    mdat_end   = GetFileOffset(pMux->file);
+    positioned = (0 <= mdat_end);
+    ordered    = (mdat_start <= mdat_end);
+    mdat_size  = (uint64_t)mdat_end - (uint64_t)mdat_start;
+    fits       = (mdat_size <= UINT32_MAX); /* the proxy is not expected to exceed 4 GiB */
+    patchable  = positioned && ordered && fits;
+    if (!patchable)
     {
         return 0;
     }
-    mdat_size = (uint64_t)(mdat_end - pMux->mdatStart);
-    if (mdat_size > UINT32_MAX)
-    {
-        return 0; /* the proxy is not expected to exceed 4 GiB */
-    }
-    if (!SetFileOffset(pMux->file, pMux->mdatStart))
+    if (!SetFileOffset(pMux->file, mdat_start))
     {
         return 0;
     }

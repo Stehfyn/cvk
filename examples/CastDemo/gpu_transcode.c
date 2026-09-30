@@ -665,6 +665,10 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
     uint64_t                         luma_bytes;
     uint64_t                         chroma_bytes;
     uint64_t                         workspace_bytes;
+    bool_t                           source_fits;
+    bool_t                           proxy_fits;
+    bool_t                           workspace_fits;
+    bool_t                           resident;
     uint64_t                         offset;
     GpuTranscoder*                   pTranscoder;
     GpuDevice*                       device;
@@ -717,20 +721,17 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const TCHAR* pFile, c
         out_height = 2U;
     }
 
-    source_pixels = (uint64_t)source_width * source_height;
-    proxy_pixels  = (uint64_t)out_width * out_height;
-    if ((source_pixels > GPU_FRAME_STORAGE_CAPACITY / ((uint64_t)PIPELINE_SLOTS * 2U)) ||
-        (proxy_pixels > GPU_FRAME_STORAGE_CAPACITY / 2U))
-    {
-        Report(pReport, reportCapacity, "frame dimensions exceed resident workspace\n");
-        Mp4Demux_Close(p_demux);
-        return NULL;
-    }
+    source_pixels   = (uint64_t)source_width * source_height;
+    proxy_pixels    = (uint64_t)out_width * out_height;
+    source_fits     = (source_pixels <= GPU_FRAME_STORAGE_CAPACITY / ((uint64_t)PIPELINE_SLOTS * 2U));
+    proxy_fits      = (proxy_pixels <= GPU_FRAME_STORAGE_CAPACITY / 2U);
     frame_bytes     = source_pixels * 2U;
     luma_bytes      = proxy_pixels;
     chroma_bytes    = (((uint64_t)out_width + 1U) / 2U) * 2U * (((uint64_t)out_height + 1U) / 2U);
     workspace_bytes = (PIPELINE_SLOTS * frame_bytes) + (2U * luma_bytes) + chroma_bytes;
-    if (GPU_FRAME_STORAGE_CAPACITY < workspace_bytes)
+    workspace_fits  = (workspace_bytes <= GPU_FRAME_STORAGE_CAPACITY);
+    resident        = source_fits && proxy_fits && workspace_fits;
+    if (!resident)
     {
         Report(pReport, reportCapacity, "frame dimensions exceed resident workspace\n");
         Mp4Demux_Close(p_demux);

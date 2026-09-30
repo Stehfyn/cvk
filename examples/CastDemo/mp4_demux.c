@@ -728,6 +728,12 @@ static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSample
     uint32_t sampleCount;
     uint32_t chunkCount;
     uint32_t stscCount;
+    bool_t     hasSamples;
+    bool_t     countFits;
+    bool_t     stscFits;
+    bool_t     stcoFits;
+    bool_t     stszFits;
+    bool_t     tablesFit;
     int        ok = 0;
 
     if (!FindChild(hFile, pStbl, FOURCC('s', 't', 's', 'z'), &stsz) ||
@@ -767,13 +773,13 @@ static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSample
     sampleCount     = Be32(pStsz + MP4_FULL_BOX_PREFIX_BYTES);
     chunkCount      = Be32(pStco + 4);
     stscCount       = Be32(pStsc + 4);
-    if (0 == sampleCount || sampleCount > MAX_TABLE_BYTES / sizeof(Mp4Sample) ||
-        ((uint64_t)stscCount * MP4_STSC_ENTRY_BYTES) + MP4_FULL_BOX_PREFIX_BYTES > stscSize ||
-        ((uint64_t)chunkCount * (is64 ? MP4_BYTES_PER_U64 : MP4_BYTES_PER_U32)) + MP4_FULL_BOX_PREFIX_BYTES > stcoSize)
-    {
-        goto cleanup;
-    }
-    if (0 == sampleSizeFixed && ((uint64_t)sampleCount * MP4_BYTES_PER_U32) + MP4_STSZ_PREFIX_BYTES > stszSize)
+    hasSamples   = (0 != sampleCount);
+    countFits    = (sampleCount <= MAX_TABLE_BYTES / sizeof(Mp4Sample));
+    stscFits     = (((uint64_t)stscCount * MP4_STSC_ENTRY_BYTES) + MP4_FULL_BOX_PREFIX_BYTES <= stscSize);
+    stcoFits     = (((uint64_t)chunkCount * (is64 ? MP4_BYTES_PER_U64 : MP4_BYTES_PER_U32)) + MP4_FULL_BOX_PREFIX_BYTES <= stcoSize);
+    stszFits     = (0 != sampleSizeFixed) || (((uint64_t)sampleCount * MP4_BYTES_PER_U32) + MP4_STSZ_PREFIX_BYTES <= stszSize);
+    tablesFit    = hasSamples && countFits && stscFits && stcoFits && stszFits;
+    if (!tablesFit)
     {
         goto cleanup;
     }
@@ -813,7 +819,7 @@ cleanup:
  * \par Details:
  *  Reads the mdhd timescale at the version-zero or version-one offset.
  */
-static unsigned ReadTimescale(HANDLE hFile, const Box* pMdia)
+static FORCE_INLINE unsigned ReadTimescale(HANDLE hFile, const Box* pMdia)
 {
     Box    mdhd;
     byte_t buffer[MP4_MEDIA_HEADER_READ_BYTES];
@@ -830,7 +836,7 @@ static unsigned ReadTimescale(HANDLE hFile, const Box* pMdia)
  * \par Details:
  *  Compares the hdlr handler type after locating and reading the child payload.
  */
-static int TrackIsHandler(HANDLE hFile, const Box* pMdia, uint32_t handler)
+static FORCE_INLINE int TrackIsHandler(HANDLE hFile, const Box* pMdia, uint32_t handler)
 {
     Box    hdlr;
     byte_t buffer[MP4_HANDLER_HEADER_BYTES];
@@ -1281,7 +1287,7 @@ static int FindTextTrackBoxes(HANDLE file, const Box* pTrack, Box* pMdia, Box* p
            entry.type == FOURCC('t', 'x', '3', 'g');
 }
 
-static int ReadTextMediaHeader(HANDLE file, const Box* pMdia, unsigned* pTimescale, char language[4])
+static FORCE_INLINE int ReadTextMediaHeader(HANDLE file, const Box* pMdia, unsigned* pTimescale, char language[4])
 {
     Box mdhd;
     byte_t header[MP4_MEDIA_HEADER_V1_BYTES];

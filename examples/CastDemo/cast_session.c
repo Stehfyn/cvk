@@ -24,7 +24,6 @@
 
 #include <float.h>
 #include <stdarg.h>
-#include <string.h>
 
 #include "cast_channel.h"
 #include "cast_media.h"
@@ -775,8 +774,8 @@ static FORCE_INLINE bool_t SendJson(CastSession_State_t*       session,
     const char*          channelError;
 
     namespace_text = Utl_Chromecast_GetNamespace(nameSpace);
-    LOGASSERT(0 < namespace_text.byteCount);
-    LOGASSERT(0 < destination.byteCount);
+    LOGASSERT(0 != namespace_text.byteCount);
+    LOGASSERT(0 != destination.byteCount);
     message.source.data           = (const byte_t*)SENDER_ID;
     message.source.byteCount      = sizeof(SENDER_ID) - 1;
     message.destination.data      = destination.data;
@@ -1292,17 +1291,29 @@ static FORCE_INLINE bool_t OnReceiverStatus(CastSession_State_t*   session,
  *  Maps known receiver state names and uses the loading flag to distinguish
  *  the fallback LOADING and IDLE states.
  */
+static FORCE_INLINE bool_t IsSameName(const char* first, const char* second)
+{
+    uint32_t index;
+
+    index = 0;
+    while ((first[index] == second[index]) && ('\0' != first[index]))
+    {
+        ++index;
+    }
+    return first[index] == second[index];
+}
+
 static FORCE_INLINE CastPlayerState GetStateFromName(const char* pName, int loading)
 {
-    if (0 == strcmp(pName, "PLAYING"))
+    if (IsSameName(pName, "PLAYING"))
     {
         return CAST_STATE_PLAYING;
     }
-    if (0 == strcmp(pName, "PAUSED"))
+    if (IsSameName(pName, "PAUSED"))
     {
         return CAST_STATE_PAUSED;
     }
-    if (0 == strcmp(pName, "BUFFERING"))
+    if (IsSameName(pName, "BUFFERING"))
     {
         return CAST_STATE_BUFFERING;
     }
@@ -1315,12 +1326,12 @@ static FORCE_INLINE void TrackSeekMotion(CastSession_State_t* pSession, const cv
     char rawState[SESSION_STATUS_NAME_CAPACITY];
 
     CopyJsonString(cvkGetJsonMember(pDocument, pStatus, "playerState"), rawState, sizeof(rawState));
-    if (pSession->measurePending && 0 == strcmp(rawState, "BUFFERING"))
+    if (pSession->measurePending && IsSameName(rawState, "BUFFERING"))
     {
         pSession->measureRebuffered = 1; /* the "PLAYING" was optimistic; it stalled again */
     }
     /* The eye sees motion only when the reported time actually advances past the target. */
-    if (pSession->measurePending && 0 == strcmp(rawState, "PLAYING") &&
+    if (pSession->measurePending && IsSameName(rawState, "PLAYING") &&
         rawTime > pSession->measureTarget + SESSION_SEEK_MOTION_TOLERANCE)
     {
         Log(pSession,
@@ -1431,12 +1442,12 @@ static int OnMediaStatus(CastSession_State_t* pSession, const cvkJsonDocument* p
     /* While the receiver fetches the media it stays IDLE and reports LOADING in extendedStatus. */
     pExtended = cvkGetJsonMember(pDocument, pStatus, "extendedStatus");
     CopyJsonString(cvkGetJsonMember(pDocument, pExtended, "playerState"), extendedName, sizeof(extendedName));
-    if (0 == strcmp(name, "IDLE") && 0 == strcmp(extendedName, "LOADING"))
+    if (IsSameName(name, "IDLE") && IsSameName(extendedName, "LOADING"))
     {
         (void)CRT_Format_Copy(name, (uint32_t)sizeof(name), "LOADING");
     }
-    changed = (0 != strcmp(name, pSession->status.stateName));
-    if (changed && 0 != pSession->resumeSince && 0 == strcmp(name, "PLAYING"))
+    changed = (!IsSameName(name, pSession->status.stateName));
+    if (changed && 0 != pSession->resumeSince && IsSameName(name, "PLAYING"))
     {
         Log(pSession,
             "playing again %llu ms after the seek",
@@ -1444,7 +1455,7 @@ static int OnMediaStatus(CastSession_State_t* pSession, const cvkJsonDocument* p
         pSession->resumeSince = 0;
     }
     (void)CRT_Format_Copy(pSession->status.stateName, (uint32_t)sizeof(pSession->status.stateName), name);
-    pSession->status.state = GetStateFromName(name, 0 == strcmp(name, "LOADING"));
+    pSession->status.state = GetStateFromName(name, IsSameName(name, "LOADING"));
     /* A resuming seek should leave the receiver playing after it lands. */
     ResumeAfterSeek(pSession);
     if (changed && idleReason[0])
@@ -1452,7 +1463,7 @@ static int OnMediaStatus(CastSession_State_t* pSession, const cvkJsonDocument* p
         Log(pSession, "%s %s", name, idleReason);
     }
     EmitStatus(pSession);
-    if (0 == strcmp(name, "IDLE") && 0 == strcmp(idleReason, "FINISHED"))
+    if (IsSameName(name, "IDLE") && IsSameName(idleReason, "FINISHED"))
     {
         if (pSession->config.loop)
         {
@@ -1461,7 +1472,7 @@ static int OnMediaStatus(CastSession_State_t* pSession, const cvkJsonDocument* p
         pSession->finished = 1;
         return 0;
     }
-    if (0 == strcmp(name, "IDLE") && 0 == strcmp(idleReason, "ERROR"))
+    if (IsSameName(name, "IDLE") && IsSameName(idleReason, "ERROR"))
     {
         Log(pSession, "the receiver could not play the media");
         return 0;
@@ -1673,11 +1684,12 @@ static FORCE_INLINE void QueueScrub(CastSession_State_t* pSession, double second
  *  before network work. Scrub positions are coalesced; the final seek preserves
  *  the gesture's intended resume state.
  */
-static int ProcessCommands(CastSession_State_t* pSession)
+static bool_t ProcessCommands(CastSession_State_t* pSession, int* pStop)
 {
     unsigned      processed;
     SeekRequest_t seek_request;
 
+    *pStop = 0;
     for (processed = 0U; processed < CAST_COMMAND_CAPACITY; ++processed)
     {
         CastQueuedCommand_t command;
@@ -1687,7 +1699,7 @@ static int ProcessCommands(CastSession_State_t* pSession)
         if (0 == CastCommands_Take(&pSession->commands, &command))
         {
             ReleaseSRWLockExclusive(&pSession->commandLock);
-            return 1;
+            return TRUE;
         }
         ReleaseSRWLockExclusive(&pSession->commandLock);
         switch ((int)command.command)
@@ -1738,16 +1750,17 @@ static int ProcessCommands(CastSession_State_t* pSession)
             break;
         }
         case CAST_COMMAND_STOP:
-            return 0;
+            *pStop = 1;
+            return TRUE;
         default:
-            return -1;
+            return FALSE;
         }
         if (!ok)
         {
-            return -1;
+            return FALSE;
         }
     }
-    return 1;
+    return TRUE;
 }
 
 /*************************************************************************************************/
@@ -1841,19 +1854,20 @@ static bool_t SwitchToProxy(CastSession_State_t* pSession)
                      pSession->status.currentTime, was_playing, LOAD_STREAM_BUFFERED);
 }
 
-static int ServiceSessionIteration(CastSession_State_t* pSession,
-                                   ULONGLONG now,
-                                   ULONGLONG* pLastHeartbeat,
-                                   ULONGLONG* pLastPoll,
-                                   int* pProxyAnnounced)
+static FORCE_INLINE bool_t ServiceSessionIteration(CastSession_State_t* pSession,
+                                      ULONGLONG now,
+                                      ULONGLONG* pLastHeartbeat,
+                                      ULONGLONG* pLastPoll,
+                                      int* pProxyAnnounced,
+                                      int* pStop)
 {
     const CastMedia_t* update;
-    int commands;
     bool_t valid;
 
+    *pStop = 0;
     if (!ServiceSessionTimers(pSession, now, pLastHeartbeat, pLastPoll))
     {
-        return -1;
+        return FALSE;
     }
     update = CastMedia_Take(&pSession->proxyUpdates);
     if (NULL != update)
@@ -1865,8 +1879,7 @@ static int ServiceSessionIteration(CastSession_State_t* pSession,
         *pProxyAnnounced = 1;
         Log(pSession, "proxy ready: switching over for instant, buffer-free seeking");
     }
-    commands = ProcessCommands(pSession);
-    valid = (0 <= commands);
+    valid = ProcessCommands(pSession, pStop);
     if (valid)
     {
         valid = FlushSeek(pSession, now);
@@ -1879,7 +1892,34 @@ static int ServiceSessionIteration(CastSession_State_t* pSession,
     {
         valid = SwitchToProxy(pSession);
     }
-    return valid ? commands : -1;
+    return valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Reports the keyframe count and, with two or more keyframes, their average
+ *  spacing. A single keyframe reports zero spacing.
+ */
+static FORCE_INLINE void LogKeyframeSpacing(CastSession_State_t* pSession)
+{
+    uint32_t         keyframeCount;
+    const float64_t* pKeyframes;
+    bool_t           spaced;
+    uint32_t         last;
+    uint32_t         gaps;
+    float64_t        spacing;
+
+    keyframeCount = pSession->config.keyframeCount;
+    pKeyframes    = pSession->config.pKeyframes;
+    if (0 != keyframeCount)
+    {
+        spaced  = (1 != keyframeCount);
+        last    = spaced ? keyframeCount - 1 : 0;
+        gaps    = spaced ? keyframeCount - 1 : 1;
+        spacing = (pKeyframes[last] - pKeyframes[0]) / gaps;
+        Log(pSession, "scrub previews snap to %u keyframes, %.2f s apart on average", keyframeCount, spacing);
+    }
 }
 
 static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
@@ -1909,14 +1949,7 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
         return 1;
     }
     Log(pSession, "connected to %s:%u over TLS", pSession->config.host, (unsigned)CAST_PORT);
-    if (pSession->config.keyframeCount > 1)
-    {
-        Log(pSession,
-            "scrub previews snap to %u keyframes, %.2f s apart on average",
-            pSession->config.keyframeCount,
-            (pSession->config.pKeyframes[pSession->config.keyframeCount - 1] - pSession->config.pKeyframes[0]) /
-                (pSession->config.keyframeCount - 1));
-    }
+    LogKeyframeSpacing(pSession);
     launch.kind                         = UTL_CHROMECAST_COMMAND_LAUNCH;
     launch.requestId                    = (uint32_t)TakeRequestId(pSession);
     launch.data.applicationId.data      = (const byte_t*)DEFAULT_MEDIA_RECEIVER;
@@ -1941,7 +1974,8 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
         Utl_CastV2_Message_t message;
         int                received;
         ULONGLONG          now;
-        int                commands;
+        bool_t             serviced;
+        int                stop;
         const char*        channelError;
 
         channel = pSession->pChannel;
@@ -1967,13 +2001,13 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
         }
         now = GetTickCount64();
         channelError = CastChannel_GetError(channel);
-        commands = ServiceSessionIteration(pSession, now, &lastHeartbeat, &lastPoll, &proxyAnnounced);
-        if (commands < 0)
+        serviced = ServiceSessionIteration(pSession, now, &lastHeartbeat, &lastPoll, &proxyAnnounced, &stop);
+        if (!serviced)
         {
             pReason = channelError;
             goto done;
         }
-        if (0 == commands)
+        if (stop)
         {
             result  = 0;
             pReason = "stopped";
@@ -2090,7 +2124,7 @@ extern FORCE_INLINE void CastSession_Prepare(CastSession_t* session, const CastS
  *  or complete track is materialized on the stack. Preflight preserves output on failure.
  *  Millisecond rounding is explicit and independent of CRT locale or formatting.
  */
-uint32_t CastSession_WriteLoad(const CastSessionConfig* config,
+extern FORCE_INLINE uint32_t CastSession_WriteLoad(const CastSessionConfig* config,
                                Utl_Json_Text_t          sessionId,
                                int32_t                  requestId,
                                const char*              url,

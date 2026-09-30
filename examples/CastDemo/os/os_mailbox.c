@@ -87,7 +87,6 @@ extern FORCE_INLINE uint32_t OS_Mailbox_GetWriteIndex(const OS_Mailbox_t* mailbo
         case MAILBOX_INITIAL_WRITER: return MAILBOX_INITIAL_WRITER;
         default:
             LOGASSERT(FALSE);
-            return MAILBOX_INITIAL_WRITER;
     }
 }
 
@@ -110,7 +109,6 @@ extern FORCE_INLINE uint32_t OS_Mailbox_GetReadIndex(const OS_Mailbox_t* mailbox
         case MAILBOX_INITIAL_WRITER: return MAILBOX_INITIAL_WRITER;
         default:
             LOGASSERT(FALSE);
-            return MAILBOX_INITIAL_READER;
     }
 }
 

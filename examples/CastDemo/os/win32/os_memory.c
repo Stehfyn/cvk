@@ -116,7 +116,7 @@ extern FORCE_INLINE bool_t OS_Memory_Initialize(OS_Memory_t* memory, uint64_t by
     SIZE_T   allocationBytes;
 
     LOGASSERT(NULL != memory);
-    LOGASSERT(0 < byteCount);
+    LOGASSERT(0 != byteCount);
 #if UINTPTR_MAX < UINT64_MAX
     LOGASSERT(UINTPTR_MAX >= byteCount);
 #endif
@@ -306,7 +306,7 @@ extern FORCE_INLINE bool_t OS_Memory_TryClose(OS_Memory_t* memory)
             RecordError(memory, error);
         }
     }
-    if ((NULL == memory->address) && (0 < memory->workingSetIncrease))
+    if ((NULL == memory->address) && (0 != memory->workingSetIncrease))
     {
         process    = GetCurrentProcess();
         decrease   = (SIZE_T)memory->workingSetIncrease;

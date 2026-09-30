@@ -1330,14 +1330,17 @@ extern FORCE_INLINE uint32_t Utl_Mpeg4_GetBitWriterByteCount(const Utl_Mpeg4_Bit
     uint64_t position;
     uint32_t capacity;
     bool_t   valid;
+    bool_t   position_fits;
+    bool_t   countable;
 
     LOGASSERT(NULL != writer);
-    position = writer->position;
-    capacity = writer->capacity;
-    valid    = writer->valid;
-    count    = (uint32_t)((position + BYTE_BITS - 1) / BYTE_BITS);
-    LOGASSERT(position <= (uint64_t)capacity * BYTE_BITS);
-    return valid ? count : 0;
+    position      = writer->position;
+    capacity      = writer->capacity;
+    valid         = writer->valid;
+    position_fits = (position <= (uint64_t)capacity * BYTE_BITS);
+    countable     = valid && position_fits;
+    count         = (uint32_t)((position + BYTE_BITS - 1) / BYTE_BITS);
+    return countable ? count : 0;
 }
 
 /*************************************************************************************************/

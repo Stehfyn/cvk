@@ -31,6 +31,9 @@
 #define INCOMING_CAPACITY  ((size_t)(32U * 1024U))
 #define PLAINTEXT_CAPACITY (UTL_CASTV2_MAX_FRAME + (16 * 1024))
 #define CHUNK_CAPACITY     (20 * 1024)
+#define RECEIVE_FAILED     (-1)
+#define RECEIVE_TIMEOUT    (0)
+#define RECEIVE_DATA       (1)
 #define HANDSHAKE_TOKEN_CAPACITY (64 * 1024)
 #define CHANNEL_ERROR_CAPACITY (256)
 #define CHANNEL_HOST_CAPACITY (256)
@@ -296,7 +299,7 @@ static FORCE_INLINE int ContinueHandshake(CastChannel* pChannel,
         received = recv(pChannel->socket,
                         (char*)pChannel->incoming + pChannel->incomingUsed,
                         (int)(INCOMING_CAPACITY - pChannel->incomingUsed), 0);
-        if (received <= 0)
+        if (0 == received || SOCKET_ERROR == received)
         {
             SetError(pError, errorCapacity, "connection closed during the TLS handshake",
                      (unsigned long)WSAGetLastError());
@@ -761,7 +764,7 @@ static int ReceiveCiphertext(CastChannel* pChannel, ULONGLONG deadline)
     now = GetTickCount64();
     if (now >= deadline)
     {
-        return 0;
+        return RECEIVE_TIMEOUT;
     }
     timeout.tv_sec  = (long)((deadline - now) / CHANNEL_MILLISECONDS_PER_SECOND);
     timeout.tv_usec = (long)((deadline - now) % CHANNEL_MILLISECONDS_PER_SECOND) * CHANNEL_MICROSECONDS_PER_MILLISECOND;
@@ -770,31 +773,31 @@ static int ReceiveCiphertext(CastChannel* pChannel, ULONGLONG deadline)
     ready = select(0, &readable, NULL, NULL, &timeout);
     if (0 == ready)
     {
-        return 0;
+        return RECEIVE_TIMEOUT;
     }
-    if (ready < 0)
+    if (SOCKET_ERROR == ready)
     {
         SetError(pChannel->error, sizeof(pChannel->error), "select failed", (unsigned long)WSAGetLastError());
-        return -1;
+        return RECEIVE_FAILED;
     }
     if (pChannel->incomingUsed >= INCOMING_CAPACITY)
     {
         SetError(pChannel->error, sizeof(pChannel->error), "TLS record too large", 0);
-        return -1;
+        return RECEIVE_FAILED;
     }
     received = recv(pChannel->socket, (char*)pChannel->incoming + pChannel->incomingUsed, (int)(INCOMING_CAPACITY - pChannel->incomingUsed), 0);
     if (0 == received)
     {
         SetError(pChannel->error, sizeof(pChannel->error), "the receiver closed the connection", 0);
-        return -1;
+        return RECEIVE_FAILED;
     }
-    if (received < 0)
+    if (SOCKET_ERROR == received)
     {
         SetError(pChannel->error, sizeof(pChannel->error), "recv failed", (unsigned long)WSAGetLastError());
-        return -1;
+        return RECEIVE_FAILED;
     }
     pChannel->incomingUsed += (size_t)received;
-    return 1;
+    return RECEIVE_DATA;
 }
 
 int CastChannel_Receive(CastChannel* pChannel, Utl_CastV2_Message_t* pMessage, unsigned timeoutMs)
@@ -857,7 +860,7 @@ int CastChannel_Receive(CastChannel* pChannel, Utl_CastV2_Message_t* pMessage, u
             continue; /* a frame may have completed */
         }
         receive_result = ReceiveCiphertext(pChannel, deadline);
-        if (receive_result <= 0)
+        if (RECEIVE_DATA != receive_result)
         {
             return receive_result;
         }

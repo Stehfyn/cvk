@@ -1207,7 +1207,7 @@ extern FORCE_INLINE void Subtitles_Initialize(Subtitles_Workspace_t* workspace, 
  *  Copies the path and display label and derives a short lowercase language
  *  suffix from the filename when present.
  */
-void Subtitles_InitializeFileTrack(const TCHAR* path, SubtitleTrack* track)
+extern FORCE_INLINE void Subtitles_InitializeFileTrack(const TCHAR* path, SubtitleTrack* track)
 {
     const WCHAR* name;
     WCHAR        stem[SUBTITLE_PATH_CAPACITY];
@@ -1372,23 +1372,24 @@ uint32_t Subtitles_Find(const TCHAR* media, SubtitleTrack tracks[SUBTITLE_MAX_TR
         ++count;
     }
     {
-        MkvSubtitleTrack mkv[SUBTITLE_MAX_TRACKS];
-        uint32_t         total;
+        MkvSubtitleTrack        mkv[SUBTITLE_MAX_TRACKS];
+        uint32_t                total;
+        const MkvSubtitleTrack* entry;
 
         total = MkvSubtitles_Find(media, mkv, SUBTITLE_MAX_TRACKS - count);
-        for (index = 0; index < total; ++index)
+        for (entry = mkv; entry != mkv + total; ++entry)
         {
             WCHAR name[SUBTITLE_MKV_NAME_CAPACITY];
 
             name[0] = L'\0';
             Subtitles_InitializeFileTrack(media, &tracks[count]);
-            tracks[count].matroskaTrack = mkv[index].number;
-            (void)CopyAscii(tracks[count].language, ARRAYSIZE(tracks[count].language), mkv[index].language);
-            (void)MultiByteToWideChar(CP_UTF8, 0, mkv[index].name, -1, name, ARRAYSIZE(name));
+            tracks[count].matroskaTrack = entry->number;
+            (void)CopyAscii(tracks[count].language, ARRAYSIZE(tracks[count].language), entry->language);
+            (void)MultiByteToWideChar(CP_UTF8, 0, entry->name, -1, name, ARRAYSIZE(name));
             (void)CopyWide(tracks[count].label, ARRAYSIZE(tracks[count].label), L"MKV track ");
-            (void)AppendUnsignedWide(tracks[count].label, ARRAYSIZE(tracks[count].label), mkv[index].number);
+            (void)AppendUnsignedWide(tracks[count].label, ARRAYSIZE(tracks[count].label), entry->number);
             (void)AppendWide(tracks[count].label, ARRAYSIZE(tracks[count].label), L" (");
-            (void)AppendAsciiWide(tracks[count].label, ARRAYSIZE(tracks[count].label), mkv[index].language);
+            (void)AppendAsciiWide(tracks[count].label, ARRAYSIZE(tracks[count].label), entry->language);
             (void)AppendWide(tracks[count].label, ARRAYSIZE(tracks[count].label), L")");
             if (L'\0' != name[0])
             {

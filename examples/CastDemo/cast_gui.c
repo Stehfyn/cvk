@@ -124,6 +124,7 @@
 #define GUI_ORIGINAL_GAIN_PERCENT (100)
 #define GUI_GAIN_PAGE_SIZE (25)
 #define GUI_DEVICE_COLUMN_WIDTH (200)
+#define GUI_DEVICE_COLUMN_COUNT (3)
 #define GUI_DEVICE_TEXT_CAPACITY (160)
 #define GUI_DEVICE_NAME_CAPACITY (256)
 #define GUI_AUTOMATIC_TEXT_CAPACITY (380)
@@ -384,6 +385,8 @@ typedef struct CastGui_ControlDefinition_s
 #define DARK_MUTED      RGB(151, 160, 174)
 
 /** Fixed controls in creation and tab order. Layout and runtime state are applied after creation. */
+static TCHAR* const c_deviceColumns[GUI_DEVICE_COLUMN_COUNT] = {TEXT("Receiver"), TEXT("Address"), TEXT("Model")};
+
 static const CastGui_ControlDefinition_t c_controls[] = {
     {offsetof(App, hListLabel), WC_STATIC, TEXT("Cast receivers on this network"), SS_LEFT, 0, ID_LIST_LABEL},
     {offsetof(App, hRefresh), WC_BUTTON, TEXT("Refresh"), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_REFRESH},
@@ -1176,30 +1179,30 @@ static FORCE_INLINE void DestroyControlPaint(App* app)
  *  Changes ordinary buttons to owner-draw controls and requests the dark Explorer
  *  theme after creating the child window.
  */
-static FORCE_INLINE HWND CreateChild(App* pApp, LPCTSTR pClass, LPCTSTR pText, DWORD style, DWORD exStyle, int id)
+static FORCE_INLINE void CreateChild(App* pApp, const CastGui_ControlDefinition_t* control, byte_t* pSlot)
 {
     HWND child;
     HRESULT themeStatus;
-    if ((0 == lstrcmp(pClass, WC_BUTTON)) && ((style & BS_TYPEMASK) != BS_AUTOCHECKBOX))
+    DWORD style = control->style;
+    if ((0 == lstrcmp(control->windowClass, WC_BUTTON)) && ((style & BS_TYPEMASK) != BS_AUTOCHECKBOX))
     {
         style = (style & ~(DWORD)BS_TYPEMASK) | (DWORD)BS_OWNERDRAW;
     }
-    child = CreateWindowEx(exStyle,
-                            pClass,
-                            pText,
+    child = CreateWindowEx(control->extendedStyle,
+                            control->windowClass,
+                            control->text,
                             WS_CHILD | WS_VISIBLE | style,
                             0,
                             0,
                             GUI_CHILD_INITIAL_SIZE,
                             GUI_CHILD_INITIAL_SIZE,
                             pApp->hWnd,
-                            (HMENU)(INT_PTR)id, // NOLINT(performance-no-int-to-ptr): Win32 child control IDs use the HMENU slot.
+                            (HMENU)(INT_PTR)control->id, // NOLINT(performance-no-int-to-ptr): Win32 child control IDs use the HMENU slot.
                             pApp->hInstance,
                             NULL);
+    CRT_Memory_Copy(pSlot, (const byte_t*)&child, sizeof(HWND));
     themeStatus = SetWindowTheme(child, L"DarkMode_Explorer", NULL);
     LOGASSERT(SUCCEEDED(themeStatus));
-
-    return child;
 }
 
 /* The list-view owns its header, so header NM_CUSTOMDRAW never reaches WindowProc.
@@ -1214,22 +1217,24 @@ static FORCE_INLINE HWND CreateChild(App* pApp, LPCTSTR pClass, LPCTSTR pText, D
  */
 static FORCE_INLINE void PaintDarkHeader(HWND hWnd, HDC dc, App* pApp)
 {
-    RECT client;
+    RECT          client;
+    TCHAR* const* column;
     GetClientRect(hWnd, &client);
     BeginControlPaint(pApp, dc, &client);
     FillControlRect(pApp, &client, &c_castFieldColor);
-    for (int i = 0; i < Header_GetItemCount(hWnd); ++i)
+    for (column = c_deviceColumns; column != c_deviceColumns + GUI_DEVICE_COLUMN_COUNT; ++column)
     {
         TCHAR                 native[GUI_COMBO_TEXT_CAPACITY];
         HDITEM                item;
         RECT                  rect;
         RECT                  divider;
         DWRITE_TEXT_ALIGNMENT alignment;
+        const int             index = (int)(column - c_deviceColumns);
         ZeroMemory(&item, sizeof(item));
         item.mask       = HDI_TEXT | HDI_FORMAT;
         item.pszText    = native;
         item.cchTextMax = GUI_COMBO_TEXT_CAPACITY;
-        if (!Header_GetItem(hWnd, i, &item) || !Header_GetItemRect(hWnd, i, &rect))
+        if (!Header_GetItem(hWnd, index, &item) || !Header_GetItemRect(hWnd, index, &rect))
         {
             continue;
         }
@@ -1326,16 +1331,17 @@ static FORCE_INLINE void DrawSubtitleItem(HWND combo, RECT rect, int index, UINT
     const D2D1_COLOR_F* fill;
     const D2D1_COLOR_F* foreground;
     LRESULT             length;
+    bool_t              fits;
+    WPARAM              item;
 
     selected   = (0 != (state & ODS_SELECTED)) && (0 == (state & ODS_COMBOBOXEDIT));
     fill       = selected ? &c_castSelectedColor : &c_castFieldColor;
     foreground = (0 != (state & ODS_DISABLED)) ? &c_castMutedColor : &c_castTextColor;
     FillControlRect(pApp, &rect, fill);
     length = SendMessage(combo, CB_GETLBTEXTLEN, (WPARAM)index, 0);
-    if (index >= 0 && length >= 0 && length < GUI_CONTROL_TEXT_CAPACITY)
-    {
-        SendMessage(combo, CB_GETLBTEXT, (WPARAM)index, (LPARAM)text);
-    }
+    fits   = (index >= 0) && (length >= 0) && (length < GUI_CONTROL_TEXT_CAPACITY);
+    item   = fits ? (WPARAM)index : (WPARAM)-1; /* CB_ERR for an invalid item; text stays empty */
+    (void)SendMessage(combo, CB_GETLBTEXT, item, (LPARAM)text);
     InflateRect(&rect, -Scale(pApp, GUI_CONTROL_TEXT_INSET), 0);
     DrawControlText(pApp, text, &rect, foreground, DWRITE_TEXT_ALIGNMENT_LEADING);
     if ((state & ODS_FOCUS) && !(state & ODS_NOFOCUSRECT))
@@ -1843,13 +1849,12 @@ static FORCE_INLINE void CreateControls(App* pApp)
     uint32_t                           index;
     LVCOLUMN                           column;
     const CastGui_ControlDefinition_t* control;
-    HWND                               child;
+    TCHAR* const*                      columnText;
 
     for (index = 0; index < ARRAYSIZE(c_controls); ++index)
     {
         control = &c_controls[index];
-        child   = CreateChild(pApp, control->windowClass, control->text, control->style, control->extendedStyle, control->id);
-        CRT_Memory_Copy((byte_t*)pApp + control->destinationOffset, (const byte_t*)&child, sizeof(HWND));
+        CreateChild(pApp, control, (byte_t*)pApp + control->destinationOffset);
     }
 
     SetWindowSubclass(pApp->hSubtitle, DarkComboProc, DARK_COMBO_SUBCLASS_ID, (DWORD_PTR)pApp);
@@ -1879,12 +1884,11 @@ static FORCE_INLINE void CreateControls(App* pApp)
     ZeroMemory(&column, sizeof(column));
     column.mask    = LVCF_TEXT | LVCF_WIDTH;
     column.cx      = GUI_DEVICE_COLUMN_WIDTH;
-    column.pszText = TEXT("Receiver");
-    ListView_InsertColumn(pApp->hList, 0, &column);
-    column.pszText = TEXT("Address");
-    ListView_InsertColumn(pApp->hList, 1, &column);
-    column.pszText = TEXT("Model");
-    ListView_InsertColumn(pApp->hList, 2, &column);
+    for (columnText = c_deviceColumns; columnText != c_deviceColumns + GUI_DEVICE_COLUMN_COUNT; ++columnText)
+    {
+        column.pszText = *columnText;
+        ListView_InsertColumn(pApp->hList, (int)(columnText - c_deviceColumns), &column);
+    }
     {
         LRESULT headerResult;
         HWND    header;
@@ -2692,9 +2696,9 @@ static bool_t PrepareCastAudio(App* pApp, const WCHAR* source,
         return TRUE;
     }
     pApp->audioNeedsConversion = AudioGain_NeedsConversion(source, error, GUI_ERROR_CAPACITY);
+    Utf8ToNative(error, message, GUI_ERROR_CAPACITY);
     if (0 > pApp->audioNeedsConversion)
     {
-        Utf8ToNative(error, message, GUI_ERROR_CAPACITY);
         FinishSession(pApp, message);
         return FALSE;
     }
@@ -3127,7 +3131,11 @@ static FORCE_INLINE void ShowPosition(App* pApp, double seconds)
     NativeText writer;
     HWND hSeek;
     double durationSeconds;
+    double divisor;
+    double clamped;
+    double ratio;
     bool_t seeking;
+    bool_t hasDuration;
 
     hSeek           = pApp->hSeek;
     durationSeconds = pApp->status.duration;
@@ -3136,21 +3144,12 @@ static FORCE_INLINE void ShowPosition(App* pApp, double seconds)
     {
         return;
     }
-    if (durationSeconds > 0)
-    {
-        if (seconds > durationSeconds)
-        {
-            seconds = durationSeconds;
-        }
-        SendMessage(hSeek,
-                    TBM_SETPOS,
-                    TRUE,
-                    (LPARAM)(LONG)((seconds / durationSeconds * SEEK_RANGE) + GUI_ROUNDING_HALF));
-    }
-    else
-    {
-        SendMessage(hSeek, TBM_SETPOS, TRUE, 0);
-    }
+    hasDuration = (durationSeconds > 0);
+    divisor     = hasDuration ? durationSeconds : 1.0;
+    clamped     = (seconds > durationSeconds) ? durationSeconds : seconds;
+    seconds     = hasDuration ? clamped : seconds;
+    ratio       = hasDuration ? (clamped / divisor) : 0.0;
+    SendMessage(hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)((ratio * SEEK_RANGE) + GUI_ROUNDING_HALF));
     if (pApp->status.hasMedia)
     {
         FormatTime(seconds, position, ARRAYSIZE(position));
@@ -3384,8 +3383,8 @@ static FORCE_INLINE void SeekToRatio(App* pApp, double ratio, int final)
     {
         ratio = 1.0;
     }
-    seconds = durationSeconds * ratio;
     SendMessage(pApp->hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)((ratio * SEEK_RANGE) + GUI_ROUNDING_HALF));
+    seconds = pApp->status.duration * ratio;
     if (final)
     {
         pApp->seeking = 0;
@@ -3556,15 +3555,16 @@ static FORCE_INLINE LRESULT CALLBACK SeekBarProc(HWND hWnd, UINT message, WPARAM
  */
 static FORCE_INLINE void OnSeekScroll(App* pApp, UINT code)
 {
-    const int position = (int)SendMessage(pApp->hSeek, TBM_GETPOS, 0, 0);
     CastSession_t* session = pApp->pSession;
     double duration = pApp->status.duration;
+    int position;
 
     if (NULL == session || duration <= 0 || TB_THUMBTRACK == code)
     {
         return; /* mouse tracking is handled by the subclass */
     }
-    CastSession_Post(session, CAST_COMMAND_SEEK, duration * position / SEEK_RANGE);
+    position = (int)SendMessage(pApp->hSeek, TBM_GETPOS, 0, 0);
+    CastSession_Post(session, CAST_COMMAND_SEEK, pApp->status.duration * position / SEEK_RANGE);
 }
 
 /*************************************************************************************************/

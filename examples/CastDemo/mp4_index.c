@@ -470,6 +470,7 @@ static FORCE_INLINE bool_t ReadTable(TableReader_t* reader, HANDLE file, const B
 {
     Utl_Mpeg4_SampleTable_t table;
     uint64_t                payload_bytes;
+    bool_t                  ordered;
     bool_t                  has_header;
     bool_t                  valid;
     byte_t                  bytes[UTL_MPEG4_SAMPLE_TABLE_HEADER_BYTES];
@@ -480,9 +481,9 @@ static FORCE_INLINE bool_t ReadTable(TableReader_t* reader, HANDLE file, const B
 
     LOGASSERT(NULL != reader);
     LOGASSERT(NULL != box);
-    LOGASSERT(box->payload <= box->end);
     Utl_Mpeg4_InitializeSampleTable(&table, box->type);
-    payload_bytes = box->end - box->payload;
+    ordered       = (box->payload <= box->end);
+    payload_bytes = ordered ? (box->end - box->payload) : 0;
     has_header    = (UTL_MPEG4_SAMPLE_TABLE_HEADER_BYTES <= payload_bytes);
     valid         = has_header;
     read_bytes    = valid ? sizeof(bytes) : 0;
@@ -518,28 +519,32 @@ static FORCE_INLINE bool_t ReadTable(TableReader_t* reader, HANDLE file, const B
 static FORCE_INLINE bool_t ReadTableEntry(TableReader_t* reader, Utl_Mpeg4_Span_t* bytes)
 {
     bool_t   has_entry;
+    bool_t   page_fits;
+    bool_t   in_page;
     bool_t   can_read;
+    uint32_t width;
     uint32_t entries;
     uint32_t count;
     bool_t   read;
 
     LOGASSERT(NULL != reader);
     LOGASSERT(NULL != bytes);
-    LOGASSERT(0 < reader->width);
-    LOGASSERT(reader->width <= sizeof(reader->page));
-    LOGASSERT(reader->position <= reader->loaded);
-    has_entry = (0 < reader->remaining);
-    can_read  = has_entry && !reader->failed;
+    LOGASSERT(0 != reader->width);
+    width       = reader->width;
+    page_fits   = (width <= sizeof(reader->page));
+    in_page     = (reader->position <= reader->loaded);
+    has_entry   = (0 != reader->remaining);
+    can_read    = has_entry && page_fits && in_page && !reader->failed;
     if (can_read)
     {
         if (reader->position == reader->loaded)
         {
-            entries = sizeof(reader->page) / reader->width;
+            entries = sizeof(reader->page) / width;
             if (reader->remaining < entries)
             {
                 entries = reader->remaining;
             }
-            count          = entries * reader->width;
+            count          = entries * width;
             read           = ReadAt(reader->file, reader->next, reader->page, count);
             reader->failed = !read;
             can_read       = read;
