@@ -32,22 +32,9 @@ InitSwapChain(
     SWAPCHAIN*     swapChain,
     IDXGIAdapter*  adapter);
 
-void
-BindSwapChain(
-    SWAPCHAIN* swapChain,
-    HWND       hwnd);
-
 BOOL
 PresentSwapChain(
     SWAPCHAIN* swapChain,
     BOOL       restart,
     BOOL       vsync);
 
-void
-CommitSwapChain(
-    SWAPCHAIN*               swapChain,
-    DCOMPOSITION_BORDER_MODE borderMode);
-
-void
-WaitForSwapChainCommit(
-    SWAPCHAIN* swapChain);

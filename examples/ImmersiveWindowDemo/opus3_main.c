@@ -275,7 +275,8 @@ void WINAPI WinMainCRTStartup(void)
     pApp->pWindow->caption = &pApp->caption;
     PrepareVideoFrame(&pApp->video, pApp->swapChain.context, 0);
     pApp->llRefreshPeriod = AppRefreshPeriod();
-    BindSwapChain(&pApp->swapChain, pApp->hwnd);
+    cdcompSetupDevice((IDXGIDevice*)pApp->swapChain.dxgiDevice, pApp->hwnd, TRUE, &pApp->swapChain.compositionDevice, &pApp->swapChain.compositionTarget, &pApp->swapChain.visual);
+    cdcompVisualSetContent(pApp->swapChain.visual, (IUnknown*)pApp->swapChain.swapChain);
     pApp->pWindow->swapChain = &pApp->swapChain;
 
     /* First frame. */

@@ -1616,10 +1616,12 @@ EndImmersivePaint(
     {
         borderMode = DCOMPOSITION_BORDER_MODE_INHERIT;
     }
-    CommitSwapChain(window->swapChain, borderMode);
+    cdcompVisualSetBorderMode(window->swapChain->visual, borderMode);
+    cdcompDeviceCommit(window->swapChain->compositionDevice);
+    ++window->swapChain->commitCount;
     if (!window->paintCount)
     {
-        WaitForSwapChainCommit(window->swapChain);
+        cdcompDeviceWaitForCommitCompletion(window->swapChain->compositionDevice);
     }
     ++window->paintCount;
 
