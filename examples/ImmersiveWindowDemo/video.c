@@ -545,7 +545,7 @@ extern FORCE_INLINE void VideoStream_GetInfo(const VideoStream* pStream, VideoIn
 }
 
 #ifdef CVK_DEMO_VALIDATION
-static void ValidateDecodedDevice(VideoStream* stream, ID3D11Texture2D* texture)
+static FORCE_INLINE void ValidateDecodedDevice(VideoStream* stream, ID3D11Texture2D* texture)
 {
     ID3D11Device* decodedDevice;
     bool_t        decoderUsesRenderDevice;

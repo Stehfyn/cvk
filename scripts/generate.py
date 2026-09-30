@@ -1098,8 +1098,7 @@ class Generator:
         """One typed, bounded array reader per element type and generated source."""
         suffix = self.enum_short(ctype) if ctype.startswith("Vk") else ctype.removesuffix("_t").capitalize()
         name = "cvkReadJson" + suffix + "Array"
-        assignment = self.json_assignment(ctype, "storage[index]",
-                                          "cvkGetJsonElement(&pContext->document, pValue, index)")
+        assignment = self.json_assignment(ctype, "*slot", "jsonElement")
         assert assignment is not None
         statements = indent("\n".join(assignment), 12)
         definition = f"""/**
@@ -1121,21 +1120,42 @@ static CVK_FORCE_INLINE {ctype}* {name}(const cvkJsonContext* pContext,
                                       const cvkJsonValue* pValue)
 {{
     {ctype}* storage;
+    {ctype}* slot;
+    const cvkJsonValue* jsonElement;
     uint32_t index;
+    uint32_t count;
+    cvkArena* arena;
 
     CVK_ASSERT(NULL != pContext);
     CVK_ASSERT(NULL != pValue);
+    arena = pContext->pArena;
+    count = pValue->childCount;
     storage = NULL;
     if (CVK_JSON_ARRAY == pValue->kind)
     {{
-        CVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        CVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-        storage = ({ctype}*)cvkAllocateArena(pContext->pArena,
-                                   pValue->childCount * sizeof(*storage),
-                                   CVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        CVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {{
+            return NULL;
+        }}
+        storage = ({ctype}*)cvkAllocateArena(arena,
+                                   count * sizeof(*storage),
+                                   CVK_JSON_ARENA_ALIGNMENT);
+        index = 0;
+        for (;;)
+        {{
+            jsonElement = cvkGetJsonElement(&pContext->document, pValue, index);
+            slot = storage + index;
 {statements}
+            ++index;
+            if (index == count)
+            {{
+                break;
+            }}
         }}
     }}
     return storage;
@@ -2158,6 +2178,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
                 doc, declaration = m.group(1) or "", m.group(2)
                 prof = re.search(r"\\par Profile:\s*(\w+)", doc)
                 if not prof or prof.group(1) == self.api:
+                    doc = re.sub(r"(?m)^ \* \\par (?:Profile|Prototype):[^\r\n]*\r?\n", "", doc)
                     self.json_private_types[plat].append(doc + declaration)
         else:
             for m in re.finditer(r"^(typedef\s+(?:struct|enum)\s+\w+\s*\{[^{}]*\}\s*\w+\s*;)", text, flags=re.S | re.M):
@@ -2196,6 +2217,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             name = self.register(name, "protocol:" + os.path.basename(path))
             if re.search(r"\\par Prototype:\s*multiline", doc):
                 self.multiline_protocol_prototypes.add(name)
+            doc = re.sub(r"(?m)^ \* \\par (?:Profile|Prototype):[^\r\n]*\r?\n", "", doc)
             ret = sig.split(name)[0].strip()
             params: List[EmittedParam] = []
             for piece in plist.split(","):

@@ -497,7 +497,7 @@ GetBorderlessCaptionLayout(
     }
 }
 
-CAPTIONBUTTONSTATE
+extern FORCEINLINE CAPTIONBUTTONSTATE
 GetCaptionButtonState(
     const IMMERSIVEWINDOW* window,
     CAPTIONBUTTON          button)
@@ -903,7 +903,7 @@ OnNCMouseLeave(
     FORWARD_WM_NCMOUSELEAVE(hwnd, DefWindowProc);
 }
 
-static void
+static FORCEINLINE void
 OnNCLButtonDown(
     HWND hwnd,
     BOOL fDoubleClick,

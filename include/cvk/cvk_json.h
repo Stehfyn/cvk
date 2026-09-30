@@ -83,6 +83,7 @@ typedef struct cvkJsonReader
     cvkJsonValue* pValues;
     uint32_t      valueCapacity;
     uint32_t      valueCount;
+    VkBool32      capacityExceeded;
 } cvkJsonReader;
 
 typedef struct cvkJsonName

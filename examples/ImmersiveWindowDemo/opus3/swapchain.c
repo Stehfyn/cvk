@@ -42,7 +42,7 @@
 
 /* Stand up the GPU stack: the D3D11 device, the composition swap chain with one frame of latency, and a
    Direct2D device context targeting its back buffer. */
-void InitSwapChain(SWAPCHAIN* pSwapChain, IDXGIAdapter* adapter)
+extern FORCEINLINE void InitSwapChain(SWAPCHAIN* pSwapChain, IDXGIAdapter* adapter)
 {
     IDXGIFactory2*          pFactory;
     IDXGISwapChain2*        pSwapChain2;
@@ -96,7 +96,7 @@ void InitSwapChain(SWAPCHAIN* pSwapChain, IDXGIAdapter* adapter)
 /* Two presents per frame: an immediate (tearing, non-blocking) present of the new frame, then either a
    sequenced vsync present (fRestart / fVSync) or a second immediate one. DXGI_ERROR_WAS_STILL_DRAWING
    is DO_NOT_WAIT's "not yet" and is tolerated; TRUE only when both presents fully succeeded. */
-BOOL PresentSwapChain(SWAPCHAIN* pSwapChain, BOOL fRestart, BOOL fVSync)
+extern FORCEINLINE BOOL PresentSwapChain(SWAPCHAIN* pSwapChain, BOOL fRestart, BOOL fVSync)
 {
     HRESULT hrFirst;
     HRESULT hrSecond;

@@ -38,7 +38,7 @@ add_custom_command(OUTPUT "${plane_shader_header}"
 
 add_library(immersive-video STATIC video.c video.h renderer.c renderer.h ${shader_headers} "${pipeline_header}" "${output_pass_header}" "${plane_shader_header}")
 if(MSVC)
-    target_compile_options(immersive-video PRIVATE /GS- /Zl /wd4711)
+    target_compile_options(immersive-video PRIVATE /GS- /Zl)
 endif()
 target_include_directories(immersive-video PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
@@ -79,7 +79,7 @@ add_executable(ImmersiveWindowDemo WIN32
 set_source_files_properties(shaders/fullscreen.vert shaders/nv12.frag shaders/plane_copy.hlsl
     PROPERTIES HEADER_FILE_ONLY TRUE)
 set_property(DIRECTORY "${PROJECT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT ImmersiveWindowDemo)
-target_compile_options(ImmersiveWindowDemo PRIVATE /GS- /Zl /wd4711)
+target_compile_options(ImmersiveWindowDemo PRIVATE /GS- /Zl)
 target_link_options(ImmersiveWindowDemo PRIVATE /NODEFAULTLIB /ENTRY:WinMainCRTStartup /INCREMENTAL:NO)
 target_link_libraries(ImmersiveWindowDemo PRIVATE
     immersive-video

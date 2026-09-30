@@ -24,22 +24,45 @@ static SCVK_FORCE_INLINE uint32_t* scvkReadJsonUint32Array(const scvkJsonContext
  */
 static SCVK_FORCE_INLINE uint32_t* scvkReadJsonUint32Array(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    uint32_t* storage;
-    uint32_t  index;
+    uint32_t*            storage;
+    uint32_t*            slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (uint32_t*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = (uint32_t)scvkParseJsonUint64(scvkGetJsonElement(&pContext->document, pValue, index));
+            return NULL;
+        }
+        storage = (uint32_t*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
+
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+
+            *slot       = (uint32_t)scvkParseJsonUint64(jsonElement);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -159,23 +182,45 @@ static SCVK_FORCE_INLINE VkDescriptorSetLayout* scvkReadJsonDescriptorSetLayoutA
 static SCVK_FORCE_INLINE VkDescriptorSetLayout* scvkReadJsonDescriptorSetLayoutArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
     VkDescriptorSetLayout* storage;
+    VkDescriptorSetLayout* slot;
+    const scvkJsonValue*   jsonElement;
     uint32_t               index;
+    uint32_t               count;
+    scvkArena*             arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkDescriptorSetLayout*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = VK_NULL_HANDLE;
+            return NULL;
+        }
+        storage = (VkDescriptorSetLayout*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
 
-            (void)scvkResolveJsonHandle(pContext, "VkDescriptorSetLayout", scvkGetJsonElement(&pContext->document, pValue, index), sizeof(VkDescriptorSetLayout), (void*)&storage[index]);
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+            *slot       = VK_NULL_HANDLE;
+
+            (void)scvkResolveJsonHandle(pContext, "VkDescriptorSetLayout", jsonElement, sizeof(VkDescriptorSetLayout), (void*)&*slot);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -198,24 +243,46 @@ static SCVK_FORCE_INLINE VkSampler* scvkReadJsonSamplerArray(const scvkJsonConte
  */
 static SCVK_FORCE_INLINE VkSampler* scvkReadJsonSamplerArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    VkSampler* storage;
-    uint32_t   index;
+    VkSampler*           storage;
+    VkSampler*           slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkSampler*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = VK_NULL_HANDLE;
+            return NULL;
+        }
+        storage = (VkSampler*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
 
-            (void)scvkResolveJsonHandle(pContext, "VkSampler", scvkGetJsonElement(&pContext->document, pValue, index), sizeof(VkSampler), (void*)&storage[index]);
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+            *slot       = VK_NULL_HANDLE;
+
+            (void)scvkResolveJsonHandle(pContext, "VkSampler", jsonElement, sizeof(VkSampler), (void*)&*slot);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -239,21 +306,44 @@ static SCVK_FORCE_INLINE VkDescriptorBindingFlags* scvkReadJsonDescriptorBinding
 static SCVK_FORCE_INLINE VkDescriptorBindingFlags* scvkReadJsonDescriptorBindingFlagsArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
     VkDescriptorBindingFlags* storage;
+    VkDescriptorBindingFlags* slot;
+    const scvkJsonValue*      jsonElement;
     uint32_t                  index;
+    uint32_t                  count;
+    scvkArena*                arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkDescriptorBindingFlags*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = scvkParseJsonDescriptorBindingFlags(scvkGetJsonElement(&pContext->document, pValue, index));
+            return NULL;
+        }
+        storage = (VkDescriptorBindingFlags*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
+
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+
+            *slot       = scvkParseJsonDescriptorBindingFlags(jsonElement);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -276,24 +366,46 @@ static SCVK_FORCE_INLINE VkPhysicalDevice* scvkReadJsonPhysicalDeviceArray(const
  */
 static SCVK_FORCE_INLINE VkPhysicalDevice* scvkReadJsonPhysicalDeviceArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    VkPhysicalDevice* storage;
-    uint32_t          index;
+    VkPhysicalDevice*    storage;
+    VkPhysicalDevice*    slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkPhysicalDevice*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = VK_NULL_HANDLE;
+            return NULL;
+        }
+        storage = (VkPhysicalDevice*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
 
-            (void)scvkResolveJsonHandle(pContext, "VkPhysicalDevice", scvkGetJsonElement(&pContext->document, pValue, index), sizeof(VkPhysicalDevice), (void*)&storage[index]);
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+            *slot       = VK_NULL_HANDLE;
+
+            (void)scvkResolveJsonHandle(pContext, "VkPhysicalDevice", jsonElement, sizeof(VkPhysicalDevice), (void*)&*slot);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -316,22 +428,45 @@ static SCVK_FORCE_INLINE float* scvkReadJsonFloatArray(const scvkJsonContext* pC
  */
 static SCVK_FORCE_INLINE float* scvkReadJsonFloatArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    float*   storage;
-    uint32_t index;
+    float*               storage;
+    float*               slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (float*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = (float)scvkParseJsonDouble(scvkGetJsonElement(&pContext->document, pValue, index));
+            return NULL;
+        }
+        storage = (float*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
+
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+
+            *slot       = (float)scvkParseJsonDouble(jsonElement);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -354,22 +489,45 @@ static SCVK_FORCE_INLINE VkFormat* scvkReadJsonFormatArray(const scvkJsonContext
  */
 static SCVK_FORCE_INLINE VkFormat* scvkReadJsonFormatArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    VkFormat* storage;
-    uint32_t  index;
+    VkFormat*            storage;
+    VkFormat*            slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkFormat*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = scvkParseJsonFormat(scvkGetJsonElement(&pContext->document, pValue, index));
+            return NULL;
+        }
+        storage = (VkFormat*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
+
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+
+            *slot       = scvkParseJsonFormat(jsonElement);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -392,24 +550,46 @@ static SCVK_FORCE_INLINE VkImageView* scvkReadJsonImageViewArray(const scvkJsonC
  */
 static SCVK_FORCE_INLINE VkImageView* scvkReadJsonImageViewArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    VkImageView* storage;
-    uint32_t     index;
+    VkImageView*         storage;
+    VkImageView*         slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkImageView*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = VK_NULL_HANDLE;
+            return NULL;
+        }
+        storage = (VkImageView*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
 
-            (void)scvkResolveJsonHandle(pContext, "VkImageView", scvkGetJsonElement(&pContext->document, pValue, index), sizeof(VkImageView), (void*)&storage[index]);
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+            *slot       = VK_NULL_HANDLE;
+
+            (void)scvkResolveJsonHandle(pContext, "VkImageView", jsonElement, sizeof(VkImageView), (void*)&*slot);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -432,22 +612,45 @@ static SCVK_FORCE_INLINE uint64_t* scvkReadJsonUint64Array(const scvkJsonContext
  */
 static SCVK_FORCE_INLINE uint64_t* scvkReadJsonUint64Array(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    uint64_t* storage;
-    uint32_t  index;
+    uint64_t*            storage;
+    uint64_t*            slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (uint64_t*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = scvkParseJsonUint64(scvkGetJsonElement(&pContext->document, pValue, index));
+            return NULL;
+        }
+        storage = (uint64_t*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
+
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+
+            *slot       = scvkParseJsonUint64(jsonElement);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -568,22 +771,45 @@ static SCVK_FORCE_INLINE VkBool32* scvkReadJsonBool32Array(const scvkJsonContext
  */
 static SCVK_FORCE_INLINE VkBool32* scvkReadJsonBool32Array(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    VkBool32* storage;
-    uint32_t  index;
+    VkBool32*            storage;
+    VkBool32*            slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkBool32*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = scvkGetJsonBool32(scvkGetJsonElement(&pContext->document, pValue, index));
+            return NULL;
+        }
+        storage = (VkBool32*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
+
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+
+            *slot       = scvkGetJsonBool32(jsonElement);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -606,22 +832,45 @@ static SCVK_FORCE_INLINE VkDynamicState* scvkReadJsonDynamicStateArray(const scv
  */
 static SCVK_FORCE_INLINE VkDynamicState* scvkReadJsonDynamicStateArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    VkDynamicState* storage;
-    uint32_t        index;
+    VkDynamicState*      storage;
+    VkDynamicState*      slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkDynamicState*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = scvkParseJsonDynamicState(scvkGetJsonElement(&pContext->document, pValue, index));
+            return NULL;
+        }
+        storage = (VkDynamicState*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
+
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+
+            *slot       = scvkParseJsonDynamicState(jsonElement);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -682,22 +931,45 @@ static SCVK_FORCE_INLINE VkSampleMask* scvkReadJsonSampleMaskArray(const scvkJso
  */
 static SCVK_FORCE_INLINE VkSampleMask* scvkReadJsonSampleMaskArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    VkSampleMask* storage;
-    uint32_t      index;
+    VkSampleMask*        storage;
+    VkSampleMask*        slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkSampleMask*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = (VkSampleMask)scvkParseJsonUint64(scvkGetJsonElement(&pContext->document, pValue, index));
+            return NULL;
+        }
+        storage = (VkSampleMask*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
+
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+
+            *slot       = (VkSampleMask)scvkParseJsonUint64(jsonElement);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -720,24 +992,46 @@ static SCVK_FORCE_INLINE VkSemaphore* scvkReadJsonSemaphoreArray(const scvkJsonC
  */
 static SCVK_FORCE_INLINE VkSemaphore* scvkReadJsonSemaphoreArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    VkSemaphore* storage;
-    uint32_t     index;
+    VkSemaphore*         storage;
+    VkSemaphore*         slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkSemaphore*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = VK_NULL_HANDLE;
+            return NULL;
+        }
+        storage = (VkSemaphore*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
 
-            (void)scvkResolveJsonHandle(pContext, "VkSemaphore", scvkGetJsonElement(&pContext->document, pValue, index), sizeof(VkSemaphore), (void*)&storage[index]);
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+            *slot       = VK_NULL_HANDLE;
+
+            (void)scvkResolveJsonHandle(pContext, "VkSemaphore", jsonElement, sizeof(VkSemaphore), (void*)&*slot);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -760,24 +1054,46 @@ static SCVK_FORCE_INLINE VkSwapchainKHR* scvkReadJsonSwapchainArray(const scvkJs
  */
 static SCVK_FORCE_INLINE VkSwapchainKHR* scvkReadJsonSwapchainArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    VkSwapchainKHR* storage;
-    uint32_t        index;
+    VkSwapchainKHR*      storage;
+    VkSwapchainKHR*      slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkSwapchainKHR*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = VK_NULL_HANDLE;
+            return NULL;
+        }
+        storage = (VkSwapchainKHR*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
 
-            (void)scvkResolveJsonHandle(pContext, "VkSwapchainKHR", scvkGetJsonElement(&pContext->document, pValue, index), sizeof(VkSwapchainKHR), (void*)&storage[index]);
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+            *slot       = VK_NULL_HANDLE;
+
+            (void)scvkResolveJsonHandle(pContext, "VkSwapchainKHR", jsonElement, sizeof(VkSwapchainKHR), (void*)&*slot);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -800,22 +1116,45 @@ static SCVK_FORCE_INLINE VkResult* scvkReadJsonResultArray(const scvkJsonContext
  */
 static SCVK_FORCE_INLINE VkResult* scvkReadJsonResultArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    VkResult* storage;
-    uint32_t  index;
+    VkResult*            storage;
+    VkResult*            slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkResult*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = scvkParseJsonResult(scvkGetJsonElement(&pContext->document, pValue, index));
+            return NULL;
+        }
+        storage = (VkResult*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
+
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+
+            *slot       = scvkParseJsonResult(jsonElement);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -838,22 +1177,45 @@ static SCVK_FORCE_INLINE int32_t* scvkReadJsonInt32Array(const scvkJsonContext* 
  */
 static SCVK_FORCE_INLINE int32_t* scvkReadJsonInt32Array(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    int32_t* storage;
-    uint32_t index;
+    int32_t*             storage;
+    int32_t*             slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (int32_t*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = (int32_t)scvkParseJsonInt64(scvkGetJsonElement(&pContext->document, pValue, index));
+            return NULL;
+        }
+        storage = (int32_t*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
+
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+
+            *slot       = (int32_t)scvkParseJsonInt64(jsonElement);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -877,21 +1239,44 @@ static SCVK_FORCE_INLINE VkPipelineStageFlags* scvkReadJsonPipelineStageFlagsArr
 static SCVK_FORCE_INLINE VkPipelineStageFlags* scvkReadJsonPipelineStageFlagsArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
     VkPipelineStageFlags* storage;
+    VkPipelineStageFlags* slot;
+    const scvkJsonValue*  jsonElement;
     uint32_t              index;
+    uint32_t              count;
+    scvkArena*            arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkPipelineStageFlags*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = scvkParseJsonPipelineStageFlags(scvkGetJsonElement(&pContext->document, pValue, index));
+            return NULL;
+        }
+        storage = (VkPipelineStageFlags*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
+
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+
+            *slot       = scvkParseJsonPipelineStageFlags(jsonElement);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -914,24 +1299,46 @@ static SCVK_FORCE_INLINE VkCommandBuffer* scvkReadJsonCommandBufferArray(const s
  */
 static SCVK_FORCE_INLINE VkCommandBuffer* scvkReadJsonCommandBufferArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    VkCommandBuffer* storage;
-    uint32_t         index;
+    VkCommandBuffer*     storage;
+    VkCommandBuffer*     slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkCommandBuffer*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = VK_NULL_HANDLE;
+            return NULL;
+        }
+        storage = (VkCommandBuffer*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
 
-            (void)scvkResolveJsonHandle(pContext, "VkCommandBuffer", scvkGetJsonElement(&pContext->document, pValue, index), sizeof(VkCommandBuffer), (void*)&storage[index]);
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+            *slot       = VK_NULL_HANDLE;
+
+            (void)scvkResolveJsonHandle(pContext, "VkCommandBuffer", jsonElement, sizeof(VkCommandBuffer), (void*)&*slot);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -955,21 +1362,44 @@ static SCVK_FORCE_INLINE VkValidationFeatureEnableEXT* scvkReadJsonValidationFea
 static SCVK_FORCE_INLINE VkValidationFeatureEnableEXT* scvkReadJsonValidationFeatureEnableArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
     VkValidationFeatureEnableEXT* storage;
+    VkValidationFeatureEnableEXT* slot;
+    const scvkJsonValue*          jsonElement;
     uint32_t                      index;
+    uint32_t                      count;
+    scvkArena*                    arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkValidationFeatureEnableEXT*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = scvkParseJsonValidationFeatureEnable(scvkGetJsonElement(&pContext->document, pValue, index));
+            return NULL;
+        }
+        storage = (VkValidationFeatureEnableEXT*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
+
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+
+            *slot       = scvkParseJsonValidationFeatureEnable(jsonElement);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -993,21 +1423,44 @@ static SCVK_FORCE_INLINE VkValidationFeatureDisableEXT* scvkReadJsonValidationFe
 static SCVK_FORCE_INLINE VkValidationFeatureDisableEXT* scvkReadJsonValidationFeatureDisableArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
     VkValidationFeatureDisableEXT* storage;
+    VkValidationFeatureDisableEXT* slot;
+    const scvkJsonValue*           jsonElement;
     uint32_t                       index;
+    uint32_t                       count;
+    scvkArena*                     arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkValidationFeatureDisableEXT*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = scvkParseJsonValidationFeatureDisable(scvkGetJsonElement(&pContext->document, pValue, index));
+            return NULL;
+        }
+        storage = (VkValidationFeatureDisableEXT*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
+
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+
+            *slot       = scvkParseJsonValidationFeatureDisable(jsonElement);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 
@@ -1030,24 +1483,46 @@ static SCVK_FORCE_INLINE VkBufferView* scvkReadJsonBufferViewArray(const scvkJso
  */
 static SCVK_FORCE_INLINE VkBufferView* scvkReadJsonBufferViewArray(const scvkJsonContext* pContext, const scvkJsonValue* pValue)
 {
-    VkBufferView* storage;
-    uint32_t      index;
+    VkBufferView*        storage;
+    VkBufferView*        slot;
+    const scvkJsonValue* jsonElement;
+    uint32_t             index;
+    uint32_t             count;
+    scvkArena*           arena;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pValue);
 
+    arena   = pContext->pArena;
+    count   = pValue->childCount;
     storage = NULL;
     if (SCVK_JSON_ARRAY == pValue->kind)
     {
-        SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
-        SCVK_ASSERT(pValue->childCount <= (pContext->pArena->size - pContext->pArena->used) / sizeof(*storage));
-
-        storage = (VkBufferView*)scvkAllocateArena(pContext->pArena, pValue->childCount * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
-        for (index = 0; index < pValue->childCount; ++index)
+#if SIZE_MAX > UINT32_MAX
+        (void)sizeof(char[(sizeof(*storage) <= SIZE_MAX / UINT32_MAX) ? 1 : -1]);
+#else
+        SCVK_ASSERT((size_t)count <= SIZE_MAX / sizeof(*storage));
+#endif
+        if (0 == count)
         {
-            storage[index] = VK_NULL_HANDLE;
+            return NULL;
+        }
+        storage = (VkBufferView*)scvkAllocateArena(arena, count * sizeof(*storage), SCVK_JSON_ARENA_ALIGNMENT);
 
-            (void)scvkResolveJsonHandle(pContext, "VkBufferView", scvkGetJsonElement(&pContext->document, pValue, index), sizeof(VkBufferView), (void*)&storage[index]);
+        index   = 0;
+        for (;;)
+        {
+            jsonElement = scvkGetJsonElement(&pContext->document, pValue, index);
+
+            slot        = storage + index;
+            *slot       = VK_NULL_HANDLE;
+
+            (void)scvkResolveJsonHandle(pContext, "VkBufferView", jsonElement, sizeof(VkBufferView), (void*)&*slot);
+            ++index;
+            if (index == count)
+            {
+                break;
+            }
         }
     }
 

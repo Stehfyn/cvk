@@ -2,7 +2,7 @@
 #define SHELLSCALINGAPIX_H
 
 #include <Windows.h>
-#include <shellscalingapi.h>
+#include <ShellScalingApi.h>
 
 #ifdef __cplusplus
 extern "C"

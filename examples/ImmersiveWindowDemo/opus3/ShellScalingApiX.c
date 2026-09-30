@@ -3,7 +3,9 @@
  */
 
 #pragma runtime_checks("", off)
+#if defined(_MSC_VER) && !defined(__clang__)
 #pragma check_stack(off)
+#endif
 #pragma strict_gs_check(off)
 
 #pragma comment(lib, "kernel32.lib")
@@ -12,8 +14,9 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
-#include "ShellScalingApiX.h"
-#include "delayimpx.h"
+#include "ShellScalingApiX.h" // IWYU pragma: keep
+#include "delayimpx.h" // IWYU pragma: keep
+#include <minwindef.h>
 
 /* Shared cached shcore.dll handle (process lifetime; never freed). */
 static HMODULE g_hShcore;

@@ -3512,6 +3512,7 @@ extern SCVK_FORCE_INLINE void scvkInitPipelineViewportStateCreateInfo(VkPipeline
         .pScissors     = pScissors
     };
 }
+// NOLINTBEGIN(readability-non-const-parameter): Vulkan output pointer contract.
 extern SCVK_FORCE_INLINE void scvkInitPresentInfo(VkPresentInfoKHR*     pInfo,
                                                   const void*           pNext,
                                                   uint32_t              waitSemaphoreCount,
@@ -3533,6 +3534,7 @@ extern SCVK_FORCE_INLINE void scvkInitPresentInfo(VkPresentInfoKHR*     pInfo,
         .pResults           = pResults
     };
 }
+// NOLINTEND(readability-non-const-parameter)
 extern SCVK_FORCE_INLINE void scvkInitPresentRegion(VkPresentRegionKHR* pInfo, uint32_t rectangleCount, const VkRectLayerKHR* pRectangles)
 {
     (*pInfo) = (VkPresentRegionKHR)
@@ -6932,6 +6934,7 @@ extern SCVK_FORCE_INLINE void scvkQueueInsertDebugUtilsLabel(VkQueue queue, cons
     scvkCopyMemory(label_info.color, color, sizeof(label_info.color));
     vkQueueInsertDebugUtilsLabelEXT(queue, &label_info);
 }
+// NOLINTBEGIN(readability-non-const-parameter): Vulkan output pointer contract.
 extern SCVK_FORCE_INLINE VkResult scvkQueuePresent(VkQueue               queue,
                                                    const void*           pNext,
                                                    uint32_t              waitSemaphoreCount,
@@ -6961,6 +6964,7 @@ extern SCVK_FORCE_INLINE VkResult scvkQueuePresent(VkQueue               queue,
 
     return result;
 }
+// NOLINTEND(readability-non-const-parameter)
 extern SCVK_FORCE_INLINE void scvkQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence)
 {
     SCVK_CHECK(vkQueueSubmit(queue, submitCount, pSubmits, fence));

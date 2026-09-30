@@ -577,7 +577,7 @@ extern FORCE_INLINE void VideoRenderer_BeginUpload(VideoRenderer* r, int slot)
     cdxgiKeyedMutexAcquireSync(r->ring[frame_index].planes[1].mutex, 0, INFINITE);
 }
 
-void VideoRenderer_EndUpload(VideoRenderer* r, int slot)
+extern FORCE_INLINE void VideoRenderer_EndUpload(VideoRenderer* r, int slot)
 {
     Frame* frame = &r->ring[FrameIndex(slot)];
     cd3d11DeviceContextTransferMultiplanarTexture(r->context,

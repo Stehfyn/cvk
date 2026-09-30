@@ -1291,7 +1291,7 @@ void PrepareWindowCaption(CAPTION* pCaption, ID2D1DeviceContext* pDC, const CAPT
 
 /* Draw the caption into the context, inside the frame's BeginDraw/EndDraw: the recording, replayed at
    the origin. */
-void DrawWindowCaption(CAPTION* pCaption, ID2D1DeviceContext* pDC)
+extern FORCEINLINE void DrawWindowCaption(CAPTION* pCaption, ID2D1DeviceContext* pDC)
 {
     ID2D1DeviceContext_DrawImage(pDC, (ID2D1Image*)pCaption->recording.list, NULL, NULL, D2D1_INTERPOLATION_MODE_LINEAR, D2D1_COMPOSITE_MODE_SOURCE_OVER);
 }

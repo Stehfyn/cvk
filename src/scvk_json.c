@@ -262,6 +262,10 @@ static SCVK_FORCE_INLINE void scvkReadJsonLiteral(scvkJsonReader* pReader, scvkJ
 {
     const char* literal;
     uint32_t    length;
+    size_t      available;
+    size_t      shortMask;
+    size_t      comparedLength;
+    int         comparison;
     switch (*pReader->pCursor)
     {
     case SCVK_JSON_TRUE_FIRST:
@@ -280,8 +284,13 @@ static SCVK_FORCE_INLINE void scvkReadJsonLiteral(scvkJsonReader* pReader, scvkJ
         pValue->kind = SCVK_JSON_NULL;
         break;
     }
-    SCVK_ASSERT(length <= (uint64_t)(pReader->pEnd - pReader->pCursor));
-    SCVK_ASSERT(0 == memcmp(pReader->pCursor, literal, length));
+    available      = (size_t)(pReader->pEnd - pReader->pCursor);
+    shortMask      = (size_t)0 - (size_t)(available < length);
+    comparedLength = (available & shortMask) | ((size_t)length & ~shortMask);
+
+    comparison = memcmp(pReader->pCursor, literal, comparedLength);
+    SCVK_ASSERT(comparedLength == length);
+    SCVK_ASSERT(0 == comparison);
 
     pReader->pCursor += length;
 }
@@ -293,17 +302,22 @@ static SCVK_FORCE_INLINE void scvkReadJsonLiteral(scvkJsonReader* pReader, scvkJ
 static SCVK_FORCE_INLINE uint32_t scvkReadJsonToken(scvkJsonReader* pReader)
 {
     scvkJsonValue* value;
+    scvkJsonValue  overflow;
     uint32_t       index;
+    uint32_t       safeIndex;
+    VkBool32       has_capacity;
     scvkSkipJsonSpace(pReader);
     SCVK_ASSERT(pReader->pCursor < pReader->pEnd);
-    SCVK_ASSERT(pReader->valueCount < pReader->valueCapacity);
 
-    index = pReader->valueCount;
-    ++pReader->valueCount;
-    value = &pReader->pValues[index];
+    index        = pReader->valueCount;
+    has_capacity = index < pReader->valueCapacity;
+    safeIndex    = index & ((uint32_t)0 - (uint32_t)has_capacity);
+    value        = has_capacity ? &pReader->pValues[safeIndex] : &overflow;
 
     scvkZeroMemory(value, sizeof(*value));
 
+    pReader->capacityExceeded |= !has_capacity;
+    pReader->valueCount += has_capacity;
     value->firstChild  = SCVK_JSON_NONE;
     value->nextSibling = SCVK_JSON_NONE;
     switch (*pReader->pCursor)
@@ -336,7 +350,7 @@ static SCVK_FORCE_INLINE uint32_t scvkReadJsonToken(scvkJsonReader* pReader)
         break;
     }
 
-    return index;
+    return safeIndex;
 }
 /*************************************************************************************************/
 /**
@@ -362,7 +376,10 @@ static SCVK_FORCE_INLINE uint32_t scvkReadJsonChild(scvkJsonReader* pReader, uin
         ++pReader->pCursor;
     }
     child = scvkReadJsonToken(pReader);
-
+    if (pReader->capacityExceeded)
+    {
+        return 0;
+    }
     pReader->pValues[child].pKey        = key;
     pReader->pValues[child].keyLength   = key_length;
     pReader->pValues[child].nextSibling = parent;
@@ -383,23 +400,29 @@ static SCVK_FORCE_INLINE uint32_t scvkReadJsonChild(scvkJsonReader* pReader, uin
  */
 static SCVK_FORCE_INLINE VkBool32 scvkReadJsonSeparator(scvkJsonReader* pReader, char close, VkBool32 has_children)
 {
-    VkBool32 has_comma;
-    VkBool32 is_close;
-    VkBool32 can_start;
+    VkBool32    has_comma;
+    VkBool32    is_close;
+    VkBool32    can_start;
+    const char* cursor;
+    const char* safeCursor;
+    const char  empty = '\0';
 
     scvkSkipJsonSpace(pReader);
-    SCVK_ASSERT(pReader->pCursor < pReader->pEnd);
 
-    has_comma = SCVK_JSON_COMMA == *pReader->pCursor;
+    cursor     = pReader->pCursor;
+    safeCursor = (cursor < pReader->pEnd) ? cursor : &empty;
+    has_comma  = SCVK_JSON_COMMA == *safeCursor;
     if (has_children && has_comma)
     {
         ++pReader->pCursor;
         scvkSkipJsonSpace(pReader);
-        SCVK_ASSERT(pReader->pCursor < pReader->pEnd);
-        SCVK_ASSERT(close != *pReader->pCursor);
     }
-    is_close  = close == *pReader->pCursor;
-    can_start = !has_children || has_comma;
+    cursor     = pReader->pCursor;
+    safeCursor = (cursor < pReader->pEnd) ? cursor : &empty;
+    is_close   = close == *safeCursor;
+    can_start  = !has_children || has_comma;
+    SCVK_ASSERT(cursor < pReader->pEnd);
+    SCVK_ASSERT((!has_children || !has_comma) || (close != *safeCursor));
     SCVK_ASSERT(is_close || can_start);
 
     return is_close;
@@ -415,11 +438,19 @@ extern SCVK_FORCE_INLINE uint32_t scvkParseJsonValue(scvkJsonReader* pReader)
     VkBool32       is_container;
     VkBool32       has_children;
     VkBool32       is_close;
+    scvkJsonValue  emptyStorage;
+    pReader->capacityExceeded = 0;
+    if (0 == pReader->valueCapacity)
+    {
+        pReader->pValues          = &emptyStorage;
+        pReader->valueCapacity    = 1;
+        pReader->capacityExceeded = 1;
+    }
     root = scvkReadJsonToken(pReader);
 
     value        = &pReader->pValues[root];
     is_container = (SCVK_JSON_ARRAY == value->kind) || (SCVK_JSON_OBJECT == value->kind);
-    active       = is_container ? root : SCVK_JSON_NONE;
+    active       = (is_container && !pReader->capacityExceeded) ? root : SCVK_JSON_NONE;
     for (; SCVK_JSON_NONE != active;)
     {
         value        = &pReader->pValues[active];
@@ -438,7 +469,10 @@ extern SCVK_FORCE_INLINE uint32_t scvkParseJsonValue(scvkJsonReader* pReader)
         else
         {
             child = scvkReadJsonChild(pReader, active);
-
+            if (pReader->capacityExceeded)
+            {
+                break;
+            }
             value        = &pReader->pValues[child];
             is_container = (SCVK_JSON_ARRAY == value->kind) || (SCVK_JSON_OBJECT == value->kind);
             if (is_container)
@@ -451,6 +485,7 @@ extern SCVK_FORCE_INLINE uint32_t scvkParseJsonValue(scvkJsonReader* pReader)
             }
         }
     }
+    SCVK_ASSERT(!pReader->capacityExceeded);
 
     return root;
 }
@@ -459,11 +494,12 @@ extern SCVK_FORCE_INLINE uint32_t scvkParseJsonDocument(const char* pText, size_
     scvkJsonReader reader;
     uint32_t       root;
 
-    reader.pCursor       = pText;
-    reader.pEnd          = pText + length;
-    reader.pValues       = pValues;
-    reader.valueCapacity = valueCapacity;
-    reader.valueCount    = 0;
+    reader.pCursor          = pText;
+    reader.pEnd             = pText + length;
+    reader.pValues          = pValues;
+    reader.valueCapacity    = valueCapacity;
+    reader.valueCount       = 0;
+    reader.capacityExceeded = 0;
 
     root = scvkParseJsonValue(&reader);
     SCVK_ASSERT(0 == root);
@@ -496,18 +532,37 @@ extern SCVK_FORCE_INLINE const scvkJsonValue* scvkGetJsonMember(const scvkJsonDo
 }
 extern SCVK_FORCE_INLINE const scvkJsonValue* scvkGetJsonElement(const scvkJsonDocument* pDocument, const scvkJsonValue* pArray, uint32_t index)
 {
-    uint32_t child;
+    const scvkJsonValue* values;
+    scvkJsonKind         kind;
+    uint32_t             childCount;
+    uint32_t             child;
+    uint32_t             safeIndex;
+    VkBool32             valid;
 
-    if ((NULL == pArray) || ((SCVK_JSON_ARRAY != pArray->kind) && (SCVK_JSON_OBJECT != pArray->kind)) || (index >= pArray->childCount))
+    if (NULL == pArray)
     {
         return NULL;
     }
-    for (child = pArray->firstChild; 0 != index; --index)
+    values     = pDocument->pValues;
+    kind       = pArray->kind;
+    childCount = pArray->childCount;
+    child      = pArray->firstChild;
+    if (((SCVK_JSON_ARRAY != kind) && (SCVK_JSON_OBJECT != kind)) || (0 == childCount))
     {
-        child = pDocument->pValues[child].nextSibling;
+        return NULL;
+    }
+    valid     = index < childCount;
+    safeIndex = index & ((uint32_t)0 - (uint32_t)valid);
+    for (; 0 != safeIndex; --safeIndex)
+    {
+        child = values[child].nextSibling;
+    }
+    if (!valid)
+    {
+        return NULL;
     }
 
-    return &pDocument->pValues[child];
+    return &values[child];
 }
 extern SCVK_FORCE_INLINE VkBool32 scvkJsonStringEquals(const scvkJsonValue* pValue, const char* pString)
 {
@@ -919,19 +974,29 @@ extern SCVK_FORCE_INLINE uint64_t scvkParseJsonFlags(const scvkJsonValue* pValue
  */
 static SCVK_FORCE_INLINE void scvkGrowArena(scvkArena* pArena, size_t size, size_t alignment)
 {
-    size_t          capacity;
-    scvkArenaBlock* block;
+    size_t                   capacity;
+    size_t                   overhead;
+    size_t                   allocationSize;
+    size_t                   validMask;
+    scvkArenaBlock*          block;
+    PFN_vkAllocationFunction allocate;
+    void*                    pUserData;
 
     SCVK_ASSERT(NULL != pArena->pAllocator);
-    SCVK_ASSERT(NULL != pArena->pAllocator->pfnAllocation);
+
+    allocate  = pArena->pAllocator->pfnAllocation;
+    pUserData = pArena->pAllocator->pUserData;
+    SCVK_ASSERT(NULL != allocate);
     SCVK_ASSERT(NULL != pArena->pAllocator->pfnFree);
 
-    capacity = (size > SCVK_JSON_ARENA_BLOCK_SIZE) ? size : SCVK_JSON_ARENA_BLOCK_SIZE;
-    SCVK_ASSERT(alignment <= SIZE_MAX - sizeof(scvkArenaBlock));
-    SCVK_ASSERT(capacity <= SIZE_MAX - alignment - sizeof(scvkArenaBlock));
+    capacity       = (size > SCVK_JSON_ARENA_BLOCK_SIZE) ? size : SCVK_JSON_ARENA_BLOCK_SIZE;
+    overhead       = sizeof(scvkArenaBlock) + alignment;
+    allocationSize = capacity + overhead;
+    validMask      = (size_t)0 - (size_t)((overhead >= alignment) & (allocationSize >= capacity));
+    allocationSize = (allocationSize & validMask) | (sizeof(scvkArenaBlock) & ~validMask);
 
-    block =
-        (scvkArenaBlock*)pArena->pAllocator->pfnAllocation(pArena->pAllocator->pUserData, sizeof(scvkArenaBlock) + capacity + alignment, SCVK_JSON_ARENA_ALIGNMENT, VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
+    block = (scvkArenaBlock*)allocate(pUserData, allocationSize, SCVK_JSON_ARENA_ALIGNMENT, VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
+    SCVK_ASSERT(0 != validMask);
     SCVK_ASSERT(NULL != block);
 
     block->pNext    = pArena->pBlocks;
@@ -942,39 +1007,54 @@ static SCVK_FORCE_INLINE void scvkGrowArena(scvkArena* pArena, size_t size, size
 }
 extern SCVK_FORCE_INLINE void* scvkAllocateArena(scvkArena* pArena, size_t size, size_t alignment)
 {
-    size_t offset;
-    size_t padding;
-    size_t remaining;
+    size_t   offset;
+    size_t   padding;
+    size_t   remaining;
+    size_t   arenaSize;
+    size_t   used;
+    size_t   safeUsed;
+    uint8_t* base;
+    uint8_t* result;
+    size_t   safeAlignment;
+    size_t   safePadding;
+    VkBool32 validAlignment;
+    VkBool32 fits;
 
     SCVK_ASSERT(NULL != pArena);
-    SCVK_ASSERT(0 < alignment);
-    SCVK_ASSERT(0 == (alignment & (alignment - 1)));
-    SCVK_ASSERT(pArena->used <= pArena->size);
+
+    base           = pArena->pBase;
+    arenaSize      = pArena->size;
+    used           = pArena->used;
+    validAlignment = (0 < alignment) && (0 == (alignment & (alignment - 1)));
+    safeAlignment  = validAlignment ? alignment : 1;
+    SCVK_ASSERT(validAlignment);
 
     if (0 == size)
     {
         return NULL;
     }
-    if (NULL != pArena->pBase)
+    if (NULL != base)
     {
-        offset    = pArena->used;
-        remaining = pArena->size - offset;
-        padding   = (uintptr_t)(pArena->pBase + offset) % alignment;
-        padding   = (alignment - padding) % alignment;
-        if ((padding <= remaining) && (size <= remaining - padding))
+        safeUsed    = (used <= arenaSize) ? used : arenaSize;
+        offset      = safeUsed;
+        remaining   = arenaSize - offset;
+        padding     = (uintptr_t)(base + offset) % safeAlignment;
+        padding     = (safeAlignment - padding) % safeAlignment;
+        fits        = (used <= arenaSize) && (padding <= remaining) && (size <= remaining - padding);
+        safePadding = padding & ((size_t)0 - (size_t)fits);
+        result      = base + offset + safePadding;
+        if (fits)
         {
             offset += padding;
             pArena->used = offset + size;
 
-            return pArena->pBase + offset;
+            return result;
         }
     }
-    scvkGrowArena(pArena, size, alignment);
+    scvkGrowArena(pArena, size, safeAlignment);
 
-    padding = (uintptr_t)pArena->pBase % alignment;
-    padding = (alignment - padding) % alignment;
-    SCVK_ASSERT(size <= pArena->size - padding);
-
+    padding      = (uintptr_t)pArena->pBase % safeAlignment;
+    padding      = (safeAlignment - padding) % safeAlignment;
     pArena->used = padding + size;
 
     return pArena->pBase + padding;
@@ -1068,14 +1148,19 @@ extern SCVK_FORCE_INLINE uint64_t scvkGetJsonHandleId(const scvkJsonHandleRefere
 }
 extern SCVK_FORCE_INLINE VkBool32 scvkResolveJsonHandle(const scvkJsonContext* pContext, const char* pHandleType, const scvkJsonValue* pValue, uint32_t handleByteCount, void* pHandle)
 {
-    scvkJsonHandleReference* reference;
-    uint64_t                 object_id;
-    VkBool32                 resolved;
+    scvkJsonHandleReference*  reference;
+    uint64_t                  object_id;
+    VkBool32                  resolved;
+    PFN_scvkResolveJsonHandle resolveHandle;
+    void*                     pUser;
 
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pHandleType);
     SCVK_ASSERT(NULL != pHandle);
     SCVK_ASSERT(0 < handleByteCount);
+
+    resolveHandle = pContext->resolveHandle;
+    pUser         = pContext->pUser;
 
     object_id = scvkGetJsonUint64(pValue);
 
@@ -1092,9 +1177,9 @@ extern SCVK_FORCE_INLINE VkBool32 scvkResolveJsonHandle(const scvkJsonContext* p
             reference->id                 = object_id;
             *pContext->ppHandleReferences = reference;
         }
-        if (NULL != pContext->resolveHandle)
+        if (NULL != resolveHandle)
         {
-            resolved = pContext->resolveHandle(pContext->pUser, pHandleType, object_id, handleByteCount, pHandle);
+            resolved = resolveHandle(pUser, pHandleType, object_id, handleByteCount, pHandle);
         }
         SCVK_ASSERT(resolved || (NULL != pContext->ppHandleReferences));
     }
@@ -1690,8 +1775,12 @@ extern SCVK_FORCE_INLINE void scvkCreateOfflinePipelineFromJson(VkDevice        
 extern SCVK_FORCE_INLINE void scvkInitializeJsonWork(scvkJsonWork* pWork, const scvkJsonContext* pContext)
 {
     uint64_t  scratch_size;
+    uint64_t  safeScratchSize;
     uint64_t  scratch_start;
     uint64_t  misalignment;
+    uint64_t  safeMisalignment;
+    VkBool32  validMisalignment;
+    VkBool32  fitsScratch;
     uint32_t  capacity;
     scvkArena scratch;
 
@@ -1720,19 +1809,21 @@ extern SCVK_FORCE_INLINE void scvkInitializeJsonWork(scvkJsonWork* pWork, const 
     else
     {
         SCVK_ASSERT(NULL != pContext->pArena->pBase);
-        SCVK_ASSERT(scratch_size <= pContext->pArena->size);
 
-        scratch_start = pContext->pArena->size - scratch_size;
-        misalignment  = (uintptr_t)(pContext->pArena->pBase + scratch_start) % SCVK_JSON_ARENA_ALIGNMENT;
-        SCVK_ASSERT(misalignment <= scratch_start);
+        fitsScratch       = scratch_size <= pContext->pArena->size;
+        safeScratchSize   = fitsScratch ? scratch_size : 0;
+        scratch_start     = pContext->pArena->size - safeScratchSize;
+        misalignment      = (uintptr_t)(pContext->pArena->pBase + scratch_start) % SCVK_JSON_ARENA_ALIGNMENT;
+        validMisalignment = misalignment <= scratch_start;
+        safeMisalignment  = validMisalignment ? misalignment : 0;
+        scratch_start -= safeMisalignment;
+        scratch       = *pContext->pArena;
+        scratch.used  = scratch_start;
 
-        scratch_start -= misalignment;
+        pWork->pTasks = (scvkJsonTask*)scvkAllocateArena(&scratch, safeScratchSize, SCVK_JSON_ARENA_ALIGNMENT);
+        SCVK_ASSERT(fitsScratch);
+        SCVK_ASSERT(validMisalignment);
         SCVK_ASSERT(pContext->pArena->used <= scratch_start);
-
-        scratch                = *pContext->pArena;
-        scratch.used           = scratch_start;
-
-        pWork->pTasks          = (scvkJsonTask*)scvkAllocateArena(&scratch, scratch_size, SCVK_JSON_ARENA_ALIGNMENT);
 
         pContext->pArena->size = scratch_start;
     }

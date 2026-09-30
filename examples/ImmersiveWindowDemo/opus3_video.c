@@ -95,7 +95,7 @@ void PrepareVideoFrame(VIDEO* video, ID2D1DeviceContext* context, LONGLONG leadT
     }
 }
 
-void DrawVideoFrame(VIDEO* video, ID2D1DeviceContext* context, const RECT* client, LONG captionHeight)
+extern FORCEINLINE void DrawVideoFrame(VIDEO* video, ID2D1DeviceContext* context, const RECT* client, LONG captionHeight)
 {
     D2D1_RECT_F destination;
     FLOAT       width;

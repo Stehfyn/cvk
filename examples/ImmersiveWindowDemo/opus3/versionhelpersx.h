@@ -41,6 +41,7 @@ extern "C"
  * (build treated as 0). Both compare (major, minor, build, servicePackMajor) lexicographically against
  * the running OS and return TRUE when the OS is at least the requested version.
  */
+BOOL VersionAtLeast(DWORD major, DWORD minor, DWORD build, DWORD sp);
 BOOL WINAPI IsWindowsBuildOrGreaterEx(WORD  wMajorVersion,
                                       WORD  wMinorVersion,
                                       DWORD dwBuildNumber,

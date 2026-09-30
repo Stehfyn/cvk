@@ -159,14 +159,11 @@ def main():
                             "external projects must not disable compiler warnings")
                 if is_owned:
                     require(values.get("TreatWarningAsError") == "true", path, "owned warnings must be errors")
-                    link_codegen_target = path.name in ("ImmersiveWindowDemo.vcxproj", "immersive-video.vcxproj")
-                    expected_disabled = "4711;4820" if link_codegen_target else "4820"
-                    require(values.get("DisableSpecificWarnings") == expected_disabled, path,
+                    require(values.get("DisableSpecificWarnings") == "4820", path,
                             "compiler warning exceptions must match the target policy")
                     require(values.get("DisableAnalyzeExternal") == "true", path, "exclude external header analysis")
                     options = values.get("AdditionalOptions", "")
-                    checked_options = options.replace("/wd4711", "") if link_codegen_target else options
-                    require(not re.search(r"[/\-](?:QSpectre|wd\d+|W[0-4]|WX-)(?:\s|$)", checked_options),
+                    require(not re.search(r"[/\-](?:QSpectre|wd\d+|W[0-4]|WX-)(?:\s|$)", options),
                             path, "additional options override owned diagnostics")
                 include_paths = values.get("AdditionalIncludeDirectories", "").replace("\\", "/")
                 if is_owned:

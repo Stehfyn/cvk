@@ -9,8 +9,12 @@ void cvkInitializeJsonWork(cvkJsonWork*          pWork,
                            const cvkJsonContext* pContext)
 {
     uint64_t scratch_size;
+    uint64_t safeScratchSize;
     uint64_t scratch_start;
     uint64_t misalignment;
+    uint64_t safeMisalignment;
+    VkBool32 validMisalignment;
+    VkBool32 fitsScratch;
     uint32_t capacity;
     cvkArena scratch;
 
@@ -40,15 +44,19 @@ void cvkInitializeJsonWork(cvkJsonWork*          pWork,
     else
     {
         CVK_ASSERT(NULL != pContext->pArena->pBase);
-        CVK_ASSERT(scratch_size <= pContext->pArena->size);
-        scratch_start = pContext->pArena->size - scratch_size;
+        fitsScratch = scratch_size <= pContext->pArena->size;
+        safeScratchSize = fitsScratch ? scratch_size : 0;
+        scratch_start = pContext->pArena->size - safeScratchSize;
         misalignment  = (uintptr_t)(pContext->pArena->pBase + scratch_start) % CVK_JSON_ARENA_ALIGNMENT;
-        CVK_ASSERT(misalignment <= scratch_start);
-        scratch_start -= misalignment;
-        CVK_ASSERT(pContext->pArena->used <= scratch_start);
+        validMisalignment = misalignment <= scratch_start;
+        safeMisalignment = validMisalignment ? misalignment : 0;
+        scratch_start -= safeMisalignment;
         scratch       = *pContext->pArena;
         scratch.used  = scratch_start;
-        pWork->pTasks = (cvkJsonTask*)cvkAllocateArena(&scratch, scratch_size, CVK_JSON_ARENA_ALIGNMENT);
+        pWork->pTasks = (cvkJsonTask*)cvkAllocateArena(&scratch, safeScratchSize, CVK_JSON_ARENA_ALIGNMENT);
+        CVK_ASSERT(fitsScratch);
+        CVK_ASSERT(validMisalignment);
+        CVK_ASSERT(pContext->pArena->used <= scratch_start);
         pContext->pArena->size = scratch_start;
     }
 }

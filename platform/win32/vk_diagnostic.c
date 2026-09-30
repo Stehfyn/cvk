@@ -44,12 +44,12 @@
 ** 4. PUBLIC FUNCTIONS
 **===============================================================================================*/
 
-void cvkZeroMemory(void* pMemory, size_t byteCount)
+extern FORCE_INLINE void cvkZeroMemory(void* pMemory, size_t byteCount)
 {
     SecureZeroMemory(pMemory, byteCount);
 }
 
-void cvkCopyMemory(void* pDestination, const void* pSource, size_t byteCount)
+extern FORCE_INLINE void cvkCopyMemory(void* pDestination, const void* pSource, size_t byteCount)
 {
     unsigned char*       destination = (unsigned char*)pDestination;
     const unsigned char* source      = (const unsigned char*)pSource;

@@ -24,14 +24,13 @@
 
 #define WINDOWS_11_INITIAL_BUILD 22000U
 
-
 /*
  * VersionAtLeast -- TRUE when the running OS is at least (major, minor, build, sp), compared
  * lexicographically in that order of significance. The version is read once from RtlGetVersionEx; a
  * negative NTSTATUS (the unreachable thunk-miss path) reports FALSE so callers never act on a guess.
  * All parameters are DWORD so every call site widens without a signed/unsigned conversion under /Wall.
  */
-static BOOL VersionAtLeast(DWORD major, DWORD minor, DWORD build, DWORD sp)
+BOOL VersionAtLeast(DWORD major, DWORD minor, DWORD build, DWORD sp)
 {
     OSVERSIONINFOEXW osvi;
     BOOL             fVersionUnavailable;
@@ -137,7 +136,7 @@ BOOL WINAPI IsWindows10OrGreaterEx(void)
     return VersionAtLeast((DWORD)HIBYTE(_WIN32_WINNT_WIN10), (DWORD)LOBYTE(_WIN32_WINNT_WIN10), 0U, 0U);
 }
 
-BOOL WINAPI IsWindows11OrGreaterEx(void)
+extern FORCEINLINE BOOL WINAPI IsWindows11OrGreaterEx(void)
 {
     /* Windows 11 RTM is 10.0.22000; major/minor alone cannot separate it from Windows 10 (both 10.0), so
        the build number is the discriminator -- available only because RtlGetVersion reports the kernel's
