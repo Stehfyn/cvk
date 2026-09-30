@@ -10,6 +10,25 @@
 #include <string.h>
 #include <vulkan/vulkan_core.h>
 
+typedef struct cvkArenaBlock
+{
+    struct cvkArenaBlock* pNext;
+    uint8_t               storage[1];
+} cvkArenaBlock;
+typedef enum cvkArenaBlockCapacity
+{
+    CVK_JSON_ARENA_BLOCK_SIZE = 4096
+} cvkArenaBlockCapacity;
+/**
+ * \brief Callback-backed scratch for the create-and-return JSON helpers.
+ * \par Profile: vulkan
+ */
+typedef struct cvkPipelineJsonScratch
+{
+    cvkArena      arena;
+    cvkJsonValue* pValues;
+    uint32_t      valueCapacity;
+} cvkPipelineJsonScratch;
 /**
  * \brief Handles supplied to a graphics pipeline JSON by the caller.
  * \par Profile: vulkan
@@ -89,6 +108,7 @@ static CVK_FORCE_INLINE void cvkAppendJsonDoubleDigit(char digit, VkBool32 fract
 static CVK_FORCE_INLINE const char* cvkParseJsonDoubleMantissa(const char* text, double* pNumber, int32_t* pExponent);
 static CVK_FORCE_INLINE int32_t cvkParseJsonDoubleExponent(const char* text);
 static CVK_FORCE_INLINE double cvkScaleJsonDouble(double value, int32_t exponent);
+static CVK_FORCE_INLINE void cvkGrowArena(cvkArena* pArena, size_t size, size_t alignment);
 /**
  * \brief Reads the pipeline state and its render-pass version.
  * \param[in] pContext Parsing context.
@@ -124,6 +144,11 @@ static CVK_FORCE_INLINE void cvkResolvePipelineJsonShader(const cvkPipelineJson*
                                                           const VkPipelineShaderStageCreateInfo* pSource,
                                                           VkPipelineShaderStageCreateInfo*       pStage);
 static CVK_FORCE_INLINE VkRenderPass cvkResolvePipelineJsonRenderPass(const cvkPipelineJson* pPipeline, PFN_cvkResolveJsonHandle resolveExternal, void* pUser);
+/**
+ * \brief Allocates JSON parsing scratch through the supplied callbacks.
+ * \par Profile: vulkan
+ */
+static CVK_FORCE_INLINE void cvkInitPipelineJsonScratch(size_t jsonLength, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonScratch* pScratch);
 /**
  * \brief Resolves caller-owned shader modules and an optional caller-owned render pass.
  * \par Profile: vulkan
@@ -928,37 +953,94 @@ extern CVK_FORCE_INLINE uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, c
 
     return flags;
 }
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static CVK_FORCE_INLINE void cvkGrowArena(cvkArena* pArena, size_t size, size_t alignment)
+{
+    size_t         capacity;
+    cvkArenaBlock* block;
+
+    CVK_ASSERT(NULL != pArena->pAllocator);
+    CVK_ASSERT(NULL != pArena->pAllocator->pfnAllocation);
+    CVK_ASSERT(NULL != pArena->pAllocator->pfnFree);
+
+    capacity = (size > CVK_JSON_ARENA_BLOCK_SIZE) ? size : CVK_JSON_ARENA_BLOCK_SIZE;
+    CVK_ASSERT(alignment <= SIZE_MAX - sizeof(cvkArenaBlock));
+    CVK_ASSERT(capacity <= SIZE_MAX - alignment - sizeof(cvkArenaBlock));
+
+    block =
+        (cvkArenaBlock*)pArena->pAllocator->pfnAllocation(pArena->pAllocator->pUserData, sizeof(cvkArenaBlock) + capacity + alignment, CVK_JSON_ARENA_ALIGNMENT, VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
+    CVK_ASSERT(NULL != block);
+
+    block->pNext    = pArena->pBlocks;
+    pArena->pBlocks = block;
+    pArena->pBase   = block->storage;
+    pArena->size    = capacity + alignment;
+    pArena->used    = 0;
+}
 extern CVK_FORCE_INLINE void* cvkAllocateArena(cvkArena* pArena, size_t size, size_t alignment)
 {
-    uint64_t offset;
-    uint64_t padding;
-    uint64_t remaining;
-    void*    storage;
+    size_t offset;
+    size_t padding;
+    size_t remaining;
 
     CVK_ASSERT(NULL != pArena);
-    CVK_ASSERT(NULL != pArena->pBase);
     CVK_ASSERT(0 < alignment);
     CVK_ASSERT(0 == (alignment & (alignment - 1)));
     CVK_ASSERT(pArena->used <= pArena->size);
 
-    storage = NULL;
-    if (0 < size)
+    if (0 == size)
+    {
+        return NULL;
+    }
+    if (NULL != pArena->pBase)
     {
         offset    = pArena->used;
+        remaining = pArena->size - offset;
         padding   = (uintptr_t)(pArena->pBase + offset) % alignment;
         padding   = (alignment - padding) % alignment;
-        remaining = pArena->size - offset;
-        CVK_ASSERT(padding <= remaining);
+        if ((padding <= remaining) && (size <= remaining - padding))
+        {
+            offset += padding;
+            pArena->used = offset + size;
 
-        remaining -= padding;
-        CVK_ASSERT(size <= remaining);
-
-        offset += padding;
-        storage      = pArena->pBase + offset;
-        pArena->used = offset + size;
+            return pArena->pBase + offset;
+        }
     }
+    cvkGrowArena(pArena, size, alignment);
 
-    return storage;
+    padding = (uintptr_t)pArena->pBase % alignment;
+    padding = (alignment - padding) % alignment;
+    CVK_ASSERT(size <= pArena->size - padding);
+
+    pArena->used = padding + size;
+
+    return pArena->pBase + padding;
+}
+extern CVK_FORCE_INLINE void cvkFreeArena(cvkArena* pArena)
+{
+    cvkArenaBlock* block;
+    cvkArenaBlock* next;
+
+    CVK_ASSERT(NULL != pArena);
+    CVK_ASSERT(NULL != pArena->pAllocator);
+
+    block = pArena->pBlocks;
+    while (NULL != block)
+    {
+        next = block->pNext;
+
+        pArena->pAllocator->pfnFree(pArena->pAllocator->pUserData, block);
+
+        block = next;
+    }
+    pArena->pBlocks = NULL;
+    pArena->pBase   = NULL;
+    pArena->size    = 0;
+    pArena->used    = 0;
 }
 extern CVK_FORCE_INLINE char* cvkCopyJsonString(cvkArena* pArena, const cvkJsonValue* pValue)
 {
@@ -1610,6 +1692,81 @@ extern CVK_FORCE_INLINE void cvkCreatePipelineFromJson(VkDevice                 
  * \par Details:
  *  None
  */
+static CVK_FORCE_INLINE void cvkInitPipelineJsonScratch(size_t jsonLength, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonScratch* pScratch)
+{
+    CVK_ASSERT(NULL != pAllocator);
+    CVK_ASSERT(NULL != pAllocator->pfnAllocation);
+    CVK_ASSERT(NULL != pAllocator->pfnFree);
+    CVK_ASSERT((0 < jsonLength) && (jsonLength <= UINT32_MAX));
+    CVK_ASSERT(jsonLength <= SIZE_MAX / sizeof(cvkJsonValue));
+
+    (*pScratch)                = (cvkPipelineJsonScratch){0};
+    pScratch->arena.pAllocator = pAllocator;
+    pScratch->valueCapacity    = (uint32_t)jsonLength;
+
+    pScratch->pValues = (cvkJsonValue*)cvkAllocateArena(&pScratch->arena, jsonLength * sizeof(cvkJsonValue), CVK_JSON_ARENA_ALIGNMENT);
+}
+extern CVK_FORCE_INLINE void cvkCreateRenderPassFromPipelineJson(VkDevice device, const char* pJsonText, size_t jsonLength, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass)
+{
+    cvkJsonContext         context;
+    cvkPipelineJson        pipeline;
+    cvkPipelineJsonScratch scratch;
+
+    cvkInitPipelineJsonScratch(jsonLength, pAllocator, &scratch);
+
+    context.document.pValues = scratch.pValues;
+
+    context.document.valueCount = cvkParseJsonDocument(pJsonText, jsonLength, scratch.pValues, scratch.valueCapacity);
+
+    context.pArena             = &scratch.arena;
+    context.resolveHandle      = NULL;
+    context.pUser              = NULL;
+    context.ppHandleReferences = NULL;
+
+    cvkParsePipelineJson(&context, &pipeline);
+    CVK_ASSERT((1 == pipeline.renderPassVersion) || (2 == pipeline.renderPassVersion));
+
+    if (1 == pipeline.renderPassVersion)
+    {
+        const VkRenderPassCreateInfo* info = &pipeline.renderPassCreateInfo;
+
+        cvkCreateRenderPass(device,
+                            info->pNext,
+                            info->flags,
+                            info->attachmentCount,
+                            info->pAttachments,
+                            info->subpassCount,
+                            info->pSubpasses,
+                            info->dependencyCount,
+                            info->pDependencies,
+                            pAllocator,
+                            pRenderPass);
+    }
+    else
+    {
+        const VkRenderPassCreateInfo2* info = &pipeline.renderPassCreateInfo2;
+
+        cvkCreateRenderPass2(device,
+                             info->pNext,
+                             info->flags,
+                             info->attachmentCount,
+                             info->pAttachments,
+                             info->subpassCount,
+                             info->pSubpasses,
+                             info->dependencyCount,
+                             info->pDependencies,
+                             info->correlatedViewMaskCount,
+                             info->pCorrelatedViewMasks,
+                             pAllocator,
+                             pRenderPass);
+    }
+    cvkFreeArena(&scratch.arena);
+}
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
 static CVK_FORCE_INLINE VkBool32 cvkResolveGraphicsPipelineJsonHandle(void* pUser, const char* pHandleType, uint64_t id, uint32_t handleByteCount, void* pHandle)
 {
     cvkGraphicsPipelineJsonHandles* handles          = (cvkGraphicsPipelineJsonHandles*)pUser;
@@ -1660,9 +1817,6 @@ extern CVK_FORCE_INLINE void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevi
                                                                           VkPipelineCache              pipelineCache,
                                                                           const char*                  pJsonText,
                                                                           size_t                       jsonLength,
-                                                                          cvkJsonValue*                pJsonValues,
-                                                                          uint32_t                     jsonValueCapacity,
-                                                                          cvkArena*                    pArena,
                                                                           VkShaderModule               vertex,
                                                                           VkShaderModule               fragment,
                                                                           VkRenderPass                 externalRenderPass,
@@ -1671,14 +1825,17 @@ extern CVK_FORCE_INLINE void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevi
 {
     cvkJsonContext                 context;
     cvkPipelineJson                pipeline;
+    cvkPipelineJsonScratch         scratch;
     cvkGraphicsPipelineJsonHandles handles = {0};
     uint32_t                       index;
 
-    context.document.pValues = pJsonValues;
+    cvkInitPipelineJsonScratch(jsonLength, pAllocator, &scratch);
 
-    context.document.valueCount = cvkParseJsonDocument(pJsonText, jsonLength, pJsonValues, jsonValueCapacity);
+    context.document.pValues = scratch.pValues;
 
-    context.pArena             = pArena;
+    context.document.valueCount = cvkParseJsonDocument(pJsonText, jsonLength, scratch.pValues, scratch.valueCapacity);
+
+    context.pArena             = &scratch.arena;
     context.resolveHandle      = NULL;
     context.pUser              = NULL;
     context.ppHandleReferences = NULL;
@@ -1722,15 +1879,13 @@ extern CVK_FORCE_INLINE void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevi
     handles.fragment   = fragment;
     handles.renderPass = externalRenderPass;
 
-    cvkCreatePipelineJsonObjects(device, pipelineCache, &pipeline, NULL, cvkResolveGraphicsPipelineJsonHandle, &handles, pArena, pAllocator, pObjects);
+    cvkCreatePipelineJsonObjects(device, pipelineCache, &pipeline, NULL, cvkResolveGraphicsPipelineJsonHandle, &handles, &scratch.arena, pAllocator, pObjects);
+    cvkFreeArena(&scratch.arena);
 }
 extern CVK_FORCE_INLINE void cvkCreateGraphicsPipelineFromJson(VkDevice                     device,
                                                                VkPipelineCache              pipelineCache,
                                                                const char*                  pJsonText,
                                                                size_t                       jsonLength,
-                                                               cvkJsonValue*                pJsonValues,
-                                                               uint32_t                     jsonValueCapacity,
-                                                               cvkArena*                    pArena,
                                                                size_t                       vertexCodeSize,
                                                                const uint32_t*              pVertexCode,
                                                                size_t                       fragmentCodeSize,
@@ -1744,15 +1899,12 @@ extern CVK_FORCE_INLINE void cvkCreateGraphicsPipelineFromJson(VkDevice         
 
     cvkCreateShaderModule(device, NULL, 0, vertexCodeSize, pVertexCode, pAllocator, &vertex);
     cvkCreateShaderModule(device, NULL, 0, fragmentCodeSize, pFragmentCode, pAllocator, &fragment);
-    cvkCreateGraphicsPipelineFromJsonWithModules(device, pipelineCache, pJsonText, jsonLength, pJsonValues, jsonValueCapacity, pArena, vertex, fragment, externalRenderPass, pAllocator, pObjects);
+    cvkCreateGraphicsPipelineFromJsonWithModules(device, pipelineCache, pJsonText, jsonLength, vertex, fragment, externalRenderPass, pAllocator, pObjects);
     cvkDestroyShaderModule(device, fragment, pAllocator);
     cvkDestroyShaderModule(device, vertex, pAllocator);
 }
 extern CVK_FORCE_INLINE void cvkCreateBicubicScalingPipeline(VkDevice                     device,
                                                              VkPipelineCache              pipelineCache,
-                                                             cvkJsonValue*                pJsonValues,
-                                                             uint32_t                     jsonValueCapacity,
-                                                             cvkArena*                    pArena,
                                                              VkRenderPass                 renderPass,
                                                              const VkAllocationCallbacks* pAllocator,
                                                              cvkPipelineJsonObjects*      pObjects)
@@ -1761,11 +1913,8 @@ extern CVK_FORCE_INLINE void cvkCreateBicubicScalingPipeline(VkDevice           
 
     cvkCreateGraphicsPipelineFromJson(device,
                                       pipelineCache,
-                                      cvk_bicubic_pipeline_json,
-                                      sizeof(cvk_bicubic_pipeline_json) - 1,
-                                      pJsonValues,
-                                      jsonValueCapacity,
-                                      pArena,
+                                      c_vkBicubicPipelineJson,
+                                      sizeof(c_vkBicubicPipelineJson) - 1,
                                       sizeof(cvk_fullscreen_vert),
                                       cvk_fullscreen_vert,
                                       sizeof(cvk_bicubic_frag),
@@ -1854,8 +2003,8 @@ extern CVK_FORCE_INLINE void cvkCmdExecuteBicubicScalingRenderPassOnExternalImag
 /**
  * \par Details:
  *  Each pending structure belongs to a distinct document value. One task per
- *  value therefore bounds the stack without recursion or heap allocation.
- *  Permanent output grows from the front of the arena; scratch occupies its tail.
+ *  value therefore bounds the stack without recursion. Callback-backed arenas
+ *  allocate the stack through those callbacks; caller-owned arenas use their tail.
  */
 extern CVK_FORCE_INLINE void cvkInitializeJsonWork(cvkJsonWork* pWork, const cvkJsonContext* pContext)
 {
@@ -1868,31 +2017,44 @@ extern CVK_FORCE_INLINE void cvkInitializeJsonWork(cvkJsonWork* pWork, const cvk
     CVK_ASSERT(NULL != pWork);
     CVK_ASSERT(NULL != pContext);
     CVK_ASSERT(NULL != pContext->pArena);
-    CVK_ASSERT(NULL != pContext->pArena->pBase);
     CVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
 
-    capacity     = pContext->document.valueCount;
-    capacity     = (0 < capacity) ? capacity : 1;
-    scratch_size = (uint64_t)capacity * sizeof(cvkJsonTask);
-    CVK_ASSERT(scratch_size <= pContext->pArena->size);
-
-    scratch_start = pContext->pArena->size - scratch_size;
-    misalignment  = (uintptr_t)(pContext->pArena->pBase + scratch_start) % CVK_JSON_ARENA_ALIGNMENT;
-    CVK_ASSERT(misalignment <= scratch_start);
-
-    scratch_start -= misalignment;
-    CVK_ASSERT(pContext->pArena->used <= scratch_start);
-
-    scratch                = *pContext->pArena;
-    scratch.used           = scratch_start;
+    capacity               = pContext->document.valueCount;
+    capacity               = (0 < capacity) ? capacity : 1;
+    scratch_size           = (uint64_t)capacity * sizeof(cvkJsonTask);
     pWork->pContext        = pContext;
-
-    pWork->pTasks          = (cvkJsonTask*)cvkAllocateArena(&scratch, scratch_size, CVK_JSON_ARENA_ALIGNMENT);
-
     pWork->arenaSize       = pContext->pArena->size;
     pWork->capacity        = capacity;
     pWork->count           = 0;
-    pContext->pArena->size = scratch_start;
+    pWork->callbackScratch = VK_FALSE;
+    if (NULL != pContext->pArena->pAllocator)
+    {
+        const VkAllocationCallbacks* pAllocator = pContext->pArena->pAllocator;
+
+        pWork->pTasks = (cvkJsonTask*)pAllocator->pfnAllocation(pAllocator->pUserData, scratch_size, CVK_JSON_ARENA_ALIGNMENT, VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
+        CVK_ASSERT(NULL != pWork->pTasks);
+
+        pWork->callbackScratch = VK_TRUE;
+    }
+    else
+    {
+        CVK_ASSERT(NULL != pContext->pArena->pBase);
+        CVK_ASSERT(scratch_size <= pContext->pArena->size);
+
+        scratch_start = pContext->pArena->size - scratch_size;
+        misalignment  = (uintptr_t)(pContext->pArena->pBase + scratch_start) % CVK_JSON_ARENA_ALIGNMENT;
+        CVK_ASSERT(misalignment <= scratch_start);
+
+        scratch_start -= misalignment;
+        CVK_ASSERT(pContext->pArena->used <= scratch_start);
+
+        scratch                = *pContext->pArena;
+        scratch.used           = scratch_start;
+
+        pWork->pTasks          = (cvkJsonTask*)cvkAllocateArena(&scratch, scratch_size, CVK_JSON_ARENA_ALIGNMENT);
+
+        pContext->pArena->size = scratch_start;
+    }
 }
 
 /*************************************************************************************************/
@@ -1935,7 +2097,16 @@ extern CVK_FORCE_INLINE void cvkRunJsonWork(cvkJsonWork* pWork)
 
         task.read(pWork, task.pObject, task.pOutput);
     }
-    pWork->pContext->pArena->size = pWork->arenaSize;
+    if (pWork->callbackScratch)
+    {
+        const VkAllocationCallbacks* pAllocator = pWork->pContext->pArena->pAllocator;
+
+        pAllocator->pfnFree(pAllocator->pUserData, pWork->pTasks);
+    }
+    else
+    {
+        pWork->pContext->pArena->size = pWork->arenaSize;
+    }
 }
 
 /*************************************************************************************************/

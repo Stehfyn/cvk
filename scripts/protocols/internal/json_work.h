@@ -18,6 +18,7 @@ struct cvkJsonWork
     uint64_t             arenaSize;
     uint32_t             capacity;
     uint32_t             count;
+    VkBool32             callbackScratch;
 };
 
 typedef struct cvkJsonStructureReader
@@ -28,7 +29,7 @@ typedef struct cvkJsonStructureReader
 } cvkJsonStructureReader;
 
 /**
- * \brief Reserves bounded parse scratch at the unused end of the caller's arena.
+ * \brief Reserves bounded parse scratch from callbacks or the unused end of the caller's arena.
  * \param[out] pWork Receives the initialized work stack.
  * \param[in] pContext Document and caller-owned arena.
  * \retval None

@@ -93,9 +93,11 @@ typedef struct scvkJsonName
 
 typedef struct scvkArena
 {
-    uint8_t* pBase;
-    size_t   size;
-    size_t   used;
+    uint8_t*                     pBase;
+    size_t                       size;
+    size_t                       used;
+    const VkAllocationCallbacks* pAllocator;
+    struct scvkArenaBlock*       pBlocks;
 } scvkArena;
 
 /* Writes a native handle of the named type to pHandle. The caller initializes
@@ -770,7 +772,9 @@ VkBool32 scvkGetJsonBool32(const scvkJsonValue* pValue);
 VkBool32 scvkLookupJsonName(const scvkJsonName* pTable, uint32_t tableCount, const char* pName, uint32_t nameLength, uint64_t* pValue);
 uint64_t scvkParseJsonEnumerant(const scvkJsonValue* pValue, const scvkJsonName* pTable, uint32_t tableCount);
 uint64_t scvkParseJsonFlags(const scvkJsonValue* pValue, const scvkJsonName* pTable, uint32_t tableCount);
+
 void* scvkAllocateArena(scvkArena* pArena, size_t size, size_t alignment);
+void scvkFreeArena(scvkArena* pArena);
 char* scvkCopyJsonString(scvkArena* pArena, const scvkJsonValue* pValue);
 uint64_t scvkGetJsonHandleId(const scvkJsonHandleReference* pReferences, const void* pHandle);
 VkBool32 scvkResolveJsonHandle(const scvkJsonContext* pContext, const char* pHandleType, const scvkJsonValue* pValue, uint32_t handleByteCount, void* pHandle);

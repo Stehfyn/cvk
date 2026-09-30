@@ -2131,6 +2131,9 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
                 prof = re.search(r"\\par Profile:\s*(\w+)", doc)
                 if not prof or prof.group(1) == self.api:
                     self.json_private_types[plat].append(doc + declaration)
+        else:
+            for m in re.finditer(r"^(typedef\s+(?:struct|enum)\s+\w+\s*\{[^{}]*\}\s*\w+\s*;)", text, flags=re.S | re.M):
+                self.defs[plat].append(m.group(1))
         for m in re.finditer(r"(/\*\*(?=\s)(?:(?!\*/).)*\*/\s*)?^(\w[\w\s\*]*?\s+(cvk\w+)\s*\((.*?)\))\s*\{", text, flags=re.S | re.M):
             doc, sig, name, plist = m.group(1) or "", m.group(2), m.group(3), m.group(4)
             depth, i, quote = 1, m.end(), ""
@@ -2757,8 +2760,9 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 #endif
 #define CVK_CHECK(expression) cvkCheckResult((expression), #expression, __FILE__, __LINE__)
 
-/* Sentinel for an unavailable index. */
+/* Sentinels for an unavailable index and an unbounded timeout. */
 #define VK_INVALID (UINT32_MAX)
+#define VK_INFINITE (UINT64_MAX)
 
 #define VK_NO_OFFSET ((VkDeviceSize)0)
 #define VK_COUNT_OF(array) ((uint32_t)(sizeof(array) / sizeof((array)[0])))

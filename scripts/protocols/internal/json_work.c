@@ -2,8 +2,8 @@
 /**
  * \par Details:
  *  Each pending structure belongs to a distinct document value. One task per
- *  value therefore bounds the stack without recursion or heap allocation.
- *  Permanent output grows from the front of the arena; scratch occupies its tail.
+ *  value therefore bounds the stack without recursion. Callback-backed arenas
+ *  allocate the stack through those callbacks; caller-owned arenas use their tail.
  */
 void cvkInitializeJsonWork(cvkJsonWork*          pWork,
                            const cvkJsonContext* pContext)
@@ -17,27 +17,40 @@ void cvkInitializeJsonWork(cvkJsonWork*          pWork,
     CVK_ASSERT(NULL != pWork);
     CVK_ASSERT(NULL != pContext);
     CVK_ASSERT(NULL != pContext->pArena);
-    CVK_ASSERT(NULL != pContext->pArena->pBase);
     CVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
     capacity      = pContext->document.valueCount;
     capacity      = (0 < capacity) ? capacity : 1;
     scratch_size  = (uint64_t)capacity * sizeof(cvkJsonTask);
-    CVK_ASSERT(scratch_size <= pContext->pArena->size);
-    scratch_start = pContext->pArena->size - scratch_size;
-    misalignment  = (uintptr_t)(pContext->pArena->pBase + scratch_start) % CVK_JSON_ARENA_ALIGNMENT;
-    CVK_ASSERT(misalignment <= scratch_start);
-    scratch_start -= misalignment;
-    CVK_ASSERT(pContext->pArena->used <= scratch_start);
-    scratch       = *pContext->pArena;
-    scratch.used  = scratch_start;
     pWork->pContext = pContext;
-    pWork->pTasks   = (cvkJsonTask*)cvkAllocateArena(&scratch,
-                                                  scratch_size,
-                                                  CVK_JSON_ARENA_ALIGNMENT);
     pWork->arenaSize = pContext->pArena->size;
     pWork->capacity = capacity;
     pWork->count    = 0;
-    pContext->pArena->size = scratch_start;
+    pWork->callbackScratch = VK_FALSE;
+    if (NULL != pContext->pArena->pAllocator)
+    {
+        const VkAllocationCallbacks* pAllocator = pContext->pArena->pAllocator;
+
+        pWork->pTasks = (cvkJsonTask*)pAllocator->pfnAllocation(pAllocator->pUserData,
+                                                                scratch_size,
+                                                                CVK_JSON_ARENA_ALIGNMENT,
+                                                                VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
+        CVK_ASSERT(NULL != pWork->pTasks);
+        pWork->callbackScratch = VK_TRUE;
+    }
+    else
+    {
+        CVK_ASSERT(NULL != pContext->pArena->pBase);
+        CVK_ASSERT(scratch_size <= pContext->pArena->size);
+        scratch_start = pContext->pArena->size - scratch_size;
+        misalignment  = (uintptr_t)(pContext->pArena->pBase + scratch_start) % CVK_JSON_ARENA_ALIGNMENT;
+        CVK_ASSERT(misalignment <= scratch_start);
+        scratch_start -= misalignment;
+        CVK_ASSERT(pContext->pArena->used <= scratch_start);
+        scratch       = *pContext->pArena;
+        scratch.used  = scratch_start;
+        pWork->pTasks = (cvkJsonTask*)cvkAllocateArena(&scratch, scratch_size, CVK_JSON_ARENA_ALIGNMENT);
+        pContext->pArena->size = scratch_start;
+    }
 }
 
 /*************************************************************************************************/
@@ -80,7 +93,16 @@ void cvkRunJsonWork(cvkJsonWork* pWork)
         task = pWork->pTasks[pWork->count];
         task.read(pWork, task.pObject, task.pOutput);
     }
-    pWork->pContext->pArena->size = pWork->arenaSize;
+    if (pWork->callbackScratch)
+    {
+        const VkAllocationCallbacks* pAllocator = pWork->pContext->pArena->pAllocator;
+
+        pAllocator->pfnFree(pAllocator->pUserData, pWork->pTasks);
+    }
+    else
+    {
+        pWork->pContext->pArena->size = pWork->arenaSize;
+    }
 }
 
 /*************************************************************************************************/

@@ -875,8 +875,42 @@ uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, const cvkJsonName* pTable
     return flags;
 }
 
+typedef struct cvkArenaBlock
+{
+    struct cvkArenaBlock* pNext;
+    uint8_t               storage[1];
+} cvkArenaBlock;
+
+typedef enum cvkArenaBlockCapacity
+{
+    CVK_JSON_ARENA_BLOCK_SIZE = 4096
+} cvkArenaBlockCapacity;
+
+static CVK_FORCE_INLINE void cvkGrowArena(cvkArena* pArena, size_t size, size_t alignment)
+{
+    size_t         capacity;
+    cvkArenaBlock* block;
+
+    CVK_ASSERT(NULL != pArena->pAllocator);
+    CVK_ASSERT(NULL != pArena->pAllocator->pfnAllocation);
+    CVK_ASSERT(NULL != pArena->pAllocator->pfnFree);
+    capacity = (size > CVK_JSON_ARENA_BLOCK_SIZE) ? size : CVK_JSON_ARENA_BLOCK_SIZE;
+    CVK_ASSERT(alignment <= SIZE_MAX - sizeof(cvkArenaBlock));
+    CVK_ASSERT(capacity <= SIZE_MAX - alignment - sizeof(cvkArenaBlock));
+    block = (cvkArenaBlock*)pArena->pAllocator->pfnAllocation(pArena->pAllocator->pUserData,
+                                                              sizeof(cvkArenaBlock) + capacity + alignment,
+                                                              CVK_JSON_ARENA_ALIGNMENT,
+                                                              VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
+    CVK_ASSERT(NULL != block);
+    block->pNext = pArena->pBlocks;
+    pArena->pBlocks = block;
+    pArena->pBase = block->storage;
+    pArena->size = capacity + alignment;
+    pArena->used = 0;
+}
+
 /**
- * \brief Allocates aligned storage from an arena; exhausting it is fatal.
+ * \brief Allocates aligned storage from an arena; exhausting caller storage is fatal.
  *
  * \param[in,out] pArena     The arena
  * \param[in]     size       Byte count; zero returns NULL
@@ -886,31 +920,62 @@ uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, const cvkJsonName* pTable
  */
 void* cvkAllocateArena(cvkArena* pArena, size_t size, size_t alignment)
 {
-    uint64_t offset;
-    uint64_t padding;
-    uint64_t remaining;
-    void* storage;
+    size_t offset;
+    size_t padding;
+    size_t remaining;
 
     CVK_ASSERT(NULL != pArena);
-    CVK_ASSERT(NULL != pArena->pBase);
     CVK_ASSERT(0 < alignment);
     CVK_ASSERT(0 == (alignment & (alignment - 1)));
     CVK_ASSERT(pArena->used <= pArena->size);
-    storage = NULL;
-    if (0 < size)
+    if (0 == size)
+    {
+        return NULL;
+    }
+    if (NULL != pArena->pBase)
     {
         offset = pArena->used;
+        remaining = pArena->size - offset;
         padding = (uintptr_t)(pArena->pBase + offset) % alignment;
         padding = (alignment - padding) % alignment;
-        remaining = pArena->size - offset;
-        CVK_ASSERT(padding <= remaining);
-        remaining -= padding;
-        CVK_ASSERT(size <= remaining);
-        offset += padding;
-        storage = pArena->pBase + offset;
-        pArena->used = offset + size;
+        if ((padding <= remaining) && (size <= remaining - padding))
+        {
+            offset += padding;
+            pArena->used = offset + size;
+            return pArena->pBase + offset;
+        }
     }
-    return storage;
+    cvkGrowArena(pArena, size, alignment);
+    padding = (uintptr_t)pArena->pBase % alignment;
+    padding = (alignment - padding) % alignment;
+    CVK_ASSERT(size <= pArena->size - padding);
+    pArena->used = padding + size;
+    return pArena->pBase + padding;
+}
+
+/**
+ * \brief Frees callback-backed arena blocks and resets the arena.
+ * \param[in,out] pArena Arena to release.
+ * \retval None
+ */
+void cvkFreeArena(cvkArena* pArena)
+{
+    cvkArenaBlock* block;
+    cvkArenaBlock* next;
+
+    CVK_ASSERT(NULL != pArena);
+    CVK_ASSERT(NULL != pArena->pAllocator);
+    block = pArena->pBlocks;
+    while (NULL != block)
+    {
+        next = block->pNext;
+        pArena->pAllocator->pfnFree(pArena->pAllocator->pUserData, block);
+        block = next;
+    }
+    pArena->pBlocks = NULL;
+    pArena->pBase = NULL;
+    pArena->size = 0;
+    pArena->used = 0;
 }
 
 /**

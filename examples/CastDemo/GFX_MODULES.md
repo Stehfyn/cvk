@@ -233,7 +233,7 @@ Current migration evidence (not completion):
   bounded display/mode/plane query storage instead of a 45 KB stack frame. The native
   surface constructors retain that workspace in their existing owner allocation;
   adapting the imported allocator and proving startup-only ownership remain open.
-- The Win32 adapter uses cdx's DXGI/D3D12 interfaces. cdxgi, cdx12 and cva compile
+- The Win32 adapter uses cdx's DXGI/D3D12 interfaces. cdxgi, cd3d12 and cva compile
   successfully in the existing Release build directory with external warnings
   disabled. This does not establish CRT-free linking or dependency lifecycle safety.
 - `scripts/check_gfx_calls.py` verifies declaration presence and argument counts

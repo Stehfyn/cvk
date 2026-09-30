@@ -7,7 +7,7 @@
 **===============================================================================================*/
 
 #include "gfx/gfx_adapter.h"
-#include "cdx12.h"
+#include "cd3d12.h"
 #include "cdxgi.h"
 
 #include "os/os_assert.h"
@@ -164,21 +164,21 @@ static void EnableD3d12DebugLogging(void)
     ID3D12DeviceRemovedExtendedDataSettings1* dred_settings;
 
     debug = NULL;
-    HRCHECK(cdx12GetDebugInterfaceAsDebug(&debug));
-    cdx12DebugEnableDebugLayer(debug);
-    (void)cdx12UnknownRelease((IUnknown*)debug);
+    HRCHECK(cd3d12GetDebugInterfaceAsDebug(&debug));
+    cd3d12DebugEnableDebugLayer(debug);
+    (void)cd3d12UnknownRelease((IUnknown*)debug);
 
     dred_settings = NULL;
-    HRCHECK(cdx12GetDebugInterfaceAsDeviceRemovedExtendedDataSettings1(&dred_settings));
-    cdx12DeviceRemovedExtendedDataSettingsSetAutoBreadcrumbsEnablement(
+    HRCHECK(cd3d12GetDebugInterfaceAsDeviceRemovedExtendedDataSettings1(&dred_settings));
+    cd3d12DeviceRemovedExtendedDataSettingsSetAutoBreadcrumbsEnablement(
         (ID3D12DeviceRemovedExtendedDataSettings*)dred_settings,
         D3D12_DRED_ENABLEMENT_FORCED_ON);
-    cdx12DeviceRemovedExtendedDataSettingsSetPageFaultEnablement(
+    cd3d12DeviceRemovedExtendedDataSettingsSetPageFaultEnablement(
         (ID3D12DeviceRemovedExtendedDataSettings*)dred_settings,
         D3D12_DRED_ENABLEMENT_FORCED_ON);
-    cdx12DeviceRemovedExtendedDataSettingsSetBreadcrumbContextEnablement(dred_settings,
+    cd3d12DeviceRemovedExtendedDataSettingsSetBreadcrumbContextEnablement(dred_settings,
                                                                          D3D12_DRED_ENABLEMENT_FORCED_ON);
-    (void)cdx12UnknownRelease((IUnknown*)dred_settings);
+    (void)cd3d12UnknownRelease((IUnknown*)dred_settings);
 }
 
 /*************************************************************************************************/

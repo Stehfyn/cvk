@@ -60,7 +60,7 @@
 #include "cdcomp.h"
 #include "cd2d.h"
 #include "cdw.h"
-#include "cdx11.h"
+#include "cd3d11.h"
 #include "cdxgi.h"
 
 #pragma comment(lib, "dwmapi")
@@ -456,7 +456,7 @@ static LRESULT OnInitD2D(HWND hWnd, LPIMMERSIVEWINDOW pw)
     IDXGIDevice1* dxgiDevice = NULL;
     IDCompositionDevice* compositionDevice = NULL;
     IDXGISurface* surface;
-    DXGI_SAMPLE_DESC sample = {1, 0};
+    DXGI_SAMPLE_DESC sample;
     RECT client = {0};
     HRESULT interface_result;
     HRESULT device_result;
@@ -474,6 +474,7 @@ static LRESULT OnInitD2D(HWND hWnd, LPIMMERSIVEWINDOW pw)
     {
         return 0;
     }
+    cdxgiInitSingleSampleDesc(&sample);
     got_client_rect = GetClientRect(hWnd, &client);
     has_width = (0 < client.right) && got_client_rect;
     has_height = (0 < client.bottom) && got_client_rect;
@@ -483,11 +484,11 @@ static LRESULT OnInitD2D(HWND hWnd, LPIMMERSIVEWINDOW pw)
     SetupFonts(pw);
     cdxgiCreateFactory1AsFactory6(&factory);
     cdxgiFactoryGetMinimumPowerAdapter(factory, &adapter);
-    device_result = cdx11CreateDevice((IDXGIAdapter*)adapter, D3D_DRIVER_TYPE_UNKNOWN, NULL, deviceFlags, levels, ARRAYSIZE(levels), D3D11_SDK_VERSION, &d3dDevice, &level, &pw->pD3D11DeviceContext);
+    device_result = cd3d11CreateDevice((IDXGIAdapter*)adapter, D3D_DRIVER_TYPE_UNKNOWN, NULL, deviceFlags, levels, ARRAYSIZE(levels), D3D11_SDK_VERSION, &d3dDevice, &level, &pw->pD3D11DeviceContext);
     pw->pD3D11Device = d3dDevice;
     Check(SUCCEEDED(device_result) && (NULL != d3dDevice) && (NULL != pw->pD3D11DeviceContext), TEXT("D3D11CreateDevice"));
 #ifndef NDEBUG
-    cdx11DeviceGetDebug(d3dDevice, &pw->pD3D11Debug);
+    cd3d11DeviceGetDebug(d3dDevice, &pw->pD3D11Debug);
     options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
 #endif
     interface_result = cdxgiUnknownQueryInterfaceAsDevice1((IUnknown*)d3dDevice, &dxgiDevice);
@@ -625,7 +626,7 @@ static void OnShutdownD2D(LPIMMERSIVEWINDOW pw)
 #ifndef NDEBUG
     if (NULL != pw->pD3D11Debug)
     {
-        cdx11DebugReportLiveDeviceObjects(pw->pD3D11Debug, D3D11_RLDO_DETAIL);
+        cd3d11DebugReportLiveDeviceObjects(pw->pD3D11Debug, D3D11_RLDO_DETAIL);
         ReleaseUnknown((IUnknown*)pw->pD3D11Debug);
     pw->pD3D11Debug = NULL;
     }
@@ -1461,7 +1462,6 @@ extern FORCE_INLINE BOOL GetImmersiveDevice(HWND hWnd, ID3D11Device** device, ID
 extern FORCE_INLINE void SetImmersiveVideo(HWND hWnd, UINT width, UINT height, IMMERSIVEVIDEOPROC draw)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
-    DXGI_SAMPLE_DESC sample = {1, 0};
     IDXGISurface* surface;
     D2D1_PIXEL_FORMAT format = {DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE};
     D2D1_BITMAP_PROPERTIES1 properties;
@@ -1474,8 +1474,7 @@ extern FORCE_INLINE void SetImmersiveVideo(HWND hWnd, UINT width, UINT height, I
     {
         cdxgiUnknownRelease((IUnknown*)windowState->pVideoTexture);
     }
-    cdx11DeviceCreateTexture2D(windowState->pD3D11Device, width, height, 1, 1, DXGI_FORMAT_B8G8R8A8_UNORM, sample,
-        D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, NULL, &windowState->pVideoTexture);
+    cd3d11SetupShaderResourceTexture2D(windowState->pD3D11Device, width, height, 1, DXGI_FORMAT_B8G8R8A8_UNORM, NULL, &windowState->pVideoTexture);
     Check(SUCCEEDED(cdxgiUnknownQueryInterface((IUnknown*)windowState->pVideoTexture, &IID_IDXGISurface, (void**)&surface)), TEXT("video bitmap surface"));
     cd2dInitBitmapProperties1(&properties, format, REFERENCE_DPI, REFERENCE_DPI, D2D1_BITMAP_OPTIONS_NONE, NULL);
     cd2dDeviceContextCreateBitmapFromDxgiSurface(windowState->pD2D1DeviceContext, surface, &properties, &windowState->pVideoBitmap);

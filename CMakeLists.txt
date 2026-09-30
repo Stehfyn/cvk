@@ -222,6 +222,12 @@ add_test(NAME cvk-pipeline-json-parse COMMAND cvk-pipeline-json-test
     ${CMAKE_CURRENT_SOURCE_DIR}/examples/ImmersiveWindowDemo/shaders/nv12.pipeline.json
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/bicubic/bicubic.pipeline.json)
 
+add_executable(cvk-render-pass-json-test tests/render_pass_json_test.c)
+target_link_libraries(cvk-render-pass-json-test PRIVATE cvk volk::volk vk-diagnostic)
+add_test(NAME cvk-render-pass-json COMMAND cvk-render-pass-json-test
+    ${CMAKE_CURRENT_SOURCE_DIR}/examples/ImmersiveWindowDemo/shaders/nv12.pipeline.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/examples/ImmersiveWindowDemo/shaders/output.renderpass.json)
+
 add_executable(cvk-volk-dispatch-test tests/volk_dispatch_test.c)
 target_link_libraries(cvk-volk-dispatch-test PRIVATE cvk volk::volk vk-diagnostic)
 add_test(NAME cvk-volk-dispatch COMMAND cvk-volk-dispatch-test)

@@ -27,8 +27,9 @@ void scvkCheckResult(VkResult result, const char* pExpression, const char* pFile
 #endif
 #define SCVK_CHECK(expression) scvkCheckResult((expression), #expression, __FILE__, __LINE__)
 
-/* Sentinel for an unavailable index. */
-#define VK_INVALID (UINT32_MAX)
+/* Sentinels for an unavailable index and an unbounded timeout. */
+#define VK_INVALID  (UINT32_MAX)
+#define VK_INFINITE (UINT64_MAX)
 
 #define VK_NO_OFFSET       ((VkDeviceSize)0)
 #define VK_COUNT_OF(array) ((uint32_t)(sizeof(array) / sizeof((array)[0])))
@@ -865,7 +866,7 @@ void scvkUpdateBufferDescriptorSet(VkDevice device, VkBuffer buffer, VkDeviceSiz
 void scvkCreateTimestampQueryPool(VkDevice device, const void* pQueryPoolNext, VkQueryPoolCreateFlags flags, uint32_t queryCount, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool);
 VkResult scvkGetQueryPoolResults64(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkQueryResultFlags flags, uint64_t* pResults);
 void scvkCreateSignaledFence(VkDevice device, const void* pFenceNext, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
-VkResult scvkWaitForFenceIndefinitely(VkDevice device, VkFence fence);
+void scvkWaitForFenceIndefinitely(VkDevice device, VkFence fence);
 VkResult scvkWaitForAllFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences);
 VkResult scvkWaitForAnyFence(VkDevice device, uint32_t fenceCount, const VkFence* pFences);
 void scvkCreateTimelineSemaphore(VkDevice device, const void* pSemaphoreNext, uint64_t initialValue, VkSemaphoreCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore);
@@ -975,25 +976,7 @@ void scvkCmdTransitionUndefinedImageToSampledImage(VkCommandBuffer         comma
                                                   VkImage                 image,
                                                   VkImageSubresourceRange subresourceRange,
                                                   VkPipelineStageFlags    sampledStageMask);
-void scvkCmdTransitionSampledImageToColorAttachment(VkCommandBuffer         commandBuffer,
-                                                   VkImageLayout           sampledLayout,
-                                                   VkImageLayout           renderLayout,
-                                                   VkImage                 image,
-                                                   VkImageSubresourceRange subresourceRange,
-                                                   VkPipelineStageFlags    sampledStageMask);
 void scvkCmdExecuteGraphicsRenderPass(VkCommandBuffer commandBuffer, VkRenderPass renderPass, VkFramebuffer framebuffer, VkExtent2D extent, VkPipeline pipeline, VkPipelineLayout layout, VkDescriptorSet descriptorSet, uint32_t vertexCount);
-void scvkCmdExecuteFullscreenQuadRenderPassToSampledImage(VkCommandBuffer         commandBuffer,
-                                                         VkImage                 image,
-                                                         VkImageSubresourceRange subresourceRange,
-                                                         VkImageLayout           renderLayout,
-                                                         VkImageLayout           sampledLayout,
-                                                         VkPipelineStageFlags    sampledStageMask,
-                                                         VkRenderPass            renderPass,
-                                                         VkFramebuffer           framebuffer,
-                                                         VkExtent2D              extent,
-                                                         VkPipeline              pipeline,
-                                                         VkPipelineLayout        layout,
-                                                         VkDescriptorSet         descriptorSet);
 void scvkCmdExecuteGraphicsRenderPassWithPushConstants(VkCommandBuffer commandBuffer, VkRenderPass renderPass, VkFramebuffer framebuffer, VkExtent2D extent, VkPipeline pipeline, VkPipelineLayout layout, VkDescriptorSet descriptorSet, uint32_t vertexCount, uint32_t pushConstantSize, const void* pPushConstants);
 VKAPI_ATTR VkBool32 VKAPI_CALL scvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
 void scvkCreateDebugInstance(const void* pNext, VkInstanceCreateFlags flags, const VkApplicationInfo* pApplicationInfo, uint32_t enabledLayerCount, const char* const* ppEnabledLayerNames, uint32_t enabledExtensionCount, const char* const* ppEnabledExtensionNames, VkDebugUtilsMessageSeverityFlagsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback, void* pUserData, const VkAllocationCallbacks* pAllocator, VkExtensionProperties pProperties[SCVK_MAX_PROPERTIES], VkInstance* pInstance, VkDebugUtilsMessengerEXT* pMessenger);

@@ -46,7 +46,7 @@ def main():
     # The pinned headers describe both platform source trees; the configured headers
     # additionally check the selected backend's actual generated declaration surface.
     header_roots = (root / "include/cvk", root / "external/cva/include", configured_cva, root / "external/cdx/include")
-    pattern = re.compile(r"\b((?:cvk|cva|cdx12|cdxgi)[A-Z]\w*)\s*\(")
+    pattern = re.compile(r"\b((?:cvk|cva|cd3d12|cdxgi)[A-Z]\w*)\s*\(")
     declarations = {}
     failures = []
     for directory in header_roots:

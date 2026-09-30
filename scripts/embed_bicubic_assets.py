@@ -32,7 +32,7 @@ def main() -> int:
     assets = {
         "cvk_fullscreen_vert.inc": spirv_source(ROOT / "fullscreen.vert.spv", "cvk_fullscreen_vert"),
         "cvk_bicubic_frag.inc": spirv_source(ROOT / "bicubic.frag.spv", "cvk_bicubic_frag"),
-        "cvk_bicubic_pipeline_json.inc": json_source(ROOT / "bicubic.pipeline.json", "cvk_bicubic_pipeline_json"),
+        "cvk_bicubic_pipeline_json.inc": json_source(ROOT / "bicubic.pipeline.json", "c_vkBicubicPipelineJson"),
     }
     for name, content in assets.items():
         path = ROOT / name

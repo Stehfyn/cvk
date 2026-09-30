@@ -53,7 +53,7 @@ void InitSwapChain(SWAPCHAIN* pSwapChain, IDXGIAdapter* adapter)
     {
         driverType = D3D_DRIVER_TYPE_HARDWARE;
     }
-    cdx11SetupDevice1(adapter, driverType, NULL, D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_VIDEO_SUPPORT, &pSwapChain->device, &pSwapChain->dxgiDevice, NULL, NULL);
+    cd3d11SetupDevice1(adapter, driverType, NULL, D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_VIDEO_SUPPORT, &pSwapChain->device, &pSwapChain->dxgiDevice, NULL, NULL);
     cdxgiCreateFactory2(0u, &pFactory);
     cdxgiFactoryGetPrimaryOutputSize((IDXGIFactory1*)pFactory, &desktopWidth, &desktopHeight);
     cdxgiSetupCompositionSwapChain2(pFactory,

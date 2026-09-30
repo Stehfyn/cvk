@@ -4,6 +4,7 @@
 #include "vk_diagnostic.h"
 #include <volk.h>
 #include "cvk/cvk_json.h"
+#include "json_allocator.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -235,7 +236,9 @@ static int CheckDemoPipeline(const char* path, VkBool32 scaled)
     if (!scaled)
     {
         CHECK(VK_FORMAT_B8G8R8A8_UNORM == pipeline.renderPassCreateInfo.pAttachments[0].format);
-        CHECK(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL == pipeline.renderPassCreateInfo.pAttachments[0].finalLayout);
+        CHECK(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL == pipeline.renderPassCreateInfo.pAttachments[0].initialLayout);
+        CHECK(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL == pipeline.renderPassCreateInfo.pAttachments[0].finalLayout);
+        CHECK(2 == pipeline.renderPassCreateInfo.dependencyCount);
     }
     CHECK(1 == pipeline.descriptorSetLayoutCount);
     CHECK((scaled ? 1U : 2U) == pipeline.pDescriptorSetLayoutCreateInfos[0].bindingCount);
@@ -266,6 +269,7 @@ static uint32_t graphicsPipelineCount;
 static VkShaderModule expectedVertex;
 static VkShaderModule expectedFragment;
 static VkRenderPass expectedRenderPass;
+static const VkAllocationCallbacks* expectedAllocator;
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateFixtureShaderModule(VkDevice device,
                                                                 const VkShaderModuleCreateInfo* info,
@@ -273,11 +277,11 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateFixtureShaderModule(VkDevice device,
                                                                 VkShaderModule* module)
 {
     CVK_ASSERT((VkDevice)(uintptr_t)1 == device);
-    CVK_ASSERT(NULL == allocator);
+    CVK_ASSERT(expectedAllocator == allocator);
     CVK_ASSERT(sizeof(uint32_t) == info->codeSize);
     CVK_ASSERT(NULL != info->pCode);
     ++shaderCreateCount;
-    *module = (VkShaderModule)(uintptr_t)(shaderCreateCount + 10);
+    *module = (VkShaderModule)((uintptr_t)shaderCreateCount + 10);
     return VK_SUCCESS;
 }
 
@@ -286,7 +290,7 @@ static VKAPI_ATTR void VKAPI_CALL DestroyFixtureShaderModule(VkDevice device,
                                                               const VkAllocationCallbacks* allocator)
 {
     CVK_ASSERT((VkDevice)(uintptr_t)1 == device);
-    CVK_ASSERT(NULL == allocator);
+    CVK_ASSERT(expectedAllocator == allocator);
     CVK_ASSERT((VkShaderModule)(uintptr_t)(12 - shaderDestroyCount) == module);
     ++shaderDestroyCount;
 }
@@ -301,26 +305,26 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateFixtureGraphicsPipeline(VkDevice dev
     CVK_ASSERT((VkDevice)(uintptr_t)1 == device);
     CVK_ASSERT(VK_NULL_HANDLE == cache);
     CVK_ASSERT(1 == count);
-    CVK_ASSERT(NULL == allocator);
+    CVK_ASSERT(expectedAllocator == allocator);
     CVK_ASSERT(2 == infos[0].stageCount);
     CVK_ASSERT(expectedVertex == infos[0].pStages[0].module);
     CVK_ASSERT(expectedFragment == infos[0].pStages[1].module);
     CVK_ASSERT(expectedRenderPass == infos[0].renderPass);
     ++graphicsPipelineCount;
-    pipelines[0] = (VkPipeline)(uintptr_t)(graphicsPipelineCount + 20);
+    pipelines[0] = (VkPipeline)((uintptr_t)graphicsPipelineCount + 20);
     return VK_SUCCESS;
 }
 
 static int CheckGraphicsPipelineModuleOwnership(void)
 {
     static const char json[] = "{\"GraphicsPipelineState\":{\"GraphicsPipeline\":{\"stageCount\":2,\"pStages\":[{\"stage\":\"VK_SHADER_STAGE_VERTEX_BIT\",\"module\":7,\"pName\":\"main\"},{\"stage\":\"VK_SHADER_STAGE_FRAGMENT_BIT\",\"module\":9,\"pName\":\"main\"}],\"renderPass\":5}}}";
-    static cvkJsonValue values[64];
-    static uint8_t storage[8192];
     const uint32_t code[] = {0x07230203};
     const VkDevice device = (VkDevice)(uintptr_t)1;
     cvkPipelineJsonObjects objects;
-    cvkArena arena = {storage, sizeof(storage), 0};
+    JsonTestAllocator allocator;
 
+    JsonTestInitAllocator(&allocator);
+    expectedAllocator = &allocator.callbacks;
     vkCreateShaderModule = CreateFixtureShaderModule;
     vkDestroyShaderModule = DestroyFixtureShaderModule;
     vkCreateGraphicsPipelines = CreateFixtureGraphicsPipeline;
@@ -331,34 +335,27 @@ static int CheckGraphicsPipelineModuleOwnership(void)
                                                  VK_NULL_HANDLE,
                                                  json,
                                                  sizeof(json) - 1,
-                                                 values,
-                                                 VK_COUNT_OF(values),
-                                                 &arena,
                                                  expectedVertex,
                                                  expectedFragment,
                                                  expectedRenderPass,
-                                                 NULL,
+                                                 expectedAllocator,
                                                  &objects);
     CHECK(0 == shaderCreateCount);
     CHECK(0 == shaderDestroyCount);
     CHECK(1 == graphicsPipelineCount);
     CHECK(VK_NULL_HANDLE == objects.renderPass);
-    arena.used = 0;
     expectedVertex = (VkShaderModule)(uintptr_t)11;
     expectedFragment = (VkShaderModule)(uintptr_t)12;
     cvkCreateGraphicsPipelineFromJson(device,
                                       VK_NULL_HANDLE,
                                       json,
                                       sizeof(json) - 1,
-                                      values,
-                                      VK_COUNT_OF(values),
-                                      &arena,
                                       sizeof(code),
                                       code,
                                       sizeof(code),
                                       code,
                                       expectedRenderPass,
-                                      NULL,
+                                      expectedAllocator,
                                       &objects);
     CHECK(2 == shaderCreateCount);
     CHECK(2 == shaderDestroyCount);

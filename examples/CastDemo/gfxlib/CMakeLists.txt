@@ -18,7 +18,7 @@ if(WIN32)
     set(gfx_native_directory win32)
     target_compile_definitions(gfxlib PRIVATE
         UNICODE _UNICODE WIN32_LEAN_AND_MEAN CINTERFACE COBJMACROS VK_USE_PLATFORM_WIN32_KHR)
-    target_link_libraries(gfxlib PRIVATE cdxgi cdx12 user32 gdi32 dxguid)
+    target_link_libraries(gfxlib PRIVATE cdxgi cd3d12 user32 gdi32 dxguid)
 elseif(UNIX AND NOT APPLE)
     set(gfx_native_directory linux)
     find_package(X11 REQUIRED)

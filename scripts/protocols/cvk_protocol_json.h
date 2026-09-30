@@ -86,9 +86,11 @@ typedef struct cvkJsonName
 
 typedef struct cvkArena
 {
-    uint8_t* pBase;
-    size_t   size;
-    size_t   used;
+    uint8_t*                     pBase;
+    size_t                       size;
+    size_t                       used;
+    const VkAllocationCallbacks* pAllocator;
+    struct cvkArenaBlock*        pBlocks;
 } cvkArena;
 
 /* Writes a native handle of the named type to pHandle. The caller initializes

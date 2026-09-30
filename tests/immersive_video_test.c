@@ -2,7 +2,7 @@
 ** CDX implementation and the CVK port, then compare their BGRA pixels. */
 #include "vk_diagnostic.h"
 #include "video.h"
-#include "cdx11.h"
+#include "cd3d11.h"
 #include "cdxgi.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +18,7 @@ static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStre
     ID3D11Texture2D*         staging[2];
     ID3D11RenderTargetView*  targets[2];
     D3D11_MAPPED_SUBRESOURCE mapped[2];
-    DXGI_SAMPLE_DESC         sample        = {1, 0};
+    DXGI_SAMPLE_DESC         sample;
     unsigned                 maxDifference = 0;
     size_t                   different     = 0;
     int                      i;
@@ -28,17 +28,18 @@ static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStre
     size_t                   transparent = 0;
     size_t                   overwritten = 0;
 
+    cdxgiInitSingleSampleDesc(&sample);
     for (i = 0; i < 2; ++i)
     {
-        cdx11DeviceCreateTexture2D(device, backingWidth, backingHeight, 1, 1, DXGI_FORMAT_B8G8R8A8_UNORM, sample, D3D11_USAGE_DEFAULT, D3D11_BIND_RENDER_TARGET, 0, 0, NULL, &textures[i]);
-        cdx11DeviceCreateRenderTargetView(device, (ID3D11Resource*)textures[i], NULL, &targets[i]);
-        cdx11DeviceCreateTexture2D(device, backingWidth, backingHeight, 1, 1, DXGI_FORMAT_B8G8R8A8_UNORM, sample, D3D11_USAGE_STAGING, 0, D3D11_CPU_ACCESS_READ, 0, NULL, &staging[i]);
+        cd3d11DeviceCreateTexture2D(device, backingWidth, backingHeight, 1, 1, DXGI_FORMAT_B8G8R8A8_UNORM, sample, D3D11_USAGE_DEFAULT, D3D11_BIND_RENDER_TARGET, 0, 0, NULL, &textures[i]);
+        cd3d11DeviceCreateRenderTargetView(device, (ID3D11Resource*)textures[i], NULL, &targets[i]);
+        cd3d11DeviceCreateTexture2D(device, backingWidth, backingHeight, 1, 1, DXGI_FORMAT_B8G8R8A8_UNORM, sample, D3D11_USAGE_STAGING, 0, D3D11_CPU_ACCESS_READ, 0, NULL, &staging[i]);
     }
     /* Poison the destination: every pixel, including the resize margin, must
     ** be replaced by opaque video rather than expose the desktop through it. */
     {
         const FLOAT poison[4] = {1, 0, 1, 0};
-        cdx11DeviceContextClearRenderTargetView(context, targets[1], poison);
+        cd3d11DeviceContextClearRenderTargetView(context, targets[1], poison);
     }
     ReferenceVideoStream_Draw(reference, targets[0], width, height);
     if (nativeCopy)
@@ -47,8 +48,8 @@ static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStre
         VideoStream_Draw(port, textures[1], width, height);
     for (i = 0; i < 2; ++i)
     {
-        cdx11DeviceContextCopyResource(context, (ID3D11Resource*)staging[i], (ID3D11Resource*)textures[i]);
-        if (FAILED(cdx11DeviceContextMap(context, (ID3D11Resource*)staging[i], 0, D3D11_MAP_READ, 0, &mapped[i])))
+        cd3d11DeviceContextCopyResource(context, (ID3D11Resource*)staging[i], (ID3D11Resource*)textures[i]);
+        if (FAILED(cd3d11DeviceContextMap(context, (ID3D11Resource*)staging[i], 0, D3D11_MAP_READ, 0, &mapped[i])))
             return 1;
     }
     for (y = 0; y < height; ++y)
@@ -81,7 +82,7 @@ static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStre
     }
     for (i = 0; i < 2; ++i)
     {
-        cdx11DeviceContextUnmap(context, (ID3D11Resource*)staging[i], 0);
+        cd3d11DeviceContextUnmap(context, (ID3D11Resource*)staging[i], 0);
         cdxgiUnknownRelease((IUnknown*)targets[i]);
         cdxgiUnknownRelease((IUnknown*)textures[i]);
         cdxgiUnknownRelease((IUnknown*)staging[i]);
@@ -117,7 +118,7 @@ int wmain(int argc, wchar_t** argv)
         return 2;
     if (FAILED(CoInitializeEx(NULL, COINIT_APARTMENTTHREADED)))
         return 2;
-    if (FAILED(cdx11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_BGRA_SUPPORT, NULL, 0, D3D11_SDK_VERSION, &device, &level, &context)))
+    if (FAILED(cd3d11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_BGRA_SUPPORT, NULL, 0, D3D11_SDK_VERSION, &device, &level, &context)))
         return 2;
     reference = ReferenceVideoStream_Open(device, context, argv[1]);
     port      = VideoStream_Open(device, context, argv[1]);

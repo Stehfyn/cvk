@@ -93,9 +93,11 @@ typedef struct cvkJsonName
 
 typedef struct cvkArena
 {
-    uint8_t* pBase;
-    size_t   size;
-    size_t   used;
+    uint8_t*                     pBase;
+    size_t                       size;
+    size_t                       used;
+    const VkAllocationCallbacks* pAllocator;
+    struct cvkArenaBlock*        pBlocks;
 } cvkArena;
 
 /* Writes a native handle of the named type to pHandle. The caller initializes
@@ -2103,7 +2105,9 @@ VkBool32 cvkGetJsonBool32(const cvkJsonValue* pValue);
 VkBool32 cvkLookupJsonName(const cvkJsonName* pTable, uint32_t tableCount, const char* pName, uint32_t nameLength, uint64_t* pValue);
 uint64_t cvkParseJsonEnumerant(const cvkJsonValue* pValue, const cvkJsonName* pTable, uint32_t tableCount);
 uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, const cvkJsonName* pTable, uint32_t tableCount);
+
 void* cvkAllocateArena(cvkArena* pArena, size_t size, size_t alignment);
+void cvkFreeArena(cvkArena* pArena);
 char* cvkCopyJsonString(cvkArena* pArena, const cvkJsonValue* pValue);
 uint64_t cvkGetJsonHandleId(const cvkJsonHandleReference* pReferences, const void* pHandle);
 VkBool32 cvkResolveJsonHandle(const cvkJsonContext* pContext, const char* pHandleType, const cvkJsonValue* pValue, uint32_t handleByteCount, void* pHandle);
@@ -2118,9 +2122,11 @@ uint32_t cvkGetPipelineJsonHandleIndex(uint32_t count, const uint64_t* pIds, uin
 void cvkCreatePipelineJsonObjects(VkDevice device, VkPipelineCache pipelineCache, const cvkPipelineJson* pPipeline, const void* pPipelineNext, PFN_cvkResolveJsonHandle resolveExternal, void* pUser, cvkArena* pArena, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
 void cvkCreatePipelineFromJson(VkDevice device, VkPipelineCache pipelineCache, const char* pJsonText, size_t jsonLength, cvkJsonValue* pJsonValues, uint32_t jsonValueCapacity, cvkArena* pArena, PFN_cvkResolveJsonHandle resolveExternal, void* pUser, const VkAllocationCallbacks* pAllocator, cvkPipelineJson* pPipeline, cvkPipelineJsonObjects* pObjects);
 
-void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevice device, VkPipelineCache pipelineCache, const char* pJsonText, size_t jsonLength, cvkJsonValue* pJsonValues, uint32_t jsonValueCapacity, cvkArena* pArena, VkShaderModule vertex, VkShaderModule fragment, VkRenderPass externalRenderPass, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
-void cvkCreateGraphicsPipelineFromJson(VkDevice device, VkPipelineCache pipelineCache, const char* pJsonText, size_t jsonLength, cvkJsonValue* pJsonValues, uint32_t jsonValueCapacity, cvkArena* pArena, size_t vertexCodeSize, const uint32_t* pVertexCode, size_t fragmentCodeSize, const uint32_t* pFragmentCode, VkRenderPass externalRenderPass, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
-void cvkCreateBicubicScalingPipeline(VkDevice device, VkPipelineCache pipelineCache, cvkJsonValue* pJsonValues, uint32_t jsonValueCapacity, cvkArena* pArena, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
+void cvkCreateRenderPassFromPipelineJson(VkDevice device, const char* pJsonText, size_t jsonLength, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass);
+
+void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevice device, VkPipelineCache pipelineCache, const char* pJsonText, size_t jsonLength, VkShaderModule vertex, VkShaderModule fragment, VkRenderPass externalRenderPass, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
+void cvkCreateGraphicsPipelineFromJson(VkDevice device, VkPipelineCache pipelineCache, const char* pJsonText, size_t jsonLength, size_t vertexCodeSize, const uint32_t* pVertexCode, size_t fragmentCodeSize, const uint32_t* pFragmentCode, VkRenderPass externalRenderPass, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
+void cvkCreateBicubicScalingPipeline(VkDevice device, VkPipelineCache pipelineCache, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
 void cvkCmdDrawFullscreenQuadWithBicubicScaling(VkCommandBuffer commandBuffer, VkPipeline pipeline, VkPipelineLayout layout, VkDescriptorSet descriptorSet, VkExtent2D sourceExtent, VkExtent2D contentExtent, VkExtent2D backingExtent, float blend);
 void cvkCmdExecuteBicubicScalingRenderPassOnExternalImage(VkCommandBuffer commandBuffer, VkImageLayout externalLayout, VkImageLayout renderLayout, uint32_t queueFamilyIndex, VkImage image, VkImageSubresourceRange subresourceRange, VkRenderPass renderPass, VkFramebuffer framebuffer, VkExtent2D backingExtent, VkPipeline pipeline, VkPipelineLayout layout, VkDescriptorSet descriptorSet, VkExtent2D sourceExtent, VkExtent2D contentExtent, float blend);
 /* clang-format on */

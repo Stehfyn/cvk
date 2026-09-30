@@ -11794,17 +11794,17 @@ extern SCVK_FORCE_INLINE void scvkCreateSignaledFence(VkDevice device, const voi
 {
     scvkCreateFence(device, pFenceNext, (VkFenceCreateFlags)VK_FENCE_CREATE_SIGNALED_BIT, pAllocator, pFence);
 }
-extern SCVK_FORCE_INLINE VkResult scvkWaitForFenceIndefinitely(VkDevice device, VkFence fence)
+extern SCVK_FORCE_INLINE void scvkWaitForFenceIndefinitely(VkDevice device, VkFence fence)
 {
-    return scvkWaitForFence(device, fence, VK_TRUE, UINT64_MAX);
+    SCVK_CHECK(scvkWaitForFence(device, fence, VK_TRUE, VK_INFINITE));
 }
 extern SCVK_FORCE_INLINE VkResult scvkWaitForAllFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences)
 {
-    return scvkWaitForFences(device, fenceCount, pFences, VK_TRUE, UINT64_MAX);
+    return scvkWaitForFences(device, fenceCount, pFences, VK_TRUE, VK_INFINITE);
 }
 extern SCVK_FORCE_INLINE VkResult scvkWaitForAnyFence(VkDevice device, uint32_t fenceCount, const VkFence* pFences)
 {
-    return scvkWaitForFences(device, fenceCount, pFences, VK_FALSE, UINT64_MAX);
+    return scvkWaitForFences(device, fenceCount, pFences, VK_FALSE, VK_INFINITE);
 }
 extern SCVK_FORCE_INLINE void scvkCreateTimelineSemaphore(VkDevice                     device,
                                                           const void*                  pSemaphoreNext,
@@ -11821,7 +11821,7 @@ extern SCVK_FORCE_INLINE VkResult scvkWaitSemaphore(VkDevice device, const void*
 }
 extern SCVK_FORCE_INLINE VkResult scvkWaitSemaphoreIndefinitely(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flags, VkSemaphore semaphore, uint64_t value)
 {
-    return scvkWaitSemaphore(device, pNext, flags, UINT64_MAX, semaphore, value);
+    return scvkWaitSemaphore(device, pNext, flags, VK_INFINITE, semaphore, value);
 }
 extern SCVK_FORCE_INLINE void scvkBeginOneTimeCommandBuffer(VkCommandBuffer commandBuffer, const void* pNext)
 {
@@ -12518,7 +12518,7 @@ extern SCVK_FORCE_INLINE void scvkCreateColorRenderPass(VkDevice                
 }
 extern SCVK_FORCE_INLINE VkResult scvkAcquireNextImageIndefinitely(VkDevice device, VkSwapchainKHR swapchain, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex)
 {
-    return scvkAcquireNextImage(device, swapchain, UINT64_MAX, semaphore, fence, pImageIndex);
+    return scvkAcquireNextImage(device, swapchain, VK_INFINITE, semaphore, fence, pImageIndex);
 }
 extern SCVK_FORCE_INLINE VkBool32 scvkGetPhysicalDeviceExternalBufferImportSupport(VkPhysicalDevice                   physicalDevice,
                                                                                    const void*                        pExternalBufferInfoNext,
@@ -13045,25 +13045,6 @@ extern SCVK_FORCE_INLINE void scvkCmdTransitionUndefinedImageToSampledImage(VkCo
                         sampledStageMask,
                         (VkDependencyFlags)0);
 }
-extern SCVK_FORCE_INLINE void scvkCmdTransitionSampledImageToColorAttachment(VkCommandBuffer         commandBuffer,
-                                                                             VkImageLayout           sampledLayout,
-                                                                             VkImageLayout           renderLayout,
-                                                                             VkImage                 image,
-                                                                             VkImageSubresourceRange subresourceRange,
-                                                                             VkPipelineStageFlags    sampledStageMask)
-{
-    scvkCmdImageBarrier(commandBuffer,
-                        NULL,
-                        (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                        (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                        sampledLayout,
-                        renderLayout,
-                        image,
-                        subresourceRange,
-                        sampledStageMask,
-                        (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                        (VkDependencyFlags)0);
-}
 extern SCVK_FORCE_INLINE void scvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  commandBuffer,
                                                                VkRenderPass     renderPass,
                                                                VkFramebuffer    framebuffer,
@@ -13085,32 +13066,6 @@ extern SCVK_FORCE_INLINE void scvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  
     scvkCmdBindGraphicsDescriptorSets(commandBuffer, layout, 0, 1, &descriptorSet, 0, NULL);
     scvkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
     scvkCmdEndRenderPass(commandBuffer);
-}
-extern SCVK_FORCE_INLINE void scvkCmdExecuteFullscreenQuadRenderPassToSampledImage(VkCommandBuffer         commandBuffer,
-                                                                                   VkImage                 image,
-                                                                                   VkImageSubresourceRange subresourceRange,
-                                                                                   VkImageLayout           renderLayout,
-                                                                                   VkImageLayout           sampledLayout,
-                                                                                   VkPipelineStageFlags    sampledStageMask,
-                                                                                   VkRenderPass            renderPass,
-                                                                                   VkFramebuffer           framebuffer,
-                                                                                   VkExtent2D              extent,
-                                                                                   VkPipeline              pipeline,
-                                                                                   VkPipelineLayout        layout,
-                                                                                   VkDescriptorSet         descriptorSet)
-{
-    scvkCmdExecuteGraphicsRenderPass(commandBuffer, renderPass, framebuffer, extent, pipeline, layout, descriptorSet, 4);
-    scvkCmdImageBarrier(commandBuffer,
-                        NULL,
-                        (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                        (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                        renderLayout,
-                        sampledLayout,
-                        image,
-                        subresourceRange,
-                        (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                        sampledStageMask,
-                        (VkDependencyFlags)0);
 }
 extern SCVK_FORCE_INLINE void scvkCmdExecuteGraphicsRenderPassWithPushConstants(VkCommandBuffer  commandBuffer,
                                                                                 VkRenderPass     renderPass,

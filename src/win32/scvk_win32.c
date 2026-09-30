@@ -2,9 +2,15 @@
 
 #include "scvk/scvk.h"
 #include "scvk/win32/scvk_win32.h"
+#include <memoryapi.h>
+#include <minwinbase.h>
+#include <minwindef.h>
+#include <stddef.h>
 #include <stdint.h>
+#include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_sc_core.h>
 #include <vulkan/vulkan_win32.h>
+#include <winnt.h>
 
 extern SCVK_FORCE_INLINE void scvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display)
 {
@@ -14,4 +20,101 @@ extern SCVK_FORCE_INLINE void scvkGetWinrtDisplayNV(VkPhysicalDevice physicalDev
 {
     SCVK_CHECK(vkGetWinrtDisplayNV(physicalDevice, deviceRelativeId, pDisplay));
     SCVK_ASSERT(VK_NULL_HANDLE != (*pDisplay));
+}
+typedef struct scvkWin32AllocationHeader
+{
+    void*  pBase;
+    size_t size;
+} scvkWin32AllocationHeader;
+static SCVK_FORCE_INLINE void* VKAPI_CALL scvkWin32Allocate(void* pUserData, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
+{
+    scvkWin32AllocationHeader* pHeader;
+    void*                      pBase;
+    void*                      pMemory;
+    size_t                     reserveSize;
+    size_t                     overhead;
+    size_t                     padding;
+    VkBool32                   sizeFits;
+    VkBool32                   hasSize;
+
+    (void)pUserData;
+    (void)allocationScope;
+    overhead    = sizeof(scvkWin32AllocationHeader) + alignment;
+    reserveSize = size + overhead;
+    sizeFits    = reserveSize >= size;
+    hasSize     = 0 < size;
+    reserveSize *= (size_t)sizeFits;
+    reserveSize *= (size_t)hasSize;
+
+    pBase = VirtualAlloc(NULL, reserveSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+
+    pMemory = NULL;
+    if (NULL != pBase)
+    {
+        padding        = (alignment - (((uintptr_t)pBase + sizeof(scvkWin32AllocationHeader)) % alignment)) % alignment;
+        pMemory        = (uint8_t*)pBase + sizeof(scvkWin32AllocationHeader) + padding;
+        pHeader        = (scvkWin32AllocationHeader*)pMemory - 1;
+        pHeader->pBase = pBase;
+        pHeader->size  = size;
+    }
+
+    return pMemory;
+}
+static SCVK_FORCE_INLINE void VKAPI_CALL scvkWin32Free(void* pUserData, void* pMemory)
+{
+    scvkWin32AllocationHeader* pHeader;
+    BOOL                       released;
+
+    (void)pUserData;
+    if (NULL != pMemory)
+    {
+        pHeader = (scvkWin32AllocationHeader*)pMemory - 1;
+
+        released = VirtualFree(pHeader->pBase, 0, MEM_RELEASE);
+        SCVK_ASSERT(released);
+    }
+}
+static SCVK_FORCE_INLINE void* VKAPI_CALL scvkWin32Reallocate(void* pUserData, void* pOriginal, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
+{
+    scvkWin32AllocationHeader* pHeader;
+    void*                      pMemory;
+    size_t                     copySize;
+    size_t                     originalSize;
+
+    pMemory = NULL;
+    if (NULL != pOriginal)
+    {
+        pHeader      = (scvkWin32AllocationHeader*)pOriginal - 1;
+        originalSize = pHeader->size;
+
+        pMemory = scvkWin32Allocate(pUserData, size, alignment, allocationScope);
+        if (NULL != pMemory)
+        {
+            copySize = (size < originalSize) ? size : originalSize;
+
+            CopyMemory(pMemory, pOriginal, copySize);
+            scvkWin32Free(pUserData, pOriginal);
+        }
+        else if (0 == size)
+        {
+            scvkWin32Free(pUserData, pOriginal);
+        }
+    }
+    else
+    {
+        pMemory = scvkWin32Allocate(pUserData, size, alignment, allocationScope);
+    }
+
+    return pMemory;
+}
+extern SCVK_FORCE_INLINE void scvkInitWin32AllocationCallbacks(VkAllocationCallbacks* pCallbacks)
+{
+    SCVK_ASSERT(NULL != pCallbacks);
+
+    pCallbacks->pUserData             = NULL;
+    pCallbacks->pfnAllocation         = scvkWin32Allocate;
+    pCallbacks->pfnReallocation       = scvkWin32Reallocate;
+    pCallbacks->pfnFree               = scvkWin32Free;
+    pCallbacks->pfnInternalAllocation = NULL;
+    pCallbacks->pfnInternalFree       = NULL;
 }

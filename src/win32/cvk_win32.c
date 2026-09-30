@@ -6,9 +6,15 @@
 #include "cvk/cvk.h"
 #include "cvk/win32/cvk_win32.h"
 #include <volk.h>
+#include <memoryapi.h>
+#include <minwinbase.h>
+#include <minwindef.h>
+#include <stddef.h>
 #include <stdint.h>
+#include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_win32.h>
+#include <winnt.h>
 
 extern CVK_FORCE_INLINE void cvkInitD3D12FenceSubmitInfo(VkD3D12FenceSubmitInfoKHR* pInfo,
                                                          const void*                pNext,
@@ -1082,6 +1088,103 @@ extern CVK_FORCE_INLINE VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesFullScre
     (*pSurfaceCapabilitiesFullScreenExclusive) = surface_capabilities_full_screen_exclusive;
 
     return result;
+}
+typedef struct cvkWin32AllocationHeader
+{
+    void*  pBase;
+    size_t size;
+} cvkWin32AllocationHeader;
+static CVK_FORCE_INLINE void* VKAPI_CALL cvkWin32Allocate(void* pUserData, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
+{
+    cvkWin32AllocationHeader* pHeader;
+    void*                     pBase;
+    void*                     pMemory;
+    size_t                    reserveSize;
+    size_t                    overhead;
+    size_t                    padding;
+    VkBool32                  sizeFits;
+    VkBool32                  hasSize;
+
+    (void)pUserData;
+    (void)allocationScope;
+    overhead    = sizeof(cvkWin32AllocationHeader) + alignment;
+    reserveSize = size + overhead;
+    sizeFits    = reserveSize >= size;
+    hasSize     = 0 < size;
+    reserveSize *= (size_t)sizeFits;
+    reserveSize *= (size_t)hasSize;
+
+    pBase = VirtualAlloc(NULL, reserveSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+
+    pMemory = NULL;
+    if (NULL != pBase)
+    {
+        padding        = (alignment - (((uintptr_t)pBase + sizeof(cvkWin32AllocationHeader)) % alignment)) % alignment;
+        pMemory        = (uint8_t*)pBase + sizeof(cvkWin32AllocationHeader) + padding;
+        pHeader        = (cvkWin32AllocationHeader*)pMemory - 1;
+        pHeader->pBase = pBase;
+        pHeader->size  = size;
+    }
+
+    return pMemory;
+}
+static CVK_FORCE_INLINE void VKAPI_CALL cvkWin32Free(void* pUserData, void* pMemory)
+{
+    cvkWin32AllocationHeader* pHeader;
+    BOOL                      released;
+
+    (void)pUserData;
+    if (NULL != pMemory)
+    {
+        pHeader = (cvkWin32AllocationHeader*)pMemory - 1;
+
+        released = VirtualFree(pHeader->pBase, 0, MEM_RELEASE);
+        CVK_ASSERT(released);
+    }
+}
+static CVK_FORCE_INLINE void* VKAPI_CALL cvkWin32Reallocate(void* pUserData, void* pOriginal, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
+{
+    cvkWin32AllocationHeader* pHeader;
+    void*                     pMemory;
+    size_t                    copySize;
+    size_t                    originalSize;
+
+    pMemory = NULL;
+    if (NULL != pOriginal)
+    {
+        pHeader      = (cvkWin32AllocationHeader*)pOriginal - 1;
+        originalSize = pHeader->size;
+
+        pMemory = cvkWin32Allocate(pUserData, size, alignment, allocationScope);
+        if (NULL != pMemory)
+        {
+            copySize = (size < originalSize) ? size : originalSize;
+
+            CopyMemory(pMemory, pOriginal, copySize);
+            cvkWin32Free(pUserData, pOriginal);
+        }
+        else if (0 == size)
+        {
+            cvkWin32Free(pUserData, pOriginal);
+        }
+    }
+    else
+    {
+        pMemory = cvkWin32Allocate(pUserData, size, alignment, allocationScope);
+    }
+
+    return pMemory;
+}
+extern CVK_FORCE_INLINE void cvkInitWin32AllocationCallbacks(VkAllocationCallbacks* pCallbacks)
+{
+    CVK_ASSERT(NULL != pCallbacks);
+
+    pCallbacks->pUserData             = NULL;
+    pCallbacks->pfnAllocation         = cvkWin32Allocate;
+    pCallbacks->pfnReallocation       = cvkWin32Reallocate;
+    pCallbacks->pfnFree               = cvkWin32Free;
+    pCallbacks->pfnInternalAllocation = NULL;
+    pCallbacks->pfnInternalFree       = NULL;
 }
 extern CVK_FORCE_INLINE void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice,
                                                        VkDevice                           device,

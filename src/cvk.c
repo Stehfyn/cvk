@@ -46939,17 +46939,17 @@ extern CVK_FORCE_INLINE void cvkCreateSignaledFence(VkDevice device, const void*
 {
     cvkCreateFence(device, pFenceNext, (VkFenceCreateFlags)VK_FENCE_CREATE_SIGNALED_BIT, pAllocator, pFence);
 }
-extern CVK_FORCE_INLINE VkResult cvkWaitForFenceIndefinitely(VkDevice device, VkFence fence)
+extern CVK_FORCE_INLINE void cvkWaitForFenceIndefinitely(VkDevice device, VkFence fence)
 {
-    return cvkWaitForFence(device, fence, VK_TRUE, UINT64_MAX);
+    CVK_CHECK(cvkWaitForFence(device, fence, VK_TRUE, VK_INFINITE));
 }
 extern CVK_FORCE_INLINE VkResult cvkWaitForAllFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences)
 {
-    return cvkWaitForFences(device, fenceCount, pFences, VK_TRUE, UINT64_MAX);
+    return cvkWaitForFences(device, fenceCount, pFences, VK_TRUE, VK_INFINITE);
 }
 extern CVK_FORCE_INLINE VkResult cvkWaitForAnyFence(VkDevice device, uint32_t fenceCount, const VkFence* pFences)
 {
-    return cvkWaitForFences(device, fenceCount, pFences, VK_FALSE, UINT64_MAX);
+    return cvkWaitForFences(device, fenceCount, pFences, VK_FALSE, VK_INFINITE);
 }
 extern CVK_FORCE_INLINE void cvkCreateTimelineSemaphore(VkDevice                     device,
                                                         const void*                  pSemaphoreNext,
@@ -46966,7 +46966,7 @@ extern CVK_FORCE_INLINE VkResult cvkWaitSemaphore(VkDevice device, const void* p
 }
 extern CVK_FORCE_INLINE VkResult cvkWaitSemaphoreIndefinitely(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flags, VkSemaphore semaphore, uint64_t value)
 {
-    return cvkWaitSemaphore(device, pNext, flags, UINT64_MAX, semaphore, value);
+    return cvkWaitSemaphore(device, pNext, flags, VK_INFINITE, semaphore, value);
 }
 extern CVK_FORCE_INLINE void cvkBeginOneTimeCommandBuffer(VkCommandBuffer commandBuffer, const void* pNext)
 {
@@ -47903,7 +47903,7 @@ extern CVK_FORCE_INLINE void cvkCreateColorRenderPass(VkDevice                  
 }
 extern CVK_FORCE_INLINE VkResult cvkAcquireNextImageIndefinitely(VkDevice device, VkSwapchainKHR swapchain, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex)
 {
-    return cvkAcquireNextImage(device, swapchain, UINT64_MAX, semaphore, fence, pImageIndex);
+    return cvkAcquireNextImage(device, swapchain, VK_INFINITE, semaphore, fence, pImageIndex);
 }
 extern CVK_FORCE_INLINE VkBool32 cvkGetPhysicalDeviceExternalBufferImportSupport(VkPhysicalDevice                   physicalDevice,
                                                                                  const void*                        pExternalBufferInfoNext,
@@ -50342,25 +50342,6 @@ extern CVK_FORCE_INLINE void cvkCmdTransitionUndefinedImageToSampledImage(VkComm
                        sampledStageMask,
                        (VkDependencyFlags)0);
 }
-extern CVK_FORCE_INLINE void cvkCmdTransitionSampledImageToColorAttachment(VkCommandBuffer         commandBuffer,
-                                                                           VkImageLayout           sampledLayout,
-                                                                           VkImageLayout           renderLayout,
-                                                                           VkImage                 image,
-                                                                           VkImageSubresourceRange subresourceRange,
-                                                                           VkPipelineStageFlags    sampledStageMask)
-{
-    cvkCmdImageBarrier(commandBuffer,
-                       NULL,
-                       (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                       (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                       sampledLayout,
-                       renderLayout,
-                       image,
-                       subresourceRange,
-                       sampledStageMask,
-                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                       (VkDependencyFlags)0);
-}
 extern CVK_FORCE_INLINE void cvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  commandBuffer,
                                                              VkRenderPass     renderPass,
                                                              VkFramebuffer    framebuffer,
@@ -50382,32 +50363,6 @@ extern CVK_FORCE_INLINE void cvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  co
     cvkCmdBindGraphicsDescriptorSets(commandBuffer, layout, 0, 1, &descriptorSet, 0, NULL);
     cvkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
     cvkCmdEndRenderPass(commandBuffer);
-}
-extern CVK_FORCE_INLINE void cvkCmdExecuteFullscreenQuadRenderPassToSampledImage(VkCommandBuffer         commandBuffer,
-                                                                                 VkImage                 image,
-                                                                                 VkImageSubresourceRange subresourceRange,
-                                                                                 VkImageLayout           renderLayout,
-                                                                                 VkImageLayout           sampledLayout,
-                                                                                 VkPipelineStageFlags    sampledStageMask,
-                                                                                 VkRenderPass            renderPass,
-                                                                                 VkFramebuffer           framebuffer,
-                                                                                 VkExtent2D              extent,
-                                                                                 VkPipeline              pipeline,
-                                                                                 VkPipelineLayout        layout,
-                                                                                 VkDescriptorSet         descriptorSet)
-{
-    cvkCmdExecuteGraphicsRenderPass(commandBuffer, renderPass, framebuffer, extent, pipeline, layout, descriptorSet, 4);
-    cvkCmdImageBarrier(commandBuffer,
-                       NULL,
-                       (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                       (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                       renderLayout,
-                       sampledLayout,
-                       image,
-                       subresourceRange,
-                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                       sampledStageMask,
-                       (VkDependencyFlags)0);
 }
 extern CVK_FORCE_INLINE void cvkCmdExecuteGraphicsRenderPassWithPushConstants(VkCommandBuffer  commandBuffer,
                                                                               VkRenderPass     renderPass,

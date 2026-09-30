@@ -4,7 +4,7 @@
 
 #include "video.h"
 #include "os/os_compiler.h"
-#include "cdx11.h"
+#include "cd3d11.h"
 #include "cdxgi.h"
 #include "cmf.h"
 #include "os/win32/os_text.h"
@@ -550,7 +550,7 @@ static void ValidateDecodedDevice(VideoStream* stream, ID3D11Texture2D* texture)
     ID3D11Device* decodedDevice;
     bool_t        decoderUsesRenderDevice;
 
-    cdx11DeviceChildGetDevice((ID3D11DeviceChild*)texture, &decodedDevice);
+    cd3d11DeviceChildGetDevice((ID3D11DeviceChild*)texture, &decodedDevice);
     decoderUsesRenderDevice = (decodedDevice == stream->pDevice);
     LOGASSERT(decoderUsesRenderDevice);
     cdxgiUnknownRelease((IUnknown*)decodedDevice);
@@ -582,7 +582,7 @@ static BOOL UploadSample(VideoStream* pStream, IMFSample* pSample, int slot)
             LPCTSTR              binding;
 
             ValidateDecodedDevice(pStream, pTexture);
-            cdx11Texture2DGetDesc(pTexture, &desc);
+            cd3d11Texture2DGetDesc(pTexture, &desc);
             binding = TEXT("no\n");
             if (desc.BindFlags & D3D11_BIND_DECODER)
             {
@@ -602,7 +602,7 @@ static BOOL UploadSample(VideoStream* pStream, IMFSample* pSample, int slot)
         }
 #endif
         VideoRenderer_BeginUpload(pStream->pRenderer, slot);
-        cdx11DeviceContextCopySubresourceRegion(pStream->pContext, (ID3D11Resource*)VideoRenderer_GetFrame(pStream->pRenderer, slot), 0, 0, 0, 0, (ID3D11Resource*)pTexture, subresource, NULL);
+        cd3d11DeviceContextCopySubresourceRegion(pStream->pContext, (ID3D11Resource*)VideoRenderer_GetFrame(pStream->pRenderer, slot), 0, 0, 0, 0, (ID3D11Resource*)pTexture, subresource, NULL);
         VideoRenderer_EndUpload(pStream->pRenderer, slot);
         RELEASE(pTexture);
         RELEASE(pDXGIBuffer);
@@ -623,7 +623,7 @@ static BOOL UploadSample(VideoStream* pStream, IMFSample* pSample, int slot)
         if (pitch > 0)
         {
             VideoRenderer_BeginUpload(pStream->pRenderer, slot);
-            cdx11DeviceContextUpdateSubresource(pStream->pContext, (ID3D11Resource*)VideoRenderer_GetFrame(pStream->pRenderer, slot), 0, NULL, pScanline0, (UINT)pitch, 0);
+            cd3d11DeviceContextUpdateSubresource(pStream->pContext, (ID3D11Resource*)VideoRenderer_GetFrame(pStream->pRenderer, slot), 0, NULL, pScanline0, (UINT)pitch, 0);
             VideoRenderer_EndUpload(pStream->pRenderer, slot);
             fCopied = TRUE;
         }

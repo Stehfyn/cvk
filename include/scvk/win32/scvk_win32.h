@@ -10,6 +10,10 @@
 /* clang-format off */
 void scvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display);
 void scvkGetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay);
+
+
+
+void scvkInitWin32AllocationCallbacks(VkAllocationCallbacks* pCallbacks);
 /* clang-format on */
 
 #endif /* SCVK_WIN32_H */

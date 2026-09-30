@@ -19,8 +19,15 @@ set(pipeline_header "${CMAKE_CURRENT_BINARY_DIR}/nv12_pipeline_json.h")
 add_custom_command(OUTPUT "${pipeline_header}"
     COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/embed_text.py"
             "${CMAKE_CURRENT_SOURCE_DIR}/shaders/nv12.pipeline.json"
-            "${pipeline_header}" "nv12_pipeline_json"
+            "${pipeline_header}" "c_vkNv12PipelineJson"
     DEPENDS shaders/nv12.pipeline.json embed_text.py VERBATIM)
+
+set(output_pass_header "${CMAKE_CURRENT_BINARY_DIR}/output_renderpass_json.h")
+add_custom_command(OUTPUT "${output_pass_header}"
+    COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/embed_text.py"
+            "${CMAKE_CURRENT_SOURCE_DIR}/shaders/output.renderpass.json"
+            "${output_pass_header}" "c_vkOutputRenderPassJson"
+    DEPENDS shaders/output.renderpass.json embed_text.py VERBATIM)
 
 set(plane_shader_header "${CMAKE_CURRENT_BINARY_DIR}/plane_copy_hlsl.h")
 add_custom_command(OUTPUT "${plane_shader_header}"
@@ -29,14 +36,14 @@ add_custom_command(OUTPUT "${plane_shader_header}"
             "${plane_shader_header}" "plane_copy_hlsl"
     DEPENDS shaders/plane_copy.hlsl embed_text.py VERBATIM)
 
-add_library(immersive-video STATIC video.c video.h renderer.c renderer.h ${shader_headers} "${pipeline_header}" "${plane_shader_header}")
+add_library(immersive-video STATIC video.c video.h renderer.c renderer.h ${shader_headers} "${pipeline_header}" "${output_pass_header}" "${plane_shader_header}")
 if(MSVC)
     target_compile_options(immersive-video PRIVATE /GS- /Zl /wd4711)
 endif()
 target_include_directories(immersive-video PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 target_include_directories(immersive-video SYSTEM PUBLIC "${reference_dir}")
-target_link_libraries(immersive-video PUBLIC cvk volk::volk cdx11 cdxgi cmf vk-diagnostic PRIVATE d3dcompiler)
+target_link_libraries(immersive-video PUBLIC cvk volk::volk cd3d11 cdxgi cmf vk-diagnostic PRIVATE d3dcompiler)
 option(CVK_DEMO_UNICODE "Select Unicode for the generic Win32 demo interfaces" ON)
 if(CVK_DEMO_UNICODE)
     target_compile_definitions(immersive-video PUBLIC UNICODE _UNICODE)
@@ -59,7 +66,7 @@ add_library(immersive-opus3-window STATIC
     "${opus3_dir}/window.c")
 target_include_directories(immersive-opus3-window PUBLIC "${opus3_dir}")
 target_compile_definitions(immersive-opus3-window PRIVATE UNICODE _UNICODE)
-target_link_libraries(immersive-opus3-window PUBLIC cdcomp cd2d cdx11 cdxgi)
+target_link_libraries(immersive-opus3-window PUBLIC cdcomp cd2d cd3d11 cdxgi)
 target_compile_options(immersive-opus3-window PRIVATE /GS- /Zl)
 cvk_external_target(immersive-opus3-window)
 add_executable(ImmersiveWindowDemo WIN32
@@ -109,7 +116,7 @@ set(CVK_DEMO_TEST_VIDEO "" CACHE FILEPATH "Video fixture for the optional CDX/CV
 if(CVK_DEMO_TEST_VIDEO)
     add_library(immersive-reference-video STATIC "${reference_dir}/video.c")
     cvk_external_target(immersive-reference-video)
-    target_link_libraries(immersive-reference-video PUBLIC cdx11 cdxgi cmf d3dcompiler)
+    target_link_libraries(immersive-reference-video PUBLIC cd3d11 cdxgi cmf d3dcompiler)
     target_compile_definitions(immersive-reference-video PRIVATE
         VideoStream_Open=ReferenceVideoStream_Open VideoStream_Close=ReferenceVideoStream_Close
         VideoStream_GetInfo=ReferenceVideoStream_GetInfo VideoStream_NextFrame=ReferenceVideoStream_NextFrame

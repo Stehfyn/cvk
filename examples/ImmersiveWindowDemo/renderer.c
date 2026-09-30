@@ -6,9 +6,8 @@
 #include <vulkan/vk_platform.h>
 #include "renderer.h"
 #include "os/os_compiler.h"
-#include "cdx11.h"
+#include "cd3d11.h"
 #include "cdxgi.h"
-#include <d3dcompiler.h>
 #include <volk.h>
 #include "cvk/win32/cvk_win32.h"
 #include "cvk/cvk.h"
@@ -18,20 +17,15 @@
 #include <stdint.h>
 #include <limits.h>
 #include <d3d11.h>
-#include <d3dcommon.h>
 #include <dxgi.h>
 #include <dxgi1_2.h>
 #include <dxgiformat.h>
-#include <dxgicommon.h>
 #include <minwindef.h>
-#include <windef.h>
 #include <minwinbase.h>
 #include <winnt.h>
 #include <Unknwnbase.h>
-#include <winerror.h>
 #include <debugapi.h>
 #include <WinUser.h>
-#include <wingdi.h>
 #include <processthreadsapi.h>
 #include <heapapi.h>
 #include <handleapi.h>
@@ -45,6 +39,7 @@
 #include "fullscreen_vert.h"
 #include "nv12_frag.h"
 #include "nv12_pipeline_json.h"
+#include "output_renderpass_json.h"
 #include "plane_copy_hlsl.h"
 
 /*=================================================================================================
@@ -63,6 +58,11 @@ typedef enum VideoPass
     VIDEO_PASS_BICUBIC,
     VIDEO_PASS_COUNT
 } VideoPass;
+
+enum ValidationTextCapacity
+{
+    VALIDATION_TEXT_CAPACITY = 1024
+};
 
 typedef struct Image
 {
@@ -90,6 +90,7 @@ struct VideoRenderer
     VkInstance            instance;
     VkPhysicalDevice      physical;
     VkDevice              device;
+    VkAllocationCallbacks allocator;
     VkQueue               queue;
     uint32_t              family;
     VkCommandPool         pool;
@@ -98,7 +99,8 @@ struct VideoRenderer
     VkCommandBuffer       scaleCommand;
     VkCommandBuffer       copyCommands[VIDEO_RENDERER_FRAMES];
     VkFence               fence;
-    VkRenderPass          renderPass;
+    VkRenderPass          convertedRenderPass;
+    VkRenderPass          outputRenderPass;
     VkDescriptorPool      descriptors;
     VkDescriptorSetLayout setLayouts[VIDEO_PASS_COUNT];
     VkPipelineLayout      layouts[VIDEO_PASS_COUNT];
@@ -131,10 +133,6 @@ static CVK_NORETURN void Fail(LPCTSTR message)
 #ifdef CVK_DEMO_VALIDATION
 static VKAPI_ATTR VkBool32 VKAPI_CALL Validation(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT* data, void* user)
 {
-    enum
-    {
-        VALIDATION_TEXT_CAPACITY = 1024
-    };
     uint16_t unicode[VALIDATION_TEXT_CAPACITY];
     TCHAR    native[VALIDATION_TEXT_CAPACITY];
     int required;
@@ -257,9 +255,7 @@ static void CreateSharedImage(VideoRenderer* r, Image* image, UINT width, UINT h
 {
     VkImageUsageFlags usage  = output ? (VkImageUsageFlags)VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT : (VkImageUsageFlags)VK_IMAGE_USAGE_SAMPLED_BIT;
     VkExtent2D        extent;
-    IDXGIResource1*   resource;
     HANDLE            handle;
-    DXGI_SAMPLE_DESC  sample = {1, 0};
 
     cvkInitExtent2D(&extent, width, height);
     if (!cvkGetPhysicalDeviceD3D11Texture2DImportSupport(r->physical, format, usage))
@@ -268,29 +264,13 @@ static void CreateSharedImage(VideoRenderer* r, Image* image, UINT width, UINT h
     }
     image->width  = width;
     image->height = height;
-    cdx11DeviceCreateTexture2D(r->d3d,
-                               width,
-                               height,
-                               1,
-                               1,
-                               d3dFormat,
-                               sample,
-                               D3D11_USAGE_DEFAULT,
-                               D3D11_BIND_RENDER_TARGET,
-                               0,
-                               D3D11_RESOURCE_MISC_SHARED_NTHANDLE | D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX,
-                               NULL,
-                               &image->texture);
-    cdxgiUnknownQueryInterfaceAsKeyedMutex((IUnknown*)image->texture, &image->mutex);
-    cdxgiUnknownQueryInterfaceAsResource1((IUnknown*)image->texture, &resource);
-    cdxgiResourceCreateReadWriteSharedHandle(resource, &handle);
-    cdxgiUnknownRelease((IUnknown*)resource);
+    cd3d11SetupSharedKeyedMutexTexture2D(r->d3d, width, height, d3dFormat, D3D11_BIND_RENDER_TARGET, &image->texture, &image->mutex, &handle);
     cvkImportD3D11Texture2D(r->physical, r->device, format, extent, usage, handle, &image->image, &image->memory);
     CloseHandle(handle);
     cvkCreateWholeImageView2D(r->device, (VkImageAspectFlags)VK_IMAGE_ASPECT_COLOR_BIT, NULL, (VkImageViewCreateFlags)0, image->image, format, NULL, &image->views[0]);
     if (output)
     {
-        cvkCreateSingleAttachmentFramebuffer(r->device, NULL, (VkFramebufferCreateFlags)0, r->renderPass, image->width, image->height, 1, image->views[0], NULL, &image->framebuffer);
+        cvkCreateSingleAttachmentFramebuffer(r->device, NULL, (VkFramebufferCreateFlags)0, r->outputRenderPass, image->width, image->height, 1, image->views[0], NULL, &image->framebuffer);
     }
 }
 
@@ -313,10 +293,7 @@ static FORCE_INLINE void DestroyImage(VideoRenderer* r, Image* image)
  * \par Details:
  *  Releases a previously selected upload plane without a runtime index.
  */
-static FORCE_INLINE void DestroyFramePlane(VideoRenderer*              renderer,
-                                           ID3D11RenderTargetView*     target,
-                                           ID3D11ShaderResourceView*   view,
-                                           Image*                      plane)
+static FORCE_INLINE void DestroyFramePlane(VideoRenderer* renderer, ID3D11RenderTargetView* target,ID3D11ShaderResourceView* view, Image* plane)
 {
     cdxgiUnknownReleaseSafe((IUnknown*)target);
     cdxgiUnknownReleaseSafe((IUnknown*)view);
@@ -331,99 +308,38 @@ static void DestroyFrame(VideoRenderer* r, Frame* frame)
     ZeroMemory(frame, sizeof(*frame));
 }
 
-/* Copy each NV12 plane without filtering or color conversion. D3D resolves its
-** native plane layout; Vulkan receives ordinary R8/RG8 images. No CPU readback. */
-static ID3DBlob* CompilePlaneCopyShader(const char* entry, const char* profile, LPCTSTR message)
-{
-    ID3DBlob* code;
-
-    if (FAILED(D3DCompile(plane_copy_hlsl,
-                          sizeof(plane_copy_hlsl) - 1,
-                          NULL,
-                          NULL,
-                          NULL,
-                          entry,
-                          profile,
-                          D3DCOMPILE_OPTIMIZATION_LEVEL3,
-                          0,
-                          &code,
-                          NULL)))
-    {
-        Fail(message);
-    }
-    return code;
-}
-
-static FORCE_INLINE void CreatePlaneCopyShaders(VideoRenderer* r)
-{
-    ID3DBlob* code;
-
-    code = CompilePlaneCopyShader("VS", "vs_5_0", TEXT("Cannot compile the video plane copy vertex shader."));
-    cdx11SetupVertexShaderFromBlob(r->d3d, code, &r->copyVertex);
-    cdxgiUnknownReleaseSafe((IUnknown*)code);
-    code = CompilePlaneCopyShader("PS", "ps_5_0", TEXT("Cannot compile the video plane copy pixel shader."));
-    cdx11SetupPixelShaderFromBlob(r->d3d, code, &r->copyPixel);
-    cdxgiUnknownReleaseSafe((IUnknown*)code);
-}
-
-enum
-{
-    PIPELINE_JSON_VALUE_CAPACITY = 512,
-    PIPELINE_JSON_ARENA_CAPACITY = 32768
-};
-
-typedef struct PipelineScratch
-{
-    cvkJsonValue           values[PIPELINE_JSON_VALUE_CAPACITY];
-    uint8_t                storage[PIPELINE_JSON_ARENA_CAPACITY];
-    cvkPipelineJsonObjects objects;
-} PipelineScratch;
-
 static void CreatePipeline(VideoRenderer* r, VideoPass pass)
 {
-    PipelineScratch* scratch = (PipelineScratch*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*scratch));
-    cvkArena         arena;
-
-    if (!scratch)
-    {
-        Fail(TEXT("Cannot allocate pipeline JSON scratch space."));
-    }
-    arena = (cvkArena){scratch->storage, sizeof(scratch->storage), 0};
+    cvkPipelineJsonObjects objects;
 
     if (VIDEO_PASS_NV12 == pass)
     {
         cvkCreateGraphicsPipelineFromJson(r->device,
                                           VK_NULL_HANDLE,
-                                          nv12_pipeline_json,
-                                          sizeof(nv12_pipeline_json) - 1,
-                                          scratch->values,
-                                          VK_COUNT_OF(scratch->values),
-                                          &arena,
+                                          c_vkNv12PipelineJson,
+                                          sizeof(c_vkNv12PipelineJson) - 1,
                                           sizeof(fullscreen_vert),
                                           fullscreen_vert,
                                           sizeof(nv12_frag),
                                           nv12_frag,
                                           VK_NULL_HANDLE,
-                                          NULL,
-                                          &scratch->objects);
-        r->renderPass = scratch->objects.renderPass;
+                                          &r->allocator,
+                                          &objects);
+        cvkCreateRenderPassFromPipelineJson(r->device, c_vkOutputRenderPassJson, sizeof(c_vkOutputRenderPassJson) - 1, &r->allocator, &r->outputRenderPass);
     }
     else
     {
-        cvkCreateBicubicScalingPipeline(r->device,
-                                        VK_NULL_HANDLE,
-                                        scratch->values,
-                                        VK_COUNT_OF(scratch->values),
-                                        &arena,
-                                        r->renderPass,
-                                        NULL,
-                                        &scratch->objects);
+        cvkCreateBicubicScalingPipeline(r->device, VK_NULL_HANDLE, r->outputRenderPass, &r->allocator, &objects);
     }
-    r->setLayouts[pass] = scratch->objects.descriptorSetLayouts[0];
-    r->samplers[pass]   = scratch->objects.samplers[0];
-    r->layouts[pass]    = scratch->objects.pipelineLayout;
-    r->pipelines[pass]  = scratch->objects.pipeline;
-    HeapFree(GetProcessHeap(), 0, scratch);
+
+    if (VK_NULL_HANDLE != objects.renderPass)
+    {
+        r->convertedRenderPass = objects.renderPass;
+    }
+    r->setLayouts[pass] = objects.descriptorSetLayouts[0];
+    r->samplers[pass]   = objects.samplers[0];
+    r->layouts[pass]    = objects.pipelineLayout;
+    r->pipelines[pass]  = objects.pipeline;
 }
 
 static void CreatePasses(VideoRenderer* r)
@@ -450,12 +366,9 @@ static void CreatePasses(VideoRenderer* r)
 extern FORCE_INLINE VideoRenderer* VideoRenderer_Create(ID3D11Device* device, ID3D11DeviceContext* context)
 {
     VideoRenderer* renderer = (VideoRenderer*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*renderer));
-    HDC            desktop;
-    int            desktopWidth;
-    int            desktopHeight;
-    bool_t         desktopAvailable;
-    bool_t         desktopReleased;
-    bool_t         desktopSizeValid;
+    IDXGIFactory2*  factory;
+    UINT            desktopWidth;
+    UINT            desktopHeight;
 
     if (!renderer)
     {
@@ -463,28 +376,15 @@ extern FORCE_INLINE VideoRenderer* VideoRenderer_Create(ID3D11Device* device, ID
     }
     renderer->d3d     = device;
     renderer->context = context;
-    CreatePlaneCopyShaders(renderer);
+    cvkInitWin32AllocationCallbacks(&renderer->allocator);
+    cd3d11SetupVertexShaderFromSource(renderer->d3d, plane_copy_hlsl, sizeof(plane_copy_hlsl) - 1, "VS", "vs_5_0", &renderer->copyVertex);
+    cd3d11SetupPixelShaderFromSource(renderer->d3d, plane_copy_hlsl, sizeof(plane_copy_hlsl) - 1, "PS", "ps_5_0", &renderer->copyPixel);
     CreateDevice(renderer);
     CreatePasses(renderer);
-    desktop = GetDC(NULL);
-    desktopAvailable = (NULL != desktop);
-    if (!desktopAvailable)
-    {
-        Fail(TEXT("Cannot query the primary desktop size."));
-    }
-    desktopWidth = GetDeviceCaps(desktop, DESKTOPHORZRES);
-    desktopHeight = GetDeviceCaps(desktop, DESKTOPVERTRES);
-    desktopReleased = (0 != ReleaseDC(NULL, desktop));
-    if (!desktopReleased)
-    {
-        Fail(TEXT("Cannot release the primary desktop DC."));
-    }
-    desktopSizeValid = (0 < desktopWidth) && (0 < desktopHeight);
-    if (!desktopSizeValid)
-    {
-        Fail(TEXT("Cannot query the primary desktop size."));
-    }
-    CreateSharedImage(renderer, &renderer->output, (UINT)desktopWidth, (UINT)desktopHeight, VK_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_B8G8R8A8_UNORM, TRUE);
+    cdxgiCreateFactory2(0U, &factory);
+    cdxgiFactoryGetPrimaryOutputSize((IDXGIFactory1*)factory, &desktopWidth, &desktopHeight);
+    cdxgiUnknownReleaseSafe((IUnknown*)factory);
+    CreateSharedImage(renderer, &renderer->output, desktopWidth, desktopHeight, VK_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_B8G8R8A8_UNORM, TRUE);
     return renderer;
 }
 
@@ -506,8 +406,8 @@ static FORCE_INLINE void CreateFramePlane(VideoRenderer*                renderer
                                           DXGI_FORMAT                   dxgi_format)
 {
     CreateSharedImage(renderer, plane, width, height, vk_format, dxgi_format, FALSE);
-    cdx11DeviceCreateWholeTexture2DShaderResourceView(renderer->d3d, (ID3D11Resource*)frame->texture, dxgi_format, view);
-    cdx11DeviceCreateTexture2DRenderTargetView(renderer->d3d, (ID3D11Resource*)plane->texture, 0, dxgi_format, target);
+    cd3d11DeviceCreateWholeTexture2DShaderResourceView(renderer->d3d, (ID3D11Resource*)frame->texture, dxgi_format, view);
+    cd3d11DeviceCreateTexture2DRenderTargetView(renderer->d3d, (ID3D11Resource*)plane->texture, 0, dxgi_format, target);
     cvkUpdateCombinedImageSamplerDescriptorSet(renderer->device, renderer->samplers[VIDEO_PASS_NV12], plane->views[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, NULL, descriptor, binding, 0);
 }
 
@@ -516,16 +416,10 @@ static FORCE_INLINE void CreateFramePlane(VideoRenderer*                renderer
  * \par Details:
  *  Recreates the two fixed planes of one frame slot.
  */
-static FORCE_INLINE void RecreateFrame(VideoRenderer* renderer,
-                                       Frame*         frame,
-                                       VkDescriptorSet descriptor,
-                                       UINT           width,
-                                       UINT           height)
+static FORCE_INLINE void RecreateFrame(VideoRenderer* renderer, Frame* frame, VkDescriptorSet descriptor, UINT width, UINT height)
 {
-    DXGI_SAMPLE_DESC sample = {1, 0};
-
     DestroyFrame(renderer, frame);
-    cdx11DeviceCreateTexture2D(renderer->d3d, width, height, 1, 1, DXGI_FORMAT_NV12, sample, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, NULL, &frame->texture);
+    cd3d11SetupShaderResourceTexture2D(renderer->d3d, width, height, 1, DXGI_FORMAT_NV12, NULL, &frame->texture);
     CreateFramePlane(renderer, frame, &frame->planes[0], &frame->views[0], &frame->targets[0], descriptor, 0, width, height, VK_FORMAT_R8_UNORM, DXGI_FORMAT_R8_UNORM);
     CreateFramePlane(renderer, frame, &frame->planes[1], &frame->views[1], &frame->targets[1], descriptor, 1, width >> 1, height >> 1, VK_FORMAT_R8G8_UNORM, DXGI_FORMAT_R8G8_UNORM);
 }
@@ -559,7 +453,7 @@ static void RecordCopyCommands(VideoRenderer* r)
                                                              r->family,
                                                              r->output.image,
                                                              colorRange,
-                                                             r->renderPass,
+                                                             r->outputRenderPass,
                                                              r->output.framebuffer,
                                                              extent,
                                                              r->pipelines[VIDEO_PASS_NV12],
@@ -580,7 +474,7 @@ static void RecordCopyCommands(VideoRenderer* r)
 void VideoRenderer_SetSize(VideoRenderer* r, UINT width, UINT height)
 {
     VkExtent2D extent;
-    VkResult   result;
+    bool_t     frameFitsOutput;
     CVK_ASSERT(width && height && !(width & 1) && !(height & 1));
     cvkInitExtent2D(&extent, width, height);
     cvkDeviceWaitIdle(r->device);
@@ -614,7 +508,7 @@ void VideoRenderer_SetSize(VideoRenderer* r, UINT width, UINT height)
     cvkCreateSingleAttachmentFramebuffer(r->device,
                                          NULL,
                                          (VkFramebufferCreateFlags)0,
-                                         r->renderPass,
+                                         r->convertedRenderPass,
                                          r->converted.width,
                                          r->converted.height,
                                          1,
@@ -639,12 +533,10 @@ void VideoRenderer_SetSize(VideoRenderer* r, UINT width, UINT height)
     cvkEndCommandBuffer(r->command);
     cvkResetFence(r->device, r->fence);
     cvkQueueSubmitInfo(r->queue, NULL, 0, NULL, NULL, 1, &r->command, 0, NULL, r->fence);
-    result = cvkWaitForFenceIndefinitely(r->device, r->fence);
-    CVK_ASSERT(VK_SUCCESS == result);
-    if ((width <= r->output.width) && (height <= r->output.height))
-    {
-        RecordCopyCommands(r);
-    }
+    cvkWaitForFenceIndefinitely(r->device, r->fence);
+    frameFitsOutput = (width <= r->output.width) && (height <= r->output.height);
+    CVK_ASSERT(frameFitsOutput);
+    RecordCopyCommands(r);
     r->outputWidth = r->outputHeight = 0;
     r->recordedWidth = r->recordedHeight = 0;
 }
@@ -688,7 +580,7 @@ extern FORCE_INLINE void VideoRenderer_BeginUpload(VideoRenderer* r, int slot)
 void VideoRenderer_EndUpload(VideoRenderer* r, int slot)
 {
     Frame* frame = &r->ring[FrameIndex(slot)];
-    cdx11DeviceContextTransferMultiplanarTexture(r->context,
+    cd3d11DeviceContextTransferMultiplanarTexture(r->context,
                                                  r->copyVertex,
                                                  r->copyPixel,
                                                  frame->views[0],
@@ -699,7 +591,7 @@ void VideoRenderer_EndUpload(VideoRenderer* r, int slot)
                                                  frame->planes[0].height);
     cdxgiKeyedMutexReleaseSync(frame->planes[0].mutex, 0);
     cdxgiKeyedMutexReleaseSync(frame->planes[1].mutex, 0);
-    cdx11DeviceContextFlush(r->context);
+    cd3d11DeviceContextFlush(r->context);
 }
 
 static void RecordDrawCommands(VideoRenderer* r, UINT width, UINT height)
@@ -729,24 +621,13 @@ static void RecordDrawCommands(VideoRenderer* r, UINT width, UINT height)
                                                sampledImages,
                                                colorRange,
                                                (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
-        cvkCmdTransitionSampledImageToColorAttachment(command,
-                                                      VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                                      VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                                      r->converted.image,
-                                                      colorRange,
-                                                      (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
-        cvkCmdExecuteFullscreenQuadRenderPassToSampledImage(command,
-                                                            r->converted.image,
-                                                            colorRange,
-                                                            VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                                            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                                            (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                                                            r->renderPass,
-                                                            r->converted.framebuffer,
-                                                            sourceExtent,
-                                                            r->pipelines[VIDEO_PASS_NV12],
-                                                            r->layouts[VIDEO_PASS_NV12],
-                                                            r->frames[frameIndex]);
+        cvkCmdExecuteFullscreenQuadRenderPass(command,
+                                             r->convertedRenderPass,
+                                             r->converted.framebuffer,
+                                             sourceExtent,
+                                             r->pipelines[VIDEO_PASS_NV12],
+                                             r->layouts[VIDEO_PASS_NV12],
+                                             r->frames[frameIndex]);
         cvkCmdReleaseSampledImagesToExternal(command,
                                              VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                                              VK_IMAGE_LAYOUT_GENERAL,
@@ -761,7 +642,7 @@ static void RecordDrawCommands(VideoRenderer* r, UINT width, UINT height)
                                                              r->family,
                                                              r->output.image,
                                                              colorRange,
-                                                             r->renderPass,
+                                                             r->outputRenderPass,
                                                              r->output.framebuffer,
                                                              backingExtent,
                                                              r->pipelines[VIDEO_PASS_BICUBIC],
@@ -781,7 +662,7 @@ static void RecordDrawCommands(VideoRenderer* r, UINT width, UINT height)
                                                          r->family,
                                                          r->output.image,
                                                          colorRange,
-                                                         r->renderPass,
+                                                         r->outputRenderPass,
                                                          r->output.framebuffer,
                                                          backingExtent,
                                                          r->pipelines[VIDEO_PASS_BICUBIC],
@@ -798,7 +679,6 @@ static void RecordDrawCommands(VideoRenderer* r, UINT width, UINT height)
 void VideoRenderer_Draw(VideoRenderer* r, ID3D11Texture2D* target, int slot, BOOL convert, UINT width, UINT height)
 {
     uint32_t             frame_index;
-    VkResult             result;
     D3D11_TEXTURE2D_DESC desc;
     VkDeviceMemory       syncs[3];
     VkCommandBuffer      command;
@@ -814,7 +694,7 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11Texture2D* target, int slot, BOO
     bool_t               drawCommandsOutdated;
 
     frame_index = FrameIndex(slot);
-    cdx11Texture2DGetDesc(target, &desc);
+    cd3d11Texture2DGetDesc(target, &desc);
     contentFitsBackBuffer   = (width <= desc.Width) && (height <= desc.Height);
     outputMatchesBackBuffer = (r->output.width == desc.Width) && (r->output.height == desc.Height);
     CVK_ASSERT(contentFitsBackBuffer);
@@ -846,18 +726,16 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11Texture2D* target, int slot, BOO
     ** can expose before its geometry paint reaches DWM. The shader preserves
     ** the exact client-area mapping and clamps the extra area to video edges.
     ** A cropped copy leaves undefined pixels in a flip-discard back buffer. */
-    cdx11DeviceContextCopyResourceWithKeyedMutex(r->context, (ID3D11Resource*)target, (ID3D11Resource*)r->output.texture, r->output.mutex, redraw ? 1 : 0, 0);
+    cd3d11DeviceContextCopyResourceWithKeyedMutex(r->context, (ID3D11Resource*)target, (ID3D11Resource*)r->output.texture, r->output.mutex, redraw ? 1 : 0, 0);
     if (redraw)
     {
-        result = cvkWaitForFenceIndefinitely(r->device, r->fence);
-        CVK_ASSERT(VK_SUCCESS == result);
+        cvkWaitForFenceIndefinitely(r->device, r->fence);
     }
 }
 
 void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT subresource, UINT x, UINT y, int slot)
 {
     uint32_t        frame_index;
-    VkResult        result;
     VkDeviceMemory  syncs[3];
     uint64_t        acquireKeys[3] = {0, 0, 0};
     uint64_t        releaseKeys[3] = {1, 0, 0};
@@ -877,9 +755,8 @@ void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT sub
     syncs[2] = r->ring[frame_index].planes[1].memory;
     cvkResetFence(r->device, r->fence);
     cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfo(r->queue, NULL, 3, syncs, acquireKeys, timeouts, 3, syncs, releaseKeys, 0, NULL, NULL, 1, &command, 0, NULL, r->fence);
-    cdx11DeviceContextCopySubresourceRegionWithKeyedMutex(r->context, (ID3D11Resource*)target, subresource, x, y, 0, (ID3D11Resource*)r->output.texture, 0, &source, r->output.mutex, 1, 0);
-    result = cvkWaitForFenceIndefinitely(r->device, r->fence);
-    CVK_ASSERT(VK_SUCCESS == result);
+    cd3d11DeviceContextCopySubresourceRegionWithKeyedMutex(r->context, (ID3D11Resource*)target, subresource, x, y, 0, (ID3D11Resource*)r->output.texture, 0, &source, r->output.mutex, 1, 0);
+    cvkWaitForFenceIndefinitely(r->device, r->fence);
     r->outputWidth = r->outputHeight = 0;
 }
 
@@ -902,12 +779,13 @@ void VideoRenderer_Destroy(VideoRenderer* r)
     cdxgiUnknownRelease((IUnknown*)r->copyVertex);
     for (index = 0; index < VIDEO_PASS_COUNT; ++index)
     {
-        cvkDestroyPipeline(r->device, r->pipelines[index], NULL);
-        cvkDestroyPipelineLayout(r->device, r->layouts[index], NULL);
-        cvkDestroyDescriptorSetLayout(r->device, r->setLayouts[index], NULL);
-        cvkDestroySampler(r->device, r->samplers[index], NULL);
+        cvkDestroyPipeline(r->device, r->pipelines[index], &r->allocator);
+        cvkDestroyPipelineLayout(r->device, r->layouts[index], &r->allocator);
+        cvkDestroyDescriptorSetLayout(r->device, r->setLayouts[index], &r->allocator);
+        cvkDestroySampler(r->device, r->samplers[index], &r->allocator);
     }
-    cvkDestroyRenderPass(r->device, r->renderPass, NULL);
+    cvkDestroyRenderPass(r->device, r->outputRenderPass, &r->allocator);
+    cvkDestroyRenderPass(r->device, r->convertedRenderPass, &r->allocator);
     cvkDestroyFence(r->device, r->fence, NULL);
     cvkDestroyCommandPool(r->device, r->pool, NULL);
     cvkDestroyDevice(r->device, NULL);

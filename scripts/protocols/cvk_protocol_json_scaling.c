@@ -20,19 +20,13 @@ typedef struct cvkBicubicScalingConstants
  *  The render pass must be compatible with the pipeline's single color attachment.
  * \param[in] device Logical device creating the objects.
  * \param[in] pipelineCache Pipeline cache, or VK_NULL_HANDLE.
- * \param[in] pJsonValues Storage for the document's values.
- * \param[in] jsonValueCapacity Capacity of pJsonValues.
- * \param[in] pArena Arena for parsed structures and resolved arrays.
  * \param[in] renderPass Caller-owned compatible render pass.
- * \param[in] pAllocator Optional allocation callbacks, or NULL.
+ * \param[in] pAllocator Allocation callbacks for scratch and Vulkan objects.
  * \param[out] pObjects Receives the created JSON objects.
  * \retval None
  */
 void cvkCreateBicubicScalingPipeline(VkDevice                     device,
                                      VkPipelineCache              pipelineCache,
-                                     cvkJsonValue*                pJsonValues,
-                                     uint32_t                     jsonValueCapacity,
-                                     cvkArena*                    pArena,
                                      VkRenderPass                 renderPass,
                                      const VkAllocationCallbacks* pAllocator,
                                      cvkPipelineJsonObjects*      pObjects)
@@ -40,11 +34,8 @@ void cvkCreateBicubicScalingPipeline(VkDevice                     device,
     CVK_ASSERT(VK_NULL_HANDLE != renderPass);
     cvkCreateGraphicsPipelineFromJson(device,
                                       pipelineCache,
-                                      cvk_bicubic_pipeline_json,
-                                      sizeof(cvk_bicubic_pipeline_json) - 1,
-                                      pJsonValues,
-                                      jsonValueCapacity,
-                                      pArena,
+                                      c_vkBicubicPipelineJson,
+                                      sizeof(c_vkBicubicPipelineJson) - 1,
                                       sizeof(cvk_fullscreen_vert),
                                       cvk_fullscreen_vert,
                                       sizeof(cvk_bicubic_frag),

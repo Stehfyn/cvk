@@ -1,4 +1,4 @@
-static const char cvk_bicubic_pipeline_json[] =
+static const char c_vkBicubicPipelineJson[] =
     "{\n"
     "  \"GraphicsPipelineState\": {\n"
     "    \"DescriptorSetLayouts\": [\n"

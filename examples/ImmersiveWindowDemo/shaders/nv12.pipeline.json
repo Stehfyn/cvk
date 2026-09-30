@@ -9,8 +9,8 @@
           "storeOp": "VK_ATTACHMENT_STORE_OP_STORE",
           "stencilLoadOp": "VK_ATTACHMENT_LOAD_OP_DONT_CARE",
           "stencilStoreOp": "VK_ATTACHMENT_STORE_OP_DONT_CARE",
-          "initialLayout": "VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL",
-          "finalLayout": "VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL"
+          "initialLayout": "VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL",
+          "finalLayout": "VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL"
         }
       ],
       "attachmentCount": 1,
@@ -26,7 +26,28 @@
           ]
         }
       ],
-      "subpassCount": 1
+      "subpassCount": 1,
+      "dependencyCount": 2,
+      "pDependencies": [
+        {
+          "srcSubpass": "VK_SUBPASS_EXTERNAL",
+          "dstSubpass": 0,
+          "srcStageMask": "VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT",
+          "dstStageMask": "VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT",
+          "srcAccessMask": "VK_ACCESS_SHADER_READ_BIT",
+          "dstAccessMask": "VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT",
+          "dependencyFlags": 0
+        },
+        {
+          "srcSubpass": 0,
+          "dstSubpass": "VK_SUBPASS_EXTERNAL",
+          "srcStageMask": "VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT",
+          "dstStageMask": "VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT",
+          "srcAccessMask": "VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT",
+          "dstAccessMask": "VK_ACCESS_SHADER_READ_BIT",
+          "dependencyFlags": 0
+        }
+      ]
     },
     "DescriptorSetLayouts": [
       {

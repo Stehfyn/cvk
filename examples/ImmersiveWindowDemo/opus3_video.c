@@ -1,12 +1,11 @@
 #include "opus3_video.h"
 #include "video.h"
 #include "nt_assert.h"
-#include "cdx11.h"
+#include "cd3d11.h"
 #include "cdxgi.h"
 #include "cd2d.h"
 #include <d3d11.h>
 #include <dxgi.h>
-#include <dxgicommon.h>
 #include <dxgiformat.h>
 #include <dcommon.h>
 #include <minwindef.h>
@@ -23,22 +22,19 @@
 
 void InitVideo(VIDEO* video, LPCWSTR path, ID3D11Device* device)
 {
-    DXGI_SAMPLE_DESC sample;
     BOOL             frameReady;
     BOOL             frequencyAvailable;
     BOOL             startTimeAvailable;
 
     *video = (VIDEO){0};
-    cdx11DeviceGetImmediateContext(device, &video->immediateContext);
+    cd3d11DeviceGetImmediateContext(device, &video->immediateContext);
     ASSERT(NULL != video->immediateContext);
     video->stream = VideoStream_Open(device, video->immediateContext, path);
     ASSERT(NULL != video->stream);
     VideoStream_GetInfo(video->stream, &video->info);
     ASSERT((0 < video->info.Width) && (0 < video->info.Height));
     ASSERT((0 < video->info.FrameRateNumerator) && (0 < video->info.FrameRateDenominator));
-    sample.Count   = 1;
-    sample.Quality = 0;
-    cdx11DeviceCreateTexture2D(device, video->info.Width, video->info.Height, 1, 1, DXGI_FORMAT_B8G8R8A8_UNORM, sample, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, NULL, &video->texture);
+    cd3d11SetupShaderResourceTexture2D(device, video->info.Width, video->info.Height, 1, DXGI_FORMAT_B8G8R8A8_UNORM, NULL, &video->texture);
     ASSERT(NULL != video->texture);
     frameReady = VideoStream_NextFrame(video->stream);
     ASSERT(frameReady);

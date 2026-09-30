@@ -1423,9 +1423,9 @@
           "call": "cvkWaitForFence",
           "bind": {
             "waitAll": "VK_TRUE",
-            "timeout": "UINT64_MAX"
+            "timeout": "VK_INFINITE"
           },
-          "return": true
+          "check": true
         }
       ]
     },
@@ -1436,7 +1436,7 @@
           "call": "cvkWaitForFences",
           "bind": {
             "waitAll": "VK_TRUE",
-            "timeout": "UINT64_MAX"
+            "timeout": "VK_INFINITE"
           },
           "return": true
         }
@@ -1449,7 +1449,7 @@
           "call": "cvkWaitForFences",
           "bind": {
             "waitAll": "VK_FALSE",
-            "timeout": "UINT64_MAX"
+            "timeout": "VK_INFINITE"
           },
           "return": true
         }
@@ -1498,7 +1498,7 @@
         {
           "call": "cvkWaitSemaphore",
           "bind": {
-            "timeout": "UINT64_MAX"
+            "timeout": "VK_INFINITE"
           },
           "return": true
         }
@@ -2478,7 +2478,7 @@
         {
           "call": "cvkAcquireNextImage",
           "bind": {
-            "timeout": "UINT64_MAX"
+            "timeout": "VK_INFINITE"
           },
           "return": true
         }

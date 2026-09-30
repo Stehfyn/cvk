@@ -559,6 +559,102 @@ void cvkCreatePipelineFromJson(VkDevice                     device,
 }
 
 /**
+ * \brief Callback-backed scratch for the create-and-return JSON helpers.
+ * \par Profile: vulkan
+ */
+typedef struct cvkPipelineJsonScratch
+{
+    cvkArena      arena;
+    cvkJsonValue* pValues;
+    uint32_t      valueCapacity;
+} cvkPipelineJsonScratch;
+
+/**
+ * \brief Allocates JSON parsing scratch through the supplied callbacks.
+ * \par Profile: vulkan
+ */
+static CVK_FORCE_INLINE void cvkInitPipelineJsonScratch(size_t jsonLength, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonScratch* pScratch)
+{
+    CVK_ASSERT(NULL != pAllocator);
+    CVK_ASSERT(NULL != pAllocator->pfnAllocation);
+    CVK_ASSERT(NULL != pAllocator->pfnFree);
+    CVK_ASSERT((0 < jsonLength) && (jsonLength <= UINT32_MAX));
+    CVK_ASSERT(jsonLength <= SIZE_MAX / sizeof(cvkJsonValue));
+    (*pScratch) = (cvkPipelineJsonScratch){0};
+    pScratch->arena.pAllocator = pAllocator;
+    pScratch->valueCapacity = (uint32_t)jsonLength;
+    pScratch->pValues = (cvkJsonValue*)cvkAllocateArena(&pScratch->arena,
+                                                        jsonLength * sizeof(cvkJsonValue),
+                                                        CVK_JSON_ARENA_ALIGNMENT);
+}
+
+/**
+ * \brief Creates only the render pass described by a pipeline JSON document.
+ * \par Profile: vulkan
+ * \param[in] device Logical device creating the render pass.
+ * \param[in] pJsonText Pipeline JSON text containing a render pass.
+ * \param[in] jsonLength Byte length of the text.
+ * \param[in] pAllocator Allocation callbacks for scratch and Vulkan objects.
+ * \param[out] pRenderPass Receives the render pass.
+ * \retval None
+ */
+void cvkCreateRenderPassFromPipelineJson(VkDevice                     device,
+                                         const char*                  pJsonText,
+                                         size_t                       jsonLength,
+                                         const VkAllocationCallbacks* pAllocator,
+                                         VkRenderPass*                pRenderPass)
+{
+    cvkJsonContext         context;
+    cvkPipelineJson        pipeline;
+    cvkPipelineJsonScratch scratch;
+
+    cvkInitPipelineJsonScratch(jsonLength, pAllocator, &scratch);
+    context.document.pValues    = scratch.pValues;
+    context.document.valueCount = cvkParseJsonDocument(pJsonText, jsonLength, scratch.pValues, scratch.valueCapacity);
+    context.pArena              = &scratch.arena;
+    context.resolveHandle       = NULL;
+    context.pUser               = NULL;
+    context.ppHandleReferences  = NULL;
+    cvkParsePipelineJson(&context, &pipeline);
+    CVK_ASSERT((1 == pipeline.renderPassVersion) || (2 == pipeline.renderPassVersion));
+    if (1 == pipeline.renderPassVersion)
+    {
+        const VkRenderPassCreateInfo* info = &pipeline.renderPassCreateInfo;
+
+        cvkCreateRenderPass(device,
+                            info->pNext,
+                            info->flags,
+                            info->attachmentCount,
+                            info->pAttachments,
+                            info->subpassCount,
+                            info->pSubpasses,
+                            info->dependencyCount,
+                            info->pDependencies,
+                            pAllocator,
+                            pRenderPass);
+    }
+    else
+    {
+        const VkRenderPassCreateInfo2* info = &pipeline.renderPassCreateInfo2;
+
+        cvkCreateRenderPass2(device,
+                             info->pNext,
+                             info->flags,
+                             info->attachmentCount,
+                             info->pAttachments,
+                             info->subpassCount,
+                             info->pSubpasses,
+                             info->dependencyCount,
+                             info->pDependencies,
+                             info->correlatedViewMaskCount,
+                             info->pCorrelatedViewMasks,
+                             pAllocator,
+                             pRenderPass);
+    }
+    cvkFreeArena(&scratch.arena);
+}
+
+/**
  * \brief Handles supplied to a graphics pipeline JSON by the caller.
  * \par Profile: vulkan
  */
@@ -633,13 +729,10 @@ static CVK_FORCE_INLINE VkBool32 cvkResolveGraphicsPipelineJsonHandle(void* pUse
  * \param[in] pipelineCache Pipeline cache, or VK_NULL_HANDLE.
  * \param[in] pJsonText Pipeline JSON text.
  * \param[in] jsonLength Byte length of the text.
- * \param[in] pJsonValues Storage for the document's values.
- * \param[in] jsonValueCapacity Capacity of pJsonValues.
- * \param[in] pArena Arena for parsed structures and resolved arrays.
  * \param[in] vertex Caller-owned vertex shader module.
  * \param[in] fragment Caller-owned fragment shader module.
  * \param[in] externalRenderPass Caller-owned render pass if the JSON omits one, or VK_NULL_HANDLE.
- * \param[in] pAllocator Optional allocation callbacks, or NULL.
+ * \param[in] pAllocator Allocation callbacks for scratch and Vulkan objects.
  * \param[out] pObjects Receives the created JSON objects.
  * \retval None
  */
@@ -647,9 +740,6 @@ void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevice                     d
                                                    VkPipelineCache              pipelineCache,
                                                    const char*                  pJsonText,
                                                    size_t                       jsonLength,
-                                                   cvkJsonValue*                pJsonValues,
-                                                   uint32_t                     jsonValueCapacity,
-                                                   cvkArena*                    pArena,
                                                    VkShaderModule               vertex,
                                                    VkShaderModule               fragment,
                                                    VkRenderPass                 externalRenderPass,
@@ -658,12 +748,14 @@ void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevice                     d
 {
     cvkJsonContext context;
     cvkPipelineJson pipeline;
+    cvkPipelineJsonScratch scratch;
     cvkGraphicsPipelineJsonHandles handles = {0};
     uint32_t index;
 
-    context.document.pValues = pJsonValues;
-    context.document.valueCount = cvkParseJsonDocument(pJsonText, jsonLength, pJsonValues, jsonValueCapacity);
-    context.pArena = pArena;
+    cvkInitPipelineJsonScratch(jsonLength, pAllocator, &scratch);
+    context.document.pValues = scratch.pValues;
+    context.document.valueCount = cvkParseJsonDocument(pJsonText, jsonLength, scratch.pValues, scratch.valueCapacity);
+    context.pArena = &scratch.arena;
     context.resolveHandle = NULL;
     context.pUser = NULL;
     context.ppHandleReferences = NULL;
@@ -698,7 +790,8 @@ void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevice                     d
     handles.vertex = vertex;
     handles.fragment = fragment;
     handles.renderPass = externalRenderPass;
-    cvkCreatePipelineJsonObjects(device, pipelineCache, &pipeline, NULL, cvkResolveGraphicsPipelineJsonHandle, &handles, pArena, pAllocator, pObjects);
+    cvkCreatePipelineJsonObjects(device, pipelineCache, &pipeline, NULL, cvkResolveGraphicsPipelineJsonHandle, &handles, &scratch.arena, pAllocator, pObjects);
+    cvkFreeArena(&scratch.arena);
 }
 
 /**
@@ -711,15 +804,12 @@ void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevice                     d
  * \param[in] pipelineCache Pipeline cache, or VK_NULL_HANDLE.
  * \param[in] pJsonText Pipeline JSON text.
  * \param[in] jsonLength Byte length of the text.
- * \param[in] pJsonValues Storage for the document's values.
- * \param[in] jsonValueCapacity Capacity of pJsonValues.
- * \param[in] pArena Arena for parsed structures and resolved arrays.
  * \param[in] vertexCodeSize Vertex SPIR-V byte length.
  * \param[in] pVertexCode Vertex SPIR-V words.
  * \param[in] fragmentCodeSize Fragment SPIR-V byte length.
  * \param[in] pFragmentCode Fragment SPIR-V words.
  * \param[in] externalRenderPass Caller-owned render pass if the JSON omits one, or VK_NULL_HANDLE.
- * \param[in] pAllocator Optional allocation callbacks, or NULL.
+ * \param[in] pAllocator Allocation callbacks for scratch and Vulkan objects.
  * \param[out] pObjects Receives the created JSON objects.
  * \retval None
  */
@@ -727,9 +817,6 @@ void cvkCreateGraphicsPipelineFromJson(VkDevice                     device,
                                        VkPipelineCache              pipelineCache,
                                        const char*                  pJsonText,
                                        size_t                       jsonLength,
-                                       cvkJsonValue*                pJsonValues,
-                                       uint32_t                     jsonValueCapacity,
-                                       cvkArena*                    pArena,
                                        size_t                       vertexCodeSize,
                                        const uint32_t*              pVertexCode,
                                        size_t                       fragmentCodeSize,
@@ -747,9 +834,6 @@ void cvkCreateGraphicsPipelineFromJson(VkDevice                     device,
                                                  pipelineCache,
                                                  pJsonText,
                                                  jsonLength,
-                                                 pJsonValues,
-                                                 jsonValueCapacity,
-                                                 pArena,
                                                  vertex,
                                                  fragment,
                                                  externalRenderPass,

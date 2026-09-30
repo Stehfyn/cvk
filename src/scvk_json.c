@@ -7,6 +7,15 @@
 #include <string.h>
 #include <vulkan/vulkan_sc_core.h>
 
+typedef struct scvkArenaBlock
+{
+    struct scvkArenaBlock* pNext;
+    uint8_t                storage[1];
+} scvkArenaBlock;
+typedef enum scvkArenaBlockCapacity
+{
+    SCVK_JSON_ARENA_BLOCK_SIZE = 4096
+} scvkArenaBlockCapacity;
 static SCVK_FORCE_INLINE VkBool32 scvkIsJsonTextSpace(char value);
 /**
  * \brief Advances over JSON whitespace.
@@ -66,6 +75,7 @@ static SCVK_FORCE_INLINE void scvkAppendJsonDoubleDigit(char digit, VkBool32 fra
 static SCVK_FORCE_INLINE const char* scvkParseJsonDoubleMantissa(const char* text, double* pNumber, int32_t* pExponent);
 static SCVK_FORCE_INLINE int32_t scvkParseJsonDoubleExponent(const char* text);
 static SCVK_FORCE_INLINE double scvkScaleJsonDouble(double value, int32_t exponent);
+static SCVK_FORCE_INLINE void scvkGrowArena(scvkArena* pArena, size_t size, size_t alignment);
 /**
  * \brief Reads the pipeline state and its render-pass version.
  * \param[in] pContext Parsing context.
@@ -900,37 +910,94 @@ extern SCVK_FORCE_INLINE uint64_t scvkParseJsonFlags(const scvkJsonValue* pValue
 
     return flags;
 }
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static SCVK_FORCE_INLINE void scvkGrowArena(scvkArena* pArena, size_t size, size_t alignment)
+{
+    size_t          capacity;
+    scvkArenaBlock* block;
+
+    SCVK_ASSERT(NULL != pArena->pAllocator);
+    SCVK_ASSERT(NULL != pArena->pAllocator->pfnAllocation);
+    SCVK_ASSERT(NULL != pArena->pAllocator->pfnFree);
+
+    capacity = (size > SCVK_JSON_ARENA_BLOCK_SIZE) ? size : SCVK_JSON_ARENA_BLOCK_SIZE;
+    SCVK_ASSERT(alignment <= SIZE_MAX - sizeof(scvkArenaBlock));
+    SCVK_ASSERT(capacity <= SIZE_MAX - alignment - sizeof(scvkArenaBlock));
+
+    block =
+        (scvkArenaBlock*)pArena->pAllocator->pfnAllocation(pArena->pAllocator->pUserData, sizeof(scvkArenaBlock) + capacity + alignment, SCVK_JSON_ARENA_ALIGNMENT, VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
+    SCVK_ASSERT(NULL != block);
+
+    block->pNext    = pArena->pBlocks;
+    pArena->pBlocks = block;
+    pArena->pBase   = block->storage;
+    pArena->size    = capacity + alignment;
+    pArena->used    = 0;
+}
 extern SCVK_FORCE_INLINE void* scvkAllocateArena(scvkArena* pArena, size_t size, size_t alignment)
 {
-    uint64_t offset;
-    uint64_t padding;
-    uint64_t remaining;
-    void*    storage;
+    size_t offset;
+    size_t padding;
+    size_t remaining;
 
     SCVK_ASSERT(NULL != pArena);
-    SCVK_ASSERT(NULL != pArena->pBase);
     SCVK_ASSERT(0 < alignment);
     SCVK_ASSERT(0 == (alignment & (alignment - 1)));
     SCVK_ASSERT(pArena->used <= pArena->size);
 
-    storage = NULL;
-    if (0 < size)
+    if (0 == size)
+    {
+        return NULL;
+    }
+    if (NULL != pArena->pBase)
     {
         offset    = pArena->used;
+        remaining = pArena->size - offset;
         padding   = (uintptr_t)(pArena->pBase + offset) % alignment;
         padding   = (alignment - padding) % alignment;
-        remaining = pArena->size - offset;
-        SCVK_ASSERT(padding <= remaining);
+        if ((padding <= remaining) && (size <= remaining - padding))
+        {
+            offset += padding;
+            pArena->used = offset + size;
 
-        remaining -= padding;
-        SCVK_ASSERT(size <= remaining);
-
-        offset += padding;
-        storage      = pArena->pBase + offset;
-        pArena->used = offset + size;
+            return pArena->pBase + offset;
+        }
     }
+    scvkGrowArena(pArena, size, alignment);
 
-    return storage;
+    padding = (uintptr_t)pArena->pBase % alignment;
+    padding = (alignment - padding) % alignment;
+    SCVK_ASSERT(size <= pArena->size - padding);
+
+    pArena->used = padding + size;
+
+    return pArena->pBase + padding;
+}
+extern SCVK_FORCE_INLINE void scvkFreeArena(scvkArena* pArena)
+{
+    scvkArenaBlock* block;
+    scvkArenaBlock* next;
+
+    SCVK_ASSERT(NULL != pArena);
+    SCVK_ASSERT(NULL != pArena->pAllocator);
+
+    block = pArena->pBlocks;
+    while (NULL != block)
+    {
+        next = block->pNext;
+
+        pArena->pAllocator->pfnFree(pArena->pAllocator->pUserData, block);
+
+        block = next;
+    }
+    pArena->pBlocks = NULL;
+    pArena->pBase   = NULL;
+    pArena->size    = 0;
+    pArena->used    = 0;
 }
 extern SCVK_FORCE_INLINE char* scvkCopyJsonString(scvkArena* pArena, const scvkJsonValue* pValue)
 {
@@ -1615,8 +1682,8 @@ extern SCVK_FORCE_INLINE void scvkCreateOfflinePipelineFromJson(VkDevice        
 /**
  * \par Details:
  *  Each pending structure belongs to a distinct document value. One task per
- *  value therefore bounds the stack without recursion or heap allocation.
- *  Permanent output grows from the front of the arena; scratch occupies its tail.
+ *  value therefore bounds the stack without recursion. Callback-backed arenas
+ *  allocate the stack through those callbacks; caller-owned arenas use their tail.
  */
 extern SCVK_FORCE_INLINE void scvkInitializeJsonWork(scvkJsonWork* pWork, const scvkJsonContext* pContext)
 {
@@ -1629,31 +1696,44 @@ extern SCVK_FORCE_INLINE void scvkInitializeJsonWork(scvkJsonWork* pWork, const 
     SCVK_ASSERT(NULL != pWork);
     SCVK_ASSERT(NULL != pContext);
     SCVK_ASSERT(NULL != pContext->pArena);
-    SCVK_ASSERT(NULL != pContext->pArena->pBase);
     SCVK_ASSERT(pContext->pArena->used <= pContext->pArena->size);
 
-    capacity     = pContext->document.valueCount;
-    capacity     = (0 < capacity) ? capacity : 1;
-    scratch_size = (uint64_t)capacity * sizeof(scvkJsonTask);
-    SCVK_ASSERT(scratch_size <= pContext->pArena->size);
-
-    scratch_start = pContext->pArena->size - scratch_size;
-    misalignment  = (uintptr_t)(pContext->pArena->pBase + scratch_start) % SCVK_JSON_ARENA_ALIGNMENT;
-    SCVK_ASSERT(misalignment <= scratch_start);
-
-    scratch_start -= misalignment;
-    SCVK_ASSERT(pContext->pArena->used <= scratch_start);
-
-    scratch                = *pContext->pArena;
-    scratch.used           = scratch_start;
+    capacity               = pContext->document.valueCount;
+    capacity               = (0 < capacity) ? capacity : 1;
+    scratch_size           = (uint64_t)capacity * sizeof(scvkJsonTask);
     pWork->pContext        = pContext;
-
-    pWork->pTasks          = (scvkJsonTask*)scvkAllocateArena(&scratch, scratch_size, SCVK_JSON_ARENA_ALIGNMENT);
-
     pWork->arenaSize       = pContext->pArena->size;
     pWork->capacity        = capacity;
     pWork->count           = 0;
-    pContext->pArena->size = scratch_start;
+    pWork->callbackScratch = VK_FALSE;
+    if (NULL != pContext->pArena->pAllocator)
+    {
+        const VkAllocationCallbacks* pAllocator = pContext->pArena->pAllocator;
+
+        pWork->pTasks = (scvkJsonTask*)pAllocator->pfnAllocation(pAllocator->pUserData, scratch_size, SCVK_JSON_ARENA_ALIGNMENT, VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
+        SCVK_ASSERT(NULL != pWork->pTasks);
+
+        pWork->callbackScratch = VK_TRUE;
+    }
+    else
+    {
+        SCVK_ASSERT(NULL != pContext->pArena->pBase);
+        SCVK_ASSERT(scratch_size <= pContext->pArena->size);
+
+        scratch_start = pContext->pArena->size - scratch_size;
+        misalignment  = (uintptr_t)(pContext->pArena->pBase + scratch_start) % SCVK_JSON_ARENA_ALIGNMENT;
+        SCVK_ASSERT(misalignment <= scratch_start);
+
+        scratch_start -= misalignment;
+        SCVK_ASSERT(pContext->pArena->used <= scratch_start);
+
+        scratch                = *pContext->pArena;
+        scratch.used           = scratch_start;
+
+        pWork->pTasks          = (scvkJsonTask*)scvkAllocateArena(&scratch, scratch_size, SCVK_JSON_ARENA_ALIGNMENT);
+
+        pContext->pArena->size = scratch_start;
+    }
 }
 
 /*************************************************************************************************/
@@ -1696,7 +1776,16 @@ extern SCVK_FORCE_INLINE void scvkRunJsonWork(scvkJsonWork* pWork)
 
         task.read(pWork, task.pObject, task.pOutput);
     }
-    pWork->pContext->pArena->size = pWork->arenaSize;
+    if (pWork->callbackScratch)
+    {
+        const VkAllocationCallbacks* pAllocator = pWork->pContext->pArena->pAllocator;
+
+        pAllocator->pfnFree(pAllocator->pUserData, pWork->pTasks);
+    }
+    else
+    {
+        pWork->pContext->pArena->size = pWork->arenaSize;
+    }
 }
 
 /*************************************************************************************************/
