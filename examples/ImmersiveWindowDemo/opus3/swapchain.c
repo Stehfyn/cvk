@@ -60,8 +60,7 @@ void InitSwapChain(SWAPCHAIN* pSwapChain, IDXGIAdapter* adapter)
     {
         driverType = D3D_DRIVER_TYPE_HARDWARE;
     }
-    ASSERT(SUCCEEDED(
-        D3D11CreateDevice(adapter, driverType, NULL, D3D11_CREATE_DEVICE_VIDEO_SUPPORT | D3D11_CREATE_DEVICE_BGRA_SUPPORT, NULL, 0u, D3D11_SDK_VERSION, &pSwapChain->device, NULL, NULL)));
+    ASSERT(SUCCEEDED(D3D11CreateDevice(adapter, driverType, NULL, D3D11_CREATE_DEVICE_VIDEO_SUPPORT | D3D11_CREATE_DEVICE_BGRA_SUPPORT, NULL, 0u, D3D11_SDK_VERSION, &pSwapChain->device, NULL, NULL)));
     ASSERT(SUCCEEDED(ID3D11Device_QueryInterface(pSwapChain->device, &IID_IDXGIDevice1, (void**)&pSwapChain->dxgiDevice)));
     ASSERT(SUCCEEDED(CreateDXGIFactory2(0u, &IID_IDXGIFactory2, (void**)&pFactory)));
 
