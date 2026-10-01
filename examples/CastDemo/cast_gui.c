@@ -13,8 +13,6 @@
 #include <ole2.h>
 #include <shellapi.h>
 #include <Uxtheme.h>
-#include <vsstyle.h>
-#include <vssym32.h>
 #include <dwmapi.h>
 #include <winnt.h>
 #include <windef.h>
@@ -27,7 +25,6 @@
 #include <stringapiset.h>
 #include <WinNls.h>
 #include <dcommon.h>
-#include <dxgiformat.h>
 #include <Unknwnbase.h>
 #include <WinUser.h>
 #include <minwinbase.h>
@@ -90,9 +87,6 @@
 #define DEFAULT_SERVER_PORT (8642)
 #define DISCOVERY_MS        (3000)
 #define SEEK_RANGE          (1000)
-#define DARK_COMBO_SUBCLASS_ID (1)
-#define DARK_HEADER_SUBCLASS_ID (1)
-#define WC_CASTHOST TEXT("CastDemoControlHost")
 #define GUI_LAYERED_OPAQUE (255)
 #define GUI_SOURCE_CAPACITY (1024)
 #define GUI_URL_CAPACITY (1200)
@@ -109,10 +103,8 @@
 #define GUI_FONT_SIZE (13)
 #define GUI_PIXEL_CENTER (0.5F)
 #define GUI_CHILD_INITIAL_SIZE (10)
-#define GUI_COMBO_TEXT_CAPACITY (128)
 #define GUI_CONTROL_TEXT_INSET (6)
 #define GUI_CONTROL_TEXT_CAPACITY (512)
-#define GUI_ICON_STROKE_WIDTH (2.0F)
 #define GUI_COMBO_ITEM_HEIGHT (22)
 #define GUI_COMBO_FIELD_HEIGHT (20)
 #define GUI_FILE_LABEL_WIDTH (44)
@@ -159,7 +151,13 @@
 #define GUI_INITIAL_WINDOW_WIDTH (720)
 #define GUI_INITIAL_WINDOW_HEIGHT (740)
 #define GUI_HOVER_DURATION_MS (120)
+#define GUI_CHECK_BOX_SIZE (16)
+#define GUI_CONTROL_GAP (8)
+#define GUI_SLIDER_THUMB_HALF_WIDTH (5)
+#define GUI_COMBO_ARROW_WIDTH (18)
+#define GUI_CARET_PERIOD_MS (500)
 #define CONTROL_VISUAL_SUBCLASS_ID (1)
+#define CAST_GEOMETRY_SUBCLASS_ID (1)
 
 enum ControlId
 {
@@ -264,37 +262,40 @@ typedef struct ControlVisual
     HWND hwnd;
     BYTE hot;
     BYTE target;
+    ULONGLONG transitionTick;
     BOOL tracking;
-    BOOL ownerDrawButton;
 } ControlVisual;
 
 enum ControlVisualSlot
 {
-    GUI_VISUAL_REFRESH,
-    GUI_VISUAL_WINDOWS_CAST,
-    GUI_VISUAL_BROWSE,
-    GUI_VISUAL_SUBTITLE_BROWSE,
-    GUI_VISUAL_CAST,
-    GUI_VISUAL_PLAY_PAUSE,
-    GUI_VISUAL_STOP,
-    GUI_VISUAL_PREVIEW,
-    GUI_VISUAL_SUBTITLE,
-    GUI_VISUAL_GAIN,
-    GUI_VISUAL_SEEK,
-    GUI_VISUAL_RESOLUTION,
-    GUI_VISUAL_QP,
-    GUI_VISUAL_GOP,
-    GUI_VISUAL_MOTION,
-    GUI_VISUAL_COUNT
+    GUI_VISUAL_COUNT = ID_CFG_READOUT - ID_LIST + 1
 };
+
+typedef struct ControlFrame
+{
+    TCHAR text[GUI_VISUAL_COUNT][GUI_CONTROL_TEXT_CAPACITY];
+    TCHAR receiver[CAST_MAX_DEVICES][GUI_DEVICE_COLUMN_COUNT][GUI_DEVICE_NAME_CAPACITY];
+    BYTE enabled[GUI_VISUAL_COUNT];
+    BYTE focused[GUI_VISUAL_COUNT];
+    BYTE checked[GUI_VISUAL_COUNT];
+    BYTE pressed[GUI_VISUAL_COUNT];
+    BYTE hot[GUI_VISUAL_COUNT];
+    BYTE target[GUI_VISUAL_COUNT];
+    ULONGLONG transitionTick[GUI_VISUAL_COUNT];
+    int sliderPosition[GUI_VISUAL_COUNT];
+    int sliderMinimum[GUI_VISUAL_COUNT];
+    int sliderMaximum[GUI_VISUAL_COUNT];
+    int selectedReceiver;
+    int firstReceiver;
+    int subtitleSelection;
+    POINT fileCaret;
+    unsigned receiverCount;
+} ControlFrame;
 
 typedef struct App
 {
     HINSTANCE hInstance;
     HWND      hWnd;
-    HWND      hHost; /* layered child that hosts every control below the caption band */
-    IUnknown*            hostSurface; /* the host window's content as a composition surface */
-    IDCompositionVisual* hostVisual;  /* composes hostSurface above the swap-chain visual     */
     IMMERSIVEWINDOW immersiveWindow;
     SWAPCHAIN       swapChain;
     CAPTION         caption;
@@ -359,6 +360,14 @@ typedef struct App
     HWND                hCfgReadout;
     HFONT               hFont;
     ControlVisual       visuals[GUI_VISUAL_COUNT];
+    SRWLOCK             controlFrameLock;
+    ControlFrame        controlFrame;
+    ControlFrame        stagingFrame;
+    ControlFrame        renderFrame;
+    int                 layoutClientWidth;
+    int                 layoutClientHeight;
+    UINT                layoutDpi;
+    int                 listColumnWidth[GUI_DEVICE_COLUMN_COUNT];
     UINT                dpi;
     /* receivers */
     DiscoveryResult devices;
@@ -548,6 +557,7 @@ static FORCE_INLINE void FinishSession(App* pApp, LPCTSTR pReason);
  * \retval        None No value is returned.
  */
 static FORCE_INLINE void PresentCastWindow(void* parameter);
+static FORCE_INLINE void ComputeControlRects(UINT dpi, int captionHeight, int clientWidth, int clientHeight, RECT rects[GUI_VISUAL_COUNT], int columnWidths[GUI_DEVICE_COLUMN_COUNT]);
 
 /*************************************************************************************************/
 /**
@@ -687,6 +697,11 @@ static FORCE_INLINE bool_t DeleteUtf16File(const WCHAR* path)
  * \par Details:
  *  Converts 96-DPI logical units using the window's current DPI.
  */
+static FORCE_INLINE int ScaleAtDpi(UINT dpi, int dips)
+{
+    return MulDiv(dips, (int)dpi, GUI_DEFAULT_DPI);
+}
+
 static FORCE_INLINE int Scale(const App* pApp, int dips)
 {
     return MulDiv(dips, (int)pApp->dpi, GUI_DEFAULT_DPI);
@@ -1099,7 +1114,6 @@ static FORCE_INLINE void FormatTime(double seconds, LPTSTR pOut, uint32_t capaci
 
 /* ------------------------------------------------------------------ controls and layout */
 
-static const D2D1_COLOR_F c_castBackgroundColor = {24.0F / 255.0F, 26.0F / 255.0F, 31.0F / 255.0F, 1.0F};
 static const D2D1_COLOR_F c_castFieldColor = {36.0F / 255.0F, 39.0F / 255.0F, 46.0F / 255.0F, 1.0F};
 static const D2D1_COLOR_F c_castSelectedColor = {48.0F / 255.0F, 91.0F / 255.0F, 146.0F / 255.0F, 1.0F};
 static const D2D1_COLOR_F c_castTextColor = {232.0F / 255.0F, 235.0F / 255.0F, 240.0F / 255.0F, 1.0F};
@@ -1109,88 +1123,64 @@ static const D2D1_COLOR_F c_castBorderColor = {62.0F / 255.0F, 68.0F / 255.0F, 7
 static const D2D1_COLOR_F c_castHotColor = {54.0F / 255.0F, 69.0F / 255.0F, 88.0F / 255.0F, 1.0F};
 static const D2D1_COLOR_F c_castHotAccentColor = {118.0F / 255.0F, 183.0F / 255.0F, 1.0F, 1.0F};
 
-static FORCE_INLINE void InitControlPaint(App* app)
+typedef struct ControlPainter
 {
-    D2D1_PIXEL_FORMAT format;
+    ID2D1DeviceContext* context;
+    ID2D1SolidColorBrush* brush;
+    IDWriteTextFormat* format;
+    UINT dpi;
+} ControlPainter;
 
-    cd2dCreateFactorySingleThreaded(NULL, &app->paintFactory);
-    /* Native control HDCs are opaque. Keep the pixels written into the host fully opaque. */
-    cd2dInitPixelFormat(&format, DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE);
-    cd2dFactoryCreateDCRenderTarget(app->paintFactory,
-                                    D2D1_RENDER_TARGET_TYPE_DEFAULT,
-                                    format,
-                                    (FLOAT)USER_DEFAULT_SCREEN_DPI,
-                                    (FLOAT)USER_DEFAULT_SCREEN_DPI,
-                                    D2D1_RENDER_TARGET_USAGE_NONE,
-                                    D2D1_FEATURE_LEVEL_DEFAULT,
-                                    &app->paintTarget);
-    cd2dRenderTargetCreateSolidColorBrush((ID2D1RenderTarget*)app->paintTarget, &c_castTextColor, NULL, &app->paintBrush);
-    cdwCreateFactory(DWRITE_FACTORY_TYPE_SHARED, &app->textFactory);
-    app->bufferedPaintReady = SUCCEEDED(BufferedPaintInit());
-}
-
-static FORCE_INLINE void UpdateControlTextFormat(App* app)
+static FORCE_INLINE void ControlPainter_SetDpi(ControlPainter* painter, IDWriteFactory* factory, UINT dpi)
 {
     int fontSize;
+    bool_t dpiChanged;
 
-    cdwUnknownReleaseSafe((IUnknown*)app->trimmingSign);
-    cdwUnknownReleaseSafe((IUnknown*)app->textFormat);
-    app->trimmingSign = NULL;
-    app->textFormat   = NULL;
-    fontSize = Scale(app, GUI_FONT_SIZE);
-    cdwFactoryCreateTextFormat(app->textFactory,
-                               L"Segoe UI",
-                               NULL,
-                               DWRITE_FONT_WEIGHT_NORMAL,
-                               DWRITE_FONT_STYLE_NORMAL,
-                               DWRITE_FONT_STRETCH_NORMAL,
-                               (FLOAT)fontSize,
-                               L"",
-                               &app->textFormat);
-    cdwTextFormatSetParagraphAlignment(app->textFormat, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    cdwTextFormatSetWordWrapping(app->textFormat, DWRITE_WORD_WRAPPING_NO_WRAP);
-    cdwFactoryCreateEllipsisTrimmingSign(app->textFactory, app->textFormat, &app->trimmingSign);
-    cdwTextFormatSetTrimming(app->textFormat, DWRITE_TRIMMING_GRANULARITY_CHARACTER, 0, 0, app->trimmingSign);
+    dpiChanged = (painter->dpi != dpi);
+    if (dpiChanged)
+    {
+        cdwUnknownReleaseSafe((IUnknown*)painter->format);
+        painter->format = NULL;
+        fontSize = ScaleAtDpi(dpi, GUI_FONT_SIZE);
+        cdwFactoryCreateTextFormat(factory,
+                                   L"Segoe UI",
+                                   NULL,
+                                   DWRITE_FONT_WEIGHT_NORMAL,
+                                   DWRITE_FONT_STYLE_NORMAL,
+                                   DWRITE_FONT_STRETCH_NORMAL,
+                                   (FLOAT)fontSize,
+                                   L"",
+                                   &painter->format);
+        cdwTextFormatSetParagraphAlignment(painter->format, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+        cdwTextFormatSetWordWrapping(painter->format, DWRITE_WORD_WRAPPING_NO_WRAP);
+        painter->dpi = dpi;
+    }
 }
 
-static FORCE_INLINE void BeginControlPaint(App* app, HDC dc, const RECT* bounds)
+static FORCE_INLINE void ControlPainter_Fill(ControlPainter* painter, const RECT* rect, const D2D1_COLOR_F* color)
 {
-    cd2dDCRenderTargetBindDC(app->paintTarget, dc, bounds);
-    cd2dRenderTargetBeginDraw((ID2D1RenderTarget*)app->paintTarget);
+    cd2dSolidColorBrushSetColor(painter->brush, color);
+    cd2dRenderTargetFillRectangle((ID2D1RenderTarget*)painter->context,
+                                  (FLOAT)rect->left, (FLOAT)rect->top,
+                                  (FLOAT)rect->right, (FLOAT)rect->bottom,
+                                  (ID2D1Brush*)painter->brush);
 }
 
-static FORCE_INLINE void EndControlPaint(App* app)
+static FORCE_INLINE void ControlPainter_Outline(ControlPainter* painter, const RECT* rect, const D2D1_COLOR_F* color)
 {
-    cd2dRenderTargetEndDrawAsserted((ID2D1RenderTarget*)app->paintTarget);
-}
-
-static FORCE_INLINE void FillControlRect(App* app, const RECT* rect, const D2D1_COLOR_F* color)
-{
-    cd2dSolidColorBrushSetColor(app->paintBrush, color);
-    cd2dRenderTargetFillRectangle((ID2D1RenderTarget*)app->paintTarget,
-                                  (FLOAT)rect->left,
-                                  (FLOAT)rect->top,
-                                  (FLOAT)rect->right,
-                                  (FLOAT)rect->bottom,
-                                  (ID2D1Brush*)app->paintBrush);
-}
-
-static FORCE_INLINE void DrawControlRect(App* app, const RECT* rect, const D2D1_COLOR_F* color)
-{
-    cd2dSolidColorBrushSetColor(app->paintBrush, color);
-    cd2dRenderTargetDrawRectangle((ID2D1RenderTarget*)app->paintTarget,
+    cd2dSolidColorBrushSetColor(painter->brush, color);
+    cd2dRenderTargetDrawRectangle((ID2D1RenderTarget*)painter->context,
                                   (FLOAT)rect->left + GUI_PIXEL_CENTER,
                                   (FLOAT)rect->top + GUI_PIXEL_CENTER,
                                   (FLOAT)rect->right - GUI_PIXEL_CENTER,
                                   (FLOAT)rect->bottom - GUI_PIXEL_CENTER,
-                                  (ID2D1Brush*)app->paintBrush,
-                                  1.0F,
-                                  NULL);
+                                  (ID2D1Brush*)painter->brush, 1.0F, NULL);
 }
 
-static FORCE_INLINE void DrawControlText(App* app, LPCTSTR text, const RECT* rect, const D2D1_COLOR_F* color, DWRITE_TEXT_ALIGNMENT alignment)
+static FORCE_INLINE void ControlPainter_Text(ControlPainter* painter, LPCTSTR text, const RECT* rect,
+                                              const D2D1_COLOR_F* color, DWRITE_TEXT_ALIGNMENT alignment)
 {
-    WCHAR  wide[GUI_WIDE_TEXT_CAPACITY];
+    WCHAR wide[GUI_WIDE_TEXT_CAPACITY];
     bool_t converted;
 
     converted = OS_Text_ReadNative((uint16_t*)wide, ARRAYSIZE(wide), text);
@@ -1198,49 +1188,14 @@ static FORCE_INLINE void DrawControlText(App* app, LPCTSTR text, const RECT* rec
     {
         wide[0] = L'\0';
     }
-    cdwTextFormatSetTextAlignment(app->textFormat, alignment);
-    cd2dSolidColorBrushSetColor(app->paintBrush, color);
-    cd2dRenderTargetDrawText((ID2D1RenderTarget*)app->paintTarget,
-                             wide,
-                             (UINT32)lstrlenW(wide),
-                             app->textFormat,
-                             (FLOAT)rect->left,
-                             (FLOAT)rect->top,
-                             (FLOAT)rect->right,
-                             (FLOAT)rect->bottom,
-                             (ID2D1Brush*)app->paintBrush,
-                             D2D1_DRAW_TEXT_OPTIONS_CLIP,
-                             DWRITE_MEASURING_MODE_NATURAL);
-}
-
-static FORCE_INLINE void DestroyControlPaint(App* app)
-{
-    if (app->bufferedPaintReady)
-    {
-        (void)BufferedPaintUnInit();
-    }
-    cdwUnknownReleaseSafe((IUnknown*)app->trimmingSign);
-    cdwUnknownReleaseSafe((IUnknown*)app->textFormat);
-    cdwUnknownReleaseSafe((IUnknown*)app->textFactory);
-    cd2dUnknownReleaseSafe((IUnknown*)app->paintBrush);
-    cd2dUnknownReleaseSafe((IUnknown*)app->paintTarget);
-    cd2dUnknownReleaseSafe((IUnknown*)app->paintFactory);
-}
-
-static FORCE_INLINE ControlVisual* FindControlVisual(App* app, HWND hwnd)
-{
-    uint32_t index;
-    ControlVisual* result;
-
-    result = NULL;
-    for (index = 0; (index < GUI_VISUAL_COUNT) && (NULL == result); ++index)
-    {
-        if (app->visuals[index].hwnd == hwnd)
-        {
-            result = &app->visuals[index];
-        }
-    }
-    return result;
+    cdwTextFormatSetTextAlignment(painter->format, alignment);
+    cd2dSolidColorBrushSetColor(painter->brush, color);
+    cd2dRenderTargetDrawText((ID2D1RenderTarget*)painter->context,
+                             wide, (UINT32)lstrlenW(wide), painter->format,
+                             (FLOAT)rect->left, (FLOAT)rect->top,
+                             (FLOAT)rect->right, (FLOAT)rect->bottom,
+                             (ID2D1Brush*)painter->brush,
+                             D2D1_DRAW_TEXT_OPTIONS_CLIP, DWRITE_MEASURING_MODE_NATURAL);
 }
 
 static FORCE_INLINE D2D1_COLOR_F MixControlColor(const D2D1_COLOR_F* start, const D2D1_COLOR_F* end, BYTE amount)
@@ -1256,65 +1211,434 @@ static FORCE_INLINE D2D1_COLOR_F MixControlColor(const D2D1_COLOR_F* start, cons
     return result;
 }
 
-static LRESULT CALLBACK ControlVisualProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR refData);
-
-static FORCE_INLINE void ControlVisual_OnEnable(HWND hwnd, BOOL enabled)
+static FORCE_INLINE ControlVisual* FindControlVisual(App* app, HWND hwnd)
 {
-    ControlVisual* visual;
+    int index;
+    ControlVisual* result;
+    bool_t validIndex;
+    bool_t matchesWindow;
 
-    visual = FindControlVisual(GetApp(hwnd), hwnd);
-    if (!enabled)
+    index = GetDlgCtrlID(hwnd) - ID_LIST;
+    validIndex = (0 <= index) && (index < GUI_VISUAL_COUNT);
+    result = NULL;
+    matchesWindow = FALSE;
+    if (validIndex)
     {
-        visual->target = 0;
-        visual->hot = 0;
-        (void)InvalidateRect(hwnd, NULL, FALSE);
+        matchesWindow = (app->visuals[index].hwnd == hwnd);
     }
-    FORWARD_WM_ENABLE(hwnd, enabled, DefSubclassProc);
-}
-
-static FORCE_INLINE BOOL ControlVisual_OnEraseBackground(HWND hwnd, HDC dc)
-{
-    ControlVisual* visual;
-    BOOL           result;
-
-    visual = FindControlVisual(GetApp(hwnd), hwnd);
-    if (visual->ownerDrawButton)
+    if (matchesWindow)
     {
-        result = TRUE;
-    }
-    else
-    {
-        result = FORWARD_WM_ERASEBKGND(hwnd, dc, DefSubclassProc);
+        result = &app->visuals[index];
     }
     return result;
 }
 
-static FORCE_INLINE void ControlVisual_OnNcDestroy(HWND hwnd)
+static FORCE_INLINE BYTE CurrentControlHot(const ControlVisual* visual, ULONGLONG tick)
 {
+    ULONGLONG elapsed;
+    int delta;
+    int current;
+    bool_t transitioning;
+
+    elapsed = tick - visual->transitionTick;
+    current = visual->target;
+    transitioning = (elapsed < GUI_HOVER_DURATION_MS);
+    if (transitioning)
+    {
+        delta = (int)visual->target - (int)visual->hot;
+        current = (int)visual->hot + (delta * (int)elapsed / GUI_HOVER_DURATION_MS);
+    }
+    return (BYTE)current;
+}
+
+static FORCE_INLINE void SetControlHot(App* app, ControlVisual* visual, BYTE target)
+{
+    ULONGLONG tick;
+    int index;
+    bool_t targetChanged;
+
+    targetChanged = (visual->target != target);
+    if (targetChanged)
+    {
+        tick = GetTickCount64();
+        visual->hot = CurrentControlHot(visual, tick);
+        visual->target = target;
+        visual->transitionTick = tick;
+        index = GetDlgCtrlID(visual->hwnd) - ID_LIST;
+        AcquireSRWLockExclusive(&app->controlFrameLock);
+        app->controlFrame.hot[index] = visual->hot;
+        app->controlFrame.target[index] = target;
+        app->controlFrame.transitionTick[index] = tick;
+        ReleaseSRWLockExclusive(&app->controlFrameLock);
+    }
+}
+
+static FORCE_INLINE void CaptureControlFrame(App* app)
+{
+    ControlFrame* next;
+    uint32_t index;
+    uint32_t column;
+    HWND hwnd;
+    HWND focus;
+    int slot;
+    unsigned row;
+    bool_t isSlider;
+    bool_t isButton;
+    bool_t fileFocused;
+
+    next = &app->stagingFrame;
+    ZeroMemory(next, sizeof(*next));
+    focus = GetFocus();
+    for (index = 0; index < ARRAYSIZE(c_controls); ++index)
+    {
+        CRT_Memory_Copy((byte_t*)&hwnd, (const byte_t*)app + c_controls[index].destinationOffset, sizeof(HWND));
+        slot = c_controls[index].id - ID_LIST;
+        (void)GetWindowText(hwnd, next->text[slot], GUI_CONTROL_TEXT_CAPACITY);
+        next->enabled[slot] = (BYTE)!!IsWindowEnabled(hwnd);
+        next->focused[slot] = (BYTE)(focus == hwnd);
+        next->hot[slot] = app->visuals[slot].hot;
+        next->target[slot] = app->visuals[slot].target;
+        next->transitionTick[slot] = app->visuals[slot].transitionTick;
+        isSlider = (0 == lstrcmp(c_controls[index].windowClass, TRACKBAR_CLASS));
+        isButton = (0 == lstrcmp(c_controls[index].windowClass, WC_BUTTON));
+        if (isSlider)
+        {
+            next->sliderPosition[slot] = (int)SendMessage(hwnd, TBM_GETPOS, 0, 0);
+            next->sliderMinimum[slot] = (int)SendMessage(hwnd, TBM_GETRANGEMIN, 0, 0);
+            next->sliderMaximum[slot] = (int)SendMessage(hwnd, TBM_GETRANGEMAX, 0, 0);
+        }
+        if (isButton)
+        {
+            next->checked[slot] = (BYTE)(BST_CHECKED == SendMessage(hwnd, BM_GETCHECK, 0, 0));
+            next->pressed[slot] = (BYTE)(0 != (SendMessage(hwnd, BM_GETSTATE, 0, 0) & BST_PUSHED));
+        }
+    }
+    next->subtitleSelection = (int)SendMessage(app->hSubtitle, CB_GETCURSEL, 0, 0);
+    next->receiverCount = app->devices.count;
+    next->selectedReceiver = ListView_GetNextItem(app->hList, -1, LVNI_SELECTED);
+    next->firstReceiver = ListView_GetTopIndex(app->hList);
+    for (row = 0; (row < next->receiverCount) && (row < CAST_MAX_DEVICES); ++row)
+    {
+        for (column = 0; column < GUI_DEVICE_COLUMN_COUNT; ++column)
+        {
+            ListView_GetItemText(app->hList, (int)row, (int)column,
+                                 next->receiver[row][column], GUI_DEVICE_NAME_CAPACITY)
+        }
+    }
+    fileFocused = (focus == app->hFile);
+    if (fileFocused)
+    {
+        (void)GetCaretPos(&next->fileCaret);
+    }
+    AcquireSRWLockExclusive(&app->controlFrameLock);
+    CRT_Memory_Copy((byte_t*)&app->controlFrame, (const byte_t*)next, sizeof(*next));
+    ReleaseSRWLockExclusive(&app->controlFrameLock);
+}
+
+static FORCE_INLINE BYTE ControlFrame_Hot(const ControlFrame* frame, int slot, ULONGLONG tick)
+{
+    ULONGLONG elapsed;
+    int delta;
+    int amount;
+    bool_t transitioning;
+
+    elapsed = tick - frame->transitionTick[slot];
+    amount = frame->target[slot];
+    transitioning = (elapsed < GUI_HOVER_DURATION_MS);
+    if (transitioning)
+    {
+        delta = (int)frame->target[slot] - (int)frame->hot[slot];
+        amount = (int)frame->hot[slot] + (delta * (int)elapsed / GUI_HOVER_DURATION_MS);
+    }
+    return (BYTE)amount;
+}
+
+static FORCE_INLINE void DrawReceiverList(ControlPainter* painter, const ControlFrame* frame,
+                                           const RECT* bounds, const int widths[GUI_DEVICE_COLUMN_COUNT])
+{
+    RECT header;
+    RECT cell;
+    RECT rowRect;
+    int headerHeight;
+    int rowHeight;
+    int top;
+    int row;
+    int column;
+    int x;
+    const D2D1_COLOR_F* textColor;
+
+    ControlPainter_Fill(painter, bounds, &c_castFieldColor);
+    ControlPainter_Outline(painter, bounds, &c_castBorderColor);
+    headerHeight = ScaleAtDpi(painter->dpi, GUI_COMBO_ITEM_HEIGHT);
+    rowHeight = ScaleAtDpi(painter->dpi, GUI_COMBO_ITEM_HEIGHT);
+    header = *bounds;
+    header.bottom = header.top + headerHeight;
+    ControlPainter_Fill(painter, &header, &c_castHotColor);
+    x = bounds->left;
+    for (column = 0; column < GUI_DEVICE_COLUMN_COUNT; ++column)
+    {
+        cell = header;
+        cell.left = x + ScaleAtDpi(painter->dpi, GUI_CONTROL_TEXT_INSET);
+        cell.right = x + widths[column];
+        ControlPainter_Text(painter, c_deviceColumns[column], &cell, &c_castTextColor, DWRITE_TEXT_ALIGNMENT_LEADING);
+        x += widths[column];
+    }
+    top = header.bottom;
+    for (row = frame->firstReceiver; (row < (int)frame->receiverCount) && (row < CAST_MAX_DEVICES) &&
+         (top + rowHeight <= bounds->bottom); ++row)
+    {
+        rowRect = *bounds;
+        rowRect.top = top;
+        rowRect.bottom = top + rowHeight;
+        if (row == frame->selectedReceiver)
+        {
+            ControlPainter_Fill(painter, &rowRect, &c_castSelectedColor);
+        }
+        x = bounds->left;
+        for (column = 0; column < GUI_DEVICE_COLUMN_COUNT; ++column)
+        {
+            cell = rowRect;
+            cell.left = x + ScaleAtDpi(painter->dpi, GUI_CONTROL_TEXT_INSET);
+            cell.right = x + widths[column];
+            textColor = (row == frame->selectedReceiver) ? &c_castTextColor : &c_castMutedColor;
+            ControlPainter_Text(painter, frame->receiver[row][column], &cell, textColor, DWRITE_TEXT_ALIGNMENT_LEADING);
+            x += widths[column];
+        }
+        top += rowHeight;
+    }
+}
+
+static FORCE_INLINE void DrawCheckbox(ControlPainter* painter, const ControlFrame* frame,
+                                       int slot, RECT rect, const D2D1_COLOR_F* foreground)
+{
+    RECT part;
+
+    part = rect;
+    part.right = part.left + ScaleAtDpi(painter->dpi, GUI_CHECK_BOX_SIZE);
+    part.top += ScaleAtDpi(painter->dpi, 4);
+    part.bottom -= ScaleAtDpi(painter->dpi, 4);
+    ControlPainter_Fill(painter, &part, &c_castFieldColor);
+    ControlPainter_Outline(painter, &part, frame->focused[slot] ? &c_castAccentColor : &c_castBorderColor);
+    if (frame->checked[slot])
+    {
+        (void)InflateRect(&part, -4, -4);
+        ControlPainter_Fill(painter, &part, &c_castAccentColor);
+    }
+    rect.left = part.right + ScaleAtDpi(painter->dpi, GUI_CONTROL_GAP);
+    ControlPainter_Text(painter, frame->text[slot], &rect, foreground, DWRITE_TEXT_ALIGNMENT_LEADING);
+}
+
+static FORCE_INLINE void DrawButton(ControlPainter* painter, const ControlFrame* frame,
+                                     int slot, const RECT* rect, BYTE hot,
+                                     const D2D1_COLOR_F* foreground)
+{
+    D2D1_COLOR_F fill;
+    D2D1_COLOR_F border;
+
+    fill = MixControlColor(&c_castFieldColor, &c_castHotColor, hot);
+    border = MixControlColor(&c_castBorderColor, &c_castAccentColor, hot);
+    if (frame->pressed[slot])
+    {
+        fill = c_castSelectedColor;
+    }
+    ControlPainter_Fill(painter, rect, &fill);
+    ControlPainter_Outline(painter, rect, frame->focused[slot] ? &c_castAccentColor : &border);
+    ControlPainter_Text(painter, frame->text[slot], rect, foreground, DWRITE_TEXT_ALIGNMENT_CENTER);
+}
+
+static FORCE_INLINE void DrawSlider(ControlPainter* painter, const ControlFrame* frame,
+                                     int slot, const RECT* rect, BYTE hot)
+{
+    RECT part;
+    int span;
+    int travel;
+    int thumbX;
+    D2D1_COLOR_F fill;
+
+    part = *rect;
+    part.left += ScaleAtDpi(painter->dpi, GUI_CONTROL_GAP);
+    part.right -= ScaleAtDpi(painter->dpi, GUI_CONTROL_GAP);
+    part.top = ((rect->top + rect->bottom) / 2) - ScaleAtDpi(painter->dpi, 2);
+    part.bottom = part.top + ScaleAtDpi(painter->dpi, 4);
+    fill = MixControlColor(&c_castFieldColor, &c_castHotColor, hot);
+    ControlPainter_Fill(painter, &part, &fill);
+    span = frame->sliderMaximum[slot] - frame->sliderMinimum[slot];
+    travel = part.right - part.left;
+    thumbX = part.left;
+    if ((0 < span) && (0 < travel))
+    {
+        thumbX += (int)((((int64_t)frame->sliderPosition[slot] - (int64_t)frame->sliderMinimum[slot]) * travel) / span);
+    }
+    part.left = thumbX - ScaleAtDpi(painter->dpi, GUI_SLIDER_THUMB_HALF_WIDTH);
+    part.right = thumbX + ScaleAtDpi(painter->dpi, GUI_SLIDER_THUMB_HALF_WIDTH);
+    part.top = rect->top + ScaleAtDpi(painter->dpi, 3);
+    part.bottom = rect->bottom - ScaleAtDpi(painter->dpi, 3);
+    fill = MixControlColor(&c_castAccentColor, &c_castHotAccentColor, hot);
+    if (!frame->enabled[slot])
+    {
+        fill = c_castMutedColor;
+    }
+    ControlPainter_Fill(painter, &part, &fill);
+    ControlPainter_Outline(painter, &part, &c_castBorderColor);
+}
+
+static FORCE_INLINE void DrawField(ControlPainter* painter, const ControlFrame* frame,
+                                    int slot, RECT rect, ULONGLONG tick,
+                                    const D2D1_COLOR_F* foreground)
+{
+    RECT part;
+
+    if (ID_SUBTITLE == slot + ID_LIST)
+    {
+        rect.bottom = rect.top + ScaleAtDpi(painter->dpi, GUI_COMBO_FIELD_HEIGHT + 4);
+    }
+    ControlPainter_Fill(painter, &rect, &c_castFieldColor);
+    ControlPainter_Outline(painter, &rect, frame->focused[slot] ? &c_castAccentColor : &c_castBorderColor);
+    part = rect;
+    part.left += ScaleAtDpi(painter->dpi, GUI_CONTROL_TEXT_INSET);
+    part.right -= ScaleAtDpi(painter->dpi, GUI_CONTROL_TEXT_INSET);
+    if (ID_SUBTITLE == slot + ID_LIST)
+    {
+        part.right -= ScaleAtDpi(painter->dpi, GUI_COMBO_ARROW_WIDTH);
+    }
+    ControlPainter_Text(painter, frame->text[slot], &part, foreground, DWRITE_TEXT_ALIGNMENT_LEADING);
+    if (ID_SUBTITLE == slot + ID_LIST)
+    {
+        part = rect;
+        part.left = part.right - ScaleAtDpi(painter->dpi, GUI_COMBO_ARROW_WIDTH);
+        ControlPainter_Text(painter, TEXT("v"), &part, foreground, DWRITE_TEXT_ALIGNMENT_CENTER);
+    }
+    if ((ID_FILE == slot + ID_LIST) && frame->focused[slot] &&
+        (0 != ((tick / GUI_CARET_PERIOD_MS) & 1)))
+    {
+        part = rect;
+        part.left += frame->fileCaret.x;
+        part.right = part.left + 1;
+        part.top += frame->fileCaret.y;
+        part.bottom = part.top + ScaleAtDpi(painter->dpi, GUI_FONT_SIZE + 2);
+        ControlPainter_Fill(painter, &part, &c_castTextColor);
+    }
+}
+
+static FORCE_INLINE void DrawControl(ControlPainter* painter, const ControlFrame* frame,
+                                      const CastGui_ControlDefinition_t* control,
+                                      const RECT* rect, ULONGLONG tick)
+{
+    int slot;
+    BYTE hot;
+    const D2D1_COLOR_F* foreground;
+    DWRITE_TEXT_ALIGNMENT alignment;
+
+    slot = control->id - ID_LIST;
+    hot = ControlFrame_Hot(frame, slot, tick);
+    foreground = frame->enabled[slot] ? &c_castTextColor : &c_castMutedColor;
+    if (0 == lstrcmp(control->windowClass, WC_STATIC))
+    {
+        alignment = (0 != (control->style & SS_RIGHT)) ? DWRITE_TEXT_ALIGNMENT_TRAILING : DWRITE_TEXT_ALIGNMENT_LEADING;
+        ControlPainter_Text(painter, frame->text[slot], rect, foreground, alignment);
+    }
+    else if (ID_MOTION_CHECK == control->id)
+    {
+        DrawCheckbox(painter, frame, slot, *rect, foreground);
+    }
+    else if (0 == lstrcmp(control->windowClass, WC_BUTTON))
+    {
+        DrawButton(painter, frame, slot, rect, hot, foreground);
+    }
+    else if (0 == lstrcmp(control->windowClass, TRACKBAR_CLASS))
+    {
+        DrawSlider(painter, frame, slot, rect, hot);
+    }
+    else if ((0 == lstrcmp(control->windowClass, WC_EDIT)) ||
+             (0 == lstrcmp(control->windowClass, WC_COMBOBOX)))
+    {
+        DrawField(painter, frame, slot, *rect, tick, foreground);
+    }
+}
+
+static FORCE_INLINE void DrawControlFrame(ControlPainter* painter, App* app, const IMMERSIVEPAINTSTRUCT* paint)
+{
+    ControlFrame* frame;
+    RECT rects[GUI_VISUAL_COUNT];
+    int widths[GUI_DEVICE_COLUMN_COUNT];
+    uint32_t index;
+    int slot;
+    ULONGLONG tick;
+    const CastGui_ControlDefinition_t* control;
+
+    frame = &app->renderFrame;
+    AcquireSRWLockShared(&app->controlFrameLock);
+    CRT_Memory_Copy((byte_t*)frame, (const byte_t*)&app->controlFrame, sizeof(*frame));
+    ReleaseSRWLockShared(&app->controlFrameLock);
+    ComputeControlRects(painter->dpi, paint->layout.cyCaption,
+                        paint->rcClient.right - paint->rcClient.left,
+                        paint->rcClient.bottom - paint->rcClient.top, rects, widths);
+    DrawReceiverList(painter, frame, &rects[ID_LIST - ID_LIST], widths);
+    tick = GetTickCount64();
+    for (index = 0; index < ARRAYSIZE(c_controls); ++index)
+    {
+        control = &c_controls[index];
+        if (ID_LIST != control->id)
+        {
+            slot = control->id - ID_LIST;
+            DrawControl(painter, frame, control, &rects[slot], tick);
+        }
+    }
+}
+
+static LRESULT CALLBACK ControlVisualProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam,
+                                           UINT_PTR subclassId, DWORD_PTR refData);
+
+static FORCE_INLINE void ControlVisual_OnEnable(HWND hwnd, BOOL enabled)
+{
+    App* app;
     ControlVisual* visual;
-    App*           app;
 
     app = GetApp(hwnd);
     visual = FindControlVisual(app, hwnd);
-    if (visual->ownerDrawButton && app->bufferedPaintReady)
+    if (!enabled)
     {
-        (void)BufferedPaintStopAllAnimations(hwnd);
+        SetControlHot(app, visual, 0);
     }
-    (void)RemoveWindowSubclass(hwnd, ControlVisualProc, CONTROL_VISUAL_SUBCLASS_ID);
+    FORWARD_WM_ENABLE(hwnd, enabled, DefSubclassProc);
+}
+
+static FORCE_INLINE void ControlVisual_OnPaint(HWND hwnd)
+{
+    (void)ValidateRect(hwnd, NULL);
+}
+
+static FORCE_INLINE BOOL ControlVisual_OnEraseBackground(HWND hwnd, HDC dc)
+{
+    UNREFERENCED_PARAMETER(hwnd);
+    UNREFERENCED_PARAMETER(dc);
+    return TRUE;
+}
+
+static FORCE_INLINE void ControlVisual_OnNcDestroy(HWND hwnd)
+{
+    App* app;
+    ControlVisual* visual;
+
+    app = GetApp(hwnd);
+    visual = FindControlVisual(app, hwnd);
     visual->hwnd = NULL;
+    (void)RemoveWindowSubclass(hwnd, ControlVisualProc, CONTROL_VISUAL_SUBCLASS_ID);
     FORWARD_WM_NCDESTROY(hwnd, DefSubclassProc);
 }
 
 static FORCE_INLINE void ControlVisual_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
+    App* app;
     ControlVisual* visual;
     TRACKMOUSEEVENT track;
-    RECT           client;
-    POINT          point;
-    BYTE           target;
+    RECT client;
+    POINT point;
+    BYTE target;
 
-    visual = FindControlVisual(GetApp(hwnd), hwnd);
-    GetClientRect(hwnd, &client);
+    app = GetApp(hwnd);
+    visual = FindControlVisual(app, hwnd);
+    (void)GetClientRect(hwnd, &client);
     point.x = x;
     point.y = y;
     target = (IsWindowEnabled(hwnd) && PtInRect(&client, point)) ? GUI_LAYERED_OPAQUE : 0;
@@ -1326,551 +1650,107 @@ static FORCE_INLINE void ControlVisual_OnMouseMove(HWND hwnd, int x, int y, UINT
         track.dwHoverTime = 0;
         visual->tracking = TrackMouseEvent(&track);
     }
-    if (visual->target != target)
-    {
-        visual->target = target;
-        if (!visual->ownerDrawButton)
-        {
-            visual->hot = target;
-        }
-        (void)InvalidateRect(hwnd, NULL, FALSE);
-    }
+    SetControlHot(app, visual, target);
     FORWARD_WM_MOUSEMOVE(hwnd, x, y, keyFlags, DefSubclassProc);
+}
+
+static FORCE_INLINE void ControlVisual_OnLButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
+{
+    App* app;
+    int slot;
+
+    app = GetApp(hwnd);
+    slot = GetDlgCtrlID(hwnd) - ID_LIST;
+    AcquireSRWLockExclusive(&app->controlFrameLock);
+    app->controlFrame.pressed[slot] = TRUE;
+    ReleaseSRWLockExclusive(&app->controlFrameLock);
+    FORWARD_WM_LBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, DefSubclassProc);
+}
+
+static FORCE_INLINE void ControlVisual_OnLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
+{
+    App* app;
+    int slot;
+
+    app = GetApp(hwnd);
+    slot = GetDlgCtrlID(hwnd) - ID_LIST;
+    AcquireSRWLockExclusive(&app->controlFrameLock);
+    app->controlFrame.pressed[slot] = FALSE;
+    ReleaseSRWLockExclusive(&app->controlFrameLock);
+    FORWARD_WM_LBUTTONUP(hwnd, x, y, keyFlags, DefSubclassProc);
 }
 
 static FORCE_INLINE void ControlVisual_OnMouseLeave(HWND hwnd)
 {
+    App* app;
     ControlVisual* visual;
 
-    visual = FindControlVisual(GetApp(hwnd), hwnd);
+    app = GetApp(hwnd);
+    visual = FindControlVisual(app, hwnd);
     visual->tracking = FALSE;
-    visual->target = 0;
-    if (!visual->ownerDrawButton)
-    {
-        visual->hot = 0;
-    }
-    (void)InvalidateRect(hwnd, NULL, FALSE);
+    SetControlHot(app, visual, 0);
     FORWARD_WM_MOUSELEAVE(hwnd, DefSubclassProc);
 }
 
-static LRESULT CALLBACK ControlVisualProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR refData)
+static LRESULT CALLBACK ControlVisualProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam,
+                                           UINT_PTR subclassId, DWORD_PTR refData)
 {
     UNREFERENCED_PARAMETER(subclassId);
     UNREFERENCED_PARAMETER(refData);
 
     switch (message)
     {
-        HANDLE_MSG(hwnd, WM_ENABLE,        ControlVisual_OnEnable);
-        HANDLE_MSG(hwnd, WM_ERASEBKGND,   ControlVisual_OnEraseBackground);
-        HANDLE_MSG(hwnd, WM_NCDESTROY,    ControlVisual_OnNcDestroy);
-        HANDLE_MSG(hwnd, WM_MOUSEMOVE,    ControlVisual_OnMouseMove);
-        HANDLE_MSG(hwnd, WM_MOUSELEAVE,   ControlVisual_OnMouseLeave);
+        HANDLE_MSG(hwnd, WM_ENABLE,      ControlVisual_OnEnable);
+        HANDLE_MSG(hwnd, WM_PAINT,       ControlVisual_OnPaint);
+        HANDLE_MSG(hwnd, WM_ERASEBKGND, ControlVisual_OnEraseBackground);
+        HANDLE_MSG(hwnd, WM_NCDESTROY,  ControlVisual_OnNcDestroy);
+        HANDLE_MSG(hwnd, WM_MOUSEMOVE,  ControlVisual_OnMouseMove);
+        HANDLE_MSG(hwnd, WM_LBUTTONDOWN, ControlVisual_OnLButtonDown);
+        HANDLE_MSG(hwnd, WM_LBUTTONUP,   ControlVisual_OnLButtonUp);
+        HANDLE_MSG(hwnd, WM_MOUSELEAVE, ControlVisual_OnMouseLeave);
     default:
         break;
     }
     return DefSubclassProc(hwnd, message, wParam, lParam);
 }
 
-static FORCE_INLINE void AddControlVisual(ControlVisual* visual, HWND hwnd, BOOL ownerDrawButton)
+static FORCE_INLINE void AddControlVisual(App* app, HWND hwnd)
 {
+    int slot;
+    ControlVisual* visual;
+
+    slot = GetDlgCtrlID(hwnd) - ID_LIST;
+    visual = &app->visuals[slot];
     visual->hwnd = hwnd;
-    visual->ownerDrawButton = ownerDrawButton;
+    visual->transitionTick = GetTickCount64();
     LOGASSERT(SetWindowSubclass(hwnd, ControlVisualProc, CONTROL_VISUAL_SUBCLASS_ID, (DWORD_PTR)visual));
 }
 
-/*************************************************************************************************/
-/**
- * \par Details:
- *  The control host is an ordinary child window with its own redirection surface,
- *  so the classic controls compose above the immersive window's swap chain. It
- *  paints the retained background and forwards control notifications to the
- *  application window, which owns the handlers.
- */
-static FORCE_INLINE BOOL CastHost_OnEraseBackground(HWND hWnd, HDC dc)
-{
-    App* pApp;
-    RECT client;
-
-    pApp = GetApp(hWnd);
-    GetClientRect(hWnd, &client);
-    (void)FillRect(dc, &client, pApp->backgroundBrush);
-    return TRUE;
-}
-
-static FORCE_INLINE void CastHost_OnCommand(HWND hWnd, int id, HWND hControl, UINT codeNotify)
-{
-    FORWARD_WM_COMMAND(GetParent(hWnd), id, hControl, codeNotify, SendMessage);
-}
-
-static FORCE_INLINE LRESULT CastHost_OnNotify(HWND hWnd, int idFrom, NMHDR* pHeader)
-{
-    return FORWARD_WM_NOTIFY(GetParent(hWnd), idFrom, pHeader, SendMessage);
-}
-
-static FORCE_INLINE void CastHost_OnDrawItem(HWND hWnd, const DRAWITEMSTRUCT* item)
-{
-    FORWARD_WM_DRAWITEM(GetParent(hWnd), item, SendMessage);
-}
-
-static FORCE_INLINE void CastHost_OnMeasureItem(HWND hWnd, MEASUREITEMSTRUCT* item)
-{
-    FORWARD_WM_MEASUREITEM(GetParent(hWnd), item, SendMessage);
-}
-
-static FORCE_INLINE void CastHost_OnHScroll(HWND hWnd, HWND hControl, UINT code, int position)
-{
-    FORWARD_WM_HSCROLL(GetParent(hWnd), hControl, code, position, SendMessage);
-}
-
-static FORCE_INLINE HBRUSH CastHost_OnCtlColorEdit(HWND hWnd, HDC dc, HWND hControl, int type)
-{
-    UNREFERENCED_PARAMETER(type);
-    return FORWARD_WM_CTLCOLOREDIT(GetParent(hWnd), dc, hControl, SendMessage);
-}
-
-static FORCE_INLINE HBRUSH CastHost_OnCtlColorListBox(HWND hWnd, HDC dc, HWND hControl, int type)
-{
-    UNREFERENCED_PARAMETER(type);
-    return FORWARD_WM_CTLCOLORLISTBOX(GetParent(hWnd), dc, hControl, SendMessage);
-}
-
-static FORCE_INLINE HBRUSH CastHost_OnCtlColorButton(HWND hWnd, HDC dc, HWND hControl, int type)
-{
-    UNREFERENCED_PARAMETER(type);
-    return FORWARD_WM_CTLCOLORBTN(GetParent(hWnd), dc, hControl, SendMessage);
-}
-
-static FORCE_INLINE HBRUSH CastHost_OnCtlColorStatic(HWND hWnd, HDC dc, HWND hControl, int type)
-{
-    UNREFERENCED_PARAMETER(type);
-    return FORWARD_WM_CTLCOLORSTATIC(GetParent(hWnd), dc, hControl, SendMessage);
-}
-
-static LRESULT CALLBACK CastHostProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message)
-    {
-        HANDLE_MSG(hWnd, WM_ERASEBKGND,      CastHost_OnEraseBackground);
-        HANDLE_MSG(hWnd, WM_COMMAND,         CastHost_OnCommand);
-        HANDLE_MSG(hWnd, WM_NOTIFY,          CastHost_OnNotify);
-        HANDLE_MSG(hWnd, WM_DRAWITEM,        CastHost_OnDrawItem);
-        HANDLE_MSG(hWnd, WM_MEASUREITEM,     CastHost_OnMeasureItem);
-        HANDLE_MSG(hWnd, WM_HSCROLL,         CastHost_OnHScroll);
-        HANDLE_MSG(hWnd, WM_CTLCOLOREDIT,    CastHost_OnCtlColorEdit);
-        HANDLE_MSG(hWnd, WM_CTLCOLORLISTBOX, CastHost_OnCtlColorListBox);
-        HANDLE_MSG(hWnd, WM_CTLCOLORBTN,     CastHost_OnCtlColorButton);
-        HANDLE_MSG(hWnd, WM_CTLCOLORSTATIC,  CastHost_OnCtlColorStatic);
-    default:
-        break;
-    }
-    return DefWindowProc(hWnd, message, wParam, lParam);
-}
-
-static FORCE_INLINE ATOM RegisterCastHostClass(HINSTANCE instance)
-{
-    WNDCLASSEX host;
-
-    ZeroMemory(&host, sizeof(host));
-    host.cbSize        = sizeof(host);
-    host.style         = 0;
-    host.lpfnWndProc   = CastHostProc;
-    host.hInstance     = instance;
-    host.hCursor       = LoadCursor(NULL, IDC_ARROW);
-    host.hbrBackground = NULL;
-    host.lpszClassName = WC_CASTHOST;
-    return RegisterClassEx(&host);
-}
-
-static FORCE_INLINE void CreateCastHost(App* pApp)
-{
-    HWND    host;
-    BOOL    opaque;
-
-    /* Layered: CreateSurfaceFromHwnd composes a child only when it is a layered child window. */
-    host = CreateWindowEx(WS_EX_CONTROLPARENT | WS_EX_LAYERED,
-                          WC_CASTHOST,
-                          NULL,
-                          WS_CHILD | WS_CLIPCHILDREN,
-                          0,
-                          0,
-                          GUI_CHILD_INITIAL_SIZE,
-                          GUI_CHILD_INITIAL_SIZE,
-                          pApp->hWnd,
-                          NULL,
-                          pApp->hInstance,
-                          NULL);
-    pApp->hHost = host;
-    LOGASSERT(NULL != host);
-    /* A layered window renders only once its attributes are set (opaque, no color key). */
-    opaque = SetLayeredWindowAttributes(host, 0, GUI_LAYERED_OPAQUE, LWA_ALPHA);
-    LOGASSERT(opaque);
-}
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  Changes ordinary buttons to owner-draw controls and requests the dark Explorer
- *  theme after creating the child window.
- */
-static FORCE_INLINE void CreateChild(App* pApp, const CastGui_ControlDefinition_t* control, byte_t* pSlot)
+static FORCE_INLINE void CreateChild(App* app, const CastGui_ControlDefinition_t* control, byte_t* destination)
 {
     HWND child;
-    HRESULT themeStatus;
-    DWORD style = control->style;
-    if ((0 == lstrcmp(control->windowClass, WC_BUTTON)) && ((style & BS_TYPEMASK) != BS_AUTOCHECKBOX))
+    DWORD style;
+
+    style = control->style;
+    if (ID_SUBTITLE == control->id)
     {
-        style = (style & ~(DWORD)BS_TYPEMASK) | (DWORD)BS_OWNERDRAW;
+        style &= ~(DWORD)CBS_OWNERDRAWFIXED;
     }
-    child = CreateWindowEx(control->extendedStyle,
-                            control->windowClass,
-                            control->text,
-                            WS_CHILD | WS_VISIBLE | style,
-                            0,
-                            0,
-                            GUI_CHILD_INITIAL_SIZE,
-                            GUI_CHILD_INITIAL_SIZE,
-                            pApp->hHost,
-                            (HMENU)(INT_PTR)control->id, // NOLINT(performance-no-int-to-ptr): Win32 child control IDs use the HMENU slot.
-                            pApp->hInstance,
-                            NULL);
-    CRT_Memory_Copy(pSlot, (const byte_t*)&child, sizeof(HWND));
-    themeStatus = SetWindowTheme(child, L"DarkMode_Explorer", NULL);
-    LOGASSERT(SUCCEEDED(themeStatus));
+    child = CreateWindowEx((control->extendedStyle & ~(DWORD)WS_EX_CLIENTEDGE) | WS_EX_NOREDIRECTIONBITMAP,
+                           control->windowClass, control->text, WS_CHILD | WS_VISIBLE | style,
+                           0, 0, GUI_CHILD_INITIAL_SIZE, GUI_CHILD_INITIAL_SIZE,
+                           app->hWnd, (HMENU)(INT_PTR)control->id, app->hInstance, NULL); // NOLINT(performance-no-int-to-ptr): Win32 child control IDs use the HMENU slot.
+    LOGASSERT(NULL != child);
+    CRT_Memory_Copy(destination, (const byte_t*)&child, sizeof(HWND));
+    (void)SetWindowTheme(child, L"DarkMode_Explorer", NULL);
+    AddControlVisual(app, child);
 }
 
-/* The list-view owns its header, so header NM_CUSTOMDRAW never reaches WindowProc.
-** Paint the header itself, including the unused area after the last column. Native
-** header processing still handles column resizing and hit testing. */
-/*************************************************************************************************/
-/**
- * \par Details:
- *  Paints the header cells and trailing unused area directly because the parent
- *  list-view owns header notifications. Native processing retains hit testing
- *  and column resizing.
- */
-static FORCE_INLINE void PaintDarkHeader(HWND hWnd, HDC dc, App* pApp)
-{
-    RECT          client;
-    TCHAR* const* column;
-    GetClientRect(hWnd, &client);
-    BeginControlPaint(pApp, dc, &client);
-    FillControlRect(pApp, &client, &c_castFieldColor);
-    for (column = c_deviceColumns; column != c_deviceColumns + GUI_DEVICE_COLUMN_COUNT; ++column)
-    {
-        TCHAR                 native[GUI_COMBO_TEXT_CAPACITY];
-        HDITEM                item;
-        RECT                  rect;
-        RECT                  divider;
-        DWRITE_TEXT_ALIGNMENT alignment;
-        const int             index = (int)(column - c_deviceColumns);
-        ZeroMemory(&item, sizeof(item));
-        item.mask       = HDI_TEXT | HDI_FORMAT;
-        item.pszText    = native;
-        item.cchTextMax = GUI_COMBO_TEXT_CAPACITY;
-        if (!Header_GetItem(hWnd, index, &item) || !Header_GetItemRect(hWnd, index, &rect))
-        {
-            continue;
-        }
-        divider      = rect;
-        divider.left = divider.right - 1;
-        FillControlRect(pApp, &divider, &c_castBackgroundColor);
-        InflateRect(&rect, -Scale(pApp, GUI_CONTROL_TEXT_INSET), 0);
-        if (0 != (item.fmt & HDF_RIGHT))
-        {
-            alignment = DWRITE_TEXT_ALIGNMENT_TRAILING;
-        }
-        else if (0 != (item.fmt & HDF_CENTER))
-        {
-            alignment = DWRITE_TEXT_ALIGNMENT_CENTER;
-        }
-        else
-        {
-            alignment = DWRITE_TEXT_ALIGNMENT_LEADING;
-        }
-        DrawControlText(pApp, native, &rect, &c_castMutedColor, alignment);
-    }
-    EndControlPaint(pApp);
-}
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  Handles paint and print-client requests with the dark header renderer and
- *  removes the subclass during nonclient destruction.
- */
-static FORCE_INLINE LRESULT CALLBACK DarkHeaderProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData);
-
-static FORCE_INLINE void DarkHeader_OnPaint(HWND hWnd)
-{
-    PAINTSTRUCT paint;
-    HDC         dc;
-    App*        pApp;
-
-    pApp = GetApp(hWnd);
-    dc   = BeginPaint(hWnd, &paint);
-    PaintDarkHeader(hWnd, dc, pApp);
-    (void)EndPaint(hWnd, &paint);
-}
-
-static FORCE_INLINE BOOL DarkHeader_OnEraseBackground(HWND hWnd, HDC dc)
-{
-    UNREFERENCED_PARAMETER(hWnd);
-    UNREFERENCED_PARAMETER(dc);
-    return TRUE;
-}
-
-static FORCE_INLINE void DarkHeader_OnNcDestroy(HWND hWnd)
-{
-    (void)RemoveWindowSubclass(hWnd, DarkHeaderProc, DARK_HEADER_SUBCLASS_ID);
-    FORWARD_WM_NCDESTROY(hWnd, DefSubclassProc);
-}
-
-static FORCE_INLINE void DarkHeader_OnPrintClient(HWND hWnd, HDC dc, UINT flags)
-{
-    App* pApp;
-
-    UNREFERENCED_PARAMETER(flags);
-    pApp = GetApp(hWnd);
-    PaintDarkHeader(hWnd, dc, pApp);
-}
-
-static FORCE_INLINE LRESULT CALLBACK DarkHeaderProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData)
-{
-    UNREFERENCED_PARAMETER(idSubclass);
-    UNREFERENCED_PARAMETER(refData);
-
-    switch (message)
-    {
-        HANDLE_MSG(hWnd, WM_PAINT,       DarkHeader_OnPaint);
-        HANDLE_MSG(hWnd, WM_ERASEBKGND, DarkHeader_OnEraseBackground);
-        HANDLE_MSG(hWnd, WM_NCDESTROY,   DarkHeader_OnNcDestroy);
-        HANDLE_MSG(hWnd, WM_PRINTCLIENT, DarkHeader_OnPrintClient); // NOLINT(performance-no-int-to-ptr): WPARAM carries an HDC.
-    default:
-        break;
-    }
-    return DefSubclassProc(hWnd, message, wParam, lParam);
-}
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  Chooses selection and disabled colors, draws the counted combo item text and
- *  adds the focus rectangle when requested by the item state.
- */
-static FORCE_INLINE void DrawSubtitleItem(HWND combo, RECT rect, int index, UINT state, App* pApp)
-{
-    TCHAR               text[GUI_CONTROL_TEXT_CAPACITY] = {0};
-    bool_t              selected;
-    const D2D1_COLOR_F* fill;
-    const D2D1_COLOR_F* foreground;
-    LRESULT             length;
-    bool_t              fits;
-    WPARAM              item;
-
-    selected   = (0 != (state & ODS_SELECTED)) && (0 == (state & ODS_COMBOBOXEDIT));
-    fill       = selected ? &c_castSelectedColor : &c_castFieldColor;
-    foreground = (0 != (state & ODS_DISABLED)) ? &c_castMutedColor : &c_castTextColor;
-    FillControlRect(pApp, &rect, fill);
-    length = SendMessage(combo, CB_GETLBTEXTLEN, (WPARAM)index, 0);
-    fits   = (index >= 0) && (length >= 0) && (length < GUI_CONTROL_TEXT_CAPACITY);
-    item   = fits ? (WPARAM)index : (WPARAM)-1; /* CB_ERR for an invalid item; text stays empty */
-    (void)SendMessage(combo, CB_GETLBTEXT, item, (LPARAM)text);
-    InflateRect(&rect, -Scale(pApp, GUI_CONTROL_TEXT_INSET), 0);
-    DrawControlText(pApp, text, &rect, foreground, DWRITE_TEXT_ALIGNMENT_LEADING);
-    if ((state & ODS_FOCUS) && !(state & ODS_NOFOCUSRECT))
-    {
-        DrawControlRect(pApp, &rect, &c_castAccentColor);
-    }
-}
-
-static FORCE_INLINE void PaintSubtitleItem(HWND combo, HDC dc, RECT bounds, int index, UINT state, App* pApp)
-{
-    RECT rect;
-
-    rect.left = 0;
-    rect.top = 0;
-    rect.right = bounds.right - bounds.left;
-    rect.bottom = bounds.bottom - bounds.top;
-    BeginControlPaint(pApp, dc, &bounds);
-    DrawSubtitleItem(combo, rect, index, state, pApp);
-    EndControlPaint(pApp);
-}
-
-/* Owner-draw covers the list items; draw the closed field, border and arrow too,
-** because visual styles otherwise retain a white dropdown button. */
-/*************************************************************************************************/
-/**
- * \par Details:
- *  Draws the closed selection field, border and arrow in addition to owner-drawn
- *  list items, preventing the dropdown button from retaining its light theme.
- */
-static FORCE_INLINE void PaintDarkCombo(HWND hWnd, HDC dc, App* pApp)
-{
-    const int           enabled    = IsWindowEnabled(hWnd);
-    const int           focused    = GetFocus() == hWnd;
-    const int           arrowWidth = Scale(pApp, 24);
-    RECT                client;
-    RECT                text;
-    const D2D1_COLOR_F* border;
-    const D2D1_COLOR_F* foreground;
-    ControlVisual*      visual;
-    D2D1_COLOR_F        hotBorder;
-    D2D1_COLOR_F        hotArrow;
-    D2D1_POINT_2F       left;
-    D2D1_POINT_2F       middle;
-    D2D1_POINT_2F       right;
-    int                 x;
-    int                 y;
-
-    GetClientRect(hWnd, &client);
-    BeginControlPaint(pApp, dc, &client);
-    FillControlRect(pApp, &client, &c_castFieldColor);
-    text = client;
-    InflateRect(&text, -1, -1);
-    text.right -= arrowWidth;
-    DrawSubtitleItem(hWnd, text, (int)SendMessage(hWnd, CB_GETCURSEL, 0, 0), ODS_COMBOBOXEDIT | (enabled ? 0 : ODS_DISABLED), pApp);
-    visual = FindControlVisual(pApp, hWnd);
-    hotBorder = MixControlColor(&c_castBorderColor, &c_castAccentColor, enabled && visual ? visual->hot : 0);
-    border = focused && enabled ? &c_castAccentColor : &hotBorder;
-    DrawControlRect(pApp, &client, border);
-    x          = client.right - (arrowWidth / 2);
-    y = (client.top + client.bottom) / 2;
-    left.x = (FLOAT)(x - Scale(pApp, 4));
-    left.y = (FLOAT)(y - Scale(pApp, 2));
-    middle.x = (FLOAT)x;
-    middle.y = (FLOAT)(y + Scale(pApp, 2));
-    right.x = (FLOAT)(x + Scale(pApp, 4));
-    right.y = left.y;
-    hotArrow = MixControlColor(&c_castTextColor, &c_castHotAccentColor, enabled && visual ? visual->hot : 0);
-    foreground = enabled ? &hotArrow : &c_castMutedColor;
-    cd2dSolidColorBrushSetColor(pApp->paintBrush, foreground);
-    cd2dRenderTargetDrawLine((ID2D1RenderTarget*)pApp->paintTarget, left, middle, (ID2D1Brush*)pApp->paintBrush, GUI_ICON_STROKE_WIDTH, NULL);
-    cd2dRenderTargetDrawLine((ID2D1RenderTarget*)pApp->paintTarget, middle, right, (ID2D1Brush*)pApp->paintBrush, GUI_ICON_STROKE_WIDTH, NULL);
-    EndControlPaint(pApp);
-}
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  Supplies dark painting and requests repaint after focus, enable, selection,
- *  dropdown and theme changes handled by the default subclass procedure.
- */
-static FORCE_INLINE LRESULT CALLBACK DarkComboProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData);
-
-static FORCE_INLINE void DarkCombo_OnSetFocus(HWND hWnd, HWND previousFocus)
-{
-    FORWARD_WM_SETFOCUS(hWnd, previousFocus, DefSubclassProc);
-    (void)InvalidateRect(hWnd, NULL, FALSE);
-}
-
-static FORCE_INLINE void DarkCombo_OnKillFocus(HWND hWnd, HWND nextFocus)
-{
-    FORWARD_WM_KILLFOCUS(hWnd, nextFocus, DefSubclassProc);
-    (void)InvalidateRect(hWnd, NULL, FALSE);
-}
-
-static FORCE_INLINE void DarkCombo_OnEnable(HWND hWnd, BOOL enabled)
-{
-    FORWARD_WM_ENABLE(hWnd, enabled, DefSubclassProc);
-    (void)InvalidateRect(hWnd, NULL, FALSE);
-}
-
-static FORCE_INLINE void DarkCombo_OnPaint(HWND hWnd)
-{
-    PAINTSTRUCT paint;
-    HDC         dc;
-    App*        pApp;
-
-    pApp = GetApp(hWnd);
-    dc   = BeginPaint(hWnd, &paint);
-    PaintDarkCombo(hWnd, dc, pApp);
-    (void)EndPaint(hWnd, &paint);
-}
-
-static FORCE_INLINE BOOL DarkCombo_OnEraseBackground(HWND hWnd, HDC dc)
-{
-    UNREFERENCED_PARAMETER(hWnd);
-    UNREFERENCED_PARAMETER(dc);
-    return TRUE;
-}
-
-static FORCE_INLINE void DarkCombo_OnNcDestroy(HWND hWnd)
-{
-    (void)RemoveWindowSubclass(hWnd, DarkComboProc, DARK_COMBO_SUBCLASS_ID);
-    FORWARD_WM_NCDESTROY(hWnd, DefSubclassProc);
-}
-
-static FORCE_INLINE LRESULT DarkCombo_OnSetCurSel(HWND hWnd, int index)
-{
-    LRESULT result;
-
-    result = FORWARD_CB_SETCURSEL(hWnd, index, DefSubclassProc);
-    (void)InvalidateRect(hWnd, NULL, FALSE);
-    return result;
-}
-
-static FORCE_INLINE LRESULT DarkCombo_OnShowDropdown(HWND hWnd, BOOL show)
-{
-    LRESULT result;
-
-    result = FORWARD_CB_SHOWDROPDOWN(hWnd, show, DefSubclassProc);
-    (void)InvalidateRect(hWnd, NULL, FALSE);
-    return result;
-}
-
-static FORCE_INLINE void DarkCombo_OnPrintClient(HWND hWnd, HDC dc, UINT flags)
-{
-    App* pApp;
-
-    UNREFERENCED_PARAMETER(flags);
-    pApp = GetApp(hWnd);
-    PaintDarkCombo(hWnd, dc, pApp);
-}
-
-static FORCE_INLINE LRESULT DarkCombo_OnThemeChanged(HWND hWnd)
-{
-    LRESULT result;
-
-    result = FORWARD_WM_THEMECHANGED(hWnd, DefSubclassProc);
-    (void)InvalidateRect(hWnd, NULL, FALSE);
-    return result;
-}
-
-static FORCE_INLINE LRESULT CALLBACK DarkComboProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData)
-{
-    UNREFERENCED_PARAMETER(idSubclass);
-    UNREFERENCED_PARAMETER(refData);
-
-    switch (message)
-    {
-        HANDLE_MSG(hWnd, WM_SETFOCUS,      DarkCombo_OnSetFocus);
-        HANDLE_MSG(hWnd, WM_KILLFOCUS,     DarkCombo_OnKillFocus);
-        HANDLE_MSG(hWnd, WM_ENABLE,        DarkCombo_OnEnable);
-        HANDLE_MSG(hWnd, WM_PAINT,         DarkCombo_OnPaint);
-        HANDLE_MSG(hWnd, WM_ERASEBKGND,    DarkCombo_OnEraseBackground);
-        HANDLE_MSG(hWnd, WM_NCDESTROY,     DarkCombo_OnNcDestroy);
-        HANDLE_MSG(hWnd, CB_SETCURSEL,     DarkCombo_OnSetCurSel);
-        HANDLE_MSG(hWnd, CB_SHOWDROPDOWN,  DarkCombo_OnShowDropdown);
-        HANDLE_MSG(hWnd, WM_PRINTCLIENT,   DarkCombo_OnPrintClient); // NOLINT(performance-no-int-to-ptr): WPARAM carries an HDC.
-        HANDLE_MSG(hWnd, WM_THEMECHANGED,  DarkCombo_OnThemeChanged);
-    default:
-        break;
-    }
-    return DefSubclassProc(hWnd, message, wParam, lParam);
-}
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  Creates the current DPI's message font, replaces the old font and sends it to
- *  all child controls before updating combo item heights.
- */
 static FORCE_INLINE void ApplyFont(App* pApp)
 {
     NONCLIENTMETRICS metrics;
     HWND             hChild;
 
-    UpdateControlTextFormat(pApp);
 
     metrics.cbSize = sizeof(metrics);
     if (SystemParametersInfoForDpi(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0, pApp->dpi))
@@ -1886,9 +1766,9 @@ static FORCE_INLINE void ApplyFont(App* pApp)
             pApp->hFont = hFont;
         }
     }
-    for (hChild = GetWindow(pApp->hHost, GW_CHILD); NULL != hChild; hChild = GetWindow(hChild, GW_HWNDNEXT))
+    for (hChild = GetWindow(pApp->hWnd, GW_CHILD); NULL != hChild; hChild = GetWindow(hChild, GW_HWNDNEXT))
     {
-        SendMessage(hChild, WM_SETFONT, (WPARAM)pApp->hFont, TRUE);
+        SendMessage(hChild, WM_SETFONT, (WPARAM)pApp->hFont, FALSE);
     }
     SendMessage(pApp->hSubtitle, CB_SETITEMHEIGHT, 0, Scale(pApp, GUI_COMBO_ITEM_HEIGHT));
     SendMessage(pApp->hSubtitle, CB_SETITEMHEIGHT, (WPARAM)-1, Scale(pApp, GUI_COMBO_FIELD_HEIGHT));
@@ -1900,29 +1780,41 @@ static FORCE_INLINE void ApplyFont(App* pApp)
  *  Computes DPI-scaled rows from the client rectangle and reserves the remaining
  *  height for the receiver list, then moves controls and adjusts column widths.
  */
-static FORCE_INLINE void Layout(App* pApp, int clientWidth, int clientHeight)
+static FORCE_INLINE void UpdateListColumnWidth(App* app, int index, int width)
+{
+    bool_t changed;
+
+    changed = app->listColumnWidth[index] != width;
+    if (changed)
+    {
+        ListView_SetColumnWidth(app->hList, index, width);
+        app->listColumnWidth[index] = width;
+    }
+}
+
+static FORCE_INLINE void ComputeControlRects(UINT dpi, int captionHeight, int clientWidth, int clientHeight, RECT rects[GUI_VISUAL_COUNT], int columnWidths[GUI_DEVICE_COLUMN_COUNT])
 {
     RECT      client;
-    const int margin  = Scale(pApp, 12);
-    const int gap     = Scale(pApp, 8);
-    const int rowH    = Scale(pApp, 24);
-    const int buttonW = Scale(pApp, 96);
-    const int smallW  = Scale(pApp, 72);
-    const int labelH  = Scale(pApp, 18);
-    const int timeW   = Scale(pApp, 150);
-    const int valueW  = Scale(pApp, 108);
+    const int margin  = ScaleAtDpi(dpi, 12);
+    const int gap     = ScaleAtDpi(dpi, 8);
+    const int rowH    = ScaleAtDpi(dpi, 24);
+    const int buttonW = ScaleAtDpi(dpi, 96);
+    const int smallW  = ScaleAtDpi(dpi, 72);
+    const int labelH  = ScaleAtDpi(dpi, 18);
+    const int timeW   = ScaleAtDpi(dpi, 150);
+    const int valueW  = ScaleAtDpi(dpi, 108);
     const int cfgH               = labelH + gap + (5 * (rowH + gap)); /* label + res + qp + gop + motion + actions */
-    const int labelOffset = Scale(pApp, 4);
-    const int buttonOffset = Scale(pApp, 2);
-    const int listMinHeight = Scale(pApp, 60);
-    const int fileLabelWidth = Scale(pApp, 40);
-    const int subtitleLabelWidth = Scale(pApp, 64);
-    const int subtitleHeight = Scale(pApp, 220);
-    const int gainStateWidth = Scale(pApp, 180);
-    const int motionValueWidth = Scale(pApp, 48);
-    const int addressColumnWidth = Scale(pApp, 120);
-    const int modelColumnWidth = Scale(pApp, 90);
-    const int columnPadding = Scale(pApp, 24);
+    const int labelOffset = ScaleAtDpi(dpi, 4);
+    const int buttonOffset = ScaleAtDpi(dpi, 2);
+    const int listMinHeight = ScaleAtDpi(dpi, 60);
+    const int fileLabelWidth = ScaleAtDpi(dpi, 40);
+    const int subtitleLabelWidth = ScaleAtDpi(dpi, 64);
+    const int subtitleHeight = ScaleAtDpi(dpi, 220);
+    const int gainStateWidth = ScaleAtDpi(dpi, 180);
+    const int motionValueWidth = ScaleAtDpi(dpi, 48);
+    const int addressColumnWidth = ScaleAtDpi(dpi, 120);
+    const int modelColumnWidth = ScaleAtDpi(dpi, 90);
+    const int columnPadding = ScaleAtDpi(dpi, 24);
     int       width;
     int       sliderX;
     int       sliderWidth;
@@ -1951,14 +1843,12 @@ static FORCE_INLINE void Layout(App* pApp, int clientWidth, int clientHeight)
     int       receiverColumnWidth;
     int       y;
     int       listH;
-    HDWP      positions;
 
-    /* The host owns the client below the caption band; control positions are host-relative. */
+    /* One client rectangle drives both input placement and the swapchain frame. */
     client.left = 0;
-    client.top = pApp->immersiveWindow.metrics.cyCaption;
+    client.top = 0;
     client.right = clientWidth;
-    client.bottom = clientHeight - client.top;
-    positions           = BeginDeferWindowPos((int)ARRAYSIZE(c_controls));
+    client.bottom = clientHeight - captionHeight;
     width               = client.right - (2 * margin);
     sliderX = margin + valueW + gap;
     sliderWidth = width - valueW - gap;
@@ -1966,12 +1856,12 @@ static FORCE_INLINE void Layout(App* pApp, int clientWidth, int clientHeight)
     refreshX = buttonX - gap - buttonW;
     browseX = buttonX;
     listLabelWidth = refreshX - gap - margin;
-    fileX = margin + Scale(pApp, GUI_FILE_LABEL_WIDTH);
+    fileX = margin + ScaleAtDpi(dpi, GUI_FILE_LABEL_WIDTH);
     fileWidth = buttonX - gap - fileX;
-    subtitleX = margin + Scale(pApp, GUI_SUBTITLE_LABEL_WIDTH);
+    subtitleX = margin + ScaleAtDpi(dpi, GUI_SUBTITLE_LABEL_WIDTH);
     subtitleWidth = buttonX - gap - subtitleX;
-    gainX = margin + Scale(pApp, GUI_GAIN_LABEL_WIDTH);
-    gainWidth = width - Scale(pApp, GUI_GAIN_ROW_RESERVED_WIDTH);
+    gainX = margin + ScaleAtDpi(dpi, GUI_GAIN_LABEL_WIDTH);
+    gainWidth = width - ScaleAtDpi(dpi, GUI_GAIN_ROW_RESERVED_WIDTH);
     gainStateX = client.right - margin - gainStateWidth;
     hintX = margin + buttonW + gap;
     hintWidth = width - buttonW - gap;
@@ -1979,7 +1869,7 @@ static FORCE_INLINE void Layout(App* pApp, int clientWidth, int clientHeight)
     seekX = stopX + smallW + gap;
     timeX = client.right - margin - timeW;
     seekWidth = timeX - gap - seekX;
-    motionSliderWidth = sliderWidth - Scale(pApp, GUI_MOTION_SLIDER_RESERVED_WIDTH);
+    motionSliderWidth = sliderWidth - ScaleAtDpi(dpi, GUI_MOTION_SLIDER_RESERVED_WIDTH);
     motionValueX = client.right - margin - motionValueWidth;
     receiverColumnWidth = width - addressColumnWidth - modelColumnWidth - columnPadding;
     /* bottom-up: config panel, status, toolbar, hint, cast, file; the list takes the rest */
@@ -1990,71 +1880,161 @@ static FORCE_INLINE void Layout(App* pApp, int clientWidth, int clientHeight)
         listH = listMinHeight;
     }
     y = margin;
-    headerY = y + Scale(pApp, 3);
+    headerY = y + ScaleAtDpi(dpi, 3);
     buttonY = y - buttonOffset;
-    positions = DeferWindowPos(positions, pApp->hListLabel, NULL, margin, headerY, listLabelWidth, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hRefresh, NULL, refreshX, buttonY, buttonW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hWindowsCast, NULL, buttonX, buttonY, buttonW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_LIST_LABEL - ID_LIST], margin, headerY, margin + listLabelWidth, headerY + labelH);
+    SetRect(&rects[ID_REFRESH - ID_LIST], refreshX, buttonY, refreshX + buttonW, buttonY + rowH);
+    SetRect(&rects[ID_WINDOWS_CAST - ID_LIST], buttonX, buttonY, buttonX + buttonW, buttonY + rowH);
     y += labelH + gap;
-    positions = DeferWindowPos(positions, pApp->hList, NULL, margin, y, width, listH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_LIST - ID_LIST], margin, y, margin + width, y + listH);
     y += listH + gap;
     labelY = y + labelOffset;
-    positions = DeferWindowPos(positions, pApp->hFileLabel, NULL, margin, labelY, fileLabelWidth, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hFile, NULL, fileX, y, fileWidth, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hBrowse, NULL, browseX, y, buttonW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_FILE_LABEL - ID_LIST], margin, labelY, margin + fileLabelWidth, labelY + labelH);
+    SetRect(&rects[ID_FILE - ID_LIST], fileX, y, fileX + fileWidth, y + rowH);
+    SetRect(&rects[ID_BROWSE - ID_LIST], browseX, y, browseX + buttonW, y + rowH);
     y += rowH + gap;
     labelY = y + labelOffset;
-    positions = DeferWindowPos(positions, pApp->hSubtitleLabel, NULL, margin, labelY, subtitleLabelWidth, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hSubtitle, NULL, subtitleX, y, subtitleWidth, subtitleHeight, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hSubtitleBrowse, NULL, browseX, y, buttonW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_SUBTITLE_LABEL - ID_LIST], margin, labelY, margin + subtitleLabelWidth, labelY + labelH);
+    SetRect(&rects[ID_SUBTITLE - ID_LIST], subtitleX, y, subtitleX + subtitleWidth, y + subtitleHeight);
+    SetRect(&rects[ID_SUBTITLE_BROWSE - ID_LIST], browseX, y, browseX + buttonW, y + rowH);
     y += rowH + gap;
     labelY = y + labelOffset;
-    positions = DeferWindowPos(positions, pApp->hGainLabel, NULL, margin, labelY, valueW, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hGain, NULL, gainX, y, gainWidth, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hGainState, NULL, gainStateX, labelY, gainStateWidth, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_GAIN_LABEL - ID_LIST], margin, labelY, margin + valueW, labelY + labelH);
+    SetRect(&rects[ID_GAIN - ID_LIST], gainX, y, gainX + gainWidth, y + rowH);
+    SetRect(&rects[ID_GAIN_STATE - ID_LIST], gainStateX, labelY, gainStateX + gainStateWidth, labelY + labelH);
     y += rowH + gap;
-    positions = DeferWindowPos(positions, pApp->hCast, NULL, margin, y, buttonW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_CAST - ID_LIST], margin, y, margin + buttonW, y + rowH);
     labelY = y + labelOffset;
-    positions = DeferWindowPos(positions, pApp->hHint, NULL, hintX, labelY, hintWidth, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_HINT - ID_LIST], hintX, labelY, hintX + hintWidth, labelY + labelH);
     y += rowH + gap;
-    positions = DeferWindowPos(positions, pApp->hPlayPause, NULL, margin, y, smallW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_PLAY_PAUSE - ID_LIST], margin, y, margin + smallW, y + rowH);
     labelY = y + labelOffset;
-    positions = DeferWindowPos(positions, pApp->hStop, NULL, stopX, y, smallW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hSeek, NULL, seekX, y, seekWidth, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hTime, NULL, timeX, labelY, timeW, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_STOP - ID_LIST], stopX, y, stopX + smallW, y + rowH);
+    SetRect(&rects[ID_SEEK - ID_LIST], seekX, y, seekX + seekWidth, y + rowH);
+    SetRect(&rects[ID_TIME - ID_LIST], timeX, labelY, timeX + timeW, labelY + labelH);
     y += rowH + gap;
-    positions = DeferWindowPos(positions, pApp->hStatus, NULL, margin, y, width, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_STATUS - ID_LIST], margin, y, margin + width, y + labelH);
     y += labelH + gap;
     /* The transcoder configuration panel. */
-    positions = DeferWindowPos(positions, pApp->hCfgLabel, NULL, margin, y, width, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_CFG_LABEL - ID_LIST], margin, y, margin + width, y + labelH);
     y += labelH + gap;
     labelY = y + labelOffset;
-    positions = DeferWindowPos(positions, pApp->hResValue, NULL, margin, labelY, valueW, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hResSlider, NULL, sliderX, y, sliderWidth, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_RES_VALUE - ID_LIST], margin, labelY, margin + valueW, labelY + labelH);
+    SetRect(&rects[ID_RES_SLIDER - ID_LIST], sliderX, y, sliderX + sliderWidth, y + rowH);
     y += rowH + gap;
     labelY = y + labelOffset;
-    positions = DeferWindowPos(positions, pApp->hQpValue, NULL, margin, labelY, valueW, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hQpSlider, NULL, sliderX, y, sliderWidth, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_QP_VALUE - ID_LIST], margin, labelY, margin + valueW, labelY + labelH);
+    SetRect(&rects[ID_QP_SLIDER - ID_LIST], sliderX, y, sliderX + sliderWidth, y + rowH);
     y += rowH + gap;
     labelY = y + labelOffset;
-    positions = DeferWindowPos(positions, pApp->hGopValue, NULL, margin, labelY, valueW, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hGopSlider, NULL, sliderX, y, sliderWidth, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_GOP_VALUE - ID_LIST], margin, labelY, margin + valueW, labelY + labelH);
+    SetRect(&rects[ID_GOP_SLIDER - ID_LIST], sliderX, y, sliderX + sliderWidth, y + rowH);
     y += rowH + gap;
     buttonY = y + buttonOffset;
     labelY = y + labelOffset;
-    positions = DeferWindowPos(positions, pApp->hMotionCheck, NULL, margin, buttonY, valueW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hMotionSlider, NULL, sliderX, y, motionSliderWidth, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
-    positions = DeferWindowPos(positions, pApp->hMotionValue, NULL, motionValueX, labelY, motionValueWidth, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_MOTION_CHECK - ID_LIST], margin, buttonY, margin + valueW, buttonY + rowH);
+    SetRect(&rects[ID_MOTION_SLIDER - ID_LIST], sliderX, y, sliderX + motionSliderWidth, y + rowH);
+    SetRect(&rects[ID_MOTION_VALUE - ID_LIST], motionValueX, labelY, motionValueX + motionValueWidth, labelY + labelH);
     y += rowH + gap;
-    positions = DeferWindowPos(positions, pApp->hPreview, NULL, margin, y, buttonW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_PREVIEW - ID_LIST], margin, y, margin + buttonW, y + rowH);
     labelY = y + labelOffset;
-    positions = DeferWindowPos(positions, pApp->hCfgReadout, NULL, hintX, labelY, hintWidth, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
-    (void)EndDeferWindowPos(positions);
-    ListView_SetColumnWidth(pApp->hList, 0, receiverColumnWidth);
-    ListView_SetColumnWidth(pApp->hList, 1, addressColumnWidth);
-    ListView_SetColumnWidth(pApp->hList, 2, modelColumnWidth);
-    /* Resize the visible host after its children have their final positions for this frame. */
-    (void)SetWindowPos(pApp->hHost, NULL, 0, client.top, client.right, client.bottom, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetRect(&rects[ID_CFG_READOUT - ID_LIST], hintX, labelY, hintX + hintWidth, labelY + labelH);
+    columnWidths[0] = receiverColumnWidth;
+    columnWidths[1] = addressColumnWidth;
+    columnWidths[2] = modelColumnWidth;
+    for (y = 0; y < GUI_VISUAL_COUNT; ++y)
+    {
+        (void)OffsetRect(&rects[y], 0, captionHeight);
+    }
+}
+
+static FORCE_INLINE void Layout(App* app, int clientWidth, int clientHeight)
+{
+    RECT rects[GUI_VISUAL_COUNT];
+    int widths[GUI_DEVICE_COLUMN_COUNT];
+    HDWP positions;
+    uint32_t index;
+    HWND hwnd;
+    RECT* rect;
+
+    ComputeControlRects(app->dpi, app->immersiveWindow.metrics.cyCaption, clientWidth, clientHeight, rects, widths);
+    positions = BeginDeferWindowPos((int)ARRAYSIZE(c_controls));
+    LOGASSERT(NULL != positions);
+    for (index = 0; index < ARRAYSIZE(c_controls); ++index)
+    {
+        CRT_Memory_Copy((byte_t*)&hwnd, (const byte_t*)app + c_controls[index].destinationOffset, sizeof(HWND));
+        rect = &rects[c_controls[index].id - ID_LIST];
+        positions = DeferWindowPos(positions,
+                                   hwnd,
+                                   NULL,
+                                   rect->left,
+                                   rect->top,
+                                   rect->right - rect->left,
+                                   rect->bottom - rect->top,
+                                   SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS);
+        LOGASSERT(NULL != positions);
+    }
+    LOGASSERT(EndDeferWindowPos(positions));
+    UpdateListColumnWidth(app, 0, widths[0]);
+    UpdateListColumnWidth(app, 1, widths[1]);
+    UpdateListColumnWidth(app, 2, widths[2]);
+    app->layoutClientWidth = clientWidth;
+    app->layoutClientHeight = clientHeight;
+    app->layoutDpi = app->dpi;
+}
+
+static LRESULT CALLBACK CastGeometryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR refData);
+
+/** Lay out controls from the exact client rectangle produced by the nonclient calculation. */
+static FORCE_INLINE UINT CastGeometry_OnNcCalcSize(HWND hwnd, BOOL validRects, NCCALCSIZE_PARAMS* params)
+{
+    App* app;
+    RECT* client;
+    UINT result;
+    int width;
+    int height;
+    bool_t hasArea;
+    bool_t layoutChanged;
+
+    result = FORWARD_WM_NCCALCSIZE(hwnd, validRects, params, DefSubclassProc);
+    app = GetApp(hwnd);
+    client = (RECT*)params;
+    width = client->right - client->left;
+    height = client->bottom - client->top;
+    hasArea = (0 < width) && (app->immersiveWindow.metrics.cyCaption < height);
+    layoutChanged = (app->layoutClientWidth != width) || (app->layoutClientHeight != height) ||
+                    (app->layoutDpi != app->immersiveWindow.metrics.dpi);
+    if ((NULL != app->hList) && hasArea && layoutChanged)
+    {
+        if (app->dpi != app->immersiveWindow.metrics.dpi)
+        {
+            app->dpi = app->immersiveWindow.metrics.dpi;
+            ApplyFont(app);
+        }
+        Layout(app, width, height);
+    }
+    return result;
+}
+
+static FORCE_INLINE void CastGeometry_OnNcDestroy(HWND hwnd)
+{
+    (void)RemoveWindowSubclass(hwnd, CastGeometryProc, CAST_GEOMETRY_SUBCLASS_ID);
+    FORWARD_WM_NCDESTROY(hwnd, DefSubclassProc);
+}
+
+static LRESULT CALLBACK CastGeometryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR refData)
+{
+    UNREFERENCED_PARAMETER(subclassId);
+    UNREFERENCED_PARAMETER(refData);
+
+    switch (message)
+    {
+        HANDLE_MSG(hwnd, WM_NCDESTROY,  CastGeometry_OnNcDestroy);
+        HANDLE_MSG(hwnd, WM_NCCALCSIZE, CastGeometry_OnNcCalcSize);
+    default:
+        break;
+    }
+    return DefSubclassProc(hwnd, message, wParam, lParam);
 }
 
 /*************************************************************************************************/
@@ -2200,14 +2180,12 @@ static FORCE_INLINE void CreateControls(App* pApp)
     const CastGui_ControlDefinition_t* control;
     TCHAR* const*                      columnText;
 
-    CreateCastHost(pApp);
     for (index = 0; index < ARRAYSIZE(c_controls); ++index)
     {
         control = &c_controls[index];
         CreateChild(pApp, control, (byte_t*)pApp + control->destinationOffset);
     }
 
-    SetWindowSubclass(pApp->hSubtitle, DarkComboProc, DARK_COMBO_SUBCLASS_ID, (DWORD_PTR)pApp);
     SendMessage(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)TEXT("Automatic"));
     SendMessage(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)TEXT("Off"));
     SendMessage(pApp->hSubtitle, CB_SETCURSEL, 0, 0);
@@ -2240,39 +2218,17 @@ static FORCE_INLINE void CreateControls(App* pApp)
         ListView_InsertColumn(pApp->hList, (int)(columnText - c_deviceColumns), &column);
     }
     {
-        LRESULT headerResult;
-        HWND    header;
-
-        headerResult = SendMessage(pApp->hList, LVM_GETHEADER, 0, 0);
-        header       = (HWND)headerResult; // NOLINT(performance-no-int-to-ptr): LVM_GETHEADER returns an HWND in LRESULT.
-        SetWindowSubclass(header, DarkHeaderProc, DARK_HEADER_SUBCLASS_ID, (DWORD_PTR)pApp);
     }
     SendMessage(pApp->hSeek, TBM_SETRANGE, TRUE, MAKELPARAM(0, SEEK_RANGE));
     /* A click on the channel should jump to the cursor and scrub, not page toward it. */
     SetWindowSubclass(pApp->hSeek, SeekBarProc, SEEK_BAR_SUBCLASS_ID, (DWORD_PTR)pApp);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_REFRESH], pApp->hRefresh, TRUE);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_WINDOWS_CAST], pApp->hWindowsCast, TRUE);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_BROWSE], pApp->hBrowse, TRUE);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_SUBTITLE_BROWSE], pApp->hSubtitleBrowse, TRUE);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_CAST], pApp->hCast, TRUE);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_PLAY_PAUSE], pApp->hPlayPause, TRUE);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_STOP], pApp->hStop, TRUE);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_PREVIEW], pApp->hPreview, TRUE);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_SUBTITLE], pApp->hSubtitle, FALSE);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_GAIN], pApp->hGain, FALSE);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_SEEK], pApp->hSeek, FALSE);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_RESOLUTION], pApp->hResSlider, FALSE);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_QP], pApp->hQpSlider, FALSE);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_GOP], pApp->hGopSlider, FALSE);
-    AddControlVisual(&pApp->visuals[GUI_VISUAL_MOTION], pApp->hMotionSlider, FALSE);
     ApplyFont(pApp);
     GetClientRect(pApp->hWnd, &client);
     Layout(pApp, client.right - client.left, client.bottom - client.top);
     UpdateConfigLabels(pApp);
     EnableWindow(pApp->hMotionSlider, pApp->transcode.motionAdaptive);
     UpdateControls(pApp);
-    (void)ShowWindow(pApp->hHost, SW_SHOWNOACTIVATE);
-    (void)RedrawWindow(pApp->hHost, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+    CaptureControlFrame(pApp);
 }
 
 /* ------------------------------------------------------------------ discovery */
@@ -4030,9 +3986,8 @@ static FORCE_INLINE BOOL CastWindow_OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
         pApp->dpi             = GetDpiForWindow(hWnd);
         pApp->backgroundBrush = CreateSolidBrush(DARK_BACKGROUND);
         pApp->fieldBrush      = CreateSolidBrush(DARK_FIELD);
-        InitControlPaint(pApp);
-        UpdateControlTextFormat(pApp);
-        CastEvents_Initialize(&pApp->events.mailbox);
+        InitializeSRWLock(&pApp->controlFrameLock);
+            CastEvents_Initialize(&pApp->events.mailbox);
         Subtitles_Initialize(&pApp->subtitleWorkspace, pApp->subtitleScratch, pApp->subtitleOutput, SUBTITLE_TEXT_CAPACITY);
         /* Optional proxy startup failure keeps original-stream casting available. */
         (void)Proxy_Initialize(&pApp->proxy);
@@ -4050,6 +4005,7 @@ static FORCE_INLINE BOOL CastWindow_OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
         workers_ready           = state_ready && execution_ready;
         DwmSetWindowAttribute(hWnd, GUI_DARK_MODE_ATTRIBUTE /* DWMWA_USE_IMMERSIVE_DARK_MODE */, &dark, sizeof(dark));
         CreateControls(pApp);
+        LOGASSERT(SetWindowSubclass(hWnd, CastGeometryProc, CAST_GEOMETRY_SUBCLASS_ID, (DWORD_PTR)pApp));
         if (workers_ready)
         {
             StartDiscovery(pApp);
@@ -4119,175 +4075,6 @@ static FORCE_INLINE HBRUSH CastWindow_OnCtlColorStatic(HWND hWnd, HDC dc, HWND h
 /**
  * \par Details:
  *  Sets the subtitle combo's DPI-scaled item height and forwards other requests.
- */
-static FORCE_INLINE void CastWindow_OnMeasureItem(HWND hWnd, MEASUREITEMSTRUCT* item)
-{
-    App* pApp;
-
-    pApp = GetApp(hWnd);
-    if (item->CtlType == ODT_COMBOBOX && item->CtlID == ID_SUBTITLE)
-    {
-        item->itemHeight = (UINT)Scale(pApp, GUI_COMBO_ITEM_HEIGHT);
-        return;
-    }
-    FORWARD_WM_MEASUREITEM(hWnd, item, DefWindowProc);
-}
-
-/*************************************************************************************************/
-/** Paints one complete opaque button state into either the control DC or an animation DC. */
-static FORCE_INLINE void PaintDarkButtonState(App* app, const DRAWITEMSTRUCT* item, HDC dc, BYTE hot)
-{
-    RECT                rect;
-    const D2D1_COLOR_F* fill;
-    const D2D1_COLOR_F* foreground;
-    D2D1_COLOR_F        fillColor;
-    D2D1_COLOR_F        borderColor;
-    TCHAR               label[GUI_STATUS_TEXT_CAPACITY];
-
-    rect.left = 0;
-    rect.top = 0;
-    rect.right = item->rcItem.right - item->rcItem.left;
-    rect.bottom = item->rcItem.bottom - item->rcItem.top;
-    fillColor = MixControlColor(&c_castFieldColor, &c_castHotColor, hot);
-    borderColor = MixControlColor(&c_castBorderColor, &c_castAccentColor, hot);
-    fill = (0 != (item->itemState & ODS_SELECTED)) ? &c_castSelectedColor : &fillColor;
-    if (0 != (item->itemState & ODS_DISABLED))
-    {
-        fill = &c_castFieldColor;
-        borderColor = c_castBorderColor;
-    }
-    foreground = (0 != (item->itemState & ODS_DISABLED)) ? &c_castMutedColor : &c_castTextColor;
-    BeginControlPaint(app, dc, &item->rcItem);
-    FillControlRect(app, &rect, fill);
-    DrawControlRect(app, &rect, &borderColor);
-    (void)GetWindowText(item->hwndItem, label, ARRAYSIZE(label));
-    DrawControlText(app, label, &rect, foreground, DWRITE_TEXT_ALIGNMENT_CENTER);
-    if (0 != (item->itemState & ODS_FOCUS))
-    {
-        InflateRect(&rect, -3, -3);
-        DrawControlRect(app, &rect, &c_castAccentColor);
-    }
-    EndControlPaint(app);
-}
-
-/** Use the visual style's button duration when one is available. */
-static FORCE_INLINE DWORD ButtonHoverDuration(HWND hwnd, BYTE fromHot, BYTE toHot)
-{
-    HTHEME theme;
-    DWORD  duration;
-    DWORD  themedDuration;
-    int    fromState;
-    int    toState;
-    HRESULT result;
-
-    duration = GUI_HOVER_DURATION_MS;
-    theme = OpenThemeData(hwnd, L"Button");
-    if (NULL != theme)
-    {
-        fromState = fromHot ? PBS_HOT : PBS_NORMAL;
-        toState = toHot ? PBS_HOT : PBS_NORMAL;
-        result = GetThemeTransitionDuration(theme, BP_PUSHBUTTON, fromState, toState, TMT_TRANSITIONDURATIONS, &themedDuration);
-        if (SUCCEEDED(result))
-        {
-            duration = themedDuration;
-        }
-        (void)CloseThemeData(theme);
-    }
-    return duration;
-}
-
-/** Let uxtheme own the cross-fade clock; a frame in flight is rendered before a new transition. */
-static FORCE_INLINE void PaintDarkButton(App* app, const DRAWITEMSTRUCT* item)
-{
-    ControlVisual*     visual;
-    BP_ANIMATIONPARAMS animation;
-    HANIMATIONBUFFER  buffer;
-    HDC               fromDC;
-    HDC               toDC;
-    HRESULT           result;
-    bool_t            painted;
-    bool_t            transition;
-    BYTE              target;
-
-    visual = FindControlVisual(app, item->hwndItem);
-    target = 0;
-    if (NULL != visual)
-    {
-        target = visual->target;
-    }
-    painted = app->bufferedPaintReady && BufferedPaintRenderAnimation(item->hwndItem, item->hDC);
-    transition = (NULL != visual) && app->bufferedPaintReady && (visual->hot != target) &&
-                 (0 == (item->itemState & ODS_DISABLED));
-    if (!painted && transition)
-    {
-        ZeroMemory(&animation, sizeof(animation));
-        animation.cbSize = sizeof(animation);
-        animation.style = BPAS_LINEAR;
-        animation.dwDuration = ButtonHoverDuration(item->hwndItem, visual->hot, target);
-        fromDC = NULL;
-        toDC = NULL;
-        buffer = BeginBufferedAnimation(item->hwndItem,
-                                        item->hDC,
-                                        &item->rcItem,
-                                        BPBF_COMPATIBLEBITMAP,
-                                        NULL,
-                                        &animation,
-                                        &fromDC,
-                                        &toDC);
-        if (NULL != buffer)
-        {
-            if ((NULL != fromDC) && (NULL != toDC))
-            {
-                PaintDarkButtonState(app, item, fromDC, visual->hot);
-                PaintDarkButtonState(app, item, toDC, target);
-                result = EndBufferedAnimation(buffer, TRUE);
-                painted = SUCCEEDED(result);
-            }
-            else
-            {
-                (void)EndBufferedAnimation(buffer, FALSE);
-            }
-        }
-    }
-    if (!painted)
-    {
-        PaintDarkButtonState(app, item, item->hDC, target);
-    }
-    if (NULL != visual)
-    {
-        visual->hot = target;
-    }
-}
-
-/**
- * \par Details:
- *  Draws subtitle entries or dark buttons with selection/focus state; forwards
- *  unhandled control types to default window processing.
- */
-static FORCE_INLINE void CastWindow_OnDrawItem(HWND hWnd, const DRAWITEMSTRUCT* item)
-{
-    App* pApp;
-
-    pApp = GetApp(hWnd);
-    if ((ODT_COMBOBOX == item->CtlType) && (ID_SUBTITLE == item->CtlID))
-    {
-        PaintSubtitleItem(item->hwndItem, item->hDC, item->rcItem, item->itemID == (UINT)-1 ? -1 : (int)item->itemID, item->itemState, pApp);
-    }
-    else if (ODT_BUTTON == item->CtlType)
-    {
-        PaintDarkButton(pApp, item);
-    }
-    else
-    {
-        FORWARD_WM_DRAWITEM(hWnd, item, DefWindowProc);
-    }
-}
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  Callback publication replaces posted completion pointers. Cancellation keeps
- *  the context and output path alive until the callback has returned.
  */
 static void PollGainJob(App* app)
 {
@@ -4482,42 +4269,13 @@ static FORCE_INLINE void CastWindow_OnTimer(HWND hWnd, UINT id)
             ScheduleGain(pApp);
         }
     }
+    if (!pApp->closing)
+    {
+        CaptureControlFrame(pApp);
+    }
 }
 
 /*************************************************************************************************/
-/** Lay out the child controls against the proposed client extent before the parent is resized. */
-static FORCE_INLINE BOOL CastWindow_OnWindowPosChanging(HWND hWnd, WINDOWPOS* position)
-{
-    App*   pApp;
-    RECT   windowRect;
-    RECT   clientRect;
-    int    clientWidth;
-    int    clientHeight;
-    bool_t hasArea;
-    BOOL   result;
-
-    result = FORWARD_WM_WINDOWPOSCHANGING(hWnd, position, DefWindowProc);
-    pApp = GetApp(hWnd);
-    if ((NULL != pApp->hHost) && !(position->flags & SWP_NOSIZE))
-    {
-        (void)GetWindowRect(hWnd, &windowRect);
-        (void)GetClientRect(hWnd, &clientRect);
-        clientWidth = (clientRect.right - clientRect.left) + position->cx - (windowRect.right - windowRect.left);
-        clientHeight = (clientRect.bottom - clientRect.top) + position->cy - (windowRect.bottom - windowRect.top);
-        hasArea = (0 < clientWidth) && (pApp->immersiveWindow.metrics.cyCaption < clientHeight);
-        if (hasArea)
-        {
-            if (pApp->dpi != pApp->immersiveWindow.metrics.dpi)
-            {
-                pApp->dpi = pApp->immersiveWindow.metrics.dpi;
-                ApplyFont(pApp);
-            }
-            Layout(pApp, clientWidth, clientHeight);
-        }
-    }
-    return result;
-}
-
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -4614,94 +4372,29 @@ static FORCE_INLINE void CastWindow_OnCommand(HWND hWnd, int id, HWND hControl, 
 }
 
 /*************************************************************************************************/
-/** Paints one trackbar part after the notification stage and item have been accepted. */
-static FORCE_INLINE void PaintSliderPart(App* app, const NMCUSTOMDRAW* draw)
-{
-    RECT           rect;
-    D2D1_COLOR_F   fill;
-    ControlVisual* visual;
-    BYTE           hot;
-
-    rect.left = 0;
-    rect.top = 0;
-    rect.right = draw->rc.right - draw->rc.left;
-    rect.bottom = draw->rc.bottom - draw->rc.top;
-    visual = FindControlVisual(app, draw->hdr.hwndFrom);
-    hot = 0;
-    if (NULL != visual)
-    {
-        hot = visual->hot;
-    }
-    if (TBCD_THUMB == draw->dwItemSpec)
-    {
-        fill = IsWindowEnabled(draw->hdr.hwndFrom)
-                   ? MixControlColor(&c_castAccentColor, &c_castHotAccentColor, hot)
-                   : c_castMutedColor;
-    }
-    else
-    {
-        fill = MixControlColor(&c_castFieldColor, &c_castHotColor, hot);
-    }
-    BeginControlPaint(app, draw->hdc, &draw->rc);
-    FillControlRect(app, &rect, &fill);
-    DrawControlRect(app, &rect, &c_castBorderColor);
-    EndControlPaint(app);
-}
-
-/** Draws only the trackbar parts that have a complete dark control paint path. */
-static FORCE_INLINE LRESULT PaintSliderCustomDraw(App* app, const NMCUSTOMDRAW* draw)
-{
-    LRESULT result;
-    bool_t  isPart;
-
-    result = CDRF_DODEFAULT;
-    isPart = (TBCD_THUMB == draw->dwItemSpec) || (TBCD_CHANNEL == draw->dwItemSpec);
-    if (CDDS_PREPAINT == draw->dwDrawStage)
-    {
-        result = CDRF_NOTIFYITEMDRAW;
-    }
-    else if ((CDDS_ITEMPREPAINT == draw->dwDrawStage) && isPart)
-    {
-        PaintSliderPart(app, draw);
-        result = CDRF_SKIPDEFAULT;
-    }
-    return result;
-}
-
 /**
  * \par Details:
- *  Supplies slider custom drawing and receiver-list selection/double-click
- *  behavior, then forwards notifications requiring default processing.
+ *  Handles receiver-list selection and double-click behavior, then forwards
+ *  notifications requiring default processing.
  */
 static FORCE_INLINE LRESULT CastWindow_OnNotify(HWND hWnd, int idFrom, NMHDR* pHeader)
 {
     App* pApp;
-    int  slider;
     LRESULT result;
 
     pApp = GetApp(hWnd);
-    slider = pHeader->hwndFrom == pApp->hGain || pHeader->hwndFrom == pApp->hSeek ||
-             pHeader->hwndFrom == pApp->hResSlider || pHeader->hwndFrom == pApp->hQpSlider ||
-             pHeader->hwndFrom == pApp->hGopSlider || pHeader->hwndFrom == pApp->hMotionSlider;
-    if ((NM_CUSTOMDRAW == pHeader->code) && slider)
+    if (pHeader->hwndFrom == pApp->hList)
     {
-        result = PaintSliderCustomDraw(pApp, (const NMCUSTOMDRAW*)pHeader);
-    }
-    else
-    {
-        if (pHeader->hwndFrom == pApp->hList)
+        if (LVN_ITEMCHANGED == pHeader->code)
         {
-            if (LVN_ITEMCHANGED == pHeader->code)
-            {
-                UpdateControls(pApp);
-            }
-            else if (NM_DBLCLK == pHeader->code && IsWindowEnabled(pApp->hCast))
-            {
-                StartCast(pApp);
-            }
+            UpdateControls(pApp);
         }
-        result = FORWARD_WM_NOTIFY(hWnd, idFrom, pHeader, DefWindowProc);
+        else if (NM_DBLCLK == pHeader->code && IsWindowEnabled(pApp->hCast))
+        {
+            StartCast(pApp);
+        }
     }
+    result = FORWARD_WM_NOTIFY(hWnd, idFrom, pHeader, DefWindowProc);
     return result;
 }
 
@@ -4861,9 +4554,6 @@ static FORCE_INLINE LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM 
         HANDLE_MSG(hWnd, WM_CLOSE,             CastWindow_OnClose);
         HANDLE_MSG(hWnd, WM_ERASEBKGND,        CastWindow_OnEraseBackground);
         HANDLE_MSG(hWnd, WM_GETMINMAXINFO,     CastWindow_OnGetMinMaxInfo);
-        HANDLE_MSG(hWnd, WM_DRAWITEM,          CastWindow_OnDrawItem);
-        HANDLE_MSG(hWnd, WM_MEASUREITEM,       CastWindow_OnMeasureItem);
-        HANDLE_MSG(hWnd, WM_WINDOWPOSCHANGING, CastWindow_OnWindowPosChanging);
         HANDLE_MSG(hWnd, WM_NOTIFY,            CastWindow_OnNotify);
         HANDLE_MSG(hWnd, WM_NCCREATE,          CastWindow_OnNcCreate);
         HANDLE_MSG(hWnd, WM_COMMAND,           CastWindow_OnCommand);
@@ -4890,6 +4580,8 @@ static FORCE_INLINE void PresentCastWindow(void* parameter)
     ID2D1DeviceContext*       context;
     HRESULT                   comResult;
     bool_t                    stopping;
+    ControlPainter            painter;
+    UINT                      frameDpi;
     static const D2D1_COLOR_F background = {24.0F / 255.0F, 26.0F / 255.0F, 31.0F / 255.0F, 1.0F};
 
     app = (App*)parameter;
@@ -4901,16 +4593,14 @@ static FORCE_INLINE void PresentCastWindow(void* parameter)
     cdxgiUnknownReleaseSafe((IUnknown*)adapter);
     cdxgiUnknownReleaseSafe((IUnknown*)factory);
     InitCaption(&app->caption, &app->immersiveWindow, app->swapChain.context);
+    ZeroMemory(&painter, sizeof(painter));
+    painter.context = app->swapChain.context;
+    cd2dRenderTargetCreateSolidColorBrush((ID2D1RenderTarget*)painter.context,
+                                          &c_castTextColor, NULL, &painter.brush);
     app->immersiveWindow.caption = &app->caption;
-    /* Topmost: a non-topmost tree is clipped by child windows, which would clip out the visual that
-    ** displays the control host. The host itself is cloaked, so only its composed surface shows. */
+    /* The root swapchain paints the caption and the control surface together. */
     cdcompSetupDevice((IDXGIDevice*)app->swapChain.dxgiDevice, app->hWnd, TRUE, &app->swapChain.compositionDevice, &app->swapChain.compositionTarget, &app->swapChain.visual);
     cdcompVisualSetContent(app->swapChain.visual, (IUnknown*)app->swapChain.swapChain);
-    /* The control host joins the tree above the swap chain; its window position is mirrored by
-    ** the visual offset so hit testing and composition agree. */
-    cdcompDeviceCreateSurfaceFromHwnd(app->swapChain.compositionDevice, app->hHost, &app->hostSurface);
-    cdcompDeviceCreateVisualWithContent(app->swapChain.compositionDevice, app->hostSurface, &app->hostVisual);
-    cdcompVisualAddVisualOnTop(app->swapChain.visual, app->hostVisual);
     app->immersiveWindow.swapChain = &app->swapChain;
 
     stopping = OS_Thread_IsStopping(&app->presenterWorker);
@@ -4918,7 +4608,13 @@ static FORCE_INLINE void PresentCastWindow(void* parameter)
     {
         context = BeginImmersivePaint(&app->immersiveWindow, &paint);
         cd2dRenderTargetClear((ID2D1RenderTarget*)context, &background);
-        cdcompVisualSetOffsetY(app->hostVisual, (float)paint.layout.cyCaption);
+        frameDpi = paint.layout.dpi;
+        if (0 == frameDpi)
+        {
+            frameDpi = GUI_DEFAULT_DPI;
+        }
+        ControlPainter_SetDpi(&painter, app->caption.dwrite, frameDpi);
+        DrawControlFrame(&painter, app, &paint);
         EndImmersivePaint(&app->immersiveWindow, &paint);
         Sleep(USER_TIMER_MINIMUM);
         stopping = OS_Thread_IsStopping(&app->presenterWorker);
@@ -4926,11 +4622,8 @@ static FORCE_INLINE void PresentCastWindow(void* parameter)
 
     app->immersiveWindow.caption = NULL;
     app->immersiveWindow.swapChain = NULL;
-    cdcompVisualRemoveVisual(app->swapChain.visual, app->hostVisual);
-    cdcompUnknownReleaseSafe((IUnknown*)app->hostVisual);
-    cdcompUnknownReleaseSafe(app->hostSurface);
-    app->hostVisual  = NULL;
-    app->hostSurface = NULL;
+    cdwUnknownReleaseSafe((IUnknown*)painter.format);
+    cd2dUnknownReleaseSafe((IUnknown*)painter.brush);
     DestroyCaption(&app->caption);
     DestroySwapChain(&app->swapChain);
     CoUninitialize();
@@ -5010,7 +4703,6 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
     INITCOMMONCONTROLSEX      controls;
     IMMERSIVEWINDOWCREATEINFO createInfo;
     bool_t                    controls_ready;
-    ATOM                      host_class;
     HWND                      window;
     bool_t                    window_ready;
     uint32_t                  argumentCount;
@@ -5041,8 +4733,6 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
     {
         app->hInstance = instance;
         app->dpi       = GetDpiForSystem();
-        host_class     = RegisterCastHostClass(instance);
-        LOGASSERT(0 != host_class);
         createInfo.clientProc = WindowProc;
         createInfo.clientData = app;
         createInfo.title = L"CastDemo";
@@ -5074,10 +4764,7 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
         }
         (void)DeleteObject(app->backgroundBrush);
         (void)DeleteObject(app->fieldBrush);
-        DestroyControlPaint(app);
         unregistered = !!UnregisterClass(WC_IMMERSIVEWINDOW, instance);
-        LOGASSERT(unregistered);
-        unregistered = !!UnregisterClass(WC_CASTHOST, instance);
         LOGASSERT(unregistered);
     }
     if (network_ready)
