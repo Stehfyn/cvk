@@ -337,6 +337,7 @@ typedef struct App
     bool_t      gainDiscard;
     unsigned    gainActiveSerial;
     volatile LONG         gainCancel, gainProgress;
+    volatile LONG         gainReady;
     unsigned              gainPercent, gainSerial;
     int gainOk;
     int                   preparingAudio, audioNeedsConversion;
@@ -345,6 +346,7 @@ typedef struct App
     WCHAR               gainOutput[MAX_PATH];
     GainVariant         gainVariantStorage[MEDIA_SERVER_CAPACITY];
     GainVariant*        gainVariants;
+    GainVariant*        gainActiveVariant;
     HWND                hCast;
     HWND                hHint;
     HWND                hPlayPause;
@@ -2788,6 +2790,7 @@ static FORCE_INLINE void GainJob(void* context)
                                     app->gainPercent,
                                     &app->gainCancel,
                                     &app->gainProgress,
+                                    &app->gainReady,
                                     app->gainError,
                                     sizeof(app->gainError));
 }
@@ -2889,6 +2892,8 @@ static FORCE_INLINE void StartGain(App* app)
         app->gainPercent = percent;
         (void)InterlockedExchange(&app->gainCancel, 0);
         (void)InterlockedExchange(&app->gainProgress, 0);
+        (void)InterlockedExchange(&app->gainReady, FALSE);
+        app->gainActiveVariant = NULL;
         app->gainActiveSerial = app->gainSerial;
         app->gainBusy         = OS_Thread_Submit(&app->gainWorker);
         SetWindowText(app->hGainState, app->gainBusy ? TEXT("Preparing gain...") : TEXT("Cannot start audio worker"));
@@ -3053,7 +3058,7 @@ static FORCE_INLINE bool_t WriteGainUrl(const char_t* local, uint32_t localCapac
  *  Consumes an acquired completion, serves successful converted output and
  *  either starts the prepared session or requests a media replacement.
  */
-static FORCE_INLINE void FinishGain(App* app, unsigned serial)
+static FORCE_INLINE void BeginGainPlayback(App* app, unsigned serial)
 {
     GainVariant* variant;
     uint32_t     index;
@@ -3065,23 +3070,9 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
     char         local[CAST_SESSION_HOST_CAPACITY];
     char         error[GAIN_ERROR_CAPACITY];
     char         url[CAST_MEDIA_URL_CAPACITY];
-    LOGASSERT(!app->gainBusy);
     LOGASSERT(serial == app->gainSerial);
-    if ((!app->pSession && !app->preparingAudio) || !app->gainOk)
+    if (!app->pSession && !app->preparingAudio)
     {
-        TCHAR message[GAIN_ERROR_CAPACITY];
-
-        Utf8ToNative(app->gainError, message, GAIN_ERROR_CAPACITY);
-        (void)SetWindowText(app->hGainState, TEXT("Audio preparation failed"));
-        if (app->preparingAudio)
-        {
-            FinishSession(app, message);
-        }
-        else
-        {
-            CancelGain(app);
-            SetStatus(app, message);
-        }
         return;
     }
     variant = NULL;
@@ -3107,7 +3098,13 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
         (void)SetWindowText(app->hGainState, TEXT("Cannot serve audio gain"));
         return;
     }
-    variant->server = MediaServer_Start(&app->serving, app->gainOutput, NULL, 0, GAIN_MEDIA_TYPE, error, sizeof(error));
+    variant->server = MediaServer_StartGrowing(&app->serving,
+                                               app->gainOutput,
+                                               NULL,
+                                               0,
+                                               GAIN_MEDIA_TYPE,
+                                               error,
+                                               sizeof(error));
     if (!variant->server)
     {
         CancelGain(app);
@@ -3119,11 +3116,16 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
         return;
     }
     (void)CopyUtf16(variant->path, MAX_PATH, app->gainOutput, ARRAYSIZE(app->gainOutput));
-    app->gainOutput[0] = 0;
     variant->next      = app->gainVariants;
     app->gainVariants  = variant;
     wrote_url = WriteGainUrl(local, sizeof(local), MediaServer_GetPort(variant->server), url, sizeof(url), &url_bytes);
-    LOGASSERT(wrote_url);
+    if (!wrote_url)
+    {
+        CancelGain(app);
+        FinishSession(app, TEXT("Cannot form the audio stream URL."));
+        return;
+    }
+    app->gainActiveVariant = variant;
     if (app->preparingAudio)
     {
         CRT_Memory_Copy(app->pendingConfig.contentUrl, url, (uint64_t)url_bytes + 1U);
@@ -3141,12 +3143,12 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
         app->preparingAudio = 0;
         ZeroMemory(&app->status, sizeof(app->status));
         UpdateControls(app);
-        (void)SetWindowText(app->hGainState, TEXT("AAC audio ready"));
+        (void)SetWindowText(app->hGainState, TEXT("Streaming AAC audio"));
     }
     else
     {
         CastSession_ReplaceMedia(app->pSession, url, GAIN_MEDIA_TYPE);
-        (void)SetWindowText(app->hGainState, TEXT("Gain ready - switching"));
+        (void)SetWindowText(app->hGainState, TEXT("Streaming gain audio"));
     }
 }
 
@@ -3276,12 +3278,9 @@ static bool_t ServeCastSubtitles(App* pApp, const CastDevice* pDevice,
 
     if (NULL == pApp->pServer)
     {
-        if (CastNetwork_ReadLocalAddress(&pApp->routeNetwork, pDevice->host,
-                                         sizeof(pDevice->host), localAddress, GUI_ADDRESS_CAPACITY))
+        if (CastNetwork_ReadLocalAddress(&pApp->routeNetwork, pDevice->host, sizeof(pDevice->host), localAddress, GUI_ADDRESS_CAPACITY))
         {
-            pApp->pServer = MediaServer_StartWithSubtitles(&pApp->serving, NULL, NULL,
-                                                           DEFAULT_SERVER_PORT, "video/mp4",
-                                                           vtt, vttSize, error, GUI_ERROR_CAPACITY);
+            pApp->pServer = MediaServer_StartWithSubtitles(&pApp->serving, NULL, NULL, DEFAULT_SERVER_PORT, "video/mp4", vtt, vttSize, error, GUI_ERROR_CAPACITY);
         }
         if (NULL == pApp->pServer)
         {
@@ -3308,10 +3307,8 @@ static bool_t PrepareCastAudio(App* pApp, const WCHAR* source,
     TCHAR message[GUI_ERROR_CAPACITY];
     HWND gainControl = pApp->hGain;
 
-    (void)CopyAscii(pApp->originalUrl, ARRAYSIZE(pApp->originalUrl),
-                    pConfig->contentUrl, ARRAYSIZE(pConfig->contentUrl));
-    (void)CopyAscii(pApp->originalType, ARRAYSIZE(pApp->originalType),
-                    pConfig->contentType, ARRAYSIZE(pConfig->contentType));
+    (void)CopyAscii(pApp->originalUrl, ARRAYSIZE(pApp->originalUrl), pConfig->contentUrl, ARRAYSIZE(pConfig->contentUrl));
+    (void)CopyAscii(pApp->originalType, ARRAYSIZE(pApp->originalType), pConfig->contentType, ARRAYSIZE(pConfig->contentType));
     pApp->audioNeedsConversion = 0;
     if (!wantsProxy || L'\0' == pApp->originalSource[0])
     {
@@ -3324,8 +3321,7 @@ static bool_t PrepareCastAudio(App* pApp, const WCHAR* source,
         FinishSession(pApp, message);
         return FALSE;
     }
-    needs_gain = !!pApp->audioNeedsConversion ||
-                 (GUI_ORIGINAL_GAIN_PERCENT != SendMessage(gainControl, TBM_GETPOS, 0, 0));
+    needs_gain = !!pApp->audioNeedsConversion || (GUI_ORIGINAL_GAIN_PERCENT != SendMessage(gainControl, TBM_GETPOS, 0, 0));
     if (needs_gain)
     {
         pApp->pendingConfig = *pConfig;
@@ -3375,8 +3371,7 @@ static void StartPreparedCastSession(App* pApp, const CastSessionConfig* pConfig
     ZeroMemory(&pApp->status, sizeof(pApp->status));
     pApp->stopping = 0;
     UpdateControls(pApp);
-    needs_gain = wantsProxy &&
-                 (GUI_ORIGINAL_GAIN_PERCENT != SendMessage(pApp->hGain, TBM_GETPOS, 0, 0));
+    needs_gain = wantsProxy && (GUI_ORIGINAL_GAIN_PERCENT != SendMessage(pApp->hGain, TBM_GETPOS, 0, 0));
     if (needs_gain)
     {
         ScheduleGain(pApp);
@@ -3492,8 +3487,7 @@ static unsigned ParsePreviewFrames(const char* report)
     bool_t is_digit;
     bool_t numberReady;
 
-    pMarker = FindAscii(report, GUI_PREVIEW_REPORT_CAPACITY,
-                        "video frames from", ARRAYSIZE("video frames from") - 1);
+    pMarker = FindAscii(report, GUI_PREVIEW_REPORT_CAPACITY, "video frames from", ARRAYSIZE("video frames from") - 1);
     if (NULL == pMarker)
     {
         return 0;
@@ -4353,15 +4347,33 @@ static void PollGainJob(App* app)
     bool_t failed;
     bool_t completed;
     bool_t discard;
+    bool_t ready;
+    bool_t can_publish;
+    bool_t published;
+    TCHAR  message[GAIN_ERROR_CAPACITY];
 
     if (app->gainBusy)
     {
         completed = OS_Thread_TakeResult(&app->gainWorker);
         failed    = (OS_THREAD_FAILED == OS_Thread_GetState(&app->gainWorker));
+        ready       = (0 != InterlockedCompareExchange(&app->gainReady, TRUE, TRUE));
+        can_publish = (!completed) && (!failed) && ready && (NULL == app->gainActiveVariant) &&
+                      (!app->gainDiscard) && (!app->closing) && (!app->finishPending) && (!app->stopping);
+        if (can_publish)
+        {
+            BeginGainPlayback(app, app->gainActiveSerial);
+        }
         if (completed || failed)
         {
             app->gainBusy = FALSE;
             discard       = app->gainDiscard || app->closing || app->finishPending || app->stopping;
+            published     = (NULL != app->gainActiveVariant);
+            if (published)
+            {
+                MediaServer_MarkComplete(app->gainActiveVariant->server);
+                app->gainOutput[0]   = TEXT('\0');
+                app->gainActiveVariant = NULL;
+            }
             if (discard)
             {
                 if (app->gainOutput[0])
@@ -4370,13 +4382,29 @@ static void PollGainJob(App* app)
                     app->gainOutput[0] = TEXT('\0');
                 }
             }
-            else
+            else if (failed || !app->gainOk)
             {
-                if (failed)
+                Utf8ToNative(app->gainError, message, ARRAYSIZE(message));
+                (void)SetWindowText(app->hGainState, TEXT("Audio conversion failed"));
+                if (published || app->preparingAudio)
                 {
-                    app->gainOk = FALSE;
+                    FinishSession(app, message);
                 }
-                FinishGain(app, app->gainActiveSerial);
+                else
+                {
+                    app->gainOutput[0] = TEXT('\0');
+                    SetStatus(app, message);
+                }
+            }
+            else if (!published)
+            {
+                BeginGainPlayback(app, app->gainActiveSerial);
+                if (NULL != app->gainActiveVariant)
+                {
+                    MediaServer_MarkComplete(app->gainActiveVariant->server);
+                    app->gainOutput[0]     = TEXT('\0');
+                    app->gainActiveVariant = NULL;
+                }
             }
         }
     }

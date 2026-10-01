@@ -213,21 +213,25 @@ static FORCE_INLINE HRESULT CreateAacType(UINT32 channels, UINT32 rate, IMFMedia
 }
 
 static FORCE_INLINE HRESULT CreateConversionWriter(const TCHAR* dest,
-                                      IMFMediaType* video,
-                                      IMFMediaType* pcm,
-                                      IMFMediaType* aac,
-                                      IMFAttributes** ppAttributes,
-                                      IMFSinkWriter** ppWriter,
-                                      DWORD* pVideoOut,
-                                      DWORD* pAudioOut)
+                                                    IMFMediaType* video,
+                                                    IMFMediaType* pcm,
+                                                    IMFMediaType* aac,
+                                                    IMFAttributes** ppAttributes,
+                                                    IMFByteStream** ppByteStream,
+                                                    IMFMediaSink** ppMediaSink,
+                                                    IMFSinkWriter** ppWriter,
+                                                    DWORD* pVideoOut,
+                                                    DWORD* pAudioOut)
 {
     IMFAttributes* attributes;
+    IMFByteStream* byteStream;
+    IMFMediaSink* mediaSink;
     IMFSinkWriter* writer;
     HRESULT hr;
     HRESULT throttleStatus;
     HRESULT createStatus;
-    HRESULT videoAddStatus;
-    HRESULT audioAddStatus;
+    HRESULT fileStatus;
+    HRESULT sinkStatus;
     HRESULT videoTypeStatus;
     HRESULT audioTypeStatus;
     HRESULT beginStatus;
@@ -236,13 +240,15 @@ static FORCE_INLINE HRESULT CreateConversionWriter(const TCHAR* dest,
     DWORD audioStream;
 
     *ppAttributes = NULL;
-    *ppWriter = NULL;
+    *ppByteStream = NULL;
+    *ppMediaSink  = NULL;
+    *ppWriter     = NULL;
     *pVideoOut = 0;
     *pAudioOut = 0;
     throttleStatus  = S_OK;
     createStatus    = S_OK;
-    videoAddStatus  = S_OK;
-    audioAddStatus  = S_OK;
+    fileStatus      = S_OK;
+    sinkStatus      = S_OK;
     videoTypeStatus = S_OK;
     audioTypeStatus = S_OK;
     beginStatus     = E_POINTER; /* a missing writer never begins writing */
@@ -251,13 +257,27 @@ static FORCE_INLINE HRESULT CreateConversionWriter(const TCHAR* dest,
     if (NULL != attributes)
     {
         throttleStatus = IMFAttributes_SetUINT32(attributes, &MF_SINK_WRITER_DISABLE_THROTTLING, TRUE);
-        createStatus   = MFCreateSinkWriterFromURL(dest, NULL, attributes, ppWriter);
+        fileStatus     = MFCreateFile(MF_ACCESSMODE_READWRITE,
+                                      MF_OPENMODE_DELETE_IF_EXIST,
+                                      MF_FILEFLAGS_NONE,
+                                      dest,
+                                      ppByteStream);
+    }
+    byteStream = *ppByteStream;
+    if (NULL != byteStream)
+    {
+        sinkStatus = MFCreateFMPEG4MediaSink(byteStream, video, aac, ppMediaSink);
+    }
+    mediaSink = *ppMediaSink;
+    if (NULL != mediaSink)
+    {
+        createStatus = MFCreateSinkWriterFromMediaSink(mediaSink, attributes, ppWriter);
     }
     writer = *ppWriter;
     if (NULL != writer)
     {
-        videoAddStatus  = IMFSinkWriter_AddStream(writer, video, pVideoOut);
-        audioAddStatus  = IMFSinkWriter_AddStream(writer, aac, pAudioOut);
+        *pVideoOut = 0;
+        *pAudioOut = 1;
         videoStream     = *pVideoOut;
         audioStream     = *pAudioOut;
         videoTypeStatus = IMFSinkWriter_SetInputMediaType(writer, videoStream, video, NULL);
@@ -265,9 +285,9 @@ static FORCE_INLINE HRESULT CreateConversionWriter(const TCHAR* dest,
         beginStatus     = IMFSinkWriter_BeginWriting(writer);
     }
     status = FAILED(hr) ? hr : throttleStatus;
+    status = FAILED(status) ? status : fileStatus;
+    status = FAILED(status) ? status : sinkStatus;
     status = FAILED(status) ? status : createStatus;
-    status = FAILED(status) ? status : videoAddStatus;
-    status = FAILED(status) ? status : audioAddStatus;
     status = FAILED(status) ? status : videoTypeStatus;
     status = FAILED(status) ? status : audioTypeStatus;
     status = FAILED(status) ? status : beginStatus;
@@ -798,7 +818,14 @@ done:
  *  preserving presentation timestamps. Cancellation and errors release the COM
  *  objects and delete the incomplete output file.
  */
-int AudioGain_Convert(const TCHAR* source, const TCHAR* dest, unsigned percent, volatile long* cancel, volatile long* progress, char* error, size_t errorCapacity)
+int AudioGain_Convert(const TCHAR* source,
+                      const TCHAR* dest,
+                      unsigned percent,
+                      volatile long* cancel,
+                      volatile long* progress,
+                      volatile long* ready,
+                      char* error,
+                      size_t errorCapacity)
 {
     IMFSourceReader* reader = NULL;
     IMFSinkWriter*   writer = NULL;
@@ -807,6 +834,8 @@ int AudioGain_Convert(const TCHAR* source, const TCHAR* dest, unsigned percent, 
     IMFMediaType*    pcm         = NULL;
     IMFMediaType*    aac         = NULL;
     IMFAttributes*   attributes = NULL;
+    IMFByteStream*   byteStream = NULL;
+    IMFMediaSink*    mediaSink   = NULL;
     HRESULT          hr;
     HRESULT          com                 = CoInitializeEx(NULL, COINIT_MULTITHREADED);
     const char*      step    = "CoInitializeEx";
@@ -823,6 +852,10 @@ int AudioGain_Convert(const TCHAR* source, const TCHAR* dest, unsigned percent, 
     {
         error[0] = 0;
     }
+    if (NULL != ready)
+    {
+        (void)InterlockedExchange(ready, FALSE);
+    }
     if (FAILED(com))
     {
         hr = com;
@@ -832,7 +865,20 @@ int AudioGain_Convert(const TCHAR* source, const TCHAR* dest, unsigned percent, 
     started = 1;
     TRY(PrepareAudioInput(source, &reader, &video, &nativeAudio, &pcm, &videoIn, &audioIn, &channels, &rate, &step))
     TRY(CreateAacType(channels, rate, &aac))
-    TRY(CreateConversionWriter(dest, video, pcm, aac, &attributes, &writer, &videoOut, &audioOut))
+    TRY(CreateConversionWriter(dest,
+                               video,
+                               pcm,
+                               aac,
+                               &attributes,
+                               &byteStream,
+                               &mediaSink,
+                               &writer,
+                               &videoOut,
+                               &audioOut))
+    if (NULL != ready)
+    {
+        (void)InterlockedExchange(ready, TRUE);
+    }
     duration = ReadPresentationDuration(reader);
     TRY(ProcessConversion(&reader, &writer, videoIn, audioIn, videoOut, audioOut, percent, cancel, progress, duration, &step))
     TRY(IMFSinkWriter_Finalize(writer))
@@ -852,6 +898,12 @@ done:
         ReportConversionFailure(error, errorCapacity, hr, step);
     }
     cmfUnknownReleaseSafe((IUnknown*)writer);
+    if (NULL != mediaSink)
+    {
+        (void)IMFMediaSink_Shutdown(mediaSink);
+    }
+    cmfUnknownReleaseSafe((IUnknown*)mediaSink);
+    cmfUnknownReleaseSafe((IUnknown*)byteStream);
     cmfUnknownReleaseSafe((IUnknown*)reader);
     ReleaseAudioTypes(&video, &nativeAudio, &pcm, &aac);
     cmfUnknownReleaseSafe((IUnknown*)attributes);
@@ -863,7 +915,7 @@ done:
     {
         CoUninitialize();
     }
-    if (!ok)
+    if (!ok && (NULL == ready || !InterlockedCompareExchange(ready, TRUE, TRUE)))
     {
         DeleteFileW(dest);
     }
