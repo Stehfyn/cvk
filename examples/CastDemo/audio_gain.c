@@ -294,6 +294,30 @@ static FORCE_INLINE HRESULT CreateConversionWriter(const TCHAR* dest,
     return status;
 }
 
+static FORCE_INLINE void ReleaseConversionOutput(IMFSinkWriter* writer,
+                                                   IMFMediaSink* mediaSink,
+                                                   IMFByteStream* byteStream)
+{
+    cmfUnknownReleaseSafe((IUnknown*)writer);
+    if (NULL != mediaSink)
+    {
+        (void)IMFMediaSink_Shutdown(mediaSink);
+    }
+    cmfUnknownReleaseSafe((IUnknown*)mediaSink);
+    cmfUnknownReleaseSafe((IUnknown*)byteStream);
+}
+
+static FORCE_INLINE void DeleteUnpublishedConversion(const TCHAR* dest, volatile long* ready, int ok)
+{
+    bool_t unpublished;
+
+    unpublished = (0 == InterlockedCompareExchange(ready, TRUE, TRUE));
+    if (!ok && unpublished)
+    {
+        (void)DeleteFileW(dest);
+    }
+}
+
 static FORCE_INLINE HRESULT EnsureVideoDecodeTime(IMFSample* sample, LONGLONG time, LONGLONG* pNextVideoDecodeTime, int* pHaveVideoDecodeTime)
 {
     UINT64 decode = 0;
@@ -852,10 +876,7 @@ int AudioGain_Convert(const TCHAR* source,
     {
         error[0] = 0;
     }
-    if (NULL != ready)
-    {
-        (void)InterlockedExchange(ready, FALSE);
-    }
+    (void)InterlockedExchange(ready, FALSE);
     if (FAILED(com))
     {
         hr = com;
@@ -875,10 +896,7 @@ int AudioGain_Convert(const TCHAR* source,
                                &writer,
                                &videoOut,
                                &audioOut))
-    if (NULL != ready)
-    {
-        (void)InterlockedExchange(ready, TRUE);
-    }
+    (void)InterlockedExchange(ready, TRUE);
     duration = ReadPresentationDuration(reader);
     TRY(ProcessConversion(&reader, &writer, videoIn, audioIn, videoOut, audioOut, percent, cancel, progress, duration, &step))
     TRY(IMFSinkWriter_Finalize(writer))
@@ -897,13 +915,7 @@ done:
     {
         ReportConversionFailure(error, errorCapacity, hr, step);
     }
-    cmfUnknownReleaseSafe((IUnknown*)writer);
-    if (NULL != mediaSink)
-    {
-        (void)IMFMediaSink_Shutdown(mediaSink);
-    }
-    cmfUnknownReleaseSafe((IUnknown*)mediaSink);
-    cmfUnknownReleaseSafe((IUnknown*)byteStream);
+    ReleaseConversionOutput(writer, mediaSink, byteStream);
     cmfUnknownReleaseSafe((IUnknown*)reader);
     ReleaseAudioTypes(&video, &nativeAudio, &pcm, &aac);
     cmfUnknownReleaseSafe((IUnknown*)attributes);
@@ -915,9 +927,6 @@ done:
     {
         CoUninitialize();
     }
-    if (!ok && (NULL == ready || !InterlockedCompareExchange(ready, TRUE, TRUE)))
-    {
-        DeleteFileW(dest);
-    }
+    DeleteUnpublishedConversion(dest, ready, ok);
     return ok;
 }

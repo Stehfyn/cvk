@@ -6,6 +6,7 @@
 **
 **   CastDemo [file.mp4]                 preselects the file */
 #define WIN32_LEAN_AND_MEAN
+#define COBJMACROS
 #include <WinSock2.h>
 #include <Windows.h> // IWYU pragma: keep
 #include <CommCtrl.h>
@@ -41,6 +42,20 @@
 #include <objbase.h>
 #include <synchapi.h>
 #include <libloaderapi.h>
+#include <mfobjects.h>
+#include <mfapi.h>
+#include <mfidl.h> // IWYU pragma: keep
+#include <mfreadwrite.h>
+#include <Mferror.h>
+#include <memoryapi.h>
+#include <dxgiformat.h>
+#include <wtypes.h>
+#include <cguid.h>
+
+#ifdef _MSC_VER
+#pragma warning(disable: 4711) /* /Wall reports successful automatic inlining as a warning. */
+#pragma warning(disable: 5045) /* /Wall reports potential Spectre instrumentation sites. */
+#endif
 
 #include <stdint.h>
 #include <stddef.h>
@@ -137,6 +152,12 @@
 #define GUI_DEFAULT_PREVIEW_RATIO (0.25)
 #define GUI_PREVIEW_SECONDS (8)
 #define GUI_PREVIEW_FPS (24)
+#define GUI_PREVIEW_CENTER_SCALE (0.5F)
+#define GUI_PREVIEW_MAX_DIMENSION (4096U)
+#define GUI_PREVIEW_MAX_FRAME_BYTES (67108864ULL)
+#define GUI_PREVIEW_FRAME_SIZE_SHIFT (32U)
+#define GUI_PREVIEW_BITMAP_DPI (96.0F)
+#define GUI_PREVIEW_MILLISECONDS_PER_SECOND (1000ULL)
 #define GUI_TIME_TEXT_CAPACITY (32)
 #define GUI_STATE_TEXT_CAPACITY (64)
 #define GUI_STATUS_TEXT_CAPACITY (128)
@@ -232,6 +253,20 @@ typedef struct PreviewJob
     WCHAR              source[MAX_PATH];
     WCHAR              dest[MAX_PATH];
 } PreviewJob;
+
+typedef struct PreviewPlayback
+{
+    IMFSourceReader* reader;
+    ID2D1Bitmap1*    bitmap;
+    BYTE*            pixels;
+    WCHAR            path[MAX_PATH];
+    UINT32           width;
+    UINT32           height;
+    UINT32           pitch;
+    LONG             sourceStride;
+    unsigned         generation;
+    ULONGLONG        nextFrameTick;
+} PreviewPlayback;
 
 typedef struct GainVariant
 {
@@ -412,6 +447,11 @@ typedef struct App
     int                previewBusy;
     PreviewJob         previewJob; /* fixed storage for the running preview, no per-click alloc */
     PreviewResult      previewResult;
+    SRWLOCK            previewLock;
+    WCHAR              previewPath[MAX_PATH];
+    unsigned           previewGeneration;
+    unsigned           previewSerial;
+    volatile LONG      previewPlaybackFailed;
     bool_t windowDestroyed; ///< UI-owned completion of the native window lifetime.
 } App;
 
@@ -1695,10 +1735,49 @@ static FORCE_INLINE void DrawControl(
     }
 }
 
+static FORCE_INLINE void DrawPreviewPlayback(
+    ControlPainter*       painter,
+    const PreviewPlayback* preview,
+    const RECT*           bounds)
+{
+    float areaWidth;
+    float areaHeight;
+    float scaleX;
+    float scaleY;
+    float scale;
+    float imageWidth;
+    float imageHeight;
+    float left;
+    float top;
+
+    if (NULL == preview->bitmap)
+    {
+        return;
+    }
+    areaWidth   = (float)bounds->right - (float)bounds->left;
+    areaHeight  = (float)bounds->bottom - (float)bounds->top;
+    scaleX      = areaWidth / (float)preview->width;
+    scaleY      = areaHeight / (float)preview->height;
+    scale       = (scaleX < scaleY) ? scaleX : scaleY;
+    imageWidth  = (float)preview->width * scale;
+    imageHeight = (float)preview->height * scale;
+    left        = (float)bounds->left + ((areaWidth - imageWidth) * GUI_PREVIEW_CENTER_SCALE);
+    top         = (float)bounds->top + ((areaHeight - imageHeight) * GUI_PREVIEW_CENTER_SCALE);
+    cd2dDeviceContextDrawBitmapInRect(painter->context,
+                                     (ID2D1Bitmap*)preview->bitmap,
+                                     left,
+                                     top,
+                                     left + imageWidth,
+                                     top + imageHeight,
+                                     1.0F,
+                                     D2D1_INTERPOLATION_MODE_LINEAR);
+}
+
 static FORCE_INLINE void DrawControlFrame(
     ControlPainter*             painter,
     App*                        app,
-    const IMMERSIVEPAINTSTRUCT* paint)
+    const IMMERSIVEPAINTSTRUCT* paint,
+    const PreviewPlayback*      preview)
 {
     ControlFrame*                      frame;
     RECT                               rects[GUI_VISUAL_COUNT];
@@ -1719,6 +1798,7 @@ static FORCE_INLINE void DrawControlFrame(
                         rects,
                         widths);
     DrawReceiverList(painter, frame, &rects[ID_LIST - ID_LIST], widths);
+    DrawPreviewPlayback(painter, preview, &rects[ID_LIST - ID_LIST]);
     tick = GetTickCount64();
     for (index = 0; index < ARRAYSIZE(c_controls); ++index)
     {
@@ -3234,18 +3314,14 @@ static bool_t PrepareLocalCastContent(App* pApp, const CastDevice* pDevice,
     }
     ToUtf8(pName, pConfig->title, sizeof(pConfig->title));
     ToUtf8(NULL != pExtension ? pExtension : L"", extension, sizeof(extension));
-    (void)CopyAscii(pConfig->contentType, ARRAYSIZE(pConfig->contentType),
-                    MediaServer_GetContentTypeForExtension(pExtension), CAST_SESSION_TYPE_CAPACITY);
+    (void)CopyAscii(pConfig->contentType, ARRAYSIZE(pConfig->contentType), MediaServer_GetContentTypeForExtension(pExtension), CAST_SESSION_TYPE_CAPACITY);
     pConfig->servingLocally = 1;
-    if (!CastNetwork_ReadLocalAddress(&pApp->routeNetwork, pDevice->host,
-                                      sizeof(pDevice->host), localAddress, GUI_ADDRESS_CAPACITY))
+    if (!CastNetwork_ReadLocalAddress(&pApp->routeNetwork, pDevice->host, sizeof(pDevice->host), localAddress, GUI_ADDRESS_CAPACITY))
     {
         SetStatus(pApp, TEXT("Cannot determine the local address facing the receiver."));
         return FALSE;
     }
-    pApp->pServer = MediaServer_StartWithSubtitles(&pApp->serving, source, NULL,
-                                                   DEFAULT_SERVER_PORT, pConfig->contentType,
-                                                   vtt, vttSize, error, GUI_ERROR_CAPACITY);
+    pApp->pServer = MediaServer_StartWithSubtitles(&pApp->serving, source, NULL, DEFAULT_SERVER_PORT, pConfig->contentType, vtt, vttSize, error, GUI_ERROR_CAPACITY);
     if (NULL == pApp->pServer)
     {
         Utf8ToNative(error, message, GUI_ERROR_CAPACITY);
@@ -3294,8 +3370,7 @@ static bool_t ServeCastSubtitles(App* pApp, const CastDevice* pDevice,
     ByteText_AppendCharacter(&urlWriter, ':');
     ByteText_AppendUnsigned(&urlWriter, MediaServer_GetPort(pApp->pServer));
     ByteText_AppendString(&urlWriter, "/subtitles.vtt", ARRAYSIZE("/subtitles.vtt"));
-    (void)CopyAscii(pConfig->subtitleLanguage, ARRAYSIZE(pConfig->subtitleLanguage),
-                    subtitle->language, ARRAYSIZE(subtitle->language));
+    (void)CopyAscii(pConfig->subtitleLanguage, ARRAYSIZE(pConfig->subtitleLanguage), subtitle->language, ARRAYSIZE(subtitle->language));
     return TRUE;
 }
 
@@ -3444,13 +3519,11 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, uint
     {
         PrepareRemoteCastContent(source, &config);
     }
-    else if (!PrepareLocalCastContent(pApp, pDevice, source, vtt, vttSize,
-                                      &config, localAddress, error))
+    else if (!PrepareLocalCastContent(pApp, pDevice, source, vtt, vttSize, &config, localAddress, error))
     {
         return;
     }
-    if (NULL != vtt && !ServeCastSubtitles(pApp, pDevice, vtt, vttSize,
-                                           subtitle, &config, localAddress, error))
+    if (NULL != vtt && !ServeCastSubtitles(pApp, pDevice, vtt, vttSize, subtitle, &config, localAddress, error))
     {
         return;
     }
@@ -3666,6 +3739,8 @@ static FORCE_INLINE void StartPreview(App* pApp)
             NativeText_AppendString(&pathWriter, nativeTemp);
             NativeText_AppendString(&pathWriter, TEXT("cvkcast_preview_"));
             NativeText_AppendUnsigned(&pathWriter, GetCurrentProcessId(), 1);
+            NativeText_AppendCharacter(&pathWriter, TEXT('_'));
+            NativeText_AppendUnsigned(&pathWriter, ++pApp->previewSerial, 1);
             NativeText_AppendString(&pathWriter, TEXT(".mp4"));
             pathReady = pathWriter.complete;
         }
@@ -3699,6 +3774,10 @@ static FORCE_INLINE void StartPreview(App* pApp)
         pJob->startFrame = (unsigned)((ratio * GUI_NOMINAL_FPS) * duration);
         pJob->frames     = GUI_PREVIEW_SECONDS * GUI_PREVIEW_FPS;
 
+        AcquireSRWLockExclusive(&pApp->previewLock);
+        pApp->previewPath[0] = L'\0';
+        ++pApp->previewGeneration;
+        ReleaseSRWLockExclusive(&pApp->previewLock);
         pApp->previewBusy = TRUE;
         (void)EnableWindow(pApp->hPreview, FALSE);
         (void)SetWindowText(pApp->hCfgReadout, TEXT("Building preview..."));
@@ -4298,6 +4377,7 @@ static FORCE_INLINE BOOL CastWindow_OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
         dark                  = TRUE;
         pApp->dpi             = GetDpiForWindow(hWnd);
         InitializeSRWLock(&pApp->controlFrameLock);
+        InitializeSRWLock(&pApp->previewLock);
             CastEvents_Initialize(&pApp->events.mailbox);
         Subtitles_Initialize(&pApp->subtitleWorkspace, pApp->subtitleScratch, pApp->subtitleOutput, SUBTITLE_TEXT_CAPACITY);
         /* Optional proxy startup failure keeps original-stream casting available. */
@@ -4342,15 +4422,62 @@ static FORCE_INLINE BOOL CastWindow_OnEraseBackground(HWND hWnd, HDC dc)
     return TRUE;
 }
 
+static void CompleteGainJob(App* app, bool_t failed)
+{
+    bool_t discard;
+    bool_t published;
+    TCHAR  message[GAIN_ERROR_CAPACITY];
+
+    app->gainBusy = FALSE;
+    discard       = app->gainDiscard || app->closing || app->finishPending || app->stopping;
+    published     = (NULL != app->gainActiveVariant);
+    if (published)
+    {
+        MediaServer_MarkComplete(app->gainActiveVariant->server);
+        app->gainOutput[0]     = TEXT('\0');
+        app->gainActiveVariant = NULL;
+    }
+    if (discard)
+    {
+        if (app->gainOutput[0])
+        {
+            (void)DeleteUtf16File(app->gainOutput);
+            app->gainOutput[0] = TEXT('\0');
+        }
+    }
+    else if (failed || !app->gainOk)
+    {
+        Utf8ToNative(app->gainError, message, ARRAYSIZE(message));
+        (void)SetWindowText(app->hGainState, TEXT("Audio conversion failed"));
+        if (published || app->preparingAudio)
+        {
+            FinishSession(app, message);
+        }
+        else
+        {
+            (void)DeleteUtf16File(app->gainOutput);
+            app->gainOutput[0] = TEXT('\0');
+            SetStatus(app, message);
+        }
+    }
+    else if (!published)
+    {
+        BeginGainPlayback(app, app->gainActiveSerial);
+        if (NULL != app->gainActiveVariant)
+        {
+            MediaServer_MarkComplete(app->gainActiveVariant->server);
+            app->gainOutput[0]     = TEXT('\0');
+            app->gainActiveVariant = NULL;
+        }
+    }
+}
+
 static void PollGainJob(App* app)
 {
     bool_t failed;
     bool_t completed;
-    bool_t discard;
     bool_t ready;
     bool_t can_publish;
-    bool_t published;
-    TCHAR  message[GAIN_ERROR_CAPACITY];
 
     if (app->gainBusy)
     {
@@ -4365,47 +4492,7 @@ static void PollGainJob(App* app)
         }
         if (completed || failed)
         {
-            app->gainBusy = FALSE;
-            discard       = app->gainDiscard || app->closing || app->finishPending || app->stopping;
-            published     = (NULL != app->gainActiveVariant);
-            if (published)
-            {
-                MediaServer_MarkComplete(app->gainActiveVariant->server);
-                app->gainOutput[0]   = TEXT('\0');
-                app->gainActiveVariant = NULL;
-            }
-            if (discard)
-            {
-                if (app->gainOutput[0])
-                {
-                    (void)DeleteUtf16File(app->gainOutput);
-                    app->gainOutput[0] = TEXT('\0');
-                }
-            }
-            else if (failed || !app->gainOk)
-            {
-                Utf8ToNative(app->gainError, message, ARRAYSIZE(message));
-                (void)SetWindowText(app->hGainState, TEXT("Audio conversion failed"));
-                if (published || app->preparingAudio)
-                {
-                    FinishSession(app, message);
-                }
-                else
-                {
-                    app->gainOutput[0] = TEXT('\0');
-                    SetStatus(app, message);
-                }
-            }
-            else if (!published)
-            {
-                BeginGainPlayback(app, app->gainActiveSerial);
-                if (NULL != app->gainActiveVariant)
-                {
-                    MediaServer_MarkComplete(app->gainActiveVariant->server);
-                    app->gainOutput[0]     = TEXT('\0');
-                    app->gainActiveVariant = NULL;
-                }
-            }
+            CompleteGainJob(app, failed);
         }
     }
 }
@@ -4423,6 +4510,10 @@ static FORCE_INLINE void PollJobs(App* app)
     }
 
     PollGainJob(app);
+    if (InterlockedExchange(&app->previewPlaybackFailed, FALSE))
+    {
+        (void)SetWindowText(app->hCfgReadout, TEXT("Cannot decode the preview in this window."));
+    }
     if (app->previewBusy)
     {
         completed = OS_Thread_TakeResult(&app->previewWorker);
@@ -4795,7 +4886,7 @@ static FORCE_INLINE void OnPreviewDone(HWND hWnd, const PreviewResult* pResult)
 
     pApp->previewBusy = 0;
     EnableWindow(pApp->hPreview, !pApp->preparingAudio);
-    if (!pApp->closing && NULL != pResult && pResult->ok && pResult->frames > 0)
+    if (!pApp->closing && NULL != pResult && pResult->ok)
     {
         TCHAR      text[GUI_GAIN_STATE_CAPACITY];
         NativeText writer;
@@ -4808,13 +4899,12 @@ static FORCE_INLINE void OnPreviewDone(HWND hWnd, const PreviewResult* pResult)
         NativeText_AppendUnsigned(&writer, pResult->kbps, 1);
         NativeText_AppendString(&writer, TEXT(" kbps, motion "));
         NativeText_AppendSigned(&writer, pResult->motionPercent);
-        NativeText_AppendString(&writer, TEXT("% - playing on the receiver"));
+        NativeText_AppendString(&writer, TEXT("% - previewing here"));
         (void)SetWindowText(pApp->hCfgReadout, text);
-        /* Show the transcoded clip on the receiver: no proxy, since the clip is the output. */
-        if (NULL == pApp->pSession)
-        {
-            StartCastSource(pApp, pResult->path, ARRAYSIZE(pResult->path), 0);
-        }
+        AcquireSRWLockExclusive(&pApp->previewLock);
+        (void)CopyUtf16(pApp->previewPath, MAX_PATH, pResult->path, ARRAYSIZE(pResult->path));
+        ++pApp->previewGeneration;
+        ReleaseSRWLockExclusive(&pApp->previewLock);
     }
     else
     {
@@ -4929,11 +5019,313 @@ static FORCE_INLINE void CastOpenVerticalBlankEvent(
     event->VidPnSourceId = adapterOpen.VidPnSourceId;
 }
 
+static void ClosePreviewPlayback(PreviewPlayback* preview)
+{
+    cd2dUnknownReleaseSafe((IUnknown*)preview->bitmap);
+    if (NULL != preview->reader)
+    {
+        (void)IMFSourceReader_Release(preview->reader);
+    }
+    if (NULL != preview->pixels)
+    {
+        (void)VirtualFree(preview->pixels, 0, MEM_RELEASE);
+    }
+    if (L'\0' != preview->path[0])
+    {
+        (void)DeleteFileW(preview->path);
+    }
+    ZeroMemory(preview, sizeof(*preview));
+}
+
+static HRESULT ConfigurePreviewReader(PreviewPlayback* preview)
+{
+    IMFAttributes* attributes;
+    IMFMediaType*  requested;
+    IMFMediaType*  current;
+    HRESULT        hr;
+    UINT32         stride;
+    UINT64         frameSize;
+
+    attributes = NULL;
+    requested  = NULL;
+    current    = NULL;
+    hr         = MFCreateAttributes(&attributes, 1);
+    if (SUCCEEDED(hr))
+    {
+        hr = IMFAttributes_SetUINT32(attributes, &MF_SOURCE_READER_ENABLE_VIDEO_PROCESSING, TRUE);
+    }
+    if (SUCCEEDED(hr))
+    {
+        hr = MFCreateSourceReaderFromURL(preview->path, attributes, &preview->reader);
+    }
+    if (SUCCEEDED(hr))
+    {
+        hr = IMFSourceReader_SetStreamSelection(preview->reader, (DWORD)MF_SOURCE_READER_ALL_STREAMS, FALSE);
+    }
+    if (SUCCEEDED(hr))
+    {
+        hr = IMFSourceReader_SetStreamSelection(preview->reader, (DWORD)MF_SOURCE_READER_FIRST_VIDEO_STREAM, TRUE);
+    }
+    if (SUCCEEDED(hr))
+    {
+        hr = MFCreateMediaType(&requested);
+    }
+    if (SUCCEEDED(hr))
+    {
+        hr = IMFMediaType_SetGUID(requested, &MF_MT_MAJOR_TYPE, &MFMediaType_Video);
+    }
+    if (SUCCEEDED(hr))
+    {
+        hr = IMFMediaType_SetGUID(requested, &MF_MT_SUBTYPE, &MFVideoFormat_RGB32);
+    }
+    if (SUCCEEDED(hr))
+    {
+        hr = IMFSourceReader_SetCurrentMediaType(preview->reader,
+                                                   (DWORD)MF_SOURCE_READER_FIRST_VIDEO_STREAM,
+                                                   NULL,
+                                                   requested);
+    }
+    if (SUCCEEDED(hr))
+    {
+        hr = IMFSourceReader_GetCurrentMediaType(preview->reader,
+                                                   (DWORD)MF_SOURCE_READER_FIRST_VIDEO_STREAM,
+                                                   &current);
+    }
+    if (SUCCEEDED(hr))
+    {
+        hr = IMFMediaType_GetUINT64(current, &MF_MT_FRAME_SIZE, &frameSize);
+        if (SUCCEEDED(hr))
+        {
+            preview->width  = (UINT32)(frameSize >> GUI_PREVIEW_FRAME_SIZE_SHIFT);
+            preview->height = (UINT32)frameSize;
+        }
+    }
+    if (SUCCEEDED(hr))
+    {
+        preview->pitch        = (UINT32)((uint64_t)preview->width * 4U);
+        preview->sourceStride = (LONG)preview->pitch;
+        if (SUCCEEDED(IMFMediaType_GetUINT32(current, &MF_MT_DEFAULT_STRIDE, &stride)))
+        {
+            preview->sourceStride = (LONG)stride;
+        }
+    }
+    if (NULL != current)
+    {
+        (void)IMFMediaType_Release(current);
+    }
+    if (NULL != requested)
+    {
+        (void)IMFMediaType_Release(requested);
+    }
+    if (NULL != attributes)
+    {
+        (void)IMFAttributes_Release(attributes);
+    }
+    return hr;
+}
+
+static bool_t OpenPreviewPlayback(
+    PreviewPlayback*    preview,
+    ID2D1DeviceContext* context,
+    const WCHAR*        path)
+{
+    D2D1_SIZE_U               size;
+    D2D1_PIXEL_FORMAT         pixelFormat;
+    uint64_t                  pixelBytes;
+    bool_t                    dimensionsValid;
+    bool_t                    opened;
+    HRESULT                   hr;
+
+    opened = CopyUtf16(preview->path, MAX_PATH, path, MAX_PATH);
+    hr     = opened ? ConfigurePreviewReader(preview) : E_INVALIDARG;
+    pixelBytes = (uint64_t)preview->pitch * (uint64_t)preview->height;
+    dimensionsValid = (0 < preview->width) && (0 < preview->height) &&
+                      (GUI_PREVIEW_MAX_DIMENSION >= preview->width) &&
+                      (GUI_PREVIEW_MAX_DIMENSION >= preview->height) &&
+                      (0 != preview->sourceStride) && (0 < pixelBytes) &&
+                      (GUI_PREVIEW_MAX_FRAME_BYTES >= pixelBytes);
+    if (SUCCEEDED(hr) && dimensionsValid)
+    {
+        preview->pixels = (BYTE*)VirtualAlloc(NULL, (SIZE_T)pixelBytes, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+        opened = (NULL != preview->pixels);
+    }
+    else
+    {
+        opened = FALSE;
+    }
+    if (opened)
+    {
+        size.width  = preview->width;
+        size.height = preview->height;
+        pixelFormat.format    = DXGI_FORMAT_B8G8R8A8_UNORM;
+        pixelFormat.alphaMode = D2D1_ALPHA_MODE_IGNORE;
+        cd2dDeviceContextCreateBitmap(context,
+                                     size,
+                                     NULL,
+                                     0,
+                                     pixelFormat,
+                                     GUI_PREVIEW_BITMAP_DPI,
+                                     GUI_PREVIEW_BITMAP_DPI,
+                                     D2D1_BITMAP_OPTIONS_NONE,
+                                     NULL,
+                                     &preview->bitmap);
+        opened = (NULL != preview->bitmap);
+    }
+    if (!opened)
+    {
+        ClosePreviewPlayback(preview);
+    }
+    return opened;
+}
+
+static bool_t CopyPreviewSample(PreviewPlayback* preview, IMFSample* sample)
+{
+    IMFMediaBuffer* buffer;
+    BYTE*           source;
+    BYTE*           firstRow;
+    DWORD           length;
+    uint64_t        sourceBytes;
+    int64_t         strideMagnitude;
+    HRESULT         hr;
+
+    buffer = NULL;
+    source = NULL;
+    length = 0;
+    hr = IMFSample_ConvertToContiguousBuffer(sample, &buffer);
+    if (SUCCEEDED(hr))
+    {
+        hr = IMFMediaBuffer_Lock(buffer, &source, NULL, &length);
+    }
+    if (SUCCEEDED(hr))
+    {
+        strideMagnitude = (0 > preview->sourceStride) ?
+                          -(int64_t)preview->sourceStride : (int64_t)preview->sourceStride;
+        sourceBytes = ((uint64_t)strideMagnitude * ((uint64_t)preview->height - 1U)) + preview->pitch;
+        if (sourceBytes <= (uint64_t)length)
+        {
+            firstRow = source;
+            if (0 > preview->sourceStride)
+            {
+                firstRow += (SIZE_T)(strideMagnitude * ((int64_t)preview->height - 1));
+            }
+            hr = MFCopyImage(preview->pixels,
+                             (LONG)preview->pitch,
+                             firstRow,
+                             preview->sourceStride,
+                             preview->pitch,
+                             preview->height);
+            if (SUCCEEDED(hr))
+            {
+                cd2dBitmapCopyFromWholeMemory((ID2D1Bitmap*)preview->bitmap,
+                                               preview->pixels,
+                                               preview->pitch);
+            }
+        }
+        else
+        {
+            hr = MF_E_BUFFERTOOSMALL;
+        }
+        (void)IMFMediaBuffer_Unlock(buffer);
+    }
+    if (NULL != buffer)
+    {
+        (void)IMFMediaBuffer_Release(buffer);
+    }
+    return SUCCEEDED(hr);
+}
+
+static bool_t AdvancePreviewPlayback(PreviewPlayback* preview)
+{
+    IMFSample*  sample;
+    PROPVARIANT start;
+    DWORD       flags;
+    ULONGLONG   now;
+    HRESULT     hr;
+    bool_t      copied;
+
+    now = GetTickCount64();
+    if (now < preview->nextFrameTick)
+    {
+        return TRUE;
+    }
+    preview->nextFrameTick = now + (GUI_PREVIEW_MILLISECONDS_PER_SECOND / GUI_PREVIEW_FPS);
+    sample = NULL;
+    flags  = 0;
+    hr = IMFSourceReader_ReadSample(preview->reader,
+                                     (DWORD)MF_SOURCE_READER_FIRST_VIDEO_STREAM,
+                                     0,
+                                     NULL,
+                                     &flags,
+                                     NULL,
+                                     &sample);
+    if (SUCCEEDED(hr) && (0 != (flags & MF_SOURCE_READERF_ENDOFSTREAM)))
+    {
+        ZeroMemory(&start, sizeof(start));
+        start.vt           = VT_I8;
+        start.hVal.QuadPart = 0;
+        hr = IMFSourceReader_SetCurrentPosition(preview->reader, &GUID_NULL, &start);
+    }
+    copied = SUCCEEDED(hr);
+    if (copied && (NULL != sample))
+    {
+        copied = CopyPreviewSample(preview, sample);
+    }
+    if (NULL != sample)
+    {
+        (void)IMFSample_Release(sample);
+    }
+    return copied;
+}
+
+static void PreparePreviewPlayback(
+    App*                app,
+    PreviewPlayback*    preview,
+    ID2D1DeviceContext* context)
+{
+    WCHAR    path[MAX_PATH];
+    unsigned generation;
+    bool_t   opened;
+    bool_t   decoded;
+
+    path[0] = L'\0';
+    AcquireSRWLockShared(&app->previewLock);
+    generation = app->previewGeneration;
+    if (generation != preview->generation)
+    {
+        (void)CopyUtf16(path, MAX_PATH, app->previewPath, MAX_PATH);
+    }
+    ReleaseSRWLockShared(&app->previewLock);
+    if (generation != preview->generation)
+    {
+        ClosePreviewPlayback(preview);
+        preview->generation = generation;
+        if (L'\0' != path[0])
+        {
+            opened = OpenPreviewPlayback(preview, context, path);
+            if (!opened)
+            {
+                (void)InterlockedExchange(&app->previewPlaybackFailed, TRUE);
+            }
+        }
+    }
+    if (NULL != preview->reader)
+    {
+        decoded = AdvancePreviewPlayback(preview);
+        if (!decoded)
+        {
+            ClosePreviewPlayback(preview);
+            preview->generation = generation;
+            (void)InterlockedExchange(&app->previewPlaybackFailed, TRUE);
+        }
+    }
+}
+
 static FORCE_INLINE void CastRenderFrame(
     App*                        app,
     ControlPainter*             painter,
     ID2D1DeviceContext*         context,
-    const IMMERSIVEPAINTSTRUCT* paint)
+    const IMMERSIVEPAINTSTRUCT* paint,
+    const PreviewPlayback*      preview)
 {
     UINT frameDpi;
 
@@ -4948,7 +5340,7 @@ static FORCE_INLINE void CastRenderFrame(
     }
     ControlPainter_SetDpi(painter, app->caption.dwrite, frameDpi);
     cd2dRenderTargetClear((ID2D1RenderTarget*)context, &c_castBackgroundColor);
-    DrawControlFrame(painter, app, paint);
+    DrawControlFrame(painter, app, paint, preview);
 }
 
 static FORCE_INLINE void PresentCastWindow(
@@ -4966,10 +5358,16 @@ static FORCE_INLINE void PresentCastWindow(
     NTSTATUS                         closeStatus;
     bool_t                           vblankReady;
     bool_t                           adapterClosed;
+    bool_t                           mediaReady;
+    HRESULT                          mediaStatus;
+    PreviewPlayback                  preview;
 
     app       = (App*)parameter;
     comResult = CoInitializeEx(NULL, COINIT_MULTITHREADED);
     LOGASSERT(SUCCEEDED(comResult));
+    ZeroMemory(&preview, sizeof(preview));
+    mediaStatus = MFStartup(MF_VERSION, MFSTARTUP_FULL);
+    mediaReady  = SUCCEEDED(mediaStatus);
     InitSwapChain(&app->swapChain, NULL);
     InitCaption(&app->caption, &app->immersiveWindow, app->swapChain.context);
     ZeroMemory(&painter, sizeof(painter));
@@ -4987,8 +5385,12 @@ static FORCE_INLINE void PresentCastWindow(
     cdcompVisualSetContent(app->swapChain.visual, (IUnknown*)app->swapChain.swapChain);
     app->immersiveWindow.swapChain = &app->swapChain;
 
+    if (mediaReady)
+    {
+        PreparePreviewPlayback(app, &preview, painter.context);
+    }
     context = BeginImmersivePaint(&app->immersiveWindow, &paint);
-    CastRenderFrame(app, &painter, context, &paint);
+    CastRenderFrame(app, &painter, context, &paint, &preview);
     EndImmersivePaint(&app->immersiveWindow, &paint);
     CastOpenVerticalBlankEvent(&vblank);
     for (;;)
@@ -5001,11 +5403,20 @@ static FORCE_INLINE void PresentCastWindow(
         vblankStatus = D3DKMTWaitForVerticalBlankEvent(&vblank);
         vblankReady  = NT_SUCCESS(vblankStatus);
         LOGASSERT(vblankReady);
+        if (mediaReady)
+        {
+            PreparePreviewPlayback(app, &preview, painter.context);
+        }
         context = BeginImmersivePaint(&app->immersiveWindow, &paint);
-        CastRenderFrame(app, &painter, context, &paint);
+        CastRenderFrame(app, &painter, context, &paint, &preview);
         EndImmersivePaint(&app->immersiveWindow, &paint);
     }
 
+    ClosePreviewPlayback(&preview);
+    if (mediaReady)
+    {
+        (void)MFShutdown();
+    }
     ZeroMemory(&adapterClose, sizeof(adapterClose));
     adapterClose.hAdapter = vblank.hAdapter;
     closeStatus           = D3DKMTCloseAdapter(&adapterClose);
