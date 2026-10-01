@@ -2,7 +2,7 @@
 Language: Cpp
 BasedOnStyle: LLVM
 Standard: Latest
-ColumnLimit: 200
+ColumnLimit: 120
 IndentWidth: 4
 ContinuationIndentWidth: 4
 UseTab: Never
@@ -37,7 +37,7 @@ AllowShortFunctionsOnASingleLine: None
 BinPackArguments: false
 BinPackLongBracedList: false
 BinPackParameters: OnePerLine
-BreakFunctionDefinitionParameters: false
+BreakFunctionDefinitionParameters: true
 PenaltyReturnTypeOnItsOwnLine: 1000000
 BreakBeforeCloseBracketFunction: false
 BreakBeforeBraces: Allman

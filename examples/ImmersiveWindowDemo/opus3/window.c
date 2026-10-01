@@ -773,6 +773,8 @@ OnNCCalcSize(
     IMMERSIVEWINDOW* window;
     RECT*            lpRect;
     UINT             result;
+    LONG             captionHeight;
+    CAPTIONLAYOUT    proposedLayout;
 
     window = GetImmersiveWindow(hwnd);
     lpRect = (RECT*)lpcsp;
@@ -801,6 +803,16 @@ OnNCCalcSize(
         result = FORWARD_WM_NCCALCSIZE(hwnd, fCalcValidRects, lpcsp, DefWindowProc);
     }
 
+    captionHeight = 0;
+    if (window->fBorderless && !window->fFullscreen)
+    {
+        GetBorderlessCaptionLayout(window, lpRect->right - lpRect->left, &proposedLayout);
+        captionHeight = proposedLayout.cyCaption;
+    }
+    if (window->clientGeometryProc)
+    {
+        window->clientGeometryProc(window->clientData, lpRect, &window->metrics, captionHeight);
+    }
     AcquireSRWLockExclusive(&window->presentLock);
     window->rcClient = (*lpRect);
     if (window->fPresentReady)
@@ -1700,6 +1712,7 @@ InitImmersiveWindow(
 {
     window->hwnd             = NULL;
     window->clientProc       = NULL;
+    window->clientGeometryProc = NULL;
     window->clientData       = NULL;
     SecureZeroMemory(&window->metrics, sizeof(window->metrics));
     window->fBorderless      = TRUE;
@@ -1739,6 +1752,7 @@ CreateImmersiveWindow(
 
     InitImmersiveWindow(window);
     window->clientProc = createInfo->clientProc;
+    window->clientGeometryProc = createInfo->clientGeometryProc;
     window->clientData = createInfo->clientData;
 
     instance = GetModuleHandle(NULL);

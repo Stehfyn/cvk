@@ -14,6 +14,8 @@
 #include <shellapi.h>
 #include <Uxtheme.h>
 #include <dwmapi.h>
+#include <winternl.h>
+#include <d3dkmthk.h>
 #include <winnt.h>
 #include <windef.h>
 #include <intsafe.h>
@@ -34,7 +36,6 @@
 #include <fileapi.h>
 #include <handleapi.h>
 #include <sysinfoapi.h>
-#include <dxgi1_6.h>
 #include <dxgi.h>
 #include <combaseapi.h>
 #include <objbase.h>
@@ -75,7 +76,6 @@
 #include "window.h"
 #include "cd2d.h"
 #include "cdw.h"
-#include "cdxgi.h"
 
 #ifdef _MSC_VER
 #pragma comment(                                                                                                       \
@@ -157,7 +157,6 @@
 #define GUI_COMBO_ARROW_WIDTH (18)
 #define GUI_CARET_PERIOD_MS (500)
 #define CONTROL_VISUAL_SUBCLASS_ID (1)
-#define CAST_GEOMETRY_SUBCLASS_ID (1)
 
 enum ControlId
 {
@@ -292,6 +291,14 @@ typedef struct ControlFrame
     unsigned receiverCount;
 } ControlFrame;
 
+typedef struct ControlPainter
+{
+    ID2D1DeviceContext* context;
+    ID2D1SolidColorBrush* brush;
+    IDWriteTextFormat* format;
+    UINT dpi;
+} ControlPainter;
+
 typedef struct App
 {
     HINSTANCE hInstance;
@@ -316,7 +323,6 @@ typedef struct App
     HWND      hBrowse;
     HWND                  hSubtitleLabel, hSubtitle, hSubtitleBrowse;
     HWND                  hGainLabel, hGain, hGainState;
-    HBRUSH                backgroundBrush, fieldBrush;
     SubtitleTrack         subtitles[SUBTITLE_MAX_TRACKS];
     Subtitles_Workspace_t subtitleWorkspace;
     byte_t                subtitleScratch[SUBTITLE_TEXT_CAPACITY];
@@ -367,6 +373,7 @@ typedef struct App
     int                 layoutClientWidth;
     int                 layoutClientHeight;
     UINT                layoutDpi;
+    int                 layoutCaptionHeight;
     int                 listColumnWidth[GUI_DEVICE_COLUMN_COUNT];
     UINT                dpi;
     /* receivers */
@@ -428,13 +435,21 @@ typedef struct CastGui_ControlDefinition_s
 #define GUI_NATIVE_TEXT_CAPACITY (2048)
 #define SEEK_BAR_SUBCLASS_ID (1)
 
-#define DARK_BACKGROUND RGB(24, 26, 31)
 #define DARK_FIELD      RGB(36, 39, 46)
 #define DARK_TEXT       RGB(232, 235, 240)
-#define DARK_MUTED      RGB(151, 160, 174)
 
 /** Fixed controls in creation and tab order. Layout and runtime state are applied after creation. */
 static TCHAR* const c_deviceColumns[GUI_DEVICE_COLUMN_COUNT] = {TEXT("Receiver"), TEXT("Address"), TEXT("Model")};
+
+static const D2D1_COLOR_F c_castBackgroundColor = {24.0F / 255.0F, 26.0F / 255.0F, 31.0F / 255.0F, 1.0F};
+static const D2D1_COLOR_F c_castFieldColor = {36.0F / 255.0F, 39.0F / 255.0F, 46.0F / 255.0F, 1.0F};
+static const D2D1_COLOR_F c_castSelectedColor = {48.0F / 255.0F, 91.0F / 255.0F, 146.0F / 255.0F, 1.0F};
+static const D2D1_COLOR_F c_castTextColor = {232.0F / 255.0F, 235.0F / 255.0F, 240.0F / 255.0F, 1.0F};
+static const D2D1_COLOR_F c_castMutedColor = {151.0F / 255.0F, 160.0F / 255.0F, 174.0F / 255.0F, 1.0F};
+static const D2D1_COLOR_F c_castAccentColor = {82.0F / 255.0F, 156.0F / 255.0F, 245.0F / 255.0F, 1.0F};
+static const D2D1_COLOR_F c_castBorderColor = {62.0F / 255.0F, 68.0F / 255.0F, 78.0F / 255.0F, 1.0F};
+static const D2D1_COLOR_F c_castHotColor = {54.0F / 255.0F, 69.0F / 255.0F, 88.0F / 255.0F, 1.0F};
+static const D2D1_COLOR_F c_castHotAccentColor = {118.0F / 255.0F, 183.0F / 255.0F, 1.0F, 1.0F};
 
 static const CastGui_ControlDefinition_t c_controls[] = {
     {offsetof(App, hListLabel), WC_STATIC, TEXT("Cast receivers on this network"), SS_LEFT, 0, ID_LIST_LABEL},
@@ -557,7 +572,13 @@ static FORCE_INLINE void FinishSession(App* pApp, LPCTSTR pReason);
  * \retval        None No value is returned.
  */
 static FORCE_INLINE void PresentCastWindow(void* parameter);
-static FORCE_INLINE void ComputeControlRects(UINT dpi, int captionHeight, int clientWidth, int clientHeight, RECT rects[GUI_VISUAL_COUNT], int columnWidths[GUI_DEVICE_COLUMN_COUNT]);
+static FORCE_INLINE void ComputeControlRects(
+    UINT dpi,
+    int captionHeight,
+    int clientWidth,
+    int clientHeight,
+    RECT rects[GUI_VISUAL_COUNT],
+    int columnWidths[GUI_DEVICE_COLUMN_COUNT]);
 
 /*************************************************************************************************/
 /**
@@ -1114,26 +1135,12 @@ static FORCE_INLINE void FormatTime(double seconds, LPTSTR pOut, uint32_t capaci
 
 /* ------------------------------------------------------------------ controls and layout */
 
-static const D2D1_COLOR_F c_castFieldColor = {36.0F / 255.0F, 39.0F / 255.0F, 46.0F / 255.0F, 1.0F};
-static const D2D1_COLOR_F c_castSelectedColor = {48.0F / 255.0F, 91.0F / 255.0F, 146.0F / 255.0F, 1.0F};
-static const D2D1_COLOR_F c_castTextColor = {232.0F / 255.0F, 235.0F / 255.0F, 240.0F / 255.0F, 1.0F};
-static const D2D1_COLOR_F c_castMutedColor = {151.0F / 255.0F, 160.0F / 255.0F, 174.0F / 255.0F, 1.0F};
-static const D2D1_COLOR_F c_castAccentColor = {82.0F / 255.0F, 156.0F / 255.0F, 245.0F / 255.0F, 1.0F};
-static const D2D1_COLOR_F c_castBorderColor = {62.0F / 255.0F, 68.0F / 255.0F, 78.0F / 255.0F, 1.0F};
-static const D2D1_COLOR_F c_castHotColor = {54.0F / 255.0F, 69.0F / 255.0F, 88.0F / 255.0F, 1.0F};
-static const D2D1_COLOR_F c_castHotAccentColor = {118.0F / 255.0F, 183.0F / 255.0F, 1.0F, 1.0F};
-
-typedef struct ControlPainter
+static FORCE_INLINE void ControlPainter_SetDpi(
+    ControlPainter* painter,
+    IDWriteFactory* factory,
+    UINT            dpi)
 {
-    ID2D1DeviceContext* context;
-    ID2D1SolidColorBrush* brush;
-    IDWriteTextFormat* format;
-    UINT dpi;
-} ControlPainter;
-
-static FORCE_INLINE void ControlPainter_SetDpi(ControlPainter* painter, IDWriteFactory* factory, UINT dpi)
-{
-    int fontSize;
+    int    fontSize;
     bool_t dpiChanged;
 
     dpiChanged = (painter->dpi != dpi);
@@ -1141,7 +1148,7 @@ static FORCE_INLINE void ControlPainter_SetDpi(ControlPainter* painter, IDWriteF
     {
         cdwUnknownReleaseSafe((IUnknown*)painter->format);
         painter->format = NULL;
-        fontSize = ScaleAtDpi(dpi, GUI_FONT_SIZE);
+        fontSize        = ScaleAtDpi(dpi, GUI_FONT_SIZE);
         cdwFactoryCreateTextFormat(factory,
                                    L"Segoe UI",
                                    NULL,
@@ -1157,16 +1164,24 @@ static FORCE_INLINE void ControlPainter_SetDpi(ControlPainter* painter, IDWriteF
     }
 }
 
-static FORCE_INLINE void ControlPainter_Fill(ControlPainter* painter, const RECT* rect, const D2D1_COLOR_F* color)
+static FORCE_INLINE void ControlPainter_Fill(
+    ControlPainter*     painter,
+    const RECT*         rect,
+    const D2D1_COLOR_F* color)
 {
     cd2dSolidColorBrushSetColor(painter->brush, color);
     cd2dRenderTargetFillRectangle((ID2D1RenderTarget*)painter->context,
-                                  (FLOAT)rect->left, (FLOAT)rect->top,
-                                  (FLOAT)rect->right, (FLOAT)rect->bottom,
+                                  (FLOAT)rect->left,
+                                  (FLOAT)rect->top,
+                                  (FLOAT)rect->right,
+                                  (FLOAT)rect->bottom,
                                   (ID2D1Brush*)painter->brush);
 }
 
-static FORCE_INLINE void ControlPainter_Outline(ControlPainter* painter, const RECT* rect, const D2D1_COLOR_F* color)
+static FORCE_INLINE void ControlPainter_Outline(
+    ControlPainter*     painter,
+    const RECT*         rect,
+    const D2D1_COLOR_F* color)
 {
     cd2dSolidColorBrushSetColor(painter->brush, color);
     cd2dRenderTargetDrawRectangle((ID2D1RenderTarget*)painter->context,
@@ -1174,13 +1189,19 @@ static FORCE_INLINE void ControlPainter_Outline(ControlPainter* painter, const R
                                   (FLOAT)rect->top + GUI_PIXEL_CENTER,
                                   (FLOAT)rect->right - GUI_PIXEL_CENTER,
                                   (FLOAT)rect->bottom - GUI_PIXEL_CENTER,
-                                  (ID2D1Brush*)painter->brush, 1.0F, NULL);
+                                  (ID2D1Brush*)painter->brush,
+                                  1.0F,
+                                  NULL);
 }
 
-static FORCE_INLINE void ControlPainter_Text(ControlPainter* painter, LPCTSTR text, const RECT* rect,
-                                              const D2D1_COLOR_F* color, DWRITE_TEXT_ALIGNMENT alignment)
+static FORCE_INLINE void ControlPainter_Text(
+    ControlPainter*       painter,
+    LPCTSTR               text,
+    const RECT*           rect,
+    const D2D1_COLOR_F*   color,
+    DWRITE_TEXT_ALIGNMENT alignment)
 {
-    WCHAR wide[GUI_WIDE_TEXT_CAPACITY];
+    WCHAR  wide[GUI_WIDE_TEXT_CAPACITY];
     bool_t converted;
 
     converted = OS_Text_ReadNative((uint16_t*)wide, ARRAYSIZE(wide), text);
@@ -1191,17 +1212,25 @@ static FORCE_INLINE void ControlPainter_Text(ControlPainter* painter, LPCTSTR te
     cdwTextFormatSetTextAlignment(painter->format, alignment);
     cd2dSolidColorBrushSetColor(painter->brush, color);
     cd2dRenderTargetDrawText((ID2D1RenderTarget*)painter->context,
-                             wide, (UINT32)lstrlenW(wide), painter->format,
-                             (FLOAT)rect->left, (FLOAT)rect->top,
-                             (FLOAT)rect->right, (FLOAT)rect->bottom,
+                             wide,
+                             (UINT32)lstrlenW(wide),
+                             painter->format,
+                             (FLOAT)rect->left,
+                             (FLOAT)rect->top,
+                             (FLOAT)rect->right,
+                             (FLOAT)rect->bottom,
                              (ID2D1Brush*)painter->brush,
-                             D2D1_DRAW_TEXT_OPTIONS_CLIP, DWRITE_MEASURING_MODE_NATURAL);
+                             D2D1_DRAW_TEXT_OPTIONS_CLIP,
+                             DWRITE_MEASURING_MODE_NATURAL);
 }
 
-static FORCE_INLINE D2D1_COLOR_F MixControlColor(const D2D1_COLOR_F* start, const D2D1_COLOR_F* end, BYTE amount)
+static FORCE_INLINE D2D1_COLOR_F MixControlColor(
+    const D2D1_COLOR_F* start,
+    const D2D1_COLOR_F* end,
+    BYTE                amount)
 {
     D2D1_COLOR_F result;
-    FLOAT fraction;
+    FLOAT        fraction;
 
     fraction = (FLOAT)amount / (FLOAT)GUI_LAYERED_OPAQUE;
     result.r = start->r + ((end->r - start->r) * fraction);
@@ -1211,16 +1240,18 @@ static FORCE_INLINE D2D1_COLOR_F MixControlColor(const D2D1_COLOR_F* start, cons
     return result;
 }
 
-static FORCE_INLINE ControlVisual* FindControlVisual(App* app, HWND hwnd)
+static FORCE_INLINE ControlVisual* FindControlVisual(
+    App* app,
+    HWND hwnd)
 {
-    int index;
+    int            index;
     ControlVisual* result;
-    bool_t validIndex;
-    bool_t matchesWindow;
+    bool_t         validIndex;
+    bool_t         matchesWindow;
 
-    index = GetDlgCtrlID(hwnd) - ID_LIST;
-    validIndex = (0 <= index) && (index < GUI_VISUAL_COUNT);
-    result = NULL;
+    index         = GetDlgCtrlID(hwnd) - ID_LIST;
+    validIndex    = (0 <= index) && (index < GUI_VISUAL_COUNT);
+    result        = NULL;
     matchesWindow = FALSE;
     if (validIndex)
     {
@@ -1233,58 +1264,65 @@ static FORCE_INLINE ControlVisual* FindControlVisual(App* app, HWND hwnd)
     return result;
 }
 
-static FORCE_INLINE BYTE CurrentControlHot(const ControlVisual* visual, ULONGLONG tick)
+static FORCE_INLINE BYTE CurrentControlHot(
+    const ControlVisual* visual,
+    ULONGLONG            tick)
 {
     ULONGLONG elapsed;
-    int delta;
-    int current;
-    bool_t transitioning;
+    int       delta;
+    int       current;
+    bool_t    transitioning;
 
-    elapsed = tick - visual->transitionTick;
-    current = visual->target;
+    elapsed       = tick - visual->transitionTick;
+    current       = visual->target;
     transitioning = (elapsed < GUI_HOVER_DURATION_MS);
     if (transitioning)
     {
-        delta = (int)visual->target - (int)visual->hot;
+        delta   = (int)visual->target - (int)visual->hot;
         current = (int)visual->hot + (delta * (int)elapsed / GUI_HOVER_DURATION_MS);
     }
     return (BYTE)current;
 }
 
-static FORCE_INLINE void SetControlHot(App* app, ControlVisual* visual, BYTE target)
+static FORCE_INLINE void SetControlHot(
+    App*           app,
+    ControlVisual* visual,
+    BYTE           target)
 {
     ULONGLONG tick;
-    int index;
-    bool_t targetChanged;
+    int       index;
+    bool_t    targetChanged;
 
     targetChanged = (visual->target != target);
     if (targetChanged)
     {
-        tick = GetTickCount64();
-        visual->hot = CurrentControlHot(visual, tick);
-        visual->target = target;
+        tick                   = GetTickCount64();
+        visual->hot            = CurrentControlHot(visual, tick);
+        visual->target         = target;
         visual->transitionTick = tick;
-        index = GetDlgCtrlID(visual->hwnd) - ID_LIST;
+        index                  = GetDlgCtrlID(visual->hwnd) - ID_LIST;
         AcquireSRWLockExclusive(&app->controlFrameLock);
-        app->controlFrame.hot[index] = visual->hot;
-        app->controlFrame.target[index] = target;
+        app->controlFrame.hot[index]            = visual->hot;
+        app->controlFrame.target[index]         = target;
         app->controlFrame.transitionTick[index] = tick;
         ReleaseSRWLockExclusive(&app->controlFrameLock);
     }
 }
 
-static FORCE_INLINE void CaptureControlFrame(App* app)
+static FORCE_INLINE void CaptureControlFrame(
+    App* app)
 {
     ControlFrame* next;
-    uint32_t index;
-    uint32_t column;
-    HWND hwnd;
-    HWND focus;
-    int slot;
-    unsigned row;
-    bool_t isSlider;
-    bool_t isButton;
-    bool_t fileFocused;
+    uint32_t      index;
+    uint32_t      column;
+    HWND          hwnd;
+    HWND          focus;
+    int           slot;
+    unsigned      row;
+    bool_t        isSlider;
+    bool_t        isButton;
+    bool_t        fileFocused;
+    bool_t        hasReceiver;
 
     next = &app->stagingFrame;
     ZeroMemory(next, sizeof(*next));
@@ -1294,18 +1332,18 @@ static FORCE_INLINE void CaptureControlFrame(App* app)
         CRT_Memory_Copy((byte_t*)&hwnd, (const byte_t*)app + c_controls[index].destinationOffset, sizeof(HWND));
         slot = c_controls[index].id - ID_LIST;
         (void)GetWindowText(hwnd, next->text[slot], GUI_CONTROL_TEXT_CAPACITY);
-        next->enabled[slot] = (BYTE)!!IsWindowEnabled(hwnd);
-        next->focused[slot] = (BYTE)(focus == hwnd);
-        next->hot[slot] = app->visuals[slot].hot;
-        next->target[slot] = app->visuals[slot].target;
+        next->enabled[slot]        = (BYTE) !!IsWindowEnabled(hwnd);
+        next->focused[slot]        = (BYTE)(focus == hwnd);
+        next->hot[slot]            = app->visuals[slot].hot;
+        next->target[slot]         = app->visuals[slot].target;
         next->transitionTick[slot] = app->visuals[slot].transitionTick;
-        isSlider = (0 == lstrcmp(c_controls[index].windowClass, TRACKBAR_CLASS));
-        isButton = (0 == lstrcmp(c_controls[index].windowClass, WC_BUTTON));
+        isSlider                   = (0 == lstrcmp(c_controls[index].windowClass, TRACKBAR_CLASS));
+        isButton                   = (0 == lstrcmp(c_controls[index].windowClass, WC_BUTTON));
         if (isSlider)
         {
             next->sliderPosition[slot] = (int)SendMessage(hwnd, TBM_GETPOS, 0, 0);
-            next->sliderMinimum[slot] = (int)SendMessage(hwnd, TBM_GETRANGEMIN, 0, 0);
-            next->sliderMaximum[slot] = (int)SendMessage(hwnd, TBM_GETRANGEMAX, 0, 0);
+            next->sliderMinimum[slot]  = (int)SendMessage(hwnd, TBM_GETRANGEMIN, 0, 0);
+            next->sliderMaximum[slot]  = (int)SendMessage(hwnd, TBM_GETRANGEMAX, 0, 0);
         }
         if (isButton)
         {
@@ -1314,15 +1352,22 @@ static FORCE_INLINE void CaptureControlFrame(App* app)
         }
     }
     next->subtitleSelection = (int)SendMessage(app->hSubtitle, CB_GETCURSEL, 0, 0);
-    next->receiverCount = app->devices.count;
-    next->selectedReceiver = ListView_GetNextItem(app->hList, -1, LVNI_SELECTED);
-    next->firstReceiver = ListView_GetTopIndex(app->hList);
-    for (row = 0; (row < next->receiverCount) && (row < CAST_MAX_DEVICES); ++row)
+    next->receiverCount     = app->devices.count;
+    next->selectedReceiver  = ListView_GetNextItem(app->hList, -1, LVNI_SELECTED);
+    next->firstReceiver     = ListView_GetTopIndex(app->hList);
+    for (row = 0; row < CAST_MAX_DEVICES; ++row)
     {
-        for (column = 0; column < GUI_DEVICE_COLUMN_COUNT; ++column)
+        hasReceiver = (row < next->receiverCount);
+        if (hasReceiver)
         {
-            ListView_GetItemText(app->hList, (int)row, (int)column,
-                                 next->receiver[row][column], GUI_DEVICE_NAME_CAPACITY)
+            for (column = 0; column < GUI_DEVICE_COLUMN_COUNT; ++column)
+            {
+                ListView_GetItemText(app->hList,
+                                     (int)row,
+                                     (int)column,
+                                     next->receiver[row][column],
+                                     GUI_DEVICE_NAME_CAPACITY)
+            }
         }
     }
     fileFocused = (focus == app->hFile);
@@ -1335,87 +1380,111 @@ static FORCE_INLINE void CaptureControlFrame(App* app)
     ReleaseSRWLockExclusive(&app->controlFrameLock);
 }
 
-static FORCE_INLINE BYTE ControlFrame_Hot(const ControlFrame* frame, int slot, ULONGLONG tick)
+static FORCE_INLINE BYTE ControlFrame_Hot(
+    const ControlFrame* frame,
+    int                 slot,
+    ULONGLONG           tick)
 {
     ULONGLONG elapsed;
-    int delta;
-    int amount;
-    bool_t transitioning;
+    int       delta;
+    int       amount;
+    bool_t    transitioning;
 
-    elapsed = tick - frame->transitionTick[slot];
-    amount = frame->target[slot];
+    elapsed       = tick - frame->transitionTick[slot];
+    amount        = frame->target[slot];
     transitioning = (elapsed < GUI_HOVER_DURATION_MS);
     if (transitioning)
     {
-        delta = (int)frame->target[slot] - (int)frame->hot[slot];
+        delta  = (int)frame->target[slot] - (int)frame->hot[slot];
         amount = (int)frame->hot[slot] + (delta * (int)elapsed / GUI_HOVER_DURATION_MS);
     }
     return (BYTE)amount;
 }
 
-static FORCE_INLINE void DrawReceiverList(ControlPainter* painter, const ControlFrame* frame,
-                                           const RECT* bounds, const int widths[GUI_DEVICE_COLUMN_COUNT])
+static FORCE_INLINE void DrawReceiverList(
+    ControlPainter*     painter,
+    const ControlFrame* frame,
+    const RECT*         bounds,
+    const int           widths[GUI_DEVICE_COLUMN_COUNT])
 {
-    RECT header;
-    RECT cell;
-    RECT rowRect;
-    int headerHeight;
-    int rowHeight;
-    int top;
-    int row;
-    int column;
-    int x;
+    RECT                header;
+    RECT                cell;
+    RECT                rowRect;
+    int                 headerHeight;
+    int                 rowHeight;
+    int                 top;
+    int                 row;
+    int                 column;
+    int                 x;
     const D2D1_COLOR_F* textColor;
+    bool_t              hasReceiver;
+    bool_t              reachedVisibleRow;
+    bool_t              rowFits;
+    bool_t              drawRow;
 
     ControlPainter_Fill(painter, bounds, &c_castFieldColor);
     ControlPainter_Outline(painter, bounds, &c_castBorderColor);
-    headerHeight = ScaleAtDpi(painter->dpi, GUI_COMBO_ITEM_HEIGHT);
-    rowHeight = ScaleAtDpi(painter->dpi, GUI_COMBO_ITEM_HEIGHT);
-    header = *bounds;
+    headerHeight  = ScaleAtDpi(painter->dpi, GUI_COMBO_ITEM_HEIGHT);
+    rowHeight     = ScaleAtDpi(painter->dpi, GUI_COMBO_ITEM_HEIGHT);
+    header        = *bounds;
     header.bottom = header.top + headerHeight;
     ControlPainter_Fill(painter, &header, &c_castHotColor);
     x = bounds->left;
     for (column = 0; column < GUI_DEVICE_COLUMN_COUNT; ++column)
     {
-        cell = header;
-        cell.left = x + ScaleAtDpi(painter->dpi, GUI_CONTROL_TEXT_INSET);
+        cell       = header;
+        cell.left  = x + ScaleAtDpi(painter->dpi, GUI_CONTROL_TEXT_INSET);
         cell.right = x + widths[column];
         ControlPainter_Text(painter, c_deviceColumns[column], &cell, &c_castTextColor, DWRITE_TEXT_ALIGNMENT_LEADING);
         x += widths[column];
     }
     top = header.bottom;
-    for (row = frame->firstReceiver; (row < (int)frame->receiverCount) && (row < CAST_MAX_DEVICES) &&
-         (top + rowHeight <= bounds->bottom); ++row)
+    for (row = 0; row < CAST_MAX_DEVICES; ++row)
     {
-        rowRect = *bounds;
-        rowRect.top = top;
-        rowRect.bottom = top + rowHeight;
-        if (row == frame->selectedReceiver)
+        hasReceiver       = (row < (int)frame->receiverCount);
+        reachedVisibleRow = (frame->firstReceiver <= row);
+        rowFits           = (top + rowHeight <= bounds->bottom);
+        drawRow           = hasReceiver && reachedVisibleRow && rowFits;
+        if (drawRow)
         {
-            ControlPainter_Fill(painter, &rowRect, &c_castSelectedColor);
+            rowRect        = *bounds;
+            rowRect.top    = top;
+            rowRect.bottom = top + rowHeight;
+            if (row == frame->selectedReceiver)
+            {
+                ControlPainter_Fill(painter, &rowRect, &c_castSelectedColor);
+            }
+            x = bounds->left;
+            for (column = 0; column < GUI_DEVICE_COLUMN_COUNT; ++column)
+            {
+                cell       = rowRect;
+                cell.left  = x + ScaleAtDpi(painter->dpi, GUI_CONTROL_TEXT_INSET);
+                cell.right = x + widths[column];
+                textColor  = (row == frame->selectedReceiver) ? &c_castTextColor : &c_castMutedColor;
+                ControlPainter_Text(painter,
+                                    frame->receiver[row][column],
+                                    &cell,
+                                    textColor,
+                                    DWRITE_TEXT_ALIGNMENT_LEADING);
+                x += widths[column];
+            }
+            top += rowHeight;
         }
-        x = bounds->left;
-        for (column = 0; column < GUI_DEVICE_COLUMN_COUNT; ++column)
-        {
-            cell = rowRect;
-            cell.left = x + ScaleAtDpi(painter->dpi, GUI_CONTROL_TEXT_INSET);
-            cell.right = x + widths[column];
-            textColor = (row == frame->selectedReceiver) ? &c_castTextColor : &c_castMutedColor;
-            ControlPainter_Text(painter, frame->receiver[row][column], &cell, textColor, DWRITE_TEXT_ALIGNMENT_LEADING);
-            x += widths[column];
-        }
-        top += rowHeight;
     }
 }
 
-static FORCE_INLINE void DrawCheckbox(ControlPainter* painter, const ControlFrame* frame,
-                                       int slot, RECT rect, const D2D1_COLOR_F* foreground)
+static FORCE_INLINE void DrawCheckbox(
+    ControlPainter*     painter,
+    const ControlFrame* frame,
+    int                 slot,
+    RECT                rect,
+    const D2D1_COLOR_F* foreground)
 {
     RECT part;
 
-    part = rect;
-    part.right = part.left + ScaleAtDpi(painter->dpi, GUI_CHECK_BOX_SIZE);
-    part.top += ScaleAtDpi(painter->dpi, 4);
+    part         = rect;
+    part.right   = part.left + ScaleAtDpi(painter->dpi, GUI_CHECK_BOX_SIZE);
+    part.top    += ScaleAtDpi(painter->dpi, 4);
     part.bottom -= ScaleAtDpi(painter->dpi, 4);
     ControlPainter_Fill(painter, &part, &c_castFieldColor);
     ControlPainter_Outline(painter, &part, frame->focused[slot] ? &c_castAccentColor : &c_castBorderColor);
@@ -1428,14 +1497,18 @@ static FORCE_INLINE void DrawCheckbox(ControlPainter* painter, const ControlFram
     ControlPainter_Text(painter, frame->text[slot], &rect, foreground, DWRITE_TEXT_ALIGNMENT_LEADING);
 }
 
-static FORCE_INLINE void DrawButton(ControlPainter* painter, const ControlFrame* frame,
-                                     int slot, const RECT* rect, BYTE hot,
-                                     const D2D1_COLOR_F* foreground)
+static FORCE_INLINE void DrawButton(
+    ControlPainter*     painter,
+    const ControlFrame* frame,
+    int                 slot,
+    const RECT*         rect,
+    BYTE                hot,
+    const D2D1_COLOR_F* foreground)
 {
     D2D1_COLOR_F fill;
     D2D1_COLOR_F border;
 
-    fill = MixControlColor(&c_castFieldColor, &c_castHotColor, hot);
+    fill   = MixControlColor(&c_castFieldColor, &c_castHotColor, hot);
     border = MixControlColor(&c_castBorderColor, &c_castAccentColor, hot);
     if (frame->pressed[slot])
     {
@@ -1446,34 +1519,38 @@ static FORCE_INLINE void DrawButton(ControlPainter* painter, const ControlFrame*
     ControlPainter_Text(painter, frame->text[slot], rect, foreground, DWRITE_TEXT_ALIGNMENT_CENTER);
 }
 
-static FORCE_INLINE void DrawSlider(ControlPainter* painter, const ControlFrame* frame,
-                                     int slot, const RECT* rect, BYTE hot)
+static FORCE_INLINE void DrawSlider(
+    ControlPainter*     painter,
+    const ControlFrame* frame,
+    int                 slot,
+    const RECT*         rect,
+    BYTE                hot)
 {
-    RECT part;
-    int span;
-    int travel;
-    int thumbX;
+    RECT         part;
+    int          span;
+    int          travel;
+    int          thumbX;
     D2D1_COLOR_F fill;
 
-    part = *rect;
-    part.left += ScaleAtDpi(painter->dpi, GUI_CONTROL_GAP);
-    part.right -= ScaleAtDpi(painter->dpi, GUI_CONTROL_GAP);
-    part.top = ((rect->top + rect->bottom) / 2) - ScaleAtDpi(painter->dpi, 2);
-    part.bottom = part.top + ScaleAtDpi(painter->dpi, 4);
-    fill = MixControlColor(&c_castFieldColor, &c_castHotColor, hot);
+    part         = *rect;
+    part.left   += ScaleAtDpi(painter->dpi, GUI_CONTROL_GAP);
+    part.right  -= ScaleAtDpi(painter->dpi, GUI_CONTROL_GAP);
+    part.top     = ((rect->top + rect->bottom) / 2) - ScaleAtDpi(painter->dpi, 2);
+    part.bottom  = part.top + ScaleAtDpi(painter->dpi, 4);
+    fill         = MixControlColor(&c_castFieldColor, &c_castHotColor, hot);
     ControlPainter_Fill(painter, &part, &fill);
-    span = frame->sliderMaximum[slot] - frame->sliderMinimum[slot];
+    span   = frame->sliderMaximum[slot] - frame->sliderMinimum[slot];
     travel = part.right - part.left;
     thumbX = part.left;
     if ((0 < span) && (0 < travel))
     {
         thumbX += (int)((((int64_t)frame->sliderPosition[slot] - (int64_t)frame->sliderMinimum[slot]) * travel) / span);
     }
-    part.left = thumbX - ScaleAtDpi(painter->dpi, GUI_SLIDER_THUMB_HALF_WIDTH);
-    part.right = thumbX + ScaleAtDpi(painter->dpi, GUI_SLIDER_THUMB_HALF_WIDTH);
-    part.top = rect->top + ScaleAtDpi(painter->dpi, 3);
+    part.left   = thumbX - ScaleAtDpi(painter->dpi, GUI_SLIDER_THUMB_HALF_WIDTH);
+    part.right  = thumbX + ScaleAtDpi(painter->dpi, GUI_SLIDER_THUMB_HALF_WIDTH);
+    part.top    = rect->top + ScaleAtDpi(painter->dpi, 3);
     part.bottom = rect->bottom - ScaleAtDpi(painter->dpi, 3);
-    fill = MixControlColor(&c_castAccentColor, &c_castHotAccentColor, hot);
+    fill        = MixControlColor(&c_castAccentColor, &c_castHotAccentColor, hot);
     if (!frame->enabled[slot])
     {
         fill = c_castMutedColor;
@@ -1482,9 +1559,13 @@ static FORCE_INLINE void DrawSlider(ControlPainter* painter, const ControlFrame*
     ControlPainter_Outline(painter, &part, &c_castBorderColor);
 }
 
-static FORCE_INLINE void DrawField(ControlPainter* painter, const ControlFrame* frame,
-                                    int slot, RECT rect, ULONGLONG tick,
-                                    const D2D1_COLOR_F* foreground)
+static FORCE_INLINE void DrawField(
+    ControlPainter*     painter,
+    const ControlFrame* frame,
+    int                 slot,
+    RECT                rect,
+    ULONGLONG           tick,
+    const D2D1_COLOR_F* foreground)
 {
     RECT part;
 
@@ -1494,8 +1575,8 @@ static FORCE_INLINE void DrawField(ControlPainter* painter, const ControlFrame* 
     }
     ControlPainter_Fill(painter, &rect, &c_castFieldColor);
     ControlPainter_Outline(painter, &rect, frame->focused[slot] ? &c_castAccentColor : &c_castBorderColor);
-    part = rect;
-    part.left += ScaleAtDpi(painter->dpi, GUI_CONTROL_TEXT_INSET);
+    part        = rect;
+    part.left  += ScaleAtDpi(painter->dpi, GUI_CONTROL_TEXT_INSET);
     part.right -= ScaleAtDpi(painter->dpi, GUI_CONTROL_TEXT_INSET);
     if (ID_SUBTITLE == slot + ID_LIST)
     {
@@ -1504,33 +1585,35 @@ static FORCE_INLINE void DrawField(ControlPainter* painter, const ControlFrame* 
     ControlPainter_Text(painter, frame->text[slot], &part, foreground, DWRITE_TEXT_ALIGNMENT_LEADING);
     if (ID_SUBTITLE == slot + ID_LIST)
     {
-        part = rect;
+        part      = rect;
         part.left = part.right - ScaleAtDpi(painter->dpi, GUI_COMBO_ARROW_WIDTH);
         ControlPainter_Text(painter, TEXT("v"), &part, foreground, DWRITE_TEXT_ALIGNMENT_CENTER);
     }
-    if ((ID_FILE == slot + ID_LIST) && frame->focused[slot] &&
-        (0 != ((tick / GUI_CARET_PERIOD_MS) & 1)))
+    if ((ID_FILE == slot + ID_LIST) && frame->focused[slot] && (0 != ((tick / GUI_CARET_PERIOD_MS) & 1)))
     {
-        part = rect;
-        part.left += frame->fileCaret.x;
-        part.right = part.left + 1;
-        part.top += frame->fileCaret.y;
-        part.bottom = part.top + ScaleAtDpi(painter->dpi, GUI_FONT_SIZE + 2);
+        part         = rect;
+        part.left   += frame->fileCaret.x;
+        part.right   = part.left + 1;
+        part.top    += frame->fileCaret.y;
+        part.bottom  = part.top + ScaleAtDpi(painter->dpi, GUI_FONT_SIZE + 2);
         ControlPainter_Fill(painter, &part, &c_castTextColor);
     }
 }
 
-static FORCE_INLINE void DrawControl(ControlPainter* painter, const ControlFrame* frame,
-                                      const CastGui_ControlDefinition_t* control,
-                                      const RECT* rect, ULONGLONG tick)
+static FORCE_INLINE void DrawControl(
+    ControlPainter*                    painter,
+    const ControlFrame*                frame,
+    const CastGui_ControlDefinition_t* control,
+    const RECT*                        rect,
+    ULONGLONG                          tick)
 {
-    int slot;
-    BYTE hot;
-    const D2D1_COLOR_F* foreground;
+    int                   slot;
+    BYTE                  hot;
+    const D2D1_COLOR_F*   foreground;
     DWRITE_TEXT_ALIGNMENT alignment;
 
-    slot = control->id - ID_LIST;
-    hot = ControlFrame_Hot(frame, slot, tick);
+    slot       = control->id - ID_LIST;
+    hot        = ControlFrame_Hot(frame, slot, tick);
     foreground = frame->enabled[slot] ? &c_castTextColor : &c_castMutedColor;
     if (0 == lstrcmp(control->windowClass, WC_STATIC))
     {
@@ -1549,30 +1632,35 @@ static FORCE_INLINE void DrawControl(ControlPainter* painter, const ControlFrame
     {
         DrawSlider(painter, frame, slot, rect, hot);
     }
-    else if ((0 == lstrcmp(control->windowClass, WC_EDIT)) ||
-             (0 == lstrcmp(control->windowClass, WC_COMBOBOX)))
+    else if ((0 == lstrcmp(control->windowClass, WC_EDIT)) || (0 == lstrcmp(control->windowClass, WC_COMBOBOX)))
     {
         DrawField(painter, frame, slot, *rect, tick, foreground);
     }
 }
 
-static FORCE_INLINE void DrawControlFrame(ControlPainter* painter, App* app, const IMMERSIVEPAINTSTRUCT* paint)
+static FORCE_INLINE void DrawControlFrame(
+    ControlPainter*             painter,
+    App*                        app,
+    const IMMERSIVEPAINTSTRUCT* paint)
 {
-    ControlFrame* frame;
-    RECT rects[GUI_VISUAL_COUNT];
-    int widths[GUI_DEVICE_COLUMN_COUNT];
-    uint32_t index;
-    int slot;
-    ULONGLONG tick;
+    ControlFrame*                      frame;
+    RECT                               rects[GUI_VISUAL_COUNT];
+    int                                widths[GUI_DEVICE_COLUMN_COUNT];
+    uint32_t                           index;
+    int                                slot;
+    ULONGLONG                          tick;
     const CastGui_ControlDefinition_t* control;
 
     frame = &app->renderFrame;
     AcquireSRWLockShared(&app->controlFrameLock);
     CRT_Memory_Copy((byte_t*)frame, (const byte_t*)&app->controlFrame, sizeof(*frame));
     ReleaseSRWLockShared(&app->controlFrameLock);
-    ComputeControlRects(painter->dpi, paint->layout.cyCaption,
+    ComputeControlRects(painter->dpi,
+                        paint->layout.cyCaption,
                         paint->rcClient.right - paint->rcClient.left,
-                        paint->rcClient.bottom - paint->rcClient.top, rects, widths);
+                        paint->rcClient.bottom - paint->rcClient.top,
+                        rects,
+                        widths);
     DrawReceiverList(painter, frame, &rects[ID_LIST - ID_LIST], widths);
     tick = GetTickCount64();
     for (index = 0; index < ARRAYSIZE(c_controls); ++index)
@@ -1586,15 +1674,17 @@ static FORCE_INLINE void DrawControlFrame(ControlPainter* painter, App* app, con
     }
 }
 
-static LRESULT CALLBACK ControlVisualProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam,
-                                           UINT_PTR subclassId, DWORD_PTR refData);
+static LRESULT CALLBACK
+ControlVisualProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR refData);
 
-static FORCE_INLINE void ControlVisual_OnEnable(HWND hwnd, BOOL enabled)
+static FORCE_INLINE void ControlVisual_OnEnable(
+    HWND hwnd,
+    BOOL enabled)
 {
-    App* app;
+    App*           app;
     ControlVisual* visual;
 
-    app = GetApp(hwnd);
+    app    = GetApp(hwnd);
     visual = FindControlVisual(app, hwnd);
     if (!enabled)
     {
@@ -1603,63 +1693,76 @@ static FORCE_INLINE void ControlVisual_OnEnable(HWND hwnd, BOOL enabled)
     FORWARD_WM_ENABLE(hwnd, enabled, DefSubclassProc);
 }
 
-static FORCE_INLINE void ControlVisual_OnPaint(HWND hwnd)
+static FORCE_INLINE void ControlVisual_OnPaint(
+    HWND hwnd)
 {
     (void)ValidateRect(hwnd, NULL);
 }
 
-static FORCE_INLINE BOOL ControlVisual_OnEraseBackground(HWND hwnd, HDC dc)
+static FORCE_INLINE BOOL ControlVisual_OnEraseBackground(
+    HWND hwnd,
+    HDC  dc)
 {
     UNREFERENCED_PARAMETER(hwnd);
     UNREFERENCED_PARAMETER(dc);
     return TRUE;
 }
 
-static FORCE_INLINE void ControlVisual_OnNcDestroy(HWND hwnd)
+static FORCE_INLINE void ControlVisual_OnNcDestroy(
+    HWND hwnd)
 {
-    App* app;
+    App*           app;
     ControlVisual* visual;
 
-    app = GetApp(hwnd);
-    visual = FindControlVisual(app, hwnd);
+    app          = GetApp(hwnd);
+    visual       = FindControlVisual(app, hwnd);
     visual->hwnd = NULL;
     (void)RemoveWindowSubclass(hwnd, ControlVisualProc, CONTROL_VISUAL_SUBCLASS_ID);
     FORWARD_WM_NCDESTROY(hwnd, DefSubclassProc);
 }
 
-static FORCE_INLINE void ControlVisual_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
+static FORCE_INLINE void ControlVisual_OnMouseMove(
+    HWND hwnd,
+    int  x,
+    int  y,
+    UINT keyFlags)
 {
-    App* app;
-    ControlVisual* visual;
+    App*            app;
+    ControlVisual*  visual;
     TRACKMOUSEEVENT track;
-    RECT client;
-    POINT point;
-    BYTE target;
+    RECT            client;
+    POINT           point;
+    BYTE            target;
 
-    app = GetApp(hwnd);
+    app    = GetApp(hwnd);
     visual = FindControlVisual(app, hwnd);
     (void)GetClientRect(hwnd, &client);
     point.x = x;
     point.y = y;
-    target = (IsWindowEnabled(hwnd) && PtInRect(&client, point)) ? GUI_LAYERED_OPAQUE : 0;
+    target  = (IsWindowEnabled(hwnd) && PtInRect(&client, point)) ? GUI_LAYERED_OPAQUE : 0;
     if (target && !visual->tracking)
     {
-        track.cbSize = sizeof(track);
-        track.dwFlags = TME_LEAVE;
-        track.hwndTrack = hwnd;
+        track.cbSize      = sizeof(track);
+        track.dwFlags     = TME_LEAVE;
+        track.hwndTrack   = hwnd;
         track.dwHoverTime = 0;
-        visual->tracking = TrackMouseEvent(&track);
+        visual->tracking  = TrackMouseEvent(&track);
     }
     SetControlHot(app, visual, target);
     FORWARD_WM_MOUSEMOVE(hwnd, x, y, keyFlags, DefSubclassProc);
 }
 
-static FORCE_INLINE void ControlVisual_OnLButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
+static FORCE_INLINE void ControlVisual_OnLButtonDown(
+    HWND hwnd,
+    BOOL doubleClick,
+    int  x,
+    int  y,
+    UINT keyFlags)
 {
     App* app;
-    int slot;
+    int  slot;
 
-    app = GetApp(hwnd);
+    app  = GetApp(hwnd);
     slot = GetDlgCtrlID(hwnd) - ID_LIST;
     AcquireSRWLockExclusive(&app->controlFrameLock);
     app->controlFrame.pressed[slot] = TRUE;
@@ -1667,12 +1770,16 @@ static FORCE_INLINE void ControlVisual_OnLButtonDown(HWND hwnd, BOOL doubleClick
     FORWARD_WM_LBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, DefSubclassProc);
 }
 
-static FORCE_INLINE void ControlVisual_OnLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
+static FORCE_INLINE void ControlVisual_OnLButtonUp(
+    HWND hwnd,
+    int  x,
+    int  y,
+    UINT keyFlags)
 {
     App* app;
-    int slot;
+    int  slot;
 
-    app = GetApp(hwnd);
+    app  = GetApp(hwnd);
     slot = GetDlgCtrlID(hwnd) - ID_LIST;
     AcquireSRWLockExclusive(&app->controlFrameLock);
     app->controlFrame.pressed[slot] = FALSE;
@@ -1680,33 +1787,39 @@ static FORCE_INLINE void ControlVisual_OnLButtonUp(HWND hwnd, int x, int y, UINT
     FORWARD_WM_LBUTTONUP(hwnd, x, y, keyFlags, DefSubclassProc);
 }
 
-static FORCE_INLINE void ControlVisual_OnMouseLeave(HWND hwnd)
+static FORCE_INLINE void ControlVisual_OnMouseLeave(
+    HWND hwnd)
 {
-    App* app;
+    App*           app;
     ControlVisual* visual;
 
-    app = GetApp(hwnd);
-    visual = FindControlVisual(app, hwnd);
+    app              = GetApp(hwnd);
+    visual           = FindControlVisual(app, hwnd);
     visual->tracking = FALSE;
     SetControlHot(app, visual, 0);
     FORWARD_WM_MOUSELEAVE(hwnd, DefSubclassProc);
 }
 
-static LRESULT CALLBACK ControlVisualProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam,
-                                           UINT_PTR subclassId, DWORD_PTR refData)
+static LRESULT CALLBACK ControlVisualProc(
+    HWND      hwnd,
+    UINT      message,
+    WPARAM    wParam,
+    LPARAM    lParam,
+    UINT_PTR  subclassId,
+    DWORD_PTR refData)
 {
     UNREFERENCED_PARAMETER(subclassId);
     UNREFERENCED_PARAMETER(refData);
 
     switch (message)
     {
-        HANDLE_MSG(hwnd, WM_ENABLE,      ControlVisual_OnEnable);
-        HANDLE_MSG(hwnd, WM_PAINT,       ControlVisual_OnPaint);
+        HANDLE_MSG(hwnd, WM_ENABLE, ControlVisual_OnEnable);
+        HANDLE_MSG(hwnd, WM_PAINT, ControlVisual_OnPaint);
         HANDLE_MSG(hwnd, WM_ERASEBKGND, ControlVisual_OnEraseBackground);
-        HANDLE_MSG(hwnd, WM_NCDESTROY,  ControlVisual_OnNcDestroy);
-        HANDLE_MSG(hwnd, WM_MOUSEMOVE,  ControlVisual_OnMouseMove);
+        HANDLE_MSG(hwnd, WM_NCDESTROY, ControlVisual_OnNcDestroy);
+        HANDLE_MSG(hwnd, WM_MOUSEMOVE, ControlVisual_OnMouseMove);
         HANDLE_MSG(hwnd, WM_LBUTTONDOWN, ControlVisual_OnLButtonDown);
-        HANDLE_MSG(hwnd, WM_LBUTTONUP,   ControlVisual_OnLButtonUp);
+        HANDLE_MSG(hwnd, WM_LBUTTONUP, ControlVisual_OnLButtonUp);
         HANDLE_MSG(hwnd, WM_MOUSELEAVE, ControlVisual_OnMouseLeave);
     default:
         break;
@@ -1714,21 +1827,26 @@ static LRESULT CALLBACK ControlVisualProc(HWND hwnd, UINT message, WPARAM wParam
     return DefSubclassProc(hwnd, message, wParam, lParam);
 }
 
-static FORCE_INLINE void AddControlVisual(App* app, HWND hwnd)
+static FORCE_INLINE void AddControlVisual(
+    App* app,
+    HWND hwnd)
 {
-    int slot;
+    int            slot;
     ControlVisual* visual;
 
-    slot = GetDlgCtrlID(hwnd) - ID_LIST;
-    visual = &app->visuals[slot];
-    visual->hwnd = hwnd;
+    slot                   = GetDlgCtrlID(hwnd) - ID_LIST;
+    visual                 = &app->visuals[slot];
+    visual->hwnd           = hwnd;
     visual->transitionTick = GetTickCount64();
     LOGASSERT(SetWindowSubclass(hwnd, ControlVisualProc, CONTROL_VISUAL_SUBCLASS_ID, (DWORD_PTR)visual));
 }
 
-static FORCE_INLINE void CreateChild(App* app, const CastGui_ControlDefinition_t* control, byte_t* destination)
+static FORCE_INLINE void CreateChild(
+    App*                               app,
+    const CastGui_ControlDefinition_t* control,
+    byte_t*                            destination)
 {
-    HWND child;
+    HWND  child;
     DWORD style;
 
     style = control->style;
@@ -1737,20 +1855,28 @@ static FORCE_INLINE void CreateChild(App* app, const CastGui_ControlDefinition_t
         style &= ~(DWORD)CBS_OWNERDRAWFIXED;
     }
     child = CreateWindowEx((control->extendedStyle & ~(DWORD)WS_EX_CLIENTEDGE) | WS_EX_NOREDIRECTIONBITMAP,
-                           control->windowClass, control->text, WS_CHILD | WS_VISIBLE | style,
-                           0, 0, GUI_CHILD_INITIAL_SIZE, GUI_CHILD_INITIAL_SIZE,
-                           app->hWnd, (HMENU)(INT_PTR)control->id, app->hInstance, NULL); // NOLINT(performance-no-int-to-ptr): Win32 child control IDs use the HMENU slot.
+                           control->windowClass,
+                           control->text,
+                           WS_CHILD | WS_VISIBLE | style,
+                           0,
+                           0,
+                           GUI_CHILD_INITIAL_SIZE,
+                           GUI_CHILD_INITIAL_SIZE,
+                           app->hWnd,
+                           (HMENU)(INT_PTR)control->id, // NOLINT(performance-no-int-to-ptr): Win32 child control IDs use the HMENU slot.
+                           app->hInstance,
+                           NULL);
     LOGASSERT(NULL != child);
     CRT_Memory_Copy(destination, (const byte_t*)&child, sizeof(HWND));
     (void)SetWindowTheme(child, L"DarkMode_Explorer", NULL);
     AddControlVisual(app, child);
 }
 
-static FORCE_INLINE void ApplyFont(App* pApp)
+static FORCE_INLINE void ApplyFont(
+    App* pApp)
 {
     NONCLIENTMETRICS metrics;
     HWND             hChild;
-
 
     metrics.cbSize = sizeof(metrics);
     if (SystemParametersInfoForDpi(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0, pApp->dpi))
@@ -1780,7 +1906,10 @@ static FORCE_INLINE void ApplyFont(App* pApp)
  *  Computes DPI-scaled rows from the client rectangle and reserves the remaining
  *  height for the receiver list, then moves controls and adjusts column widths.
  */
-static FORCE_INLINE void UpdateListColumnWidth(App* app, int index, int width)
+static FORCE_INLINE void UpdateListColumnWidth(
+    App* app,
+    int  index,
+    int  width)
 {
     bool_t changed;
 
@@ -1792,29 +1921,35 @@ static FORCE_INLINE void UpdateListColumnWidth(App* app, int index, int width)
     }
 }
 
-static FORCE_INLINE void ComputeControlRects(UINT dpi, int captionHeight, int clientWidth, int clientHeight, RECT rects[GUI_VISUAL_COUNT], int columnWidths[GUI_DEVICE_COLUMN_COUNT])
+static FORCE_INLINE void ComputeControlRects(
+    UINT dpi,
+    int  captionHeight,
+    int  clientWidth,
+    int  clientHeight,
+    RECT rects[GUI_VISUAL_COUNT],
+    int  columnWidths[GUI_DEVICE_COLUMN_COUNT])
 {
     RECT      client;
-    const int margin  = ScaleAtDpi(dpi, 12);
-    const int gap     = ScaleAtDpi(dpi, 8);
-    const int rowH    = ScaleAtDpi(dpi, 24);
-    const int buttonW = ScaleAtDpi(dpi, 96);
-    const int smallW  = ScaleAtDpi(dpi, 72);
-    const int labelH  = ScaleAtDpi(dpi, 18);
-    const int timeW   = ScaleAtDpi(dpi, 150);
-    const int valueW  = ScaleAtDpi(dpi, 108);
+    const int margin             = ScaleAtDpi(dpi, 12);
+    const int gap                = ScaleAtDpi(dpi, 8);
+    const int rowH               = ScaleAtDpi(dpi, 24);
+    const int buttonW            = ScaleAtDpi(dpi, 96);
+    const int smallW             = ScaleAtDpi(dpi, 72);
+    const int labelH             = ScaleAtDpi(dpi, 18);
+    const int timeW              = ScaleAtDpi(dpi, 150);
+    const int valueW             = ScaleAtDpi(dpi, 108);
     const int cfgH               = labelH + gap + (5 * (rowH + gap)); /* label + res + qp + gop + motion + actions */
-    const int labelOffset = ScaleAtDpi(dpi, 4);
-    const int buttonOffset = ScaleAtDpi(dpi, 2);
-    const int listMinHeight = ScaleAtDpi(dpi, 60);
-    const int fileLabelWidth = ScaleAtDpi(dpi, 40);
+    const int labelOffset        = ScaleAtDpi(dpi, 4);
+    const int buttonOffset       = ScaleAtDpi(dpi, 2);
+    const int listMinHeight      = ScaleAtDpi(dpi, 60);
+    const int fileLabelWidth     = ScaleAtDpi(dpi, 40);
     const int subtitleLabelWidth = ScaleAtDpi(dpi, 64);
-    const int subtitleHeight = ScaleAtDpi(dpi, 220);
-    const int gainStateWidth = ScaleAtDpi(dpi, 180);
-    const int motionValueWidth = ScaleAtDpi(dpi, 48);
+    const int subtitleHeight     = ScaleAtDpi(dpi, 220);
+    const int gainStateWidth     = ScaleAtDpi(dpi, 180);
+    const int motionValueWidth   = ScaleAtDpi(dpi, 48);
     const int addressColumnWidth = ScaleAtDpi(dpi, 120);
-    const int modelColumnWidth = ScaleAtDpi(dpi, 90);
-    const int columnPadding = ScaleAtDpi(dpi, 24);
+    const int modelColumnWidth   = ScaleAtDpi(dpi, 90);
+    const int columnPadding      = ScaleAtDpi(dpi, 24);
     int       width;
     int       sliderX;
     int       sliderWidth;
@@ -1845,41 +1980,41 @@ static FORCE_INLINE void ComputeControlRects(UINT dpi, int captionHeight, int cl
     int       listH;
 
     /* One client rectangle drives both input placement and the swapchain frame. */
-    client.left = 0;
-    client.top = 0;
-    client.right = clientWidth;
-    client.bottom = clientHeight - captionHeight;
+    client.left         = 0;
+    client.top          = 0;
+    client.right        = clientWidth;
+    client.bottom       = clientHeight - captionHeight;
     width               = client.right - (2 * margin);
-    sliderX = margin + valueW + gap;
-    sliderWidth = width - valueW - gap;
-    buttonX = client.right - margin - buttonW;
-    refreshX = buttonX - gap - buttonW;
-    browseX = buttonX;
-    listLabelWidth = refreshX - gap - margin;
-    fileX = margin + ScaleAtDpi(dpi, GUI_FILE_LABEL_WIDTH);
-    fileWidth = buttonX - gap - fileX;
-    subtitleX = margin + ScaleAtDpi(dpi, GUI_SUBTITLE_LABEL_WIDTH);
-    subtitleWidth = buttonX - gap - subtitleX;
-    gainX = margin + ScaleAtDpi(dpi, GUI_GAIN_LABEL_WIDTH);
-    gainWidth = width - ScaleAtDpi(dpi, GUI_GAIN_ROW_RESERVED_WIDTH);
-    gainStateX = client.right - margin - gainStateWidth;
-    hintX = margin + buttonW + gap;
-    hintWidth = width - buttonW - gap;
-    stopX = margin + smallW + gap;
-    seekX = stopX + smallW + gap;
-    timeX = client.right - margin - timeW;
-    seekWidth = timeX - gap - seekX;
-    motionSliderWidth = sliderWidth - ScaleAtDpi(dpi, GUI_MOTION_SLIDER_RESERVED_WIDTH);
-    motionValueX = client.right - margin - motionValueWidth;
+    sliderX             = margin + valueW + gap;
+    sliderWidth         = width - valueW - gap;
+    buttonX             = client.right - margin - buttonW;
+    refreshX            = buttonX - gap - buttonW;
+    browseX             = buttonX;
+    listLabelWidth      = refreshX - gap - margin;
+    fileX               = margin + ScaleAtDpi(dpi, GUI_FILE_LABEL_WIDTH);
+    fileWidth           = buttonX - gap - fileX;
+    subtitleX           = margin + ScaleAtDpi(dpi, GUI_SUBTITLE_LABEL_WIDTH);
+    subtitleWidth       = buttonX - gap - subtitleX;
+    gainX               = margin + ScaleAtDpi(dpi, GUI_GAIN_LABEL_WIDTH);
+    gainWidth           = width - ScaleAtDpi(dpi, GUI_GAIN_ROW_RESERVED_WIDTH);
+    gainStateX          = client.right - margin - gainStateWidth;
+    hintX               = margin + buttonW + gap;
+    hintWidth           = width - buttonW - gap;
+    stopX               = margin + smallW + gap;
+    seekX               = stopX + smallW + gap;
+    timeX               = client.right - margin - timeW;
+    seekWidth           = timeX - gap - seekX;
+    motionSliderWidth   = sliderWidth - ScaleAtDpi(dpi, GUI_MOTION_SLIDER_RESERVED_WIDTH);
+    motionValueX        = client.right - margin - motionValueWidth;
     receiverColumnWidth = width - addressColumnWidth - modelColumnWidth - columnPadding;
     /* bottom-up: config panel, status, toolbar, hint, cast, file; the list takes the rest */
-    listH = client.bottom - (margin + labelH + gap) - (GUI_CONTROL_ROW_COUNT * (gap + rowH)) -
-            (gap + labelH) - (gap + cfgH) - margin;
+    listH = client.bottom - (margin + labelH + gap) - (GUI_CONTROL_ROW_COUNT * (gap + rowH)) - (gap + labelH) -
+            (gap + cfgH) - margin;
     if (listH < listMinHeight)
     {
         listH = listMinHeight;
     }
-    y = margin;
+    y       = margin;
     headerY = y + ScaleAtDpi(dpi, 3);
     buttonY = y - buttonOffset;
     SetRect(&rects[ID_LIST_LABEL - ID_LIST], margin, headerY, margin + listLabelWidth, headerY + labelH);
@@ -1887,18 +2022,18 @@ static FORCE_INLINE void ComputeControlRects(UINT dpi, int captionHeight, int cl
     SetRect(&rects[ID_WINDOWS_CAST - ID_LIST], buttonX, buttonY, buttonX + buttonW, buttonY + rowH);
     y += labelH + gap;
     SetRect(&rects[ID_LIST - ID_LIST], margin, y, margin + width, y + listH);
-    y += listH + gap;
-    labelY = y + labelOffset;
+    y      += listH + gap;
+    labelY  = y + labelOffset;
     SetRect(&rects[ID_FILE_LABEL - ID_LIST], margin, labelY, margin + fileLabelWidth, labelY + labelH);
     SetRect(&rects[ID_FILE - ID_LIST], fileX, y, fileX + fileWidth, y + rowH);
     SetRect(&rects[ID_BROWSE - ID_LIST], browseX, y, browseX + buttonW, y + rowH);
-    y += rowH + gap;
-    labelY = y + labelOffset;
+    y      += rowH + gap;
+    labelY  = y + labelOffset;
     SetRect(&rects[ID_SUBTITLE_LABEL - ID_LIST], margin, labelY, margin + subtitleLabelWidth, labelY + labelH);
     SetRect(&rects[ID_SUBTITLE - ID_LIST], subtitleX, y, subtitleX + subtitleWidth, y + subtitleHeight);
     SetRect(&rects[ID_SUBTITLE_BROWSE - ID_LIST], browseX, y, browseX + buttonW, y + rowH);
-    y += rowH + gap;
-    labelY = y + labelOffset;
+    y      += rowH + gap;
+    labelY  = y + labelOffset;
     SetRect(&rects[ID_GAIN_LABEL - ID_LIST], margin, labelY, margin + valueW, labelY + labelH);
     SetRect(&rects[ID_GAIN - ID_LIST], gainX, y, gainX + gainWidth, y + rowH);
     SetRect(&rects[ID_GAIN_STATE - ID_LIST], gainStateX, labelY, gainStateX + gainStateWidth, labelY + labelH);
@@ -1917,21 +2052,21 @@ static FORCE_INLINE void ComputeControlRects(UINT dpi, int captionHeight, int cl
     y += labelH + gap;
     /* The transcoder configuration panel. */
     SetRect(&rects[ID_CFG_LABEL - ID_LIST], margin, y, margin + width, y + labelH);
-    y += labelH + gap;
-    labelY = y + labelOffset;
+    y      += labelH + gap;
+    labelY  = y + labelOffset;
     SetRect(&rects[ID_RES_VALUE - ID_LIST], margin, labelY, margin + valueW, labelY + labelH);
     SetRect(&rects[ID_RES_SLIDER - ID_LIST], sliderX, y, sliderX + sliderWidth, y + rowH);
-    y += rowH + gap;
-    labelY = y + labelOffset;
+    y      += rowH + gap;
+    labelY  = y + labelOffset;
     SetRect(&rects[ID_QP_VALUE - ID_LIST], margin, labelY, margin + valueW, labelY + labelH);
     SetRect(&rects[ID_QP_SLIDER - ID_LIST], sliderX, y, sliderX + sliderWidth, y + rowH);
-    y += rowH + gap;
-    labelY = y + labelOffset;
+    y      += rowH + gap;
+    labelY  = y + labelOffset;
     SetRect(&rects[ID_GOP_VALUE - ID_LIST], margin, labelY, margin + valueW, labelY + labelH);
     SetRect(&rects[ID_GOP_SLIDER - ID_LIST], sliderX, y, sliderX + sliderWidth, y + rowH);
-    y += rowH + gap;
-    buttonY = y + buttonOffset;
-    labelY = y + labelOffset;
+    y       += rowH + gap;
+    buttonY  = y + buttonOffset;
+    labelY   = y + labelOffset;
     SetRect(&rects[ID_MOTION_CHECK - ID_LIST], margin, buttonY, margin + valueW, buttonY + rowH);
     SetRect(&rects[ID_MOTION_SLIDER - ID_LIST], sliderX, y, sliderX + motionSliderWidth, y + rowH);
     SetRect(&rects[ID_MOTION_VALUE - ID_LIST], motionValueX, labelY, motionValueX + motionValueWidth, labelY + labelH);
@@ -1948,22 +2083,27 @@ static FORCE_INLINE void ComputeControlRects(UINT dpi, int captionHeight, int cl
     }
 }
 
-static FORCE_INLINE void Layout(App* app, int clientWidth, int clientHeight)
+static FORCE_INLINE void Layout(
+    App* app,
+    UINT dpi,
+    int  captionHeight,
+    int  clientWidth,
+    int  clientHeight)
 {
-    RECT rects[GUI_VISUAL_COUNT];
-    int widths[GUI_DEVICE_COLUMN_COUNT];
-    HDWP positions;
+    RECT     rects[GUI_VISUAL_COUNT];
+    int      widths[GUI_DEVICE_COLUMN_COUNT];
+    HDWP     positions;
     uint32_t index;
-    HWND hwnd;
-    RECT* rect;
+    HWND     hwnd;
+    RECT*    rect;
 
-    ComputeControlRects(app->dpi, app->immersiveWindow.metrics.cyCaption, clientWidth, clientHeight, rects, widths);
+    ComputeControlRects(dpi, captionHeight, clientWidth, clientHeight, rects, widths);
     positions = BeginDeferWindowPos((int)ARRAYSIZE(c_controls));
     LOGASSERT(NULL != positions);
     for (index = 0; index < ARRAYSIZE(c_controls); ++index)
     {
         CRT_Memory_Copy((byte_t*)&hwnd, (const byte_t*)app + c_controls[index].destinationOffset, sizeof(HWND));
-        rect = &rects[c_controls[index].id - ID_LIST];
+        rect      = &rects[c_controls[index].id - ID_LIST];
         positions = DeferWindowPos(positions,
                                    hwnd,
                                    NULL,
@@ -1978,63 +2118,57 @@ static FORCE_INLINE void Layout(App* app, int clientWidth, int clientHeight)
     UpdateListColumnWidth(app, 0, widths[0]);
     UpdateListColumnWidth(app, 1, widths[1]);
     UpdateListColumnWidth(app, 2, widths[2]);
-    app->layoutClientWidth = clientWidth;
-    app->layoutClientHeight = clientHeight;
-    app->layoutDpi = app->dpi;
+    app->layoutClientWidth   = clientWidth;
+    app->layoutClientHeight  = clientHeight;
+    app->layoutDpi           = dpi;
+    app->layoutCaptionHeight = captionHeight;
 }
 
-static LRESULT CALLBACK CastGeometryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR refData);
-
-/** Lay out controls from the exact client rectangle produced by the nonclient calculation. */
-static FORCE_INLINE UINT CastGeometry_OnNcCalcSize(HWND hwnd, BOOL validRects, NCCALCSIZE_PARAMS* params)
+/** Move input windows before the immersive window publishes and presents this client geometry. */
+static FORCE_INLINE void CastWindow_OnClientGeometry(
+    void*                clientData,
+    const RECT*          client,
+    const WINDOWMETRICS* metrics,
+    LONG                 captionHeight)
 {
-    App* app;
-    RECT* client;
-    UINT result;
-    int width;
-    int height;
+    App*   app;
+    int    width;
+    int    height;
     bool_t hasArea;
     bool_t layoutChanged;
+    bool_t controlsReady;
+    bool_t dpiChanged;
+    bool_t shouldLayout;
+    bool_t widthChanged;
+    bool_t heightChanged;
+    bool_t layoutDpiChanged;
+    bool_t captionChanged;
+    bool_t positiveWidth;
+    bool_t captionFits;
 
-    result = FORWARD_WM_NCCALCSIZE(hwnd, validRects, params, DefSubclassProc);
-    app = GetApp(hwnd);
-    client = (RECT*)params;
-    width = client->right - client->left;
-    height = client->bottom - client->top;
-    hasArea = (0 < width) && (app->immersiveWindow.metrics.cyCaption < height);
-    layoutChanged = (app->layoutClientWidth != width) || (app->layoutClientHeight != height) ||
-                    (app->layoutDpi != app->immersiveWindow.metrics.dpi);
-    if ((NULL != app->hList) && hasArea && layoutChanged)
+    app              = (App*)clientData;
+    width            = client->right - client->left;
+    height           = client->bottom - client->top;
+    positiveWidth    = (0 < width);
+    captionFits      = (captionHeight < height);
+    hasArea          = positiveWidth && captionFits;
+    widthChanged     = (app->layoutClientWidth != width);
+    heightChanged    = (app->layoutClientHeight != height);
+    layoutDpiChanged = (app->layoutDpi != metrics->dpi);
+    captionChanged   = (app->layoutCaptionHeight != captionHeight);
+    layoutChanged    = widthChanged || heightChanged || layoutDpiChanged || captionChanged;
+    controlsReady    = (NULL != app->hList);
+    shouldLayout     = controlsReady && hasArea && layoutChanged;
+    if (shouldLayout)
     {
-        if (app->dpi != app->immersiveWindow.metrics.dpi)
+        dpiChanged = (app->dpi != metrics->dpi);
+        if (dpiChanged)
         {
-            app->dpi = app->immersiveWindow.metrics.dpi;
+            app->dpi = metrics->dpi;
             ApplyFont(app);
         }
-        Layout(app, width, height);
+        Layout(app, metrics->dpi, (int)captionHeight, width, height);
     }
-    return result;
-}
-
-static FORCE_INLINE void CastGeometry_OnNcDestroy(HWND hwnd)
-{
-    (void)RemoveWindowSubclass(hwnd, CastGeometryProc, CAST_GEOMETRY_SUBCLASS_ID);
-    FORWARD_WM_NCDESTROY(hwnd, DefSubclassProc);
-}
-
-static LRESULT CALLBACK CastGeometryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclassId, DWORD_PTR refData)
-{
-    UNREFERENCED_PARAMETER(subclassId);
-    UNREFERENCED_PARAMETER(refData);
-
-    switch (message)
-    {
-        HANDLE_MSG(hwnd, WM_NCDESTROY,  CastGeometry_OnNcDestroy);
-        HANDLE_MSG(hwnd, WM_NCCALCSIZE, CastGeometry_OnNcCalcSize);
-    default:
-        break;
-    }
-    return DefSubclassProc(hwnd, message, wParam, lParam);
 }
 
 /*************************************************************************************************/
@@ -2043,7 +2177,8 @@ static LRESULT CALLBACK CastGeometryProc(HWND hwnd, UINT message, WPARAM wParam,
  *  Derives control availability from selection, session, preparation and preview
  *  state, then updates the Play/Pause caption.
  */
-static FORCE_INLINE void UpdateControls(App* pApp)
+static FORCE_INLINE void UpdateControls(
+    App* pApp)
 {
     int32_t selected;
     int32_t fileLength;
@@ -2224,7 +2359,8 @@ static FORCE_INLINE void CreateControls(App* pApp)
     SetWindowSubclass(pApp->hSeek, SeekBarProc, SEEK_BAR_SUBCLASS_ID, (DWORD_PTR)pApp);
     ApplyFont(pApp);
     GetClientRect(pApp->hWnd, &client);
-    Layout(pApp, client.right - client.left, client.bottom - client.top);
+    Layout(pApp, pApp->dpi, pApp->immersiveWindow.metrics.cyCaption,
+           client.right - client.left, client.bottom - client.top);
     UpdateConfigLabels(pApp);
     EnableWindow(pApp->hMotionSlider, pApp->transcode.motionAdaptive);
     UpdateControls(pApp);
@@ -3984,8 +4120,6 @@ static FORCE_INLINE BOOL CastWindow_OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
     {
         dark                  = TRUE;
         pApp->dpi             = GetDpiForWindow(hWnd);
-        pApp->backgroundBrush = CreateSolidBrush(DARK_BACKGROUND);
-        pApp->fieldBrush      = CreateSolidBrush(DARK_FIELD);
         InitializeSRWLock(&pApp->controlFrameLock);
             CastEvents_Initialize(&pApp->events.mailbox);
         Subtitles_Initialize(&pApp->subtitleWorkspace, pApp->subtitleScratch, pApp->subtitleOutput, SUBTITLE_TEXT_CAPACITY);
@@ -4005,7 +4139,6 @@ static FORCE_INLINE BOOL CastWindow_OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
         workers_ready           = state_ready && execution_ready;
         DwmSetWindowAttribute(hWnd, GUI_DARK_MODE_ATTRIBUTE /* DWMWA_USE_IMMERSIVE_DARK_MODE */, &dark, sizeof(dark));
         CreateControls(pApp);
-        LOGASSERT(SetWindowSubclass(hWnd, CastGeometryProc, CAST_GEOMETRY_SUBCLASS_ID, (DWORD_PTR)pApp));
         if (workers_ready)
         {
             StartDiscovery(pApp);
@@ -4023,7 +4156,7 @@ static FORCE_INLINE BOOL CastWindow_OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Fills the client area with the retained background brush.
+ *  Validates erase requests; the swapchain paints the client area.
  */
 static FORCE_INLINE BOOL CastWindow_OnEraseBackground(HWND hWnd, HDC dc)
 {
@@ -4032,50 +4165,6 @@ static FORCE_INLINE BOOL CastWindow_OnEraseBackground(HWND hWnd, HDC dc)
     return TRUE;
 }
 
-/*************************************************************************************************/
-/**
- * \par Details:
- *  Selects field or background colors and returns the corresponding retained
- *  brush, using muted text for disabled controls.
- */
-static FORCE_INLINE HBRUSH CastWindow_ControlColor(HWND hWnd, HDC dc, HWND hControl, int type)
-{
-    App* pApp;
-    int  field;
-
-    pApp = GetApp(hWnd);
-
-    field = (type == CTLCOLOR_EDIT) || (type == CTLCOLOR_LISTBOX) || (hControl == pApp->hSubtitle);
-    SetTextColor(dc, IsWindowEnabled(hControl) ? DARK_TEXT : DARK_MUTED);
-    SetBkColor(dc, field ? DARK_FIELD : DARK_BACKGROUND);
-    return field ? pApp->fieldBrush : pApp->backgroundBrush;
-}
-
-static FORCE_INLINE HBRUSH CastWindow_OnCtlColorEdit(HWND hWnd, HDC dc, HWND hControl, int type)
-{
-    return CastWindow_ControlColor(hWnd, dc, hControl, type);
-}
-
-static FORCE_INLINE HBRUSH CastWindow_OnCtlColorListBox(HWND hWnd, HDC dc, HWND hControl, int type)
-{
-    return CastWindow_ControlColor(hWnd, dc, hControl, type);
-}
-
-static FORCE_INLINE HBRUSH CastWindow_OnCtlColorButton(HWND hWnd, HDC dc, HWND hControl, int type)
-{
-    return CastWindow_ControlColor(hWnd, dc, hControl, type);
-}
-
-static FORCE_INLINE HBRUSH CastWindow_OnCtlColorStatic(HWND hWnd, HDC dc, HWND hControl, int type)
-{
-    return CastWindow_ControlColor(hWnd, dc, hControl, type);
-}
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  Sets the subtitle combo's DPI-scaled item height and forwards other requests.
- */
 static void PollGainJob(App* app)
 {
     bool_t failed;
@@ -4559,10 +4648,6 @@ static FORCE_INLINE LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM 
         HANDLE_MSG(hWnd, WM_COMMAND,           CastWindow_OnCommand);
         HANDLE_MSG(hWnd, WM_TIMER,             CastWindow_OnTimer);
         HANDLE_MSG(hWnd, WM_HSCROLL,           CastWindow_OnHScroll);
-        HANDLE_MSG(hWnd, WM_CTLCOLOREDIT,      CastWindow_OnCtlColorEdit);
-        HANDLE_MSG(hWnd, WM_CTLCOLORLISTBOX,   CastWindow_OnCtlColorListBox);
-        HANDLE_MSG(hWnd, WM_CTLCOLORBTN,       CastWindow_OnCtlColorButton);
-        HANDLE_MSG(hWnd, WM_CTLCOLORSTATIC,    CastWindow_OnCtlColorStatic);
         HANDLE_MSG(hWnd, WM_DPICHANGED,        CastWindow_OnDpiChanged); // NOLINT(performance-no-int-to-ptr): LPARAM carries a RECT pointer.
     default:
         break;
@@ -4571,56 +4656,108 @@ static FORCE_INLINE LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM 
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-static FORCE_INLINE void PresentCastWindow(void* parameter)
+static FORCE_INLINE void CastOpenVerticalBlankEvent(
+    D3DKMT_WAITFORVERTICALBLANKEVENT* event)
 {
-    App*                      app;
-    IDXGIFactory6*            factory;
-    IDXGIAdapter1*            adapter;
-    IMMERSIVEPAINTSTRUCT      paint;
-    ID2D1DeviceContext*       context;
-    HRESULT                   comResult;
-    bool_t                    stopping;
-    ControlPainter            painter;
-    UINT                      frameDpi;
-    static const D2D1_COLOR_F background = {24.0F / 255.0F, 26.0F / 255.0F, 31.0F / 255.0F, 1.0F};
+    D3DKMT_OPENADAPTERFROMHDC adapterOpen;
+    HDC                       screenDc;
+    NTSTATUS                  status;
+    bool_t                    adapterOpened;
+    bool_t                    dcReleased;
 
-    app = (App*)parameter;
+    ZeroMemory(&adapterOpen, sizeof(adapterOpen));
+    screenDc = GetDC(NULL);
+    LOGASSERT(NULL != screenDc);
+    adapterOpen.hDc = screenDc;
+    status          = D3DKMTOpenAdapterFromHdc(&adapterOpen);
+    adapterOpened   = NT_SUCCESS(status);
+    LOGASSERT(adapterOpened);
+    dcReleased = (0 != ReleaseDC(NULL, screenDc));
+    LOGASSERT(dcReleased);
+    ZeroMemory(event, sizeof(*event));
+    event->hAdapter      = adapterOpen.hAdapter;
+    event->VidPnSourceId = adapterOpen.VidPnSourceId;
+}
+
+static FORCE_INLINE void CastRenderFrame(
+    App*                        app,
+    ControlPainter*             painter,
+    ID2D1DeviceContext*         context,
+    const IMMERSIVEPAINTSTRUCT* paint)
+{
+    UINT frameDpi;
+
+    frameDpi = paint->layout.dpi;
+    if (0 == frameDpi)
+    {
+        frameDpi = GUI_DEFAULT_DPI;
+    }
+    ControlPainter_SetDpi(painter, app->caption.dwrite, frameDpi);
+    cd2dRenderTargetClear((ID2D1RenderTarget*)context, &c_castBackgroundColor);
+    DrawControlFrame(painter, app, paint);
+}
+
+static FORCE_INLINE void PresentCastWindow(
+    void* parameter)
+{
+    App*                             app;
+    IMMERSIVEPAINTSTRUCT             paint;
+    ID2D1DeviceContext*              context;
+    HRESULT                          comResult;
+    bool_t                           stopping;
+    ControlPainter                   painter;
+    D3DKMT_WAITFORVERTICALBLANKEVENT vblank;
+    D3DKMT_CLOSEADAPTER              adapterClose;
+    NTSTATUS                         vblankStatus;
+    NTSTATUS                         closeStatus;
+    bool_t                           vblankReady;
+    bool_t                           adapterClosed;
+
+    app       = (App*)parameter;
     comResult = CoInitializeEx(NULL, COINIT_MULTITHREADED);
     LOGASSERT(SUCCEEDED(comResult));
-    cdxgiSetupDefaultFactory(&factory);
-    cdxgiFactoryGetMinimumPowerAdapter(factory, &adapter);
-    InitSwapChain(&app->swapChain, (IDXGIAdapter*)adapter);
-    cdxgiUnknownReleaseSafe((IUnknown*)adapter);
-    cdxgiUnknownReleaseSafe((IUnknown*)factory);
+    InitSwapChain(&app->swapChain, NULL);
     InitCaption(&app->caption, &app->immersiveWindow, app->swapChain.context);
     ZeroMemory(&painter, sizeof(painter));
     painter.context = app->swapChain.context;
-    cd2dRenderTargetCreateSolidColorBrush((ID2D1RenderTarget*)painter.context,
-                                          &c_castTextColor, NULL, &painter.brush);
+    cd2dRenderTargetCreateSolidColorBrush((ID2D1RenderTarget*)painter.context, &c_castTextColor, NULL, &painter.brush);
+    ControlPainter_SetDpi(&painter, app->caption.dwrite, app->dpi);
     app->immersiveWindow.caption = &app->caption;
     /* The root swapchain paints the caption and the control surface together. */
-    cdcompSetupDevice((IDXGIDevice*)app->swapChain.dxgiDevice, app->hWnd, TRUE, &app->swapChain.compositionDevice, &app->swapChain.compositionTarget, &app->swapChain.visual);
+    cdcompSetupDevice((IDXGIDevice*)app->swapChain.dxgiDevice,
+                      app->hWnd,
+                      TRUE,
+                      &app->swapChain.compositionDevice,
+                      &app->swapChain.compositionTarget,
+                      &app->swapChain.visual);
     cdcompVisualSetContent(app->swapChain.visual, (IUnknown*)app->swapChain.swapChain);
     app->immersiveWindow.swapChain = &app->swapChain;
 
-    stopping = OS_Thread_IsStopping(&app->presenterWorker);
-    for (; !stopping;)
+    context = BeginImmersivePaint(&app->immersiveWindow, &paint);
+    CastRenderFrame(app, &painter, context, &paint);
+    EndImmersivePaint(&app->immersiveWindow, &paint);
+    CastOpenVerticalBlankEvent(&vblank);
+    for (;;)
     {
-        context = BeginImmersivePaint(&app->immersiveWindow, &paint);
-        cd2dRenderTargetClear((ID2D1RenderTarget*)context, &background);
-        frameDpi = paint.layout.dpi;
-        if (0 == frameDpi)
-        {
-            frameDpi = GUI_DEFAULT_DPI;
-        }
-        ControlPainter_SetDpi(&painter, app->caption.dwrite, frameDpi);
-        DrawControlFrame(&painter, app, &paint);
-        EndImmersivePaint(&app->immersiveWindow, &paint);
-        Sleep(USER_TIMER_MINIMUM);
         stopping = OS_Thread_IsStopping(&app->presenterWorker);
+        if (stopping)
+        {
+            break;
+        }
+        vblankStatus = D3DKMTWaitForVerticalBlankEvent(&vblank);
+        vblankReady  = NT_SUCCESS(vblankStatus);
+        LOGASSERT(vblankReady);
+        context = BeginImmersivePaint(&app->immersiveWindow, &paint);
+        CastRenderFrame(app, &painter, context, &paint);
+        EndImmersivePaint(&app->immersiveWindow, &paint);
     }
 
-    app->immersiveWindow.caption = NULL;
+    ZeroMemory(&adapterClose, sizeof(adapterClose));
+    adapterClose.hAdapter = vblank.hAdapter;
+    closeStatus           = D3DKMTCloseAdapter(&adapterClose);
+    adapterClosed         = NT_SUCCESS(closeStatus);
+    LOGASSERT(adapterClosed);
+    app->immersiveWindow.caption   = NULL;
     app->immersiveWindow.swapChain = NULL;
     cdwUnknownReleaseSafe((IUnknown*)painter.format);
     cd2dUnknownReleaseSafe((IUnknown*)painter.brush);
@@ -4635,7 +4772,9 @@ static FORCE_INLINE void PresentCastWindow(void* parameter)
  *  Initializes DPI, OLE, Winsock and common controls, creates the application
  *  window, then runs dialog-key translation and the window message loop.
  */
-static int RunMessageLoop(App* app, HWND window)
+static int RunMessageLoop(
+    App* app,
+    HWND window)
 {
     MSG     message;
     BOOL    message_result;
@@ -4734,6 +4873,7 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
         app->hInstance = instance;
         app->dpi       = GetDpiForSystem();
         createInfo.clientProc = WindowProc;
+        createInfo.clientGeometryProc = CastWindow_OnClientGeometry;
         createInfo.clientData = app;
         createInfo.title = L"CastDemo";
         createInfo.width = Scale(app, GUI_INITIAL_WINDOW_WIDTH);
@@ -4762,8 +4902,6 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
         {
             (void)DeleteObject(app->hFont);
         }
-        (void)DeleteObject(app->backgroundBrush);
-        (void)DeleteObject(app->fieldBrush);
         unregistered = !!UnregisterClass(WC_IMMERSIVEWINDOW, instance);
         LOGASSERT(unregistered);
     }

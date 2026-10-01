@@ -177,6 +177,7 @@ static DWORD WINAPI AppWindowThread(LPVOID pvParameter)
 
     pLaunch = (APP_WINDOW_LAUNCH*)pvParameter;
     createInfo.clientProc = NULL;
+    createInfo.clientGeometryProc = NULL;
     createInfo.clientData = NULL;
     createInfo.title = TEXT("Opus3");
     createInfo.width = APP_WINDOW_WIDTH;

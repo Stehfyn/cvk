@@ -38,10 +38,13 @@ typedef struct WINDOWMETRICS
     LONG cyTopBorder;      /* DWM's visible top border rows: resizing, not buttons               */
 } WINDOWMETRICS;
 
+typedef void (*IMMERSIVECLIENTGEOMETRYPROC)(void* clientData, const RECT* clientRect, const WINDOWMETRICS* metrics, LONG captionHeight);
+
 typedef struct IMMERSIVEWINDOW
 {
     HWND               hwnd;
     WNDPROC            clientProc;
+    IMMERSIVECLIENTGEOMETRYPROC clientGeometryProc;
     void*              clientData;
     WINDOWMETRICS      metrics;
     BOOL               fBorderless;
@@ -71,6 +74,7 @@ typedef struct IMMERSIVEWINDOW
 typedef struct IMMERSIVEWINDOWCREATEINFO
 {
     WNDPROC      clientProc;
+    IMMERSIVECLIENTGEOMETRYPROC clientGeometryProc;
     void*        clientData;
     const WCHAR* title;
     int          width;
