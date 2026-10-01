@@ -90,6 +90,8 @@
 #define SEEK_RANGE          (1000)
 #define DARK_COMBO_SUBCLASS_ID (1)
 #define DARK_HEADER_SUBCLASS_ID (1)
+#define WC_CASTHOST TEXT("CastDemoControlHost")
+#define GUI_LAYERED_OPAQUE (255)
 #define GUI_SOURCE_CAPACITY (1024)
 #define GUI_URL_CAPACITY (1200)
 #define GUI_MEDIA_TYPE_CAPACITY (64)
@@ -257,6 +259,9 @@ typedef struct App
 {
     HINSTANCE hInstance;
     HWND      hWnd;
+    HWND      hHost; /* layered child that hosts every control below the caption band */
+    IUnknown*            hostSurface; /* the host window's content as a composition surface */
+    IDCompositionVisual* hostVisual;  /* composes hostSurface above the swap-chain visual     */
     IMMERSIVEWINDOW immersiveWindow;
     SWAPCHAIN       swapChain;
     CAPTION         caption;
@@ -443,13 +448,14 @@ static const CastGui_ControlDefinition_t c_controls[] = {
 
 /*************************************************************************************************/
 /**
- * \brief Borrows the startup context already attached to a live window.
+ * \brief Borrows the startup context from the immersive window that roots a live window.
  *
  * \par Requirements:
- *  - 001 WM_NCCREATE shall have attached the context before any caller uses this query.
+ *  - 001 The immersive window shall store its record in GWLP_USERDATA before the client
+ *        procedure receives WM_NCCREATE; the record's clientData is the context.
  *  - 002 The entry point shall retain the context until native destruction and worker closure.
  *
- * \param[in] window   Native application window
+ * \param[in] window   The application window or any of its descendants
  *
  * \retval    non-NULL   Borrowed startup context; a missing binding asserts.
  */
@@ -458,13 +464,18 @@ static FORCE_INLINE App* GetApp(HWND window);
 /*************************************************************************************************/
 /**
  * \par Details:
- *  The native window owns only a borrowed pointer, never the context allocation.
+ *  The immersive window record owns only a borrowed pointer, never the context allocation.
  */
 static FORCE_INLINE App* GetApp(HWND window)
 {
-    App* app;
+    HWND             root;
+    IMMERSIVEWINDOW* immersiveWindow;
+    App*             app;
 
-    app = (App*)GetProp(window, TEXT("cvkCastApp"));
+    root            = GetAncestor(window, GA_ROOT);
+    immersiveWindow = (IMMERSIVEWINDOW*)(ULONG_PTR)GetWindowLongPtr(root, GWLP_USERDATA); // NOLINT(performance-no-int-to-ptr): Win32 stores the pointer in LONG_PTR.
+    LOGASSERT(NULL != immersiveWindow);
+    app = (App*)immersiveWindow->clientData;
     LOGASSERT(NULL != app);
     return app;
 }
@@ -1176,6 +1187,134 @@ static FORCE_INLINE void DestroyControlPaint(App* app)
 /*************************************************************************************************/
 /**
  * \par Details:
+ *  The control host is an ordinary child window with its own redirection surface,
+ *  so the classic controls compose above the immersive window's swap chain. It
+ *  paints the retained background and forwards control notifications to the
+ *  application window, which owns the handlers.
+ */
+static FORCE_INLINE BOOL CastHost_OnEraseBackground(HWND hWnd, HDC dc)
+{
+    App* pApp;
+    RECT client;
+
+    pApp = GetApp(hWnd);
+    GetClientRect(hWnd, &client);
+    (void)FillRect(dc, &client, pApp->backgroundBrush);
+    return TRUE;
+}
+
+static FORCE_INLINE void CastHost_OnCommand(HWND hWnd, int id, HWND hControl, UINT codeNotify)
+{
+    FORWARD_WM_COMMAND(GetParent(hWnd), id, hControl, codeNotify, SendMessage);
+}
+
+static FORCE_INLINE LRESULT CastHost_OnNotify(HWND hWnd, int idFrom, NMHDR* pHeader)
+{
+    return FORWARD_WM_NOTIFY(GetParent(hWnd), idFrom, pHeader, SendMessage);
+}
+
+static FORCE_INLINE void CastHost_OnDrawItem(HWND hWnd, const DRAWITEMSTRUCT* item)
+{
+    FORWARD_WM_DRAWITEM(GetParent(hWnd), item, SendMessage);
+}
+
+static FORCE_INLINE void CastHost_OnMeasureItem(HWND hWnd, MEASUREITEMSTRUCT* item)
+{
+    FORWARD_WM_MEASUREITEM(GetParent(hWnd), item, SendMessage);
+}
+
+static FORCE_INLINE void CastHost_OnHScroll(HWND hWnd, HWND hControl, UINT code, int position)
+{
+    FORWARD_WM_HSCROLL(GetParent(hWnd), hControl, code, position, SendMessage);
+}
+
+static FORCE_INLINE HBRUSH CastHost_OnCtlColorEdit(HWND hWnd, HDC dc, HWND hControl, int type)
+{
+    UNREFERENCED_PARAMETER(type);
+    return FORWARD_WM_CTLCOLOREDIT(GetParent(hWnd), dc, hControl, SendMessage);
+}
+
+static FORCE_INLINE HBRUSH CastHost_OnCtlColorListBox(HWND hWnd, HDC dc, HWND hControl, int type)
+{
+    UNREFERENCED_PARAMETER(type);
+    return FORWARD_WM_CTLCOLORLISTBOX(GetParent(hWnd), dc, hControl, SendMessage);
+}
+
+static FORCE_INLINE HBRUSH CastHost_OnCtlColorButton(HWND hWnd, HDC dc, HWND hControl, int type)
+{
+    UNREFERENCED_PARAMETER(type);
+    return FORWARD_WM_CTLCOLORBTN(GetParent(hWnd), dc, hControl, SendMessage);
+}
+
+static FORCE_INLINE HBRUSH CastHost_OnCtlColorStatic(HWND hWnd, HDC dc, HWND hControl, int type)
+{
+    UNREFERENCED_PARAMETER(type);
+    return FORWARD_WM_CTLCOLORSTATIC(GetParent(hWnd), dc, hControl, SendMessage);
+}
+
+static LRESULT CALLBACK CastHostProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message)
+    {
+        HANDLE_MSG(hWnd, WM_ERASEBKGND,      CastHost_OnEraseBackground);
+        HANDLE_MSG(hWnd, WM_COMMAND,         CastHost_OnCommand);
+        HANDLE_MSG(hWnd, WM_NOTIFY,          CastHost_OnNotify);
+        HANDLE_MSG(hWnd, WM_DRAWITEM,        CastHost_OnDrawItem);
+        HANDLE_MSG(hWnd, WM_MEASUREITEM,     CastHost_OnMeasureItem);
+        HANDLE_MSG(hWnd, WM_HSCROLL,         CastHost_OnHScroll);
+        HANDLE_MSG(hWnd, WM_CTLCOLOREDIT,    CastHost_OnCtlColorEdit);
+        HANDLE_MSG(hWnd, WM_CTLCOLORLISTBOX, CastHost_OnCtlColorListBox);
+        HANDLE_MSG(hWnd, WM_CTLCOLORBTN,     CastHost_OnCtlColorButton);
+        HANDLE_MSG(hWnd, WM_CTLCOLORSTATIC,  CastHost_OnCtlColorStatic);
+    default:
+        break;
+    }
+    return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+static FORCE_INLINE ATOM RegisterCastHostClass(HINSTANCE instance)
+{
+    WNDCLASSEX host;
+
+    ZeroMemory(&host, sizeof(host));
+    host.cbSize        = sizeof(host);
+    host.style         = 0;
+    host.lpfnWndProc   = CastHostProc;
+    host.hInstance     = instance;
+    host.hCursor       = LoadCursor(NULL, IDC_ARROW);
+    host.hbrBackground = NULL;
+    host.lpszClassName = WC_CASTHOST;
+    return RegisterClassEx(&host);
+}
+
+static FORCE_INLINE void CreateCastHost(App* pApp)
+{
+    HWND    host;
+    BOOL    opaque;
+
+    /* Layered: CreateSurfaceFromHwnd composes a child only when it is a layered child window. */
+    host = CreateWindowEx(WS_EX_CONTROLPARENT | WS_EX_LAYERED,
+                          WC_CASTHOST,
+                          NULL,
+                          WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN,
+                          0,
+                          0,
+                          GUI_CHILD_INITIAL_SIZE,
+                          GUI_CHILD_INITIAL_SIZE,
+                          pApp->hWnd,
+                          NULL,
+                          pApp->hInstance,
+                          NULL);
+    pApp->hHost = host;
+    LOGASSERT(NULL != host);
+    /* A layered window renders only once its attributes are set (opaque, no color key). */
+    opaque = SetLayeredWindowAttributes(host, 0, GUI_LAYERED_OPAQUE, LWA_ALPHA);
+    LOGASSERT(opaque);
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
  *  Changes ordinary buttons to owner-draw controls and requests the dark Explorer
  *  theme after creating the child window.
  */
@@ -1196,7 +1335,7 @@ static FORCE_INLINE void CreateChild(App* pApp, const CastGui_ControlDefinition_
                             0,
                             GUI_CHILD_INITIAL_SIZE,
                             GUI_CHILD_INITIAL_SIZE,
-                            pApp->hWnd,
+                            pApp->hHost,
                             (HMENU)(INT_PTR)control->id, // NOLINT(performance-no-int-to-ptr): Win32 child control IDs use the HMENU slot.
                             pApp->hInstance,
                             NULL);
@@ -1273,7 +1412,7 @@ static FORCE_INLINE void DarkHeader_OnPaint(HWND hWnd)
     HDC         dc;
     App*        pApp;
 
-    pApp = GetApp(GetParent(GetParent(hWnd)));
+    pApp = GetApp(hWnd);
     dc   = BeginPaint(hWnd, &paint);
     PaintDarkHeader(hWnd, dc, pApp);
     (void)EndPaint(hWnd, &paint);
@@ -1297,7 +1436,7 @@ static FORCE_INLINE void DarkHeader_OnPrintClient(HWND hWnd, HDC dc, UINT flags)
     App* pApp;
 
     UNREFERENCED_PARAMETER(flags);
-    pApp = GetApp(GetParent(GetParent(hWnd)));
+    pApp = GetApp(hWnd);
     PaintDarkHeader(hWnd, dc, pApp);
 }
 
@@ -1442,7 +1581,7 @@ static FORCE_INLINE void DarkCombo_OnPaint(HWND hWnd)
     HDC         dc;
     App*        pApp;
 
-    pApp = GetApp(GetParent(hWnd));
+    pApp = GetApp(hWnd);
     dc   = BeginPaint(hWnd, &paint);
     PaintDarkCombo(hWnd, dc, pApp);
     (void)EndPaint(hWnd, &paint);
@@ -1484,7 +1623,7 @@ static FORCE_INLINE void DarkCombo_OnPrintClient(HWND hWnd, HDC dc, UINT flags)
     App* pApp;
 
     UNREFERENCED_PARAMETER(flags);
-    pApp = GetApp(GetParent(hWnd));
+    pApp = GetApp(hWnd);
     PaintDarkCombo(hWnd, dc, pApp);
 }
 
@@ -1547,7 +1686,7 @@ static FORCE_INLINE void ApplyFont(App* pApp)
             pApp->hFont = hFont;
         }
     }
-    for (hChild = GetWindow(pApp->hWnd, GW_CHILD); NULL != hChild; hChild = GetWindow(hChild, GW_HWNDNEXT))
+    for (hChild = GetWindow(pApp->hHost, GW_CHILD); NULL != hChild; hChild = GetWindow(hChild, GW_HWNDNEXT))
     {
         SendMessage(hChild, WM_SETFONT, (WPARAM)pApp->hFont, TRUE);
     }
@@ -1613,7 +1752,11 @@ static FORCE_INLINE void Layout(App* pApp)
     int       y;
     int       listH;
 
+    /* The host owns the client below the caption band; control positions are host-relative. */
     GetClientRect(pApp->hWnd, &client);
+    client.top = pApp->immersiveWindow.metrics.cyCaption;
+    MoveWindow(pApp->hHost, 0, client.top, client.right, client.bottom - client.top, TRUE);
+    client.bottom -= client.top;
     width               = client.right - (2 * margin);
     sliderX = margin + valueW + gap;
     sliderWidth = width - valueW - gap;
@@ -1638,13 +1781,13 @@ static FORCE_INLINE void Layout(App* pApp)
     motionValueX = client.right - margin - motionValueWidth;
     receiverColumnWidth = width - addressColumnWidth - modelColumnWidth - columnPadding;
     /* bottom-up: config panel, status, toolbar, hint, cast, file; the list takes the rest */
-    listH = client.bottom - pApp->immersiveWindow.metrics.cyCaption - (margin + labelH + gap) - (GUI_CONTROL_ROW_COUNT * (gap + rowH)) -
+    listH = client.bottom - (margin + labelH + gap) - (GUI_CONTROL_ROW_COUNT * (gap + rowH)) -
             (gap + labelH) - (gap + cfgH) - margin;
     if (listH < listMinHeight)
     {
         listH = listMinHeight;
     }
-    y = pApp->immersiveWindow.metrics.cyCaption + margin;
+    y = margin;
     headerY = y + Scale(pApp, 3);
     buttonY = y - buttonOffset;
     MoveWindow(pApp->hListLabel, margin, headerY, listLabelWidth, labelH, TRUE);
@@ -1851,6 +1994,7 @@ static FORCE_INLINE void CreateControls(App* pApp)
     const CastGui_ControlDefinition_t* control;
     TCHAR* const*                      columnText;
 
+    CreateCastHost(pApp);
     for (index = 0; index < ARRAYSIZE(c_controls); ++index)
     {
         control = &c_controls[index];
@@ -3471,7 +3615,7 @@ static FORCE_INLINE void SeekBar_OnMouseMove(HWND hWnd, int x, int y, UINT keyFl
     dragging    = has_capture && button_down;
     if (dragging)
     {
-        app   = GetApp(GetParent(hWnd));
+        app   = GetApp(hWnd);
         ratio = GetRatioFromClick(hWnd, x);
         SeekToRatio(app, ratio, FALSE);
     }
@@ -3491,7 +3635,7 @@ static FORCE_INLINE void SeekBar_OnLButtonDown(HWND hWnd, BOOL doubleClick, int 
     UNREFERENCED_PARAMETER(y);
     UNREFERENCED_PARAMETER(keyFlags);
 
-    app   = GetApp(GetParent(hWnd));
+    app   = GetApp(hWnd);
     ratio = GetRatioFromClick(hWnd, x);
     (void)SetFocus(hWnd);
     (void)SetCapture(hWnd);
@@ -3512,7 +3656,7 @@ static FORCE_INLINE void SeekBar_OnLButtonUp(HWND hWnd, int x, int y, UINT keyFl
     has_capture = (hWnd == GetCapture());
     if (has_capture)
     {
-        app   = GetApp(GetParent(hWnd));
+        app   = GetApp(hWnd);
         ratio = GetRatioFromClick(hWnd, x);
         (void)ReleaseCapture();
         SeekToRatio(app, ratio, TRUE);
@@ -4014,6 +4158,25 @@ static FORCE_INLINE void CastWindow_OnTimer(HWND hWnd, UINT id)
  * \par Details:
  *  None
  */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The host and its controls first paint during WM_CREATE, before the window is
+ *  shown; a layered window keeps that stored image when revealed, so the show
+ *  invalidates the whole host tree for a paint that lands once visible.
+ */
+static FORCE_INLINE void CastWindow_OnShowWindow(HWND hWnd, BOOL show, UINT status)
+{
+    App* pApp;
+
+    pApp = GetApp(hWnd);
+    if (show)
+    {
+        (void)RedrawWindow(pApp->hHost, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
+    }
+    FORWARD_WM_SHOWWINDOW(hWnd, show, status, DefWindowProc);
+}
+
 static FORCE_INLINE void CastWindow_OnSize(HWND hWnd, UINT state, int width, int height)
 {
     App* pApp;
@@ -4319,12 +4482,7 @@ static FORCE_INLINE BOOL CastWindow_OnNcCreate(HWND window, LPCREATESTRUCT creat
     immersiveWindow = (IMMERSIVEWINDOW*)create->lpCreateParams;
     app = (App*)immersiveWindow->clientData;
     app->hWnd = window;
-    return SetProp(window, TEXT("cvkCastApp"), app);
-}
-
-static FORCE_INLINE void CastWindow_OnNcDestroy(HWND window)
-{
-    (void)RemoveProp(window, TEXT("cvkCastApp"));
+    return TRUE; /* opus3 has already run the default WM_NCCREATE processing */
 }
 
 /*************************************************************************************************/
@@ -4340,6 +4498,7 @@ static FORCE_INLINE LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM 
         HANDLE_MSG(hWnd, WM_CREATE,          CastWindow_OnCreate);
         HANDLE_MSG(hWnd, WM_DESTROY,         CastWindow_OnDestroy);
         HANDLE_MSG(hWnd, WM_SIZE,            CastWindow_OnSize);
+        HANDLE_MSG(hWnd, WM_SHOWWINDOW,      CastWindow_OnShowWindow);
         HANDLE_MSG(hWnd, WM_CLOSE,           CastWindow_OnClose);
         HANDLE_MSG(hWnd, WM_ERASEBKGND,      CastWindow_OnEraseBackground);
         HANDLE_MSG(hWnd, WM_GETMINMAXINFO,   CastWindow_OnGetMinMaxInfo);
@@ -4347,7 +4506,6 @@ static FORCE_INLINE LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM 
         HANDLE_MSG(hWnd, WM_MEASUREITEM,     CastWindow_OnMeasureItem);
         HANDLE_MSG(hWnd, WM_NOTIFY,          CastWindow_OnNotify);
         HANDLE_MSG(hWnd, WM_NCCREATE,        CastWindow_OnNcCreate);
-        HANDLE_MSG(hWnd, WM_NCDESTROY,       CastWindow_OnNcDestroy);
         HANDLE_MSG(hWnd, WM_COMMAND,         CastWindow_OnCommand);
         HANDLE_MSG(hWnd, WM_TIMER,           CastWindow_OnTimer);
         HANDLE_MSG(hWnd, WM_HSCROLL,         CastWindow_OnHScroll);
@@ -4384,8 +4542,15 @@ static FORCE_INLINE void PresentCastWindow(void* parameter)
     cdxgiUnknownReleaseSafe((IUnknown*)factory);
     InitCaption(&app->caption, &app->immersiveWindow, app->swapChain.context);
     app->immersiveWindow.caption = &app->caption;
-    cdcompSetupDevice((IDXGIDevice*)app->swapChain.dxgiDevice, app->hWnd, FALSE, &app->swapChain.compositionDevice, &app->swapChain.compositionTarget, &app->swapChain.visual);
+    /* Topmost: a non-topmost tree is clipped by child windows, which would clip out the visual that
+    ** displays the control host. The host itself is cloaked, so only its composed surface shows. */
+    cdcompSetupDevice((IDXGIDevice*)app->swapChain.dxgiDevice, app->hWnd, TRUE, &app->swapChain.compositionDevice, &app->swapChain.compositionTarget, &app->swapChain.visual);
     cdcompVisualSetContent(app->swapChain.visual, (IUnknown*)app->swapChain.swapChain);
+    /* The control host joins the tree above the swap chain; its window position is mirrored by
+    ** the visual offset so hit testing and composition agree. */
+    cdcompDeviceCreateSurfaceFromHwnd(app->swapChain.compositionDevice, app->hHost, &app->hostSurface);
+    cdcompDeviceCreateVisualWithContent(app->swapChain.compositionDevice, app->hostSurface, &app->hostVisual);
+    cdcompVisualAddVisualOnTop(app->swapChain.visual, app->hostVisual);
     app->immersiveWindow.swapChain = &app->swapChain;
 
     stopping = OS_Thread_IsStopping(&app->presenterWorker);
@@ -4393,6 +4558,7 @@ static FORCE_INLINE void PresentCastWindow(void* parameter)
     {
         context = BeginImmersivePaint(&app->immersiveWindow, &paint);
         cd2dRenderTargetClear((ID2D1RenderTarget*)context, &background);
+        cdcompVisualSetOffsetY(app->hostVisual, (float)paint.layout.cyCaption);
         EndImmersivePaint(&app->immersiveWindow, &paint);
         Sleep(USER_TIMER_MINIMUM);
         stopping = OS_Thread_IsStopping(&app->presenterWorker);
@@ -4400,6 +4566,11 @@ static FORCE_INLINE void PresentCastWindow(void* parameter)
 
     app->immersiveWindow.caption = NULL;
     app->immersiveWindow.swapChain = NULL;
+    cdcompVisualRemoveVisual(app->swapChain.visual, app->hostVisual);
+    cdcompUnknownReleaseSafe((IUnknown*)app->hostVisual);
+    cdcompUnknownReleaseSafe(app->hostSurface);
+    app->hostVisual  = NULL;
+    app->hostSurface = NULL;
     DestroyCaption(&app->caption);
     DestroySwapChain(&app->swapChain);
     CoUninitialize();
@@ -4479,6 +4650,7 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
     INITCOMMONCONTROLSEX      controls;
     IMMERSIVEWINDOWCREATEINFO createInfo;
     bool_t                    controls_ready;
+    ATOM                      host_class;
     HWND                      window;
     bool_t                    window_ready;
     uint32_t                  argumentCount;
@@ -4509,6 +4681,8 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
     {
         app->hInstance = instance;
         app->dpi       = GetDpiForSystem();
+        host_class     = RegisterCastHostClass(instance);
+        LOGASSERT(0 != host_class);
         createInfo.clientProc = WindowProc;
         createInfo.clientData = app;
         createInfo.title = L"CastDemo";
@@ -4542,6 +4716,8 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
         (void)DeleteObject(app->fieldBrush);
         DestroyControlPaint(app);
         unregistered = !!UnregisterClass(WC_IMMERSIVEWINDOW, instance);
+        LOGASSERT(unregistered);
+        unregistered = !!UnregisterClass(WC_CASTHOST, instance);
         LOGASSERT(unregistered);
     }
     if (network_ready)

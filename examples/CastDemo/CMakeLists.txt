@@ -118,7 +118,7 @@ if(MSVC)
     target_compile_options(cast-session PRIVATE /GS- /Zl)
 endif()
 
-add_executable(CastDemo WIN32 cast_gui.c os/win32/os_entry.c)
+add_executable(CastDemo WIN32 cast_gui.c os/win32/os_entry.c CastDemo.manifest)
 target_compile_definitions(CastDemo PRIVATE UNICODE _UNICODE)
 target_link_libraries(CastDemo PRIVATE cast-session cast-text-unicode immersive-opus3-window cdw
     comctl32 comdlg32 shell32 ole32 user32 gdi32 uxtheme dwmapi
