@@ -1095,6 +1095,28 @@ static FORCE_INLINE void LogResponse(const Connection_t*        connection,
  * \par Details:
  *  The current file extent bounds partial output without claiming that conversion has finished.
  */
+static FORCE_INLINE bool_t IsGrowingFromStart(const CastHttp_Request_t* request)
+{
+    Utl_Http_Range_t    range;
+    Utl_Http_RangeSet_t set;
+    Utl_Http_Text_t     value;
+    bool_t              parsed;
+    bool_t              fromStart;
+
+    fromStart = FALSE;
+    if (UTL_HTTP_NO_FIELD != request->rangeField)
+    {
+        set.ranges   = &range;
+        set.capacity = 1;
+        set.count    = 0;
+        value        = request->reader.head.fields[request->rangeField].value;
+        parsed       = Utl_Http_ReadRange(&set, value.data, value.byteCount);
+        fromStart    = parsed && (1 == set.count) &&
+                       (UTL_HTTP_RANGE_OPEN == range.kind) && (0 == range.first);
+    }
+    return fromStart;
+}
+
 static FORCE_INLINE void ReadGrowingResponse(const Connection_t*       connection,
                                              const CastHttp_Request_t* request,
                                              CastHttp_Response_t*      response)
@@ -1106,7 +1128,7 @@ static FORCE_INLINE void ReadGrowingResponse(const Connection_t*       connectio
     CastHttp_InitializeResponse(response, UTL_HTTP_STATUS_OK);
     response->contentType = GetContentType(connection);
     response->growing     = TRUE;
-    if (UTL_HTTP_NO_FIELD != request->rangeField)
+    if ((UTL_HTTP_NO_FIELD != request->rangeField) && !IsGrowingFromStart(request))
     {
         size.QuadPart = 0;
         sized         = GetFileSizeEx(connection->hFile, &size);
