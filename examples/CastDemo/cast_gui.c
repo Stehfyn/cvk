@@ -1751,12 +1751,14 @@ static FORCE_INLINE void Layout(App* pApp)
     int       receiverColumnWidth;
     int       y;
     int       listH;
+    HDWP      positions;
 
     /* The host owns the client below the caption band; control positions are host-relative. */
     GetClientRect(pApp->hWnd, &client);
     client.top = pApp->immersiveWindow.metrics.cyCaption;
-    MoveWindow(pApp->hHost, 0, client.top, client.right, client.bottom - client.top, TRUE);
+    (void)SetWindowPos(pApp->hHost, NULL, 0, client.top, client.right, client.bottom - client.top, SWP_NOZORDER | SWP_NOACTIVATE);
     client.bottom -= client.top;
+    positions           = BeginDeferWindowPos((int)ARRAYSIZE(c_controls));
     width               = client.right - (2 * margin);
     sliderX = margin + valueW + gap;
     sliderWidth = width - valueW - gap;
@@ -1790,63 +1792,64 @@ static FORCE_INLINE void Layout(App* pApp)
     y = margin;
     headerY = y + Scale(pApp, 3);
     buttonY = y - buttonOffset;
-    MoveWindow(pApp->hListLabel, margin, headerY, listLabelWidth, labelH, TRUE);
-    MoveWindow(pApp->hRefresh, refreshX, buttonY, buttonW, rowH, TRUE);
-    MoveWindow(pApp->hWindowsCast, buttonX, buttonY, buttonW, rowH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hListLabel, NULL, margin, headerY, listLabelWidth, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hRefresh, NULL, refreshX, buttonY, buttonW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hWindowsCast, NULL, buttonX, buttonY, buttonW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
     y += labelH + gap;
-    MoveWindow(pApp->hList, margin, y, width, listH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hList, NULL, margin, y, width, listH, SWP_NOZORDER | SWP_NOACTIVATE);
     y += listH + gap;
     labelY = y + labelOffset;
-    MoveWindow(pApp->hFileLabel, margin, labelY, fileLabelWidth, labelH, TRUE);
-    MoveWindow(pApp->hFile, fileX, y, fileWidth, rowH, TRUE);
-    MoveWindow(pApp->hBrowse, browseX, y, buttonW, rowH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hFileLabel, NULL, margin, labelY, fileLabelWidth, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hFile, NULL, fileX, y, fileWidth, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hBrowse, NULL, browseX, y, buttonW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
     y += rowH + gap;
     labelY = y + labelOffset;
-    MoveWindow(pApp->hSubtitleLabel, margin, labelY, subtitleLabelWidth, labelH, TRUE);
-    MoveWindow(pApp->hSubtitle, subtitleX, y, subtitleWidth, subtitleHeight, TRUE);
-    MoveWindow(pApp->hSubtitleBrowse, browseX, y, buttonW, rowH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hSubtitleLabel, NULL, margin, labelY, subtitleLabelWidth, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hSubtitle, NULL, subtitleX, y, subtitleWidth, subtitleHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hSubtitleBrowse, NULL, browseX, y, buttonW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
     y += rowH + gap;
     labelY = y + labelOffset;
-    MoveWindow(pApp->hGainLabel, margin, labelY, valueW, labelH, TRUE);
-    MoveWindow(pApp->hGain, gainX, y, gainWidth, rowH, TRUE);
-    MoveWindow(pApp->hGainState, gainStateX, labelY, gainStateWidth, labelH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hGainLabel, NULL, margin, labelY, valueW, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hGain, NULL, gainX, y, gainWidth, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hGainState, NULL, gainStateX, labelY, gainStateWidth, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
     y += rowH + gap;
-    MoveWindow(pApp->hCast, margin, y, buttonW, rowH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hCast, NULL, margin, y, buttonW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
     labelY = y + labelOffset;
-    MoveWindow(pApp->hHint, hintX, labelY, hintWidth, labelH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hHint, NULL, hintX, labelY, hintWidth, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
     y += rowH + gap;
-    MoveWindow(pApp->hPlayPause, margin, y, smallW, rowH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hPlayPause, NULL, margin, y, smallW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
     labelY = y + labelOffset;
-    MoveWindow(pApp->hStop, stopX, y, smallW, rowH, TRUE);
-    MoveWindow(pApp->hSeek, seekX, y, seekWidth, rowH, TRUE);
-    MoveWindow(pApp->hTime, timeX, labelY, timeW, labelH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hStop, NULL, stopX, y, smallW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hSeek, NULL, seekX, y, seekWidth, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hTime, NULL, timeX, labelY, timeW, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
     y += rowH + gap;
-    MoveWindow(pApp->hStatus, margin, y, width, labelH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hStatus, NULL, margin, y, width, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
     y += labelH + gap;
     /* The transcoder configuration panel. */
-    MoveWindow(pApp->hCfgLabel, margin, y, width, labelH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hCfgLabel, NULL, margin, y, width, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
     y += labelH + gap;
     labelY = y + labelOffset;
-    MoveWindow(pApp->hResValue, margin, labelY, valueW, labelH, TRUE);
-    MoveWindow(pApp->hResSlider, sliderX, y, sliderWidth, rowH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hResValue, NULL, margin, labelY, valueW, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hResSlider, NULL, sliderX, y, sliderWidth, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
     y += rowH + gap;
     labelY = y + labelOffset;
-    MoveWindow(pApp->hQpValue, margin, labelY, valueW, labelH, TRUE);
-    MoveWindow(pApp->hQpSlider, sliderX, y, sliderWidth, rowH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hQpValue, NULL, margin, labelY, valueW, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hQpSlider, NULL, sliderX, y, sliderWidth, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
     y += rowH + gap;
     labelY = y + labelOffset;
-    MoveWindow(pApp->hGopValue, margin, labelY, valueW, labelH, TRUE);
-    MoveWindow(pApp->hGopSlider, sliderX, y, sliderWidth, rowH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hGopValue, NULL, margin, labelY, valueW, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hGopSlider, NULL, sliderX, y, sliderWidth, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
     y += rowH + gap;
     buttonY = y + buttonOffset;
     labelY = y + labelOffset;
-    MoveWindow(pApp->hMotionCheck, margin, buttonY, valueW, rowH, TRUE);
-    MoveWindow(pApp->hMotionSlider, sliderX, y, motionSliderWidth, rowH, TRUE);
-    MoveWindow(pApp->hMotionValue, motionValueX, labelY, motionValueWidth, labelH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hMotionCheck, NULL, margin, buttonY, valueW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hMotionSlider, NULL, sliderX, y, motionSliderWidth, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
+    positions = DeferWindowPos(positions, pApp->hMotionValue, NULL, motionValueX, labelY, motionValueWidth, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
     y += rowH + gap;
-    MoveWindow(pApp->hPreview, margin, y, buttonW, rowH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hPreview, NULL, margin, y, buttonW, rowH, SWP_NOZORDER | SWP_NOACTIVATE);
     labelY = y + labelOffset;
-    MoveWindow(pApp->hCfgReadout, hintX, labelY, hintWidth, labelH, TRUE);
+    positions = DeferWindowPos(positions, pApp->hCfgReadout, NULL, hintX, labelY, hintWidth, labelH, SWP_NOZORDER | SWP_NOACTIVATE);
+    (void)EndDeferWindowPos(positions);
     ListView_SetColumnWidth(pApp->hList, 0, receiverColumnWidth);
     ListView_SetColumnWidth(pApp->hList, 1, addressColumnWidth);
     ListView_SetColumnWidth(pApp->hList, 2, modelColumnWidth);
@@ -4158,25 +4161,6 @@ static FORCE_INLINE void CastWindow_OnTimer(HWND hWnd, UINT id)
  * \par Details:
  *  None
  */
-/*************************************************************************************************/
-/**
- * \par Details:
- *  The host and its controls first paint during WM_CREATE, before the window is
- *  shown; a layered window keeps that stored image when revealed, so the show
- *  invalidates the whole host tree for a paint that lands once visible.
- */
-static FORCE_INLINE void CastWindow_OnShowWindow(HWND hWnd, BOOL show, UINT status)
-{
-    App* pApp;
-
-    pApp = GetApp(hWnd);
-    if (show)
-    {
-        (void)RedrawWindow(pApp->hHost, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
-    }
-    FORWARD_WM_SHOWWINDOW(hWnd, show, status, DefWindowProc);
-}
-
 static FORCE_INLINE void CastWindow_OnSize(HWND hWnd, UINT state, int width, int height)
 {
     App* pApp;
@@ -4498,7 +4482,6 @@ static FORCE_INLINE LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM 
         HANDLE_MSG(hWnd, WM_CREATE,          CastWindow_OnCreate);
         HANDLE_MSG(hWnd, WM_DESTROY,         CastWindow_OnDestroy);
         HANDLE_MSG(hWnd, WM_SIZE,            CastWindow_OnSize);
-        HANDLE_MSG(hWnd, WM_SHOWWINDOW,      CastWindow_OnShowWindow);
         HANDLE_MSG(hWnd, WM_CLOSE,           CastWindow_OnClose);
         HANDLE_MSG(hWnd, WM_ERASEBKGND,      CastWindow_OnEraseBackground);
         HANDLE_MSG(hWnd, WM_GETMINMAXINFO,   CastWindow_OnGetMinMaxInfo);
