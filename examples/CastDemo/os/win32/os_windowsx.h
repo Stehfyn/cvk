@@ -50,6 +50,16 @@
     (fn)((hwnd), WM_THEMECHANGED, 0, 0)
 #endif
 
+/** Callback: void fn(HWND). */
+#ifndef HANDLE_WM_MOUSELEAVE
+#define HANDLE_WM_MOUSELEAVE(hwnd, wParam, lParam, fn) \
+    ((fn)((hwnd)), (LRESULT)0)
+#endif
+#ifndef FORWARD_WM_MOUSELEAVE
+#define FORWARD_WM_MOUSELEAVE(hwnd, fn) \
+    (void)(fn)((hwnd), WM_MOUSELEAVE, 0, 0)
+#endif
+
 /** Callback: LRESULT fn(HWND, int index). */
 #ifndef HANDLE_CB_SETCURSEL
 #define HANDLE_CB_SETCURSEL(hwnd, wParam, lParam, fn) \
