@@ -370,6 +370,7 @@ typedef struct App
     ControlFrame        controlFrame;
     ControlFrame        stagingFrame;
     ControlFrame        renderFrame;
+    bool_t              receiverRowsDirty;
     int                 layoutClientWidth;
     int                 layoutClientHeight;
     UINT                layoutDpi;
@@ -434,9 +435,6 @@ typedef struct CastGui_ControlDefinition_s
 #define GAIN_MEDIA_TYPE ("video/mp4")
 #define GUI_NATIVE_TEXT_CAPACITY (2048)
 #define SEEK_BAR_SUBCLASS_ID (1)
-
-#define DARK_FIELD      RGB(36, 39, 46)
-#define DARK_TEXT       RGB(232, 235, 240)
 
 /** Fixed controls in creation and tab order. Layout and runtime state are applied after creation. */
 static TCHAR* const c_deviceColumns[GUI_DEVICE_COLUMN_COUNT] = {TEXT("Receiver"), TEXT("Address"), TEXT("Model")};
@@ -1323,9 +1321,17 @@ static FORCE_INLINE void CaptureControlFrame(
     bool_t        isButton;
     bool_t        fileFocused;
     bool_t        hasReceiver;
+    bool_t        rowsDirty;
 
     next = &app->stagingFrame;
     ZeroMemory(next, sizeof(*next));
+    rowsDirty = app->receiverRowsDirty;
+    if (!rowsDirty)
+    {
+        CRT_Memory_Copy((byte_t*)next->receiver,
+                        (const byte_t*)app->controlFrame.receiver,
+                        sizeof(next->receiver));
+    }
     focus = GetFocus();
     for (index = 0; index < ARRAYSIZE(c_controls); ++index)
     {
@@ -1357,7 +1363,7 @@ static FORCE_INLINE void CaptureControlFrame(
     next->firstReceiver     = ListView_GetTopIndex(app->hList);
     for (row = 0; row < CAST_MAX_DEVICES; ++row)
     {
-        hasReceiver = (row < next->receiverCount);
+        hasReceiver = rowsDirty && (row < next->receiverCount);
         if (hasReceiver)
         {
             for (column = 0; column < GUI_DEVICE_COLUMN_COUNT; ++column)
@@ -1370,6 +1376,7 @@ static FORCE_INLINE void CaptureControlFrame(
             }
         }
     }
+    app->receiverRowsDirty = FALSE;
     fileFocused = (focus == app->hFile);
     if (fileFocused)
     {
@@ -1377,6 +1384,54 @@ static FORCE_INLINE void CaptureControlFrame(
     }
     AcquireSRWLockExclusive(&app->controlFrameLock);
     CRT_Memory_Copy((byte_t*)&app->controlFrame, (const byte_t*)next, sizeof(*next));
+    ReleaseSRWLockExclusive(&app->controlFrameLock);
+}
+
+static FORCE_INLINE void PublishControlText(
+    App* app,
+    HWND control)
+{
+    TCHAR text[GUI_CONTROL_TEXT_CAPACITY];
+    int   slot;
+
+    slot = GetDlgCtrlID(control) - ID_LIST;
+    ZeroMemory(text, sizeof(text));
+    (void)GetWindowText(control, text, ARRAYSIZE(text));
+    AcquireSRWLockExclusive(&app->controlFrameLock);
+    CRT_Memory_Copy((byte_t*)app->controlFrame.text[slot], (const byte_t*)text, sizeof(text));
+    ReleaseSRWLockExclusive(&app->controlFrameLock);
+}
+
+static FORCE_INLINE void PublishSliderPosition(
+    App* app,
+    HWND slider)
+{
+    int slot;
+    int position;
+
+    slot     = GetDlgCtrlID(slider) - ID_LIST;
+    position = (int)SendMessage(slider, TBM_GETPOS, 0, 0);
+    AcquireSRWLockExclusive(&app->controlFrameLock);
+    app->controlFrame.sliderPosition[slot] = position;
+    ReleaseSRWLockExclusive(&app->controlFrameLock);
+}
+
+static FORCE_INLINE void PublishButtonState(
+    App* app,
+    HWND button)
+{
+    int   slot;
+    BYTE  checked;
+    BYTE  pressed;
+    LRESULT state;
+
+    slot    = GetDlgCtrlID(button) - ID_LIST;
+    checked = (BYTE)(BST_CHECKED == SendMessage(button, BM_GETCHECK, 0, 0));
+    state   = SendMessage(button, BM_GETSTATE, 0, 0);
+    pressed = (BYTE)(0 != (state & BST_PUSHED));
+    AcquireSRWLockExclusive(&app->controlFrameLock);
+    app->controlFrame.checked[slot] = checked;
+    app->controlFrame.pressed[slot] = pressed;
     ReleaseSRWLockExclusive(&app->controlFrameLock);
 }
 
@@ -1683,9 +1738,14 @@ static FORCE_INLINE void ControlVisual_OnEnable(
 {
     App*           app;
     ControlVisual* visual;
+    int            slot;
 
     app    = GetApp(hwnd);
     visual = FindControlVisual(app, hwnd);
+    slot   = GetDlgCtrlID(hwnd) - ID_LIST;
+    AcquireSRWLockExclusive(&app->controlFrameLock);
+    app->controlFrame.enabled[slot] = (BYTE) !!enabled;
+    ReleaseSRWLockExclusive(&app->controlFrameLock);
     if (!enabled)
     {
         SetControlHot(app, visual, 0);
@@ -1706,6 +1766,36 @@ static FORCE_INLINE BOOL ControlVisual_OnEraseBackground(
     UNREFERENCED_PARAMETER(hwnd);
     UNREFERENCED_PARAMETER(dc);
     return TRUE;
+}
+
+static FORCE_INLINE void ControlVisual_OnSetFocus(
+    HWND hwnd,
+    HWND previous)
+{
+    App* app;
+    int  slot;
+
+    app  = GetApp(hwnd);
+    slot = GetDlgCtrlID(hwnd) - ID_LIST;
+    AcquireSRWLockExclusive(&app->controlFrameLock);
+    app->controlFrame.focused[slot] = TRUE;
+    ReleaseSRWLockExclusive(&app->controlFrameLock);
+    FORWARD_WM_SETFOCUS(hwnd, previous, DefSubclassProc);
+}
+
+static FORCE_INLINE void ControlVisual_OnKillFocus(
+    HWND hwnd,
+    HWND next)
+{
+    App* app;
+    int  slot;
+
+    app  = GetApp(hwnd);
+    slot = GetDlgCtrlID(hwnd) - ID_LIST;
+    AcquireSRWLockExclusive(&app->controlFrameLock);
+    app->controlFrame.focused[slot] = FALSE;
+    ReleaseSRWLockExclusive(&app->controlFrameLock);
+    FORWARD_WM_KILLFOCUS(hwnd, next, DefSubclassProc);
 }
 
 static FORCE_INLINE void ControlVisual_OnNcDestroy(
@@ -1816,6 +1906,8 @@ static LRESULT CALLBACK ControlVisualProc(
         HANDLE_MSG(hwnd, WM_ENABLE, ControlVisual_OnEnable);
         HANDLE_MSG(hwnd, WM_PAINT, ControlVisual_OnPaint);
         HANDLE_MSG(hwnd, WM_ERASEBKGND, ControlVisual_OnEraseBackground);
+        HANDLE_MSG(hwnd, WM_SETFOCUS, ControlVisual_OnSetFocus);
+        HANDLE_MSG(hwnd, WM_KILLFOCUS, ControlVisual_OnKillFocus);
         HANDLE_MSG(hwnd, WM_NCDESTROY, ControlVisual_OnNcDestroy);
         HANDLE_MSG(hwnd, WM_MOUSEMOVE, ControlVisual_OnMouseMove);
         HANDLE_MSG(hwnd, WM_LBUTTONDOWN, ControlVisual_OnLButtonDown);
@@ -2171,6 +2263,23 @@ static FORCE_INLINE void CastWindow_OnClientGeometry(
     }
 }
 
+static FORCE_INLINE void SetControlEnabledIfChanged(
+    HWND control,
+    bool_t enabled)
+{
+    bool_t changed;
+
+    changed = (!!IsWindowEnabled(control) != enabled);
+    if (changed)
+    {
+        (void)EnableWindow(control, enabled);
+    }
+}
+
+static FORCE_INLINE bool_t SetControlTextIfChanged(
+    HWND control,
+    const TCHAR* text);
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -2197,6 +2306,7 @@ static FORCE_INLINE void UpdateControls(
     bool_t  canSeek;
     bool_t  canPreview;
     bool_t  canGain;
+    bool_t  playCaptionChanged;
     LPCTSTR playCaption;
 
     selected          = ListView_GetNextItem(pApp->hList, -1, LVNI_SELECTED);
@@ -2218,18 +2328,43 @@ static FORCE_INLINE void UpdateControls(
     canGain           = (!hasSession) || hasOriginalSource;
     playCaption       = playing ? TEXT("Pause") : TEXT("Play");
 
-    (void)EnableWindow(pApp->hCast, canCast);
-    (void)EnableWindow(pApp->hRefresh, !pApp->discovering);
-    (void)EnableWindow(pApp->hStop, canStop);
-    (void)EnableWindow(pApp->hPlayPause, canPause);
-    (void)EnableWindow(pApp->hSeek, canSeek);
-    (void)EnableWindow(pApp->hSubtitle, !busy);
-    (void)EnableWindow(pApp->hSubtitleBrowse, !busy);
-    (void)EnableWindow(pApp->hFile, !busy);
-    (void)EnableWindow(pApp->hBrowse, !busy);
-    (void)EnableWindow(pApp->hPreview, canPreview);
-    (void)EnableWindow(pApp->hGain, canGain);
-    (void)SetWindowText(pApp->hPlayPause, playCaption);
+    SetControlEnabledIfChanged(pApp->hCast, canCast);
+    SetControlEnabledIfChanged(pApp->hRefresh, !pApp->discovering);
+    SetControlEnabledIfChanged(pApp->hStop, canStop);
+    SetControlEnabledIfChanged(pApp->hPlayPause, canPause);
+    SetControlEnabledIfChanged(pApp->hSeek, canSeek);
+    SetControlEnabledIfChanged(pApp->hSubtitle, !busy);
+    SetControlEnabledIfChanged(pApp->hSubtitleBrowse, !busy);
+    SetControlEnabledIfChanged(pApp->hFile, !busy);
+    SetControlEnabledIfChanged(pApp->hBrowse, !busy);
+    SetControlEnabledIfChanged(pApp->hPreview, canPreview);
+    SetControlEnabledIfChanged(pApp->hGain, canGain);
+    playCaptionChanged = SetControlTextIfChanged(pApp->hPlayPause, playCaption);
+    if (playCaptionChanged)
+    {
+        PublishControlText(pApp, pApp->hPlayPause);
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Writes changed native control text only when the value differs.
+ */
+static FORCE_INLINE bool_t SetControlTextIfChanged(
+    HWND control,
+    const TCHAR* text)
+{
+    TCHAR current[GUI_CONTROL_TEXT_CAPACITY];
+    bool_t changed;
+
+    (void)GetWindowText(control, current, ARRAYSIZE(current));
+    changed = (0 != lstrcmp(current, text));
+    if (changed)
+    {
+        (void)SetWindowText(control, text);
+    }
+    return changed;
 }
 
 /* Rewrites the slider value captions from the current transcoder config. */
@@ -2238,29 +2373,51 @@ static FORCE_INLINE void UpdateControls(
  * \par Details:
  *  Formats slider captions from the stored transcoder configuration.
  */
-static FORCE_INLINE void UpdateConfigLabels(App* pApp)
+static FORCE_INLINE void UpdateConfigLabels(
+    App* pApp,
+    HWND changedSlider)
 {
     TCHAR      text[GUI_SHORT_TEXT_CAPACITY];
     NativeText writer;
+    bool_t     updateWidth;
+    bool_t     updateQuality;
+    bool_t     updateKeyframe;
+    bool_t     updateMotion;
 
-    NativeText_Initialize(&writer, text, ARRAYSIZE(text));
-    NativeText_AppendString(&writer, TEXT("Width  "));
-    NativeText_AppendUnsigned(&writer, pApp->transcode.width, 1);
-    NativeText_AppendString(&writer, TEXT(" px"));
-    (void)SetWindowText(pApp->hResValue, text);
-    NativeText_Initialize(&writer, text, ARRAYSIZE(text));
-    NativeText_AppendString(&writer, TEXT("Quality  QP "));
-    NativeText_AppendSigned(&writer, pApp->transcode.qpInter);
-    (void)SetWindowText(pApp->hQpValue, text);
-    NativeText_Initialize(&writer, text, ARRAYSIZE(text));
-    NativeText_AppendString(&writer, TEXT("Keyframe  "));
-    NativeText_AppendUnsigned(&writer, pApp->transcode.gopLength, 1);
-    NativeText_AppendCharacter(&writer, TEXT('f'));
-    (void)SetWindowText(pApp->hGopValue, text);
-    NativeText_Initialize(&writer, text, ARRAYSIZE(text));
-    NativeText_AppendSigned(&writer, pApp->transcode.motionStrength);
-    NativeText_AppendCharacter(&writer, TEXT('%'));
-    (void)SetWindowText(pApp->hMotionValue, text);
+    updateWidth    = (NULL == changedSlider) || (pApp->hResSlider == changedSlider);
+    updateQuality  = (NULL == changedSlider) || (pApp->hQpSlider == changedSlider);
+    updateKeyframe = (NULL == changedSlider) || (pApp->hGopSlider == changedSlider);
+    updateMotion   = (NULL == changedSlider) || (pApp->hMotionSlider == changedSlider);
+    if (updateWidth)
+    {
+        NativeText_Initialize(&writer, text, ARRAYSIZE(text));
+        NativeText_AppendString(&writer, TEXT("Width  "));
+        NativeText_AppendUnsigned(&writer, pApp->transcode.width, 1);
+        NativeText_AppendString(&writer, TEXT(" px"));
+        SetControlTextIfChanged(pApp->hResValue, text);
+    }
+    if (updateQuality)
+    {
+        NativeText_Initialize(&writer, text, ARRAYSIZE(text));
+        NativeText_AppendString(&writer, TEXT("Quality  QP "));
+        NativeText_AppendSigned(&writer, pApp->transcode.qpInter);
+        SetControlTextIfChanged(pApp->hQpValue, text);
+    }
+    if (updateKeyframe)
+    {
+        NativeText_Initialize(&writer, text, ARRAYSIZE(text));
+        NativeText_AppendString(&writer, TEXT("Keyframe  "));
+        NativeText_AppendUnsigned(&writer, pApp->transcode.gopLength, 1);
+        NativeText_AppendCharacter(&writer, TEXT('f'));
+        SetControlTextIfChanged(pApp->hGopValue, text);
+    }
+    if (updateMotion)
+    {
+        NativeText_Initialize(&writer, text, ARRAYSIZE(text));
+        NativeText_AppendSigned(&writer, pApp->transcode.motionStrength);
+        NativeText_AppendCharacter(&writer, TEXT('%'));
+        SetControlTextIfChanged(pApp->hMotionValue, text);
+    }
 }
 
 /* Reads the sliders and checkbox into the transcoder config, snapping where needed, then refreshes
@@ -2271,7 +2428,9 @@ static FORCE_INLINE void UpdateConfigLabels(App* pApp)
  *  Snaps width to a multiple of sixteen, derives intra QP from inter QP and
  *  updates motion controls before refreshing the captions.
  */
-static FORCE_INLINE void ReadConfigFromSliders(App* pApp)
+static FORCE_INLINE void ReadConfigFromSliders(
+    App* pApp,
+    HWND changedSlider)
 {
     int    width;
     int    qp;
@@ -2279,7 +2438,8 @@ static FORCE_INLINE void ReadConfigFromSliders(App* pApp)
     bool_t motionAdaptive;
 
     width = (int)SendMessage(pApp->hResSlider, TBM_GETPOS, 0, 0);
-    width = (((width + GUI_PROXY_WIDTH_ROUNDING) / GUI_PROXY_WIDTH_ALIGNMENT) * GUI_PROXY_WIDTH_ALIGNMENT); /* proxy width is a multiple of 16 */
+    width = ((width + GUI_PROXY_WIDTH_ROUNDING) / GUI_PROXY_WIDTH_ALIGNMENT) *
+            GUI_PROXY_WIDTH_ALIGNMENT; /* proxy width is a multiple of 16 */
     if (width < GUI_PROXY_MIN_WIDTH)
     {
         width = GUI_PROXY_MIN_WIDTH;
@@ -2297,8 +2457,8 @@ static FORCE_INLINE void ReadConfigFromSliders(App* pApp)
     pApp->transcode.motionStrength = (int)SendMessage(pApp->hMotionSlider, TBM_GETPOS, 0, 0);
     motionAdaptive                 = (BST_CHECKED == SendMessage(pApp->hMotionCheck, BM_GETCHECK, 0, 0));
     pApp->transcode.motionAdaptive = motionAdaptive;
-    EnableWindow(pApp->hMotionSlider, pApp->transcode.motionAdaptive);
-    UpdateConfigLabels(pApp);
+    SetControlEnabledIfChanged(pApp->hMotionSlider, motionAdaptive);
+    UpdateConfigLabels(pApp, changedSlider);
 }
 
 /*************************************************************************************************/
@@ -2320,6 +2480,7 @@ static FORCE_INLINE void CreateControls(App* pApp)
         control = &c_controls[index];
         CreateChild(pApp, control, (byte_t*)pApp + control->destinationOffset);
     }
+    pApp->receiverRowsDirty = TRUE;
 
     SendMessage(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)TEXT("Automatic"));
     SendMessage(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)TEXT("Off"));
@@ -2327,10 +2488,6 @@ static FORCE_INLINE void CreateControls(App* pApp)
     SendMessage(pApp->hGain, TBM_SETRANGE, TRUE, MAKELPARAM(0, 400));
     SendMessage(pApp->hGain, TBM_SETPOS, TRUE, GUI_ORIGINAL_GAIN_PERCENT);
     SendMessage(pApp->hGain, TBM_SETPAGESIZE, 0, GUI_GAIN_PAGE_SIZE);
-    ListView_SetBkColor(pApp->hList, DARK_FIELD);
-    ListView_SetTextBkColor(pApp->hList, DARK_FIELD);
-    ListView_SetTextColor(pApp->hList, DARK_TEXT);
-
     /* Transcoder (proxy) configuration panel: sliders whose settings drive the GPU proxy encode. */
     GpuTranscode_InitializeConfig(&pApp->transcode);
     SendMessage(pApp->hResSlider, TBM_SETRANGE, TRUE, MAKELPARAM(320, 1920));
@@ -2343,7 +2500,7 @@ static FORCE_INLINE void CreateControls(App* pApp)
     SendMessage(pApp->hMotionSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.motionStrength);
     SendMessage(pApp->hMotionCheck, BM_SETCHECK, pApp->transcode.motionAdaptive ? BST_CHECKED : BST_UNCHECKED, 0);
 
-    ListView_SetExtendedListViewStyle(pApp->hList, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
+    ListView_SetExtendedListViewStyle(pApp->hList, LVS_EX_FULLROWSELECT);
     ZeroMemory(&column, sizeof(column));
     column.mask    = LVCF_TEXT | LVCF_WIDTH;
     column.cx      = GUI_DEVICE_COLUMN_WIDTH;
@@ -2352,16 +2509,17 @@ static FORCE_INLINE void CreateControls(App* pApp)
         column.pszText = *columnText;
         ListView_InsertColumn(pApp->hList, (int)(columnText - c_deviceColumns), &column);
     }
-    {
-    }
     SendMessage(pApp->hSeek, TBM_SETRANGE, TRUE, MAKELPARAM(0, SEEK_RANGE));
     /* A click on the channel should jump to the cursor and scrub, not page toward it. */
     SetWindowSubclass(pApp->hSeek, SeekBarProc, SEEK_BAR_SUBCLASS_ID, (DWORD_PTR)pApp);
     ApplyFont(pApp);
     GetClientRect(pApp->hWnd, &client);
-    Layout(pApp, pApp->dpi, pApp->immersiveWindow.metrics.cyCaption,
-           client.right - client.left, client.bottom - client.top);
-    UpdateConfigLabels(pApp);
+    Layout(pApp,
+           pApp->dpi,
+           pApp->immersiveWindow.metrics.cyCaption,
+           client.right - client.left,
+           client.bottom - client.top);
+    UpdateConfigLabels(pApp, NULL);
     EnableWindow(pApp->hMotionSlider, pApp->transcode.motionAdaptive);
     UpdateControls(pApp);
     CaptureControlFrame(pApp);
@@ -2378,7 +2536,10 @@ static FORCE_INLINE void DiscoveryJob(void* pParameter)
 {
     App* pApp = (App*)pParameter;
 
-    pApp->discovered.count = Ssdp_DiscoverCastDevices(&pApp->discovery, pApp->discovered.devices, CAST_MAX_DEVICES, DISCOVERY_MS);
+    pApp->discovered.count = Ssdp_DiscoverCastDevices(&pApp->discovery,
+                                                      pApp->discovered.devices,
+                                                      CAST_MAX_DEVICES,
+                                                      DISCOVERY_MS);
     pApp->discovered.error = Ssdp_GetError(&pApp->discovery);
 }
 
@@ -2431,6 +2592,7 @@ static FORCE_INLINE void OnDiscovered(App* pApp, const DiscoveryResult* pResult)
         pApp->devices.error = 0;
     }
     ListView_DeleteAllItems(pApp->hList);
+    pApp->receiverRowsDirty = TRUE;
     for (index = 0; index < pApp->devices.count; ++index)
     {
         const CastDevice* pDevice = &pApp->devices.devices[index];
@@ -3501,7 +3663,7 @@ static FORCE_INLINE void StartPreview(App* pApp)
     }
     if (hasLocalSource)
     {
-        ReadConfigFromSliders(pApp);
+        ReadConfigFromSliders(pApp, NULL);
         length    = GetTempPath(MAX_PATH, nativeTemp);
         pathReady = (0 < length) && (length < MAX_PATH);
         if (pathReady)
@@ -3596,6 +3758,10 @@ static FORCE_INLINE void ShowPosition(App* pApp, double seconds)
     double ratio;
     bool_t seeking;
     bool_t hasDuration;
+    int    sliderPosition;
+    int    currentPosition;
+    bool_t positionChanged;
+    bool_t textChanged;
 
     hSeek           = pApp->hSeek;
     durationSeconds = pApp->status.duration;
@@ -3609,7 +3775,14 @@ static FORCE_INLINE void ShowPosition(App* pApp, double seconds)
     clamped     = (seconds > durationSeconds) ? durationSeconds : seconds;
     seconds     = hasDuration ? clamped : seconds;
     ratio       = hasDuration ? (clamped / divisor) : 0.0;
-    SendMessage(hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)((ratio * SEEK_RANGE) + GUI_ROUNDING_HALF));
+    sliderPosition  = (int)((ratio * SEEK_RANGE) + GUI_ROUNDING_HALF);
+    currentPosition = (int)SendMessage(hSeek, TBM_GETPOS, 0, 0);
+    positionChanged = (sliderPosition != currentPosition);
+    if (positionChanged)
+    {
+        SendMessage(hSeek, TBM_SETPOS, TRUE, sliderPosition);
+        PublishSliderPosition(pApp, hSeek);
+    }
     if (pApp->status.hasMedia)
     {
         FormatTime(seconds, position, ARRAYSIZE(position));
@@ -3626,7 +3799,11 @@ static FORCE_INLINE void ShowPosition(App* pApp, double seconds)
     {
         Utf8ToNative(pApp->status.stateName, text, ARRAYSIZE(text));
     }
-    (void)SetWindowText(pApp->hTime, text);
+    textChanged = SetControlTextIfChanged(pApp->hTime, text);
+    if (textChanged)
+    {
+        PublishControlText(pApp, pApp->hTime);
+    }
 }
 
 /*************************************************************************************************/
@@ -3844,6 +4021,7 @@ static FORCE_INLINE void SeekToRatio(App* pApp, double ratio, int final)
         ratio = 1.0;
     }
     SendMessage(pApp->hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)((ratio * SEEK_RANGE) + GUI_ROUNDING_HALF));
+    PublishSliderPosition(pApp, pApp->hSeek);
     seconds = pApp->status.duration * ratio;
     if (final)
     {
@@ -3871,6 +4049,7 @@ static FORCE_INLINE void SeekToRatio(App* pApp, double ratio, int final)
         NativeText_AppendString(&writer, duration);
         (void)SetWindowText(pApp->hTime, text);
     }
+    PublishControlText(pApp, pApp->hTime);
 }
 
 /* The click position as a fraction of the channel: how far along the media the cursor points. */
@@ -3882,18 +4061,22 @@ static FORCE_INLINE void SeekToRatio(App* pApp, double ratio, int final)
  */
 static FORCE_INLINE double GetRatioFromClick(HWND hSeek, int x)
 {
-    RECT    channel;
+    App*    app;
+    RECT    client;
+    int     inset;
     double  span;
     double  offset;
-    bool_t  has_span;
+    bool_t  hasSpan;
     double  ratio;
 
-    SendMessage(hSeek, TBM_GETCHANNELRECT, 0, (LPARAM)&channel);
-    span     = (double)channel.right - (double)channel.left;
-    offset   = (double)x - (double)channel.left;
-    has_span = 0.0 < span;
-    ratio    = 0.0;
-    if (has_span)
+    app = GetApp(hSeek);
+    (void)GetClientRect(hSeek, &client);
+    inset   = ScaleAtDpi(app->dpi, GUI_CONTROL_GAP);
+    span    = (double)client.right - (double)client.left - (double)inset - (double)inset;
+    offset  = (double)x - (double)inset;
+    hasSpan = (0.0 < span);
+    ratio   = 0.0;
+    if (hasSpan)
     {
         ratio = offset / span;
     }
@@ -4428,6 +4611,7 @@ static FORCE_INLINE void CastWindow_OnCommand(HWND hWnd, int id, HWND hControl, 
         return;
     case ID_SUBTITLE:
         InvalidateRect(pApp->hSubtitle, NULL, FALSE);
+        PublishControlText(pApp, pApp->hSubtitle);
         return;
     case ID_CAST:
         StartCast(pApp);
@@ -4446,10 +4630,12 @@ static FORCE_INLINE void CastWindow_OnCommand(HWND hWnd, int id, HWND hControl, 
         {
             UpdateControls(pApp);
             SetTimer(hWnd, SUBTITLE_TIMER, GUI_SUBTITLE_POLL_MS, NULL);
+            PublishControlText(pApp, pApp->hFile);
         }
         return;
     case ID_MOTION_CHECK:
-        ReadConfigFromSliders(pApp);
+        ReadConfigFromSliders(pApp, NULL);
+        PublishButtonState(pApp, pApp->hMotionCheck);
         return;
     case ID_PREVIEW:
         StartPreview(pApp);
@@ -4468,8 +4654,9 @@ static FORCE_INLINE void CastWindow_OnCommand(HWND hWnd, int id, HWND hControl, 
  */
 static FORCE_INLINE LRESULT CastWindow_OnNotify(HWND hWnd, int idFrom, NMHDR* pHeader)
 {
-    App* pApp;
+    App*    pApp;
     LRESULT result;
+    int     selectedReceiver;
 
     pApp = GetApp(hWnd);
     if (pHeader->hwndFrom == pApp->hList)
@@ -4477,6 +4664,10 @@ static FORCE_INLINE LRESULT CastWindow_OnNotify(HWND hWnd, int idFrom, NMHDR* pH
         if (LVN_ITEMCHANGED == pHeader->code)
         {
             UpdateControls(pApp);
+            selectedReceiver = ListView_GetNextItem(pApp->hList, -1, LVNI_SELECTED);
+            AcquireSRWLockExclusive(&pApp->controlFrameLock);
+            pApp->controlFrame.selectedReceiver = selectedReceiver;
+            ReleaseSRWLockExclusive(&pApp->controlFrameLock);
         }
         else if (NM_DBLCLK == pHeader->code && IsWindowEnabled(pApp->hCast))
         {
@@ -4495,39 +4686,70 @@ static FORCE_INLINE LRESULT CastWindow_OnNotify(HWND hWnd, int idFrom, NMHDR* pH
  */
 static FORCE_INLINE void CastWindow_OnHScroll(HWND hWnd, HWND hControl, UINT code, int position)
 {
-    App* pApp;
+    App*   pApp;
+    bool_t isConfigSlider;
+    bool_t isSlider;
 
     UNREFERENCED_PARAMETER(position);
 
-    pApp = GetApp(hWnd);
+    pApp           = GetApp(hWnd);
+    isConfigSlider = (hControl == pApp->hResSlider) || (hControl == pApp->hQpSlider) ||
+                     (hControl == pApp->hGopSlider) || (hControl == pApp->hMotionSlider);
+    isSlider       = isConfigSlider || (hControl == pApp->hGain) || (hControl == pApp->hSeek);
 
     if (hControl == pApp->hGain)
     {
         TCHAR      text[GUI_STATE_TEXT_CAPACITY];
         NativeText writer;
-        unsigned   percent = (unsigned)SendMessage(pApp->hGain, TBM_GETPOS, 0, 0);
+        unsigned   percent;
+        LPCTSTR    gainState;
+
+        percent = (unsigned)SendMessage(pApp->hGain, TBM_GETPOS, 0, 0);
         NativeText_Initialize(&writer, text, ARRAYSIZE(text));
         NativeText_AppendString(&writer, TEXT("Audio gain "));
         NativeText_AppendUnsigned(&writer, percent, 1);
         NativeText_AppendCharacter(&writer, TEXT('%'));
-        (void)SetWindowText(pApp->hGainLabel, text);
+        (void)SetControlTextIfChanged(pApp->hGainLabel, text);
         if (pApp->pSession || pApp->preparingAudio)
         {
             SetTimer(hWnd, GAIN_TIMER, GUI_GAIN_POLL_MS, NULL);
         }
         else
         {
-            (void)SetWindowText(pApp->hGainState, (GUI_ORIGINAL_GAIN_PERCENT == percent) ? TEXT("Original audio") : TEXT("Applies during playback"));
+            gainState = (GUI_ORIGINAL_GAIN_PERCENT == percent) ? TEXT("Original audio")
+                                                                 : TEXT("Applies during playback");
+            (void)SetControlTextIfChanged(pApp->hGainState, gainState);
         }
+        PublishControlText(pApp, pApp->hGainLabel);
+        PublishControlText(pApp, pApp->hGainState);
     }
     else if (hControl == pApp->hSeek)
     {
         OnSeekScroll(pApp, code);
     }
-    else if (hControl == pApp->hResSlider || hControl == pApp->hQpSlider || hControl == pApp->hGopSlider ||
-             hControl == pApp->hMotionSlider)
+    else if (isConfigSlider)
     {
-        ReadConfigFromSliders(pApp);
+        ReadConfigFromSliders(pApp, hControl);
+        if (hControl == pApp->hResSlider)
+        {
+            PublishControlText(pApp, pApp->hResValue);
+        }
+        else if (hControl == pApp->hQpSlider)
+        {
+            PublishControlText(pApp, pApp->hQpValue);
+        }
+        else if (hControl == pApp->hGopSlider)
+        {
+            PublishControlText(pApp, pApp->hGopValue);
+        }
+        else
+        {
+            PublishControlText(pApp, pApp->hMotionValue);
+        }
+    }
+    if (isSlider)
+    {
+        PublishSliderPosition(pApp, hControl);
     }
 }
 
@@ -4688,6 +4910,10 @@ static FORCE_INLINE void CastRenderFrame(
     UINT frameDpi;
 
     frameDpi = paint->layout.dpi;
+    if (0 == frameDpi)
+    {
+        frameDpi = app->immersiveWindow.metrics.dpi;
+    }
     if (0 == frameDpi)
     {
         frameDpi = GUI_DEFAULT_DPI;
