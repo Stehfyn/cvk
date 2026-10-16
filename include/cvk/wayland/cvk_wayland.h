@@ -16,8 +16,8 @@
  * \param[out] pInfo     Receives the initialized VkWaylandSurfaceCreateInfoKHR
  * \param[in]  pNext     Optional extension chain attached to VkWaylandSurfaceCreateInfoKHR, or NULL
  * \param[in]  flags     Reserved for future use; must be 0
- * \param[in]  display   Pointers to the Wayland wl_display and wl_surface to associate the surface with
- * \param[in]  surface   Pointers to the Wayland wl_display and wl_surface to associate the surface with
+ * \param[out] display   Pointer to the Wayland wl_display to associate the surface with
+ * \param[out] surface   Pointer to the Wayland wl_surface to associate the surface with
  *
  * \retval     None
  */
@@ -30,8 +30,8 @@ void cvkInitWaylandSurfaceCreateInfo(VkWaylandSurfaceCreateInfoKHR* pInfo, const
  * \param[in]  instance     The instance to associate the surface with
  * \param[in]  pNext        Optional extension chain attached to VkWaylandSurfaceCreateInfoKHR, or NULL
  * \param[in]  flags        Reserved for future use; must be 0
- * \param[in]  display      Pointers to the Wayland wl_display and wl_surface to associate the surface with
- * \param[in]  surface      Pointers to the Wayland wl_display and wl_surface to associate the surface with
+ * \param[out] display      Pointer to the Wayland wl_display to associate the surface with
+ * \param[out] surface      Pointer to the Wayland wl_surface to associate the surface with
  * \param[in]  pAllocator   Optional allocation callbacks, or NULL
  * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned
  *
@@ -43,12 +43,12 @@ void cvkCreateWaylandSurface(VkInstance instance, const void* pNext, VkWaylandSu
 /**
  * \brief Retrieves physical device wayland presentation support.
  *
- * \param[in]  physicalDevice     The physical device
- * \param[in]  queueFamilyIndex   The queue family index
- * \param[out] display            A pointer to the wl_display associated with a Wayland compositor
+ * \param[in] physicalDevice     Physical device to query
+ * \param[in] queueFamilyIndex   Queue family whose presentation support is queried
+ * \param[in] display            Pointer to the wl_display of the Wayland compositor to query (input; tag should be [in], not [out])
  *
- * \retval     VK_TRUE    The queried support is available.
- * \retval     VK_FALSE   The queried support is unavailable.
+ * \retval    VK_TRUE    The queried support is available.
+ * \retval    VK_FALSE   The queried support is unavailable.
  */
 VkBool32 cvkGetPhysicalDeviceWaylandPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, struct wl_display* display);
 /* clang-format on */

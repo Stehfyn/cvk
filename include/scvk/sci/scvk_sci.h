@@ -291,13 +291,13 @@ void scvkGetMemorySciBufNV(VkDevice device, const void* pNext, VkDeviceMemory me
 /**
  * \brief Retrieves physical device external memory sci buf properties.
  *
- * \param[in]  physicalDevice            The handle to the physical device whose properties will be queried
- * \param[in]  handleType                The type of the handle handle
- * \param[in]  handle                    The NvSciBuffObj handle which will be imported
- * \param[in]  pNext                     Optional output extension chain attached to VkMemorySciBufPropertiesNV, or NULL
- * \param[out] pMemorySciBufProperties   A pointer to a VkMemorySciBufPropertiesNV structure
+ * \param[in]     physicalDevice            The handle to the physical device whose properties will be queried
+ * \param[in]     handleType                The type of the handle handle
+ * \param[in]     handle                    The NvSciBuffObj handle which will be imported
+ * \param[in,out] pNext                     Optional output extension chain attached to VkMemorySciBufPropertiesNV, or NULL
+ * \param[out]    pMemorySciBufProperties   A pointer to a VkMemorySciBufPropertiesNV structure describing properties of External Memory NvSciBufObj Handles
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceExternalMemorySciBufPropertiesNV(VkPhysicalDevice physicalDevice, VkExternalMemoryHandleTypeFlagBits handleType, NvSciBufObj handle, void* pNext, VkMemorySciBufPropertiesNV* pMemorySciBufProperties);
 
@@ -419,7 +419,7 @@ void scvkAllocateImportMemorySciBufNV(VkDevice device, const void* pNext, VkExte
 /**
  * \brief Creates a device with VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV chained.
  *
- * \param[in]  physicalDevice                     Must be one of the device handles returned from a call to vkEnumeratePhysicalDevices (see Physical Device Enumeration)
+ * \param[in]  physicalDevice                     Must be one of the device handles returned from a call to vkEnumeratePhysicalDevices
  * \param[in]  pNext                              Optional extension chain attached to VkDeviceCreateInfo, or NULL
  * \param[in]  semaphoreSciSyncPoolRequestCount   The requested maximum number of VkSemaphoreSciSyncPoolNV objects that can exist at the same time
  * \param[in]  flags                              Reserved for future use; must be 0
@@ -487,11 +487,11 @@ void scvkCreateSemaphoreWithSciSyncInfoNV(VkDevice device, const void* pNext, Vk
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceExternalMemorySciBufFeaturesNV chained to the output.
  *
- * \param[in]  physicalDevice                                  The physical device from which to query the supported features
- * \param[in]  pNext                                           Optional output extension chain attached to VkPhysicalDeviceExternalMemorySciBufFeaturesNV, or NULL
- * \param[out] pPhysicalDeviceExternalMemorySciBufFeaturesNV   Receives the structure describing NvSciBuf features that can be supported by an implementation
+ * \param[in]     physicalDevice                                  The physical device from which to query the supported features
+ * \param[in,out] pNext                                           Optional output extension chain attached to VkPhysicalDeviceExternalMemorySciBufFeaturesNV, or NULL
+ * \param[out]    pPhysicalDeviceExternalMemorySciBufFeaturesNV   Receives the structure describing NvSciBuf features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceExternalMemorySciBufFeaturesNV(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceExternalMemorySciBufFeaturesNV* pPhysicalDeviceExternalMemorySciBufFeaturesNV);
 
@@ -499,11 +499,11 @@ void scvkGetPhysicalDeviceExternalMemorySciBufFeaturesNV(VkPhysicalDevice physic
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceExternalSciSync2FeaturesNV chained to the output.
  *
- * \param[in]  physicalDevice                              The physical device from which to query the supported features
- * \param[in]  pNext                                       Optional output extension chain attached to VkPhysicalDeviceExternalSciSync2FeaturesNV, or NULL
- * \param[out] pPhysicalDeviceExternalSciSync2FeaturesNV   Receives the structure describing SciSync features that can be supported by an implementation
+ * \param[in]     physicalDevice                              The physical device from which to query the supported features
+ * \param[in,out] pNext                                       Optional output extension chain attached to VkPhysicalDeviceExternalSciSync2FeaturesNV, or NULL
+ * \param[out]    pPhysicalDeviceExternalSciSync2FeaturesNV   Receives the structure describing SciSync features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceExternalSciSync2FeaturesNV(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceExternalSciSync2FeaturesNV* pPhysicalDeviceExternalSciSync2FeaturesNV);
 
@@ -511,11 +511,11 @@ void scvkGetPhysicalDeviceExternalSciSync2FeaturesNV(VkPhysicalDevice physicalDe
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceExternalSciSyncFeaturesNV chained to the output.
  *
- * \param[in]  physicalDevice                             The physical device from which to query the supported features
- * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDeviceExternalSciSyncFeaturesNV, or NULL
- * \param[out] pPhysicalDeviceExternalSciSyncFeaturesNV   Receives the structure describing SciSync features that can be supported by an implementation
+ * \param[in]     physicalDevice                             The physical device from which to query the supported features
+ * \param[in,out] pNext                                      Optional output extension chain attached to VkPhysicalDeviceExternalSciSyncFeaturesNV, or NULL
+ * \param[out]    pPhysicalDeviceExternalSciSyncFeaturesNV   Receives the structure describing SciSync features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceExternalSciSyncFeaturesNV(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceExternalSciSyncFeaturesNV* pPhysicalDeviceExternalSciSyncFeaturesNV);
 /* clang-format on */

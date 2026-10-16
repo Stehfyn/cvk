@@ -111,11 +111,11 @@ void scvkInitAcquireProfilingLockInfo(VkAcquireProfilingLockInfoKHR* pInfo, cons
  *
  * \param[out] pInfo                Receives the initialized VkApplicationInfo
  * \param[in]  pNext                Optional extension chain attached to VkApplicationInfo, or NULL
- * \param[in]  pApplicationName     NULL or is a pointer to a null-terminated UTF-8 string containing the name of the application
+ * \param[in]  pApplicationName     NULL or a null-terminated UTF-8 string containing the name of the application
  * \param[in]  applicationVersion   An unsigned integer variable containing the developer-supplied version number of the application
- * \param[in]  pEngineName          NULL or is a pointer to a null-terminated UTF-8 string containing the name of the engine (if any) used to create the application
+ * \param[in]  pEngineName          NULL or a null-terminated UTF-8 string containing the name of the engine used to create the application
  * \param[in]  engineVersion        An unsigned integer variable containing the developer-supplied version number of the engine used to create the application
- * \param[in]  apiVersion           The version of the Vulkan API against which the application expects to run, encoded as described in extendingvulkan-coreversions-versionnumbers
+ * \param[in]  apiVersion           The highest Vulkan API version the application is designed to use, encoded with VK_MAKE_API_VERSION
  *
  * \retval     None
  */
@@ -300,7 +300,7 @@ void scvkInitBindImageMemoryInfo(VkBindImageMemoryInfo* pInfo, const void* pNext
  *
  * \param[out] pInfo        Receives the initialized VkBindImageMemorySwapchainInfoKHR
  * \param[in]  pNext        Optional extension chain attached to VkBindImageMemorySwapchainInfoKHR, or NULL
- * \param[in]  swapchain    VK_NULL_HANDLE or a swapchain handle
+ * \param[in]  swapchain    VK_NULL_HANDLE or the swapchain whose image at imageIndex supplies the memory binding
  * \param[in]  imageIndex   An image index within swapchain
  *
  * \retval     None
@@ -367,8 +367,8 @@ void scvkInitBufferDeviceAddressInfo(VkBufferDeviceAddressInfo* pInfo, const voi
  *
  * \param[out] pInfo               Receives the initialized VkBufferImageCopy
  * \param[in]  bufferOffset        The offset in bytes from the start of the buffer object where the image data is copied from or to
- * \param[in]  bufferRowLength     Specify in texels a subregion of a larger two- or three-dimensional image in buffer memory, and control the addressing calculations
- * \param[in]  bufferImageHeight   Specify in texels a subregion of a larger two- or three-dimensional image in buffer memory, and control the addressing calculations
+ * \param[in]  bufferRowLength     Row length in texels of the image data in buffer memory, or 0 for tightly packed rows of imageExtent.width
+ * \param[in]  bufferImageHeight   Height in texels of each image slice in buffer memory, or 0 for tightly packed slices of imageExtent.height
  * \param[in]  imageSubresource    A VkImageSubresourceLayers used to specify the specific image subresources of the image used for the source or destination image data
  * \param[in]  imageOffset         Selects the initial x, y, z offsets in texels of the sub-region of the source or destination image data
  * \param[in]  imageExtent         The size in texels of the image to copy in width, height and depth
@@ -388,7 +388,7 @@ void scvkInitBufferImageCopy(VkBufferImageCopy* pInfo, VkDeviceSize bufferOffset
  * \param[in]  srcQueueFamilyIndex   The source queue family for a queue family ownership transfer
  * \param[in]  dstQueueFamilyIndex   The destination queue family for a queue family ownership transfer
  * \param[in]  buffer                A handle to the buffer whose backing memory is affected by the barrier
- * \param[in]  offset                An offset in bytes into the backing memory for buffer; this is relative to the base offset as bound to the buffer (see vkBindBufferMemory)
+ * \param[in]  offset                An offset in bytes into the backing memory for buffer; this is relative to the base offset as bound to the buffer
  * \param[in]  size                  A size in bytes of the affected area of backing memory for buffer, or VK_WHOLE_SIZE to use the range from offset to the end of the buffer
  *
  * \retval     None
@@ -454,7 +454,7 @@ void scvkInitCalibratedTimestampInfo(VkCalibratedTimestampInfoKHR* pInfo, const 
  * \param[out] pInfo             Receives the initialized VkClearAttachment
  * \param[in]  aspectMask        A mask selecting the color, depth and/or stencil aspects of the attachment to be cleared
  * \param[in]  colorAttachment   Only meaningful if VK_IMAGE_ASPECT_COLOR_BIT is set in aspectMask, in which case it is an index into the bound color attachments
- * \param[in]  clearValue        The color or depth/stencil value to clear the attachment to, as described in Clear Values below
+ * \param[in]  clearValue        The color or depth/stencil value to clear the attachment to
  *
  * \retval     None
  */
@@ -536,7 +536,7 @@ void scvkInitCommandBufferInheritanceInfo(VkCommandBufferInheritanceInfo* pInfo,
  * \param[out] pInfo              Receives the initialized VkCommandPoolCreateInfo
  * \param[in]  pNext              Optional extension chain attached to VkCommandPoolCreateInfo, or NULL
  * \param[in]  flags              A bitmask of VkCommandPoolCreateFlagBits indicating usage behavior for the pool and command buffers allocated from it
- * \param[in]  queueFamilyIndex   Designates a queue family as described in section Queue Family Properties
+ * \param[in]  queueFamilyIndex   Index of the queue family whose queues will execute command buffers allocated from the pool
  *
  * \retval     None
  */
@@ -616,12 +616,12 @@ void scvkInitConformanceVersion(VkConformanceVersion* pInfo, uint8_t major, uint
  *
  * \param[out] pInfo             Receives the initialized VkCopyDescriptorSet
  * \param[in]  pNext             Optional extension chain attached to VkCopyDescriptorSet, or NULL
- * \param[in]  srcSet            The source set, binding, and array element, respectively
- * \param[in]  srcBinding        The source set, binding, and array element, respectively
- * \param[in]  srcArrayElement   The source set, binding, and array element, respectively
- * \param[in]  dstSet            The destination set, binding, and array element, respectively
- * \param[in]  dstBinding        The destination set, binding, and array element, respectively
- * \param[in]  dstArrayElement   The destination set, binding, and array element, respectively
+ * \param[in]  srcSet            The descriptor set to copy descriptors from
+ * \param[in]  srcBinding        The binding within srcSet to copy descriptors from
+ * \param[in]  srcArrayElement   The first array element within srcBinding to copy descriptors from
+ * \param[in]  dstSet            The descriptor set to copy descriptors into
+ * \param[in]  dstBinding        The binding within dstSet to copy descriptors into
+ * \param[in]  dstArrayElement   The first array element within dstBinding to copy descriptors into
  * \param[in]  descriptorCount   The number of descriptors to copy from the source to destination
  *
  * \retval     None
@@ -647,7 +647,7 @@ void scvkInitDebugUtilsLabel(VkDebugUtilsLabelEXT* pInfo, const void* pNext, con
  *
  * \param[out] pInfo              Receives the initialized VkDebugUtilsMessengerCallbackDataEXT
  * \param[in]  pNext              Optional extension chain attached to VkDebugUtilsMessengerCallbackDataEXT, or NULL
- * \param[in]  flags              0 and is reserved for future use
+ * \param[in]  flags              Reserved for future use; must be 0
  * \param[in]  pMessageIdName     NULL or a null-terminated UTF-8 string that identifies the particular message ID that is associated with the provided message
  * \param[in]  messageIdNumber    The ID number of the triggering message
  * \param[in]  pMessage           NULL if messageTypes is equal to VK_DEBUG_UTILS_MESSAGE_TYPE_DEVICE_ADDRESS_BINDING_BIT_EXT, or a null-terminated UTF-8 string detailing the trigger conditions
@@ -668,7 +668,7 @@ void scvkInitDebugUtilsMessengerCallbackData(VkDebugUtilsMessengerCallbackDataEX
  *
  * \param[out] pInfo             Receives the initialized VkDebugUtilsMessengerCreateInfoEXT
  * \param[in]  pNext             Optional extension chain attached to VkDebugUtilsMessengerCreateInfoEXT, or NULL
- * \param[in]  flags             0 and is reserved for future use
+ * \param[in]  flags             Reserved for future use; must be 0
  * \param[in]  messageSeverity   A bitmask of VkDebugUtilsMessageSeverityFlagBitsEXT specifying which severity of event(s) will cause this callback to be called
  * \param[in]  messageType       A bitmask of VkDebugUtilsMessageTypeFlagBitsEXT specifying which type of event(s) will cause this callback to be called
  * \param[in]  pfnUserCallback   The application callback function to call
@@ -713,7 +713,7 @@ void scvkInitDebugUtilsObjectTagInfo(VkDebugUtilsObjectTagInfoEXT* pInfo, const 
  * \brief Initializes a VkDescriptorBufferInfo.
  *
  * \param[out] pInfo    Receives the initialized VkDescriptorBufferInfo
- * \param[in]  buffer   Is
+ * \param[in]  buffer   VK_NULL_HANDLE or the buffer the descriptor refers to
  * \param[in]  offset   The offset in bytes from the start of buffer
  * \param[in]  range    The size in bytes that is used for this descriptor update, or VK_WHOLE_SIZE to use the range from offset to the end of the buffer
  *
@@ -783,8 +783,8 @@ void scvkInitDescriptorSetAllocateInfo(VkDescriptorSetAllocateInfo* pInfo, const
  * \param[in]  binding              The binding number of this entry and corresponds to a resource of the same binding number in the shader stages
  * \param[in]  descriptorType       A VkDescriptorType specifying which type of resource descriptors are used for this binding
  * \param[in]  descriptorCount      The number of descriptors contained in the binding, accessed in a shader as an array, except if descriptorType is VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK in which case descriptorCount is the size in bytes of the inline uniform block
- * \param[in]  stageFlags           Member is a bitmask of VkShaderStageFlagBits specifying which pipeline shader stages can access a resource for this binding
- * \param[in]  pImmutableSamplers   Affects initialization of samplers
+ * \param[in]  stageFlags           A bitmask of VkShaderStageFlagBits specifying which pipeline shader stages can access a resource for this binding
+ * \param[in]  pImmutableSamplers   NULL, or descriptorCount sampler handles used as the binding's immutable samplers
  *
  * \retval     None
  */
@@ -1046,7 +1046,7 @@ void scvkInitDeviceObjectReservationCreateInfo(VkDeviceObjectReservationCreateIn
  *
  * \param[out] pInfo              Receives the initialized VkDeviceQueueCreateInfo
  * \param[in]  pNext              Optional extension chain attached to VkDeviceQueueCreateInfo, or NULL
- * \param[in]  flags              Reserved for future use; must be 0
+ * \param[in]  flags              Bitmask of VkDeviceQueueCreateFlagBits indicating behavior of the queues, such as VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT for protected-capable queues
  * \param[in]  queueFamilyIndex   An unsigned integer indicating the index of the queue family in which to create the queues on this device
  * \param[in]  queueCount         An unsigned integer specifying the number of queues to create in the queue family indicated by queueFamilyIndex, and with the behavior specified by flags
  * \param[in]  pQueuePriorities   A pointer to an array of queueCount normalized floating-point values, specifying priorities of work that will be submitted to each created queue
@@ -1213,7 +1213,7 @@ void scvkInitDisplayProperties2(VkDisplayProperties2KHR* pInfo, void* pNext);
  * \param[in]  planeIndex        The plane on which this surface appears
  * \param[in]  planeStackIndex   The z-order of the plane
  * \param[in]  transform         A VkSurfaceTransformFlagBitsKHR value specifying the transformation to apply to images as part of the scanout operation
- * \param[in]  globalAlpha       The global alpha value
+ * \param[in]  globalAlpha       Global alpha value in [0,1], used only when alphaMode is VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR
  * \param[in]  alphaMode         A VkDisplayPlaneAlphaFlagBitsKHR value specifying the type of alpha blending to use
  * \param[in]  imageExtent       The size of the presentable images to use with the surface
  *
@@ -1409,7 +1409,7 @@ void scvkInitExternalSemaphoreProperties(VkExternalSemaphoreProperties* pInfo, v
  * \param[out] pInfo              Receives the initialized VkFaultCallbackInfo
  * \param[in]  pNext              Optional extension chain attached to VkFaultCallbackInfo, or NULL
  * \param[in]  faultCount         The number of reported faults in the array pointed to by pFaults
- * \param[in]  pFaults            Either NULL or a pointer to an array of faultCount VkFaultData structures
+ * \param[out] pFaults            Either NULL or a pointer to an array of faultCount VkFaultData structures
  * \param[in]  pfnFaultCallback   A function pointer to the fault handler function that will be called by the implementation when a fault occurs
  *
  * \retval     None
@@ -1524,13 +1524,13 @@ void scvkInitFramebufferAttachmentsCreateInfo(VkFramebufferAttachmentsCreateInfo
  *
  * \param[out] pInfo             Receives the initialized VkFramebufferCreateInfo
  * \param[in]  pNext             Optional extension chain attached to VkFramebufferCreateInfo, or NULL
- * \param[in]  flags             A bitmask of VkFramebufferCreateFlagBits
+ * \param[in]  flags             A bitmask of VkFramebufferCreateFlagBits, such as VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT for an imageless framebuffer
  * \param[in]  renderPass        A render pass defining what render passes the framebuffer will be compatible with
  * \param[in]  attachmentCount   The number of attachments
  * \param[in]  pAttachments      A pointer to an array of VkImageView handles, each of which will be used as the corresponding attachment in a render pass instance
- * \param[in]  width             Define the dimensions of the framebuffer
- * \param[in]  height            Define the dimensions of the framebuffer
- * \param[in]  layers            Define the dimensions of the framebuffer
+ * \param[in]  width             Width of the framebuffer in pixels
+ * \param[in]  height            Height of the framebuffer in pixels
+ * \param[in]  layers            Number of array layers in the framebuffer
  *
  * \retval     None
  */
@@ -1541,12 +1541,12 @@ void scvkInitFramebufferCreateInfo(VkFramebufferCreateInfo* pInfo, const void* p
  * \brief Initializes a VkGraphicsPipelineCreateInfo.
  *
  * \param[out] pInfo                 Receives the initialized VkGraphicsPipelineCreateInfo
- * \param[in]  pNext                 Optional extension chain attached to VkGraphicsPipelineCreateInfo, or NULL
+ * \param[in]  pNext                 Optional input extension chain attached to VkGraphicsPipelineCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  flags                 A bitmask of VkPipelineCreateFlagBits specifying how the pipeline will be generated
  * \param[in]  stageCount            The number of entries in the pStages array
  * \param[in]  pStages               A pointer to an array of stageCount VkPipelineShaderStageCreateInfo structures describing the set of the shader stages to be included in the graphics pipeline
- * \param[in]  pVertexInputState     A pointer to a VkPipelineVertexInputStateCreateInfo structure
- * \param[in]  pInputAssemblyState   A pointer to a VkPipelineInputAssemblyStateCreateInfo structure which determines input assembly behavior for vertex shading, as described in Drawing Commands
+ * \param[in]  pVertexInputState     A pointer to a VkPipelineVertexInputStateCreateInfo structure specifying parameters of a newly created pipeline vertex input state
+ * \param[in]  pInputAssemblyState   A pointer to a VkPipelineInputAssemblyStateCreateInfo structure which determines input assembly behavior for vertex shading
  * \param[in]  pTessellationState    A pointer to a VkPipelineTessellationStateCreateInfo structure defining tessellation state used by tessellation shaders
  * \param[in]  pViewportState        A pointer to a VkPipelineViewportStateCreateInfo structure defining viewport state used when rasterization is enabled
  * \param[in]  pRasterizationState   A pointer to a VkPipelineRasterizationStateCreateInfo structure defining rasterization state
@@ -1614,10 +1614,10 @@ void scvkInitImageBlit(VkImageBlit* pInfo, VkImageSubresourceLayers srcSubresour
  * \brief Initializes a VkImageCopy.
  *
  * \param[out] pInfo            Receives the initialized VkImageCopy
- * \param[in]  srcSubresource   VkImageSubresourceLayers structures specifying the image subresources of the images used for the source and destination image data, respectively
- * \param[in]  srcOffset        Select the initial x, y, and z offsets in texels of the sub-regions of the source and destination image data
- * \param[in]  dstSubresource   VkImageSubresourceLayers structures specifying the image subresources of the images used for the source and destination image data, respectively
- * \param[in]  dstOffset        Select the initial x, y, and z offsets in texels of the sub-regions of the source and destination image data
+ * \param[in]  srcSubresource   A VkImageSubresourceLayers structure specifying the source image subresource
+ * \param[in]  srcOffset        Initial x, y, and z offsets in texels of the source sub-region
+ * \param[in]  dstSubresource   A VkImageSubresourceLayers structure specifying the destination image subresource
+ * \param[in]  dstOffset        Initial x, y, and z offsets in texels of the destination sub-region
  * \param[in]  extent           The size in texels of the image to copy in width, height and depth
  *
  * \retval     None
@@ -1629,7 +1629,7 @@ void scvkInitImageCopy(VkImageCopy* pInfo, VkImageSubresourceLayers srcSubresour
  * \brief Initializes a VkImageCreateInfo.
  *
  * \param[out] pInfo                   Receives the initialized VkImageCreateInfo
- * \param[in]  pNext                   Optional extension chain attached to VkImageCreateInfo, or NULL
+ * \param[in]  pNext                   Optional input extension chain attached to VkImageCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image
  * \param[in]  imageType               A VkImageType value specifying the basic dimensionality of the image
  * \param[in]  format                  A VkFormat describing the format and type of the texel blocks that will be contained in the image
@@ -1758,10 +1758,10 @@ void scvkInitImagePlaneMemoryRequirementsInfo(VkImagePlaneMemoryRequirementsInfo
  * \brief Initializes a VkImageResolve.
  *
  * \param[out] pInfo            Receives the initialized VkImageResolve
- * \param[in]  srcSubresource   VkImageSubresourceLayers structures specifying the image subresources of the images used for the source and destination image data, respectively
- * \param[in]  srcOffset        Select the initial x, y, and z offsets in texels of the sub-regions of the source and destination image data
- * \param[in]  dstSubresource   VkImageSubresourceLayers structures specifying the image subresources of the images used for the source and destination image data, respectively
- * \param[in]  dstOffset        Select the initial x, y, and z offsets in texels of the sub-regions of the source and destination image data
+ * \param[in]  srcSubresource   A VkImageSubresourceLayers structure specifying the source image subresource
+ * \param[in]  srcOffset        Initial x, y, and z offsets in texels of the source sub-region
+ * \param[in]  dstSubresource   A VkImageSubresourceLayers structure specifying the destination image subresource
+ * \param[in]  dstOffset        Initial x, y, and z offsets in texels of the destination sub-region
  * \param[in]  extent           The size in texels of the source image to resolve in width, height and depth
  *
  * \retval     None
@@ -1800,8 +1800,8 @@ void scvkInitImageSubresource(VkImageSubresource* pInfo, VkImageAspectFlags aspe
  * \param[out] pInfo            Receives the initialized VkImageSubresourceLayers
  * \param[in]  aspectMask       A combination of VkImageAspectFlagBits, selecting the color, depth and/or stencil aspects to be copied
  * \param[in]  mipLevel         The mipmap level to copy
- * \param[in]  baseArrayLayer   The starting layer and number of layers to copy
- * \param[in]  layerCount       The starting layer and number of layers to copy
+ * \param[in]  baseArrayLayer   The first array layer to copy
+ * \param[in]  layerCount       The number of array layers to copy
  *
  * \retval     None
  */
@@ -1951,7 +1951,7 @@ void scvkInitInputAttachmentAspectReference(VkInputAttachmentAspectReference* pI
  * \param[out] pInfo                     Receives the initialized VkInstanceCreateInfo
  * \param[in]  pNext                     Optional extension chain attached to VkInstanceCreateInfo, or NULL
  * \param[in]  flags                     A bitmask of VkInstanceCreateFlagBits indicating the behavior of the instance
- * \param[in]  pApplicationInfo          NULL or a pointer to a VkApplicationInfo structure
+ * \param[in]  pApplicationInfo          NULL or a pointer to a VkApplicationInfo identifying the application, engine, and highest Vulkan API version it uses
  * \param[in]  enabledLayerCount         The number of global layers to enable
  * \param[in]  ppEnabledLayerNames       A pointer to an array of enabledLayerCount null-terminated UTF-8 strings containing the names of layers to enable for the created instance
  * \param[in]  enabledExtensionCount     The number of global extensions to enable
@@ -2212,7 +2212,7 @@ void scvkInitPerformanceQuerySubmitInfo(VkPerformanceQuerySubmitInfoKHR* pInfo, 
  *
  * \param[out] pInfo                                Receives the initialized VkPhysicalDevice16BitStorageFeatures
  * \param[in]  pNext                                Optional extension chain attached to VkPhysicalDevice16BitStorageFeatures, or NULL
- * \param[in]  storageBuffer16BitAccess             Specifies whether objects in the StorageBuffer, or PhysicalStorageBuffer storage class with the Block decoration can have 16-bit integer and 16-bit floating-point members
+ * \param[in]  storageBuffer16BitAccess             Specifies whether objects in the StorageBuffer, ShaderRecordBufferKHR, or PhysicalStorageBuffer storage class with the Block decoration can have 16-bit integer and 16-bit floating-point members
  * \param[in]  uniformAndStorageBuffer16BitAccess   Specifies whether objects in the Uniform storage class with the Block decoration can have 16-bit integer and 16-bit floating-point members
  * \param[in]  storagePushConstant16                Specifies whether objects in the PushConstant storage class can have 16-bit integer and 16-bit floating-point members
  * \param[in]  storageInputOutput16                 Specifies whether objects in the Input and Output storage classes can have 16-bit integer and 16-bit floating-point members
@@ -2227,8 +2227,8 @@ void scvkInitPhysicalDevice16BitStorageFeatures(VkPhysicalDevice16BitStorageFeat
  *
  * \param[out] pInfo            Receives the initialized VkPhysicalDevice4444FormatsFeaturesEXT
  * \param[in]  pNext            Optional extension chain attached to VkPhysicalDevice4444FormatsFeaturesEXT, or NULL
- * \param[in]  formatA4R4G4B4   Indicates that the implementation must support using a VkFormat of VK_FORMAT_A4R4G4B4_UNORM_PACK16_EXT with at least the following VkFormatFeatureFlagBits:
- * \param[in]  formatA4B4G4R4   Indicates that the implementation must support using a VkFormat of VK_FORMAT_A4B4G4R4_UNORM_PACK16_EXT with at least the following VkFormatFeatureFlagBits:
+ * \param[in]  formatA4R4G4B4   Indicates support for VK_FORMAT_A4R4G4B4_UNORM_PACK16_EXT with at least the sampled-image, blit-source, and linear-filter format features
+ * \param[in]  formatA4B4G4R4   Indicates support for VK_FORMAT_A4B4G4R4_UNORM_PACK16_EXT with at least the sampled-image, blit-source, and linear-filter format features
  *
  * \retval     None
  */
@@ -2240,7 +2240,7 @@ void scvkInitPhysicalDevice4444FormatsFeatures(VkPhysicalDevice4444FormatsFeatur
  *
  * \param[out] pInfo                               Receives the initialized VkPhysicalDevice8BitStorageFeatures
  * \param[in]  pNext                               Optional extension chain attached to VkPhysicalDevice8BitStorageFeatures, or NULL
- * \param[in]  storageBuffer8BitAccess             Indicates whether objects in the StorageBuffer, or PhysicalStorageBuffer storage class with the Block decoration can have 8-bit integer members
+ * \param[in]  storageBuffer8BitAccess             Indicates whether objects in the StorageBuffer, ShaderRecordBufferKHR, or PhysicalStorageBuffer storage class with the Block decoration can have 8-bit integer members
  * \param[in]  uniformAndStorageBuffer8BitAccess   Indicates whether objects in the Uniform storage class with the Block decoration can have 8-bit integer members
  * \param[in]  storagePushConstant8                Indicates whether objects in the PushConstant storage class can have 8-bit integer members
  *
@@ -2291,7 +2291,7 @@ void scvkInitPhysicalDeviceBlendOperationAdvancedProperties(VkPhysicalDeviceBlen
  * \param[in]  pNext                              Optional extension chain attached to VkPhysicalDeviceBufferDeviceAddressFeatures, or NULL
  * \param[in]  bufferDeviceAddress                Indicates that the implementation supports accessing buffer memory in shaders as storage buffers via an address queried from vkGetBufferDeviceAddress
  * \param[in]  bufferDeviceAddressCaptureReplay   Indicates that the implementation supports saving and reusing buffer and device addresses, e.g. for trace capture and replay
- * \param[in]  bufferDeviceAddressMultiDevice     Indicates that the implementation supports the bufferDeviceAddress and rayTracingPipeline features , rayTracingPipeline and rayQuery features and rayQuery features for logical devices created with multiple physical devices
+ * \param[in]  bufferDeviceAddressMultiDevice     Indicates that the implementation supports the bufferDeviceAddress, rayTracingPipeline, and rayQuery features for logical devices created with multiple physical devices
  *
  * \retval     None
  */
@@ -2326,7 +2326,7 @@ void scvkInitPhysicalDeviceConservativeRasterizationProperties(VkPhysicalDeviceC
  *
  * \param[out] pInfo                            Receives the initialized VkPhysicalDeviceCustomBorderColorFeaturesEXT
  * \param[in]  pNext                            Optional extension chain attached to VkPhysicalDeviceCustomBorderColorFeaturesEXT, or NULL
- * \param[in]  customBorderColors               Indicates that the implementation supports providing a borderColor value with one of the following values at sampler creation time:
+ * \param[in]  customBorderColors               Indicates that the implementation supports VK_BORDER_COLOR_FLOAT_CUSTOM_EXT and VK_BORDER_COLOR_INT_CUSTOM_EXT border colors at sampler creation
  * \param[in]  customBorderColorWithoutFormat   Indicates that explicit formats are not required for custom border colors and the value of the format member of the VkSamplerCustomBorderColorCreateInfoEXT structure may be VK_FORMAT_UNDEFINED
  *
  * \retval     None
@@ -2437,9 +2437,9 @@ void scvkInitPhysicalDeviceDriverProperties(VkPhysicalDeviceDriverProperties* pI
  *
  * \param[out] pInfo                                     Receives the initialized VkPhysicalDeviceExtendedDynamicState2FeaturesEXT
  * \param[in]  pNext                                     Optional extension chain attached to VkPhysicalDeviceExtendedDynamicState2FeaturesEXT, or NULL
- * \param[in]  extendedDynamicState2                     Indicates that the implementation supports the following dynamic states:
- * \param[in]  extendedDynamicState2LogicOp              Indicates that the implementation supports the following dynamic state:
- * \param[in]  extendedDynamicState2PatchControlPoints   Indicates that the implementation supports the following dynamic state:
+ * \param[in]  extendedDynamicState2                     Indicates that the implementation supports the depth bias enable, primitive restart enable, and rasterizer discard enable dynamic states
+ * \param[in]  extendedDynamicState2LogicOp              Indicates that the implementation supports the VK_DYNAMIC_STATE_LOGIC_OP_EXT dynamic state
+ * \param[in]  extendedDynamicState2PatchControlPoints   Indicates that the implementation supports the VK_DYNAMIC_STATE_PATCH_CONTROL_POINTS_EXT dynamic state
  *
  * \retval     None
  */
@@ -2451,7 +2451,7 @@ void scvkInitPhysicalDeviceExtendedDynamicState2Features(VkPhysicalDeviceExtende
  *
  * \param[out] pInfo                  Receives the initialized VkPhysicalDeviceExtendedDynamicStateFeaturesEXT
  * \param[in]  pNext                  Optional extension chain attached to VkPhysicalDeviceExtendedDynamicStateFeaturesEXT, or NULL
- * \param[in]  extendedDynamicState   Indicates that the implementation supports the following dynamic states:
+ * \param[in]  extendedDynamicState   Indicates that the implementation supports the cull mode, front face, primitive topology, viewport/scissor with count, vertex input binding stride, depth test/write/compare/bounds, and stencil test/op dynamic states
  *
  * \retval     None
  */
@@ -2523,7 +2523,7 @@ void scvkInitPhysicalDeviceExternalSemaphoreInfo(VkPhysicalDeviceExternalSemapho
  * \brief Initializes a VkPhysicalDeviceFeatures.
  *
  * \param[out] pInfo                                     Receives the initialized VkPhysicalDeviceFeatures
- * \param[in]  robustBufferAccess                        Enables shaders-robust-buffer-access guarantees for shader buffer accesses
+ * \param[in]  robustBufferAccess                        Enables robust (bounds-checked) buffer access guarantees for shader buffer accesses
  * \param[in]  fullDrawIndexUint32                       Specifies the full 32-bit range of indices is supported for indexed draw calls when using a VkIndexType of VK_INDEX_TYPE_UINT32
  * \param[in]  imageCubeArray                            Specifies whether image views with a VkImageViewType of VK_IMAGE_VIEW_TYPE_CUBE_ARRAY can be created, and that the corresponding SampledCubeArray and ImageCubeArray SPIR-V capabilities can be used in shader code
  * \param[in]  independentBlend                          Specifies whether the VkPipelineColorBlendAttachmentState settings are controlled independently per-attachment
@@ -2552,10 +2552,10 @@ void scvkInitPhysicalDeviceExternalSemaphoreInfo(VkPhysicalDeviceExternalSemapho
  * \param[in]  fragmentStoresAndAtomics                  Specifies whether storage buffers and images support stores and atomic operations in the fragment shader stage
  * \param[in]  shaderTessellationAndGeometryPointSize    Specifies whether the PointSize built-in decoration is available in the tessellation control, tessellation evaluation, and geometry shader stages
  * \param[in]  shaderImageGatherExtended                 Specifies whether the extended set of image gather instructions are available in shader code
- * \param[in]  shaderStorageImageExtendedFormats         Specifies whether all the "storage image extended formats" below are supported; if this feature is supported, then the VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT must be supported in optimalTilingFeatures for the following formats:
+ * \param[in]  shaderStorageImageExtendedFormats         Specifies whether VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT is supported in optimalTilingFeatures for all the storage image extended formats
  * \param[in]  shaderStorageImageMultisample             Specifies whether multisampled storage images are supported
- * \param[in]  shaderStorageImageReadWithoutFormat       Specifies whether storage images and storage texel buffers require a format qualifier to be specified when reading
- * \param[in]  shaderStorageImageWriteWithoutFormat      Specifies whether storage images and storage texel buffers require a format qualifier to be specified when writing
+ * \param[in]  shaderStorageImageReadWithoutFormat       Specifies whether storage images and storage texel buffers can be read without a format qualifier
+ * \param[in]  shaderStorageImageWriteWithoutFormat      Specifies whether storage images and storage texel buffers can be written without a format qualifier
  * \param[in]  shaderUniformBufferArrayDynamicIndexing   Specifies whether arrays of uniform buffers can be indexed by integer expressions that are dynamically uniform within either the subgroup or the invocation group in shader code
  * \param[in]  shaderSampledImageArrayDynamicIndexing    Specifies whether arrays of samplers or sampled images can be indexed by integer expressions that are dynamically uniform within either the subgroup or the invocation group in shader code
  * \param[in]  shaderStorageBufferArrayDynamicIndexing   Specifies whether arrays of storage buffers can be indexed by integer expressions that are dynamically uniform within either the subgroup or the invocation group in shader code
@@ -2576,7 +2576,7 @@ void scvkInitPhysicalDeviceExternalSemaphoreInfo(VkPhysicalDeviceExternalSemapho
  * \param[in]  sparseResidency8Samples                   Specifies whether the physical device can access partially resident 2D images with 8 samples per pixel
  * \param[in]  sparseResidency16Samples                  Specifies whether the physical device can access partially resident 2D images with 16 samples per pixel
  * \param[in]  sparseResidencyAliased                    Specifies whether the physical device can correctly access data aliased into multiple locations
- * \param[in]  variableMultisampleRate                   Specifies whether all pipelines that will be bound to a command buffer during a subpass which uses no attachments must have the same value for VkPipelineMultisampleStateCreateInfo::rasterizationSamples
+ * \param[in]  variableMultisampleRate                   Specifies whether pipelines bound during a subpass that uses no attachments may use different rasterizationSamples values
  * \param[in]  inheritedQueries                          Specifies whether a secondary command buffer may be executed while a query is active
  *
  * \retval     None
@@ -3129,7 +3129,7 @@ void scvkInitPhysicalDeviceVariablePointersFeatures(VkPhysicalDeviceVariablePoin
  *
  * \param[out] pInfo                     Receives the initialized VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT
  * \param[in]  pNext                     Optional extension chain attached to VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT, or NULL
- * \param[in]  vertexInputDynamicState   Indicates that the implementation supports the following dynamic states:
+ * \param[in]  vertexInputDynamicState   Indicates that the implementation supports the VK_DYNAMIC_STATE_VERTEX_INPUT_EXT dynamic state
  *
  * \retval     None
  */
@@ -3141,7 +3141,7 @@ void scvkInitPhysicalDeviceVertexInputDynamicStateFeatures(VkPhysicalDeviceVerte
  *
  * \param[out] pInfo                                Receives the initialized VkPhysicalDeviceVulkan11Features
  * \param[in]  pNext                                Optional extension chain attached to VkPhysicalDeviceVulkan11Features, or NULL
- * \param[in]  storageBuffer16BitAccess             Specifies whether objects in the StorageBuffer, or PhysicalStorageBuffer storage class with the Block decoration can have 16-bit integer and 16-bit floating-point members
+ * \param[in]  storageBuffer16BitAccess             Specifies whether objects in the StorageBuffer, ShaderRecordBufferKHR, or PhysicalStorageBuffer storage class with the Block decoration can have 16-bit integer and 16-bit floating-point members
  * \param[in]  uniformAndStorageBuffer16BitAccess   Specifies whether objects in the Uniform storage class with the Block decoration can have 16-bit integer and 16-bit floating-point members
  * \param[in]  storagePushConstant16                Specifies whether objects in the PushConstant storage class can have 16-bit integer and 16-bit floating-point members
  * \param[in]  storageInputOutput16                 Specifies whether objects in the Input and Output storage classes can have 16-bit integer and 16-bit floating-point members
@@ -3177,14 +3177,14 @@ void scvkInitPhysicalDeviceVulkan11Properties(VkPhysicalDeviceVulkan11Properties
  * \param[in]  pNext                                                Optional extension chain attached to VkPhysicalDeviceVulkan12Features, or NULL
  * \param[in]  samplerMirrorClampToEdge                             Indicates whether the implementation supports the VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE sampler address mode
  * \param[in]  drawIndirectCount                                    Indicates whether the implementation supports the vkCmdDrawIndirectCount and vkCmdDrawIndexedIndirectCount functions
- * \param[in]  storageBuffer8BitAccess                              Indicates whether objects in the StorageBuffer, or PhysicalStorageBuffer storage class with the Block decoration can have 8-bit integer members
+ * \param[in]  storageBuffer8BitAccess                              Indicates whether objects in the StorageBuffer, ShaderRecordBufferKHR, or PhysicalStorageBuffer storage class with the Block decoration can have 8-bit integer members
  * \param[in]  uniformAndStorageBuffer8BitAccess                    Indicates whether objects in the Uniform storage class with the Block decoration can have 8-bit integer members
  * \param[in]  storagePushConstant8                                 Indicates whether objects in the PushConstant storage class can have 8-bit integer members
  * \param[in]  shaderBufferInt64Atomics                             Indicates whether shaders can perform 64-bit unsigned and signed integer atomic operations on buffers
  * \param[in]  shaderSharedInt64Atomics                             Indicates whether shaders can perform 64-bit unsigned and signed integer atomic operations on shared and payload memory
  * \param[in]  shaderFloat16                                        Indicates whether 16-bit floats (halfs) are supported in shader code
  * \param[in]  shaderInt8                                           Indicates whether 8-bit integers (signed and unsigned) are supported in shader code
- * \param[in]  descriptorIndexing                                   Indicates whether the implementation supports the minimum set of descriptor indexing features as described in the Feature Requirements section
+ * \param[in]  descriptorIndexing                                   Indicates whether the implementation supports the minimum set of descriptor indexing features
  * \param[in]  shaderInputAttachmentArrayDynamicIndexing            Indicates whether arrays of input attachments can be indexed by integer expressions that are dynamically uniform within either the subgroup or the invocation group in shader code
  * \param[in]  shaderUniformTexelBufferArrayDynamicIndexing         Indicates whether arrays of uniform texel buffers can be indexed by integer expressions that are dynamically uniform within either the subgroup or the invocation group in shader code
  * \param[in]  shaderStorageTexelBufferArrayDynamicIndexing         Indicates whether arrays of storage texel buffers can be indexed by integer expressions that are dynamically uniform within either the subgroup or the invocation group in shader code
@@ -3215,12 +3215,12 @@ void scvkInitPhysicalDeviceVulkan11Properties(VkPhysicalDeviceVulkan11Properties
  * \param[in]  timelineSemaphore                                    Indicates whether semaphores created with a VkSemaphoreType of VK_SEMAPHORE_TYPE_TIMELINE are supported
  * \param[in]  bufferDeviceAddress                                  Indicates that the implementation supports accessing buffer memory in shaders as storage buffers via an address queried from vkGetBufferDeviceAddress
  * \param[in]  bufferDeviceAddressCaptureReplay                     Indicates that the implementation supports saving and reusing buffer and device addresses, e.g. for trace capture and replay
- * \param[in]  bufferDeviceAddressMultiDevice                       Indicates that the implementation supports the bufferDeviceAddress and rayTracingPipeline features , rayTracingPipeline and rayQuery features and rayQuery features for logical devices created with multiple physical devices
+ * \param[in]  bufferDeviceAddressMultiDevice                       Indicates that the implementation supports the bufferDeviceAddress, rayTracingPipeline, and rayQuery features for logical devices created with multiple physical devices
  * \param[in]  vulkanMemoryModel                                    Indicates whether shader modules can declare the VulkanMemoryModel capability
  * \param[in]  vulkanMemoryModelDeviceScope                         Indicates whether the Vulkan Memory Model can use Device scope synchronization
  * \param[in]  vulkanMemoryModelAvailabilityVisibilityChains        Indicates whether the Vulkan Memory Model can use availability and visibility chains with more than one element
- * \param[in]  shaderOutputViewportIndex                            Indicates whether the implementation supports the ShaderViewportIndex SPIR-V capability enabling variables decorated with the ViewportIndex built-in to be exported from vertex or tessellation evaluation shaders
- * \param[in]  shaderOutputLayer                                    Indicates whether the implementation supports the ShaderLayer SPIR-V capability enabling variables decorated with the Layer built-in to be exported from vertex or tessellation evaluation shaders
+ * \param[in]  shaderOutputViewportIndex                            Indicates whether the implementation supports the ShaderViewportIndex SPIR-V capability enabling variables decorated with the ViewportIndex built-in to be exported from mesh, vertex or tessellation evaluation shaders
+ * \param[in]  shaderOutputLayer                                    Indicates whether the implementation supports the ShaderLayer SPIR-V capability enabling variables decorated with the Layer built-in to be exported from mesh, vertex or tessellation evaluation shaders
  * \param[in]  subgroupBroadcastDynamicId                           Indicates whether the Id operand of OpGroupNonUniformBroadcast and the Index operand of OpGroupNonUniformQuadBroadcast can be dynamically uniform
  *
  * \retval     None
@@ -3281,7 +3281,7 @@ void scvkInitPhysicalDeviceVulkanSC10Properties(VkPhysicalDeviceVulkanSC10Proper
  *
  * \param[out] pInfo                   Receives the initialized VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT
  * \param[in]  pNext                   Optional extension chain attached to VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT, or NULL
- * \param[in]  ycbcr2plane444Formats   Indicates that the implementation supports querying format features for, and using, the following 2-plane 444 Y'CbCr formats:
+ * \param[in]  ycbcr2plane444Formats   Indicates support for querying format features for, and using, the 2-plane 444 Y'CbCr formats such as VK_FORMAT_G8_B8R8_2PLANE_444_UNORM
  *
  * \retval     None
  */
@@ -3307,7 +3307,7 @@ void scvkInitPhysicalDeviceYcbcrImageArraysFeatures(VkPhysicalDeviceYcbcrImageAr
  * \param[in]  pNext             Optional extension chain attached to VkPipelineCacheCreateInfo, or NULL
  * \param[in]  flags             A bitmask of VkPipelineCacheCreateFlagBits specifying the behavior of the pipeline cache
  * \param[in]  initialDataSize   The number of bytes in pInitialData
- * \param[in]  pInitialData      A pointer to previously retrieved pipeline cache data
+ * \param[in]  pInitialData      A pointer to pipeline cache data that has been generated offline
  *
  * \retval     None
  */
@@ -3393,11 +3393,11 @@ void scvkInitPipelineColorBlendAdvancedStateCreateInfo(VkPipelineColorBlendAdvan
  *
  * \param[out] pInfo                 Receives the initialized VkPipelineColorBlendAttachmentState
  * \param[in]  blendEnable           Controls whether blending is enabled for the corresponding color attachment
- * \param[in]  srcColorBlendFactor   Selects which blend factor is used to determine the source factors (Sr,Sg,Sb)
- * \param[in]  dstColorBlendFactor   Selects which blend factor is used to determine the destination factors (Dr,Dg,Db)
+ * \param[in]  srcColorBlendFactor   Selects which blend factor is used to determine the source factors (S_r,S_g,S_b)
+ * \param[in]  dstColorBlendFactor   Selects which blend factor is used to determine the destination factors (D_r,D_g,D_b)
  * \param[in]  colorBlendOp          Selects which blend operation is used to calculate the RGB values to write to the color attachment
- * \param[in]  srcAlphaBlendFactor   Selects which blend factor is used to determine the source factor Sa
- * \param[in]  dstAlphaBlendFactor   Selects which blend factor is used to determine the destination factor Da
+ * \param[in]  srcAlphaBlendFactor   Selects which blend factor is used to determine the source factor S_a
+ * \param[in]  dstAlphaBlendFactor   Selects which blend factor is used to determine the destination factor D_a
  * \param[in]  alphaBlendOp          Selects which blend operation is used to calculate the alpha values to write to the color attachment
  * \param[in]  colorWriteMask        A bitmask of VkColorComponentFlagBits specifying which of the R, G, B, and/or A components are enabled for writing, as described for the Color Write Mask
  *
@@ -3411,7 +3411,7 @@ void scvkInitPipelineColorBlendAttachmentState(VkPipelineColorBlendAttachmentSta
  *
  * \param[out] pInfo             Receives the initialized VkPipelineColorBlendStateCreateInfo
  * \param[in]  pNext             Optional extension chain attached to VkPipelineColorBlendStateCreateInfo, or NULL
- * \param[in]  flags             Reserved for future use; must be 0
+ * \param[in]  flags             A bitmask of VkPipelineColorBlendStateCreateFlagBits specifying additional color blending information
  * \param[in]  logicOpEnable     Controls whether to apply Logical Operations
  * \param[in]  logicOp           Selects which logical operation to apply
  * \param[in]  attachmentCount   The number of VkPipelineColorBlendAttachmentState elements in pAttachments
@@ -3441,14 +3441,14 @@ void scvkInitPipelineColorWriteCreateInfo(VkPipelineColorWriteCreateInfoEXT* pIn
  *
  * \param[out] pInfo                   Receives the initialized VkPipelineDepthStencilStateCreateInfo
  * \param[in]  pNext                   Optional extension chain attached to VkPipelineDepthStencilStateCreateInfo, or NULL
- * \param[in]  flags                   Reserved for future use; must be 0
+ * \param[in]  flags                   A bitmask of VkPipelineDepthStencilStateCreateFlagBits specifying additional depth/stencil state information
  * \param[in]  depthTestEnable         Controls whether depth testing is enabled
  * \param[in]  depthWriteEnable        Controls whether depth writes are enabled when depthTestEnable is VK_TRUE
  * \param[in]  depthCompareOp          A VkCompareOp value specifying the comparison operator to use in the Depth Comparison step of the depth test
  * \param[in]  depthBoundsTestEnable   Controls whether depth bounds testing is enabled
  * \param[in]  stencilTestEnable       Controls whether stencil testing is enabled
- * \param[in]  front                   VkStencilOpState values controlling the corresponding parameters of the stencil test
- * \param[in]  back                    VkStencilOpState values controlling the corresponding parameters of the stencil test
+ * \param[in]  front                   Stencil test parameters applied to front-facing polygons and to points and lines
+ * \param[in]  back                    Stencil test parameters applied to back-facing polygons
  * \param[in]  minDepthBounds          The minimum depth bound used in the depth bounds test
  * \param[in]  maxDepthBounds          The maximum depth bound used in the depth bounds test
  *
@@ -3492,7 +3492,7 @@ void scvkInitPipelineDynamicStateCreateInfo(VkPipelineDynamicStateCreateInfo* pI
  * \param[out] pInfo          Receives the initialized VkPipelineFragmentShadingRateStateCreateInfoKHR
  * \param[in]  pNext          Optional extension chain attached to VkPipelineFragmentShadingRateStateCreateInfoKHR, or NULL
  * \param[in]  fragmentSize   Specifies a VkExtent2D structure containing the fragment size used to define the pipeline fragment shading rate for drawing commands using this pipeline
- * \param[in]  combinerOps    Specifies a VkFragmentShadingRateCombinerOpKHR value determining how the pipeline, primitive, and attachment shading rates are combined for fragments generated by drawing commands using the created pipeline
+ * \param[in]  combinerOps    Two VkFragmentShadingRateCombinerOpKHR values: [0] combines the pipeline and primitive shading rates, [1] combines that result with the attachment shading rate
  *
  * \retval     None
  */
@@ -3505,7 +3505,7 @@ void scvkInitPipelineFragmentShadingRateStateCreateInfo(VkPipelineFragmentShadin
  * \param[out] pInfo                    Receives the initialized VkPipelineInputAssemblyStateCreateInfo
  * \param[in]  pNext                    Optional extension chain attached to VkPipelineInputAssemblyStateCreateInfo, or NULL
  * \param[in]  flags                    Reserved for future use; must be 0
- * \param[in]  topology                 A VkPrimitiveTopology defining the primitive topology, as described below
+ * \param[in]  topology                 A VkPrimitiveTopology defining the primitive topology
  * \param[in]  primitiveRestartEnable   Controls whether a special vertex index value is treated as restarting the assembly of primitives
  *
  * \retval     None
@@ -3520,7 +3520,7 @@ void scvkInitPipelineInputAssemblyStateCreateInfo(VkPipelineInputAssemblyStateCr
  * \param[in]  pNext                    Optional extension chain attached to VkPipelineLayoutCreateInfo, or NULL
  * \param[in]  flags                    A bitmask of VkPipelineLayoutCreateFlagBits specifying options for pipeline layout creation
  * \param[in]  setLayoutCount           The number of descriptor sets included in the pipeline layout
- * \param[in]  pSetLayouts              A pointer to an array of VkDescriptorSetLayout objects
+ * \param[in]  pSetLayouts              Array of setLayoutCount descriptor set layouts; element i is the layout of set number i
  * \param[in]  pushConstantRangeCount   The number of push constant ranges included in the pipeline layout
  * \param[in]  pPushConstantRanges      A pointer to an array of VkPushConstantRange structures defining a set of push constant ranges for use in a single pipeline layout
  *
@@ -3540,7 +3540,7 @@ void scvkInitPipelineLayoutCreateInfo(VkPipelineLayoutCreateInfo* pInfo, const v
  * \param[in]  minSampleShading        Specifies a minimum fraction of sample shading if sampleShadingEnable is VK_TRUE
  * \param[in]  pSampleMask             A pointer to an array of VkSampleMask values used in the sample mask test
  * \param[in]  alphaToCoverageEnable   Controls whether a temporary coverage value is generated based on the alpha component of the fragment's first color output as specified in the Multisample Coverage section
- * \param[in]  alphaToOneEnable        Controls whether the alpha component of the fragment's first color output is replaced with one as described in Multisample Coverage
+ * \param[in]  alphaToOneEnable        Controls whether the alpha component of the fragment's first color output is replaced with one
  *
  * \retval     None
  */
@@ -3594,7 +3594,7 @@ void scvkInitPipelineRasterizationConservativeStateCreateInfo(VkPipelineRasteriz
  * \param[out] pInfo             Receives the initialized VkPipelineRasterizationDepthClipStateCreateInfoEXT
  * \param[in]  pNext             Optional extension chain attached to VkPipelineRasterizationDepthClipStateCreateInfoEXT, or NULL
  * \param[in]  flags             Reserved for future use; must be 0
- * \param[in]  depthClipEnable   Controls whether depth clipping is enabled as described in Primitive Clipping
+ * \param[in]  depthClipEnable   Controls whether depth clipping is enabled
  *
  * \retval     None
  */
@@ -3607,7 +3607,7 @@ void scvkInitPipelineRasterizationDepthClipStateCreateInfo(VkPipelineRasterizati
  * \param[out] pInfo                     Receives the initialized VkPipelineRasterizationStateCreateInfo
  * \param[in]  pNext                     Optional extension chain attached to VkPipelineRasterizationStateCreateInfo, or NULL
  * \param[in]  flags                     Reserved for future use; must be 0
- * \param[in]  depthClampEnable          Controls whether to clamp the fragment's depth values as described in Depth Test
+ * \param[in]  depthClampEnable          Controls whether to clamp the fragment's depth values
  * \param[in]  rasterizerDiscardEnable   Controls whether primitives are discarded immediately before the rasterization stage
  * \param[in]  polygonMode               The triangle rendering mode
  * \param[in]  cullMode                  The triangle facing direction used for primitive culling
@@ -3645,7 +3645,7 @@ void scvkInitPipelineSampleLocationsStateCreateInfo(VkPipelineSampleLocationsSta
  * \param[in]  stage                 A VkShaderStageFlagBits value specifying a single pipeline stage
  * \param[in]  module                Optionally a VkShaderModule object containing the shader code for this stage
  * \param[in]  pName                 A pointer to a null-terminated UTF-8 string specifying the entry point name of the shader for this stage
- * \param[in]  pSpecializationInfo   A pointer to a VkSpecializationInfo structure, as described in Specialization Constants, or NULL
+ * \param[in]  pSpecializationInfo   Specialization constant values for the shader stage, or NULL for none
  *
  * \retval     None
  */
@@ -3684,9 +3684,9 @@ void scvkInitPipelineTessellationStateCreateInfo(VkPipelineTessellationStateCrea
  * \param[in]  pNext                             Optional extension chain attached to VkPipelineVertexInputStateCreateInfo, or NULL
  * \param[in]  flags                             Reserved for future use; must be 0
  * \param[in]  vertexBindingDescriptionCount     The number of vertex binding descriptions provided in pVertexBindingDescriptions
- * \param[in]  pVertexBindingDescriptions        A pointer to an array of VkVertexInputBindingDescription structures
+ * \param[in]  pVertexBindingDescriptions        Array of vertexBindingDescriptionCount vertex binding descriptions (binding, stride, input rate)
  * \param[in]  vertexAttributeDescriptionCount   The number of vertex attribute descriptions provided in pVertexAttributeDescriptions
- * \param[in]  pVertexAttributeDescriptions      A pointer to an array of VkVertexInputAttributeDescription structures
+ * \param[in]  pVertexAttributeDescriptions      Array of vertexAttributeDescriptionCount vertex attribute descriptions (location, binding, format, offset)
  *
  * \retval     None
  */
@@ -3719,7 +3719,7 @@ void scvkInitPipelineViewportStateCreateInfo(VkPipelineViewportStateCreateInfo* 
  * \param[in]  swapchainCount       The number of swapchains being presented to by this command
  * \param[in]  pSwapchains          A pointer to an array of VkSwapchainKHR objects with swapchainCount entries
  * \param[in]  pImageIndices        A pointer to an array of indices into the array of each swapchain's presentable images, with swapchainCount entries
- * \param[in]  pResults             A pointer to an array of VkResult typed elements with swapchainCount entries
+ * \param[out] pResults             A pointer to an array of VkResult typed elements with swapchainCount entries
  *
  * \retval     None
  */
@@ -3731,7 +3731,7 @@ void scvkInitPresentInfo(VkPresentInfoKHR* pInfo, const void* pNext, uint32_t wa
  *
  * \param[out] pInfo            Receives the initialized VkPresentRegionKHR
  * \param[in]  rectangleCount   The number of rectangles in pRectangles, or zero if the entire image has changed and should be presented
- * \param[in]  pRectangles      Either NULL or a pointer to an array of VkRectLayerKHR structures
+ * \param[in]  pRectangles      Array of rectangleCount rectangles that changed since the last present, or NULL if the entire image changed
  *
  * \retval     None
  */
@@ -3768,8 +3768,8 @@ void scvkInitProtectedSubmitInfo(VkProtectedSubmitInfo* pInfo, const void* pNext
  *
  * \param[out] pInfo        Receives the initialized VkPushConstantRange
  * \param[in]  stageFlags   A set of stage flags describing the shader stages that will access a range of push constants
- * \param[in]  offset       The start offset and size, respectively, consumed by the range
- * \param[in]  size         The start offset and size, respectively, consumed by the range
+ * \param[in]  offset       Start offset of the push constant range, in bytes; must be a multiple of 4
+ * \param[in]  size         Size of the push constant range, in bytes; must be a nonzero multiple of 4
  *
  * \retval     None
  */
@@ -3781,10 +3781,10 @@ void scvkInitPushConstantRange(VkPushConstantRange* pInfo, VkShaderStageFlags st
  *
  * \param[out] pInfo                Receives the initialized VkQueryPoolCreateInfo
  * \param[in]  pNext                Optional extension chain attached to VkQueryPoolCreateInfo, or NULL
- * \param[in]  flags                A bitmask of VkQueryPoolCreateFlagBits
+ * \param[in]  flags                A bitmask of VkQueryPoolCreateFlagBits; VK_QUERY_POOL_CREATE_RESET_BIT_KHR creates the queries in the reset state
  * \param[in]  queryType            A VkQueryType value specifying the type of queries managed by the pool
  * \param[in]  queryCount           The number of queries managed by the pool
- * \param[in]  pipelineStatistics   A bitmask of VkQueryPipelineStatisticFlagBits specifying which counters will be returned in queries on the new pool, as described below in queries-pipestats
+ * \param[in]  pipelineStatistics   A bitmask of VkQueryPipelineStatisticFlagBits specifying which counters pipeline statistics queries on the new pool return; ignored for other query types
  *
  * \retval     None
  */
@@ -3887,7 +3887,7 @@ void scvkInitRenderPassAttachmentBeginInfo(VkRenderPassAttachmentBeginInfo* pInf
  * \param[in]  pNext             Optional extension chain attached to VkRenderPassBeginInfo, or NULL
  * \param[in]  renderPass        The render pass to begin an instance of
  * \param[in]  framebuffer       The framebuffer containing the attachments that are used with the render pass
- * \param[in]  renderArea        The render area that is affected by the render pass instance, and is described in more detail below
+ * \param[in]  renderArea        The render area affected by the render pass instance
  * \param[in]  clearValueCount   The number of elements in pClearValues
  * \param[in]  pClearValues      A pointer to an array of clearValueCount VkClearValue structures containing clear values for each attachment, if the attachment uses a loadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR or if the attachment has a depth/stencil format and uses a stencilLoadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR
  *
@@ -3901,7 +3901,7 @@ void scvkInitRenderPassBeginInfo(VkRenderPassBeginInfo* pInfo, const void* pNext
  *
  * \param[out] pInfo             Receives the initialized VkRenderPassCreateInfo
  * \param[in]  pNext             Optional extension chain attached to VkRenderPassCreateInfo, or NULL
- * \param[in]  flags             Reserved for future use; must be 0
+ * \param[in]  flags             A bitmask of VkRenderPassCreateFlagBits specifying additional properties of a render pass
  * \param[in]  attachmentCount   The number of attachments used by this render pass
  * \param[in]  pAttachments      A pointer to an array of attachmentCount VkAttachmentDescription structures describing the attachments used by the render pass
  * \param[in]  subpassCount      The number of subpasses to create
@@ -3919,7 +3919,7 @@ void scvkInitRenderPassCreateInfo(VkRenderPassCreateInfo* pInfo, const void* pNe
  *
  * \param[out] pInfo                     Receives the initialized VkRenderPassCreateInfo2
  * \param[in]  pNext                     Optional extension chain attached to VkRenderPassCreateInfo2, or NULL
- * \param[in]  flags                     Reserved for future use; must be 0
+ * \param[in]  flags                     A bitmask of VkRenderPassCreateFlagBits specifying additional properties of a render pass
  * \param[in]  attachmentCount           The number of attachments used by this render pass
  * \param[in]  pAttachments              A pointer to an array of attachmentCount VkAttachmentDescription2 structures describing the attachments used by the render pass
  * \param[in]  subpassCount              The number of subpasses to create
@@ -3999,7 +3999,7 @@ void scvkInitSampleLocation(VkSampleLocationEXT* pInfo, float x, float y);
  * \param[in]  sampleLocationsPerPixel   A VkSampleCountFlagBits value specifying the number of sample locations per pixel
  * \param[in]  sampleLocationGridSize    The size of the sample location grid to select custom sample locations for
  * \param[in]  sampleLocationsCount      The number of sample locations in pSampleLocations
- * \param[in]  pSampleLocations          A pointer to an array of sampleLocationsCount VkSampleLocationEXT structures
+ * \param[in]  pSampleLocations          Array of sampleLocationsCount custom sample positions within the sample location grid
  *
  * \retval     None
  */
@@ -4018,11 +4018,11 @@ void scvkInitSampleLocationsInfo(VkSampleLocationsInfoEXT* pInfo, const void* pN
  * \param[in]  addressModeU              A VkSamplerAddressMode value specifying the wrapping operation used when the i coordinate used to sample the image would be out of bounds
  * \param[in]  addressModeV              A VkSamplerAddressMode value specifying the wrapping operation used when the j coordinate used to sample the image would be out of bounds
  * \param[in]  addressModeW              A VkSamplerAddressMode value specifying the wrapping operation used when the k coordinate used to sample the image would be out of bounds
- * \param[in]  mipLodBias                The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V, as described in the LOD Operation section
- * \param[in]  anisotropyEnable          VK_TRUE to enable anisotropic filtering, as described in the Texel Anisotropic Filtering section, or VK_FALSE otherwise
+ * \param[in]  mipLodBias                The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V
+ * \param[in]  anisotropyEnable          VK_TRUE to enable anisotropic filtering, or VK_FALSE otherwise
  * \param[in]  maxAnisotropy             The anisotropy value clamp used by the sampler when anisotropyEnable is VK_TRUE
  * \param[in]  compareEnable             VK_TRUE to enable comparison against a reference value during lookups, or VK_FALSE otherwise
- * \param[in]  compareOp                 A VkCompareOp value specifying the comparison operator to apply to fetched data before filtering as described in the Depth Compare Operation section
+ * \param[in]  compareOp                 A VkCompareOp value specifying the comparison operator to apply to fetched data before filtering
  * \param[in]  minLod                    Used to clamp the minimum of the computed LOD value
  * \param[in]  maxLod                    Used to clamp the maximum of the computed LOD value
  * \param[in]  borderColor               A VkBorderColor value specifying the predefined border color to use
@@ -4062,7 +4062,7 @@ void scvkInitSamplerReductionModeCreateInfo(VkSamplerReductionModeCreateInfo* pI
  * \brief Initializes a VkSamplerYcbcrConversionCreateInfo.
  *
  * \param[out] pInfo                         Receives the initialized VkSamplerYcbcrConversionCreateInfo
- * \param[in]  pNext                         Optional extension chain attached to VkSamplerYcbcrConversionCreateInfo, or NULL
+ * \param[in]  pNext                         Optional input extension chain attached to VkSamplerYcbcrConversionCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  format                        The format of the image from which color information will be retrieved
  * \param[in]  ycbcrModel                    Describes the color matrix for conversion between color models
  * \param[in]  ycbcrRange                    Describes whether the encoded values have headroom and foot room, or whether the encoding uses the full numerical range
@@ -4258,10 +4258,10 @@ void scvkInitSubpassBeginInfo(VkSubpassBeginInfo* pInfo, const void* pNext, VkSu
  * \param[in]  srcSubpass        The subpass index of the first subpass in the dependency, or VK_SUBPASS_EXTERNAL
  * \param[in]  dstSubpass        The subpass index of the second subpass in the dependency, or VK_SUBPASS_EXTERNAL
  * \param[in]  srcStageMask      A bitmask of VkPipelineStageFlagBits specifying the source stage mask
- * \param[in]  dstStageMask      A bitmask of VkPipelineStageFlagBits specifying the destination stage mask If set to VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, it is equivalent to setting it to VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT
+ * \param[in]  dstStageMask      A bitmask of VkPipelineStageFlagBits specifying the destination stage mask; VK_PIPELINE_STAGE_ALL_COMMANDS_BIT acts as VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT
  * \param[in]  srcAccessMask     A bitmask of VkAccessFlagBits specifying a source access mask
  * \param[in]  dstAccessMask     A bitmask of VkAccessFlagBits specifying a destination access mask
- * \param[in]  dependencyFlags   A bitmask of VkDependencyFlagBits
+ * \param[in]  dependencyFlags   A bitmask of VkDependencyFlagBits, such as VK_DEPENDENCY_BY_REGION_BIT, qualifying the dependency
  *
  * \retval     None
  */
@@ -4276,10 +4276,10 @@ void scvkInitSubpassDependency(VkSubpassDependency* pInfo, uint32_t srcSubpass, 
  * \param[in]  srcSubpass        The subpass index of the first subpass in the dependency, or VK_SUBPASS_EXTERNAL
  * \param[in]  dstSubpass        The subpass index of the second subpass in the dependency, or VK_SUBPASS_EXTERNAL
  * \param[in]  srcStageMask      A bitmask of VkPipelineStageFlagBits specifying the source stage mask
- * \param[in]  dstStageMask      A bitmask of VkPipelineStageFlagBits specifying the destination stage mask If set to VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, it is equivalent to setting it to VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT
+ * \param[in]  dstStageMask      A bitmask of VkPipelineStageFlagBits specifying the destination stage mask; VK_PIPELINE_STAGE_ALL_COMMANDS_BIT acts as VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT
  * \param[in]  srcAccessMask     A bitmask of VkAccessFlagBits specifying a source access mask
  * \param[in]  dstAccessMask     A bitmask of VkAccessFlagBits specifying a destination access mask
- * \param[in]  dependencyFlags   A bitmask of VkDependencyFlagBits
+ * \param[in]  dependencyFlags   A bitmask of VkDependencyFlagBits, such as VK_DEPENDENCY_BY_REGION_BIT, qualifying the dependency
  * \param[in]  viewOffset        Controls which views in the source subpass the views in the destination subpass depend on
  *
  * \retval     None
@@ -4441,12 +4441,12 @@ void scvkInitSwapchainCounterCreateInfo(VkSwapchainCounterCreateInfoEXT* pInfo, 
  * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
  * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
  * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
  * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
  * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
  * \param[in]  presentMode             The presentation mode the swapchain will use
  * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
+ * \param[in]  oldSwapchain            VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface, which is retired and may aid resource reuse
  *
  * \retval     None
  */
@@ -4461,7 +4461,7 @@ void scvkInitSwapchainCreateInfo(VkSwapchainCreateInfoKHR* pInfo, const void* pN
  * \param[in]  waitSemaphoreValueCount     The number of semaphore wait values specified in pWaitSemaphoreValues
  * \param[in]  pWaitSemaphoreValues        A pointer to an array of waitSemaphoreValueCount values for the corresponding semaphores in VkSubmitInfo::pWaitSemaphores to wait for
  * \param[in]  signalSemaphoreValueCount   The number of semaphore signal values specified in pSignalSemaphoreValues
- * \param[in]  pSignalSemaphoreValues      A pointer to an array signalSemaphoreValueCount values for the corresponding semaphores in VkSubmitInfo::pSignalSemaphores to set when signaled
+ * \param[in]  pSignalSemaphoreValues      A pointer to an array of signalSemaphoreValueCount values for the corresponding semaphores in VkSubmitInfo::pSignalSemaphores to set when signaled
  *
  * \retval     None
  */
@@ -4544,12 +4544,12 @@ void scvkInitVertexInputBindingDescription2(VkVertexInputBindingDescription2EXT*
  * \brief Initializes a VkViewport.
  *
  * \param[out] pInfo      Receives the initialized VkViewport
- * \param[in]  x          The viewport's upper left corner (x,y)
- * \param[in]  y          The viewport's upper left corner (x,y)
- * \param[in]  width      The viewport's width and height, respectively
- * \param[in]  height     The viewport's width and height, respectively
- * \param[in]  minDepth   The depth range for the viewport
- * \param[in]  maxDepth   The depth range for the viewport
+ * \param[in]  x          The x coordinate of the viewport's upper-left corner
+ * \param[in]  y          The y coordinate of the viewport's upper-left corner
+ * \param[in]  width      The viewport's width
+ * \param[in]  height     The viewport's height
+ * \param[in]  minDepth   The minimum depth of the viewport's depth range
+ * \param[in]  maxDepth   The maximum depth of the viewport's depth range
  *
  * \retval     None
  */
@@ -4562,13 +4562,13 @@ void scvkInitViewport(VkViewport* pInfo, float x, float y, float width, float he
  * \param[out] pInfo              Receives the initialized VkWriteDescriptorSet
  * \param[in]  pNext              Optional extension chain attached to VkWriteDescriptorSet, or NULL
  * \param[in]  dstSet             The destination descriptor set to update
- * \param[in]  dstBinding         The descriptor binding within that set
- * \param[in]  dstArrayElement    The starting element in that array
+ * \param[in]  dstBinding         Binding number to update within dstSet
+ * \param[in]  dstArrayElement    First array element to update in dstBinding, or starting byte offset for an inline uniform block
  * \param[in]  descriptorCount    The number of descriptors to update
- * \param[in]  descriptorType     A VkDescriptorType specifying the type of each descriptor in pImageInfo, pBufferInfo, or pTexelBufferView, as described below
- * \param[in]  pImageInfo         A pointer to an array of VkDescriptorImageInfo structures or is ignored, as described below
- * \param[in]  pBufferInfo        A pointer to an array of VkDescriptorBufferInfo structures or is ignored, as described below
- * \param[in]  pTexelBufferView   A pointer to an array of VkBufferView handles as described in the Buffer Views section or is ignored, as described below
+ * \param[in]  descriptorType     Type of each descriptor in pImageInfo, pBufferInfo, or pTexelBufferView; must match the dstBinding layout type
+ * \param[in]  pImageInfo         Array of descriptorCount image descriptors, read only for image descriptor types, else NULL
+ * \param[in]  pBufferInfo        Array of descriptorCount buffer descriptors, read only for buffer descriptor types, else NULL
+ * \param[in]  pTexelBufferView   Array of descriptorCount texel buffer descriptors, read only for texel buffer descriptor types, else NULL
  *
  * \retval     None
  */
@@ -4646,7 +4646,7 @@ void scvkInitClearValueDepthStencil(VkClearValue* pInfo, VkClearDepthStencilValu
  * \brief Initializes a VkPerformanceCounterResultKHR holding its int32 member.
  *
  * \param[out] pInfo   Receives the initialized VkPerformanceCounterResultKHR
- * \param[in]  int32   A 32-bit signed integer value
+ * \param[in]  int32   The counter result when the counter's storage is VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR
  *
  * \retval     None
  */
@@ -4657,7 +4657,7 @@ void scvkInitPerformanceCounterResultInt32(VkPerformanceCounterResultKHR* pInfo,
  * \brief Initializes a VkPerformanceCounterResultKHR holding its int64 member.
  *
  * \param[out] pInfo   Receives the initialized VkPerformanceCounterResultKHR
- * \param[in]  int64   A 64-bit signed integer value
+ * \param[in]  int64   The counter result when the counter's storage is VK_PERFORMANCE_COUNTER_STORAGE_INT64_KHR
  *
  * \retval     None
  */
@@ -4668,7 +4668,7 @@ void scvkInitPerformanceCounterResultInt64(VkPerformanceCounterResultKHR* pInfo,
  * \brief Initializes a VkPerformanceCounterResultKHR holding its uint32 member.
  *
  * \param[out] pInfo    Receives the initialized VkPerformanceCounterResultKHR
- * \param[in]  uint32   A 32-bit unsigned integer value
+ * \param[in]  uint32   The counter result when the counter's storage is VK_PERFORMANCE_COUNTER_STORAGE_UINT32_KHR
  *
  * \retval     None
  */
@@ -4679,7 +4679,7 @@ void scvkInitPerformanceCounterResultUint32(VkPerformanceCounterResultKHR* pInfo
  * \brief Initializes a VkPerformanceCounterResultKHR holding its uint64 member.
  *
  * \param[out] pInfo    Receives the initialized VkPerformanceCounterResultKHR
- * \param[in]  uint64   A 64-bit unsigned integer value
+ * \param[in]  uint64   The counter result when the counter's storage is VK_PERFORMANCE_COUNTER_STORAGE_UINT64_KHR
  *
  * \retval     None
  */
@@ -4690,7 +4690,7 @@ void scvkInitPerformanceCounterResultUint64(VkPerformanceCounterResultKHR* pInfo
  * \brief Initializes a VkPerformanceCounterResultKHR holding its float32 member.
  *
  * \param[out] pInfo     Receives the initialized VkPerformanceCounterResultKHR
- * \param[in]  float32   A 32-bit floating-point value
+ * \param[in]  float32   The counter result when the counter's storage is VK_PERFORMANCE_COUNTER_STORAGE_FLOAT32_KHR
  *
  * \retval     None
  */
@@ -4701,7 +4701,7 @@ void scvkInitPerformanceCounterResultFloat32(VkPerformanceCounterResultKHR* pInf
  * \brief Initializes a VkPerformanceCounterResultKHR holding its float64 member.
  *
  * \param[out] pInfo     Receives the initialized VkPerformanceCounterResultKHR
- * \param[in]  float64   A 64-bit floating-point value
+ * \param[in]  float64   The counter result when the counter's storage is VK_PERFORMANCE_COUNTER_STORAGE_FLOAT64_KHR
  *
  * \retval     None
  */
@@ -4850,7 +4850,7 @@ void scvkBindBufferMemory2(VkDevice device, uint32_t bindInfoCount, const VkBind
  * \brief Binds image memory.
  *
  * \param[in] device         The logical device that owns the image and memory
- * \param[in] image          The image
+ * \param[in] image          Image to attach the memory to
  * \param[in] memory         The VkDeviceMemory object describing the device memory to attach
  * \param[in] memoryOffset   The start offset of the region of memory which is to be bound to the image
  *
@@ -4904,7 +4904,7 @@ void scvkCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uin
  * \param[in] pNext             Optional extension chain attached to VkRenderPassBeginInfo, or NULL
  * \param[in] renderPass        The render pass to begin an instance of
  * \param[in] framebuffer       The framebuffer containing the attachments that are used with the render pass
- * \param[in] renderArea        The render area that is affected by the render pass instance, and is described in more detail below
+ * \param[in] renderArea        The render area affected by the render pass instance
  * \param[in] clearValueCount   The number of elements in pClearValues
  * \param[in] pClearValues      A pointer to an array of clearValueCount VkClearValue structures containing clear values for each attachment, if the attachment uses a loadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR or if the attachment has a depth/stencil format and uses a stencilLoadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR
  * \param[in] contents          A VkSubpassContents value specifying how the commands in the first subpass will be provided
@@ -4921,7 +4921,7 @@ void scvkCmdBeginRenderPass(VkCommandBuffer commandBuffer, const void* pNext, Vk
  * \param[in] pRenderPassBeginNext    Optional extension chain attached to VkRenderPassBeginInfo, or NULL
  * \param[in] renderPass              The render pass to begin an instance of
  * \param[in] framebuffer             The framebuffer containing the attachments that are used with the render pass
- * \param[in] renderArea              The render area that is affected by the render pass instance, and is described in more detail below
+ * \param[in] renderArea              The render area affected by the render pass instance
  * \param[in] clearValueCount         The number of elements in pClearValues
  * \param[in] pClearValues            A pointer to an array of clearValueCount VkClearValue structures containing clear values for each attachment, if the attachment uses a loadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR or if the attachment has a depth/stencil format and uses a stencilLoadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR
  * \param[in] pSubpassBeginInfoNext   Optional extension chain attached to VkSubpassBeginInfo, or NULL
@@ -4980,8 +4980,8 @@ void scvkCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipe
  * \param[in] commandBuffer   The command buffer into which the command is recorded
  * \param[in] firstBinding    The index of the first vertex input binding whose state is updated by the command
  * \param[in] bindingCount    The number of vertex input bindings whose state is updated by the command
- * \param[in] pBuffers        A pointer to an array of buffer handles
- * \param[in] pOffsets        A pointer to an array of buffer offsets
+ * \param[in] pBuffers        A pointer to an array of bindingCount buffer handles bound starting at firstBinding
+ * \param[in] pOffsets        A pointer to an array of bindingCount byte offsets into the corresponding pBuffers elements
  *
  * \retval    None
  */
@@ -4992,9 +4992,9 @@ void scvkCmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBindi
  * \brief Records blit image.
  *
  * \param[in] commandBuffer    The command buffer into which the command will be recorded
- * \param[in] srcImage         The source image
+ * \param[in] srcImage         The image to blit from
  * \param[in] srcImageLayout   The layout of the source image subresources for the blit
- * \param[in] dstImage         The destination image
+ * \param[in] dstImage         The image to blit into
  * \param[in] dstImageLayout   The layout of the destination image subresources for the blit
  * \param[in] regionCount      The number of regions to blit
  * \param[in] pRegions         A pointer to an array of VkImageBlit structures specifying the regions to blit
@@ -5025,9 +5025,9 @@ void scvkCmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t attachmentC
  * \param[in] commandBuffer   The command buffer into which the command will be recorded
  * \param[in] image           The image to be cleared
  * \param[in] imageLayout     Specifies the current layout of the image subresource ranges to be cleared, and must be VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR, VK_IMAGE_LAYOUT_GENERAL or VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
- * \param[in] pColor          A pointer to a VkClearColorValue structure containing the values that the image subresource ranges will be cleared to (see clears-values below)
+ * \param[in] pColor          A pointer to a VkClearColorValue structure containing the values that the image subresource ranges will be cleared to
  * \param[in] rangeCount      The number of image subresource range structures in pRanges
- * \param[in] pRanges         A pointer to an array of VkImageSubresourceRange structures describing a range of mipmap levels, array layers, and aspects to be cleared, as described in Image Views
+ * \param[in] pRanges         A pointer to an array of VkImageSubresourceRange structures describing a range of mipmap levels, array layers, and aspects to be cleared
  *
  * \retval    None
  */
@@ -5040,9 +5040,9 @@ void scvkCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImag
  * \param[in] commandBuffer   The command buffer into which the command will be recorded
  * \param[in] image           The image to be cleared
  * \param[in] imageLayout     Specifies the current layout of the image subresource ranges to be cleared, and must be VK_IMAGE_LAYOUT_GENERAL or VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
- * \param[in] pDepthStencil   A pointer to a VkClearDepthStencilValue structure containing the values that the depth and stencil image subresource ranges will be cleared to (see clears-values below)
+ * \param[in] pDepthStencil   A pointer to a VkClearDepthStencilValue structure containing the values that the depth and stencil image subresource ranges will be cleared to
  * \param[in] rangeCount      The number of image subresource range structures in pRanges
- * \param[in] pRanges         A pointer to an array of VkImageSubresourceRange structures describing a range of mipmap levels, array layers, and aspects to be cleared, as described in Image Views
+ * \param[in] pRanges         A pointer to an array of VkImageSubresourceRange structures describing a range of mipmap levels, array layers, and aspects to be cleared
  *
  * \retval    None
  */
@@ -5053,8 +5053,8 @@ void scvkCmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image,
  * \brief Records copy buffer.
  *
  * \param[in] commandBuffer   The command buffer into which the command will be recorded
- * \param[in] srcBuffer       The source buffer
- * \param[in] dstBuffer       The destination buffer
+ * \param[in] srcBuffer       The buffer to copy from
+ * \param[in] dstBuffer       The buffer to copy into
  * \param[in] regionCount     The number of regions to copy
  * \param[in] pRegions        A pointer to an array of VkBufferCopy structures specifying the regions to copy
  *
@@ -5067,8 +5067,8 @@ void scvkCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuff
  * \brief Records copy buffer to image.
  *
  * \param[in] commandBuffer    The command buffer into which the command will be recorded
- * \param[in] srcBuffer        The source buffer
- * \param[in] dstImage         The destination image
+ * \param[in] srcBuffer        The buffer to copy image data from
+ * \param[in] dstImage         The image to copy buffer data into
  * \param[in] dstImageLayout   The layout of the destination image subresources for the copy
  * \param[in] regionCount      The number of regions to copy
  * \param[in] pRegions         A pointer to an array of VkBufferImageCopy structures specifying the regions to copy
@@ -5082,9 +5082,9 @@ void scvkCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer,
  * \brief Records copy image.
  *
  * \param[in] commandBuffer    The command buffer into which the command will be recorded
- * \param[in] srcImage         The source image
+ * \param[in] srcImage         The image to copy from
  * \param[in] srcImageLayout   The current layout of the source image subresource
- * \param[in] dstImage         The destination image
+ * \param[in] dstImage         The image to copy into
  * \param[in] dstImageLayout   The current layout of the destination image subresource
  * \param[in] regionCount      The number of regions to copy
  * \param[in] pRegions         A pointer to an array of VkImageCopy structures specifying the regions to copy
@@ -5098,9 +5098,9 @@ void scvkCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLa
  * \brief Records copy image to buffer.
  *
  * \param[in] commandBuffer    The command buffer into which the command will be recorded
- * \param[in] srcImage         The source image
+ * \param[in] srcImage         The image to copy into the buffer
  * \param[in] srcImageLayout   The layout of the source image subresources for the copy
- * \param[in] dstBuffer        The destination buffer
+ * \param[in] dstBuffer        The buffer to copy image data into
  * \param[in] regionCount      The number of regions to copy
  * \param[in] pRegions         A pointer to an array of VkBufferImageCopy structures specifying the regions to copy
  *
@@ -5370,11 +5370,11 @@ void scvkCmdNextSubpass2(VkCommandBuffer commandBuffer, const void* pSubpassBegi
  * \param[in] dstStageMask               A bitmask of VkPipelineStageFlagBits specifying the destination stages
  * \param[in] dependencyFlags            A bitmask of VkDependencyFlagBits specifying how execution and memory dependencies are formed
  * \param[in] memoryBarrierCount         The length of the pMemoryBarriers array
- * \param[in] pMemoryBarriers            A pointer to an array of VkMemoryBarrier structures
+ * \param[in] pMemoryBarriers            A pointer to an array of memoryBarrierCount VkMemoryBarrier structures describing global memory dependencies
  * \param[in] bufferMemoryBarrierCount   The length of the pBufferMemoryBarriers array
- * \param[in] pBufferMemoryBarriers      A pointer to an array of VkBufferMemoryBarrier structures
+ * \param[in] pBufferMemoryBarriers      A pointer to an array of bufferMemoryBarrierCount VkBufferMemoryBarrier structures describing buffer memory dependencies
  * \param[in] imageMemoryBarrierCount    The length of the pImageMemoryBarriers array
- * \param[in] pImageMemoryBarriers       A pointer to an array of VkImageMemoryBarrier structures
+ * \param[in] pImageMemoryBarriers       A pointer to an array of imageMemoryBarrierCount VkImageMemoryBarrier structures describing image memory dependencies and layout transitions
  *
  * \retval    None
  */
@@ -5438,9 +5438,9 @@ void scvkCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
  * \brief Records resolve image.
  *
  * \param[in] commandBuffer    The command buffer into which the command will be recorded
- * \param[in] srcImage         The source image
+ * \param[in] srcImage         The multisample image to resolve from
  * \param[in] srcImageLayout   The layout of the source image subresources for the resolve
- * \param[in] dstImage         The destination image
+ * \param[in] dstImage         The single-sample image to resolve into
  * \param[in] dstImageLayout   The layout of the destination image subresources for the resolve
  * \param[in] regionCount      The number of regions to resolve
  * \param[in] pRegions         A pointer to an array of VkImageResolve structures specifying the regions to resolve
@@ -5454,7 +5454,7 @@ void scvkCmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImag
  * \brief Records set blend constants.
  *
  * \param[in] commandBuffer    The command buffer into which the command will be recorded
- * \param[in] blendConstants   A pointer to an array of four values specifying the Rc, Gc, Bc, and Ac components of the blend constant color used in blending, depending on the blend factor
+ * \param[in] blendConstants   A pointer to an array of four values specifying the R_c, G_c, B_c, and A_c components of the blend constant color used in blending, depending on the blend factor
  *
  * \retval    None
  */
@@ -5490,8 +5490,8 @@ void scvkCmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantF
  * \brief Records set depth bounds.
  *
  * \param[in] commandBuffer    The command buffer into which the command will be recorded
- * \param[in] minDepthBounds   The minimum depth bound
- * \param[in] maxDepthBounds   The maximum depth bound
+ * \param[in] minDepthBounds   Lower bound of the depth bounds test, in [0, 1] unless VK_EXT_depth_range_unrestricted is enabled
+ * \param[in] maxDepthBounds   Upper bound of the depth bounds test, in [0, 1] unless VK_EXT_depth_range_unrestricted is enabled
  *
  * \retval    None
  */
@@ -5561,7 +5561,7 @@ void scvkCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineSta
  *
  * \param[in] commandBuffer   The command buffer into which the command will be recorded
  * \param[in] pFragmentSize   Specifies the pipeline fragment shading rate for subsequent drawing commands
- * \param[in] combinerOps     Specifies a VkFragmentShadingRateCombinerOpKHR determining how the pipeline, primitive, and attachment shading rates are combined for fragments generated by subsequent drawing commands
+ * \param[in] combinerOps     Two VkFragmentShadingRateCombinerOpKHR values: element 0 combines the pipeline and primitive rates, element 1 combines that result with the attachment rate
  *
  * \retval    None
  */
@@ -5609,7 +5609,7 @@ void scvkCmdSetPatchControlPoints(VkCommandBuffer commandBuffer, uint32_t patchC
  * \param[in] sampleLocationsPerPixel   A VkSampleCountFlagBits value specifying the number of sample locations per pixel
  * \param[in] sampleLocationGridSize    The size of the sample location grid to select custom sample locations for
  * \param[in] sampleLocationsCount      The number of sample locations in pSampleLocations
- * \param[in] pSampleLocations          A pointer to an array of sampleLocationsCount VkSampleLocationEXT structures
+ * \param[in] pSampleLocations          Array of sampleLocationsCount custom sample positions within the sample location grid
  *
  * \retval    None
  */
@@ -5643,7 +5643,7 @@ void scvkCmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkStencilFaceFl
  * \brief Records set stencil reference.
  *
  * \param[in] commandBuffer   The command buffer into which the command will be recorded
- * \param[in] faceMask        A bitmask of VkStencilFaceFlagBits specifying the set of stencil state for which to update the reference value, as described above for vkCmdSetStencilCompareMask
+ * \param[in] faceMask        A bitmask of VkStencilFaceFlagBits specifying the set of stencil state for which to update the reference value
  * \param[in] reference       The new value to use as the stencil reference value
  *
  * \retval    None
@@ -5655,7 +5655,7 @@ void scvkCmdSetStencilReference(VkCommandBuffer commandBuffer, VkStencilFaceFlag
  * \brief Records set stencil write mask.
  *
  * \param[in] commandBuffer   The command buffer into which the command will be recorded
- * \param[in] faceMask        A bitmask of VkStencilFaceFlagBits specifying the set of stencil state for which to update the write mask, as described above for vkCmdSetStencilCompareMask
+ * \param[in] faceMask        A bitmask of VkStencilFaceFlagBits specifying the set of stencil state for which to update the write mask
  * \param[in] writeMask       The new value to use as the stencil write mask
  *
  * \retval    None
@@ -5668,9 +5668,9 @@ void scvkCmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStencilFaceFlag
  *
  * \param[in] commandBuffer                     The command buffer into which the command will be recorded
  * \param[in] vertexBindingDescriptionCount     The number of vertex binding descriptions provided in pVertexBindingDescriptions
- * \param[in] pVertexBindingDescriptions        A pointer to an array of VkVertexInputBindingDescription2EXT structures
+ * \param[in] pVertexBindingDescriptions        A pointer to an array of vertexBindingDescriptionCount VkVertexInputBindingDescription2EXT structures describing each vertex binding
  * \param[in] vertexAttributeDescriptionCount   The number of vertex attribute descriptions provided in pVertexAttributeDescriptions
- * \param[in] pVertexAttributeDescriptions      A pointer to an array of VkVertexInputAttributeDescription2EXT structures
+ * \param[in] pVertexAttributeDescriptions      A pointer to an array of vertexAttributeDescriptionCount VkVertexInputAttributeDescription2EXT structures describing each vertex attribute
  *
  * \retval    None
  */
@@ -5711,11 +5711,11 @@ void scvkCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDe
  * \param[in] srcStageMask               A bitmask of VkPipelineStageFlagBits specifying the source stage mask
  * \param[in] dstStageMask               A bitmask of VkPipelineStageFlagBits specifying the destination stage mask
  * \param[in] memoryBarrierCount         The length of the pMemoryBarriers array
- * \param[in] pMemoryBarriers            A pointer to an array of VkMemoryBarrier structures
+ * \param[in] pMemoryBarriers            A pointer to an array of memoryBarrierCount VkMemoryBarrier structures describing global memory dependencies
  * \param[in] bufferMemoryBarrierCount   The length of the pBufferMemoryBarriers array
- * \param[in] pBufferMemoryBarriers      A pointer to an array of VkBufferMemoryBarrier structures
+ * \param[in] pBufferMemoryBarriers      A pointer to an array of bufferMemoryBarrierCount VkBufferMemoryBarrier structures describing buffer memory dependencies
  * \param[in] imageMemoryBarrierCount    The length of the pImageMemoryBarriers array
- * \param[in] pImageMemoryBarriers       A pointer to an array of VkImageMemoryBarrier structures
+ * \param[in] pImageMemoryBarriers       A pointer to an array of imageMemoryBarrierCount VkImageMemoryBarrier structures describing image memory dependencies and layout transitions
  *
  * \retval    None
  */
@@ -5726,7 +5726,7 @@ void scvkCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const
  * \brief Records write timestamp.
  *
  * \param[in] commandBuffer   The command buffer into which the command will be recorded
- * \param[in] pipelineStage   A VkPipelineStageFlagBits value, specifying a stage of the pipeline
+ * \param[in] pipelineStage   Pipeline stage whose completion triggers the timestamp write
  * \param[in] queryPool       The query pool that will manage the timestamp
  * \param[in] query           The query within the query pool that will contain the timestamp
  *
@@ -5778,7 +5778,7 @@ void scvkCreateBufferView(VkDevice device, const void* pNext, VkBufferViewCreate
  * \param[in]  device             The logical device that creates the command pool
  * \param[in]  pNext              Optional extension chain attached to VkCommandPoolCreateInfo, or NULL
  * \param[in]  flags              A bitmask of VkCommandPoolCreateFlagBits indicating usage behavior for the pool and command buffers allocated from it
- * \param[in]  queueFamilyIndex   Designates a queue family as described in section Queue Family Properties
+ * \param[in]  queueFamilyIndex   Index of the queue family whose queues will execute command buffers allocated from the pool
  * \param[in]  pAllocator         Optional allocation callbacks, or NULL
  * \param[out] pCommandPool       A pointer to a VkCommandPool handle in which the created pool is returned
  *
@@ -5791,9 +5791,9 @@ void scvkCreateCommandPool(VkDevice device, const void* pNext, VkCommandPoolCrea
  * \brief Creates a compute pipelines.
  *
  * \param[in]  device            The logical device that creates the compute pipelines
- * \param[in]  pipelineCache     Either VK_NULL_HANDLE, indicating that pipeline caching is disabled, or to enable caching, the handle of a valid VkPipelineCache object
+ * \param[in]  pipelineCache     The handle of a valid VkPipelineCache object
  * \param[in]  createInfoCount   The length of the pCreateInfos and pPipelines arrays
- * \param[in]  pCreateInfos      A pointer to an array of VkComputePipelineCreateInfo structures
+ * \param[in]  pCreateInfos      A pointer to an array of createInfoCount VkComputePipelineCreateInfo structures, one per pipeline
  * \param[in]  pAllocator        Optional allocation callbacks, or NULL
  * \param[out] pPipelines        A pointer to an array of VkPipeline handles in which the resulting compute pipeline objects are returned
  *
@@ -5807,7 +5807,7 @@ void scvkCreateComputePipelines(VkDevice device, VkPipelineCache pipelineCache, 
  *
  * \param[in]  instance          The instance the messenger will be used with
  * \param[in]  pNext             Optional extension chain attached to VkDebugUtilsMessengerCreateInfoEXT, or NULL
- * \param[in]  flags             0 and is reserved for future use
+ * \param[in]  flags             Reserved for future use; must be 0
  * \param[in]  messageSeverity   A bitmask of VkDebugUtilsMessageSeverityFlagBitsEXT specifying which severity of event(s) will cause this callback to be called
  * \param[in]  messageType       A bitmask of VkDebugUtilsMessageTypeFlagBitsEXT specifying which type of event(s) will cause this callback to be called
  * \param[in]  pfnUserCallback   The application callback function to call
@@ -5856,7 +5856,7 @@ void scvkCreateDescriptorSetLayout(VkDevice device, const void* pNext, VkDescrip
 /**
  * \brief Creates a device.
  *
- * \param[in]  physicalDevice            Must be one of the device handles returned from a call to vkEnumeratePhysicalDevices (see Physical Device Enumeration)
+ * \param[in]  physicalDevice            A physical device returned by vkEnumeratePhysicalDevices that the logical device is created on
  * \param[in]  pNext                     Optional extension chain attached to VkDeviceCreateInfo, or NULL
  * \param[in]  flags                     Reserved for future use; must be 0
  * \param[in]  queueCreateInfoCount      The unsigned integer size of the pQueueCreateInfos array
@@ -5900,7 +5900,7 @@ void scvkCreateDisplayMode(VkPhysicalDevice physicalDevice, VkDisplayKHR display
  * \param[in]  planeIndex        The plane on which this surface appears
  * \param[in]  planeStackIndex   The z-order of the plane
  * \param[in]  transform         A VkSurfaceTransformFlagBitsKHR value specifying the transformation to apply to images as part of the scanout operation
- * \param[in]  globalAlpha       The global alpha value
+ * \param[in]  globalAlpha       Global alpha value in [0,1], used only when alphaMode is VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR
  * \param[in]  alphaMode         A VkDisplayPlaneAlphaFlagBitsKHR value specifying the type of alpha blending to use
  * \param[in]  imageExtent       The size of the presentable images to use with the surface
  * \param[in]  pAllocator        Optional allocation callbacks, or NULL
@@ -5944,13 +5944,13 @@ void scvkCreateFence(VkDevice device, const void* pNext, VkFenceCreateFlags flag
  *
  * \param[in]  device            The logical device that creates the framebuffer
  * \param[in]  pNext             Optional extension chain attached to VkFramebufferCreateInfo, or NULL
- * \param[in]  flags             A bitmask of VkFramebufferCreateFlagBits
+ * \param[in]  flags             A bitmask of VkFramebufferCreateFlagBits, such as VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT for an imageless framebuffer
  * \param[in]  renderPass        A render pass defining what render passes the framebuffer will be compatible with
  * \param[in]  attachmentCount   The number of attachments
  * \param[in]  pAttachments      A pointer to an array of VkImageView handles, each of which will be used as the corresponding attachment in a render pass instance
- * \param[in]  width             Define the dimensions of the framebuffer
- * \param[in]  height            Define the dimensions of the framebuffer
- * \param[in]  layers            Define the dimensions of the framebuffer
+ * \param[in]  width             Width of the framebuffer in pixels
+ * \param[in]  height            Height of the framebuffer in pixels
+ * \param[in]  layers            Number of array layers in the framebuffer
  * \param[in]  pAllocator        Optional allocation callbacks, or NULL
  * \param[out] pFramebuffer      A pointer to a VkFramebuffer handle in which the resulting framebuffer object is returned
  *
@@ -5963,9 +5963,9 @@ void scvkCreateFramebuffer(VkDevice device, const void* pNext, VkFramebufferCrea
  * \brief Creates a graphics pipelines.
  *
  * \param[in]  device            The logical device that creates the graphics pipelines
- * \param[in]  pipelineCache     Either VK_NULL_HANDLE, indicating that pipeline caching is disabled, or to enable caching, the handle of a valid VkPipelineCache object
+ * \param[in]  pipelineCache     The handle of a valid VkPipelineCache object
  * \param[in]  createInfoCount   The length of the pCreateInfos and pPipelines arrays
- * \param[in]  pCreateInfos      A pointer to an array of VkGraphicsPipelineCreateInfo structures
+ * \param[in]  pCreateInfos      A pointer to an array of createInfoCount VkGraphicsPipelineCreateInfo structures, one per pipeline
  * \param[in]  pAllocator        Optional allocation callbacks, or NULL
  * \param[out] pPipelines        A pointer to an array of VkPipeline handles in which the resulting graphics pipeline objects are returned
  *
@@ -5992,7 +5992,7 @@ void scvkCreateHeadlessSurface(VkInstance instance, const void* pNext, VkHeadles
  * \brief Creates a image.
  *
  * \param[in]  device                  The logical device that creates the image
- * \param[in]  pNext                   Optional extension chain attached to VkImageCreateInfo, or NULL
+ * \param[in]  pNext                   Optional input extension chain attached to VkImageCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image
  * \param[in]  imageType               A VkImageType value specifying the basic dimensionality of the image
  * \param[in]  format                  A VkFormat describing the format and type of the texel blocks that will be contained in the image
@@ -6038,13 +6038,13 @@ void scvkCreateImageView(VkDevice device, const void* pNext, VkImageViewCreateFl
  *
  * \param[in]  pNext                     Optional extension chain attached to VkInstanceCreateInfo, or NULL
  * \param[in]  flags                     A bitmask of VkInstanceCreateFlagBits indicating the behavior of the instance
- * \param[in]  pApplicationInfo          NULL or a pointer to a VkApplicationInfo structure
+ * \param[in]  pApplicationInfo          NULL or a pointer to a VkApplicationInfo identifying the application, engine, and highest Vulkan API version it uses
  * \param[in]  enabledLayerCount         The number of global layers to enable
  * \param[in]  ppEnabledLayerNames       A pointer to an array of enabledLayerCount null-terminated UTF-8 strings containing the names of layers to enable for the created instance
  * \param[in]  enabledExtensionCount     The number of global extensions to enable
  * \param[in]  ppEnabledExtensionNames   A pointer to an array of enabledExtensionCount null-terminated UTF-8 strings containing the names of extensions to enable
  * \param[in]  pAllocator                Optional allocation callbacks, or NULL
- * \param[out] pInstance                 Points a VkInstance handle in which the resulting instance is returned
+ * \param[out] pInstance                 A pointer to a VkInstance handle in which the resulting instance is returned
  *
  * \retval     None
  */
@@ -6058,7 +6058,7 @@ void scvkCreateInstance(const void* pNext, VkInstanceCreateFlags flags, const Vk
  * \param[in]  pNext             Optional extension chain attached to VkPipelineCacheCreateInfo, or NULL
  * \param[in]  flags             A bitmask of VkPipelineCacheCreateFlagBits specifying the behavior of the pipeline cache
  * \param[in]  initialDataSize   The number of bytes in pInitialData
- * \param[in]  pInitialData      A pointer to previously retrieved pipeline cache data
+ * \param[in]  pInitialData      A pointer to pipeline cache data that has been generated offline
  * \param[in]  pAllocator        Optional allocation callbacks, or NULL
  * \param[out] pPipelineCache    A pointer to a VkPipelineCache handle in which the resulting pipeline cache object is returned
  *
@@ -6074,7 +6074,7 @@ void scvkCreatePipelineCache(VkDevice device, const void* pNext, VkPipelineCache
  * \param[in]  pNext                    Optional extension chain attached to VkPipelineLayoutCreateInfo, or NULL
  * \param[in]  flags                    A bitmask of VkPipelineLayoutCreateFlagBits specifying options for pipeline layout creation
  * \param[in]  setLayoutCount           The number of descriptor sets included in the pipeline layout
- * \param[in]  pSetLayouts              A pointer to an array of VkDescriptorSetLayout objects
+ * \param[in]  pSetLayouts              Array of setLayoutCount descriptor set layouts; element i is the layout of set number i
  * \param[in]  pushConstantRangeCount   The number of push constant ranges included in the pipeline layout
  * \param[in]  pPushConstantRanges      A pointer to an array of VkPushConstantRange structures defining a set of push constant ranges for use in a single pipeline layout
  * \param[in]  pAllocator               Optional allocation callbacks, or NULL
@@ -6090,10 +6090,10 @@ void scvkCreatePipelineLayout(VkDevice device, const void* pNext, VkPipelineLayo
  *
  * \param[in]  device               The logical device that creates the query pool
  * \param[in]  pNext                Optional extension chain attached to VkQueryPoolCreateInfo, or NULL
- * \param[in]  flags                A bitmask of VkQueryPoolCreateFlagBits
+ * \param[in]  flags                A bitmask of VkQueryPoolCreateFlagBits; VK_QUERY_POOL_CREATE_RESET_BIT_KHR creates the queries in the reset state
  * \param[in]  queryType            A VkQueryType value specifying the type of queries managed by the pool
  * \param[in]  queryCount           The number of queries managed by the pool
- * \param[in]  pipelineStatistics   A bitmask of VkQueryPipelineStatisticFlagBits specifying which counters will be returned in queries on the new pool, as described below in queries-pipestats
+ * \param[in]  pipelineStatistics   A bitmask of VkQueryPipelineStatisticFlagBits specifying which counters pipeline statistics queries on the new pool return; ignored for other query types
  * \param[in]  pAllocator           Optional allocation callbacks, or NULL
  * \param[out] pQueryPool           A pointer to a VkQueryPool handle in which the resulting query pool object is returned
  *
@@ -6107,7 +6107,7 @@ void scvkCreateQueryPool(VkDevice device, const void* pNext, VkQueryPoolCreateFl
  *
  * \param[in]  device            The logical device that creates the render pass
  * \param[in]  pNext             Optional extension chain attached to VkRenderPassCreateInfo, or NULL
- * \param[in]  flags             Reserved for future use; must be 0
+ * \param[in]  flags             A bitmask of VkRenderPassCreateFlagBits specifying additional properties of a render pass
  * \param[in]  attachmentCount   The number of attachments used by this render pass
  * \param[in]  pAttachments      A pointer to an array of attachmentCount VkAttachmentDescription structures describing the attachments used by the render pass
  * \param[in]  subpassCount      The number of subpasses to create
@@ -6127,7 +6127,7 @@ void scvkCreateRenderPass(VkDevice device, const void* pNext, VkRenderPassCreate
  *
  * \param[in]  device                    The logical device that creates the render pass
  * \param[in]  pNext                     Optional extension chain attached to VkRenderPassCreateInfo2, or NULL
- * \param[in]  flags                     Reserved for future use; must be 0
+ * \param[in]  flags                     A bitmask of VkRenderPassCreateFlagBits specifying additional properties of a render pass
  * \param[in]  attachmentCount           The number of attachments used by this render pass
  * \param[in]  pAttachments              A pointer to an array of attachmentCount VkAttachmentDescription2 structures describing the attachments used by the render pass
  * \param[in]  subpassCount              The number of subpasses to create
@@ -6156,11 +6156,11 @@ void scvkCreateRenderPass2(VkDevice device, const void* pNext, VkRenderPassCreat
  * \param[in]  addressModeU              A VkSamplerAddressMode value specifying the wrapping operation used when the i coordinate used to sample the image would be out of bounds
  * \param[in]  addressModeV              A VkSamplerAddressMode value specifying the wrapping operation used when the j coordinate used to sample the image would be out of bounds
  * \param[in]  addressModeW              A VkSamplerAddressMode value specifying the wrapping operation used when the k coordinate used to sample the image would be out of bounds
- * \param[in]  mipLodBias                The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V, as described in the LOD Operation section
- * \param[in]  anisotropyEnable          VK_TRUE to enable anisotropic filtering, as described in the Texel Anisotropic Filtering section, or VK_FALSE otherwise
+ * \param[in]  mipLodBias                The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V
+ * \param[in]  anisotropyEnable          VK_TRUE to enable anisotropic filtering, or VK_FALSE otherwise
  * \param[in]  maxAnisotropy             The anisotropy value clamp used by the sampler when anisotropyEnable is VK_TRUE
  * \param[in]  compareEnable             VK_TRUE to enable comparison against a reference value during lookups, or VK_FALSE otherwise
- * \param[in]  compareOp                 A VkCompareOp value specifying the comparison operator to apply to fetched data before filtering as described in the Depth Compare Operation section
+ * \param[in]  compareOp                 A VkCompareOp value specifying the comparison operator to apply to fetched data before filtering
  * \param[in]  minLod                    Used to clamp the minimum of the computed LOD value
  * \param[in]  maxLod                    Used to clamp the maximum of the computed LOD value
  * \param[in]  borderColor               A VkBorderColor value specifying the predefined border color to use
@@ -6177,7 +6177,7 @@ void scvkCreateSampler(VkDevice device, const void* pNext, VkSamplerCreateFlags 
  * \brief Creates a sampler ycbcr conversion.
  *
  * \param[in]  device                        The logical device that creates the sampler Y'CbCr conversion
- * \param[in]  pNext                         Optional extension chain attached to VkSamplerYcbcrConversionCreateInfo, or NULL
+ * \param[in]  pNext                         Optional input extension chain attached to VkSamplerYcbcrConversionCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  format                        The format of the image from which color information will be retrieved
  * \param[in]  ycbcrModel                    Describes the color matrix for conversion between color models
  * \param[in]  ycbcrRange                    Describes whether the encoded values have headroom and foot room, or whether the encoding uses the full numerical range
@@ -6238,12 +6238,12 @@ VkResult scvkCreateSharedSwapchains(VkDevice device, uint32_t swapchainCount, co
  * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
  * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
  * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
  * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
  * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
  * \param[in]  presentMode             The presentation mode the swapchain will use
  * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
+ * \param[in]  oldSwapchain            VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface, which is retired and may aid resource reuse
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pSwapchain              A pointer to a VkSwapchainKHR handle in which the created swapchain object will be returned
  *
@@ -6518,7 +6518,7 @@ void scvkEndCommandBuffer(VkCommandBuffer commandBuffer);
  * \param[in]  physicalDevice   The physical device that will be queried
  * \param[in]  pLayerName       Either NULL or a pointer to a null-terminated UTF-8 string naming the layer to retrieve extensions from
  * \param[out] pPropertyCount   Receives the number of entries written
- * \param[out] pProperties      Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties      Receives *pPropertyCount VkExtensionProperties entries; more than SCVK_MAX_PROPERTIES is fatal
  *
  * \retval     None
  */
@@ -6530,7 +6530,7 @@ void scvkEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, con
  *
  * \param[in]  physicalDevice   The physical device that will be queried
  * \param[out] pPropertyCount   Receives the number of entries written
- * \param[out] pProperties      Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties      Receives *pPropertyCount VkLayerProperties entries; more than SCVK_MAX_PROPERTIES is fatal
  *
  * \retval     None
  */
@@ -6542,7 +6542,7 @@ void scvkEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice, uint32_
  *
  * \param[in]  pLayerName       Either NULL or a pointer to a null-terminated UTF-8 string naming the layer to retrieve extensions from
  * \param[out] pPropertyCount   Receives the number of entries written
- * \param[out] pProperties      Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties      Receives *pPropertyCount VkExtensionProperties entries; more than SCVK_MAX_PROPERTIES is fatal
  *
  * \retval     None
  */
@@ -6553,7 +6553,7 @@ void scvkEnumerateInstanceExtensionProperties(const char* pLayerName, uint32_t* 
  * \brief Enumerates instance layer properties into a fixed-capacity array.
  *
  * \param[out] pPropertyCount   Receives the number of entries written
- * \param[out] pProperties      Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties      Receives *pPropertyCount VkLayerProperties entries; more than SCVK_MAX_PROPERTIES is fatal
  *
  * \retval     None
  */
@@ -6563,7 +6563,7 @@ void scvkEnumerateInstanceLayerProperties(uint32_t* pPropertyCount, VkLayerPrope
 /**
  * \brief Enumerates instance version into a fixed-capacity array.
  *
- * \param[out] pApiVersion   A pointer to a uint32_t, which is the version of Vulkan supported by instance-level functionality, encoded as described in extendingvulkan-coreversions-versionnumbers
+ * \param[out] pApiVersion   A pointer to a uint32_t that receives the instance-level Vulkan version, encoded as by VK_MAKE_API_VERSION
  *
  * \retval     None
  */
@@ -6575,7 +6575,7 @@ void scvkEnumerateInstanceVersion(uint32_t* pApiVersion);
  *
  * \param[in]  instance                         A handle to a Vulkan instance previously created with vkCreateInstance
  * \param[out] pPhysicalDeviceGroupCount        Receives the number of entries written
- * \param[out] pPhysicalDeviceGroupProperties   Receives up to SCVK_MAX_PHYSICAL_DEVICE_GROUP_PROPERTIES entries
+ * \param[out] pPhysicalDeviceGroupProperties   Receives *pPhysicalDeviceGroupCount VkPhysicalDeviceGroupProperties entries; more than SCVK_MAX_PHYSICAL_DEVICE_GROUP_PROPERTIES is fatal
  *
  * \retval     None
  */
@@ -6588,8 +6588,8 @@ void scvkEnumeratePhysicalDeviceGroups(VkInstance instance, uint32_t* pPhysicalD
  * \param[in]  physicalDevice         The handle to the physical device whose queue family performance query counter properties will be queried
  * \param[in]  queueFamilyIndex       The index into the queue family of the physical device we want to get properties for
  * \param[out] pCounterCount          Receives the number of entries written
- * \param[out] pCounters              Receives up to SCVK_MAX_COUNTERS entries
- * \param[out] pCounterDescriptions   Receives up to SCVK_MAX_COUNTER_DESCRIPTIONS entries
+ * \param[out] pCounters              Receives *pCounterCount VkPerformanceCounterKHR entries; more than SCVK_MAX_COUNTERS is fatal
+ * \param[out] pCounterDescriptions   Receives *pCounterCount VkPerformanceCounterDescriptionKHR entries; more than SCVK_MAX_COUNTER_DESCRIPTIONS is fatal
  *
  * \retval     None
  */
@@ -6601,7 +6601,7 @@ void scvkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCounters(VkPhysicalDe
  *
  * \param[in]  instance               A handle to a Vulkan instance previously created with vkCreateInstance
  * \param[out] pPhysicalDeviceCount   Receives the number of entries written
- * \param[out] pPhysicalDevices       Receives up to SCVK_MAX_PHYSICAL_DEVICES entries
+ * \param[out] pPhysicalDevices       Receives *pPhysicalDeviceCount VkPhysicalDevice entries; more than SCVK_MAX_PHYSICAL_DEVICES is fatal
  *
  * \retval     None
  */
@@ -6639,7 +6639,7 @@ void scvkFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t
  * \param[in] device               The logical device that owns the descriptor pool
  * \param[in] descriptorPool       The descriptor pool from which the descriptor sets were allocated
  * \param[in] descriptorSetCount   The number of elements in the pDescriptorSets array
- * \param[in] pDescriptorSets      A pointer to an array of handles to VkDescriptorSet objects
+ * \param[in] pDescriptorSets      A pointer to an array of descriptorSetCount descriptor sets to free back to descriptorPool
  *
  * \retval    None
  */
@@ -6673,12 +6673,12 @@ void scvkGetBufferMemoryRequirements(VkDevice device, VkBuffer buffer, VkMemoryR
 /**
  * \brief Retrieves buffer memory requirements 2.
  *
- * \param[in]  device                The logical device that owns the buffer
- * \param[in]  pInfo                 A pointer to a VkBufferMemoryRequirementsInfo2 structure containing parameters required for the memory requirements query
- * \param[in]  pNext                 Optional output extension chain attached to VkMemoryRequirements2, or NULL
- * \param[out] pMemoryRequirements   A pointer to a VkMemoryRequirements2 structure in which the memory requirements of the buffer object are returned
+ * \param[in]     device                The logical device that owns the buffer
+ * \param[in]     pInfo                 A pointer to a VkBufferMemoryRequirementsInfo2 structure containing parameters required for the memory requirements query
+ * \param[in,out] pNext                 Optional output extension chain attached to VkMemoryRequirements2, or NULL
+ * \param[out]    pMemoryRequirements   A pointer to a VkMemoryRequirements2 structure in which the memory requirements of the buffer object are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetBufferMemoryRequirements2(VkDevice device, const VkBufferMemoryRequirementsInfo2* pInfo, void* pNext, VkMemoryRequirements2* pMemoryRequirements);
 
@@ -6712,13 +6712,13 @@ void scvkGetCalibratedTimestamps(VkDevice device, uint32_t timestampCount, const
 /**
  * \brief Retrieves command pool memory consumption.
  *
- * \param[in]  device          The logical device that owns the command pool
- * \param[in]  commandPool     The command pool from which to query the memory usage
- * \param[in]  commandBuffer   An optional command buffer from which to query the memory usage
- * \param[in]  pNext           Optional output extension chain attached to VkCommandPoolMemoryConsumption, or NULL
- * \param[out] pConsumption    A pointer to a VkCommandPoolMemoryConsumption structure where the memory usage is written
+ * \param[in]     device          The logical device that owns the command pool
+ * \param[in]     commandPool     The command pool from which to query the memory usage
+ * \param[in]     commandBuffer   An optional command buffer from which to query the memory usage
+ * \param[in,out] pNext           Optional output extension chain attached to VkCommandPoolMemoryConsumption, or NULL
+ * \param[out]    pConsumption    A pointer to a VkCommandPoolMemoryConsumption structure where the memory usage is written
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetCommandPoolMemoryConsumption(VkDevice device, VkCommandPool commandPool, VkCommandBuffer commandBuffer, void* pNext, VkCommandPoolMemoryConsumption* pConsumption);
 
@@ -6726,15 +6726,15 @@ void scvkGetCommandPoolMemoryConsumption(VkDevice device, VkCommandPool commandP
 /**
  * \brief Retrieves descriptor set layout support.
  *
- * \param[in]  device            The logical device that would create the descriptor set layout
- * \param[in]  pCreateInfoNext   Optional extension chain attached to VkDescriptorSetLayoutCreateInfo, or NULL
- * \param[in]  flags             A bitmask of VkDescriptorSetLayoutCreateFlagBits specifying options for descriptor set layout creation
- * \param[in]  bindingCount      The number of elements in pBindings
- * \param[in]  pBindings         A pointer to an array of VkDescriptorSetLayoutBinding structures
- * \param[in]  pSupportNext      Optional output extension chain attached to VkDescriptorSetLayoutSupport, or NULL
- * \param[out] pSupport          A pointer to a VkDescriptorSetLayoutSupport structure, in which information about support for the descriptor set layout object is returned
+ * \param[in]     device            The logical device that would create the descriptor set layout
+ * \param[in]     pCreateInfoNext   Optional extension chain attached to VkDescriptorSetLayoutCreateInfo, or NULL
+ * \param[in]     flags             A bitmask of VkDescriptorSetLayoutCreateFlagBits specifying options for descriptor set layout creation
+ * \param[in]     bindingCount      The number of elements in pBindings
+ * \param[in]     pBindings         A pointer to an array of VkDescriptorSetLayoutBinding structures
+ * \param[in,out] pSupportNext      Optional output extension chain attached to VkDescriptorSetLayoutSupport, or NULL
+ * \param[out]    pSupport          A pointer to a VkDescriptorSetLayoutSupport structure, in which information about support for the descriptor set layout object is returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetDescriptorSetLayoutSupport(VkDevice device, const void* pCreateInfoNext, VkDescriptorSetLayoutCreateFlags flags, uint32_t bindingCount, const VkDescriptorSetLayoutBinding* pBindings, void* pSupportNext, VkDescriptorSetLayoutSupport* pSupport);
 
@@ -6756,11 +6756,11 @@ void scvkGetDeviceGroupPeerMemoryFeatures(VkDevice device, uint32_t heapIndex, u
 /**
  * \brief Retrieves device group present capabilities.
  *
- * \param[in]  device                            The logical device
- * \param[in]  pNext                             Optional output extension chain attached to VkDeviceGroupPresentCapabilitiesKHR, or NULL
- * \param[out] pDeviceGroupPresentCapabilities   A pointer to a VkDeviceGroupPresentCapabilitiesKHR structure in which the device's capabilities are returned
+ * \param[in]     device                            Logical device whose device-group present capabilities are queried
+ * \param[in,out] pNext                             Optional output extension chain attached to VkDeviceGroupPresentCapabilitiesKHR, or NULL
+ * \param[out]    pDeviceGroupPresentCapabilities   A pointer to a VkDeviceGroupPresentCapabilitiesKHR structure in which the device's capabilities are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetDeviceGroupPresentCapabilities(VkDevice device, void* pNext, VkDeviceGroupPresentCapabilitiesKHR* pDeviceGroupPresentCapabilities);
 
@@ -6768,8 +6768,8 @@ void scvkGetDeviceGroupPresentCapabilities(VkDevice device, void* pNext, VkDevic
 /**
  * \brief Retrieves device group surface present modes.
  *
- * \param[in]  device    The logical device
- * \param[in]  surface   The surface
+ * \param[in]  device    Logical device whose device-group present modes for the surface are queried
+ * \param[in]  surface   Surface whose device-group present modes are queried
  * \param[out] pModes    A pointer to a VkDeviceGroupPresentModeFlagsKHR in which the supported device group present modes for the surface are returned
  *
  * \retval     VK_SUCCESS                  Command successfully completed.
@@ -6848,7 +6848,7 @@ void scvkGetDeviceQueue2(VkDevice device, const void* pNext, VkDeviceQueueCreate
  * \param[in]  physicalDevice   The physical device associated with display
  * \param[in]  display          The display to query
  * \param[out] pPropertyCount   Receives the number of entries written
- * \param[out] pProperties      Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties      Receives *pPropertyCount VkDisplayModeProperties2KHR entries; more than SCVK_MAX_PROPERTIES is fatal
  *
  * \retval     None
  */
@@ -6861,7 +6861,7 @@ void scvkGetDisplayModeProperties2(VkPhysicalDevice physicalDevice, VkDisplayKHR
  * \param[in]  physicalDevice   The physical device associated with display
  * \param[in]  display          The display to query
  * \param[out] pPropertyCount   Receives the number of entries written
- * \param[out] pProperties      Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties      Receives *pPropertyCount VkDisplayModePropertiesKHR entries; more than SCVK_MAX_PROPERTIES is fatal
  *
  * \retval     None
  */
@@ -6871,12 +6871,12 @@ void scvkGetDisplayModeProperties(VkPhysicalDevice physicalDevice, VkDisplayKHR 
 /**
  * \brief Retrieves display plane capabilities 2.
  *
- * \param[in]  physicalDevice      The physical device associated with pDisplayPlaneInfo
- * \param[in]  pDisplayPlaneInfo   A pointer to a VkDisplayPlaneInfo2KHR structure describing the plane and mode
- * \param[in]  pNext               Optional output extension chain attached to VkDisplayPlaneCapabilities2KHR, or NULL
- * \param[out] pCapabilities       A pointer to a VkDisplayPlaneCapabilities2KHR structure in which the capabilities are returned
+ * \param[in]     physicalDevice      The physical device associated with pDisplayPlaneInfo
+ * \param[in]     pDisplayPlaneInfo   A pointer to a VkDisplayPlaneInfo2KHR structure describing the plane and mode
+ * \param[in,out] pNext               Optional output extension chain attached to VkDisplayPlaneCapabilities2KHR, or NULL
+ * \param[out]    pCapabilities       A pointer to a VkDisplayPlaneCapabilities2KHR structure in which the capabilities are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetDisplayPlaneCapabilities2(VkPhysicalDevice physicalDevice, const VkDisplayPlaneInfo2KHR* pDisplayPlaneInfo, void* pNext, VkDisplayPlaneCapabilities2KHR* pCapabilities);
 
@@ -6897,10 +6897,10 @@ void scvkGetDisplayPlaneCapabilities(VkPhysicalDevice physicalDevice, VkDisplayM
 /**
  * \brief Retrieves display plane supported displays.
  *
- * \param[in]  physicalDevice   A physical device
+ * \param[in]  physicalDevice   Physical device to query
  * \param[in]  planeIndex       The plane which the application wishes to use, and must be in the range [0, physical device plane count - 1]
  * \param[out] pDisplayCount    Receives the number of entries written
- * \param[out] pDisplays        Receives up to SCVK_MAX_DISPLAYS entries
+ * \param[out] pDisplays        Receives *pDisplayCount VkDisplayKHR entries; more than SCVK_MAX_DISPLAYS is fatal
  *
  * \retval     None
  */
@@ -6963,12 +6963,12 @@ VkResult scvkGetFenceStatus(VkDevice device, VkFence fence);
 /**
  * \brief Retrieves image drm format modifier properties.
  *
- * \param[in]  device        The logical device that owns the image
- * \param[in]  image         The queried image
- * \param[in]  pNext         Optional output extension chain attached to VkImageDrmFormatModifierPropertiesEXT, or NULL
- * \param[out] pProperties   A pointer to a VkImageDrmFormatModifierPropertiesEXT structure in which properties of the image's DRM format modifier are returned
+ * \param[in]     device        The logical device that owns the image
+ * \param[in]     image         The queried image
+ * \param[in,out] pNext         Optional output extension chain attached to VkImageDrmFormatModifierPropertiesEXT, or NULL
+ * \param[out]    pProperties   A pointer to a VkImageDrmFormatModifierPropertiesEXT structure in which properties of the image's DRM format modifier are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetImageDrmFormatModifierProperties(VkDevice device, VkImage image, void* pNext, VkImageDrmFormatModifierPropertiesEXT* pProperties);
 
@@ -6988,12 +6988,12 @@ void scvkGetImageMemoryRequirements(VkDevice device, VkImage image, VkMemoryRequ
 /**
  * \brief Retrieves image memory requirements 2.
  *
- * \param[in]  device                The logical device that owns the image
- * \param[in]  pInfo                 A pointer to a VkImageMemoryRequirementsInfo2 structure containing parameters required for the memory requirements query
- * \param[in]  pNext                 Optional output extension chain attached to VkMemoryRequirements2, or NULL
- * \param[out] pMemoryRequirements   A pointer to a VkMemoryRequirements2 structure in which the memory requirements of the image object are returned
+ * \param[in]     device                The logical device that owns the image
+ * \param[in]     pInfo                 A pointer to a VkImageMemoryRequirementsInfo2 structure containing parameters required for the memory requirements query
+ * \param[in,out] pNext                 Optional output extension chain attached to VkMemoryRequirements2, or NULL
+ * \param[out]    pMemoryRequirements   A pointer to a VkMemoryRequirements2 structure in which the memory requirements of the image object are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetImageMemoryRequirements2(VkDevice device, const VkImageMemoryRequirementsInfo2* pInfo, void* pNext, VkMemoryRequirements2* pMemoryRequirements);
 
@@ -7040,13 +7040,13 @@ void scvkGetMemoryFd(VkDevice device, const void* pNext, VkDeviceMemory memory, 
 /**
  * \brief Retrieves memory fd properties.
  *
- * \param[in]  device                The logical device that will be importing fd
- * \param[in]  handleType            A VkExternalMemoryHandleTypeFlagBits value specifying the type of the handle fd
- * \param[in]  fd                    The handle which will be imported
- * \param[in]  pNext                 Optional output extension chain attached to VkMemoryFdPropertiesKHR, or NULL
- * \param[out] pMemoryFdProperties   A pointer to a VkMemoryFdPropertiesKHR structure in which the properties of the handle fd are returned
+ * \param[in]     device                The logical device that will be importing fd
+ * \param[in]     handleType            A VkExternalMemoryHandleTypeFlagBits value specifying the type of the handle fd
+ * \param[in]     fd                    The handle which will be imported
+ * \param[in,out] pNext                 Optional output extension chain attached to VkMemoryFdPropertiesKHR, or NULL
+ * \param[out]    pMemoryFdProperties   A pointer to a VkMemoryFdPropertiesKHR structure in which the properties of the handle fd are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetMemoryFdProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, int fd, void* pNext, VkMemoryFdPropertiesKHR* pMemoryFdProperties);
 
@@ -7054,13 +7054,13 @@ void scvkGetMemoryFdProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBi
 /**
  * \brief Retrieves memory host pointer properties.
  *
- * \param[in]  device                         The logical device that will be importing pHostPointer
- * \param[in]  handleType                     A VkExternalMemoryHandleTypeFlagBits value specifying the type of the handle pHostPointer
- * \param[in]  pHostPointer                   The host pointer to import from
- * \param[in]  pNext                          Optional output extension chain attached to VkMemoryHostPointerPropertiesEXT, or NULL
- * \param[out] pMemoryHostPointerProperties   A pointer to a VkMemoryHostPointerPropertiesEXT structure in which the host pointer properties are returned
+ * \param[in]     device                         The logical device that will be importing pHostPointer
+ * \param[in]     handleType                     A VkExternalMemoryHandleTypeFlagBits value specifying the type of the handle pHostPointer
+ * \param[in]     pHostPointer                   The host pointer to import from
+ * \param[in,out] pNext                          Optional output extension chain attached to VkMemoryHostPointerPropertiesEXT, or NULL
+ * \param[out]    pMemoryHostPointerProperties   A pointer to a VkMemoryHostPointerPropertiesEXT structure in which the host pointer properties are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetMemoryHostPointerProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, const void* pHostPointer, void* pNext, VkMemoryHostPointerPropertiesEXT* pMemoryHostPointerProperties);
 
@@ -7070,7 +7070,7 @@ void scvkGetMemoryHostPointerProperties(VkDevice device, VkExternalMemoryHandleT
  *
  * \param[in]  physicalDevice     The physical device from which to query the set of calibrateable time domains
  * \param[out] pTimeDomainCount   Receives the number of entries written
- * \param[out] pTimeDomains       Receives up to SCVK_MAX_TIME_DOMAINS entries
+ * \param[out] pTimeDomains       Receives *pTimeDomainCount VkTimeDomainKHR entries; more than SCVK_MAX_TIME_DOMAINS is fatal
  *
  * \retval     None
  */
@@ -7080,9 +7080,9 @@ void scvkGetPhysicalDeviceCalibrateableTimeDomains(VkPhysicalDevice physicalDevi
 /**
  * \brief Retrieves physical device display plane properties 2.
  *
- * \param[in]  physicalDevice   A physical device
+ * \param[in]  physicalDevice   Physical device to query
  * \param[out] pPropertyCount   Receives the number of entries written
- * \param[out] pProperties      Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties      Receives *pPropertyCount VkDisplayPlaneProperties2KHR entries; more than SCVK_MAX_PROPERTIES is fatal
  *
  * \retval     None
  */
@@ -7092,9 +7092,9 @@ void scvkGetPhysicalDeviceDisplayPlaneProperties2(VkPhysicalDevice physicalDevic
 /**
  * \brief Retrieves physical device display plane properties.
  *
- * \param[in]  physicalDevice   A physical device
+ * \param[in]  physicalDevice   Physical device to query
  * \param[out] pPropertyCount   Receives the number of entries written
- * \param[out] pProperties      Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties      Receives *pPropertyCount VkDisplayPlanePropertiesKHR entries; more than SCVK_MAX_PROPERTIES is fatal
  *
  * \retval     None
  */
@@ -7104,9 +7104,9 @@ void scvkGetPhysicalDeviceDisplayPlaneProperties(VkPhysicalDevice physicalDevice
 /**
  * \brief Retrieves physical device display properties 2.
  *
- * \param[in]  physicalDevice   A physical device
+ * \param[in]  physicalDevice   Physical device to query
  * \param[out] pPropertyCount   Receives the number of entries written
- * \param[out] pProperties      Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties      Receives *pPropertyCount VkDisplayProperties2KHR entries; more than SCVK_MAX_PROPERTIES is fatal
  *
  * \retval     None
  */
@@ -7116,9 +7116,9 @@ void scvkGetPhysicalDeviceDisplayProperties2(VkPhysicalDevice physicalDevice, ui
 /**
  * \brief Retrieves physical device display properties.
  *
- * \param[in]  physicalDevice   A physical device
+ * \param[in]  physicalDevice   Physical device to query
  * \param[out] pPropertyCount   Receives the number of entries written
- * \param[out] pProperties      Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties      Receives *pPropertyCount VkDisplayPropertiesKHR entries; more than SCVK_MAX_PROPERTIES is fatal
  *
  * \retval     None
  */
@@ -7128,12 +7128,12 @@ void scvkGetPhysicalDeviceDisplayProperties(VkPhysicalDevice physicalDevice, uin
 /**
  * \brief Retrieves physical device external buffer properties.
  *
- * \param[in]  physicalDevice              The physical device from which to query the buffer capabilities
- * \param[in]  pExternalBufferInfo         A pointer to a VkPhysicalDeviceExternalBufferInfo structure describing the parameters that would be consumed by vkCreateBuffer
- * \param[in]  pNext                       Optional output extension chain attached to VkExternalBufferProperties, or NULL
- * \param[out] pExternalBufferProperties   A pointer to a VkExternalBufferProperties structure in which capabilities are returned
+ * \param[in]     physicalDevice              The physical device from which to query the buffer capabilities
+ * \param[in]     pExternalBufferInfo         A pointer to a VkPhysicalDeviceExternalBufferInfo structure describing the parameters that would be consumed by vkCreateBuffer
+ * \param[in,out] pNext                       Optional output extension chain attached to VkExternalBufferProperties, or NULL
+ * \param[out]    pExternalBufferProperties   A pointer to a VkExternalBufferProperties structure in which capabilities are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceExternalBufferProperties(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo, void* pNext, VkExternalBufferProperties* pExternalBufferProperties);
 
@@ -7141,12 +7141,12 @@ void scvkGetPhysicalDeviceExternalBufferProperties(VkPhysicalDevice physicalDevi
 /**
  * \brief Retrieves physical device external fence properties.
  *
- * \param[in]  physicalDevice             The physical device from which to query the fence capabilities
- * \param[in]  pExternalFenceInfo         A pointer to a VkPhysicalDeviceExternalFenceInfo structure describing the parameters that would be consumed by vkCreateFence
- * \param[in]  pNext                      Optional output extension chain attached to VkExternalFenceProperties, or NULL
- * \param[out] pExternalFenceProperties   A pointer to a VkExternalFenceProperties structure in which capabilities are returned
+ * \param[in]     physicalDevice             The physical device from which to query the fence capabilities
+ * \param[in]     pExternalFenceInfo         A pointer to a VkPhysicalDeviceExternalFenceInfo structure describing the parameters that would be consumed by vkCreateFence
+ * \param[in,out] pNext                      Optional output extension chain attached to VkExternalFenceProperties, or NULL
+ * \param[out]    pExternalFenceProperties   A pointer to a VkExternalFenceProperties structure in which capabilities are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceExternalFenceProperties(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo, void* pNext, VkExternalFenceProperties* pExternalFenceProperties);
 
@@ -7154,12 +7154,12 @@ void scvkGetPhysicalDeviceExternalFenceProperties(VkPhysicalDevice physicalDevic
 /**
  * \brief Retrieves physical device external semaphore properties.
  *
- * \param[in]  physicalDevice                 The physical device from which to query the semaphore capabilities
- * \param[in]  pExternalSemaphoreInfo         A pointer to a VkPhysicalDeviceExternalSemaphoreInfo structure describing the parameters that would be consumed by vkCreateSemaphore
- * \param[in]  pNext                          Optional output extension chain attached to VkExternalSemaphoreProperties, or NULL
- * \param[out] pExternalSemaphoreProperties   A pointer to a VkExternalSemaphoreProperties structure in which capabilities are returned
+ * \param[in]     physicalDevice                 The physical device from which to query the semaphore capabilities
+ * \param[in]     pExternalSemaphoreInfo         A pointer to a VkPhysicalDeviceExternalSemaphoreInfo structure describing the parameters that would be consumed by vkCreateSemaphore
+ * \param[in,out] pNext                          Optional output extension chain attached to VkExternalSemaphoreProperties, or NULL
+ * \param[out]    pExternalSemaphoreProperties   A pointer to a VkExternalSemaphoreProperties structure in which capabilities are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceExternalSemaphoreProperties(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo, void* pNext, VkExternalSemaphoreProperties* pExternalSemaphoreProperties);
 
@@ -7178,11 +7178,11 @@ void scvkGetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice, VkPhysicalDe
 /**
  * \brief Retrieves physical device features 2.
  *
- * \param[in]  physicalDevice   The physical device from which to query the supported features
- * \param[in]  pNext            Optional output extension chain attached to VkPhysicalDeviceFeatures2, or NULL
- * \param[out] pFeatures        A pointer to a VkPhysicalDeviceFeatures2 structure in which the physical device features are returned
+ * \param[in]     physicalDevice   The physical device from which to query the supported features
+ * \param[in,out] pNext            Optional output extension chain attached to VkPhysicalDeviceFeatures2, or NULL
+ * \param[out]    pFeatures        A pointer to a VkPhysicalDeviceFeatures2 structure in which the physical device features are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceFeatures2(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceFeatures2* pFeatures);
 
@@ -7202,12 +7202,12 @@ void scvkGetPhysicalDeviceFormatProperties(VkPhysicalDevice physicalDevice, VkFo
 /**
  * \brief Retrieves physical device format properties 2.
  *
- * \param[in]  physicalDevice      The physical device from which to query the format properties
- * \param[in]  format              The format whose properties are queried
- * \param[in]  pNext               Optional output extension chain attached to VkFormatProperties2, or NULL
- * \param[out] pFormatProperties   A pointer to a VkFormatProperties2 structure in which physical device properties for format are returned
+ * \param[in]     physicalDevice      The physical device from which to query the format properties
+ * \param[in]     format              The format whose properties are queried
+ * \param[in,out] pNext               Optional output extension chain attached to VkFormatProperties2, or NULL
+ * \param[out]    pFormatProperties   A pointer to a VkFormatProperties2 structure in which physical device properties for format are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceFormatProperties2(VkPhysicalDevice physicalDevice, VkFormat format, void* pNext, VkFormatProperties2* pFormatProperties);
 
@@ -7217,7 +7217,7 @@ void scvkGetPhysicalDeviceFormatProperties2(VkPhysicalDevice physicalDevice, VkF
  *
  * \param[in]  physicalDevice              The handle to the physical device whose properties will be queried
  * \param[out] pFragmentShadingRateCount   Receives the number of entries written
- * \param[out] pFragmentShadingRates       Receives up to SCVK_MAX_FRAGMENT_SHADING_RATES entries
+ * \param[out] pFragmentShadingRates       Receives *pFragmentShadingRateCount VkPhysicalDeviceFragmentShadingRateKHR entries; more than SCVK_MAX_FRAGMENT_SHADING_RATES is fatal
  *
  * \retval     None
  */
@@ -7244,13 +7244,13 @@ VkResult scvkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice physicalDev
 /**
  * \brief Retrieves physical device image format properties 2.
  *
- * \param[in]  physicalDevice           The physical device from which to query the image capabilities
- * \param[in]  pImageFormatInfo         A pointer to a VkPhysicalDeviceImageFormatInfo2 structure describing the parameters that would be consumed by vkCreateImage
- * \param[in]  pNext                    Optional output extension chain attached to VkImageFormatProperties2, or NULL
- * \param[out] pImageFormatProperties   A pointer to a VkImageFormatProperties2 structure in which capabilities are returned
+ * \param[in]     physicalDevice           The physical device from which to query the image capabilities
+ * \param[in]     pImageFormatInfo         A pointer to a VkPhysicalDeviceImageFormatInfo2 structure describing the parameters that would be consumed by vkCreateImage
+ * \param[in,out] pNext                    Optional output extension chain attached to VkImageFormatProperties2, or NULL
+ * \param[out]    pImageFormatProperties   A pointer to a VkImageFormatProperties2 structure in which capabilities are returned
  *
- * \retval     VK_SUCCESS                      Command successfully completed.
- * \retval     VK_ERROR_FORMAT_NOT_SUPPORTED   A requested format is not supported on this device.
+ * \retval        VK_SUCCESS                      Command successfully completed.
+ * \retval        VK_ERROR_FORMAT_NOT_SUPPORTED   A requested format is not supported on this device.
  */
 VkResult scvkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo, void* pNext, VkImageFormatProperties2* pImageFormatProperties);
 
@@ -7269,11 +7269,11 @@ void scvkGetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice, VkPh
 /**
  * \brief Retrieves physical device memory properties 2.
  *
- * \param[in]  physicalDevice      The handle to the device to query
- * \param[in]  pNext               Optional output extension chain attached to VkPhysicalDeviceMemoryProperties2, or NULL
- * \param[out] pMemoryProperties   A pointer to a VkPhysicalDeviceMemoryProperties2 structure in which the properties are returned
+ * \param[in]     physicalDevice      The handle to the device to query
+ * \param[in,out] pNext               Optional output extension chain attached to VkPhysicalDeviceMemoryProperties2, or NULL
+ * \param[out]    pMemoryProperties   A pointer to a VkPhysicalDeviceMemoryProperties2 structure in which the properties are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceMemoryProperties2* pMemoryProperties);
 
@@ -7281,12 +7281,12 @@ void scvkGetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice, voi
 /**
  * \brief Retrieves physical device multisample properties.
  *
- * \param[in]  physicalDevice           The physical device from which to query the additional multisampling capabilities
- * \param[in]  samples                  A VkSampleCountFlagBits value specifying the sample count to query capabilities for
- * \param[in]  pNext                    Optional output extension chain attached to VkMultisamplePropertiesEXT, or NULL
- * \param[out] pMultisampleProperties   A pointer to a VkMultisamplePropertiesEXT structure in which information about additional multisampling capabilities specific to the sample count is returned
+ * \param[in]     physicalDevice           The physical device from which to query the additional multisampling capabilities
+ * \param[in]     samples                  A VkSampleCountFlagBits value specifying the sample count to query capabilities for
+ * \param[in,out] pNext                    Optional output extension chain attached to VkMultisamplePropertiesEXT, or NULL
+ * \param[out]    pMultisampleProperties   A pointer to a VkMultisamplePropertiesEXT structure in which information about additional multisampling capabilities specific to the sample count is returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceMultisampleProperties(VkPhysicalDevice physicalDevice, VkSampleCountFlagBits samples, void* pNext, VkMultisamplePropertiesEXT* pMultisampleProperties);
 
@@ -7294,10 +7294,10 @@ void scvkGetPhysicalDeviceMultisampleProperties(VkPhysicalDevice physicalDevice,
 /**
  * \brief Retrieves physical device present rectangles.
  *
- * \param[in]  physicalDevice   The physical device
- * \param[in]  surface          The surface
+ * \param[in]  physicalDevice   Physical device to query
+ * \param[in]  surface          Surface whose present rectangles are queried
  * \param[out] pRectCount       Receives the number of entries written
- * \param[out] pRects           Receives up to SCVK_MAX_RECTS entries
+ * \param[out] pRects           Receives *pRectCount VkRect2D entries; more than SCVK_MAX_RECTS is fatal
  *
  * \retval     None
  */
@@ -7318,11 +7318,11 @@ void scvkGetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice, VkPhysical
 /**
  * \brief Retrieves physical device properties 2.
  *
- * \param[in]  physicalDevice   The handle to the physical device whose properties will be queried
- * \param[in]  pNext            Optional output extension chain attached to VkPhysicalDeviceProperties2, or NULL
- * \param[out] pProperties      A pointer to a VkPhysicalDeviceProperties2 structure in which properties are returned
+ * \param[in]     physicalDevice   The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext            Optional output extension chain attached to VkPhysicalDeviceProperties2, or NULL
+ * \param[out]    pProperties      A pointer to a VkPhysicalDeviceProperties2 structure in which properties are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceProperties2* pProperties);
 
@@ -7335,7 +7335,7 @@ void scvkGetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice, void* pNe
  * \param[in]  queueFamilyIndex    The queue family index to create this performance query pool for
  * \param[in]  counterIndexCount   The length of the pCounterIndices array
  * \param[in]  pCounterIndices     A pointer to an array of indices into the vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR::pCounters to enable in this performance query pool
- * \param[out] pNumPasses          A pointer to an integer related to the number of passes required to query the performance query pool, as described below
+ * \param[out] pNumPasses          A pointer to a uint32_t that receives the number of passes required to query the performance query pool
  *
  * \retval     None
  */
@@ -7347,7 +7347,7 @@ void scvkGetPhysicalDeviceQueueFamilyPerformanceQueryPasses(VkPhysicalDevice phy
  *
  * \param[in]  physicalDevice              The handle to the physical device whose properties will be queried
  * \param[out] pQueueFamilyPropertyCount   Receives the number of entries written
- * \param[out] pQueueFamilyProperties      Receives up to SCVK_MAX_QUEUE_FAMILY_PROPERTIES entries
+ * \param[out] pQueueFamilyProperties      Receives *pQueueFamilyPropertyCount VkQueueFamilyProperties entries; more than SCVK_MAX_QUEUE_FAMILY_PROPERTIES is fatal
  *
  * \retval     None
  */
@@ -7359,7 +7359,7 @@ void scvkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice,
  *
  * \param[in]  physicalDevice              The handle to the physical device whose properties will be queried
  * \param[out] pQueueFamilyPropertyCount   Receives the number of entries written
- * \param[out] pQueueFamilyProperties      Receives up to SCVK_MAX_QUEUE_FAMILY_PROPERTIES entries
+ * \param[out] pQueueFamilyProperties      Receives *pQueueFamilyPropertyCount VkQueueFamilyProperties2 entries; more than SCVK_MAX_QUEUE_FAMILY_PROPERTIES is fatal
  *
  * \retval     None
  */
@@ -7381,13 +7381,13 @@ void scvkGetPhysicalDeviceRefreshableObjectTypes(VkPhysicalDevice physicalDevice
 /**
  * \brief Retrieves physical device surface capabilities 2.
  *
- * \param[in]  physicalDevice         The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
- * \param[in]  surface                The surface that will be associated with the swapchain
- * \param[in]  pNext                  Optional output extension chain attached to VkSurfaceCapabilities2EXT, or NULL
- * \param[out] pSurfaceCapabilities   A pointer to a VkSurfaceCapabilities2EXT structure in which the capabilities are returned
+ * \param[in]     physicalDevice         The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
+ * \param[in]     surface                The surface that will be associated with the swapchain
+ * \param[in,out] pNext                  Optional output extension chain attached to VkSurfaceCapabilities2EXT, or NULL
+ * \param[out]    pSurfaceCapabilities   A pointer to a VkSurfaceCapabilities2EXT structure in which the capabilities are returned
  *
- * \retval     VK_SUCCESS                  Command successfully completed.
- * \retval     VK_ERROR_SURFACE_LOST_KHR   The surface is no longer available.
+ * \retval        VK_SUCCESS                  Command successfully completed.
+ * \retval        VK_ERROR_SURFACE_LOST_KHR   The surface is no longer available.
  */
 VkResult scvkGetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, void* pNext, VkSurfaceCapabilities2EXT* pSurfaceCapabilities);
 
@@ -7395,13 +7395,13 @@ VkResult scvkGetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevice physicalD
 /**
  * \brief Retrieves physical device surface capabilities 2.
  *
- * \param[in]  physicalDevice         The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
- * \param[in]  pSurfaceInfo           A pointer to a VkPhysicalDeviceSurfaceInfo2KHR structure describing the surface and other fixed parameters that would be consumed by vkCreateSwapchainKHR
- * \param[in]  pNext                  Optional output extension chain attached to VkSurfaceCapabilities2KHR, or NULL
- * \param[out] pSurfaceCapabilities   A pointer to a VkSurfaceCapabilities2KHR structure in which the capabilities are returned
+ * \param[in]     physicalDevice         The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
+ * \param[in]     pSurfaceInfo           A pointer to a VkPhysicalDeviceSurfaceInfo2KHR structure describing the surface and other fixed parameters that would be consumed by vkCreateSwapchainKHR
+ * \param[in,out] pNext                  Optional output extension chain attached to VkSurfaceCapabilities2KHR, or NULL
+ * \param[out]    pSurfaceCapabilities   A pointer to a VkSurfaceCapabilities2KHR structure in which the capabilities are returned
  *
- * \retval     VK_SUCCESS                  Command successfully completed.
- * \retval     VK_ERROR_SURFACE_LOST_KHR   The surface is no longer available.
+ * \retval        VK_SUCCESS                  Command successfully completed.
+ * \retval        VK_ERROR_SURFACE_LOST_KHR   The surface is no longer available.
  */
 VkResult scvkGetPhysicalDeviceSurfaceCapabilities2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, void* pNext, VkSurfaceCapabilities2KHR* pSurfaceCapabilities);
 
@@ -7461,10 +7461,10 @@ void scvkGetPhysicalDeviceSurfacePresentModes(VkPhysicalDevice physicalDevice, V
 /**
  * \brief Retrieves physical device surface support.
  *
- * \param[in]  physicalDevice     The physical device
- * \param[in]  queueFamilyIndex   The queue family
- * \param[in]  surface            The surface
- * \param[out] pSupported         A pointer to a VkBool32
+ * \param[in]  physicalDevice     Physical device to query
+ * \param[in]  queueFamilyIndex   Index of the queue family to query for presentation support
+ * \param[in]  surface            Surface whose presentation support is queried
+ * \param[out] pSupported         Receives VK_TRUE if the queue family supports presentation to the surface, VK_FALSE otherwise
  *
  * \retval     VK_SUCCESS                  Command successfully completed.
  * \retval     VK_ERROR_SURFACE_LOST_KHR   The surface is no longer available.
@@ -7494,7 +7494,7 @@ VkResult scvkGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_
  * \brief Retrieves render area granularity.
  *
  * \param[in]  device         The logical device that owns the render pass
- * \param[in]  renderPass     A handle to a render pass
+ * \param[in]  renderPass     The render pass to query the render area granularity for
  * \param[out] pGranularity   A pointer to a VkExtent2D structure in which the granularity is returned
  *
  * \retval     None
@@ -7618,7 +7618,7 @@ void scvkInvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount
  * \param[in]  memory   The VkDeviceMemory object to be mapped
  * \param[in]  offset   A zero-based byte offset from the beginning of the memory object
  * \param[in]  size     The size of the memory range to map, or VK_WHOLE_SIZE to map from offset to the end of the allocation
- * \param[in]  flags    Reserved for future use; must be 0
+ * \param[in]  flags    A bitmask of VkMemoryMapFlagBits specifying additional parameters of the memory map operation
  * \param[out] ppData   A pointer to a void* variable in which a host-accessible pointer to the beginning of the mapped range is returned
  *
  * \retval     None
@@ -7665,19 +7665,19 @@ void scvkQueueInsertDebugUtilsLabel(VkQueue queue, const void* pNext, const char
 /**
  * \brief Queues present.
  *
- * \param[in] queue                A queue that is capable of presentation to the target surface's platform on the same device as the image's swapchain
- * \param[in] pNext                Optional extension chain attached to VkPresentInfoKHR, or NULL
- * \param[in] waitSemaphoreCount   The number of semaphores to wait for before issuing the present request
- * \param[in] pWaitSemaphores      NULL or a pointer to an array of VkSemaphore objects with waitSemaphoreCount entries, and specifies the semaphores to wait for before issuing the present request
- * \param[in] swapchainCount       The number of swapchains being presented to by this command
- * \param[in] pSwapchains          A pointer to an array of VkSwapchainKHR objects with swapchainCount entries
- * \param[in] pImageIndices        A pointer to an array of indices into the array of each swapchain's presentable images, with swapchainCount entries
- * \param[in] pResults             A pointer to an array of VkResult typed elements with swapchainCount entries
+ * \param[in]  queue                A queue that is capable of presentation to the target surface's platform on the same device as the image's swapchain
+ * \param[in]  pNext                Optional extension chain attached to VkPresentInfoKHR, or NULL
+ * \param[in]  waitSemaphoreCount   The number of semaphores to wait for before issuing the present request
+ * \param[in]  pWaitSemaphores      NULL or a pointer to an array of VkSemaphore objects with waitSemaphoreCount entries, and specifies the semaphores to wait for before issuing the present request
+ * \param[in]  swapchainCount       The number of swapchains being presented to by this command
+ * \param[in]  pSwapchains          A pointer to an array of VkSwapchainKHR objects with swapchainCount entries
+ * \param[in]  pImageIndices        A pointer to an array of indices into the array of each swapchain's presentable images, with swapchainCount entries
+ * \param[out] pResults             A pointer to an array of VkResult typed elements with swapchainCount entries
  *
- * \retval    VK_SUCCESS                  Command successfully completed.
- * \retval    VK_SUBOPTIMAL_KHR           A swapchain no longer matches the surface properties exactly, but can still present.
- * \retval    VK_ERROR_OUT_OF_DATE_KHR    The surface changed and is no longer compatible with the swapchain.
- * \retval    VK_ERROR_SURFACE_LOST_KHR   The surface is no longer available.
+ * \retval     VK_SUCCESS                  Command successfully completed.
+ * \retval     VK_SUBOPTIMAL_KHR           A swapchain no longer matches the surface properties exactly, but can still present.
+ * \retval     VK_ERROR_OUT_OF_DATE_KHR    The surface changed and is no longer compatible with the swapchain.
+ * \retval     VK_ERROR_SURFACE_LOST_KHR   The surface is no longer available.
  */
 VkResult scvkQueuePresent(VkQueue queue, const void* pNext, uint32_t waitSemaphoreCount, const VkSemaphore* pWaitSemaphores, uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, const uint32_t* pImageIndices, VkResult* pResults);
 
@@ -7900,7 +7900,7 @@ void scvkSignalSemaphore(VkDevice device, const void* pNext, VkSemaphore semapho
  * \param[in] messageSeverity    A VkDebugUtilsMessageSeverityFlagBitsEXT value specifying the severity of this event/message
  * \param[in] messageTypes       A bitmask of VkDebugUtilsMessageTypeFlagBitsEXT specifying which type of event(s) to identify with this message
  * \param[in] pNext              Optional extension chain attached to VkDebugUtilsMessengerCallbackDataEXT, or NULL
- * \param[in] flags              0 and is reserved for future use
+ * \param[in] flags              Reserved for future use; must be 0
  * \param[in] pMessageIdName     NULL or a null-terminated UTF-8 string that identifies the particular message ID that is associated with the provided message
  * \param[in] messageIdNumber    The ID number of the triggering message
  * \param[in] pMessage           NULL if messageTypes is equal to VK_DEBUG_UTILS_MESSAGE_TYPE_DEVICE_ADDRESS_BINDING_BIT_EXT, or a null-terminated UTF-8 string detailing the trigger conditions
@@ -7947,7 +7947,7 @@ void scvkUpdateDescriptorSets(VkDevice device, uint32_t descriptorWriteCount, co
  * \param[in] device       The logical device that owns the fences
  * \param[in] fenceCount   The number of fences to wait on
  * \param[in] pFences      A pointer to an array of fenceCount fence handles
- * \param[in] waitAll      The condition that must be satisfied to successfully unblock the wait
+ * \param[in] waitAll      VK_TRUE to wait until every fence in pFences is signaled, VK_FALSE until any one is
  * \param[in] timeout      The timeout period in units of nanoseconds
  *
  * \retval    VK_SUCCESS   Command successfully completed.
@@ -8202,13 +8202,13 @@ void scvkDestroySurfaceSafe(VkInstance instance, VkSurfaceKHR surface, const VkA
 /**
  * \brief Retrieves buffer memory requirements 2 from the fields of VkBufferMemoryRequirementsInfo2.
  *
- * \param[in]  device                    The logical device that owns the buffer
- * \param[in]  pInfoNext                 Optional extension chain attached to VkBufferMemoryRequirementsInfo2, or NULL
- * \param[in]  buffer                    The buffer to query
- * \param[in]  pMemoryRequirementsNext   Optional output extension chain attached to VkMemoryRequirements2, or NULL
- * \param[out] pMemoryRequirements       A pointer to a VkMemoryRequirements2 structure in which the memory requirements of the buffer object are returned
+ * \param[in]     device                    The logical device that owns the buffer
+ * \param[in]     pInfoNext                 Optional extension chain attached to VkBufferMemoryRequirementsInfo2, or NULL
+ * \param[in]     buffer                    The buffer to query
+ * \param[in,out] pMemoryRequirementsNext   Optional output extension chain attached to VkMemoryRequirements2, or NULL
+ * \param[out]    pMemoryRequirements       A pointer to a VkMemoryRequirements2 structure in which the memory requirements of the buffer object are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetBufferMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext, VkBuffer buffer, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements);
 
@@ -8216,14 +8216,14 @@ void scvkGetBufferMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext
 /**
  * \brief Retrieves display plane capabilities 2 from the fields of VkDisplayPlaneInfo2KHR.
  *
- * \param[in]  physicalDevice          The physical device associated with pDisplayPlaneInfo
- * \param[in]  pDisplayPlaneInfoNext   Optional extension chain attached to VkDisplayPlaneInfo2KHR, or NULL
- * \param[in]  mode                    The display mode the application intends to program when using the specified plane
- * \param[in]  planeIndex              The plane which the application intends to use with the display
- * \param[in]  pCapabilitiesNext       Optional output extension chain attached to VkDisplayPlaneCapabilities2KHR, or NULL
- * \param[out] pCapabilities           A pointer to a VkDisplayPlaneCapabilities2KHR structure in which the capabilities are returned
+ * \param[in]     physicalDevice          The physical device associated with mode
+ * \param[in]     pDisplayPlaneInfoNext   Optional extension chain attached to VkDisplayPlaneInfo2KHR, or NULL
+ * \param[in]     mode                    The display mode the application intends to program when using the specified plane
+ * \param[in]     planeIndex              The plane which the application intends to use with the display
+ * \param[in,out] pCapabilitiesNext       Optional output extension chain attached to VkDisplayPlaneCapabilities2KHR, or NULL
+ * \param[out]    pCapabilities           A pointer to a VkDisplayPlaneCapabilities2KHR structure in which the capabilities are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetDisplayPlaneInfo2(VkPhysicalDevice physicalDevice, const void* pDisplayPlaneInfoNext, VkDisplayModeKHR mode, uint32_t planeIndex, void* pCapabilitiesNext, VkDisplayPlaneCapabilities2KHR* pCapabilities);
 
@@ -8231,13 +8231,13 @@ void scvkGetDisplayPlaneInfo2(VkPhysicalDevice physicalDevice, const void* pDisp
 /**
  * \brief Retrieves image memory requirements 2 from the fields of VkImageMemoryRequirementsInfo2.
  *
- * \param[in]  device                    The logical device that owns the image
- * \param[in]  pInfoNext                 Optional extension chain attached to VkImageMemoryRequirementsInfo2, or NULL
- * \param[in]  image                     The image to query
- * \param[in]  pMemoryRequirementsNext   Optional output extension chain attached to VkMemoryRequirements2, or NULL
- * \param[out] pMemoryRequirements       A pointer to a VkMemoryRequirements2 structure in which the memory requirements of the image object are returned
+ * \param[in]     device                    The logical device that owns the image
+ * \param[in]     pInfoNext                 Optional extension chain attached to VkImageMemoryRequirementsInfo2, or NULL
+ * \param[in]     image                     The image to query
+ * \param[in,out] pMemoryRequirementsNext   Optional output extension chain attached to VkMemoryRequirements2, or NULL
+ * \param[out]    pMemoryRequirements       A pointer to a VkMemoryRequirements2 structure in which the memory requirements of the image object are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetImageMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext, VkImage image, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements);
 
@@ -8245,15 +8245,15 @@ void scvkGetImageMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext,
 /**
  * \brief Retrieves physical device external buffer properties from the fields of VkPhysicalDeviceExternalBufferInfo.
  *
- * \param[in]  physicalDevice                  The physical device from which to query the buffer capabilities
- * \param[in]  pExternalBufferInfoNext         Optional extension chain attached to VkPhysicalDeviceExternalBufferInfo, or NULL
- * \param[in]  flags                           A bitmask of VkBufferCreateFlagBits describing additional parameters of the buffer, corresponding to VkBufferCreateInfo::flags
- * \param[in]  usage                           A bitmask of VkBufferUsageFlagBits describing the intended usage of the buffer, corresponding to VkBufferCreateInfo::usage
- * \param[in]  handleType                      A VkExternalMemoryHandleTypeFlagBits value specifying the memory handle type that will be used with the memory associated with the buffer
- * \param[in]  pExternalBufferPropertiesNext   Optional output extension chain attached to VkExternalBufferProperties, or NULL
- * \param[out] pExternalBufferProperties       A pointer to a VkExternalBufferProperties structure in which capabilities are returned
+ * \param[in]     physicalDevice                  The physical device from which to query the buffer capabilities
+ * \param[in]     pExternalBufferInfoNext         Optional extension chain attached to VkPhysicalDeviceExternalBufferInfo, or NULL
+ * \param[in]     flags                           A bitmask of VkBufferCreateFlagBits describing additional parameters of the buffer, corresponding to VkBufferCreateInfo::flags
+ * \param[in]     usage                           A bitmask of VkBufferUsageFlagBits describing the intended usage of the buffer, corresponding to VkBufferCreateInfo::usage
+ * \param[in]     handleType                      A VkExternalMemoryHandleTypeFlagBits value specifying the memory handle type that will be used with the memory associated with the buffer
+ * \param[in,out] pExternalBufferPropertiesNext   Optional output extension chain attached to VkExternalBufferProperties, or NULL
+ * \param[out]    pExternalBufferProperties       A pointer to a VkExternalBufferProperties structure in which capabilities are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceExternalBufferInfo(VkPhysicalDevice physicalDevice, const void* pExternalBufferInfoNext, VkBufferCreateFlags flags, VkBufferUsageFlags usage, VkExternalMemoryHandleTypeFlagBits handleType, void* pExternalBufferPropertiesNext, VkExternalBufferProperties* pExternalBufferProperties);
 
@@ -8261,13 +8261,13 @@ void scvkGetPhysicalDeviceExternalBufferInfo(VkPhysicalDevice physicalDevice, co
 /**
  * \brief Retrieves physical device external fence properties from the fields of VkPhysicalDeviceExternalFenceInfo.
  *
- * \param[in]  physicalDevice                 The physical device from which to query the fence capabilities
- * \param[in]  pExternalFenceInfoNext         Optional extension chain attached to VkPhysicalDeviceExternalFenceInfo, or NULL
- * \param[in]  handleType                     A VkExternalFenceHandleTypeFlagBits value specifying an external fence handle type for which capabilities will be returned
- * \param[in]  pExternalFencePropertiesNext   Optional output extension chain attached to VkExternalFenceProperties, or NULL
- * \param[out] pExternalFenceProperties       A pointer to a VkExternalFenceProperties structure in which capabilities are returned
+ * \param[in]     physicalDevice                 The physical device from which to query the fence capabilities
+ * \param[in]     pExternalFenceInfoNext         Optional extension chain attached to VkPhysicalDeviceExternalFenceInfo, or NULL
+ * \param[in]     handleType                     A VkExternalFenceHandleTypeFlagBits value specifying an external fence handle type for which capabilities will be returned
+ * \param[in,out] pExternalFencePropertiesNext   Optional output extension chain attached to VkExternalFenceProperties, or NULL
+ * \param[out]    pExternalFenceProperties       A pointer to a VkExternalFenceProperties structure in which capabilities are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceExternalFenceInfo(VkPhysicalDevice physicalDevice, const void* pExternalFenceInfoNext, VkExternalFenceHandleTypeFlagBits handleType, void* pExternalFencePropertiesNext, VkExternalFenceProperties* pExternalFenceProperties);
 
@@ -8275,13 +8275,13 @@ void scvkGetPhysicalDeviceExternalFenceInfo(VkPhysicalDevice physicalDevice, con
 /**
  * \brief Retrieves physical device external semaphore properties from the fields of VkPhysicalDeviceExternalSemaphoreInfo.
  *
- * \param[in]  physicalDevice                     The physical device from which to query the semaphore capabilities
- * \param[in]  pExternalSemaphoreInfoNext         Optional extension chain attached to VkPhysicalDeviceExternalSemaphoreInfo, or NULL
- * \param[in]  handleType                         A VkExternalSemaphoreHandleTypeFlagBits value specifying the external semaphore handle type for which capabilities will be returned
- * \param[in]  pExternalSemaphorePropertiesNext   Optional output extension chain attached to VkExternalSemaphoreProperties, or NULL
- * \param[out] pExternalSemaphoreProperties       A pointer to a VkExternalSemaphoreProperties structure in which capabilities are returned
+ * \param[in]     physicalDevice                     The physical device from which to query the semaphore capabilities
+ * \param[in]     pExternalSemaphoreInfoNext         Optional extension chain attached to VkPhysicalDeviceExternalSemaphoreInfo, or NULL
+ * \param[in]     handleType                         A VkExternalSemaphoreHandleTypeFlagBits value specifying the external semaphore handle type for which capabilities will be returned
+ * \param[in,out] pExternalSemaphorePropertiesNext   Optional output extension chain attached to VkExternalSemaphoreProperties, or NULL
+ * \param[out]    pExternalSemaphoreProperties       A pointer to a VkExternalSemaphoreProperties structure in which capabilities are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceExternalSemaphoreInfo(VkPhysicalDevice physicalDevice, const void* pExternalSemaphoreInfoNext, VkExternalSemaphoreHandleTypeFlagBits handleType, void* pExternalSemaphorePropertiesNext, VkExternalSemaphoreProperties* pExternalSemaphoreProperties);
 
@@ -8289,17 +8289,17 @@ void scvkGetPhysicalDeviceExternalSemaphoreInfo(VkPhysicalDevice physicalDevice,
 /**
  * \brief Retrieves physical device image format properties 2 from the fields of VkPhysicalDeviceImageFormatInfo2.
  *
- * \param[in]  physicalDevice               The physical device from which to query the image capabilities
- * \param[in]  pImageFormatInfoNext         Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
- * \param[in]  format                       A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
- * \param[in]  type                         A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
- * \param[in]  tiling                       A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
- * \param[in]  usage                        A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
- * \param[in]  flags                        A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
- * \param[in]  pImageFormatPropertiesNext   Optional output extension chain attached to VkImageFormatProperties2, or NULL
- * \param[out] pImageFormatProperties       A pointer to a VkImageFormatProperties2 structure in which capabilities are returned
+ * \param[in]     physicalDevice               The physical device from which to query the image capabilities
+ * \param[in]     pImageFormatInfoNext         Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
+ * \param[in]     format                       A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
+ * \param[in]     type                         A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
+ * \param[in]     tiling                       A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
+ * \param[in]     usage                        A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
+ * \param[in]     flags                        A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
+ * \param[in,out] pImageFormatPropertiesNext   Optional output extension chain attached to VkImageFormatProperties2, or NULL
+ * \param[out]    pImageFormatProperties       A pointer to a VkImageFormatProperties2 structure in which capabilities are returned
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult scvkGetPhysicalDeviceImageFormatInfo2(VkPhysicalDevice physicalDevice, const void* pImageFormatInfoNext, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, void* pImageFormatPropertiesNext, VkImageFormatProperties2* pImageFormatProperties);
 
@@ -8307,13 +8307,13 @@ VkResult scvkGetPhysicalDeviceImageFormatInfo2(VkPhysicalDevice physicalDevice, 
 /**
  * \brief Retrieves physical device surface capabilities 2 from the fields of VkPhysicalDeviceSurfaceInfo2KHR.
  *
- * \param[in]  physicalDevice             The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
- * \param[in]  pSurfaceInfoNext           Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  surface                    The surface that will be associated with the swapchain
- * \param[in]  pSurfaceCapabilitiesNext   Optional output extension chain attached to VkSurfaceCapabilities2KHR, or NULL
- * \param[out] pSurfaceCapabilities       A pointer to a VkSurfaceCapabilities2KHR structure in which the capabilities are returned
+ * \param[in]     physicalDevice             The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
+ * \param[in]     pSurfaceInfoNext           Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
+ * \param[in]     surface                    The surface that will be associated with the swapchain
+ * \param[in,out] pSurfaceCapabilitiesNext   Optional output extension chain attached to VkSurfaceCapabilities2KHR, or NULL
+ * \param[out]    pSurfaceCapabilities       A pointer to a VkSurfaceCapabilities2KHR structure in which the capabilities are returned
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult scvkGetPhysicalDeviceSurfaceCapabilities2Info(VkPhysicalDevice physicalDevice, const void* pSurfaceInfoNext, VkSurfaceKHR surface, void* pSurfaceCapabilitiesNext, VkSurfaceCapabilities2KHR* pSurfaceCapabilities);
 
@@ -8364,13 +8364,13 @@ void scvkBindImageMemoryInfo(VkDevice device, const void* pNext, VkImage image, 
  * \brief Creates a compute pipelines for one element.
  *
  * \param[in]  device               The logical device that creates the compute pipelines
- * \param[in]  pipelineCache        Either VK_NULL_HANDLE, indicating that pipeline caching is disabled, or to enable caching, the handle of a valid VkPipelineCache object
+ * \param[in]  pipelineCache        The handle of a valid VkPipelineCache object
  * \param[in]  pNext                Optional extension chain attached to VkComputePipelineCreateInfo, or NULL
  * \param[in]  flags                A bitmask of VkPipelineCreateFlagBits specifying how the pipeline will be generated
  * \param[in]  stage                A VkPipelineShaderStageCreateInfo structure describing the compute shader
  * \param[in]  layout               The description of binding locations used by both the pipeline and descriptor sets used with the pipeline
  * \param[in]  basePipelineHandle   A pipeline to derive from
- * \param[in]  basePipelineIndex    An index into the pCreateInfos parameter to use as a pipeline to derive from
+ * \param[in]  basePipelineIndex    Must be -1: this wrapper passes a single create info, so derive through basePipelineHandle
  * \param[in]  pAllocator           Optional allocation callbacks, or NULL
  * \param[out] pPipeline            Receives the created VkPipeline
  *
@@ -8383,13 +8383,13 @@ void scvkCreateComputePipeline(VkDevice device, VkPipelineCache pipelineCache, c
  * \brief Creates a graphics pipelines for one element.
  *
  * \param[in]  device                The logical device that creates the graphics pipelines
- * \param[in]  pipelineCache         Either VK_NULL_HANDLE, indicating that pipeline caching is disabled, or to enable caching, the handle of a valid VkPipelineCache object
- * \param[in]  pNext                 Optional extension chain attached to VkGraphicsPipelineCreateInfo, or NULL
+ * \param[in]  pipelineCache         The handle of a valid VkPipelineCache object
+ * \param[in]  pNext                 Optional input extension chain attached to VkGraphicsPipelineCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  flags                 A bitmask of VkPipelineCreateFlagBits specifying how the pipeline will be generated
  * \param[in]  stageCount            The number of entries in the pStages array
  * \param[in]  pStages               A pointer to an array of stageCount VkPipelineShaderStageCreateInfo structures describing the set of the shader stages to be included in the graphics pipeline
- * \param[in]  pVertexInputState     A pointer to a VkPipelineVertexInputStateCreateInfo structure
- * \param[in]  pInputAssemblyState   A pointer to a VkPipelineInputAssemblyStateCreateInfo structure which determines input assembly behavior for vertex shading, as described in Drawing Commands
+ * \param[in]  pVertexInputState     A pointer to a VkPipelineVertexInputStateCreateInfo structure describing vertex bindings and attributes; ignored with a mesh shader stage, and may be NULL when VK_DYNAMIC_STATE_VERTEX_INPUT_EXT is dynamic
+ * \param[in]  pInputAssemblyState   A pointer to a VkPipelineInputAssemblyStateCreateInfo structure which determines input assembly behavior for vertex shading
  * \param[in]  pTessellationState    A pointer to a VkPipelineTessellationStateCreateInfo structure defining tessellation state used by tessellation shaders
  * \param[in]  pViewportState        A pointer to a VkPipelineViewportStateCreateInfo structure defining viewport state used when rasterization is enabled
  * \param[in]  pRasterizationState   A pointer to a VkPipelineRasterizationStateCreateInfo structure defining rasterization state
@@ -8401,7 +8401,7 @@ void scvkCreateComputePipeline(VkDevice device, VkPipelineCache pipelineCache, c
  * \param[in]  renderPass            A handle to a render pass object describing the environment in which the pipeline will be used
  * \param[in]  subpass               The index of the subpass in the render pass where this pipeline will be used
  * \param[in]  basePipelineHandle    A pipeline to derive from
- * \param[in]  basePipelineIndex     An index into the pCreateInfos parameter to use as a pipeline to derive from
+ * \param[in]  basePipelineIndex     Must be -1: this wrapper passes a single create info, so derive through basePipelineHandle
  * \param[in]  pAllocator            Optional allocation callbacks, or NULL
  * \param[out] pPipeline             Receives the created VkPipeline
  *
@@ -8425,12 +8425,12 @@ void scvkCreateGraphicsPipeline(VkDevice device, VkPipelineCache pipelineCache, 
  * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
  * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
  * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
  * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
  * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
  * \param[in]  presentMode             The presentation mode the swapchain will use
  * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
+ * \param[in]  oldSwapchain            VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface, which is retired and may aid resource reuse
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pSwapchain              Receives the created VkSwapchainKHR
  *
@@ -8458,7 +8458,7 @@ void scvkFlushMappedMemoryRange(VkDevice device, const void* pNext, VkDeviceMemo
  *
  * \param[in] device          The logical device that owns the command pool
  * \param[in] commandPool     The command pool from which the command buffers were allocated
- * \param[in] commandBuffer   The single VkCommandBuffer
+ * \param[in] commandBuffer   Command buffer to free; must not be pending execution
  *
  * \retval    None
  */
@@ -8470,7 +8470,7 @@ void scvkFreeCommandBuffer(VkDevice device, VkCommandPool commandPool, VkCommand
  *
  * \param[in] device           The logical device that owns the descriptor pool
  * \param[in] descriptorPool   The descriptor pool from which the descriptor sets were allocated
- * \param[in] descriptorSet    The single VkDescriptorSet
+ * \param[in] descriptorSet    Descriptor set to free back to descriptorPool
  *
  * \retval    None
  */
@@ -8527,8 +8527,8 @@ void scvkQueueSubmitInfo(VkQueue queue, const void* pNext, uint32_t waitSemaphor
 /**
  * \brief Resets fences for one element.
  *
- * \param[in] device   The logical device that owns the fences
- * \param[in] fence    The single VkFence
+ * \param[in] device   The logical device that owns fence
+ * \param[in] fence    Fence to reset to the unsignaled state
  *
  * \retval    None
  */
@@ -8538,9 +8538,9 @@ void scvkResetFence(VkDevice device, VkFence fence);
 /**
  * \brief Waits for for fences for one element.
  *
- * \param[in] device    The logical device that owns the fences
- * \param[in] fence     The single VkFence
- * \param[in] waitAll   The condition that must be satisfied to successfully unblock the wait
+ * \param[in] device    The logical device that owns fence
+ * \param[in] fence     Fence to wait on
+ * \param[in] waitAll   No effect with a single fence: either value waits until fence is signaled
  * \param[in] timeout   The timeout period in units of nanoseconds
  *
  * \retval    VK_SUCCESS   Command successfully completed.
@@ -8604,7 +8604,7 @@ void scvkAllocateImportMemoryFd(VkDevice device, const void* pNext, VkExternalMe
  * \param[in]  device            The logical device that owns the memory
  * \param[in]  pNext             Optional extension chain attached to VkMemoryAllocateInfo, or NULL
  * \param[in]  handleType        A VkExternalMemoryHandleTypeFlagBits value specifying the handle type
- * \param[out] pHostPointer      The host pointer to import from
+ * \param[in]  pHostPointer      The host pointer to import from
  * \param[in]  allocationSize    The size of the allocation in bytes
  * \param[in]  memoryTypeIndex   An index identifying a memory type from the memoryTypes array of the VkPhysicalDeviceMemoryProperties structure
  * \param[in]  pAllocator        Optional allocation callbacks, or NULL
@@ -8689,7 +8689,7 @@ void scvkBeginCommandBufferWithDeviceGroupInfo(VkCommandBuffer commandBuffer, co
  * \param[in] pDeviceRenderAreas      A pointer to an array of VkRect2D structures defining the render area for each physical device
  * \param[in] renderPass              The render pass to begin an instance of
  * \param[in] framebuffer             The framebuffer containing the attachments that are used with the render pass
- * \param[in] renderArea              The render area that is affected by the render pass instance, and is described in more detail below
+ * \param[in] renderArea              The render area affected by the render pass instance
  * \param[in] clearValueCount         The number of elements in pClearValues
  * \param[in] pClearValues            A pointer to an array of clearValueCount VkClearValue structures containing clear values for each attachment, if the attachment uses a loadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR or if the attachment has a depth/stencil format and uses a stencilLoadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR
  * \param[in] contents                A VkSubpassContents value specifying how the commands in the first subpass will be provided
@@ -8708,7 +8708,7 @@ void scvkCmdBeginRenderPassWithDeviceGroupInfo(VkCommandBuffer commandBuffer, co
  * \param[in] pAttachments      A pointer to an array of VkImageView handles, each of which will be used as the corresponding attachment in the render pass instance
  * \param[in] renderPass        The render pass to begin an instance of
  * \param[in] framebuffer       The framebuffer containing the attachments that are used with the render pass
- * \param[in] renderArea        The render area that is affected by the render pass instance, and is described in more detail below
+ * \param[in] renderArea        The render area affected by the render pass instance
  * \param[in] clearValueCount   The number of elements in pClearValues
  * \param[in] pClearValues      A pointer to an array of clearValueCount VkClearValue structures containing clear values for each attachment, if the attachment uses a loadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR or if the attachment has a depth/stencil format and uses a stencilLoadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR
  * \param[in] contents          A VkSubpassContents value specifying how the commands in the first subpass will be provided
@@ -8729,7 +8729,7 @@ void scvkCmdBeginRenderPassWithAttachmentInfo(VkCommandBuffer commandBuffer, con
  * \param[in] pPostSubpassSampleLocations             A pointer to an array of postSubpassSampleLocationsCount VkSubpassSampleLocationsEXT structures specifying the subpass indices and their corresponding sample location state
  * \param[in] renderPass                              The render pass to begin an instance of
  * \param[in] framebuffer                             The framebuffer containing the attachments that are used with the render pass
- * \param[in] renderArea                              The render area that is affected by the render pass instance, and is described in more detail below
+ * \param[in] renderArea                              The render area affected by the render pass instance
  * \param[in] clearValueCount                         The number of elements in pClearValues
  * \param[in] pClearValues                            A pointer to an array of clearValueCount VkClearValue structures containing clear values for each attachment, if the attachment uses a loadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR or if the attachment has a depth/stencil format and uses a stencilLoadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR
  * \param[in] contents                                A VkSubpassContents value specifying how the commands in the first subpass will be provided
@@ -8749,7 +8749,7 @@ void scvkCmdBeginRenderPassWithSampleLocationsInfo(VkCommandBuffer commandBuffer
  * \param[in] pDeviceRenderAreas      A pointer to an array of VkRect2D structures defining the render area for each physical device
  * \param[in] renderPass              The render pass to begin an instance of
  * \param[in] framebuffer             The framebuffer containing the attachments that are used with the render pass
- * \param[in] renderArea              The render area that is affected by the render pass instance, and is described in more detail below
+ * \param[in] renderArea              The render area affected by the render pass instance
  * \param[in] clearValueCount         The number of elements in pClearValues
  * \param[in] pClearValues            A pointer to an array of clearValueCount VkClearValue structures containing clear values for each attachment, if the attachment uses a loadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR or if the attachment has a depth/stencil format and uses a stencilLoadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR
  * \param[in] pSubpassBeginInfoNext   Optional extension chain attached to VkSubpassBeginInfo, or NULL
@@ -8769,7 +8769,7 @@ void scvkCmdBeginRenderPass2WithDeviceGroupInfo(VkCommandBuffer commandBuffer, c
  * \param[in] pAttachments            A pointer to an array of VkImageView handles, each of which will be used as the corresponding attachment in the render pass instance
  * \param[in] renderPass              The render pass to begin an instance of
  * \param[in] framebuffer             The framebuffer containing the attachments that are used with the render pass
- * \param[in] renderArea              The render area that is affected by the render pass instance, and is described in more detail below
+ * \param[in] renderArea              The render area affected by the render pass instance
  * \param[in] clearValueCount         The number of elements in pClearValues
  * \param[in] pClearValues            A pointer to an array of clearValueCount VkClearValue structures containing clear values for each attachment, if the attachment uses a loadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR or if the attachment has a depth/stencil format and uses a stencilLoadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR
  * \param[in] pSubpassBeginInfoNext   Optional extension chain attached to VkSubpassBeginInfo, or NULL
@@ -8791,7 +8791,7 @@ void scvkCmdBeginRenderPass2WithAttachmentInfo(VkCommandBuffer commandBuffer, co
  * \param[in] pPostSubpassSampleLocations             A pointer to an array of postSubpassSampleLocationsCount VkSubpassSampleLocationsEXT structures specifying the subpass indices and their corresponding sample location state
  * \param[in] renderPass                              The render pass to begin an instance of
  * \param[in] framebuffer                             The framebuffer containing the attachments that are used with the render pass
- * \param[in] renderArea                              The render area that is affected by the render pass instance, and is described in more detail below
+ * \param[in] renderArea                              The render area affected by the render pass instance
  * \param[in] clearValueCount                         The number of elements in pClearValues
  * \param[in] pClearValues                            A pointer to an array of clearValueCount VkClearValue structures containing clear values for each attachment, if the attachment uses a loadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR or if the attachment has a depth/stencil format and uses a stencilLoadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR
  * \param[in] pSubpassBeginInfoNext                   Optional extension chain attached to VkSubpassBeginInfo, or NULL
@@ -8850,7 +8850,7 @@ void scvkCreateBufferWithExternalMemoryInfo(VkDevice device, const void* pNext, 
  * \param[in]  commandPoolReservedSize        The number of bytes to be allocated for all command buffer data recorded into this pool
  * \param[in]  commandPoolMaxCommandBuffers   The maximum number of command buffers that can be allocated from this command pool
  * \param[in]  flags                          A bitmask of VkCommandPoolCreateFlagBits indicating usage behavior for the pool and command buffers allocated from it
- * \param[in]  queueFamilyIndex               Designates a queue family as described in section Queue Family Properties
+ * \param[in]  queueFamilyIndex               Designates a queue family
  * \param[in]  pAllocator                     Optional allocation callbacks, or NULL
  * \param[out] pCommandPool                   A pointer to a VkCommandPool handle in which the created pool is returned
  *
@@ -8880,7 +8880,7 @@ void scvkCreateDescriptorSetLayoutWithBindingFlagsInfo(VkDevice device, const vo
 /**
  * \brief Creates a device with VkApplicationParametersEXT chained.
  *
- * \param[in]  physicalDevice            Must be one of the device handles returned from a call to vkEnumeratePhysicalDevices (see Physical Device Enumeration)
+ * \param[in]  physicalDevice            Must be one of the device handles returned from a call to vkEnumeratePhysicalDevices
  * \param[in]  pNext                     Optional extension chain attached to VkDeviceCreateInfo, or NULL
  * \param[in]  vendorID                  The VkPhysicalDeviceProperties::vendorID of the ICD that the application parameter is applied to
  * \param[in]  deviceID                  0 or the VkPhysicalDeviceProperties::deviceID of the physical device that the application parameter is applied to
@@ -8905,7 +8905,7 @@ void scvkCreateDeviceWithApplicationParametersInfo(VkPhysicalDevice physicalDevi
 /**
  * \brief Creates a device with VkDeviceGroupDeviceCreateInfo chained.
  *
- * \param[in]  physicalDevice            Must be one of the device handles returned from a call to vkEnumeratePhysicalDevices (see Physical Device Enumeration)
+ * \param[in]  physicalDevice            A physical device returned by vkEnumeratePhysicalDevices that the logical device is created on
  * \param[in]  pNext                     Optional extension chain attached to VkDeviceCreateInfo, or NULL
  * \param[in]  physicalDeviceCount       The number of elements in the pPhysicalDevices array
  * \param[in]  pPhysicalDevices          A pointer to an array of physical device handles belonging to the same device group
@@ -8928,7 +8928,7 @@ void scvkCreateDeviceWithDeviceGroupInfo(VkPhysicalDevice physicalDevice, const 
 /**
  * \brief Creates a device with VkDeviceObjectReservationCreateInfo chained.
  *
- * \param[in]  physicalDevice                               Must be one of the device handles returned from a call to vkEnumeratePhysicalDevices (see Physical Device Enumeration)
+ * \param[in]  physicalDevice                               Must be one of the device handles returned from a call to vkEnumeratePhysicalDevices
  * \param[in]  pNext                                        Optional extension chain attached to VkDeviceCreateInfo, or NULL
  * \param[in]  pipelineCacheCreateInfoCount                 The length of the pPipelineCacheCreateInfos array
  * \param[in]  pPipelineCacheCreateInfos                    A pointer to an array of VkPipelineCacheCreateInfo structures that contain the creation information of the pipeline caches that can be created on this device
@@ -8990,10 +8990,10 @@ void scvkCreateDeviceWithObjectReservationInfo(VkPhysicalDevice physicalDevice, 
 /**
  * \brief Creates a device with VkFaultCallbackInfo chained.
  *
- * \param[in]  physicalDevice            Must be one of the device handles returned from a call to vkEnumeratePhysicalDevices (see Physical Device Enumeration)
+ * \param[in]  physicalDevice            Must be one of the device handles returned from a call to vkEnumeratePhysicalDevices
  * \param[in]  pNext                     Optional extension chain attached to VkDeviceCreateInfo, or NULL
  * \param[in]  faultCount                The number of reported faults in the array pointed to by pFaults
- * \param[out] pFaults                   Either NULL or a pointer to an array of faultCount VkFaultData structures
+ * \param[in]  pFaults                   Either NULL or a pointer to an array of faultCount VkFaultData structures
  * \param[in]  pfnFaultCallback          A function pointer to the fault handler function that will be called by the implementation when a fault occurs
  * \param[in]  flags                     Reserved for future use; must be 0
  * \param[in]  queueCreateInfoCount      The unsigned integer size of the pQueueCreateInfos array
@@ -9014,7 +9014,7 @@ void scvkCreateDeviceWithFaultCallbackInfo(VkPhysicalDevice physicalDevice, cons
 /**
  * \brief Creates a device with VkPerformanceQueryReservationInfoKHR chained.
  *
- * \param[in]  physicalDevice                 Must be one of the device handles returned from a call to vkEnumeratePhysicalDevices (see Physical Device Enumeration)
+ * \param[in]  physicalDevice                 Must be one of the device handles returned from a call to vkEnumeratePhysicalDevices
  * \param[in]  pNext                          Optional extension chain attached to VkDeviceCreateInfo, or NULL
  * \param[in]  maxPerformanceQueriesPerPool   The requested maximum number of VK_QUERY_TYPE_PERFORMANCE_QUERY_KHR queries that can exist at the same time in a single query pool
  * \param[in]  flags                          Reserved for future use; must be 0
@@ -9055,13 +9055,13 @@ void scvkCreateExportFence(VkDevice device, const void* pNext, VkExternalFenceHa
  * \param[in]  pNext                      Optional extension chain attached to VkFramebufferCreateInfo, or NULL
  * \param[in]  attachmentImageInfoCount   The number of attachments being described
  * \param[in]  pAttachmentImageInfos      A pointer to an array of VkFramebufferAttachmentImageInfo structures, each structure describing a number of parameters of the corresponding attachment in a render pass instance
- * \param[in]  flags                      A bitmask of VkFramebufferCreateFlagBits
+ * \param[in]  flags                      A bitmask of VkFramebufferCreateFlagBits, such as VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT for an imageless framebuffer
  * \param[in]  renderPass                 A render pass defining what render passes the framebuffer will be compatible with
  * \param[in]  attachmentCount            The number of attachments
  * \param[in]  pAttachments               A pointer to an array of VkImageView handles, each of which will be used as the corresponding attachment in a render pass instance
- * \param[in]  width                      Define the dimensions of the framebuffer
- * \param[in]  height                     Define the dimensions of the framebuffer
- * \param[in]  layers                     Define the dimensions of the framebuffer
+ * \param[in]  width                      Width of the framebuffer in pixels
+ * \param[in]  height                     Height of the framebuffer in pixels
+ * \param[in]  layers                     Number of array layers in the framebuffer
  * \param[in]  pAllocator                 Optional allocation callbacks, or NULL
  * \param[out] pFramebuffer               A pointer to a VkFramebuffer handle in which the resulting framebuffer object is returned
  *
@@ -9074,7 +9074,7 @@ void scvkCreateFramebufferWithAttachmentsInfo(VkDevice device, const void* pNext
  * \brief Creates a image with VkExternalMemoryImageCreateInfo chained.
  *
  * \param[in]  device                  The logical device that creates the image
- * \param[in]  pNext                   Optional extension chain attached to VkImageCreateInfo, or NULL
+ * \param[in]  pNext                   Optional input extension chain attached to VkImageCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  handleTypes             Zero or a bitmask of VkExternalMemoryHandleTypeFlagBits specifying one or more external memory handle types
  * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image
  * \param[in]  imageType               A VkImageType value specifying the basic dimensionality of the image
@@ -9101,7 +9101,7 @@ void scvkCreateImageWithExternalMemoryInfo(VkDevice device, const void* pNext, V
  * \brief Creates a image with VkImageDrmFormatModifierExplicitCreateInfoEXT chained.
  *
  * \param[in]  device                        The logical device that creates the image
- * \param[in]  pNext                         Optional extension chain attached to VkImageCreateInfo, or NULL
+ * \param[in]  pNext                         Optional input extension chain attached to VkImageCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  drmFormatModifier             The Linux DRM format modifier with which the image will be created
  * \param[in]  drmFormatModifierPlaneCount   The number of memory planes in the image (as reported by VkDrmFormatModifierPropertiesEXT) as well as the length of the pPlaneLayouts array
  * \param[in]  pPlaneLayouts                 A pointer to an array of VkSubresourceLayout structures describing the image's memory planes
@@ -9130,7 +9130,7 @@ void scvkCreateImageWithDrmFormatModifierExplicitInfo(VkDevice device, const voi
  * \brief Creates a image with VkImageDrmFormatModifierListCreateInfoEXT chained.
  *
  * \param[in]  device                   The logical device that creates the image
- * \param[in]  pNext                    Optional extension chain attached to VkImageCreateInfo, or NULL
+ * \param[in]  pNext                    Optional input extension chain attached to VkImageCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  drmFormatModifierCount   The length of the pDrmFormatModifiers array
  * \param[in]  pDrmFormatModifiers      A pointer to an array of Linux DRM format modifiers
  * \param[in]  flags                    A bitmask of VkImageCreateFlagBits describing additional parameters of the image
@@ -9158,7 +9158,7 @@ void scvkCreateImageWithDrmFormatModifierListInfo(VkDevice device, const void* p
  * \brief Creates a image with VkImageFormatListCreateInfo chained.
  *
  * \param[in]  device                  The logical device that creates the image
- * \param[in]  pNext                   Optional extension chain attached to VkImageCreateInfo, or NULL
+ * \param[in]  pNext                   Optional input extension chain attached to VkImageCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  viewFormatCount         The number of entries in the pViewFormats array
  * \param[in]  pViewFormats            A pointer to an array of VkFormat values specifying all formats which can be used when creating views of this image
  * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image
@@ -9186,7 +9186,7 @@ void scvkCreateImageWithFormatListInfo(VkDevice device, const void* pNext, uint3
  * \brief Creates a image with VkImageStencilUsageCreateInfo chained.
  *
  * \param[in]  device                  The logical device that creates the image
- * \param[in]  pNext                   Optional extension chain attached to VkImageCreateInfo, or NULL
+ * \param[in]  pNext                   Optional input extension chain attached to VkImageCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  stencilUsage            A bitmask of VkImageUsageFlagBits describing the intended usage of the stencil aspect of the image
  * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image
  * \param[in]  imageType               A VkImageType value specifying the basic dimensionality of the image
@@ -9213,7 +9213,7 @@ void scvkCreateImageWithStencilUsageInfo(VkDevice device, const void* pNext, VkI
  * \brief Creates a image with VkImageSwapchainCreateInfoKHR chained.
  *
  * \param[in]  device                  The logical device that creates the image
- * \param[in]  pNext                   Optional extension chain attached to VkImageCreateInfo, or NULL
+ * \param[in]  pNext                   Optional input extension chain attached to VkImageCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  swapchain               VK_NULL_HANDLE or a handle of a swapchain that the image will be bound to
  * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image
  * \param[in]  imageType               A VkImageType value specifying the basic dimensionality of the image
@@ -9300,19 +9300,19 @@ void scvkCreateImageViewWithSamplerYcbcrConversionInfo(VkDevice device, const vo
  * \brief Creates a instance with VkDebugUtilsMessengerCreateInfoEXT chained.
  *
  * \param[in]  pNext                      Optional extension chain attached to VkInstanceCreateInfo, or NULL
- * \param[in]  flagsDebugUtilsMessenger   0 and is reserved for future use
+ * \param[in]  flagsDebugUtilsMessenger   Reserved for future use; must be 0
  * \param[in]  messageSeverity            A bitmask of VkDebugUtilsMessageSeverityFlagBitsEXT specifying which severity of event(s) will cause this callback to be called
  * \param[in]  messageType                A bitmask of VkDebugUtilsMessageTypeFlagBitsEXT specifying which type of event(s) will cause this callback to be called
  * \param[in]  pfnUserCallback            The application callback function to call
- * \param[out] pUserData                  NULL or an application-defined user data pointer to be passed to the callback
+ * \param[in]  pUserData                  NULL or an application-defined user data pointer to be passed to the callback
  * \param[in]  flags                      A bitmask of VkInstanceCreateFlagBits indicating the behavior of the instance
- * \param[in]  pApplicationInfo           NULL or a pointer to a VkApplicationInfo structure
+ * \param[in]  pApplicationInfo           NULL or a pointer to a VkApplicationInfo identifying the application, engine, and highest Vulkan API version it uses
  * \param[in]  enabledLayerCount          The number of global layers to enable
  * \param[in]  ppEnabledLayerNames        A pointer to an array of enabledLayerCount null-terminated UTF-8 strings containing the names of layers to enable for the created instance
  * \param[in]  enabledExtensionCount      The number of global extensions to enable
  * \param[in]  ppEnabledExtensionNames    A pointer to an array of enabledExtensionCount null-terminated UTF-8 strings containing the names of extensions to enable
  * \param[in]  pAllocator                 Optional allocation callbacks, or NULL
- * \param[out] pInstance                  Points a VkInstance handle in which the resulting instance is returned
+ * \param[out] pInstance                  A pointer to a VkInstance handle in which the resulting instance is returned
  *
  * \retval     None
  */
@@ -9326,13 +9326,13 @@ void scvkCreateInstanceWithDebugUtilsMessengerInfo(const void* pNext, VkDebugUti
  * \param[in]  settingCount              The number of settings to configure
  * \param[in]  pSettings                 A pointer to an array of settingCount VkLayerSettingEXT values specifying the settings to be configured
  * \param[in]  flags                     A bitmask of VkInstanceCreateFlagBits indicating the behavior of the instance
- * \param[in]  pApplicationInfo          NULL or a pointer to a VkApplicationInfo structure
+ * \param[in]  pApplicationInfo          NULL or a pointer to a VkApplicationInfo identifying the application, engine, and highest Vulkan API version it uses
  * \param[in]  enabledLayerCount         The number of global layers to enable
  * \param[in]  ppEnabledLayerNames       A pointer to an array of enabledLayerCount null-terminated UTF-8 strings containing the names of layers to enable for the created instance
  * \param[in]  enabledExtensionCount     The number of global extensions to enable
  * \param[in]  ppEnabledExtensionNames   A pointer to an array of enabledExtensionCount null-terminated UTF-8 strings containing the names of extensions to enable
  * \param[in]  pAllocator                Optional allocation callbacks, or NULL
- * \param[out] pInstance                 Points a VkInstance handle in which the resulting instance is returned
+ * \param[out] pInstance                 A pointer to a VkInstance handle in which the resulting instance is returned
  *
  * \retval     None
  */
@@ -9348,13 +9348,13 @@ void scvkCreateInstanceWithLayerSettingsInfo(const void* pNext, uint32_t setting
  * \param[in]  disabledValidationFeatureCount   The number of features to disable
  * \param[in]  pDisabledValidationFeatures      A pointer to an array of VkValidationFeatureDisableEXT values specifying the validation features to be disabled
  * \param[in]  flags                            A bitmask of VkInstanceCreateFlagBits indicating the behavior of the instance
- * \param[in]  pApplicationInfo                 NULL or a pointer to a VkApplicationInfo structure
+ * \param[in]  pApplicationInfo                 NULL or a pointer to a VkApplicationInfo identifying the application, engine, and highest Vulkan API version it uses
  * \param[in]  enabledLayerCount                The number of global layers to enable
  * \param[in]  ppEnabledLayerNames              A pointer to an array of enabledLayerCount null-terminated UTF-8 strings containing the names of layers to enable for the created instance
  * \param[in]  enabledExtensionCount            The number of global extensions to enable
  * \param[in]  ppEnabledExtensionNames          A pointer to an array of enabledExtensionCount null-terminated UTF-8 strings containing the names of extensions to enable
  * \param[in]  pAllocator                       Optional allocation callbacks, or NULL
- * \param[out] pInstance                        Points a VkInstance handle in which the resulting instance is returned
+ * \param[out] pInstance                        A pointer to a VkInstance handle in which the resulting instance is returned
  *
  * \retval     None
  */
@@ -9369,10 +9369,10 @@ void scvkCreateInstanceWithValidationFeaturesInfo(const void* pNext, uint32_t en
  * \param[in]  queueFamilyIndex     The queue family index to create this performance query pool for
  * \param[in]  counterIndexCount    The length of the pCounterIndices array
  * \param[in]  pCounterIndices      A pointer to an array of indices into the vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR::pCounters to enable in this performance query pool
- * \param[in]  flags                A bitmask of VkQueryPoolCreateFlagBits
+ * \param[in]  flags                A bitmask of VkQueryPoolCreateFlagBits; VK_QUERY_POOL_CREATE_RESET_BIT_KHR creates the queries in the reset state
  * \param[in]  queryType            A VkQueryType value specifying the type of queries managed by the pool
  * \param[in]  queryCount           The number of queries managed by the pool
- * \param[in]  pipelineStatistics   A bitmask of VkQueryPipelineStatisticFlagBits specifying which counters will be returned in queries on the new pool, as described below in queries-pipestats
+ * \param[in]  pipelineStatistics   A bitmask of VkQueryPipelineStatisticFlagBits specifying which counters pipeline statistics queries on the new pool return; ignored for other query types
  * \param[in]  pAllocator           Optional allocation callbacks, or NULL
  * \param[out] pQueryPool           A pointer to a VkQueryPool handle in which the resulting query pool object is returned
  *
@@ -9388,7 +9388,7 @@ void scvkCreateQueryPoolWithPerformanceInfo(VkDevice device, const void* pNext, 
  * \param[in]  pNext                  Optional extension chain attached to VkRenderPassCreateInfo, or NULL
  * \param[in]  aspectReferenceCount   The number of elements in the pAspectReferences array
  * \param[in]  pAspectReferences      A pointer to an array of aspectReferenceCount VkInputAttachmentAspectReference structures containing a mask describing which aspect(s) can be accessed for a given input attachment within a given subpass
- * \param[in]  flags                  Reserved for future use; must be 0
+ * \param[in]  flags                  A bitmask of VkRenderPassCreateFlagBits specifying additional properties of a render pass
  * \param[in]  attachmentCount        The number of attachments used by this render pass
  * \param[in]  pAttachments           A pointer to an array of attachmentCount VkAttachmentDescription structures describing the attachments used by the render pass
  * \param[in]  subpassCount           The number of subpasses to create
@@ -9414,7 +9414,7 @@ void scvkCreateRenderPassWithInputAttachmentAspectInfo(VkDevice device, const vo
  * \param[in]  pViewOffsets               A pointer to an array of dependencyCount view offsets, one for each dependency
  * \param[in]  correlationMaskCount       Zero or the number of correlation masks
  * \param[in]  pCorrelationMasks          A pointer to an array of correlationMaskCount view masks indicating sets of views that may be more efficient to render concurrently
- * \param[in]  flags                      Reserved for future use; must be 0
+ * \param[in]  flags                      A bitmask of VkRenderPassCreateFlagBits specifying additional properties of a render pass
  * \param[in]  attachmentCount            The number of attachments used by this render pass
  * \param[in]  pAttachments               A pointer to an array of attachmentCount VkAttachmentDescription structures describing the attachments used by the render pass
  * \param[in]  subpassCount               The number of subpasses to create
@@ -9444,11 +9444,11 @@ void scvkCreateRenderPassWithMultiviewInfo(VkDevice device, const void* pNext, u
  * \param[in]  addressModeU              A VkSamplerAddressMode value specifying the wrapping operation used when the i coordinate used to sample the image would be out of bounds
  * \param[in]  addressModeV              A VkSamplerAddressMode value specifying the wrapping operation used when the j coordinate used to sample the image would be out of bounds
  * \param[in]  addressModeW              A VkSamplerAddressMode value specifying the wrapping operation used when the k coordinate used to sample the image would be out of bounds
- * \param[in]  mipLodBias                The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V, as described in the LOD Operation section
- * \param[in]  anisotropyEnable          VK_TRUE to enable anisotropic filtering, as described in the Texel Anisotropic Filtering section, or VK_FALSE otherwise
+ * \param[in]  mipLodBias                The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V
+ * \param[in]  anisotropyEnable          VK_TRUE to enable anisotropic filtering, or VK_FALSE otherwise
  * \param[in]  maxAnisotropy             The anisotropy value clamp used by the sampler when anisotropyEnable is VK_TRUE
  * \param[in]  compareEnable             VK_TRUE to enable comparison against a reference value during lookups, or VK_FALSE otherwise
- * \param[in]  compareOp                 A VkCompareOp value specifying the comparison operator to apply to fetched data before filtering as described in the Depth Compare Operation section
+ * \param[in]  compareOp                 A VkCompareOp value specifying the comparison operator to apply to fetched data before filtering
  * \param[in]  minLod                    Used to clamp the minimum of the computed LOD value
  * \param[in]  maxLod                    Used to clamp the maximum of the computed LOD value
  * \param[in]  borderColor               A VkBorderColor value specifying the predefined border color to use
@@ -9475,11 +9475,11 @@ void scvkCreateSamplerWithDebugUtilsObjectNameInfo(VkDevice device, const void* 
  * \param[in]  addressModeU              A VkSamplerAddressMode value specifying the wrapping operation used when the i coordinate used to sample the image would be out of bounds
  * \param[in]  addressModeV              A VkSamplerAddressMode value specifying the wrapping operation used when the j coordinate used to sample the image would be out of bounds
  * \param[in]  addressModeW              A VkSamplerAddressMode value specifying the wrapping operation used when the k coordinate used to sample the image would be out of bounds
- * \param[in]  mipLodBias                The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V, as described in the LOD Operation section
- * \param[in]  anisotropyEnable          VK_TRUE to enable anisotropic filtering, as described in the Texel Anisotropic Filtering section, or VK_FALSE otherwise
+ * \param[in]  mipLodBias                The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V
+ * \param[in]  anisotropyEnable          VK_TRUE to enable anisotropic filtering, or VK_FALSE otherwise
  * \param[in]  maxAnisotropy             The anisotropy value clamp used by the sampler when anisotropyEnable is VK_TRUE
  * \param[in]  compareEnable             VK_TRUE to enable comparison against a reference value during lookups, or VK_FALSE otherwise
- * \param[in]  compareOp                 A VkCompareOp value specifying the comparison operator to apply to fetched data before filtering as described in the Depth Compare Operation section
+ * \param[in]  compareOp                 A VkCompareOp value specifying the comparison operator to apply to fetched data before filtering
  * \param[in]  minLod                    Used to clamp the minimum of the computed LOD value
  * \param[in]  maxLod                    Used to clamp the maximum of the computed LOD value
  * \param[in]  borderColor               A VkBorderColor value specifying the predefined border color to use
@@ -9505,11 +9505,11 @@ void scvkCreateSamplerWithCustomBorderColorInfo(VkDevice device, const void* pNe
  * \param[in]  addressModeU              A VkSamplerAddressMode value specifying the wrapping operation used when the i coordinate used to sample the image would be out of bounds
  * \param[in]  addressModeV              A VkSamplerAddressMode value specifying the wrapping operation used when the j coordinate used to sample the image would be out of bounds
  * \param[in]  addressModeW              A VkSamplerAddressMode value specifying the wrapping operation used when the k coordinate used to sample the image would be out of bounds
- * \param[in]  mipLodBias                The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V, as described in the LOD Operation section
- * \param[in]  anisotropyEnable          VK_TRUE to enable anisotropic filtering, as described in the Texel Anisotropic Filtering section, or VK_FALSE otherwise
+ * \param[in]  mipLodBias                The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V
+ * \param[in]  anisotropyEnable          VK_TRUE to enable anisotropic filtering, or VK_FALSE otherwise
  * \param[in]  maxAnisotropy             The anisotropy value clamp used by the sampler when anisotropyEnable is VK_TRUE
  * \param[in]  compareEnable             VK_TRUE to enable comparison against a reference value during lookups, or VK_FALSE otherwise
- * \param[in]  compareOp                 A VkCompareOp value specifying the comparison operator to apply to fetched data before filtering as described in the Depth Compare Operation section
+ * \param[in]  compareOp                 A VkCompareOp value specifying the comparison operator to apply to fetched data before filtering
  * \param[in]  minLod                    Used to clamp the minimum of the computed LOD value
  * \param[in]  maxLod                    Used to clamp the maximum of the computed LOD value
  * \param[in]  borderColor               A VkBorderColor value specifying the predefined border color to use
@@ -9535,11 +9535,11 @@ void scvkCreateSamplerWithReductionModeInfo(VkDevice device, const void* pNext, 
  * \param[in]  addressModeU              A VkSamplerAddressMode value specifying the wrapping operation used when the i coordinate used to sample the image would be out of bounds
  * \param[in]  addressModeV              A VkSamplerAddressMode value specifying the wrapping operation used when the j coordinate used to sample the image would be out of bounds
  * \param[in]  addressModeW              A VkSamplerAddressMode value specifying the wrapping operation used when the k coordinate used to sample the image would be out of bounds
- * \param[in]  mipLodBias                The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V, as described in the LOD Operation section
- * \param[in]  anisotropyEnable          VK_TRUE to enable anisotropic filtering, as described in the Texel Anisotropic Filtering section, or VK_FALSE otherwise
+ * \param[in]  mipLodBias                The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V
+ * \param[in]  anisotropyEnable          VK_TRUE to enable anisotropic filtering, or VK_FALSE otherwise
  * \param[in]  maxAnisotropy             The anisotropy value clamp used by the sampler when anisotropyEnable is VK_TRUE
  * \param[in]  compareEnable             VK_TRUE to enable comparison against a reference value during lookups, or VK_FALSE otherwise
- * \param[in]  compareOp                 A VkCompareOp value specifying the comparison operator to apply to fetched data before filtering as described in the Depth Compare Operation section
+ * \param[in]  compareOp                 A VkCompareOp value specifying the comparison operator to apply to fetched data before filtering
  * \param[in]  minLod                    Used to clamp the minimum of the computed LOD value
  * \param[in]  maxLod                    Used to clamp the maximum of the computed LOD value
  * \param[in]  borderColor               A VkBorderColor value specifying the predefined border color to use
@@ -9599,12 +9599,12 @@ void scvkCreateSemaphoreWithTypeInfo(VkDevice device, const void* pNext, VkSemap
  * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
  * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
  * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
  * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
  * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
  * \param[in]  presentMode             The presentation mode the swapchain will use
  * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
+ * \param[in]  oldSwapchain            VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface, which is retired and may aid resource reuse
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pSwapchain              A pointer to a VkSwapchainKHR handle in which the created swapchain object will be returned
  *
@@ -9630,12 +9630,12 @@ VkResult scvkCreateSwapchainWithDeviceGroupInfo(VkDevice device, const void* pNe
  * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
  * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
  * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
  * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
  * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
  * \param[in]  presentMode             The presentation mode the swapchain will use
  * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
+ * \param[in]  oldSwapchain            VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface, which is retired and may aid resource reuse
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pSwapchain              A pointer to a VkSwapchainKHR handle in which the created swapchain object will be returned
  *
@@ -9660,12 +9660,12 @@ VkResult scvkCreateSwapchainWithImageFormatListInfo(VkDevice device, const void*
  * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
  * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
  * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
  * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
  * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
  * \param[in]  presentMode             The presentation mode the swapchain will use
  * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
+ * \param[in]  oldSwapchain            VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface, which is retired and may aid resource reuse
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pSwapchain              A pointer to a VkSwapchainKHR handle in which the created swapchain object will be returned
  *
@@ -9677,17 +9677,17 @@ VkResult scvkCreateSwapchainWithCounterInfo(VkDevice device, const void* pNext, 
 /**
  * \brief Retrieves descriptor set layout support with VkDescriptorSetLayoutBindingFlagsCreateInfo chained.
  *
- * \param[in]  device                     The logical device that would create the descriptor set layout
- * \param[in]  pCreateInfoNext            Optional extension chain attached to VkDescriptorSetLayoutCreateInfo, or NULL
- * \param[in]  bindingFlagsBindingCount   Zero or the number of elements in pBindingFlags
- * \param[in]  pBindingFlags              A pointer to an array of VkDescriptorBindingFlags bitfields, one for each descriptor set layout binding
- * \param[in]  flags                      A bitmask of VkDescriptorSetLayoutCreateFlagBits specifying options for descriptor set layout creation
- * \param[in]  bindingCount               The number of elements in pBindings
- * \param[in]  pBindings                  A pointer to an array of VkDescriptorSetLayoutBinding structures
- * \param[out] pSupportNext               Optional output extension chain attached to VkDescriptorSetLayoutSupport, or NULL
- * \param[out] pSupport                   A pointer to a VkDescriptorSetLayoutSupport structure, in which information about support for the descriptor set layout object is returned
+ * \param[in]     device                     The logical device that would create the descriptor set layout
+ * \param[in]     pCreateInfoNext            Optional extension chain attached to VkDescriptorSetLayoutCreateInfo, or NULL
+ * \param[in]     bindingFlagsBindingCount   Zero or the number of elements in pBindingFlags
+ * \param[in]     pBindingFlags              A pointer to an array of VkDescriptorBindingFlags bitfields, one for each descriptor set layout binding
+ * \param[in]     flags                      A bitmask of VkDescriptorSetLayoutCreateFlagBits specifying options for descriptor set layout creation
+ * \param[in]     bindingCount               The number of elements in pBindings
+ * \param[in]     pBindings                  A pointer to an array of VkDescriptorSetLayoutBinding structures
+ * \param[in,out] pSupportNext               Optional output extension chain attached to VkDescriptorSetLayoutSupport, or NULL
+ * \param[out]    pSupport                   A pointer to a VkDescriptorSetLayoutSupport structure, in which information about support for the descriptor set layout object is returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetDescriptorSetLayoutBindingFlagsSupport(VkDevice device, const void* pCreateInfoNext, uint32_t bindingFlagsBindingCount, const VkDescriptorBindingFlags* pBindingFlags, VkDescriptorSetLayoutCreateFlags flags, uint32_t bindingCount, const VkDescriptorSetLayoutBinding* pBindings, void* pSupportNext, VkDescriptorSetLayoutSupport* pSupport);
 
@@ -9695,14 +9695,14 @@ void scvkGetDescriptorSetLayoutBindingFlagsSupport(VkDevice device, const void* 
 /**
  * \brief Retrieves image memory requirements 2 with VkImagePlaneMemoryRequirementsInfo chained.
  *
- * \param[in]  device                    The logical device that owns the image
- * \param[in]  pInfoNext                 Optional extension chain attached to VkImageMemoryRequirementsInfo2, or NULL
- * \param[in]  planeAspect               A VkImageAspectFlagBits value specifying the aspect corresponding to the image plane to query
- * \param[in]  image                     The image to query
- * \param[out] pMemoryRequirementsNext   Optional output extension chain attached to VkMemoryRequirements2, or NULL
- * \param[out] pMemoryRequirements       A pointer to a VkMemoryRequirements2 structure in which the memory requirements of the image object are returned
+ * \param[in]     device                    The logical device that owns the image
+ * \param[in]     pInfoNext                 Optional extension chain attached to VkImageMemoryRequirementsInfo2, or NULL
+ * \param[in]     planeAspect               A VkImageAspectFlagBits value specifying the aspect corresponding to the image plane to query
+ * \param[in]     image                     The image to query
+ * \param[in,out] pMemoryRequirementsNext   Optional output extension chain attached to VkMemoryRequirements2, or NULL
+ * \param[out]    pMemoryRequirements       A pointer to a VkMemoryRequirements2 structure in which the memory requirements of the image object are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetImagePlaneMemoryRequirementsInfo(VkDevice device, const void* pInfoNext, VkImageAspectFlagBits planeAspect, VkImage image, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements);
 
@@ -9710,15 +9710,15 @@ void scvkGetImagePlaneMemoryRequirementsInfo(VkDevice device, const void* pInfoN
 /**
  * \brief Retrieves physical device external semaphore properties with VkSemaphoreTypeCreateInfo chained.
  *
- * \param[in]  physicalDevice                     The physical device from which to query the semaphore capabilities
- * \param[in]  pExternalSemaphoreInfoNext         Optional extension chain attached to VkPhysicalDeviceExternalSemaphoreInfo, or NULL
- * \param[in]  semaphoreType                      A VkSemaphoreType value specifying the type of the semaphore
- * \param[in]  initialValue                       The initial payload value if semaphoreType is VK_SEMAPHORE_TYPE_TIMELINE
- * \param[in]  handleType                         A VkExternalSemaphoreHandleTypeFlagBits value specifying the external semaphore handle type for which capabilities will be returned
- * \param[out] pExternalSemaphorePropertiesNext   Optional output extension chain attached to VkExternalSemaphoreProperties, or NULL
- * \param[out] pExternalSemaphoreProperties       A pointer to a VkExternalSemaphoreProperties structure in which capabilities are returned
+ * \param[in]     physicalDevice                     The physical device from which to query the semaphore capabilities
+ * \param[in]     pExternalSemaphoreInfoNext         Optional extension chain attached to VkPhysicalDeviceExternalSemaphoreInfo, or NULL
+ * \param[in]     semaphoreType                      A VkSemaphoreType value specifying the type of the semaphore
+ * \param[in]     initialValue                       The initial payload value if semaphoreType is VK_SEMAPHORE_TYPE_TIMELINE
+ * \param[in]     handleType                         A VkExternalSemaphoreHandleTypeFlagBits value specifying the external semaphore handle type for which capabilities will be returned
+ * \param[in,out] pExternalSemaphorePropertiesNext   Optional output extension chain attached to VkExternalSemaphoreProperties, or NULL
+ * \param[out]    pExternalSemaphoreProperties       A pointer to a VkExternalSemaphoreProperties structure in which capabilities are returned
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceExternalSemaphoreTypeProperties(VkPhysicalDevice physicalDevice, const void* pExternalSemaphoreInfoNext, VkSemaphoreType semaphoreType, uint64_t initialValue, VkExternalSemaphoreHandleTypeFlagBits handleType, void* pExternalSemaphorePropertiesNext, VkExternalSemaphoreProperties* pExternalSemaphoreProperties);
 
@@ -9726,19 +9726,19 @@ void scvkGetPhysicalDeviceExternalSemaphoreTypeProperties(VkPhysicalDevice physi
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageFormatListCreateInfo chained.
  *
- * \param[in]  physicalDevice               The physical device from which to query the image capabilities
- * \param[in]  pImageFormatInfoNext         Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
- * \param[in]  viewFormatCount              The number of entries in the pViewFormats array
- * \param[in]  pViewFormats                 A pointer to an array of VkFormat values specifying all formats which can be used when creating views of this image
- * \param[in]  format                       A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
- * \param[in]  type                         A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
- * \param[in]  tiling                       A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
- * \param[in]  usage                        A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
- * \param[in]  flags                        A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
- * \param[out] pImageFormatPropertiesNext   Optional output extension chain attached to VkImageFormatProperties2, or NULL
- * \param[out] pImageFormatProperties       A pointer to a VkImageFormatProperties2 structure in which capabilities are returned
+ * \param[in]     physicalDevice               The physical device from which to query the image capabilities
+ * \param[in]     pImageFormatInfoNext         Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
+ * \param[in]     viewFormatCount              The number of entries in the pViewFormats array
+ * \param[in]     pViewFormats                 A pointer to an array of VkFormat values specifying all formats which can be used when creating views of this image
+ * \param[in]     format                       A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
+ * \param[in]     type                         A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
+ * \param[in]     tiling                       A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
+ * \param[in]     usage                        A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
+ * \param[in]     flags                        A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
+ * \param[in,out] pImageFormatPropertiesNext   Optional output extension chain attached to VkImageFormatProperties2, or NULL
+ * \param[out]    pImageFormatProperties       A pointer to a VkImageFormatProperties2 structure in which capabilities are returned
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult scvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice physicalDevice, const void* pImageFormatInfoNext, uint32_t viewFormatCount, const VkFormat* pViewFormats, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, void* pImageFormatPropertiesNext, VkImageFormatProperties2* pImageFormatProperties);
 
@@ -9746,18 +9746,18 @@ VkResult scvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice physica
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageStencilUsageCreateInfo chained.
  *
- * \param[in]  physicalDevice               The physical device from which to query the image capabilities
- * \param[in]  pImageFormatInfoNext         Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
- * \param[in]  stencilUsage                 A bitmask of VkImageUsageFlagBits describing the intended usage of the stencil aspect of the image
- * \param[in]  format                       A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
- * \param[in]  type                         A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
- * \param[in]  tiling                       A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
- * \param[in]  usage                        A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
- * \param[in]  flags                        A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
- * \param[out] pImageFormatPropertiesNext   Optional output extension chain attached to VkImageFormatProperties2, or NULL
- * \param[out] pImageFormatProperties       A pointer to a VkImageFormatProperties2 structure in which capabilities are returned
+ * \param[in]     physicalDevice               The physical device from which to query the image capabilities
+ * \param[in]     pImageFormatInfoNext         Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
+ * \param[in]     stencilUsage                 A bitmask of VkImageUsageFlagBits describing the intended usage of the stencil aspect of the image
+ * \param[in]     format                       A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
+ * \param[in]     type                         A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
+ * \param[in]     tiling                       A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
+ * \param[in]     usage                        A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
+ * \param[in]     flags                        A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
+ * \param[in,out] pImageFormatPropertiesNext   Optional output extension chain attached to VkImageFormatProperties2, or NULL
+ * \param[out]    pImageFormatProperties       A pointer to a VkImageFormatProperties2 structure in which capabilities are returned
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult scvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice physicalDevice, const void* pImageFormatInfoNext, VkImageUsageFlags stencilUsage, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, void* pImageFormatPropertiesNext, VkImageFormatProperties2* pImageFormatProperties);
 
@@ -9765,18 +9765,18 @@ VkResult scvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice
 /**
  * \brief Retrieves physical device image format properties 2 with VkPhysicalDeviceExternalImageFormatInfo chained.
  *
- * \param[in]  physicalDevice               The physical device from which to query the image capabilities
- * \param[in]  pImageFormatInfoNext         Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
- * \param[in]  handleType                   A VkExternalMemoryHandleTypeFlagBits value specifying the memory handle type that will be used with the memory associated with the image
- * \param[in]  format                       A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
- * \param[in]  type                         A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
- * \param[in]  tiling                       A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
- * \param[in]  usage                        A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
- * \param[in]  flags                        A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
- * \param[out] pImageFormatPropertiesNext   Optional output extension chain attached to VkImageFormatProperties2, or NULL
- * \param[out] pImageFormatProperties       A pointer to a VkImageFormatProperties2 structure in which capabilities are returned
+ * \param[in]     physicalDevice               The physical device from which to query the image capabilities
+ * \param[in]     pImageFormatInfoNext         Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
+ * \param[in]     handleType                   A VkExternalMemoryHandleTypeFlagBits value specifying the memory handle type that will be used with the memory associated with the image
+ * \param[in]     format                       A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
+ * \param[in]     type                         A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
+ * \param[in]     tiling                       A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
+ * \param[in]     usage                        A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
+ * \param[in]     flags                        A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
+ * \param[in,out] pImageFormatPropertiesNext   Optional output extension chain attached to VkImageFormatProperties2, or NULL
+ * \param[out]    pImageFormatProperties       A pointer to a VkImageFormatProperties2 structure in which capabilities are returned
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult scvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice physicalDevice, const void* pImageFormatInfoNext, VkExternalMemoryHandleTypeFlagBits handleType, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, void* pImageFormatPropertiesNext, VkImageFormatProperties2* pImageFormatProperties);
 
@@ -9784,21 +9784,21 @@ VkResult scvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice physicalD
 /**
  * \brief Retrieves physical device image format properties 2 with VkPhysicalDeviceImageDrmFormatModifierInfoEXT chained.
  *
- * \param[in]  physicalDevice               The physical device from which to query the image capabilities
- * \param[in]  pImageFormatInfoNext         Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
- * \param[in]  drmFormatModifier            The image's Linux DRM format modifier, corresponding to VkImageDrmFormatModifierExplicitCreateInfoEXT::drmFormatModifier or to VkImageDrmFormatModifierListCreateInfoEXT::pDrmFormatModifiers
- * \param[in]  sharingMode                  Specifies how the image will be accessed by multiple queue families
- * \param[in]  queueFamilyIndexCount        The number of entries in the pQueueFamilyIndices array
- * \param[in]  pQueueFamilyIndices          A pointer to an array of queue families that will access the image
- * \param[in]  format                       A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
- * \param[in]  type                         A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
- * \param[in]  tiling                       A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
- * \param[in]  usage                        A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
- * \param[in]  flags                        A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
- * \param[out] pImageFormatPropertiesNext   Optional output extension chain attached to VkImageFormatProperties2, or NULL
- * \param[out] pImageFormatProperties       A pointer to a VkImageFormatProperties2 structure in which capabilities are returned
+ * \param[in]     physicalDevice               The physical device from which to query the image capabilities
+ * \param[in]     pImageFormatInfoNext         Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
+ * \param[in]     drmFormatModifier            The image's Linux DRM format modifier, corresponding to VkImageDrmFormatModifierExplicitCreateInfoEXT::drmFormatModifier or to VkImageDrmFormatModifierListCreateInfoEXT::pDrmFormatModifiers
+ * \param[in]     sharingMode                  Specifies how the image will be accessed by multiple queue families
+ * \param[in]     queueFamilyIndexCount        The number of entries in the pQueueFamilyIndices array
+ * \param[in]     pQueueFamilyIndices          A pointer to an array of queue families that will access the image
+ * \param[in]     format                       A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
+ * \param[in]     type                         A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
+ * \param[in]     tiling                       A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
+ * \param[in]     usage                        A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
+ * \param[in]     flags                        A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
+ * \param[in,out] pImageFormatPropertiesNext   Optional output extension chain attached to VkImageFormatProperties2, or NULL
+ * \param[out]    pImageFormatProperties       A pointer to a VkImageFormatProperties2 structure in which capabilities are returned
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult scvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice physicalDevice, const void* pImageFormatInfoNext, uint64_t drmFormatModifier, VkSharingMode sharingMode, uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, void* pImageFormatPropertiesNext, VkImageFormatProperties2* pImageFormatProperties);
 
@@ -9806,18 +9806,18 @@ VkResult scvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice physic
 /**
  * \brief Retrieves physical device image format properties 2 with VkPhysicalDeviceImageViewImageFormatInfoEXT chained.
  *
- * \param[in]  physicalDevice               The physical device from which to query the image capabilities
- * \param[out] pImageFormatInfoNext         Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
- * \param[in]  imageViewType                A VkImageViewType value specifying the type of the image view
- * \param[in]  format                       A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
- * \param[in]  type                         A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
- * \param[in]  tiling                       A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
- * \param[in]  usage                        A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
- * \param[in]  flags                        A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
- * \param[out] pImageFormatPropertiesNext   Optional output extension chain attached to VkImageFormatProperties2, or NULL
- * \param[out] pImageFormatProperties       A pointer to a VkImageFormatProperties2 structure in which capabilities are returned
+ * \param[in]     physicalDevice               The physical device from which to query the image capabilities
+ * \param[in]     pImageFormatInfoNext         Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
+ * \param[in]     imageViewType                A VkImageViewType value specifying the type of the image view
+ * \param[in]     format                       A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
+ * \param[in]     type                         A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
+ * \param[in]     tiling                       A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
+ * \param[in]     usage                        A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
+ * \param[in]     flags                        A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
+ * \param[in,out] pImageFormatPropertiesNext   Optional output extension chain attached to VkImageFormatProperties2, or NULL
+ * \param[out]    pImageFormatProperties       A pointer to a VkImageFormatProperties2 structure in which capabilities are returned
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult scvkGetPhysicalDeviceImageViewImageFormatInfo(VkPhysicalDevice physicalDevice, void* pImageFormatInfoNext, VkImageViewType imageViewType, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, void* pImageFormatPropertiesNext, VkImageFormatProperties2* pImageFormatProperties);
 
@@ -9920,7 +9920,7 @@ void scvkBindImageMemoryInfoWithDeviceGroupInfo(VkDevice device, const void* pNe
  *
  * \param[in] device         The logical device that owns the images and memory
  * \param[in] pNext          Optional extension chain attached to VkBindImageMemoryInfo, or NULL
- * \param[in] swapchain      VK_NULL_HANDLE or a swapchain handle
+ * \param[in] swapchain      VK_NULL_HANDLE or the swapchain whose image at imageIndex supplies the memory binding
  * \param[in] imageIndex     An image index within swapchain
  * \param[in] image          The image to be attached to memory
  * \param[in] memory         A VkDeviceMemory object describing the device memory to attach
@@ -9950,7 +9950,7 @@ void scvkBindImageMemoryInfoWithPlaneInfo(VkDevice device, const void* pNext, Vk
  * \brief Creates a compute pipelines with VkPipelineOfflineCreateInfo chained.
  *
  * \param[in]  device               The logical device that creates the compute pipelines
- * \param[in]  pipelineCache        Either VK_NULL_HANDLE, indicating that pipeline caching is disabled, or to enable caching, the handle of a valid VkPipelineCache object
+ * \param[in]  pipelineCache        The handle of a valid VkPipelineCache object
  * \param[in]  pNext                Optional extension chain attached to VkComputePipelineCreateInfo, or NULL
  * \param[in]  pipelineIdentifier   An array of VK_UUID_SIZE uint8_t values representing an identifier for the pipeline
  * \param[in]  matchControl         A VkPipelineMatchControl value specifying the type of identifier being used and how the match should be performed
@@ -9972,8 +9972,8 @@ void scvkCreateComputePipelineWithOfflineInfo(VkDevice device, VkPipelineCache p
  * \brief Creates a graphics pipelines with VkPipelineDiscardRectangleStateCreateInfoEXT chained.
  *
  * \param[in]  device                       The logical device that creates the graphics pipelines
- * \param[in]  pipelineCache                Either VK_NULL_HANDLE, indicating that pipeline caching is disabled, or to enable caching, the handle of a valid VkPipelineCache object
- * \param[in]  pNext                        Optional extension chain attached to VkGraphicsPipelineCreateInfo, or NULL
+ * \param[in]  pipelineCache                The handle of a valid VkPipelineCache object
+ * \param[in]  pNext                        Optional input extension chain attached to VkGraphicsPipelineCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  flagsDiscardRectangleState   Reserved for future use; must be 0
  * \param[in]  discardRectangleMode         A VkDiscardRectangleModeEXT value determining whether the discard rectangle test is inclusive or exclusive
  * \param[in]  discardRectangleCount        The number of discard rectangles to use
@@ -9981,8 +9981,8 @@ void scvkCreateComputePipelineWithOfflineInfo(VkDevice device, VkPipelineCache p
  * \param[in]  flags                        A bitmask of VkPipelineCreateFlagBits specifying how the pipeline will be generated
  * \param[in]  stageCount                   The number of entries in the pStages array
  * \param[in]  pStages                      A pointer to an array of stageCount VkPipelineShaderStageCreateInfo structures describing the set of the shader stages to be included in the graphics pipeline
- * \param[in]  pVertexInputState            A pointer to a VkPipelineVertexInputStateCreateInfo structure
- * \param[in]  pInputAssemblyState          A pointer to a VkPipelineInputAssemblyStateCreateInfo structure which determines input assembly behavior for vertex shading, as described in Drawing Commands
+ * \param[in]  pVertexInputState            A pointer to a VkPipelineVertexInputStateCreateInfo structure describing vertex bindings and attributes; ignored with a mesh shader stage, and may be NULL when VK_DYNAMIC_STATE_VERTEX_INPUT_EXT is dynamic
+ * \param[in]  pInputAssemblyState          A pointer to a VkPipelineInputAssemblyStateCreateInfo structure which determines input assembly behavior for vertex shading
  * \param[in]  pTessellationState           A pointer to a VkPipelineTessellationStateCreateInfo structure defining tessellation state used by tessellation shaders
  * \param[in]  pViewportState               A pointer to a VkPipelineViewportStateCreateInfo structure defining viewport state used when rasterization is enabled
  * \param[in]  pRasterizationState          A pointer to a VkPipelineRasterizationStateCreateInfo structure defining rasterization state
@@ -9994,7 +9994,7 @@ void scvkCreateComputePipelineWithOfflineInfo(VkDevice device, VkPipelineCache p
  * \param[in]  renderPass                   A handle to a render pass object describing the environment in which the pipeline will be used
  * \param[in]  subpass                      The index of the subpass in the render pass where this pipeline will be used
  * \param[in]  basePipelineHandle           A pipeline to derive from
- * \param[in]  basePipelineIndex            An index into the pCreateInfos parameter to use as a pipeline to derive from
+ * \param[in]  basePipelineIndex            Must be -1: this wrapper passes a single create info, so derive through basePipelineHandle
  * \param[in]  pAllocator                   Optional allocation callbacks, or NULL
  * \param[out] pPipeline                    Receives the created VkPipeline
  *
@@ -10007,15 +10007,15 @@ void scvkCreateGraphicsPipelineWithDiscardRectangleStateInfo(VkDevice device, Vk
  * \brief Creates a graphics pipelines with VkPipelineFragmentShadingRateStateCreateInfoKHR chained.
  *
  * \param[in]  device                The logical device that creates the graphics pipelines
- * \param[in]  pipelineCache         Either VK_NULL_HANDLE, indicating that pipeline caching is disabled, or to enable caching, the handle of a valid VkPipelineCache object
- * \param[in]  pNext                 Optional extension chain attached to VkGraphicsPipelineCreateInfo, or NULL
+ * \param[in]  pipelineCache         The handle of a valid VkPipelineCache object
+ * \param[in]  pNext                 Optional input extension chain attached to VkGraphicsPipelineCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  fragmentSize          Specifies a VkExtent2D structure containing the fragment size used to define the pipeline fragment shading rate for drawing commands using this pipeline
- * \param[in]  combinerOps           Specifies a VkFragmentShadingRateCombinerOpKHR value determining how the pipeline, primitive, and attachment shading rates are combined for fragments generated by drawing commands using the created pipeline
+ * \param[in]  combinerOps           Two VkFragmentShadingRateCombinerOpKHR values: [0] combines the pipeline and primitive shading rates, [1] combines that result with the attachment shading rate
  * \param[in]  flags                 A bitmask of VkPipelineCreateFlagBits specifying how the pipeline will be generated
  * \param[in]  stageCount            The number of entries in the pStages array
  * \param[in]  pStages               A pointer to an array of stageCount VkPipelineShaderStageCreateInfo structures describing the set of the shader stages to be included in the graphics pipeline
- * \param[in]  pVertexInputState     A pointer to a VkPipelineVertexInputStateCreateInfo structure
- * \param[in]  pInputAssemblyState   A pointer to a VkPipelineInputAssemblyStateCreateInfo structure which determines input assembly behavior for vertex shading, as described in Drawing Commands
+ * \param[in]  pVertexInputState     A pointer to a VkPipelineVertexInputStateCreateInfo structure describing vertex bindings and attributes; ignored with a mesh shader stage, and may be NULL when VK_DYNAMIC_STATE_VERTEX_INPUT_EXT is dynamic
+ * \param[in]  pInputAssemblyState   A pointer to a VkPipelineInputAssemblyStateCreateInfo structure which determines input assembly behavior for vertex shading
  * \param[in]  pTessellationState    A pointer to a VkPipelineTessellationStateCreateInfo structure defining tessellation state used by tessellation shaders
  * \param[in]  pViewportState        A pointer to a VkPipelineViewportStateCreateInfo structure defining viewport state used when rasterization is enabled
  * \param[in]  pRasterizationState   A pointer to a VkPipelineRasterizationStateCreateInfo structure defining rasterization state
@@ -10027,7 +10027,7 @@ void scvkCreateGraphicsPipelineWithDiscardRectangleStateInfo(VkDevice device, Vk
  * \param[in]  renderPass            A handle to a render pass object describing the environment in which the pipeline will be used
  * \param[in]  subpass               The index of the subpass in the render pass where this pipeline will be used
  * \param[in]  basePipelineHandle    A pipeline to derive from
- * \param[in]  basePipelineIndex     An index into the pCreateInfos parameter to use as a pipeline to derive from
+ * \param[in]  basePipelineIndex     Must be -1: this wrapper passes a single create info, so derive through basePipelineHandle
  * \param[in]  pAllocator            Optional allocation callbacks, or NULL
  * \param[out] pPipeline             Receives the created VkPipeline
  *
@@ -10040,7 +10040,7 @@ void scvkCreateGraphicsPipelineWithFragmentShadingRateStateInfo(VkDevice device,
  * \brief Creates a graphics pipelines with VkPipelineOfflineCreateInfo chained.
  *
  * \param[in]  device                The logical device that creates the graphics pipelines
- * \param[in]  pipelineCache         Either VK_NULL_HANDLE, indicating that pipeline caching is disabled, or to enable caching, the handle of a valid VkPipelineCache object
+ * \param[in]  pipelineCache         The handle of a valid VkPipelineCache object
  * \param[in]  pNext                 Optional extension chain attached to VkGraphicsPipelineCreateInfo, or NULL
  * \param[in]  pipelineIdentifier    An array of VK_UUID_SIZE uint8_t values representing an identifier for the pipeline
  * \param[in]  matchControl          A VkPipelineMatchControl value specifying the type of identifier being used and how the match should be performed
@@ -10048,8 +10048,8 @@ void scvkCreateGraphicsPipelineWithFragmentShadingRateStateInfo(VkDevice device,
  * \param[in]  flags                 A bitmask of VkPipelineCreateFlagBits specifying how the pipeline will be generated
  * \param[in]  stageCount            The number of entries in the pStages array
  * \param[in]  pStages               A pointer to an array of stageCount VkPipelineShaderStageCreateInfo structures describing the set of the shader stages to be included in the graphics pipeline
- * \param[in]  pVertexInputState     A pointer to a VkPipelineVertexInputStateCreateInfo structure
- * \param[in]  pInputAssemblyState   A pointer to a VkPipelineInputAssemblyStateCreateInfo structure which determines input assembly behavior for vertex shading, as described in Drawing Commands
+ * \param[in]  pVertexInputState     A pointer to a VkPipelineVertexInputStateCreateInfo structure specifying parameters of a newly created pipeline vertex input state
+ * \param[in]  pInputAssemblyState   A pointer to a VkPipelineInputAssemblyStateCreateInfo structure which determines input assembly behavior for vertex shading
  * \param[in]  pTessellationState    A pointer to a VkPipelineTessellationStateCreateInfo structure defining tessellation state used by tessellation shaders
  * \param[in]  pViewportState        A pointer to a VkPipelineViewportStateCreateInfo structure defining viewport state used when rasterization is enabled
  * \param[in]  pRasterizationState   A pointer to a VkPipelineRasterizationStateCreateInfo structure defining rasterization state
@@ -10086,12 +10086,12 @@ void scvkCreateGraphicsPipelineWithOfflineInfo(VkDevice device, VkPipelineCache 
  * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
  * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
  * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
  * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
  * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
  * \param[in]  presentMode             The presentation mode the swapchain will use
  * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
+ * \param[in]  oldSwapchain            VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface, which is retired and may aid resource reuse
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pSwapchain              Receives the created VkSwapchainKHR
  *
@@ -10117,12 +10117,12 @@ VkResult scvkCreateSharedSwapchainWithDeviceGroupInfo(VkDevice device, const voi
  * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
  * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
  * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
  * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
  * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
  * \param[in]  presentMode             The presentation mode the swapchain will use
  * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
+ * \param[in]  oldSwapchain            VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface, which is retired and may aid resource reuse
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pSwapchain              Receives the created VkSwapchainKHR
  *
@@ -10147,12 +10147,12 @@ VkResult scvkCreateSharedSwapchainWithImageFormatListInfo(VkDevice device, const
  * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
  * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
  * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
  * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
  * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
  * \param[in]  presentMode             The presentation mode the swapchain will use
  * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
+ * \param[in]  oldSwapchain            VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface, which is retired and may aid resource reuse
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pSwapchain              Receives the created VkSwapchainKHR
  *
@@ -10234,7 +10234,7 @@ void scvkQueueSubmitInfoWithProtectedInfo(VkQueue queue, const void* pNext, VkBo
  * \param[in] waitSemaphoreValueCount     The number of semaphore wait values specified in pWaitSemaphoreValues
  * \param[in] pWaitSemaphoreValues        A pointer to an array of waitSemaphoreValueCount values for the corresponding semaphores in VkSubmitInfo::pWaitSemaphores to wait for
  * \param[in] signalSemaphoreValueCount   The number of semaphore signal values specified in pSignalSemaphoreValues
- * \param[in] pSignalSemaphoreValues      A pointer to an array signalSemaphoreValueCount values for the corresponding semaphores in VkSubmitInfo::pSignalSemaphores to set when signaled
+ * \param[in] pSignalSemaphoreValues      A pointer to an array of signalSemaphoreValueCount values for the corresponding semaphores in VkSubmitInfo::pSignalSemaphores to set when signaled
  * \param[in] waitSemaphoreCount          The number of semaphores upon which to wait before executing the command buffers for the batch
  * \param[in] pWaitSemaphores             A pointer to an array of VkSemaphore handles upon which to wait before the command buffers for this batch begin execution
  * \param[in] pWaitDstStageMask           A pointer to an array of pipeline stages at which each corresponding semaphore wait will occur
@@ -10256,7 +10256,7 @@ void scvkQueueSubmitInfoWithTimelineSemaphoreInfo(VkQueue queue, const void* pNe
  * \param[in] bindInfoCount    The number of elements in pBindInfos
  * \param[in] ppNexts          Optional per-element extension chains attached to VkBindImageMemorySwapchainInfoKHR, or NULL
  * \param[in] pSwapchains      VK_NULL_HANDLE or a swapchain handle, one per element
- * \param[in] pImageIndices    An image index within swapchain, one per element
+ * \param[in] pImageIndices    Image index within the corresponding pSwapchains element, one per element
  * \param[in] pImages          The image to be attached to memory, one per element
  * \param[in] pMemories        A VkDeviceMemory object describing the device memory to attach, one per element
  * \param[in] pMemoryOffsets   The start offset of the region of memory which is to be bound to the image, one per element
@@ -10271,11 +10271,11 @@ void scvkBindSwapchainImageMemories(VkDevice device, uint32_t bindInfoCount, con
  *
  * \param[in] device         The logical device that owns the images and memory
  * \param[in] pNext          Optional extension chain attached to VkBindImageMemorySwapchainInfoKHR, or NULL
- * \param[in] swapchain      VK_NULL_HANDLE or a swapchain handle, one 
- * \param[in] imageIndex     An image index within swapchain, one 
- * \param[in] image          The image to be attached to memory, one 
- * \param[in] memory         A VkDeviceMemory object describing the device memory to attach, one 
- * \param[in] memoryOffset   The start offset of the region of memory which is to be bound to the image, one 
+ * \param[in] swapchain      VK_NULL_HANDLE or a swapchain handle
+ * \param[in] imageIndex     An image index within swapchain
+ * \param[in] image          The image to be attached to memory
+ * \param[in] memory         A VkDeviceMemory object describing the device memory to attach
+ * \param[in] memoryOffset   The start offset of the region of memory which is to be bound to the image
  *
  * \retval    None
  */
@@ -10303,10 +10303,10 @@ void scvkBindPlaneImageMemories(VkDevice device, uint32_t bindInfoCount, const v
  *
  * \param[in] device         The logical device that owns the images and memory
  * \param[in] pNext          Optional extension chain attached to VkBindImagePlaneMemoryInfo, or NULL
- * \param[in] planeAspect    A VkImageAspectFlagBits value specifying the aspect of the disjoint image plane to bind, one 
- * \param[in] image          The image to be attached to memory, one 
- * \param[in] memory         A VkDeviceMemory object describing the device memory to attach, one 
- * \param[in] memoryOffset   The start offset of the region of memory which is to be bound to the image, one 
+ * \param[in] planeAspect    A VkImageAspectFlagBits value specifying the aspect of the disjoint image plane to bind
+ * \param[in] image          The image to be attached to memory
+ * \param[in] memory         A VkDeviceMemory object describing the device memory to attach
+ * \param[in] memoryOffset   The start offset of the region of memory which is to be bound to the image
  *
  * \retval    None
  */
@@ -10316,13 +10316,13 @@ void scvkBindPlaneImageMemory(VkDevice device, const void* pNext, VkImageAspectF
 /**
  * \brief Retrieves buffer memory requirements 2 with VkMemoryDedicatedRequirements chained to the output.
  *
- * \param[in]  device                             The logical device that owns the buffer
- * \param[in]  pInfoNext                          Optional extension chain attached to VkBufferMemoryRequirementsInfo2, or NULL
- * \param[in]  buffer                             The buffer to query
- * \param[in]  pMemoryDedicatedRequirementsNext   Optional output extension chain attached to VkMemoryDedicatedRequirements, or NULL
- * \param[out] pMemoryDedicatedRequirements       Receives the structure describing dedicated allocation requirements of buffer and image resources
+ * \param[in]     device                             The logical device that owns the buffer
+ * \param[in]     pInfoNext                          Optional extension chain attached to VkBufferMemoryRequirementsInfo2, or NULL
+ * \param[in]     buffer                             The buffer to query
+ * \param[in,out] pMemoryDedicatedRequirementsNext   Optional output extension chain attached to VkMemoryDedicatedRequirements, or NULL
+ * \param[out]    pMemoryDedicatedRequirements       Receives the structure describing dedicated allocation requirements of buffer and image resources
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetBufferMemoryDedicatedRequirements(VkDevice device, const void* pInfoNext, VkBuffer buffer, void* pMemoryDedicatedRequirementsNext, VkMemoryDedicatedRequirements* pMemoryDedicatedRequirements);
 
@@ -10330,15 +10330,15 @@ void scvkGetBufferMemoryDedicatedRequirements(VkDevice device, const void* pInfo
 /**
  * \brief Retrieves descriptor set layout support with VkDescriptorSetVariableDescriptorCountLayoutSupport chained to the output.
  *
- * \param[in]  device                                                   The logical device that would create the descriptor set layout
- * \param[in]  pCreateInfoNext                                          Optional extension chain attached to VkDescriptorSetLayoutCreateInfo, or NULL
- * \param[in]  flags                                                    A bitmask of VkDescriptorSetLayoutCreateFlagBits specifying options for descriptor set layout creation
- * \param[in]  bindingCount                                             The number of elements in pBindings
- * \param[in]  pBindings                                                A pointer to an array of VkDescriptorSetLayoutBinding structures
- * \param[in]  pDescriptorSetVariableDescriptorCountLayoutSupportNext   Optional output extension chain attached to VkDescriptorSetVariableDescriptorCountLayoutSupport, or NULL
- * \param[out] pDescriptorSetVariableDescriptorCountLayoutSupport       Receives the structure returning information about whether a descriptor set layout can be supported
+ * \param[in]     device                                                   The logical device that would create the descriptor set layout
+ * \param[in]     pCreateInfoNext                                          Optional extension chain attached to VkDescriptorSetLayoutCreateInfo, or NULL
+ * \param[in]     flags                                                    A bitmask of VkDescriptorSetLayoutCreateFlagBits specifying options for descriptor set layout creation
+ * \param[in]     bindingCount                                             The number of elements in pBindings
+ * \param[in]     pBindings                                                A pointer to an array of VkDescriptorSetLayoutBinding structures
+ * \param[in,out] pDescriptorSetVariableDescriptorCountLayoutSupportNext   Optional output extension chain attached to VkDescriptorSetVariableDescriptorCountLayoutSupport, or NULL
+ * \param[out]    pDescriptorSetVariableDescriptorCountLayoutSupport       Receives the structure returning information about whether a descriptor set layout can be supported
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetDescriptorSetVariableDescriptorCountLayoutSupport(VkDevice device, const void* pCreateInfoNext, VkDescriptorSetLayoutCreateFlags flags, uint32_t bindingCount, const VkDescriptorSetLayoutBinding* pBindings, void* pDescriptorSetVariableDescriptorCountLayoutSupportNext, VkDescriptorSetVariableDescriptorCountLayoutSupport* pDescriptorSetVariableDescriptorCountLayoutSupport);
 
@@ -10346,13 +10346,13 @@ void scvkGetDescriptorSetVariableDescriptorCountLayoutSupport(VkDevice device, c
 /**
  * \brief Retrieves image memory requirements 2 with VkMemoryDedicatedRequirements chained to the output.
  *
- * \param[in]  device                             The logical device that owns the image
- * \param[in]  pInfoNext                          Optional extension chain attached to VkImageMemoryRequirementsInfo2, or NULL
- * \param[in]  image                              The image to query
- * \param[in]  pMemoryDedicatedRequirementsNext   Optional output extension chain attached to VkMemoryDedicatedRequirements, or NULL
- * \param[out] pMemoryDedicatedRequirements       Receives the structure describing dedicated allocation requirements of buffer and image resources
+ * \param[in]     device                             The logical device that owns the image
+ * \param[in]     pInfoNext                          Optional extension chain attached to VkImageMemoryRequirementsInfo2, or NULL
+ * \param[in]     image                              The image to query
+ * \param[in,out] pMemoryDedicatedRequirementsNext   Optional output extension chain attached to VkMemoryDedicatedRequirements, or NULL
+ * \param[out]    pMemoryDedicatedRequirements       Receives the structure describing dedicated allocation requirements of buffer and image resources
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetImageMemoryDedicatedRequirements(VkDevice device, const void* pInfoNext, VkImage image, void* pMemoryDedicatedRequirementsNext, VkMemoryDedicatedRequirements* pMemoryDedicatedRequirements);
 
@@ -10360,11 +10360,11 @@ void scvkGetImageMemoryDedicatedRequirements(VkDevice device, const void* pInfoN
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDevice16BitStorageFeatures chained to the output.
  *
- * \param[in]  physicalDevice                        The physical device from which to query the supported features
- * \param[in]  pNext                                 Optional output extension chain attached to VkPhysicalDevice16BitStorageFeatures, or NULL
- * \param[out] pPhysicalDevice16BitStorageFeatures   Receives the structure describing features supported by VK_KHR_16bit_storage
+ * \param[in]     physicalDevice                        The physical device from which to query the supported features
+ * \param[in,out] pNext                                 Optional output extension chain attached to VkPhysicalDevice16BitStorageFeatures, or NULL
+ * \param[out]    pPhysicalDevice16BitStorageFeatures   Receives the structure describing features supported by VK_KHR_16bit_storage
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDevice16BitStorageFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDevice16BitStorageFeatures* pPhysicalDevice16BitStorageFeatures);
 
@@ -10372,11 +10372,11 @@ void scvkGetPhysicalDevice16BitStorageFeatures(VkPhysicalDevice physicalDevice, 
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDevice4444FormatsFeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                       The physical device from which to query the supported features
- * \param[in]  pNext                                Optional output extension chain attached to VkPhysicalDevice4444FormatsFeaturesEXT, or NULL
- * \param[out] pPhysicalDevice4444FormatsFeatures   Receives the structure describing additional 4444 formats supported by an implementation
+ * \param[in]     physicalDevice                       The physical device from which to query the supported features
+ * \param[in,out] pNext                                Optional output extension chain attached to VkPhysicalDevice4444FormatsFeaturesEXT, or NULL
+ * \param[out]    pPhysicalDevice4444FormatsFeatures   Receives the structure describing additional 4444 formats supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDevice4444FormatsFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDevice4444FormatsFeaturesEXT* pPhysicalDevice4444FormatsFeatures);
 
@@ -10384,11 +10384,11 @@ void scvkGetPhysicalDevice4444FormatsFeatures(VkPhysicalDevice physicalDevice, v
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDevice8BitStorageFeatures chained to the output.
  *
- * \param[in]  physicalDevice                       The physical device from which to query the supported features
- * \param[in]  pNext                                Optional output extension chain attached to VkPhysicalDevice8BitStorageFeatures, or NULL
- * \param[out] pPhysicalDevice8BitStorageFeatures   Receives the structure describing features supported by VK_KHR_8bit_storage
+ * \param[in]     physicalDevice                       The physical device from which to query the supported features
+ * \param[in,out] pNext                                Optional output extension chain attached to VkPhysicalDevice8BitStorageFeatures, or NULL
+ * \param[out]    pPhysicalDevice8BitStorageFeatures   Receives the structure describing features supported by VK_KHR_8bit_storage
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDevice8BitStorageFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDevice8BitStorageFeatures* pPhysicalDevice8BitStorageFeatures);
 
@@ -10396,11 +10396,11 @@ void scvkGetPhysicalDevice8BitStorageFeatures(VkPhysicalDevice physicalDevice, v
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceASTCDecodeFeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                      The physical device from which to query the supported features
- * \param[in]  pNext                               Optional output extension chain attached to VkPhysicalDeviceASTCDecodeFeaturesEXT, or NULL
- * \param[out] pPhysicalDeviceASTCDecodeFeatures   Receives the structure describing ASTC decode mode features
+ * \param[in]     physicalDevice                      The physical device from which to query the supported features
+ * \param[in,out] pNext                               Optional output extension chain attached to VkPhysicalDeviceASTCDecodeFeaturesEXT, or NULL
+ * \param[out]    pPhysicalDeviceASTCDecodeFeatures   Receives the structure describing ASTC decode mode features
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceASTCDecodeFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceASTCDecodeFeaturesEXT* pPhysicalDeviceASTCDecodeFeatures);
 
@@ -10408,11 +10408,11 @@ void scvkGetPhysicalDeviceASTCDecodeFeatures(VkPhysicalDevice physicalDevice, vo
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                                  The physical device from which to query the supported features
- * \param[in]  pNext                                           Optional output extension chain attached to VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT, or NULL
- * \param[out] pPhysicalDeviceBlendOperationAdvancedFeatures   Receives the structure describing advanced blending features that can be supported by an implementation
+ * \param[in]     physicalDevice                                  The physical device from which to query the supported features
+ * \param[in,out] pNext                                           Optional output extension chain attached to VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT, or NULL
+ * \param[out]    pPhysicalDeviceBlendOperationAdvancedFeatures   Receives the structure describing advanced blending features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceBlendOperationAdvancedFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT* pPhysicalDeviceBlendOperationAdvancedFeatures);
 
@@ -10420,11 +10420,11 @@ void scvkGetPhysicalDeviceBlendOperationAdvancedFeatures(VkPhysicalDevice physic
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceBufferDeviceAddressFeatures chained to the output.
  *
- * \param[in]  physicalDevice                               The physical device from which to query the supported features
- * \param[in]  pNext                                        Optional output extension chain attached to VkPhysicalDeviceBufferDeviceAddressFeatures, or NULL
- * \param[out] pPhysicalDeviceBufferDeviceAddressFeatures   Receives the structure describing buffer address features that can be supported by an implementation
+ * \param[in]     physicalDevice                               The physical device from which to query the supported features
+ * \param[in,out] pNext                                        Optional output extension chain attached to VkPhysicalDeviceBufferDeviceAddressFeatures, or NULL
+ * \param[out]    pPhysicalDeviceBufferDeviceAddressFeatures   Receives the structure describing buffer address features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceBufferDeviceAddressFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceBufferDeviceAddressFeatures* pPhysicalDeviceBufferDeviceAddressFeatures);
 
@@ -10432,11 +10432,11 @@ void scvkGetPhysicalDeviceBufferDeviceAddressFeatures(VkPhysicalDevice physicalD
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceColorWriteEnableFeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                            The physical device from which to query the supported features
- * \param[in]  pNext                                     Optional output extension chain attached to VkPhysicalDeviceColorWriteEnableFeaturesEXT, or NULL
- * \param[out] pPhysicalDeviceColorWriteEnableFeatures   Receives the structure describing whether writes to color attachments can be enabled and disabled dynamically
+ * \param[in]     physicalDevice                            The physical device from which to query the supported features
+ * \param[in,out] pNext                                     Optional output extension chain attached to VkPhysicalDeviceColorWriteEnableFeaturesEXT, or NULL
+ * \param[out]    pPhysicalDeviceColorWriteEnableFeatures   Receives the structure describing whether writes to color attachments can be enabled and disabled dynamically
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceColorWriteEnableFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceColorWriteEnableFeaturesEXT* pPhysicalDeviceColorWriteEnableFeatures);
 
@@ -10444,11 +10444,11 @@ void scvkGetPhysicalDeviceColorWriteEnableFeatures(VkPhysicalDevice physicalDevi
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceCustomBorderColorFeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                             The physical device from which to query the supported features
- * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDeviceCustomBorderColorFeaturesEXT, or NULL
- * \param[out] pPhysicalDeviceCustomBorderColorFeatures   Receives the structure describing whether custom border colors can be supported by an implementation
+ * \param[in]     physicalDevice                             The physical device from which to query the supported features
+ * \param[in,out] pNext                                      Optional output extension chain attached to VkPhysicalDeviceCustomBorderColorFeaturesEXT, or NULL
+ * \param[out]    pPhysicalDeviceCustomBorderColorFeatures   Receives the structure describing whether custom border colors can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceCustomBorderColorFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceCustomBorderColorFeaturesEXT* pPhysicalDeviceCustomBorderColorFeatures);
 
@@ -10456,11 +10456,11 @@ void scvkGetPhysicalDeviceCustomBorderColorFeatures(VkPhysicalDevice physicalDev
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceDepthClipEnableFeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                           The physical device from which to query the supported features
- * \param[in]  pNext                                    Optional output extension chain attached to VkPhysicalDeviceDepthClipEnableFeaturesEXT, or NULL
- * \param[out] pPhysicalDeviceDepthClipEnableFeatures   Receives the structure indicating support for explicit enable of depth clip
+ * \param[in]     physicalDevice                           The physical device from which to query the supported features
+ * \param[in,out] pNext                                    Optional output extension chain attached to VkPhysicalDeviceDepthClipEnableFeaturesEXT, or NULL
+ * \param[out]    pPhysicalDeviceDepthClipEnableFeatures   Receives the structure indicating support for explicit enable of depth clip
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceDepthClipEnableFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceDepthClipEnableFeaturesEXT* pPhysicalDeviceDepthClipEnableFeatures);
 
@@ -10468,11 +10468,11 @@ void scvkGetPhysicalDeviceDepthClipEnableFeatures(VkPhysicalDevice physicalDevic
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceDescriptorIndexingFeatures chained to the output.
  *
- * \param[in]  physicalDevice                              The physical device from which to query the supported features
- * \param[in]  pNext                                       Optional output extension chain attached to VkPhysicalDeviceDescriptorIndexingFeatures, or NULL
- * \param[out] pPhysicalDeviceDescriptorIndexingFeatures   Receives the structure describing descriptor indexing features that can be supported by an implementation
+ * \param[in]     physicalDevice                              The physical device from which to query the supported features
+ * \param[in,out] pNext                                       Optional output extension chain attached to VkPhysicalDeviceDescriptorIndexingFeatures, or NULL
+ * \param[out]    pPhysicalDeviceDescriptorIndexingFeatures   Receives the structure describing descriptor indexing features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceDescriptorIndexingFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceDescriptorIndexingFeatures* pPhysicalDeviceDescriptorIndexingFeatures);
 
@@ -10480,11 +10480,11 @@ void scvkGetPhysicalDeviceDescriptorIndexingFeatures(VkPhysicalDevice physicalDe
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceExtendedDynamicState2FeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                                 The physical device from which to query the supported features
- * \param[in]  pNext                                          Optional output extension chain attached to VkPhysicalDeviceExtendedDynamicState2FeaturesEXT, or NULL
- * \param[out] pPhysicalDeviceExtendedDynamicState2Features   Receives the structure describing what extended dynamic state can be used
+ * \param[in]     physicalDevice                                 The physical device from which to query the supported features
+ * \param[in,out] pNext                                          Optional output extension chain attached to VkPhysicalDeviceExtendedDynamicState2FeaturesEXT, or NULL
+ * \param[out]    pPhysicalDeviceExtendedDynamicState2Features   Receives the structure describing what extended dynamic state can be used
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceExtendedDynamicState2Features(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceExtendedDynamicState2FeaturesEXT* pPhysicalDeviceExtendedDynamicState2Features);
 
@@ -10492,11 +10492,11 @@ void scvkGetPhysicalDeviceExtendedDynamicState2Features(VkPhysicalDevice physica
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceExtendedDynamicStateFeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                                The physical device from which to query the supported features
- * \param[in]  pNext                                         Optional output extension chain attached to VkPhysicalDeviceExtendedDynamicStateFeaturesEXT, or NULL
- * \param[out] pPhysicalDeviceExtendedDynamicStateFeatures   Receives the structure describing what extended dynamic state can be used
+ * \param[in]     physicalDevice                                The physical device from which to query the supported features
+ * \param[in,out] pNext                                         Optional output extension chain attached to VkPhysicalDeviceExtendedDynamicStateFeaturesEXT, or NULL
+ * \param[out]    pPhysicalDeviceExtendedDynamicStateFeatures   Receives the structure describing what extended dynamic state can be used
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceExtendedDynamicStateFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceExtendedDynamicStateFeaturesEXT* pPhysicalDeviceExtendedDynamicStateFeatures);
 
@@ -10504,11 +10504,11 @@ void scvkGetPhysicalDeviceExtendedDynamicStateFeatures(VkPhysicalDevice physical
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                                   The physical device from which to query the supported features
- * \param[in]  pNext                                            Optional output extension chain attached to VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT, or NULL
- * \param[out] pPhysicalDeviceFragmentShaderInterlockFeatures   Receives the structure describing fragment shader interlock features that can be supported by an implementation
+ * \param[in]     physicalDevice                                   The physical device from which to query the supported features
+ * \param[in,out] pNext                                            Optional output extension chain attached to VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT, or NULL
+ * \param[out]    pPhysicalDeviceFragmentShaderInterlockFeatures   Receives the structure describing fragment shader interlock features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceFragmentShaderInterlockFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT* pPhysicalDeviceFragmentShaderInterlockFeatures);
 
@@ -10516,11 +10516,11 @@ void scvkGetPhysicalDeviceFragmentShaderInterlockFeatures(VkPhysicalDevice physi
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceFragmentShadingRateFeaturesKHR chained to the output.
  *
- * \param[in]  physicalDevice                               The physical device from which to query the supported features
- * \param[in]  pNext                                        Optional output extension chain attached to VkPhysicalDeviceFragmentShadingRateFeaturesKHR, or NULL
- * \param[out] pPhysicalDeviceFragmentShadingRateFeatures   Receives the structure indicating support for variable rate fragment shading
+ * \param[in]     physicalDevice                               The physical device from which to query the supported features
+ * \param[in,out] pNext                                        Optional output extension chain attached to VkPhysicalDeviceFragmentShadingRateFeaturesKHR, or NULL
+ * \param[out]    pPhysicalDeviceFragmentShadingRateFeatures   Receives the structure indicating support for variable rate fragment shading
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceFragmentShadingRateFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceFragmentShadingRateFeaturesKHR* pPhysicalDeviceFragmentShadingRateFeatures);
 
@@ -10528,11 +10528,11 @@ void scvkGetPhysicalDeviceFragmentShadingRateFeatures(VkPhysicalDevice physicalD
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceHostQueryResetFeatures chained to the output.
  *
- * \param[in]  physicalDevice                          The physical device from which to query the supported features
- * \param[in]  pNext                                   Optional output extension chain attached to VkPhysicalDeviceHostQueryResetFeatures, or NULL
- * \param[out] pPhysicalDeviceHostQueryResetFeatures   Receives the structure describing whether queries can be reset from the host
+ * \param[in]     physicalDevice                          The physical device from which to query the supported features
+ * \param[in,out] pNext                                   Optional output extension chain attached to VkPhysicalDeviceHostQueryResetFeatures, or NULL
+ * \param[out]    pPhysicalDeviceHostQueryResetFeatures   Receives the structure describing whether queries can be reset from the host
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceHostQueryResetFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceHostQueryResetFeatures* pPhysicalDeviceHostQueryResetFeatures);
 
@@ -10540,11 +10540,11 @@ void scvkGetPhysicalDeviceHostQueryResetFeatures(VkPhysicalDevice physicalDevice
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceImagelessFramebufferFeatures chained to the output.
  *
- * \param[in]  physicalDevice                                The physical device from which to query the supported features
- * \param[in]  pNext                                         Optional output extension chain attached to VkPhysicalDeviceImagelessFramebufferFeatures, or NULL
- * \param[out] pPhysicalDeviceImagelessFramebufferFeatures   Receives the structure indicating support for imageless framebuffers
+ * \param[in]     physicalDevice                                The physical device from which to query the supported features
+ * \param[in,out] pNext                                         Optional output extension chain attached to VkPhysicalDeviceImagelessFramebufferFeatures, or NULL
+ * \param[out]    pPhysicalDeviceImagelessFramebufferFeatures   Receives the structure indicating support for imageless framebuffers
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceImagelessFramebufferFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceImagelessFramebufferFeatures* pPhysicalDeviceImagelessFramebufferFeatures);
 
@@ -10552,11 +10552,11 @@ void scvkGetPhysicalDeviceImagelessFramebufferFeatures(VkPhysicalDevice physical
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceMultiviewFeatures chained to the output.
  *
- * \param[in]  physicalDevice                     The physical device from which to query the supported features
- * \param[in]  pNext                              Optional output extension chain attached to VkPhysicalDeviceMultiviewFeatures, or NULL
- * \param[out] pPhysicalDeviceMultiviewFeatures   Receives the structure describing multiview features that can be supported by an implementation
+ * \param[in]     physicalDevice                     The physical device from which to query the supported features
+ * \param[in,out] pNext                              Optional output extension chain attached to VkPhysicalDeviceMultiviewFeatures, or NULL
+ * \param[out]    pPhysicalDeviceMultiviewFeatures   Receives the structure describing multiview features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceMultiviewFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceMultiviewFeatures* pPhysicalDeviceMultiviewFeatures);
 
@@ -10564,11 +10564,11 @@ void scvkGetPhysicalDeviceMultiviewFeatures(VkPhysicalDevice physicalDevice, voi
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDevicePerformanceQueryFeaturesKHR chained to the output.
  *
- * \param[in]  physicalDevice                            The physical device from which to query the supported features
- * \param[in]  pNext                                     Optional output extension chain attached to VkPhysicalDevicePerformanceQueryFeaturesKHR, or NULL
- * \param[out] pPhysicalDevicePerformanceQueryFeatures   Receives the structure describing performance query support for an implementation
+ * \param[in]     physicalDevice                            The physical device from which to query the supported features
+ * \param[in,out] pNext                                     Optional output extension chain attached to VkPhysicalDevicePerformanceQueryFeaturesKHR, or NULL
+ * \param[out]    pPhysicalDevicePerformanceQueryFeatures   Receives the structure describing performance query support for an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDevicePerformanceQueryFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDevicePerformanceQueryFeaturesKHR* pPhysicalDevicePerformanceQueryFeatures);
 
@@ -10576,11 +10576,11 @@ void scvkGetPhysicalDevicePerformanceQueryFeatures(VkPhysicalDevice physicalDevi
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceProtectedMemoryFeatures chained to the output.
  *
- * \param[in]  physicalDevice                           The physical device from which to query the supported features
- * \param[in]  pNext                                    Optional output extension chain attached to VkPhysicalDeviceProtectedMemoryFeatures, or NULL
- * \param[out] pPhysicalDeviceProtectedMemoryFeatures   Receives the structure describing protected memory features that can be supported by an implementation
+ * \param[in]     physicalDevice                           The physical device from which to query the supported features
+ * \param[in,out] pNext                                    Optional output extension chain attached to VkPhysicalDeviceProtectedMemoryFeatures, or NULL
+ * \param[out]    pPhysicalDeviceProtectedMemoryFeatures   Receives the structure describing protected memory features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceProtectedMemoryFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceProtectedMemoryFeatures* pPhysicalDeviceProtectedMemoryFeatures);
 
@@ -10588,11 +10588,11 @@ void scvkGetPhysicalDeviceProtectedMemoryFeatures(VkPhysicalDevice physicalDevic
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceSamplerYcbcrConversionFeatures chained to the output.
  *
- * \param[in]  physicalDevice                                  The physical device from which to query the supported features
- * \param[in]  pNext                                           Optional output extension chain attached to VkPhysicalDeviceSamplerYcbcrConversionFeatures, or NULL
- * \param[out] pPhysicalDeviceSamplerYcbcrConversionFeatures   Receives the structure describing Y'CbCr conversion features that can be supported by an implementation
+ * \param[in]     physicalDevice                                  The physical device from which to query the supported features
+ * \param[in,out] pNext                                           Optional output extension chain attached to VkPhysicalDeviceSamplerYcbcrConversionFeatures, or NULL
+ * \param[out]    pPhysicalDeviceSamplerYcbcrConversionFeatures   Receives the structure describing Y'CbCr conversion features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceSamplerYcbcrConversionFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceSamplerYcbcrConversionFeatures* pPhysicalDeviceSamplerYcbcrConversionFeatures);
 
@@ -10600,11 +10600,11 @@ void scvkGetPhysicalDeviceSamplerYcbcrConversionFeatures(VkPhysicalDevice physic
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceScalarBlockLayoutFeatures chained to the output.
  *
- * \param[in]  physicalDevice                             The physical device from which to query the supported features
- * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDeviceScalarBlockLayoutFeatures, or NULL
- * \param[out] pPhysicalDeviceScalarBlockLayoutFeatures   Receives the structure indicating support for scalar block layouts
+ * \param[in]     physicalDevice                             The physical device from which to query the supported features
+ * \param[in,out] pNext                                      Optional output extension chain attached to VkPhysicalDeviceScalarBlockLayoutFeatures, or NULL
+ * \param[out]    pPhysicalDeviceScalarBlockLayoutFeatures   Receives the structure indicating support for scalar block layouts
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceScalarBlockLayoutFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceScalarBlockLayoutFeatures* pPhysicalDeviceScalarBlockLayoutFeatures);
 
@@ -10612,11 +10612,11 @@ void scvkGetPhysicalDeviceScalarBlockLayoutFeatures(VkPhysicalDevice physicalDev
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures chained to the output.
  *
- * \param[in]  physicalDevice                                       The physical device from which to query the supported features
- * \param[in]  pNext                                                Optional output extension chain attached to VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures, or NULL
- * \param[out] pPhysicalDeviceSeparateDepthStencilLayoutsFeatures   Receives the structure describing whether the implementation can do depth and stencil image barriers separately
+ * \param[in]     physicalDevice                                       The physical device from which to query the supported features
+ * \param[in,out] pNext                                                Optional output extension chain attached to VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures, or NULL
+ * \param[out]    pPhysicalDeviceSeparateDepthStencilLayoutsFeatures   Receives the structure describing whether the implementation can do depth and stencil image barriers separately
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceSeparateDepthStencilLayoutsFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures* pPhysicalDeviceSeparateDepthStencilLayoutsFeatures);
 
@@ -10624,11 +10624,11 @@ void scvkGetPhysicalDeviceSeparateDepthStencilLayoutsFeatures(VkPhysicalDevice p
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderAtomicFloatFeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                             The physical device from which to query the supported features
- * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDeviceShaderAtomicFloatFeaturesEXT, or NULL
- * \param[out] pPhysicalDeviceShaderAtomicFloatFeatures   Receives the structure describing features supported by VK_EXT_shader_atomic_float
+ * \param[in]     physicalDevice                             The physical device from which to query the supported features
+ * \param[in,out] pNext                                      Optional output extension chain attached to VkPhysicalDeviceShaderAtomicFloatFeaturesEXT, or NULL
+ * \param[out]    pPhysicalDeviceShaderAtomicFloatFeatures   Receives the structure describing features supported by VK_EXT_shader_atomic_float
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceShaderAtomicFloatFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceShaderAtomicFloatFeaturesEXT* pPhysicalDeviceShaderAtomicFloatFeatures);
 
@@ -10636,11 +10636,11 @@ void scvkGetPhysicalDeviceShaderAtomicFloatFeatures(VkPhysicalDevice physicalDev
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderAtomicInt64Features chained to the output.
  *
- * \param[in]  physicalDevice                             The physical device from which to query the supported features
- * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDeviceShaderAtomicInt64Features, or NULL
- * \param[out] pPhysicalDeviceShaderAtomicInt64Features   Receives the structure describing features supported by VK_KHR_shader_atomic_int64
+ * \param[in]     physicalDevice                             The physical device from which to query the supported features
+ * \param[in,out] pNext                                      Optional output extension chain attached to VkPhysicalDeviceShaderAtomicInt64Features, or NULL
+ * \param[out]    pPhysicalDeviceShaderAtomicInt64Features   Receives the structure describing features supported by VK_KHR_shader_atomic_int64
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceShaderAtomicInt64Features(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceShaderAtomicInt64Features* pPhysicalDeviceShaderAtomicInt64Features);
 
@@ -10648,11 +10648,11 @@ void scvkGetPhysicalDeviceShaderAtomicInt64Features(VkPhysicalDevice physicalDev
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderClockFeaturesKHR chained to the output.
  *
- * \param[in]  physicalDevice                       The physical device from which to query the supported features
- * \param[in]  pNext                                Optional output extension chain attached to VkPhysicalDeviceShaderClockFeaturesKHR, or NULL
- * \param[out] pPhysicalDeviceShaderClockFeatures   Receives the structure describing features supported by VK_KHR_shader_clock
+ * \param[in]     physicalDevice                       The physical device from which to query the supported features
+ * \param[in,out] pNext                                Optional output extension chain attached to VkPhysicalDeviceShaderClockFeaturesKHR, or NULL
+ * \param[out]    pPhysicalDeviceShaderClockFeatures   Receives the structure describing features supported by VK_KHR_shader_clock
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceShaderClockFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceShaderClockFeaturesKHR* pPhysicalDeviceShaderClockFeatures);
 
@@ -10660,11 +10660,11 @@ void scvkGetPhysicalDeviceShaderClockFeatures(VkPhysicalDevice physicalDevice, v
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderDrawParametersFeatures chained to the output.
  *
- * \param[in]  physicalDevice                                The physical device from which to query the supported features
- * \param[in]  pNext                                         Optional output extension chain attached to VkPhysicalDeviceShaderDrawParametersFeatures, or NULL
- * \param[out] pPhysicalDeviceShaderDrawParametersFeatures   Receives the structure describing shader draw parameter features that can be supported by an implementation
+ * \param[in]     physicalDevice                                The physical device from which to query the supported features
+ * \param[in,out] pNext                                         Optional output extension chain attached to VkPhysicalDeviceShaderDrawParametersFeatures, or NULL
+ * \param[out]    pPhysicalDeviceShaderDrawParametersFeatures   Receives the structure describing shader draw parameter features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceShaderDrawParametersFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceShaderDrawParametersFeatures* pPhysicalDeviceShaderDrawParametersFeatures);
 
@@ -10672,11 +10672,11 @@ void scvkGetPhysicalDeviceShaderDrawParametersFeatures(VkPhysicalDevice physical
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderFloat16Int8Features chained to the output.
  *
- * \param[in]  physicalDevice                             The physical device from which to query the supported features
- * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDeviceShaderFloat16Int8Features, or NULL
- * \param[out] pPhysicalDeviceShaderFloat16Int8Features   Receives the structure describing features supported by VK_KHR_shader_float16_int8
+ * \param[in]     physicalDevice                             The physical device from which to query the supported features
+ * \param[in,out] pNext                                      Optional output extension chain attached to VkPhysicalDeviceShaderFloat16Int8Features, or NULL
+ * \param[out]    pPhysicalDeviceShaderFloat16Int8Features   Receives the structure describing features supported by VK_KHR_shader_float16_int8
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceShaderFloat16Int8Features(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceShaderFloat16Int8Features* pPhysicalDeviceShaderFloat16Int8Features);
 
@@ -10684,11 +10684,11 @@ void scvkGetPhysicalDeviceShaderFloat16Int8Features(VkPhysicalDevice physicalDev
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                                  The physical device from which to query the supported features
- * \param[in]  pNext                                           Optional output extension chain attached to VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT, or NULL
- * \param[out] pPhysicalDeviceShaderImageAtomicInt64Features   Receives the structure describing features supported by VK_EXT_shader_image_atomic_int64
+ * \param[in]     physicalDevice                                  The physical device from which to query the supported features
+ * \param[in,out] pNext                                           Optional output extension chain attached to VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT, or NULL
+ * \param[out]    pPhysicalDeviceShaderImageAtomicInt64Features   Receives the structure describing features supported by VK_EXT_shader_image_atomic_int64
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceShaderImageAtomicInt64Features(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT* pPhysicalDeviceShaderImageAtomicInt64Features);
 
@@ -10696,11 +10696,11 @@ void scvkGetPhysicalDeviceShaderImageAtomicInt64Features(VkPhysicalDevice physic
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures chained to the output.
  *
- * \param[in]  physicalDevice                                       The physical device from which to query the supported features
- * \param[in]  pNext                                                Optional output extension chain attached to VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures, or NULL
- * \param[out] pPhysicalDeviceShaderSubgroupExtendedTypesFeatures   Receives the structure describing the extended types subgroups support feature for an implementation
+ * \param[in]     physicalDevice                                       The physical device from which to query the supported features
+ * \param[in,out] pNext                                                Optional output extension chain attached to VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures, or NULL
+ * \param[out]    pPhysicalDeviceShaderSubgroupExtendedTypesFeatures   Receives the structure describing the extended types subgroups support feature for an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceShaderSubgroupExtendedTypesFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures* pPhysicalDeviceShaderSubgroupExtendedTypesFeatures);
 
@@ -10708,11 +10708,11 @@ void scvkGetPhysicalDeviceShaderSubgroupExtendedTypesFeatures(VkPhysicalDevice p
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                                The physical device from which to query the supported features
- * \param[in]  pNext                                         Optional output extension chain attached to VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT, or NULL
- * \param[out] pPhysicalDeviceTexelBufferAlignmentFeatures   Receives the structure describing the texel buffer alignment features that can be supported by an implementation
+ * \param[in]     physicalDevice                                The physical device from which to query the supported features
+ * \param[in,out] pNext                                         Optional output extension chain attached to VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT, or NULL
+ * \param[out]    pPhysicalDeviceTexelBufferAlignmentFeatures   Receives the structure describing the texel buffer alignment features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceTexelBufferAlignmentFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT* pPhysicalDeviceTexelBufferAlignmentFeatures);
 
@@ -10720,11 +10720,11 @@ void scvkGetPhysicalDeviceTexelBufferAlignmentFeatures(VkPhysicalDevice physical
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceTimelineSemaphoreFeatures chained to the output.
  *
- * \param[in]  physicalDevice                             The physical device from which to query the supported features
- * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDeviceTimelineSemaphoreFeatures, or NULL
- * \param[out] pPhysicalDeviceTimelineSemaphoreFeatures   Receives the structure describing timeline semaphore features that can be supported by an implementation
+ * \param[in]     physicalDevice                             The physical device from which to query the supported features
+ * \param[in,out] pNext                                      Optional output extension chain attached to VkPhysicalDeviceTimelineSemaphoreFeatures, or NULL
+ * \param[out]    pPhysicalDeviceTimelineSemaphoreFeatures   Receives the structure describing timeline semaphore features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceTimelineSemaphoreFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceTimelineSemaphoreFeatures* pPhysicalDeviceTimelineSemaphoreFeatures);
 
@@ -10732,11 +10732,11 @@ void scvkGetPhysicalDeviceTimelineSemaphoreFeatures(VkPhysicalDevice physicalDev
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceUniformBufferStandardLayoutFeatures chained to the output.
  *
- * \param[in]  physicalDevice                                       The physical device from which to query the supported features
- * \param[in]  pNext                                                Optional output extension chain attached to VkPhysicalDeviceUniformBufferStandardLayoutFeatures, or NULL
- * \param[out] pPhysicalDeviceUniformBufferStandardLayoutFeatures   Receives the structure indicating support for std430-like packing in uniform buffers
+ * \param[in]     physicalDevice                                       The physical device from which to query the supported features
+ * \param[in,out] pNext                                                Optional output extension chain attached to VkPhysicalDeviceUniformBufferStandardLayoutFeatures, or NULL
+ * \param[out]    pPhysicalDeviceUniformBufferStandardLayoutFeatures   Receives the structure indicating support for std430-like packing in uniform buffers
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceUniformBufferStandardLayoutFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceUniformBufferStandardLayoutFeatures* pPhysicalDeviceUniformBufferStandardLayoutFeatures);
 
@@ -10744,11 +10744,11 @@ void scvkGetPhysicalDeviceUniformBufferStandardLayoutFeatures(VkPhysicalDevice p
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceVariablePointersFeatures chained to the output.
  *
- * \param[in]  physicalDevice                            The physical device from which to query the supported features
- * \param[in]  pNext                                     Optional output extension chain attached to VkPhysicalDeviceVariablePointersFeatures, or NULL
- * \param[out] pPhysicalDeviceVariablePointersFeatures   Receives the structure describing variable pointers features that can be supported by an implementation
+ * \param[in]     physicalDevice                            The physical device from which to query the supported features
+ * \param[in,out] pNext                                     Optional output extension chain attached to VkPhysicalDeviceVariablePointersFeatures, or NULL
+ * \param[out]    pPhysicalDeviceVariablePointersFeatures   Receives the structure describing variable pointers features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceVariablePointersFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceVariablePointersFeatures* pPhysicalDeviceVariablePointersFeatures);
 
@@ -10756,11 +10756,11 @@ void scvkGetPhysicalDeviceVariablePointersFeatures(VkPhysicalDevice physicalDevi
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                                   The physical device from which to query the supported features
- * \param[in]  pNext                                            Optional output extension chain attached to VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT, or NULL
- * \param[out] pPhysicalDeviceVertexInputDynamicStateFeatures   Receives the structure describing whether the dynamic vertex input state can be used
+ * \param[in]     physicalDevice                                   The physical device from which to query the supported features
+ * \param[in,out] pNext                                            Optional output extension chain attached to VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT, or NULL
+ * \param[out]    pPhysicalDeviceVertexInputDynamicStateFeatures   Receives the structure describing whether the dynamic vertex input state can be used
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceVertexInputDynamicStateFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT* pPhysicalDeviceVertexInputDynamicStateFeatures);
 
@@ -10768,11 +10768,11 @@ void scvkGetPhysicalDeviceVertexInputDynamicStateFeatures(VkPhysicalDevice physi
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceVulkan11Features chained to the output.
  *
- * \param[in]  physicalDevice                    The physical device from which to query the supported features
- * \param[in]  pNext                             Optional output extension chain attached to VkPhysicalDeviceVulkan11Features, or NULL
- * \param[out] pPhysicalDeviceVulkan11Features   Receives the structure describing the Vulkan 1.1 features that can be supported by an implementation
+ * \param[in]     physicalDevice                    The physical device from which to query the supported features
+ * \param[in,out] pNext                             Optional output extension chain attached to VkPhysicalDeviceVulkan11Features, or NULL
+ * \param[out]    pPhysicalDeviceVulkan11Features   Receives the structure describing the Vulkan 1.1 features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceVulkan11Features(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceVulkan11Features* pPhysicalDeviceVulkan11Features);
 
@@ -10780,11 +10780,11 @@ void scvkGetPhysicalDeviceVulkan11Features(VkPhysicalDevice physicalDevice, void
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceVulkan12Features chained to the output.
  *
- * \param[in]  physicalDevice                    The physical device from which to query the supported features
- * \param[in]  pNext                             Optional output extension chain attached to VkPhysicalDeviceVulkan12Features, or NULL
- * \param[out] pPhysicalDeviceVulkan12Features   Receives the structure describing the Vulkan 1.2 features that can be supported by an implementation
+ * \param[in]     physicalDevice                    The physical device from which to query the supported features
+ * \param[in,out] pNext                             Optional output extension chain attached to VkPhysicalDeviceVulkan12Features, or NULL
+ * \param[out]    pPhysicalDeviceVulkan12Features   Receives the structure describing the Vulkan 1.2 features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceVulkan12Features(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceVulkan12Features* pPhysicalDeviceVulkan12Features);
 
@@ -10792,11 +10792,11 @@ void scvkGetPhysicalDeviceVulkan12Features(VkPhysicalDevice physicalDevice, void
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceVulkanMemoryModelFeatures chained to the output.
  *
- * \param[in]  physicalDevice                             The physical device from which to query the supported features
- * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDeviceVulkanMemoryModelFeatures, or NULL
- * \param[out] pPhysicalDeviceVulkanMemoryModelFeatures   Receives the structure describing features supported by the memory model
+ * \param[in]     physicalDevice                             The physical device from which to query the supported features
+ * \param[in,out] pNext                                      Optional output extension chain attached to VkPhysicalDeviceVulkanMemoryModelFeatures, or NULL
+ * \param[out]    pPhysicalDeviceVulkanMemoryModelFeatures   Receives the structure describing features supported by the memory model
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceVulkanMemoryModelFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceVulkanMemoryModelFeatures* pPhysicalDeviceVulkanMemoryModelFeatures);
 
@@ -10804,11 +10804,11 @@ void scvkGetPhysicalDeviceVulkanMemoryModelFeatures(VkPhysicalDevice physicalDev
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceVulkanSC10Features chained to the output.
  *
- * \param[in]  physicalDevice                      The physical device from which to query the supported features
- * \param[in]  pNext                               Optional output extension chain attached to VkPhysicalDeviceVulkanSC10Features, or NULL
- * \param[out] pPhysicalDeviceVulkanSC10Features   Receives the structure describing the features that may not be supported by an implementation of Vulkan SC
+ * \param[in]     physicalDevice                      The physical device from which to query the supported features
+ * \param[in,out] pNext                               Optional output extension chain attached to VkPhysicalDeviceVulkanSC10Features, or NULL
+ * \param[out]    pPhysicalDeviceVulkanSC10Features   Receives the structure describing the features that may not be supported by an implementation of Vulkan SC
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceVulkanSC10Features(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceVulkanSC10Features* pPhysicalDeviceVulkanSC10Features);
 
@@ -10816,11 +10816,11 @@ void scvkGetPhysicalDeviceVulkanSC10Features(VkPhysicalDevice physicalDevice, vo
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                                 The physical device from which to query the supported features
- * \param[in]  pNext                                          Optional output extension chain attached to VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT, or NULL
- * \param[out] pPhysicalDeviceYcbcr2Plane444FormatsFeatures   Receives the structure describing whether the implementation supports additional 2-plane 444 Y'CbCr formats
+ * \param[in]     physicalDevice                                 The physical device from which to query the supported features
+ * \param[in,out] pNext                                          Optional output extension chain attached to VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT, or NULL
+ * \param[out]    pPhysicalDeviceYcbcr2Plane444FormatsFeatures   Receives the structure describing whether the implementation supports additional 2-plane 444 Y'CbCr formats
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceYcbcr2Plane444FormatsFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT* pPhysicalDeviceYcbcr2Plane444FormatsFeatures);
 
@@ -10828,11 +10828,11 @@ void scvkGetPhysicalDeviceYcbcr2Plane444FormatsFeatures(VkPhysicalDevice physica
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceYcbcrImageArraysFeaturesEXT chained to the output.
  *
- * \param[in]  physicalDevice                            The physical device from which to query the supported features
- * \param[in]  pNext                                     Optional output extension chain attached to VkPhysicalDeviceYcbcrImageArraysFeaturesEXT, or NULL
- * \param[out] pPhysicalDeviceYcbcrImageArraysFeatures   Receives the structure describing extended Y'CbCr image creation features that can be supported by an implementation
+ * \param[in]     physicalDevice                            The physical device from which to query the supported features
+ * \param[in,out] pNext                                     Optional output extension chain attached to VkPhysicalDeviceYcbcrImageArraysFeaturesEXT, or NULL
+ * \param[out]    pPhysicalDeviceYcbcrImageArraysFeatures   Receives the structure describing extended Y'CbCr image creation features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceYcbcrImageArraysFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceYcbcrImageArraysFeaturesEXT* pPhysicalDeviceYcbcrImageArraysFeatures);
 
@@ -10840,14 +10840,14 @@ void scvkGetPhysicalDeviceYcbcrImageArraysFeatures(VkPhysicalDevice physicalDevi
 /**
  * \brief Retrieves physical device format properties 2 with VkDrmFormatModifierPropertiesListEXT chained to the output.
  *
- * \param[in]  physicalDevice                     The physical device from which to query the format properties
- * \param[in]  format                             The format whose properties are queried
- * \param[in]  pNext                              Optional output extension chain attached to VkDrmFormatModifierPropertiesListEXT, or NULL
- * \param[in]  drmFormatModifierCount             An inout parameter related to the number of modifiers compatible with the format, as described below
- * \param[in]  pDrmFormatModifierProperties       Either NULL or a pointer to an array of VkDrmFormatModifierPropertiesEXT structures
- * \param[out] pDrmFormatModifierPropertiesList   Receives the structure specifying the list of DRM format modifiers supported for a format
+ * \param[in]     physicalDevice                     The physical device from which to query the format properties
+ * \param[in]     format                             The format whose properties are queried
+ * \param[in,out] pNext                              Optional output extension chain attached to VkDrmFormatModifierPropertiesListEXT, or NULL
+ * \param[in]     drmFormatModifierCount             Capacity of pDrmFormatModifierProperties in elements; the written count is returned in the output list structure
+ * \param[in]     pDrmFormatModifierProperties       NULL to query only the count, or caller storage for drmFormatModifierCount VkDrmFormatModifierPropertiesEXT structures that receive the modifiers
+ * \param[out]    pDrmFormatModifierPropertiesList   Receives the structure specifying the list of DRM format modifiers supported for a format
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceDrmFormatModifierPropertiesList(VkPhysicalDevice physicalDevice, VkFormat format, void* pNext, uint32_t drmFormatModifierCount, VkDrmFormatModifierPropertiesEXT* pDrmFormatModifierProperties, VkDrmFormatModifierPropertiesListEXT* pDrmFormatModifierPropertiesList);
 
@@ -10855,17 +10855,17 @@ void scvkGetPhysicalDeviceDrmFormatModifierPropertiesList(VkPhysicalDevice physi
 /**
  * \brief Retrieves physical device image format properties 2 with VkExternalImageFormatProperties chained to the output.
  *
- * \param[in]  physicalDevice                       The physical device from which to query the image capabilities
- * \param[in]  pImageFormatInfoNext                 Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
- * \param[in]  format                               A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
- * \param[in]  type                                 A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
- * \param[in]  tiling                               A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
- * \param[in]  usage                                A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
- * \param[in]  flags                                A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
- * \param[in]  pExternalImageFormatPropertiesNext   Optional output extension chain attached to VkExternalImageFormatProperties, or NULL
- * \param[out] pExternalImageFormatProperties       Receives the structure specifying supported external handle properties
+ * \param[in]     physicalDevice                       The physical device from which to query the image capabilities
+ * \param[in]     pImageFormatInfoNext                 Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
+ * \param[in]     format                               A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
+ * \param[in]     type                                 A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
+ * \param[in]     tiling                               A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
+ * \param[in]     usage                                A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
+ * \param[in]     flags                                A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
+ * \param[in,out] pExternalImageFormatPropertiesNext   Optional output extension chain attached to VkExternalImageFormatProperties, or NULL
+ * \param[out]    pExternalImageFormatProperties       Receives the structure specifying supported external handle properties
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult scvkGetPhysicalDeviceExternalImageFormatProperties(VkPhysicalDevice physicalDevice, const void* pImageFormatInfoNext, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, void* pExternalImageFormatPropertiesNext, VkExternalImageFormatProperties* pExternalImageFormatProperties);
 
@@ -10873,17 +10873,17 @@ VkResult scvkGetPhysicalDeviceExternalImageFormatProperties(VkPhysicalDevice phy
 /**
  * \brief Retrieves physical device image format properties 2 with VkFilterCubicImageViewImageFormatPropertiesEXT chained to the output.
  *
- * \param[in]  physicalDevice                                   The physical device from which to query the image capabilities
- * \param[in]  pImageFormatInfoNext                             Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
- * \param[in]  format                                           A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
- * \param[in]  type                                             A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
- * \param[in]  tiling                                           A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
- * \param[in]  usage                                            A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
- * \param[in]  flags                                            A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
- * \param[in]  pFilterCubicImageViewImageFormatPropertiesNext   Optional output extension chain attached to VkFilterCubicImageViewImageFormatPropertiesEXT, or NULL
- * \param[out] pFilterCubicImageViewImageFormatProperties       Receives the structure for querying cubic filtering capabilities of an image view type
+ * \param[in]     physicalDevice                                   The physical device from which to query the image capabilities
+ * \param[in]     pImageFormatInfoNext                             Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
+ * \param[in]     format                                           A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
+ * \param[in]     type                                             A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
+ * \param[in]     tiling                                           A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
+ * \param[in]     usage                                            A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
+ * \param[in]     flags                                            A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
+ * \param[in,out] pFilterCubicImageViewImageFormatPropertiesNext   Optional output extension chain attached to VkFilterCubicImageViewImageFormatPropertiesEXT, or NULL
+ * \param[out]    pFilterCubicImageViewImageFormatProperties       Receives the structure for querying cubic filtering capabilities of an image view type
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult scvkGetPhysicalDeviceFilterCubicImageViewImageFormatProperties(VkPhysicalDevice physicalDevice, const void* pImageFormatInfoNext, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, void* pFilterCubicImageViewImageFormatPropertiesNext, VkFilterCubicImageViewImageFormatPropertiesEXT* pFilterCubicImageViewImageFormatProperties);
 
@@ -10891,17 +10891,17 @@ VkResult scvkGetPhysicalDeviceFilterCubicImageViewImageFormatProperties(VkPhysic
 /**
  * \brief Retrieves physical device image format properties 2 with VkSamplerYcbcrConversionImageFormatProperties chained to the output.
  *
- * \param[in]  physicalDevice                                     The physical device from which to query the image capabilities
- * \param[in]  pImageFormatInfoNext                               Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
- * \param[in]  format                                             A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
- * \param[in]  type                                               A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
- * \param[in]  tiling                                             A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
- * \param[in]  usage                                              A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
- * \param[in]  flags                                              A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
- * \param[in]  pSamplerYcbcrConversionImageFormatPropertiesNext   Optional output extension chain attached to VkSamplerYcbcrConversionImageFormatProperties, or NULL
- * \param[out] pSamplerYcbcrConversionImageFormatProperties       Receives the structure specifying combined image sampler descriptor count for multi-planar images
+ * \param[in]     physicalDevice                                     The physical device from which to query the image capabilities
+ * \param[in]     pImageFormatInfoNext                               Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
+ * \param[in]     format                                             A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
+ * \param[in]     type                                               A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
+ * \param[in]     tiling                                             A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
+ * \param[in]     usage                                              A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
+ * \param[in]     flags                                              A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
+ * \param[in,out] pSamplerYcbcrConversionImageFormatPropertiesNext   Optional output extension chain attached to VkSamplerYcbcrConversionImageFormatProperties, or NULL
+ * \param[out]    pSamplerYcbcrConversionImageFormatProperties       Receives the structure specifying combined image sampler descriptor count for multi-planar images
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult scvkGetPhysicalDeviceSamplerYcbcrConversionImageFormatProperties(VkPhysicalDevice physicalDevice, const void* pImageFormatInfoNext, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, void* pSamplerYcbcrConversionImageFormatPropertiesNext, VkSamplerYcbcrConversionImageFormatProperties* pSamplerYcbcrConversionImageFormatProperties);
 
@@ -10909,11 +10909,11 @@ VkResult scvkGetPhysicalDeviceSamplerYcbcrConversionImageFormatProperties(VkPhys
 /**
  * \brief Retrieves physical device memory properties 2 with VkPhysicalDeviceMemoryBudgetPropertiesEXT chained to the output.
  *
- * \param[in]  physicalDevice                          The handle to the device to query
- * \param[in]  pNext                                   Optional output extension chain attached to VkPhysicalDeviceMemoryBudgetPropertiesEXT, or NULL
- * \param[out] pPhysicalDeviceMemoryBudgetProperties   Receives the structure specifying physical device memory budget and usage
+ * \param[in]     physicalDevice                          The handle to the device to query
+ * \param[in,out] pNext                                   Optional output extension chain attached to VkPhysicalDeviceMemoryBudgetPropertiesEXT, or NULL
+ * \param[out]    pPhysicalDeviceMemoryBudgetProperties   Receives the structure specifying physical device memory budget and usage
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceMemoryBudgetProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceMemoryBudgetPropertiesEXT* pPhysicalDeviceMemoryBudgetProperties);
 
@@ -10921,11 +10921,11 @@ void scvkGetPhysicalDeviceMemoryBudgetProperties(VkPhysicalDevice physicalDevice
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT chained to the output.
  *
- * \param[in]  physicalDevice                                    The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                             Optional output extension chain attached to VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT, or NULL
- * \param[out] pPhysicalDeviceBlendOperationAdvancedProperties   Receives the structure describing advanced blending limits that can be supported by an implementation
+ * \param[in]     physicalDevice                                    The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                             Optional output extension chain attached to VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT, or NULL
+ * \param[out]    pPhysicalDeviceBlendOperationAdvancedProperties   Receives the structure describing advanced blending limits that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceBlendOperationAdvancedProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT* pPhysicalDeviceBlendOperationAdvancedProperties);
 
@@ -10933,11 +10933,11 @@ void scvkGetPhysicalDeviceBlendOperationAdvancedProperties(VkPhysicalDevice phys
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceConservativeRasterizationPropertiesEXT chained to the output.
  *
- * \param[in]  physicalDevice                                       The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                                Optional output extension chain attached to VkPhysicalDeviceConservativeRasterizationPropertiesEXT, or NULL
- * \param[out] pPhysicalDeviceConservativeRasterizationProperties   Receives the structure describing conservative raster properties that can be supported by an implementation
+ * \param[in]     physicalDevice                                       The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                                Optional output extension chain attached to VkPhysicalDeviceConservativeRasterizationPropertiesEXT, or NULL
+ * \param[out]    pPhysicalDeviceConservativeRasterizationProperties   Receives the structure describing conservative raster properties that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceConservativeRasterizationProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceConservativeRasterizationPropertiesEXT* pPhysicalDeviceConservativeRasterizationProperties);
 
@@ -10945,11 +10945,11 @@ void scvkGetPhysicalDeviceConservativeRasterizationProperties(VkPhysicalDevice p
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceCustomBorderColorPropertiesEXT chained to the output.
  *
- * \param[in]  physicalDevice                               The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                        Optional output extension chain attached to VkPhysicalDeviceCustomBorderColorPropertiesEXT, or NULL
- * \param[out] pPhysicalDeviceCustomBorderColorProperties   Receives the structure describing whether custom border colors can be supported by an implementation
+ * \param[in]     physicalDevice                               The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                        Optional output extension chain attached to VkPhysicalDeviceCustomBorderColorPropertiesEXT, or NULL
+ * \param[out]    pPhysicalDeviceCustomBorderColorProperties   Receives the structure describing custom border color limits, such as maxCustomBorderColorSamplers
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceCustomBorderColorProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceCustomBorderColorPropertiesEXT* pPhysicalDeviceCustomBorderColorProperties);
 
@@ -10957,11 +10957,11 @@ void scvkGetPhysicalDeviceCustomBorderColorProperties(VkPhysicalDevice physicalD
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceDepthStencilResolveProperties chained to the output.
  *
- * \param[in]  physicalDevice                                 The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                          Optional output extension chain attached to VkPhysicalDeviceDepthStencilResolveProperties, or NULL
- * \param[out] pPhysicalDeviceDepthStencilResolveProperties   Receives the structure describing depth/stencil resolve properties that can be supported by an implementation
+ * \param[in]     physicalDevice                                 The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                          Optional output extension chain attached to VkPhysicalDeviceDepthStencilResolveProperties, or NULL
+ * \param[out]    pPhysicalDeviceDepthStencilResolveProperties   Receives the structure describing depth/stencil resolve properties that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceDepthStencilResolveProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceDepthStencilResolveProperties* pPhysicalDeviceDepthStencilResolveProperties);
 
@@ -10969,11 +10969,11 @@ void scvkGetPhysicalDeviceDepthStencilResolveProperties(VkPhysicalDevice physica
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceDescriptorIndexingProperties chained to the output.
  *
- * \param[in]  physicalDevice                                The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                         Optional output extension chain attached to VkPhysicalDeviceDescriptorIndexingProperties, or NULL
- * \param[out] pPhysicalDeviceDescriptorIndexingProperties   Receives the structure describing descriptor indexing properties that can be supported by an implementation
+ * \param[in]     physicalDevice                                The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                         Optional output extension chain attached to VkPhysicalDeviceDescriptorIndexingProperties, or NULL
+ * \param[out]    pPhysicalDeviceDescriptorIndexingProperties   Receives the structure describing descriptor indexing properties that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceDescriptorIndexingProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceDescriptorIndexingProperties* pPhysicalDeviceDescriptorIndexingProperties);
 
@@ -10981,11 +10981,11 @@ void scvkGetPhysicalDeviceDescriptorIndexingProperties(VkPhysicalDevice physical
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceDiscardRectanglePropertiesEXT chained to the output.
  *
- * \param[in]  physicalDevice                              The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                       Optional output extension chain attached to VkPhysicalDeviceDiscardRectanglePropertiesEXT, or NULL
- * \param[out] pPhysicalDeviceDiscardRectangleProperties   Receives the structure describing discard rectangle limits that can be supported by an implementation
+ * \param[in]     physicalDevice                              The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                       Optional output extension chain attached to VkPhysicalDeviceDiscardRectanglePropertiesEXT, or NULL
+ * \param[out]    pPhysicalDeviceDiscardRectangleProperties   Receives the structure describing discard rectangle limits that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceDiscardRectangleProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceDiscardRectanglePropertiesEXT* pPhysicalDeviceDiscardRectangleProperties);
 
@@ -10993,11 +10993,11 @@ void scvkGetPhysicalDeviceDiscardRectangleProperties(VkPhysicalDevice physicalDe
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceDriverProperties chained to the output.
  *
- * \param[in]  physicalDevice                    The handle to the physical device whose properties will be queried
- * \param[in]  pNext                             Optional output extension chain attached to VkPhysicalDeviceDriverProperties, or NULL
- * \param[out] pPhysicalDeviceDriverProperties   Receives the structure containing driver identification information
+ * \param[in]     physicalDevice                    The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                             Optional output extension chain attached to VkPhysicalDeviceDriverProperties, or NULL
+ * \param[out]    pPhysicalDeviceDriverProperties   Receives the structure containing driver identification information
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceDriverProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceDriverProperties* pPhysicalDeviceDriverProperties);
 
@@ -11005,11 +11005,11 @@ void scvkGetPhysicalDeviceDriverProperties(VkPhysicalDevice physicalDevice, void
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceExternalMemoryHostPropertiesEXT chained to the output.
  *
- * \param[in]  physicalDevice                                The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                         Optional output extension chain attached to VkPhysicalDeviceExternalMemoryHostPropertiesEXT, or NULL
- * \param[out] pPhysicalDeviceExternalMemoryHostProperties   Receives the structure describing external memory host pointer limits that can be supported by an implementation
+ * \param[in]     physicalDevice                                The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                         Optional output extension chain attached to VkPhysicalDeviceExternalMemoryHostPropertiesEXT, or NULL
+ * \param[out]    pPhysicalDeviceExternalMemoryHostProperties   Receives the structure describing external memory host pointer limits that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceExternalMemoryHostProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceExternalMemoryHostPropertiesEXT* pPhysicalDeviceExternalMemoryHostProperties);
 
@@ -11017,11 +11017,11 @@ void scvkGetPhysicalDeviceExternalMemoryHostProperties(VkPhysicalDevice physical
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceFloatControlsProperties chained to the output.
  *
- * \param[in]  physicalDevice                           The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                    Optional output extension chain attached to VkPhysicalDeviceFloatControlsProperties, or NULL
- * \param[out] pPhysicalDeviceFloatControlsProperties   Receives the structure describing properties supported by VK_KHR_shader_float_controls
+ * \param[in]     physicalDevice                           The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                    Optional output extension chain attached to VkPhysicalDeviceFloatControlsProperties, or NULL
+ * \param[out]    pPhysicalDeviceFloatControlsProperties   Receives the structure describing properties supported by VK_KHR_shader_float_controls
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceFloatControlsProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceFloatControlsProperties* pPhysicalDeviceFloatControlsProperties);
 
@@ -11029,11 +11029,11 @@ void scvkGetPhysicalDeviceFloatControlsProperties(VkPhysicalDevice physicalDevic
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceFragmentShadingRatePropertiesKHR chained to the output.
  *
- * \param[in]  physicalDevice                                 The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                          Optional output extension chain attached to VkPhysicalDeviceFragmentShadingRatePropertiesKHR, or NULL
- * \param[out] pPhysicalDeviceFragmentShadingRateProperties   Receives the structure describing variable fragment shading rate limits that can be supported by an implementation
+ * \param[in]     physicalDevice                                 The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                          Optional output extension chain attached to VkPhysicalDeviceFragmentShadingRatePropertiesKHR, or NULL
+ * \param[out]    pPhysicalDeviceFragmentShadingRateProperties   Receives the structure describing variable fragment shading rate limits that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceFragmentShadingRateProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceFragmentShadingRatePropertiesKHR* pPhysicalDeviceFragmentShadingRateProperties);
 
@@ -11041,11 +11041,11 @@ void scvkGetPhysicalDeviceFragmentShadingRateProperties(VkPhysicalDevice physica
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceIDProperties chained to the output.
  *
- * \param[in]  physicalDevice                The handle to the physical device whose properties will be queried
- * \param[in]  pNext                         Optional output extension chain attached to VkPhysicalDeviceIDProperties, or NULL
- * \param[out] pPhysicalDeviceIDProperties   Receives the structure specifying IDs related to the physical device
+ * \param[in]     physicalDevice                The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                         Optional output extension chain attached to VkPhysicalDeviceIDProperties, or NULL
+ * \param[out]    pPhysicalDeviceIDProperties   Receives the structure specifying IDs related to the physical device
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceIDProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceIDProperties* pPhysicalDeviceIDProperties);
 
@@ -11053,11 +11053,11 @@ void scvkGetPhysicalDeviceIDProperties(VkPhysicalDevice physicalDevice, void* pN
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceMaintenance3Properties chained to the output.
  *
- * \param[in]  physicalDevice                          The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                   Optional output extension chain attached to VkPhysicalDeviceMaintenance3Properties, or NULL
- * \param[out] pPhysicalDeviceMaintenance3Properties   Receives the structure describing descriptor set properties
+ * \param[in]     physicalDevice                          The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                   Optional output extension chain attached to VkPhysicalDeviceMaintenance3Properties, or NULL
+ * \param[out]    pPhysicalDeviceMaintenance3Properties   Receives the structure describing descriptor set properties
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceMaintenance3Properties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceMaintenance3Properties* pPhysicalDeviceMaintenance3Properties);
 
@@ -11065,11 +11065,11 @@ void scvkGetPhysicalDeviceMaintenance3Properties(VkPhysicalDevice physicalDevice
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceMultiviewProperties chained to the output.
  *
- * \param[in]  physicalDevice                       The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                Optional output extension chain attached to VkPhysicalDeviceMultiviewProperties, or NULL
- * \param[out] pPhysicalDeviceMultiviewProperties   Receives the structure describing multiview limits that can be supported by an implementation
+ * \param[in]     physicalDevice                       The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                Optional output extension chain attached to VkPhysicalDeviceMultiviewProperties, or NULL
+ * \param[out]    pPhysicalDeviceMultiviewProperties   Receives the structure describing multiview limits that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceMultiviewProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceMultiviewProperties* pPhysicalDeviceMultiviewProperties);
 
@@ -11077,11 +11077,11 @@ void scvkGetPhysicalDeviceMultiviewProperties(VkPhysicalDevice physicalDevice, v
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDevicePCIBusInfoPropertiesEXT chained to the output.
  *
- * \param[in]  physicalDevice                        The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                 Optional output extension chain attached to VkPhysicalDevicePCIBusInfoPropertiesEXT, or NULL
- * \param[out] pPhysicalDevicePCIBusInfoProperties   Receives the structure containing PCI bus information of a physical device
+ * \param[in]     physicalDevice                        The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                 Optional output extension chain attached to VkPhysicalDevicePCIBusInfoPropertiesEXT, or NULL
+ * \param[out]    pPhysicalDevicePCIBusInfoProperties   Receives the structure containing PCI bus information of a physical device
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDevicePCIBusInfoProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDevicePCIBusInfoPropertiesEXT* pPhysicalDevicePCIBusInfoProperties);
 
@@ -11089,11 +11089,11 @@ void scvkGetPhysicalDevicePCIBusInfoProperties(VkPhysicalDevice physicalDevice, 
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDevicePerformanceQueryPropertiesKHR chained to the output.
  *
- * \param[in]  physicalDevice                              The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                       Optional output extension chain attached to VkPhysicalDevicePerformanceQueryPropertiesKHR, or NULL
- * \param[out] pPhysicalDevicePerformanceQueryProperties   Receives the structure describing performance query properties for an implementation
+ * \param[in]     physicalDevice                              The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                       Optional output extension chain attached to VkPhysicalDevicePerformanceQueryPropertiesKHR, or NULL
+ * \param[out]    pPhysicalDevicePerformanceQueryProperties   Receives the structure describing performance query properties for an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDevicePerformanceQueryProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDevicePerformanceQueryPropertiesKHR* pPhysicalDevicePerformanceQueryProperties);
 
@@ -11101,11 +11101,11 @@ void scvkGetPhysicalDevicePerformanceQueryProperties(VkPhysicalDevice physicalDe
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDevicePointClippingProperties chained to the output.
  *
- * \param[in]  physicalDevice                           The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                    Optional output extension chain attached to VkPhysicalDevicePointClippingProperties, or NULL
- * \param[out] pPhysicalDevicePointClippingProperties   Receives the structure describing the point clipping behavior supported by an implementation
+ * \param[in]     physicalDevice                           The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                    Optional output extension chain attached to VkPhysicalDevicePointClippingProperties, or NULL
+ * \param[out]    pPhysicalDevicePointClippingProperties   Receives the structure describing the point clipping behavior supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDevicePointClippingProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDevicePointClippingProperties* pPhysicalDevicePointClippingProperties);
 
@@ -11113,11 +11113,11 @@ void scvkGetPhysicalDevicePointClippingProperties(VkPhysicalDevice physicalDevic
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceProtectedMemoryProperties chained to the output.
  *
- * \param[in]  physicalDevice                             The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDeviceProtectedMemoryProperties, or NULL
- * \param[out] pPhysicalDeviceProtectedMemoryProperties   Receives the structure describing protected memory properties that can be supported by an implementation
+ * \param[in]     physicalDevice                             The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                      Optional output extension chain attached to VkPhysicalDeviceProtectedMemoryProperties, or NULL
+ * \param[out]    pPhysicalDeviceProtectedMemoryProperties   Receives the structure describing protected memory properties that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceProtectedMemoryProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceProtectedMemoryProperties* pPhysicalDeviceProtectedMemoryProperties);
 
@@ -11125,11 +11125,11 @@ void scvkGetPhysicalDeviceProtectedMemoryProperties(VkPhysicalDevice physicalDev
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceSampleLocationsPropertiesEXT chained to the output.
  *
- * \param[in]  physicalDevice                             The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDeviceSampleLocationsPropertiesEXT, or NULL
- * \param[out] pPhysicalDeviceSampleLocationsProperties   Receives the structure describing sample location limits that can be supported by an implementation
+ * \param[in]     physicalDevice                             The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                      Optional output extension chain attached to VkPhysicalDeviceSampleLocationsPropertiesEXT, or NULL
+ * \param[out]    pPhysicalDeviceSampleLocationsProperties   Receives the structure describing sample location limits that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceSampleLocationsProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceSampleLocationsPropertiesEXT* pPhysicalDeviceSampleLocationsProperties);
 
@@ -11137,11 +11137,11 @@ void scvkGetPhysicalDeviceSampleLocationsProperties(VkPhysicalDevice physicalDev
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceSamplerFilterMinmaxProperties chained to the output.
  *
- * \param[in]  physicalDevice                                 The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                          Optional output extension chain attached to VkPhysicalDeviceSamplerFilterMinmaxProperties, or NULL
- * \param[out] pPhysicalDeviceSamplerFilterMinmaxProperties   Receives the structure describing sampler filter minmax limits that can be supported by an implementation
+ * \param[in]     physicalDevice                                 The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                          Optional output extension chain attached to VkPhysicalDeviceSamplerFilterMinmaxProperties, or NULL
+ * \param[out]    pPhysicalDeviceSamplerFilterMinmaxProperties   Receives the structure describing sampler filter minmax limits that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceSamplerFilterMinmaxProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceSamplerFilterMinmaxProperties* pPhysicalDeviceSamplerFilterMinmaxProperties);
 
@@ -11149,11 +11149,11 @@ void scvkGetPhysicalDeviceSamplerFilterMinmaxProperties(VkPhysicalDevice physica
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceSubgroupProperties chained to the output.
  *
- * \param[in]  physicalDevice                      The handle to the physical device whose properties will be queried
- * \param[in]  pNext                               Optional output extension chain attached to VkPhysicalDeviceSubgroupProperties, or NULL
- * \param[out] pPhysicalDeviceSubgroupProperties   Receives the structure describing subgroup support for an implementation
+ * \param[in]     physicalDevice                      The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                               Optional output extension chain attached to VkPhysicalDeviceSubgroupProperties, or NULL
+ * \param[out]    pPhysicalDeviceSubgroupProperties   Receives the structure describing subgroup support for an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceSubgroupProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceSubgroupProperties* pPhysicalDeviceSubgroupProperties);
 
@@ -11161,11 +11161,11 @@ void scvkGetPhysicalDeviceSubgroupProperties(VkPhysicalDevice physicalDevice, vo
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceTimelineSemaphoreProperties chained to the output.
  *
- * \param[in]  physicalDevice                               The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                        Optional output extension chain attached to VkPhysicalDeviceTimelineSemaphoreProperties, or NULL
- * \param[out] pPhysicalDeviceTimelineSemaphoreProperties   Receives the structure describing timeline semaphore properties that can be supported by an implementation
+ * \param[in]     physicalDevice                               The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                        Optional output extension chain attached to VkPhysicalDeviceTimelineSemaphoreProperties, or NULL
+ * \param[out]    pPhysicalDeviceTimelineSemaphoreProperties   Receives the structure describing timeline semaphore properties that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceTimelineSemaphoreProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceTimelineSemaphoreProperties* pPhysicalDeviceTimelineSemaphoreProperties);
 
@@ -11173,11 +11173,11 @@ void scvkGetPhysicalDeviceTimelineSemaphoreProperties(VkPhysicalDevice physicalD
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceVulkan11Properties chained to the output.
  *
- * \param[in]  physicalDevice                      The handle to the physical device whose properties will be queried
- * \param[in]  pNext                               Optional output extension chain attached to VkPhysicalDeviceVulkan11Properties, or NULL
- * \param[out] pPhysicalDeviceVulkan11Properties   Receives the structure specifying physical device properties for functionality promoted to Vulkan 1.1
+ * \param[in]     physicalDevice                      The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                               Optional output extension chain attached to VkPhysicalDeviceVulkan11Properties, or NULL
+ * \param[out]    pPhysicalDeviceVulkan11Properties   Receives the structure specifying physical device properties for functionality promoted to Vulkan 1.1
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceVulkan11Properties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceVulkan11Properties* pPhysicalDeviceVulkan11Properties);
 
@@ -11185,11 +11185,11 @@ void scvkGetPhysicalDeviceVulkan11Properties(VkPhysicalDevice physicalDevice, vo
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceVulkan12Properties chained to the output.
  *
- * \param[in]  physicalDevice                      The handle to the physical device whose properties will be queried
- * \param[in]  pNext                               Optional output extension chain attached to VkPhysicalDeviceVulkan12Properties, or NULL
- * \param[out] pPhysicalDeviceVulkan12Properties   Receives the structure specifying physical device properties for functionality promoted to Vulkan 1.2
+ * \param[in]     physicalDevice                      The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                               Optional output extension chain attached to VkPhysicalDeviceVulkan12Properties, or NULL
+ * \param[out]    pPhysicalDeviceVulkan12Properties   Receives the structure specifying physical device properties for functionality promoted to Vulkan 1.2
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceVulkan12Properties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceVulkan12Properties* pPhysicalDeviceVulkan12Properties);
 
@@ -11197,11 +11197,11 @@ void scvkGetPhysicalDeviceVulkan12Properties(VkPhysicalDevice physicalDevice, vo
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceVulkanSC10Properties chained to the output.
  *
- * \param[in]  physicalDevice                        The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                 Optional output extension chain attached to VkPhysicalDeviceVulkanSC10Properties, or NULL
- * \param[out] pPhysicalDeviceVulkanSC10Properties   Receives the structure describing safety critical properties supported by an implementation
+ * \param[in]     physicalDevice                        The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                 Optional output extension chain attached to VkPhysicalDeviceVulkanSC10Properties, or NULL
+ * \param[out]    pPhysicalDeviceVulkanSC10Properties   Receives the structure describing safety critical properties supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void scvkGetPhysicalDeviceVulkanSC10Properties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceVulkanSC10Properties* pPhysicalDeviceVulkanSC10Properties);
 
@@ -11209,13 +11209,13 @@ void scvkGetPhysicalDeviceVulkanSC10Properties(VkPhysicalDevice physicalDevice, 
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSharedPresentSurfaceCapabilitiesKHR chained to the output.
  *
- * \param[in]  physicalDevice                          The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
- * \param[in]  pSurfaceInfoNext                        Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  surface                                 The surface that will be associated with the swapchain
- * \param[in]  pSharedPresentSurfaceCapabilitiesNext   Optional output extension chain attached to VkSharedPresentSurfaceCapabilitiesKHR, or NULL
- * \param[out] pSharedPresentSurfaceCapabilities       Receives the structure describing capabilities of a surface for shared presentation
+ * \param[in]     physicalDevice                          The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
+ * \param[in]     pSurfaceInfoNext                        Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
+ * \param[in]     surface                                 The surface that will be associated with the swapchain
+ * \param[in,out] pSharedPresentSurfaceCapabilitiesNext   Optional output extension chain attached to VkSharedPresentSurfaceCapabilitiesKHR, or NULL
+ * \param[out]    pSharedPresentSurfaceCapabilities       Receives the structure describing capabilities of a surface for shared presentation
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult scvkGetPhysicalDeviceSharedPresentSurfaceCapabilities(VkPhysicalDevice physicalDevice, const void* pSurfaceInfoNext, VkSurfaceKHR surface, void* pSharedPresentSurfaceCapabilitiesNext, VkSharedPresentSurfaceCapabilitiesKHR* pSharedPresentSurfaceCapabilities);
 
@@ -11337,7 +11337,7 @@ uint32_t scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(VkPhysicalDevice physica
  * \param[in]  pLayerName                 Either NULL or a pointer to a null-terminated UTF-8 string naming the layer to retrieve extensions from
  * \param[in]  requiredExtensionCount     Number of names in ppRequiredExtensionNames
  * \param[in]  ppRequiredExtensionNames   Null-terminated names of the extensions that must all be present
- * \param[out] pProperties                Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties                Caller-owned scratch workspace of SCVK_MAX_PROPERTIES entries for the extension enumeration; no count is returned, so its contents are not meaningful to the caller
  *
  * \retval     VK_TRUE    The queried support is available.
  * \retval     VK_FALSE   The queried support is unavailable.
@@ -11352,7 +11352,7 @@ VkBool32 scvkGetInstanceExtensionSupport(const char* pLayerName, uint32_t requir
  * \param[in]  pLayerName                 Either NULL or a pointer to a null-terminated UTF-8 string naming the layer to retrieve extensions from
  * \param[in]  requiredExtensionCount     Number of names in ppRequiredExtensionNames
  * \param[in]  ppRequiredExtensionNames   Null-terminated names of the extensions that must all be present
- * \param[out] pProperties                Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties                Caller-owned scratch workspace of SCVK_MAX_PROPERTIES entries for the extension enumeration; no count is returned, so its contents are not meaningful to the caller
  *
  * \retval     VK_TRUE    The queried support is available.
  * \retval     VK_FALSE   The queried support is unavailable.
@@ -11382,7 +11382,7 @@ uint32_t scvkGetPhysicalDeviceQueueFamilyIndex(VkPhysicalDevice physicalDevice, 
  * \param[in]  usage                  A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
  * \param[in]  flags                  A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
  * \param[in]  pImageFormatInfoNext   Optional extension chain for the image format query, or NULL
- * \param[out] pDedicatedOnly         Receives the dedicated only
+ * \param[out] pDedicatedOnly         Receives VK_TRUE when the imported memory must be a dedicated allocation
  *
  * \retval     VK_TRUE    The queried support is available.
  * \retval     VK_FALSE   The queried support is unavailable.
@@ -11401,7 +11401,7 @@ VkBool32 scvkGetPhysicalDeviceExternalImageImportSupport(VkPhysicalDevice physic
  * \param[in]  usage                  A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
  * \param[in]  flags                  A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
  * \param[in]  pImageFormatInfoNext   Optional extension chain for the image format query, or NULL
- * \param[out] pDedicatedOnly         Receives the dedicated only
+ * \param[out] pDedicatedOnly         Receives VK_TRUE when the imported memory must be a dedicated allocation
  *
  * \retval     VK_TRUE    The queried support is available.
  * \retval     VK_FALSE   The queried support is unavailable.
@@ -11507,10 +11507,10 @@ void scvkSetupBuffer(VkPhysicalDevice physicalDevice, VkDevice device, const voi
  * \param[in]  ppEnabledExtensionNames   A pointer to an array of enabledExtensionCount null-terminated UTF-8 strings containing the names of extensions to enable for the created device
  * \param[in]  pEnabledFeatures          NULL or a pointer to a VkPhysicalDeviceFeatures structure containing boolean indicators of all the features to be enabled
  * \param[in]  pQueueNext                Optional extension chain for VkDeviceQueueCreateInfo, or NULL
- * \param[in]  queueFlags                Reserved for future use; must be 0
+ * \param[in]  queueFlags                A bitmask of VkDeviceQueueCreateFlagBits for the queue, such as VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT
  * \param[in]  queuePriority             Priority of the single queue, 0.0 through 1.0
  * \param[in]  pAllocator                Optional allocation callbacks, or NULL
- * \param[out] pProperties               Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties               Caller-owned scratch workspace of SCVK_MAX_PROPERTIES entries for the extension enumeration; no count is returned, so its contents are not meaningful to the caller
  * \param[out] pDevice                   A pointer to a handle in which the created VkDevice is returned
  * \param[out] pQueue                    A pointer to a VkQueue object that will be filled with the handle for the requested queue
  *
@@ -11650,7 +11650,7 @@ void scvkCmdReleaseImageToExternal(VkCommandBuffer commandBuffer, const void* pN
  * \param[in] srcQueueFamilyIndex   The source queue family for a queue family ownership transfer
  * \param[in] dstQueueFamilyIndex   The destination queue family for a queue family ownership transfer
  * \param[in] buffer                A handle to the buffer whose backing memory is affected by the barrier
- * \param[in] offset                An offset in bytes into the backing memory for buffer; this is relative to the base offset as bound to the buffer (see vkBindBufferMemory)
+ * \param[in] offset                An offset in bytes into the backing memory for buffer; this is relative to the base offset as bound to the buffer
  * \param[in] size                  A size in bytes of the affected area of backing memory for buffer, or VK_WHOLE_SIZE to use the range from offset to the end of the buffer
  * \param[in] srcStageMask          A bitmask of VkPipelineStageFlagBits specifying the source stages
  * \param[in] dstStageMask          A bitmask of VkPipelineStageFlagBits specifying the destination stages
@@ -11669,7 +11669,7 @@ void scvkCmdBufferQueueOwnershipBarrier(VkCommandBuffer commandBuffer, const voi
  * \param[in] srcAccessMask     A bitmask of VkAccessFlagBits specifying a source access mask
  * \param[in] dstAccessMask     A bitmask of VkAccessFlagBits specifying a destination access mask
  * \param[in] buffer            A handle to the buffer whose backing memory is affected by the barrier
- * \param[in] offset            An offset in bytes into the backing memory for buffer; this is relative to the base offset as bound to the buffer (see vkBindBufferMemory)
+ * \param[in] offset            An offset in bytes into the backing memory for buffer; this is relative to the base offset as bound to the buffer
  * \param[in] size              A size in bytes of the affected area of backing memory for buffer, or VK_WHOLE_SIZE to use the range from offset to the end of the buffer
  * \param[in] srcStageMask      A bitmask of VkPipelineStageFlagBits specifying the source stages
  * \param[in] dstStageMask      A bitmask of VkPipelineStageFlagBits specifying the destination stages
@@ -11688,7 +11688,7 @@ void scvkCmdBufferBarrier(VkCommandBuffer commandBuffer, const void* pNext, VkAc
  * \param[in] dstAccessMask         A bitmask of VkAccessFlagBits specifying a destination access mask
  * \param[in] dstQueueFamilyIndex   The destination queue family for a queue family ownership transfer
  * \param[in] buffer                A handle to the buffer whose backing memory is affected by the barrier
- * \param[in] offset                An offset in bytes into the backing memory for buffer; this is relative to the base offset as bound to the buffer (see vkBindBufferMemory)
+ * \param[in] offset                An offset in bytes into the backing memory for buffer; this is relative to the base offset as bound to the buffer
  * \param[in] size                  A size in bytes of the affected area of backing memory for buffer, or VK_WHOLE_SIZE to use the range from offset to the end of the buffer
  * \param[in] dstStageMask          A bitmask of VkPipelineStageFlagBits specifying the destination stages
  * \param[in] dependencyFlags       A bitmask of VkDependencyFlagBits specifying how execution and memory dependencies are formed
@@ -11706,7 +11706,7 @@ void scvkCmdAcquireBufferFromExternal(VkCommandBuffer commandBuffer, const void*
  * \param[in] srcAccessMask         A bitmask of VkAccessFlagBits specifying a source access mask
  * \param[in] srcQueueFamilyIndex   The source queue family for a queue family ownership transfer
  * \param[in] buffer                A handle to the buffer whose backing memory is affected by the barrier
- * \param[in] offset                An offset in bytes into the backing memory for buffer; this is relative to the base offset as bound to the buffer (see vkBindBufferMemory)
+ * \param[in] offset                An offset in bytes into the backing memory for buffer; this is relative to the base offset as bound to the buffer
  * \param[in] size                  A size in bytes of the affected area of backing memory for buffer, or VK_WHOLE_SIZE to use the range from offset to the end of the buffer
  * \param[in] srcStageMask          A bitmask of VkPipelineStageFlagBits specifying the source stages
  * \param[in] dependencyFlags       A bitmask of VkDependencyFlagBits specifying how execution and memory dependencies are formed
@@ -11755,7 +11755,7 @@ VkResult scvkQueuePresentImage(VkQueue queue, const void* pNext, uint32_t waitSe
  * \param[in]  device                The logical device that creates the command pool
  * \param[in]  pCommandPoolNext      Optional extension chain attached to VkCommandPoolCreateInfo, or NULL
  * \param[in]  flags                 A bitmask of VkCommandPoolCreateFlagBits indicating usage behavior for the pool and command buffers allocated from it
- * \param[in]  queueFamilyIndex      Designates a queue family as described in section Queue Family Properties
+ * \param[in]  queueFamilyIndex      Index of the queue family whose queues will execute command buffers allocated from the pool
  * \param[in]  pCommandBuffersNext   Optional extension chain attached to VkCommandBufferAllocateInfo, or NULL
  * \param[in]  level                 A VkCommandBufferLevel value specifying the command buffer level
  * \param[in]  commandBufferCount    The number of command buffers to allocate from the pool
@@ -11775,8 +11775,8 @@ void scvkSetupCommandPool(VkDevice device, const void* pCommandPoolNext, VkComma
  * \param[in]  pPipelineLayoutNext   Optional extension chain attached to VkPipelineLayoutCreateInfo, or NULL
  * \param[in]  flags                 A bitmask of VkPipelineLayoutCreateFlagBits specifying options for pipeline layout creation
  * \param[in]  setLayoutCount        The number of descriptor sets included in the pipeline layout
- * \param[in]  pSetLayouts           A pointer to an array of VkDescriptorSetLayout objects
- * \param[in]  pushConstantOffset    Offset of the push constant range
+ * \param[in]  pSetLayouts           Array of setLayoutCount descriptor set layouts; element i is the layout of set number i
+ * \param[in]  pushConstantOffset    Byte offset of the push constant range; a multiple of 4
  * \param[in]  pushConstantSize      Size of the push constant range, zero for none
  * \param[in]  pAllocator            Optional allocation callbacks, or NULL
  * \param[out] pPipelineLayout       A pointer to a VkPipelineLayout handle in which the resulting pipeline layout object is returned
@@ -11792,13 +11792,13 @@ void scvkCreateComputePipelineLayout(VkDevice device, const void* pPipelineLayou
  * \param[in] device             The logical device that updates the descriptor sets
  * \param[in] pNext              Optional extension chain attached to VkWriteDescriptorSet, or NULL
  * \param[in] dstSet             The destination descriptor set to update
- * \param[in] dstBinding         The descriptor binding within that set
- * \param[in] dstArrayElement    The starting element in that array
+ * \param[in] dstBinding         Binding number to update within dstSet
+ * \param[in] dstArrayElement    First array element to update in dstBinding, or starting byte offset for an inline uniform block
  * \param[in] descriptorCount    The number of descriptors to update
- * \param[in] descriptorType     A VkDescriptorType specifying the type of each descriptor in pImageInfo, pBufferInfo, or pTexelBufferView, as described below
- * \param[in] pImageInfo         A pointer to an array of VkDescriptorImageInfo structures or is ignored, as described below
- * \param[in] pBufferInfo        A pointer to an array of VkDescriptorBufferInfo structures or is ignored, as described below
- * \param[in] pTexelBufferView   A pointer to an array of VkBufferView handles as described in the Buffer Views section or is ignored, as described below
+ * \param[in] descriptorType     Type of each descriptor in pImageInfo, pBufferInfo, or pTexelBufferView; must match the dstBinding layout type
+ * \param[in] pImageInfo         Array of descriptorCount image descriptors, read only for image descriptor types, else NULL
+ * \param[in] pBufferInfo        Array of descriptorCount buffer descriptors, read only for buffer descriptor types, else NULL
+ * \param[in] pTexelBufferView   Array of descriptorCount texel buffer descriptors, read only for texel buffer descriptor types, else NULL
  *
  * \retval    None
  */
@@ -11814,9 +11814,9 @@ void scvkUpdateDescriptorSet(VkDevice device, const void* pNext, VkDescriptorSet
  * \param[in] imageLayout       The layout that the image subresources accessible from imageView will be in at the time this descriptor is accessed
  * \param[in] pNext             Optional extension chain attached to VkWriteDescriptorSet, or NULL
  * \param[in] dstSet            The destination descriptor set to update
- * \param[in] dstBinding        The descriptor binding within that set
- * \param[in] dstArrayElement   The starting element in that array
- * \param[in] descriptorType    A VkDescriptorType specifying the type of each descriptor in pImageInfo, pBufferInfo, or pTexelBufferView, as described below
+ * \param[in] dstBinding        Binding number to update within dstSet
+ * \param[in] dstArrayElement   First array element to update in dstBinding
+ * \param[in] descriptorType    Type of the single image descriptor written; must match the dstBinding layout type
  *
  * \retval    None
  */
@@ -11827,14 +11827,14 @@ void scvkUpdateImageDescriptorSet(VkDevice device, VkSampler sampler, VkImageVie
  * \brief Writes one buffer descriptor.
  *
  * \param[in] device            The logical device that updates the descriptor sets
- * \param[in] buffer            Is
+ * \param[in] buffer            VK_NULL_HANDLE or the buffer the descriptor refers to
  * \param[in] offset            The offset in bytes from the start of buffer
  * \param[in] range             The size in bytes that is used for this descriptor update, or VK_WHOLE_SIZE to use the range from offset to the end of the buffer
  * \param[in] pNext             Optional extension chain attached to VkWriteDescriptorSet, or NULL
  * \param[in] dstSet            The destination descriptor set to update
- * \param[in] dstBinding        The descriptor binding within that set
- * \param[in] dstArrayElement   The starting element in that array
- * \param[in] descriptorType    A VkDescriptorType specifying the type of each descriptor in pImageInfo, pBufferInfo, or pTexelBufferView, as described below
+ * \param[in] dstBinding        Binding number to update within dstSet
+ * \param[in] dstArrayElement   First array element to update in dstBinding
+ * \param[in] descriptorType    Type of the single buffer descriptor written; must match the dstBinding layout type
  *
  * \retval    None
  */
@@ -11846,7 +11846,7 @@ void scvkUpdateBufferDescriptorSet(VkDevice device, VkBuffer buffer, VkDeviceSiz
  *
  * \param[in]  device           The logical device that creates the query pool
  * \param[in]  pQueryPoolNext   Optional extension chain attached to VkQueryPoolCreateInfo, or NULL
- * \param[in]  flags            A bitmask of VkQueryPoolCreateFlagBits
+ * \param[in]  flags            A bitmask of VkQueryPoolCreateFlagBits; VK_QUERY_POOL_CREATE_RESET_BIT_KHR creates the queries in the reset state
  * \param[in]  queryCount       The number of queries managed by the pool
  * \param[in]  pAllocator       Optional allocation callbacks, or NULL
  * \param[out] pQueryPool       A pointer to a VkQueryPool handle in which the resulting query pool object is returned
@@ -11859,14 +11859,14 @@ void scvkCreateTimestampQueryPool(VkDevice device, const void* pQueryPoolNext, V
 /**
  * \brief Reads 64-bit query results into a tightly packed array.
  *
- * \param[in] device       The logical device that owns the query pool
- * \param[in] queryPool    The query pool managing the queries containing the desired results
- * \param[in] firstQuery   The initial query index
- * \param[in] queryCount   The number of queries to read
- * \param[in] flags        Query result flags; VK_QUERY_RESULT_64_BIT is added
- * \param[in] pResults     Receives queryCount 64-bit results
+ * \param[in]  device       The logical device that owns the query pool
+ * \param[in]  queryPool    The query pool managing the queries containing the desired results
+ * \param[in]  firstQuery   The initial query index
+ * \param[in]  queryCount   The number of queries to read
+ * \param[in]  flags        Query result flags; VK_QUERY_RESULT_64_BIT is added
+ * \param[out] pResults     Receives queryCount tightly packed 64-bit results, one per query (tag should be [out], not [in])
  *
- * \retval    VK_SUCCESS   Command successfully completed.
+ * \retval     VK_SUCCESS   Command successfully completed.
  */
 VkResult scvkGetQueryPoolResults64(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkQueryResultFlags flags, uint64_t* pResults);
 
@@ -11887,8 +11887,8 @@ void scvkCreateSignaledFence(VkDevice device, const void* pFenceNext, const VkAl
 /**
  * \brief Waits for one fence without a timeout.
  *
- * \param[in] device   The logical device that owns the fences
- * \param[in] fence    The single VkFence
+ * \param[in] device   The logical device that owns fence
+ * \param[in] fence    Fence to wait on, with no timeout
  *
  * \retval    None
  */
@@ -11937,7 +11937,7 @@ void scvkCreateTimelineSemaphore(VkDevice device, const void* pSemaphoreNext, ui
 /**
  * \brief Waits for one timeline semaphore to reach a value.
  *
- * \param[in] device      The logical device that owns the semaphores
+ * \param[in] device      The logical device that owns semaphore
  * \param[in] pNext       Optional extension chain attached to VkSemaphoreWaitInfo, or NULL
  * \param[in] flags       A bitmask of VkSemaphoreWaitFlagBits specifying additional parameters for the semaphore wait operation
  * \param[in] timeout     The timeout period in units of nanoseconds
@@ -11952,7 +11952,7 @@ VkResult scvkWaitSemaphore(VkDevice device, const void* pNext, VkSemaphoreWaitFl
 /**
  * \brief Waits for one timeline semaphore to reach a value, without a timeout.
  *
- * \param[in] device      The logical device that owns the semaphores
+ * \param[in] device      The logical device that owns semaphore
  * \param[in] pNext       Optional extension chain attached to VkSemaphoreWaitInfo, or NULL
  * \param[in] flags       A bitmask of VkSemaphoreWaitFlagBits specifying additional parameters for the semaphore wait operation
  * \param[in] semaphore   Timeline semaphore to wait for
@@ -12009,7 +12009,7 @@ void scvkAllocateSecondaryCommandBuffers(VkDevice device, const void* pCommandBu
  * \param[in]  pCommandBufferNext   Optional extension chain attached to VkCommandBufferAllocateInfo, or NULL
  * \param[in]  commandPool          The command pool from which the command buffers are allocated
  * \param[in]  level                A VkCommandBufferLevel value specifying the command buffer level
- * \param[out] pCommandBuffer       Receives the command buffer
+ * \param[out] pCommandBuffer       Receives the handle of the command buffer allocated from commandPool at level
  *
  * \retval     None
  */
@@ -12022,7 +12022,7 @@ void scvkAllocateCommandBuffer(VkDevice device, const void* pCommandBufferNext, 
  * \param[in]  device               The logical device that owns the command pool
  * \param[in]  pCommandBufferNext   Optional extension chain attached to VkCommandBufferAllocateInfo, or NULL
  * \param[in]  commandPool          The command pool from which the command buffers are allocated
- * \param[out] pCommandBuffer       Receives the command buffer
+ * \param[out] pCommandBuffer       Receives the handle of the primary command buffer allocated from commandPool
  *
  * \retval     None
  */
@@ -12035,7 +12035,7 @@ void scvkAllocatePrimaryCommandBuffer(VkDevice device, const void* pCommandBuffe
  * \param[in]  device               The logical device that owns the command pool
  * \param[in]  pCommandBufferNext   Optional extension chain attached to VkCommandBufferAllocateInfo, or NULL
  * \param[in]  commandPool          The command pool from which the command buffers are allocated
- * \param[out] pCommandBuffer       Receives the command buffer
+ * \param[out] pCommandBuffer       Receives the handle of the secondary command buffer allocated from commandPool
  *
  * \retval     None
  */
@@ -12047,7 +12047,7 @@ void scvkAllocateSecondaryCommandBuffer(VkDevice device, const void* pCommandBuf
  *
  * \param[in]  device             The logical device that creates the command pool
  * \param[in]  pCommandPoolNext   Optional extension chain attached to VkCommandPoolCreateInfo, or NULL
- * \param[in]  queueFamilyIndex   Designates a queue family as described in section Queue Family Properties
+ * \param[in]  queueFamilyIndex   Index of the queue family whose queues will execute command buffers allocated from the pool
  * \param[in]  pAllocator         Optional allocation callbacks, or NULL
  * \param[out] pCommandPool       A pointer to a VkCommandPool handle in which the created pool is returned
  *
@@ -12061,7 +12061,7 @@ void scvkCreateResettableCommandPool(VkDevice device, const void* pCommandPoolNe
  *
  * \param[in]  device             The logical device that creates the command pool
  * \param[in]  pCommandPoolNext   Optional extension chain attached to VkCommandPoolCreateInfo, or NULL
- * \param[in]  queueFamilyIndex   Designates a queue family as described in section Queue Family Properties
+ * \param[in]  queueFamilyIndex   Index of the queue family whose queues will execute command buffers allocated from the pool
  * \param[in]  pAllocator         Optional allocation callbacks, or NULL
  * \param[out] pCommandPool       A pointer to a VkCommandPool handle in which the created pool is returned
  *
@@ -12076,7 +12076,7 @@ void scvkCreateTransientCommandPool(VkDevice device, const void* pCommandPoolNex
  * \param[in]  device                The logical device that creates the command pool
  * \param[in]  pCommandPoolNext      Optional extension chain attached to VkCommandPoolCreateInfo, or NULL
  * \param[in]  flags                 A bitmask of VkCommandPoolCreateFlagBits indicating usage behavior for the pool and command buffers allocated from it
- * \param[in]  queueFamilyIndex      Designates a queue family as described in section Queue Family Properties
+ * \param[in]  queueFamilyIndex      Index of the queue family whose queues will execute command buffers allocated from the pool
  * \param[in]  pCommandBuffersNext   Optional extension chain attached to VkCommandBufferAllocateInfo, or NULL
  * \param[in]  commandBufferCount    The number of command buffers to allocate from the pool
  * \param[in]  pAllocator            Optional allocation callbacks, or NULL
@@ -12380,7 +12380,7 @@ void scvkCreateWholeImageView2D(VkDevice device, VkImageAspectFlags aspectMask, 
  * \brief Retrieves physical device limits.
  *
  * \param[in]  physicalDevice   The handle to the physical device whose properties will be queried
- * \param[out] pLimits          Receives the limits
+ * \param[out] pLimits          Receives the device limits, as in VkPhysicalDeviceProperties::limits
  *
  * \retval     None
  */
@@ -12431,7 +12431,7 @@ uint32_t scvkGetPhysicalDeviceComputeQueueFamilyIndex(VkPhysicalDevice physicalD
 /**
  * \brief Creates a device with one queue of the first compute queue family.
  *
- * \param[in]  physicalDevice            The handle to the physical device whose properties will be queried
+ * \param[in]  physicalDevice            Physical device whose queue families are searched and on which the logical device is created
  * \param[in]  pDeviceNext               Optional extension chain attached to VkDeviceCreateInfo, or NULL
  * \param[in]  flags                     Reserved for future use; must be 0
  * \param[in]  enabledLayerCount         Legacy and not used
@@ -12440,10 +12440,10 @@ uint32_t scvkGetPhysicalDeviceComputeQueueFamilyIndex(VkPhysicalDevice physicalD
  * \param[in]  ppEnabledExtensionNames   A pointer to an array of enabledExtensionCount null-terminated UTF-8 strings containing the names of extensions to enable for the created device
  * \param[in]  pEnabledFeatures          NULL or a pointer to a VkPhysicalDeviceFeatures structure containing boolean indicators of all the features to be enabled
  * \param[in]  pQueueNext                Optional extension chain for VkDeviceQueueCreateInfo, or NULL
- * \param[in]  queueFlags                Reserved for future use; must be 0
+ * \param[in]  queueFlags                A bitmask of VkDeviceQueueCreateFlagBits for the queue, such as VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT
  * \param[in]  queuePriority             Priority of the single queue, 0.0 through 1.0
  * \param[in]  pAllocator                Optional allocation callbacks, or NULL
- * \param[out] pProperties               Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties               Caller-owned scratch workspace of SCVK_MAX_PROPERTIES entries for the extension enumeration; no count is returned, so its contents are not meaningful to the caller
  * \param[out] pDevice                   A pointer to a handle in which the created VkDevice is returned
  * \param[out] pQueue                    A pointer to a VkQueue object that will be filled with the handle for the requested queue
  *
@@ -12465,7 +12465,7 @@ uint32_t scvkGetPhysicalDeviceGraphicsQueueFamilyIndex(VkPhysicalDevice physical
 /**
  * \brief Creates a device with one queue of the first graphics queue family.
  *
- * \param[in]  physicalDevice            The handle to the physical device whose properties will be queried
+ * \param[in]  physicalDevice            Physical device whose queue families are searched and on which the logical device is created
  * \param[in]  pDeviceNext               Optional extension chain attached to VkDeviceCreateInfo, or NULL
  * \param[in]  flags                     Reserved for future use; must be 0
  * \param[in]  enabledLayerCount         Legacy and not used
@@ -12474,10 +12474,10 @@ uint32_t scvkGetPhysicalDeviceGraphicsQueueFamilyIndex(VkPhysicalDevice physical
  * \param[in]  ppEnabledExtensionNames   A pointer to an array of enabledExtensionCount null-terminated UTF-8 strings containing the names of extensions to enable for the created device
  * \param[in]  pEnabledFeatures          NULL or a pointer to a VkPhysicalDeviceFeatures structure containing boolean indicators of all the features to be enabled
  * \param[in]  pQueueNext                Optional extension chain for VkDeviceQueueCreateInfo, or NULL
- * \param[in]  queueFlags                Reserved for future use; must be 0
+ * \param[in]  queueFlags                A bitmask of VkDeviceQueueCreateFlagBits for the queue, such as VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT
  * \param[in]  queuePriority             Priority of the single queue, 0.0 through 1.0
  * \param[in]  pAllocator                Optional allocation callbacks, or NULL
- * \param[out] pProperties               Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties               Caller-owned scratch workspace of SCVK_MAX_PROPERTIES entries for the extension enumeration; no count is returned, so its contents are not meaningful to the caller
  * \param[out] pDevice                   A pointer to a handle in which the created VkDevice is returned
  * \param[out] pQueue                    A pointer to a VkQueue object that will be filled with the handle for the requested queue
  *
@@ -12499,7 +12499,7 @@ uint32_t scvkGetPhysicalDeviceTransferQueueFamilyIndex(VkPhysicalDevice physical
 /**
  * \brief Creates a device with one queue of the first transfer queue family.
  *
- * \param[in]  physicalDevice            The handle to the physical device whose properties will be queried
+ * \param[in]  physicalDevice            Physical device whose queue families are searched and on which the logical device is created
  * \param[in]  pDeviceNext               Optional extension chain attached to VkDeviceCreateInfo, or NULL
  * \param[in]  flags                     Reserved for future use; must be 0
  * \param[in]  enabledLayerCount         Legacy and not used
@@ -12508,10 +12508,10 @@ uint32_t scvkGetPhysicalDeviceTransferQueueFamilyIndex(VkPhysicalDevice physical
  * \param[in]  ppEnabledExtensionNames   A pointer to an array of enabledExtensionCount null-terminated UTF-8 strings containing the names of extensions to enable for the created device
  * \param[in]  pEnabledFeatures          NULL or a pointer to a VkPhysicalDeviceFeatures structure containing boolean indicators of all the features to be enabled
  * \param[in]  pQueueNext                Optional extension chain for VkDeviceQueueCreateInfo, or NULL
- * \param[in]  queueFlags                Reserved for future use; must be 0
+ * \param[in]  queueFlags                A bitmask of VkDeviceQueueCreateFlagBits for the queue, such as VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT
  * \param[in]  queuePriority             Priority of the single queue, 0.0 through 1.0
  * \param[in]  pAllocator                Optional allocation callbacks, or NULL
- * \param[out] pProperties               Receives up to SCVK_MAX_PROPERTIES entries
+ * \param[out] pProperties               Caller-owned scratch workspace of SCVK_MAX_PROPERTIES entries for the extension enumeration; no count is returned, so its contents are not meaningful to the caller
  * \param[out] pDevice                   A pointer to a handle in which the created VkDevice is returned
  * \param[out] pQueue                    A pointer to a VkQueue object that will be filled with the handle for the requested queue
  *
@@ -12527,8 +12527,8 @@ void scvkSetupTransferDeviceQueue(VkPhysicalDevice physicalDevice, const void* p
  * \param[in]  binding              The binding number of this entry and corresponds to a resource of the same binding number in the shader stages
  * \param[in]  descriptorType       A VkDescriptorType specifying which type of resource descriptors are used for this binding
  * \param[in]  descriptorCount      The number of descriptors contained in the binding, accessed in a shader as an array, except if descriptorType is VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK in which case descriptorCount is the size in bytes of the inline uniform block
- * \param[in]  stageFlags           Member is a bitmask of VkShaderStageFlagBits specifying which pipeline shader stages can access a resource for this binding
- * \param[in]  pImmutableSamplers   Affects initialization of samplers
+ * \param[in]  stageFlags           A bitmask of VkShaderStageFlagBits specifying which pipeline shader stages can access a resource for this binding
+ * \param[in]  pImmutableSamplers   NULL, or descriptorCount sampler handles used as the binding's immutable samplers
  * \param[in]  pSetLayoutNext       Optional extension chain attached to VkDescriptorSetLayoutCreateInfo, or NULL
  * \param[in]  flags                A bitmask of VkDescriptorSetLayoutCreateFlagBits specifying options for descriptor set layout creation
  * \param[in]  pAllocator           Optional allocation callbacks, or NULL
@@ -12562,8 +12562,8 @@ void scvkCreateSingleTypeDescriptorPool(VkDevice device, VkDescriptorType type, 
  * \param[in]  device               The logical device that owns the descriptor pool
  * \param[in]  pDescriptorSetNext   Optional extension chain attached to VkDescriptorSetAllocateInfo, or NULL
  * \param[in]  descriptorPool       The pool which the sets will be allocated from
- * \param[in]  setLayout            Layout of the descriptor set
- * \param[out] pDescriptorSet       Receives the descriptor set
+ * \param[in]  setLayout            Layout that defines the bindings of the allocated descriptor set
+ * \param[out] pDescriptorSet       Receives the handle of the descriptor set allocated from descriptorPool with setLayout
  *
  * \retval     None
  */
@@ -12577,8 +12577,8 @@ void scvkAllocateDescriptorSet(VkDevice device, const void* pDescriptorSetNext, 
  * \param[in] imageView         VK_NULL_HANDLE or an image view handle, and is used in descriptor updates for types VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, and VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT
  * \param[in] pNext             Optional extension chain attached to VkWriteDescriptorSet, or NULL
  * \param[in] dstSet            The destination descriptor set to update
- * \param[in] dstBinding        The descriptor binding within that set
- * \param[in] dstArrayElement   The starting element in that array
+ * \param[in] dstBinding        Binding number to update within dstSet
+ * \param[in] dstArrayElement   First array element to update in dstBinding
  *
  * \retval    None
  */
@@ -12593,8 +12593,8 @@ void scvkUpdateStorageImageDescriptorSet(VkDevice device, VkImageView imageView,
  * \param[in] imageLayout       The layout that the image subresources accessible from imageView will be in at the time this descriptor is accessed
  * \param[in] pNext             Optional extension chain attached to VkWriteDescriptorSet, or NULL
  * \param[in] dstSet            The destination descriptor set to update
- * \param[in] dstBinding        The descriptor binding within that set
- * \param[in] dstArrayElement   The starting element in that array
+ * \param[in] dstBinding        Binding number to update within dstSet
+ * \param[in] dstArrayElement   First array element to update in dstBinding
  *
  * \retval    None
  */
@@ -12610,8 +12610,8 @@ void scvkUpdateSampledImageDescriptorSet(VkDevice device, VkImageView imageView,
  * \param[in] imageLayout       The layout that the image subresources accessible from imageView will be in at the time this descriptor is accessed
  * \param[in] pNext             Optional extension chain attached to VkWriteDescriptorSet, or NULL
  * \param[in] dstSet            The destination descriptor set to update
- * \param[in] dstBinding        The descriptor binding within that set
- * \param[in] dstArrayElement   The starting element in that array
+ * \param[in] dstBinding        Binding number to update within dstSet
+ * \param[in] dstArrayElement   First array element to update in dstBinding
  *
  * \retval    None
  */
@@ -12622,13 +12622,13 @@ void scvkUpdateCombinedImageSamplerDescriptorSet(VkDevice device, VkSampler samp
  * \brief Writes one storage buffer descriptor.
  *
  * \param[in] device            The logical device that updates the descriptor sets
- * \param[in] buffer            Is
+ * \param[in] buffer            VK_NULL_HANDLE or the buffer the descriptor refers to
  * \param[in] offset            The offset in bytes from the start of buffer
  * \param[in] range             The size in bytes that is used for this descriptor update, or VK_WHOLE_SIZE to use the range from offset to the end of the buffer
  * \param[in] pNext             Optional extension chain attached to VkWriteDescriptorSet, or NULL
  * \param[in] dstSet            The destination descriptor set to update
- * \param[in] dstBinding        The descriptor binding within that set
- * \param[in] dstArrayElement   The starting element in that array
+ * \param[in] dstBinding        Binding number to update within dstSet
+ * \param[in] dstArrayElement   First array element to update in dstBinding
  *
  * \retval    None
  */
@@ -12639,13 +12639,13 @@ void scvkUpdateStorageBufferDescriptorSet(VkDevice device, VkBuffer buffer, VkDe
  * \brief Writes one uniform buffer descriptor.
  *
  * \param[in] device            The logical device that updates the descriptor sets
- * \param[in] buffer            Is
+ * \param[in] buffer            VK_NULL_HANDLE or the buffer the descriptor refers to
  * \param[in] offset            The offset in bytes from the start of buffer
  * \param[in] range             The size in bytes that is used for this descriptor update, or VK_WHOLE_SIZE to use the range from offset to the end of the buffer
  * \param[in] pNext             Optional extension chain attached to VkWriteDescriptorSet, or NULL
  * \param[in] dstSet            The destination descriptor set to update
- * \param[in] dstBinding        The descriptor binding within that set
- * \param[in] dstArrayElement   The starting element in that array
+ * \param[in] dstBinding        Binding number to update within dstSet
+ * \param[in] dstArrayElement   First array element to update in dstBinding
  *
  * \retval    None
  */
@@ -12656,11 +12656,11 @@ void scvkUpdateUniformBufferDescriptorSet(VkDevice device, VkBuffer buffer, VkDe
  * \brief Writes one storage buffer descriptor covering the whole buffer.
  *
  * \param[in] device            The logical device that updates the descriptor sets
- * \param[in] buffer            Is
+ * \param[in] buffer            VK_NULL_HANDLE or the buffer the descriptor refers to
  * \param[in] pNext             Optional extension chain attached to VkWriteDescriptorSet, or NULL
  * \param[in] dstSet            The destination descriptor set to update
- * \param[in] dstBinding        The descriptor binding within that set
- * \param[in] dstArrayElement   The starting element in that array
+ * \param[in] dstBinding        Binding number to update within dstSet
+ * \param[in] dstArrayElement   First array element to update in dstBinding
  *
  * \retval    None
  */
@@ -12671,11 +12671,11 @@ void scvkUpdateWholeStorageBufferDescriptorSet(VkDevice device, VkBuffer buffer,
  * \brief Writes one uniform buffer descriptor covering the whole buffer.
  *
  * \param[in] device            The logical device that updates the descriptor sets
- * \param[in] buffer            Is
+ * \param[in] buffer            VK_NULL_HANDLE or the buffer the descriptor refers to
  * \param[in] pNext             Optional extension chain attached to VkWriteDescriptorSet, or NULL
  * \param[in] dstSet            The destination descriptor set to update
- * \param[in] dstBinding        The descriptor binding within that set
- * \param[in] dstArrayElement   The starting element in that array
+ * \param[in] dstBinding        Binding number to update within dstSet
+ * \param[in] dstArrayElement   First array element to update in dstBinding
  *
  * \retval    None
  */
@@ -12727,11 +12727,11 @@ void scvkCmdMemoryBarrier(VkCommandBuffer commandBuffer, const void* pNext, VkAc
  *
  * \param[in]  device             The logical device that creates the framebuffer
  * \param[in]  pFramebufferNext   Optional extension chain attached to VkFramebufferCreateInfo, or NULL
- * \param[in]  flags              A bitmask of VkFramebufferCreateFlagBits
+ * \param[in]  flags              A bitmask of VkFramebufferCreateFlagBits, such as VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT for an imageless framebuffer
  * \param[in]  renderPass         A render pass defining what render passes the framebuffer will be compatible with
- * \param[in]  width              Define the dimensions of the framebuffer
- * \param[in]  height             Define the dimensions of the framebuffer
- * \param[in]  layers             Define the dimensions of the framebuffer
+ * \param[in]  width              Width of the framebuffer in pixels
+ * \param[in]  height             Height of the framebuffer in pixels
+ * \param[in]  layers             Number of array layers in the framebuffer
  * \param[in]  attachment         The framebuffer's only attachment
  * \param[in]  pAllocator         Optional allocation callbacks, or NULL
  * \param[out] pFramebuffer       A pointer to a VkFramebuffer handle in which the resulting framebuffer object is returned
@@ -12752,7 +12752,7 @@ void scvkCreateSingleAttachmentFramebuffer(VkDevice device, const void* pFramebu
  * \param[in]  initialLayout     The layout the attachment image subresource will be in when a render pass instance begins
  * \param[in]  finalLayout       The layout the attachment image subresource will be transitioned to when a render pass instance ends
  * \param[in]  pRenderPassNext   Optional extension chain attached to VkRenderPassCreateInfo, or NULL
- * \param[in]  flags             Reserved for future use; must be 0
+ * \param[in]  flags             A bitmask of VkRenderPassCreateFlagBits specifying additional properties of a render pass
  * \param[in]  pAllocator        Optional allocation callbacks, or NULL
  * \param[out] pRenderPass       A pointer to a VkRenderPass handle in which the resulting render pass object is returned
  *
@@ -12783,7 +12783,7 @@ VkResult scvkAcquireNextImageIndefinitely(VkDevice device, VkSwapchainKHR swapch
  * \param[in]  flags                     A bitmask of VkBufferCreateFlagBits describing additional parameters of the buffer, corresponding to VkBufferCreateInfo::flags
  * \param[in]  usage                     A bitmask of VkBufferUsageFlagBits describing the intended usage of the buffer, corresponding to VkBufferCreateInfo::usage
  * \param[in]  handleType                A VkExternalMemoryHandleTypeFlagBits value specifying the memory handle type that will be used with the memory associated with the buffer
- * \param[out] pDedicatedOnly            Receives the dedicated only
+ * \param[out] pDedicatedOnly            Receives VK_TRUE when the imported memory must be a dedicated allocation
  *
  * \retval     VK_TRUE    The queried support is available.
  * \retval     VK_FALSE   The queried support is unavailable.
@@ -12799,7 +12799,7 @@ VkBool32 scvkGetPhysicalDeviceExternalBufferImportSupport(VkPhysicalDevice physi
  * \param[in]  flags                     A bitmask of VkBufferCreateFlagBits describing additional parameters of the buffer, corresponding to VkBufferCreateInfo::flags
  * \param[in]  usage                     A bitmask of VkBufferUsageFlagBits describing the intended usage of the buffer, corresponding to VkBufferCreateInfo::usage
  * \param[in]  handleType                A VkExternalMemoryHandleTypeFlagBits value specifying the memory handle type that will be used with the memory associated with the buffer
- * \param[out] pDedicatedOnly            Receives the dedicated only
+ * \param[out] pDedicatedOnly            Receives VK_TRUE when the imported memory must be a dedicated allocation
  *
  * \retval     VK_TRUE    The queried support is available.
  * \retval     VK_FALSE   The queried support is unavailable.
@@ -12855,8 +12855,8 @@ void scvkCmdPushGraphicsConstants(VkCommandBuffer commandBuffer, VkPipelineLayou
  * \param[in]  pPipelineLayoutNext   Optional extension chain attached to VkPipelineLayoutCreateInfo, or NULL
  * \param[in]  flags                 A bitmask of VkPipelineLayoutCreateFlagBits specifying options for pipeline layout creation
  * \param[in]  setLayoutCount        The number of descriptor sets included in the pipeline layout
- * \param[in]  pSetLayouts           A pointer to an array of VkDescriptorSetLayout objects
- * \param[in]  pushConstantOffset    Offset of the push constant range
+ * \param[in]  pSetLayouts           Array of setLayoutCount descriptor set layouts; element i is the layout of set number i
+ * \param[in]  pushConstantOffset    Byte offset of the push constant range; a multiple of 4
  * \param[in]  pushConstantSize      Size of the push constant range, zero for none
  * \param[in]  pAllocator            Optional allocation callbacks, or NULL
  * \param[out] pPipelineLayout       A pointer to a VkPipelineLayout handle in which the resulting pipeline layout object is returned
@@ -12972,7 +12972,7 @@ void scvkInitSampleCountPipelineMultisampleStateCreateInfo(VkPipelineMultisample
  *
  * \param[out] pInfo   Receives the initialized VkPipelineDepthStencilStateCreateInfo
  * \param[in]  pNext   Optional extension chain attached to VkPipelineDepthStencilStateCreateInfo, or NULL
- * \param[in]  flags   Reserved for future use; must be 0
+ * \param[in]  flags   A bitmask of VkPipelineDepthStencilStateCreateFlagBits specifying additional depth/stencil state information
  *
  * \retval     None
  */
@@ -12984,7 +12984,7 @@ void scvkInitDisabledPipelineDepthStencilStateCreateInfo(VkPipelineDepthStencilS
  *
  * \param[out] pInfo              Receives the initialized VkPipelineDepthStencilStateCreateInfo
  * \param[in]  pNext              Optional extension chain attached to VkPipelineDepthStencilStateCreateInfo, or NULL
- * \param[in]  flags              Reserved for future use; must be 0
+ * \param[in]  flags              A bitmask of VkPipelineDepthStencilStateCreateFlagBits specifying additional depth/stencil state information
  * \param[in]  depthWriteEnable   Controls whether depth writes are enabled when depthTestEnable is VK_TRUE
  * \param[in]  depthCompareOp     A VkCompareOp value specifying the comparison operator to use in the Depth Comparison step of the depth test
  *
@@ -13018,7 +13018,7 @@ void scvkInitAlphaBlendPipelineColorBlendAttachmentState(VkPipelineColorBlendAtt
  *
  * \param[out] pInfo         Receives the initialized VkPipelineColorBlendStateCreateInfo
  * \param[in]  pNext         Optional extension chain attached to VkPipelineColorBlendStateCreateInfo, or NULL
- * \param[in]  flags         Reserved for future use; must be 0
+ * \param[in]  flags         A bitmask of VkPipelineColorBlendStateCreateFlagBits specifying additional color blending information
  * \param[in]  pAttachment   The only attachment's blend state
  *
  * \retval     None
@@ -13030,7 +13030,7 @@ void scvkInitSingleAttachmentPipelineColorBlendStateCreateInfo(VkPipelineColorBl
  * \brief Sets viewport zero to an extent at the origin with the full depth range.
  *
  * \param[in] commandBuffer   The command buffer into which the command will be recorded
- * \param[in] extent2D        Viewport size
+ * \param[in] extent2D        Viewport width and height in pixels; the origin is (0, 0) and the depth range [0, 1]
  *
  * \retval    None
  */
@@ -13041,7 +13041,7 @@ void scvkCmdSetViewport2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D);
  * \brief Sets scissor zero to an extent at the origin.
  *
  * \param[in] commandBuffer   The command buffer into which the command will be recorded
- * \param[in] extent2D        Scissor size
+ * \param[in] extent2D        Scissor width and height in pixels; the offset is (0, 0)
  *
  * \retval    None
  */
@@ -13052,7 +13052,7 @@ void scvkCmdSetScissor2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D);
  * \brief Sets viewport zero and scissor zero to an extent at the origin.
  *
  * \param[in] commandBuffer   The command buffer into which the command will be recorded
- * \param[in] extent2D        Viewport size
+ * \param[in] extent2D        Width and height in pixels of both viewport zero and scissor zero, at the origin
  *
  * \retval    None
  */
@@ -13074,9 +13074,9 @@ void scvkCmdSetViewportAndScissor2D(VkCommandBuffer commandBuffer, VkExtent2D ex
  * \param[in] instanceCount        The number of instances to draw
  * \param[in] firstVertex          The index of the first vertex to draw
  * \param[in] firstInstance        The instance ID of the first instance to draw
- * \param[in] pushConstantOffset   Offset of the push constants
- * \param[in] pushConstantSize     Size of the push constants
- * \param[in] pPushConstants       Push constant bytes
+ * \param[in] pushConstantOffset   Byte offset of the pushed range within the layout's push constant range; a multiple of 4
+ * \param[in] pushConstantSize     Size in bytes of pPushConstants; a multiple of 4
+ * \param[in] pPushConstants       pushConstantSize bytes of push constant data written at pushConstantOffset
  *
  * \retval    None
  */
@@ -13104,9 +13104,9 @@ void scvkCmdDrawFullscreenQuad(VkCommandBuffer commandBuffer);
  * \param[in] pDescriptorSets      A pointer to an array of handles to VkDescriptorSet objects describing the descriptor sets to bind to
  * \param[in] dynamicOffsetCount   The number of dynamic offsets in the pDynamicOffsets array
  * \param[in] pDynamicOffsets      A pointer to an array of uint32_t values specifying dynamic offsets
- * \param[in] pushConstantOffset   Offset of the push constants
- * \param[in] pushConstantSize     Size of the push constants
- * \param[in] pPushConstants       Push constant bytes
+ * \param[in] pushConstantOffset   Byte offset of the pushed range within the layout's push constant range; a multiple of 4
+ * \param[in] pushConstantSize     Size in bytes of pPushConstants; a multiple of 4
+ * \param[in] pPushConstants       pushConstantSize bytes of push constant data written at pushConstantOffset
  *
  * \retval    None
  */
@@ -13129,9 +13129,9 @@ void scvkCmdDrawFullscreenQuadWithPushConstants(VkCommandBuffer commandBuffer, V
  * \param[in] firstIndex           The base index within the index buffer
  * \param[in] vertexOffset         The value added to the vertex index before indexing into the vertex buffer
  * \param[in] firstInstance        The instance ID of the first instance to draw
- * \param[in] pushConstantOffset   Offset of the push constants
- * \param[in] pushConstantSize     Size of the push constants
- * \param[in] pPushConstants       Push constant bytes
+ * \param[in] pushConstantOffset   Byte offset of the pushed range within the layout's push constant range; a multiple of 4
+ * \param[in] pushConstantSize     Size in bytes of pPushConstants; a multiple of 4
+ * \param[in] pPushConstants       pushConstantSize bytes of push constant data written at pushConstantOffset
  *
  * \retval    None
  */
@@ -13168,7 +13168,7 @@ void scvkCreateLayerImageView2D(VkDevice device, VkImageAspectFlags aspectMask, 
  * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array
  * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this buffer
  * \param[in]  usage                   VkBufferCreateInfo::usage; VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT is added
- * \param[in]  pMemoryNext             Optional extension chain behind the allocate flags, or NULL
+ * \param[in]  pMemoryNext             Optional extension chain appended after the VkMemoryAllocateFlagsInfo in VkMemoryAllocateInfo, or NULL
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pBuffer                 A pointer to a VkBuffer handle in which the resulting buffer object is returned
  * \param[out] pMemory                 A pointer to a VkDeviceMemory handle in which information about the allocated memory is returned
@@ -13190,7 +13190,7 @@ void scvkSetupDeviceAddressBuffer(VkPhysicalDevice physicalDevice, VkDevice devi
  * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array
  * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this buffer
  * \param[in]  usage                   VkBufferCreateInfo::usage; VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT is added
- * \param[in]  pMemoryNext             Optional extension chain behind the allocate flags, or NULL
+ * \param[in]  pMemoryNext             Optional extension chain appended after the VkMemoryAllocateFlagsInfo in VkMemoryAllocateInfo, or NULL
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pBuffer                 A pointer to a VkBuffer handle in which the resulting buffer object is returned
  * \param[out] pMemory                 A pointer to a VkDeviceMemory handle in which information about the allocated memory is returned
@@ -13211,7 +13211,7 @@ void scvkSetupHostVisibleDeviceAddressBuffer(VkPhysicalDevice physicalDevice, Vk
  * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the buffer when it will be accessed by multiple queue families
  * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array
  * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this buffer
- * \param[in]  pMemoryNext             Optional extension chain behind the allocate flags, or NULL
+ * \param[in]  pMemoryNext             Optional extension chain appended after the VkMemoryAllocateFlagsInfo in VkMemoryAllocateInfo, or NULL
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pBuffer                 A pointer to a VkBuffer handle in which the resulting buffer object is returned
  * \param[out] pMemory                 A pointer to a VkDeviceMemory handle in which information about the allocated memory is returned
@@ -13237,10 +13237,10 @@ void scvkSetupScratchBuffer(VkPhysicalDevice physicalDevice, VkDevice device, co
  * \param[in] pRenderPassNext    Optional render pass begin extension chain
  * \param[in] renderPass         Render pass to begin
  * \param[in] framebuffer        Target framebuffer
- * \param[in] renderArea         Render area
- * \param[in] clearValueCount    Number of clear values
+ * \param[in] renderArea         Area of the framebuffer, in pixels, that the render pass affects
+ * \param[in] clearValueCount    Number of elements in pClearValues
  * \param[in] pClearValues       Clear values, or NULL when the count is zero
- * \param[in] contents           Subpass contents mode
+ * \param[in] contents           Whether the first subpass's commands are recorded inline or in secondary command buffers
  *
  * \retval    None
  */
@@ -13381,8 +13381,8 @@ void scvkCmdExecuteGraphicsRenderPass(VkCommandBuffer commandBuffer, VkRenderPas
  * \param[in] layout             Pipeline layout for the descriptor set and push constants
  * \param[in] descriptorSet      Descriptor set bound at set zero
  * \param[in] vertexCount        Number of vertices to draw
- * \param[in] pushConstantSize   Size of the fragment push constants
- * \param[in] pPushConstants     Fragment push constants
+ * \param[in] pushConstantSize   Size in bytes of pPushConstants; a multiple of 4
+ * \param[in] pPushConstants     pushConstantSize bytes of push constant data for the fragment stage, written at offset zero
  *
  * \retval    None
  */
@@ -13569,9 +13569,9 @@ uint32_t scvkGetWorkgroupCount(uint32_t itemCount, uint32_t itemsPerInvocation, 
  * \brief Dispatches enough workgroups to cover an item count, given items per invocation and the local size.
  *
  * \param[in] commandBuffer        The command buffer into which the command will be recorded
- * \param[in] itemCount            Items to cover
- * \param[in] itemsPerInvocation   Items each invocation handles
- * \param[in] localSize            Workgroup local size
+ * \param[in] itemCount            Number of work items to cover in x, y and z; group counts round up to whole workgroups
+ * \param[in] itemsPerInvocation   Work items each shader invocation processes in x, y and z
+ * \param[in] localSize            Workgroup local size in x, y and z declared by the shader
  *
  * \retval    None
  */
@@ -13589,12 +13589,12 @@ void scvkCmdDispatchItems(VkCommandBuffer commandBuffer, VkExtent3D itemCount, V
  * \param[in] pDescriptorSets      A pointer to an array of handles to VkDescriptorSet objects describing the descriptor sets to bind to
  * \param[in] dynamicOffsetCount   The number of dynamic offsets in the pDynamicOffsets array
  * \param[in] pDynamicOffsets      A pointer to an array of uint32_t values specifying dynamic offsets
- * \param[in] itemCount            Items to cover
- * \param[in] itemsPerInvocation   Items each invocation handles
- * \param[in] localSize            Workgroup local size
- * \param[in] pushConstantOffset   Offset of the push constants
- * \param[in] pushConstantSize     Size of the push constants
- * \param[in] pPushConstants       Push constant bytes
+ * \param[in] itemCount            Number of work items to cover in x, y and z; group counts round up to whole workgroups
+ * \param[in] itemsPerInvocation   Work items each shader invocation processes in x, y and z
+ * \param[in] localSize            Workgroup local size in x, y and z declared by the shader
+ * \param[in] pushConstantOffset   Byte offset of the pushed range within the layout's push constant range; a multiple of 4
+ * \param[in] pushConstantSize     Size in bytes of pPushConstants; a multiple of 4
+ * \param[in] pPushConstants       pushConstantSize bytes of push constant data written at pushConstantOffset
  *
  * \retval    None
  */
@@ -13625,9 +13625,9 @@ void scvkCmdDispatchItems2D(VkCommandBuffer commandBuffer, VkExtent2D itemCount2
  * \param[in] pDescriptorSets        A pointer to an array of handles to VkDescriptorSet objects describing the descriptor sets to bind to
  * \param[in] dynamicOffsetCount     The number of dynamic offsets in the pDynamicOffsets array
  * \param[in] pDynamicOffsets        A pointer to an array of uint32_t values specifying dynamic offsets
- * \param[in] pushConstantOffset     Offset of the push constants
- * \param[in] pushConstantSize       Size of the push constants
- * \param[in] pPushConstants         Push constant bytes
+ * \param[in] pushConstantOffset     Byte offset of the pushed range within the layout's push constant range; a multiple of 4
+ * \param[in] pushConstantSize       Size in bytes of pPushConstants; a multiple of 4
+ * \param[in] pPushConstants         pushConstantSize bytes of push constant data written at pushConstantOffset
  * \param[in] itemCount2D            Number of work items in x and y; z is 1
  * \param[in] itemsPerInvocation2D   Work items each shader invocation processes in x and y; z is 1
  * \param[in] localSize2D            Workgroup local size in x and y declared by the shader; z is 1

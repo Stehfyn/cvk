@@ -12,7 +12,7 @@
 /**
  * \brief Parses a VkCompressedTriangleFormatAMDX from JSON.
  *
- * \param[in] pValue   The value: an enumerant name or a number, or NULL
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for VK_COMPRESSED_TRIANGLE_FORMAT_DGF1_AMDX
  *
  * \retval    VkCompressedTriangleFormatAMDX   The parsed value.
  */
@@ -22,7 +22,7 @@ VkCompressedTriangleFormatAMDX cvkParseJsonCompressedTriangleFormatAMDX(const cv
 /**
  * \brief Parses a VkDisplacementMicromapFormatNV from JSON.
  *
- * \param[in] pValue   The value: an enumerant name or a number, or NULL
+ * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDisplacementMicromapFormatNV has no zero value)
  *
  * \retval    VkDisplacementMicromapFormatNV   The parsed value.
  */
@@ -33,7 +33,7 @@ VkDisplacementMicromapFormatNV cvkParseJsonDisplacementMicromapFormatNV(const cv
  * \brief Parses a VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX members, or NULL for a zeroed VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX
  * \param[out] pInfo      Receives the parsed VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX, zeroed first
  *
  * \retval     None
@@ -45,7 +45,7 @@ void cvkParseJsonAccelerationStructureDenseGeometryFormatTrianglesDataAMDX(const
  * \brief Parses a VkAccelerationStructureTrianglesDisplacementMicromapNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkAccelerationStructureTrianglesDisplacementMicromapNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkAccelerationStructureTrianglesDisplacementMicromapNV members, or NULL for a zeroed VkAccelerationStructureTrianglesDisplacementMicromapNV
  * \param[out] pInfo      Receives the parsed VkAccelerationStructureTrianglesDisplacementMicromapNV, zeroed first
  *
  * \retval     None
@@ -57,7 +57,7 @@ void cvkParseJsonAccelerationStructureTrianglesDisplacementMicromapNV(const cvkJ
  * \brief Parses a VkCudaFunctionCreateInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkCudaFunctionCreateInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkCudaFunctionCreateInfoNV members, or NULL for a zeroed VkCudaFunctionCreateInfoNV
  * \param[out] pInfo      Receives the parsed VkCudaFunctionCreateInfoNV, zeroed first
  *
  * \retval     None
@@ -69,7 +69,7 @@ void cvkParseJsonCudaFunctionCreateInfoNV(const cvkJsonContext* pContext, const 
  * \brief Parses a VkCudaLaunchInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkCudaLaunchInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkCudaLaunchInfoNV members, or NULL for a zeroed VkCudaLaunchInfoNV
  * \param[out] pInfo      Receives the parsed VkCudaLaunchInfoNV, zeroed first
  *
  * \retval     None
@@ -81,7 +81,7 @@ void cvkParseJsonCudaLaunchInfoNV(const cvkJsonContext* pContext, const cvkJsonV
  * \brief Parses a VkCudaModuleCreateInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkCudaModuleCreateInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkCudaModuleCreateInfoNV members, or NULL for a zeroed VkCudaModuleCreateInfoNV
  * \param[out] pInfo      Receives the parsed VkCudaModuleCreateInfoNV, zeroed first
  *
  * \retval     None
@@ -93,7 +93,7 @@ void cvkParseJsonCudaModuleCreateInfoNV(const cvkJsonContext* pContext, const cv
  * \brief Parses a VkDeviceOrHostAddressConstAMDX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkDeviceOrHostAddressConstAMDX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkDeviceOrHostAddressConstAMDX members, or NULL for a zeroed VkDeviceOrHostAddressConstAMDX
  * \param[out] pInfo      Receives the parsed VkDeviceOrHostAddressConstAMDX, zeroed first
  *
  * \retval     None
@@ -105,7 +105,7 @@ void cvkParseJsonDeviceOrHostAddressConstAMDX(const cvkJsonContext* pContext, co
  * \brief Parses a VkDispatchGraphCountInfoAMDX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkDispatchGraphCountInfoAMDX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkDispatchGraphCountInfoAMDX members, or NULL for a zeroed VkDispatchGraphCountInfoAMDX
  * \param[out] pInfo      Receives the parsed VkDispatchGraphCountInfoAMDX, zeroed first
  *
  * \retval     None
@@ -117,7 +117,7 @@ void cvkParseJsonDispatchGraphCountInfoAMDX(const cvkJsonContext* pContext, cons
  * \brief Parses a VkDispatchGraphInfoAMDX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkDispatchGraphInfoAMDX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkDispatchGraphInfoAMDX members, or NULL for a zeroed VkDispatchGraphInfoAMDX
  * \param[out] pInfo      Receives the parsed VkDispatchGraphInfoAMDX, zeroed first
  *
  * \retval     None
@@ -129,7 +129,7 @@ void cvkParseJsonDispatchGraphInfoAMDX(const cvkJsonContext* pContext, const cvk
  * \brief Parses a VkExecutionGraphPipelineCreateInfoAMDX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkExecutionGraphPipelineCreateInfoAMDX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkExecutionGraphPipelineCreateInfoAMDX members, or NULL for a zeroed VkExecutionGraphPipelineCreateInfoAMDX
  * \param[out] pInfo      Receives the parsed VkExecutionGraphPipelineCreateInfoAMDX, zeroed first
  *
  * \retval     None
@@ -141,7 +141,7 @@ void cvkParseJsonExecutionGraphPipelineCreateInfoAMDX(const cvkJsonContext* pCon
  * \brief Parses a VkExecutionGraphPipelineScratchSizeAMDX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkExecutionGraphPipelineScratchSizeAMDX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkExecutionGraphPipelineScratchSizeAMDX members, or NULL for a zeroed VkExecutionGraphPipelineScratchSizeAMDX
  * \param[out] pInfo      Receives the parsed VkExecutionGraphPipelineScratchSizeAMDX, zeroed first
  *
  * \retval     None
@@ -153,7 +153,7 @@ void cvkParseJsonExecutionGraphPipelineScratchSizeAMDX(const cvkJsonContext* pCo
  * \brief Parses a VkPhysicalDeviceCudaKernelLaunchFeaturesNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPhysicalDeviceCudaKernelLaunchFeaturesNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPhysicalDeviceCudaKernelLaunchFeaturesNV members, or NULL for a zeroed VkPhysicalDeviceCudaKernelLaunchFeaturesNV
  * \param[out] pInfo      Receives the parsed VkPhysicalDeviceCudaKernelLaunchFeaturesNV, zeroed first
  *
  * \retval     None
@@ -165,7 +165,7 @@ void cvkParseJsonPhysicalDeviceCudaKernelLaunchFeaturesNV(const cvkJsonContext* 
  * \brief Parses a VkPhysicalDeviceCudaKernelLaunchPropertiesNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPhysicalDeviceCudaKernelLaunchPropertiesNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPhysicalDeviceCudaKernelLaunchPropertiesNV members, or NULL for a zeroed VkPhysicalDeviceCudaKernelLaunchPropertiesNV
  * \param[out] pInfo      Receives the parsed VkPhysicalDeviceCudaKernelLaunchPropertiesNV, zeroed first
  *
  * \retval     None
@@ -177,7 +177,7 @@ void cvkParseJsonPhysicalDeviceCudaKernelLaunchPropertiesNV(const cvkJsonContext
  * \brief Parses a VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX members, or NULL for a zeroed VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX
  * \param[out] pInfo      Receives the parsed VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX, zeroed first
  *
  * \retval     None
@@ -189,7 +189,7 @@ void cvkParseJsonPhysicalDeviceDenseGeometryFormatFeaturesAMDX(const cvkJsonCont
  * \brief Parses a VkPhysicalDeviceDisplacementMicromapFeaturesNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPhysicalDeviceDisplacementMicromapFeaturesNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPhysicalDeviceDisplacementMicromapFeaturesNV members, or NULL for a zeroed VkPhysicalDeviceDisplacementMicromapFeaturesNV
  * \param[out] pInfo      Receives the parsed VkPhysicalDeviceDisplacementMicromapFeaturesNV, zeroed first
  *
  * \retval     None
@@ -201,7 +201,7 @@ void cvkParseJsonPhysicalDeviceDisplacementMicromapFeaturesNV(const cvkJsonConte
  * \brief Parses a VkPhysicalDeviceDisplacementMicromapPropertiesNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPhysicalDeviceDisplacementMicromapPropertiesNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPhysicalDeviceDisplacementMicromapPropertiesNV members, or NULL for a zeroed VkPhysicalDeviceDisplacementMicromapPropertiesNV
  * \param[out] pInfo      Receives the parsed VkPhysicalDeviceDisplacementMicromapPropertiesNV, zeroed first
  *
  * \retval     None
@@ -213,7 +213,7 @@ void cvkParseJsonPhysicalDeviceDisplacementMicromapPropertiesNV(const cvkJsonCon
  * \brief Parses a VkPhysicalDevicePortabilitySubsetFeaturesKHR from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPhysicalDevicePortabilitySubsetFeaturesKHR
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPhysicalDevicePortabilitySubsetFeaturesKHR members, or NULL for a zeroed VkPhysicalDevicePortabilitySubsetFeaturesKHR
  * \param[out] pInfo      Receives the parsed VkPhysicalDevicePortabilitySubsetFeaturesKHR, zeroed first
  *
  * \retval     None
@@ -225,7 +225,7 @@ void cvkParseJsonPhysicalDevicePortabilitySubsetFeatures(const cvkJsonContext* p
  * \brief Parses a VkPhysicalDevicePortabilitySubsetPropertiesKHR from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPhysicalDevicePortabilitySubsetPropertiesKHR
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPhysicalDevicePortabilitySubsetPropertiesKHR members, or NULL for a zeroed VkPhysicalDevicePortabilitySubsetPropertiesKHR
  * \param[out] pInfo      Receives the parsed VkPhysicalDevicePortabilitySubsetPropertiesKHR, zeroed first
  *
  * \retval     None
@@ -237,7 +237,7 @@ void cvkParseJsonPhysicalDevicePortabilitySubsetProperties(const cvkJsonContext*
  * \brief Parses a VkPhysicalDeviceShaderEnqueueFeaturesAMDX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPhysicalDeviceShaderEnqueueFeaturesAMDX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPhysicalDeviceShaderEnqueueFeaturesAMDX members, or NULL for a zeroed VkPhysicalDeviceShaderEnqueueFeaturesAMDX
  * \param[out] pInfo      Receives the parsed VkPhysicalDeviceShaderEnqueueFeaturesAMDX, zeroed first
  *
  * \retval     None
@@ -249,7 +249,7 @@ void cvkParseJsonPhysicalDeviceShaderEnqueueFeaturesAMDX(const cvkJsonContext* p
  * \brief Parses a VkPhysicalDeviceShaderEnqueuePropertiesAMDX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPhysicalDeviceShaderEnqueuePropertiesAMDX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPhysicalDeviceShaderEnqueuePropertiesAMDX members, or NULL for a zeroed VkPhysicalDeviceShaderEnqueuePropertiesAMDX
  * \param[out] pInfo      Receives the parsed VkPhysicalDeviceShaderEnqueuePropertiesAMDX, zeroed first
  *
  * \retval     None
@@ -261,7 +261,7 @@ void cvkParseJsonPhysicalDeviceShaderEnqueuePropertiesAMDX(const cvkJsonContext*
  * \brief Parses a VkPipelineShaderStageNodeCreateInfoAMDX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPipelineShaderStageNodeCreateInfoAMDX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPipelineShaderStageNodeCreateInfoAMDX members, or NULL for a zeroed VkPipelineShaderStageNodeCreateInfoAMDX
  * \param[out] pInfo      Receives the parsed VkPipelineShaderStageNodeCreateInfoAMDX, zeroed first
  *
  * \retval     None

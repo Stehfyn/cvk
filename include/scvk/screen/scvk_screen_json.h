@@ -14,7 +14,7 @@
  * \brief Parses a VkExternalFormatQNX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkExternalFormatQNX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkExternalFormatQNX members, or NULL for a zeroed VkExternalFormatQNX
  * \param[out] pInfo      Receives the parsed VkExternalFormatQNX, zeroed first
  *
  * \retval     None
@@ -26,7 +26,7 @@ void scvkParseJsonExternalFormatQNX(const scvkJsonContext* pContext, const scvkJ
  * \brief Parses a VkImportScreenBufferInfoQNX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkImportScreenBufferInfoQNX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkImportScreenBufferInfoQNX members, or NULL for a zeroed VkImportScreenBufferInfoQNX
  * \param[out] pInfo      Receives the parsed VkImportScreenBufferInfoQNX, zeroed first
  *
  * \retval     None
@@ -38,7 +38,7 @@ void scvkParseJsonImportScreenBufferInfoQNX(const scvkJsonContext* pContext, con
  * \brief Parses a VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX members, or NULL for a zeroed VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX
  * \param[out] pInfo      Receives the parsed VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX, zeroed first
  *
  * \retval     None
@@ -50,7 +50,7 @@ void scvkParseJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(const scvk
  * \brief Parses a VkScreenBufferFormatPropertiesQNX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkScreenBufferFormatPropertiesQNX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkScreenBufferFormatPropertiesQNX members, or NULL for a zeroed VkScreenBufferFormatPropertiesQNX
  * \param[out] pInfo      Receives the parsed VkScreenBufferFormatPropertiesQNX, zeroed first
  *
  * \retval     None
@@ -62,7 +62,7 @@ void scvkParseJsonScreenBufferFormatPropertiesQNX(const scvkJsonContext* pContex
  * \brief Parses a VkScreenBufferPropertiesQNX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkScreenBufferPropertiesQNX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkScreenBufferPropertiesQNX members, or NULL for a zeroed VkScreenBufferPropertiesQNX
  * \param[out] pInfo      Receives the parsed VkScreenBufferPropertiesQNX, zeroed first
  *
  * \retval     None

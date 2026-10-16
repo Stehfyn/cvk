@@ -42,7 +42,7 @@ void cvkInitializeJsonWork(cvkJsonWork*        pWork,
  * \param[in,out] pWork Initialized work stack.
  * \param[in] read Reader for the object's native structure type.
  * \param[in] pObject JSON object, or NULL for a zeroed structure.
- * \param[out] pOutput Native structure storage.
+ * \param[out] pOutput Receives the decoded native structure when the work stack runs; must have the layout read expects
  * \retval None
  */
 void cvkAppendJsonWork(cvkJsonWork*        pWork,

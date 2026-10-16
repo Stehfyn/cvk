@@ -70,7 +70,7 @@ void cvkInitAndroidHardwareBufferUsageANDROID(VkAndroidHardwareBufferUsageANDROI
  * \param[out] pInfo    Receives the initialized VkAndroidSurfaceCreateInfoKHR
  * \param[in]  pNext    Optional extension chain attached to VkAndroidSurfaceCreateInfoKHR, or NULL
  * \param[in]  flags    Reserved for future use; must be 0
- * \param[in]  window   A pointer to the ANativeWindow to associate the surface with
+ * \param[out] window   A pointer to the ANativeWindow to associate the surface with
  *
  * \retval     None
  */
@@ -94,7 +94,7 @@ void cvkInitExternalFormatANDROID(VkExternalFormatANDROID* pInfo, void* pNext, u
  *
  * \param[out] pInfo    Receives the initialized VkImportAndroidHardwareBufferInfoANDROID
  * \param[in]  pNext    Optional extension chain attached to VkImportAndroidHardwareBufferInfoANDROID, or NULL
- * \param[in]  buffer   The Android hardware buffer to import
+ * \param[out] buffer   The Android hardware buffer to import
  *
  * \retval     None
  */
@@ -142,7 +142,7 @@ void cvkInitPhysicalDeviceExternalFormatResolvePropertiesANDROID(VkPhysicalDevic
  * \param[in]  instance     The instance to associate the surface with
  * \param[in]  pNext        Optional extension chain attached to VkAndroidSurfaceCreateInfoKHR, or NULL
  * \param[in]  flags        Reserved for future use; must be 0
- * \param[in]  window       A pointer to the ANativeWindow to associate the surface with
+ * \param[out] window       A pointer to the ANativeWindow to associate the surface with
  * \param[in]  pAllocator   Optional allocation callbacks, or NULL
  * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned
  *
@@ -154,12 +154,12 @@ void cvkCreateAndroidSurface(VkInstance instance, const void* pNext, VkAndroidSu
 /**
  * \brief Retrieves android hardware buffer properties.
  *
- * \param[in]  device        The logical device that will be importing buffer
- * \param[in]  buffer        The Android hardware buffer which will be imported
- * \param[in]  pNext         Optional output extension chain attached to VkAndroidHardwareBufferPropertiesANDROID, or NULL
- * \param[out] pProperties   A pointer to a VkAndroidHardwareBufferPropertiesANDROID structure in which the properties of buffer are returned
+ * \param[in]     device        The logical device that will be importing buffer
+ * \param[in]     buffer        The Android hardware buffer which will be imported
+ * \param[in,out] pNext         Optional output extension chain attached to VkAndroidHardwareBufferPropertiesANDROID, or NULL
+ * \param[out]    pProperties   A pointer to a VkAndroidHardwareBufferPropertiesANDROID structure in which the properties of buffer are returned
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetAndroidHardwareBufferPropertiesANDROID(VkDevice device, const struct AHardwareBuffer* buffer, void* pNext, VkAndroidHardwareBufferPropertiesANDROID* pProperties);
 
@@ -197,7 +197,7 @@ void cvkAllocateImportAndroidHardwareBufferANDROID(VkDevice device, const void* 
  * \brief Creates a image with VkExternalFormatANDROID chained.
  *
  * \param[in]  device                  The logical device that creates the image
- * \param[out] pNext                   Optional extension chain attached to VkImageCreateInfo, or NULL
+ * \param[in]  pNext                   Optional input extension chain attached to VkImageCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  externalFormat          An implementation-defined identifier for the external format
  * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image
  * \param[in]  imageType               A VkImageType value specifying the basic dimensionality of the image
@@ -224,7 +224,7 @@ void cvkCreateImageWithExternalFormatInfoANDROID(VkDevice device, void* pNext, u
  * \brief Creates a sampler ycbcr conversion with VkExternalFormatANDROID chained.
  *
  * \param[in]  device                        The logical device that creates the sampler Y'CbCr conversion
- * \param[out] pNext                         Optional extension chain attached to VkSamplerYcbcrConversionCreateInfo, or NULL
+ * \param[in]  pNext                         Optional input extension chain attached to VkSamplerYcbcrConversionCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  externalFormat                An implementation-defined identifier for the external format
  * \param[in]  format                        The format of the image from which color information will be retrieved
  * \param[in]  ycbcrModel                    Describes the color matrix for conversion between color models
@@ -247,13 +247,13 @@ void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoANDROID(VkDevice devic
  *
  * \param[in]  device                The logical device that creates the graphics pipelines
  * \param[in]  pipelineCache         Either VK_NULL_HANDLE, indicating that pipeline caching is disabled, or to enable caching, the handle of a valid VkPipelineCache object
- * \param[out] pNext                 Optional extension chain attached to VkGraphicsPipelineCreateInfo, or NULL
+ * \param[in]  pNext                 Optional input extension chain attached to VkGraphicsPipelineCreateInfo, or NULL; tag it [in] despite the non-const type
  * \param[in]  externalFormat        An implementation-defined identifier for the external format
  * \param[in]  flags                 A bitmask of VkPipelineCreateFlagBits specifying how the pipeline will be generated
  * \param[in]  stageCount            The number of entries in the pStages array
  * \param[in]  pStages               A pointer to an array of stageCount VkPipelineShaderStageCreateInfo structures describing the set of the shader stages to be included in the graphics pipeline
- * \param[in]  pVertexInputState     A pointer to a VkPipelineVertexInputStateCreateInfo structure
- * \param[in]  pInputAssemblyState   A pointer to a VkPipelineInputAssemblyStateCreateInfo structure which determines input assembly behavior for vertex shading, as described in Drawing Commands
+ * \param[in]  pVertexInputState     A pointer to a VkPipelineVertexInputStateCreateInfo structure describing vertex bindings and attributes; ignored with a mesh shader stage, and may be NULL when VK_DYNAMIC_STATE_VERTEX_INPUT_EXT is dynamic
+ * \param[in]  pInputAssemblyState   A pointer to a VkPipelineInputAssemblyStateCreateInfo structure which determines input assembly behavior for vertex shading
  * \param[in]  pTessellationState    A pointer to a VkPipelineTessellationStateCreateInfo structure defining tessellation state used by tessellation shaders
  * \param[in]  pViewportState        A pointer to a VkPipelineViewportStateCreateInfo structure defining viewport state used when rasterization is enabled
  * \param[in]  pRasterizationState   A pointer to a VkPipelineRasterizationStateCreateInfo structure defining rasterization state
@@ -265,7 +265,7 @@ void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoANDROID(VkDevice devic
  * \param[in]  renderPass            A handle to a render pass object describing the environment in which the pipeline will be used
  * \param[in]  subpass               The index of the subpass in the render pass where this pipeline will be used
  * \param[in]  basePipelineHandle    A pipeline to derive from
- * \param[in]  basePipelineIndex     An index into the pCreateInfos parameter to use as a pipeline to derive from
+ * \param[in]  basePipelineIndex     Must be -1: this wrapper passes a single create info, so derive through basePipelineHandle
  * \param[in]  pAllocator            Optional allocation callbacks, or NULL
  * \param[out] pPipeline             Receives the created VkPipeline
  *
@@ -277,12 +277,12 @@ VkResult cvkCreateGraphicsPipelineWithExternalFormatInfoANDROID(VkDevice device,
 /**
  * \brief Retrieves android hardware buffer properties with VkAndroidHardwareBufferFormatProperties2ANDROID chained to the output.
  *
- * \param[in]  device                                           The logical device that will be importing buffer
- * \param[in]  buffer                                           The Android hardware buffer which will be imported
- * \param[in]  pNext                                            Optional output extension chain attached to VkAndroidHardwareBufferFormatProperties2ANDROID, or NULL
- * \param[out] pAndroidHardwareBufferFormatProperties2ANDROID   Receives the structure describing the image format properties of an Android hardware buffer
+ * \param[in]     device                                           The logical device that will be importing buffer
+ * \param[in]     buffer                                           The Android hardware buffer which will be imported
+ * \param[in,out] pNext                                            Optional output extension chain attached to VkAndroidHardwareBufferFormatProperties2ANDROID, or NULL
+ * \param[out]    pAndroidHardwareBufferFormatProperties2ANDROID   Receives the structure describing the image format properties of an Android hardware buffer
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetAndroidHardwareBufferFormatProperties2ANDROID(VkDevice device, const struct AHardwareBuffer* buffer, void* pNext, VkAndroidHardwareBufferFormatProperties2ANDROID* pAndroidHardwareBufferFormatProperties2ANDROID);
 
@@ -290,12 +290,12 @@ void cvkGetAndroidHardwareBufferFormatProperties2ANDROID(VkDevice device, const 
 /**
  * \brief Retrieves android hardware buffer properties with VkAndroidHardwareBufferFormatPropertiesANDROID chained to the output.
  *
- * \param[in]  device                                          The logical device that will be importing buffer
- * \param[in]  buffer                                          The Android hardware buffer which will be imported
- * \param[in]  pNext                                           Optional output extension chain attached to VkAndroidHardwareBufferFormatPropertiesANDROID, or NULL
- * \param[out] pAndroidHardwareBufferFormatPropertiesANDROID   Receives the structure describing the image format properties of an Android hardware buffer
+ * \param[in]     device                                          The logical device that will be importing buffer
+ * \param[in]     buffer                                          The Android hardware buffer which will be imported
+ * \param[in,out] pNext                                           Optional output extension chain attached to VkAndroidHardwareBufferFormatPropertiesANDROID, or NULL
+ * \param[out]    pAndroidHardwareBufferFormatPropertiesANDROID   Receives the structure describing the image format properties of an Android hardware buffer
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetAndroidHardwareBufferFormatPropertiesANDROID(VkDevice device, const struct AHardwareBuffer* buffer, void* pNext, VkAndroidHardwareBufferFormatPropertiesANDROID* pAndroidHardwareBufferFormatPropertiesANDROID);
 
@@ -303,12 +303,12 @@ void cvkGetAndroidHardwareBufferFormatPropertiesANDROID(VkDevice device, const s
 /**
  * \brief Retrieves android hardware buffer properties with VkAndroidHardwareBufferFormatResolvePropertiesANDROID chained to the output.
  *
- * \param[in]  device                                                 The logical device that will be importing buffer
- * \param[in]  buffer                                                 The Android hardware buffer which will be imported
- * \param[in]  pNext                                                  Optional output extension chain attached to VkAndroidHardwareBufferFormatResolvePropertiesANDROID, or NULL
- * \param[out] pAndroidHardwareBufferFormatResolvePropertiesANDROID   Receives the structure defining properties of resolves using an external format
+ * \param[in]     device                                                 The logical device that will be importing buffer
+ * \param[in]     buffer                                                 The Android hardware buffer which will be imported
+ * \param[in,out] pNext                                                  Optional output extension chain attached to VkAndroidHardwareBufferFormatResolvePropertiesANDROID, or NULL
+ * \param[out]    pAndroidHardwareBufferFormatResolvePropertiesANDROID   Receives the structure defining properties of resolves using an external format
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetAndroidHardwareBufferFormatResolvePropertiesANDROID(VkDevice device, const struct AHardwareBuffer* buffer, void* pNext, VkAndroidHardwareBufferFormatResolvePropertiesANDROID* pAndroidHardwareBufferFormatResolvePropertiesANDROID);
 
@@ -316,11 +316,11 @@ void cvkGetAndroidHardwareBufferFormatResolvePropertiesANDROID(VkDevice device, 
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceExternalFormatResolveFeaturesANDROID chained to the output.
  *
- * \param[in]  physicalDevice                                        The physical device from which to query the supported features
- * \param[in]  pNext                                                 Optional output extension chain attached to VkPhysicalDeviceExternalFormatResolveFeaturesANDROID, or NULL
- * \param[out] pPhysicalDeviceExternalFormatResolveFeaturesANDROID   Receives the structure describing whether external format resolves are supported
+ * \param[in]     physicalDevice                                        The physical device from which to query the supported features
+ * \param[in,out] pNext                                                 Optional output extension chain attached to VkPhysicalDeviceExternalFormatResolveFeaturesANDROID, or NULL
+ * \param[out]    pPhysicalDeviceExternalFormatResolveFeaturesANDROID   Receives the structure describing whether external format resolves are supported
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetPhysicalDeviceExternalFormatResolveFeaturesANDROID(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* pPhysicalDeviceExternalFormatResolveFeaturesANDROID);
 
@@ -328,17 +328,17 @@ void cvkGetPhysicalDeviceExternalFormatResolveFeaturesANDROID(VkPhysicalDevice p
 /**
  * \brief Retrieves physical device image format properties 2 with VkAndroidHardwareBufferUsageANDROID chained to the output.
  *
- * \param[in]  physicalDevice                           The physical device from which to query the image capabilities
- * \param[in]  pImageFormatInfoNext                     Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
- * \param[in]  format                                   A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
- * \param[in]  type                                     A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
- * \param[in]  tiling                                   A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
- * \param[in]  usage                                    A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
- * \param[in]  flags                                    A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
- * \param[in]  pAndroidHardwareBufferUsageANDROIDNext   Optional output extension chain attached to VkAndroidHardwareBufferUsageANDROID, or NULL
- * \param[out] pAndroidHardwareBufferUsageANDROID       Receives the struct containing Android hardware buffer usage flags
+ * \param[in]     physicalDevice                           The physical device from which to query the image capabilities
+ * \param[in]     pImageFormatInfoNext                     Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
+ * \param[in]     format                                   A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format
+ * \param[in]     type                                     A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType
+ * \param[in]     tiling                                   A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling
+ * \param[in]     usage                                    A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage
+ * \param[in]     flags                                    A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags
+ * \param[in,out] pAndroidHardwareBufferUsageANDROIDNext   Optional output extension chain attached to VkAndroidHardwareBufferUsageANDROID, or NULL
+ * \param[out]    pAndroidHardwareBufferUsageANDROID       Receives the struct containing Android hardware buffer usage flags
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithAndroidHardwareBufferUsageANDROID(VkPhysicalDevice physicalDevice, const void* pImageFormatInfoNext, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, void* pAndroidHardwareBufferUsageANDROIDNext, VkAndroidHardwareBufferUsageANDROID* pAndroidHardwareBufferUsageANDROID);
 
@@ -346,11 +346,11 @@ VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithAndroidHardwareBufferUsage
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceExternalFormatResolvePropertiesANDROID chained to the output.
  *
- * \param[in]  physicalDevice                                          The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                                   Optional output extension chain attached to VkPhysicalDeviceExternalFormatResolvePropertiesANDROID, or NULL
- * \param[out] pPhysicalDeviceExternalFormatResolvePropertiesANDROID   Receives the structure describing external format resolve supported by an implementation
+ * \param[in]     physicalDevice                                          The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                                   Optional output extension chain attached to VkPhysicalDeviceExternalFormatResolvePropertiesANDROID, or NULL
+ * \param[out]    pPhysicalDeviceExternalFormatResolvePropertiesANDROID   Receives the structure describing external format resolve supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetPhysicalDeviceExternalFormatResolvePropertiesANDROID(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* pPhysicalDeviceExternalFormatResolvePropertiesANDROID);
 /* clang-format on */

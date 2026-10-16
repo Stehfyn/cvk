@@ -12,7 +12,7 @@
 /**
  * \brief Parses a VkViSurfaceCreateFlagsNN from JSON.
  *
- * \param[in] pValue   The value: bit names joined by |, a number, or NULL
+ * \param[in] pValue   JSON number holding the flags, or NULL for 0
  *
  * \retval    VkViSurfaceCreateFlagsNN   The parsed value.
  */
@@ -23,7 +23,7 @@ VkViSurfaceCreateFlagsNN cvkParseJsonViSurfaceCreateFlagsNN(const cvkJsonValue* 
  * \brief Parses a VkViSurfaceCreateInfoNN from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkViSurfaceCreateInfoNN
+ * \param[in]  pObject    JSON object from pContext's document holding the VkViSurfaceCreateInfoNN members, or NULL for a zeroed VkViSurfaceCreateInfoNN
  * \param[out] pInfo      Receives the parsed VkViSurfaceCreateInfoNN, zeroed first
  *
  * \retval     None

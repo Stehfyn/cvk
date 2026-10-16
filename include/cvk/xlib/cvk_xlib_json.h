@@ -13,7 +13,7 @@
 /**
  * \brief Parses a VkXlibSurfaceCreateFlagsKHR from JSON.
  *
- * \param[in] pValue   The value: bit names joined by |, a number, or NULL
+ * \param[in] pValue   JSON number holding the flags, or NULL for 0
  *
  * \retval    VkXlibSurfaceCreateFlagsKHR   The parsed value.
  */
@@ -24,7 +24,7 @@ VkXlibSurfaceCreateFlagsKHR cvkParseJsonXlibSurfaceCreateFlags(const cvkJsonValu
  * \brief Parses a VkXlibSurfaceCreateInfoKHR from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkXlibSurfaceCreateInfoKHR
+ * \param[in]  pObject    JSON object from pContext's document holding the VkXlibSurfaceCreateInfoKHR members, or NULL for a zeroed VkXlibSurfaceCreateInfoKHR
  * \param[out] pInfo      Receives the parsed VkXlibSurfaceCreateInfoKHR, zeroed first
  *
  * \retval     None

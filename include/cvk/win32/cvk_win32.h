@@ -316,7 +316,7 @@ void cvkCreateWin32Surface(VkInstance instance, const void* pNext, VkWin32Surfac
 /**
  * \brief Retrieves device group surface present modes 2.
  *
- * \param[in]  device    The logical device
+ * \param[in]  device    Logical device whose device-group present modes for the surface are queried
  * \param[in]  pNext     Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
  * \param[in]  surface   The surface that will be associated with the swapchain
  * \param[out] pModes    A pointer to a VkDeviceGroupPresentModeFlagsKHR in which the supported device group present modes for the surface are returned
@@ -359,7 +359,7 @@ void cvkGetMemoryWin32Handle(VkDevice device, const void* pNext, VkDeviceMemory 
  * \brief Retrieves memory win 32 handle.
  *
  * \param[in]  device       The logical device that owns the memory
- * \param[in]  memory       The VkDeviceMemory object
+ * \param[in]  memory       Device memory whose Win32 handle is exported
  * \param[in]  handleType   A bitmask of VkExternalMemoryHandleTypeFlagBitsNV containing a single bit specifying the type of handle requested
  * \param[out] pHandle      A pointer to a Windows HANDLE in which the handle is returned
  *
@@ -371,13 +371,13 @@ void cvkGetMemoryWin32HandleNV(VkDevice device, VkDeviceMemory memory, VkExterna
 /**
  * \brief Retrieves memory win 32 handle properties.
  *
- * \param[in]  device                         The logical device that will be importing handle
- * \param[in]  handleType                     A VkExternalMemoryHandleTypeFlagBits value specifying the type of the handle handle
- * \param[in]  handle                         The handle which will be imported
- * \param[in]  pNext                          Optional output extension chain attached to VkMemoryWin32HandlePropertiesKHR, or NULL
- * \param[out] pMemoryWin32HandleProperties   A pointer to a VkMemoryWin32HandlePropertiesKHR structure in which properties of handle are returned
+ * \param[in]     device                         The logical device that will be importing handle
+ * \param[in]     handleType                     A VkExternalMemoryHandleTypeFlagBits value specifying the type of the handle handle
+ * \param[in]     handle                         The handle which will be imported
+ * \param[in,out] pNext                          Optional output extension chain attached to VkMemoryWin32HandlePropertiesKHR, or NULL
+ * \param[out]    pMemoryWin32HandleProperties   A pointer to a VkMemoryWin32HandlePropertiesKHR structure in which properties of handle are returned
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetMemoryWin32HandleProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, void* pNext, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
 
@@ -399,8 +399,8 @@ void cvkGetPhysicalDeviceSurfacePresentModes2(VkPhysicalDevice physicalDevice, c
 /**
  * \brief Retrieves physical device win 32 presentation support.
  *
- * \param[in] physicalDevice     The physical device
- * \param[in] queueFamilyIndex   The queue family index
+ * \param[in] physicalDevice     Physical device to query
+ * \param[in] queueFamilyIndex   Queue family whose presentation support is queried
  *
  * \retval    VK_TRUE    The queried support is available.
  * \retval    VK_FALSE   The queried support is unavailable.
@@ -426,7 +426,7 @@ void cvkGetSemaphoreWin32Handle(VkDevice device, const void* pNext, VkSemaphore 
  * \brief Retrieves winrt display.
  *
  * \param[in]  physicalDevice     The physical device on which to query the display handle
- * \param[in]  deviceRelativeId   The value of the https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displaytarget.adapterrelativeid["AdapterRelativeId"] property of a https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displaytarget["DisplayTarget"] that is enumerated by a https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displayadapter["DisplayAdapter"] with an https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displayadapter.id["Id"] property matching the deviceLUID property of a VkPhysicalDeviceIDProperties for physicalDevice
+ * \param[in]  deviceRelativeId   The AdapterRelativeId of a DisplayTarget enumerated by the DisplayAdapter whose Id matches the deviceLUID of physicalDevice
  * \param[out] pDisplay           A pointer to a VkDisplayKHR handle where the display is returned
  *
  * \retval     None
@@ -586,7 +586,7 @@ void cvkCreateExportSemaphoreWin32Handle(VkDevice device, const void* pNext, con
  * \brief Creates a swapchain with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
  * \param[in]  device                  The device to create the swapchain for
- * \param[out] pNext                   Optional extension chain attached to VkSwapchainCreateInfoKHR, or NULL
+ * \param[in]  pNext                   Optional extension chain attached to VkSwapchainCreateInfoKHR, or NULL
  * \param[in]  fullScreenExclusive     A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior
  * \param[in]  flags                   A bitmask of VkSwapchainCreateFlagBitsKHR indicating parameters of the swapchain creation
  * \param[in]  surface                 The surface onto which the swapchain will present images
@@ -598,12 +598,12 @@ void cvkCreateExportSemaphoreWin32Handle(VkDevice device, const void* pNext, con
  * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
  * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
  * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
  * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
  * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
  * \param[in]  presentMode             The presentation mode the swapchain will use
  * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
+ * \param[in]  oldSwapchain            VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface, which is retired and may aid resource reuse
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pSwapchain              A pointer to a VkSwapchainKHR handle in which the created swapchain object will be returned
  *
@@ -628,12 +628,12 @@ VkResult cvkCreateSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice device, v
  * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
  * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
  * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
  * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
  * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
  * \param[in]  presentMode             The presentation mode the swapchain will use
  * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
+ * \param[in]  oldSwapchain            VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface, which is retired and may aid resource reuse
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pSwapchain              A pointer to a VkSwapchainKHR handle in which the created swapchain object will be returned
  *
@@ -645,8 +645,8 @@ VkResult cvkCreateSwapchainWithSurfaceFullScreenExclusiveWin32Info(VkDevice devi
 /**
  * \brief Retrieves device group surface present modes 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
- * \param[in]  device                The logical device
- * \param[out] pNext                 Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
+ * \param[in]  device                Logical device whose device-group present modes for the surface are queried
+ * \param[in]  pNext                 Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
  * \param[in]  fullScreenExclusive   A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior
  * \param[in]  surface               The surface that will be associated with the swapchain
  * \param[out] pModes                A pointer to a VkDeviceGroupPresentModeFlagsKHR in which the supported device group present modes for the surface are returned
@@ -659,7 +659,7 @@ VkResult cvkGetDeviceGroupSurfaceFullScreenExclusivePresentModes(VkDevice device
 /**
  * \brief Retrieves device group surface present modes 2 with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
- * \param[in]  device     The logical device
+ * \param[in]  device     Logical device whose device-group present modes for the surface are queried
  * \param[in]  pNext      Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
  * \param[in]  hmonitor   The Win32 HMONITOR handle identifying the display to create the surface with
  * \param[in]  surface    The surface that will be associated with the swapchain
@@ -673,8 +673,8 @@ VkResult cvkGetDeviceGroupSurfaceFullScreenExclusiveWin32PresentModes(VkDevice d
 /**
  * \brief Retrieves device group surface present modes 2 with VkSurfacePresentModeKHR chained.
  *
- * \param[in]  device        The logical device
- * \param[out] pNext         Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
+ * \param[in]  device        Logical device whose device-group present modes for the surface are queried
+ * \param[in]  pNext         Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
  * \param[in]  presentMode   The presentation mode the swapchain will use
  * \param[in]  surface       The surface that will be associated with the swapchain
  * \param[out] pModes        A pointer to a VkDeviceGroupPresentModeFlagsKHR in which the supported device group present modes for the surface are returned
@@ -687,14 +687,14 @@ VkResult cvkGetDeviceGroupSurfacePresentModePresentModes(VkDevice device, void* 
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
- * \param[in]  physicalDevice             The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
- * \param[out] pSurfaceInfoNext           Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  fullScreenExclusive        A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior
- * \param[in]  surface                    The surface that will be associated with the swapchain
- * \param[out] pSurfaceCapabilitiesNext   Optional output extension chain attached to VkSurfaceCapabilities2KHR, or NULL
- * \param[out] pSurfaceCapabilities       A pointer to a VkSurfaceCapabilities2KHR structure in which the capabilities are returned
+ * \param[in]     physicalDevice             The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
+ * \param[in]     pSurfaceInfoNext           Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
+ * \param[in]     fullScreenExclusive        A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior
+ * \param[in]     surface                    The surface that will be associated with the swapchain
+ * \param[in,out] pSurfaceCapabilitiesNext   Optional output extension chain attached to VkSurfaceCapabilities2KHR, or NULL
+ * \param[out]    pSurfaceCapabilities       A pointer to a VkSurfaceCapabilities2KHR structure in which the capabilities are returned
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult cvkGetPhysicalDeviceSurfaceFullScreenExclusiveCapabilities(VkPhysicalDevice physicalDevice, void* pSurfaceInfoNext, VkFullScreenExclusiveEXT fullScreenExclusive, VkSurfaceKHR surface, void* pSurfaceCapabilitiesNext, VkSurfaceCapabilities2KHR* pSurfaceCapabilities);
 
@@ -702,14 +702,14 @@ VkResult cvkGetPhysicalDeviceSurfaceFullScreenExclusiveCapabilities(VkPhysicalDe
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
- * \param[in]  physicalDevice             The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
- * \param[in]  pSurfaceInfoNext           Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  hmonitor                   The Win32 HMONITOR handle identifying the display to create the surface with
- * \param[in]  surface                    The surface that will be associated with the swapchain
- * \param[out] pSurfaceCapabilitiesNext   Optional output extension chain attached to VkSurfaceCapabilities2KHR, or NULL
- * \param[out] pSurfaceCapabilities       A pointer to a VkSurfaceCapabilities2KHR structure in which the capabilities are returned
+ * \param[in]     physicalDevice             The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
+ * \param[in]     pSurfaceInfoNext           Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
+ * \param[in]     hmonitor                   The Win32 HMONITOR handle identifying the display to create the surface with
+ * \param[in]     surface                    The surface that will be associated with the swapchain
+ * \param[in,out] pSurfaceCapabilitiesNext   Optional output extension chain attached to VkSurfaceCapabilities2KHR, or NULL
+ * \param[out]    pSurfaceCapabilities       A pointer to a VkSurfaceCapabilities2KHR structure in which the capabilities are returned
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Capabilities(VkPhysicalDevice physicalDevice, const void* pSurfaceInfoNext, HMONITOR hmonitor, VkSurfaceKHR surface, void* pSurfaceCapabilitiesNext, VkSurfaceCapabilities2KHR* pSurfaceCapabilities);
 
@@ -718,11 +718,11 @@ VkResult cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Capabilities(VkPhysi
  * \brief Retrieves physical device surface formats 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
  * \param[in]  physicalDevice        The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
- * \param[out] pNext                 Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
+ * \param[in]  pNext                 Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
  * \param[in]  fullScreenExclusive   A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior
  * \param[in]  surface               The surface that will be associated with the swapchain
  * \param[out] pSurfaceFormatCount   Receives the number of entries written
- * \param[in]  pSurfaceFormats       Receives up to CVK_MAX_SURFACE_FORMATS entries
+ * \param[out] pSurfaceFormats       Receives up to CVK_MAX_SURFACE_FORMATS entries
  *
  * \retval     None
  */
@@ -737,7 +737,7 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveFormats(VkPhysicalDevice phys
  * \param[in]  hmonitor              The Win32 HMONITOR handle identifying the display to create the surface with
  * \param[in]  surface               The surface that will be associated with the swapchain
  * \param[out] pSurfaceFormatCount   Receives the number of entries written
- * \param[in]  pSurfaceFormats       Receives up to CVK_MAX_SURFACE_FORMATS entries
+ * \param[out] pSurfaceFormats       Receives up to CVK_MAX_SURFACE_FORMATS entries
  *
  * \retval     None
  */
@@ -748,11 +748,11 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Formats(VkPhysicalDevice
  * \brief Retrieves physical device surface present modes 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
  * \param[in]  physicalDevice        The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
- * \param[out] pNext                 Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
+ * \param[in]  pNext                 Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
  * \param[in]  fullScreenExclusive   A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior
  * \param[in]  surface               The surface that will be associated with the swapchain
  * \param[out] pPresentModeCount     Receives the number of entries written
- * \param[in]  pPresentModes         Receives up to CVK_MAX_PRESENT_MODES entries
+ * \param[out] pPresentModes         Receives up to CVK_MAX_PRESENT_MODES entries
  *
  * \retval     None
  */
@@ -767,7 +767,7 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusivePresentModes(VkPhysicalDevice
  * \param[in]  hmonitor            The Win32 HMONITOR handle identifying the display to create the surface with
  * \param[in]  surface             The surface that will be associated with the swapchain
  * \param[out] pPresentModeCount   Receives the number of entries written
- * \param[in]  pPresentModes       Receives up to CVK_MAX_PRESENT_MODES entries
+ * \param[out] pPresentModes       Receives up to CVK_MAX_PRESENT_MODES entries
  *
  * \retval     None
  */
@@ -778,11 +778,11 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32PresentModes(VkPhysicalD
  * \brief Retrieves physical device surface present modes 2 with VkSurfacePresentModeKHR chained.
  *
  * \param[in]  physicalDevice      The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
- * \param[out] pNext               Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
+ * \param[in]  pNext               Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
  * \param[in]  presentMode         The presentation mode the swapchain will use
  * \param[in]  surface             The surface that will be associated with the swapchain
  * \param[out] pPresentModeCount   Receives the number of entries written
- * \param[in]  pPresentModes       Receives up to CVK_MAX_PRESENT_MODES entries
+ * \param[out] pPresentModes       Receives up to CVK_MAX_PRESENT_MODES entries
  *
  * \retval     None
  */
@@ -793,7 +793,7 @@ void cvkGetPhysicalDeviceSurfacePresentModePresentModes(VkPhysicalDevice physica
  * \brief Creates a shared swapchains with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
  * \param[in]  device                  The device to create the swapchains for
- * \param[out] pNext                   Optional extension chain attached to VkSwapchainCreateInfoKHR, or NULL
+ * \param[in]  pNext                   Optional extension chain attached to VkSwapchainCreateInfoKHR, or NULL
  * \param[in]  fullScreenExclusive     A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior
  * \param[in]  flags                   A bitmask of VkSwapchainCreateFlagBitsKHR indicating parameters of the swapchain creation
  * \param[in]  surface                 The surface onto which the swapchain will present images
@@ -805,12 +805,12 @@ void cvkGetPhysicalDeviceSurfacePresentModePresentModes(VkPhysicalDevice physica
  * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
  * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
  * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
  * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
  * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
  * \param[in]  presentMode             The presentation mode the swapchain will use
  * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
+ * \param[in]  oldSwapchain            VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface, which is retired and may aid resource reuse
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pSwapchain              Receives the created VkSwapchainKHR
  *
@@ -835,12 +835,12 @@ VkResult cvkCreateSharedSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice dev
  * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
  * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
  * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
  * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
  * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
  * \param[in]  presentMode             The presentation mode the swapchain will use
  * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
+ * \param[in]  oldSwapchain            VK_NULL_HANDLE, or the existing non-retired swapchain currently associated with surface, which is retired and may aid resource reuse
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pSwapchain              Receives the created VkSwapchainKHR
  *
@@ -936,7 +936,7 @@ void cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfoNV(VkQueue queue, co
  * \param[in] releaseCount               The number of entries in the pReleaseSyncs and pReleaseKeys arrays
  * \param[in] pReleaseSyncs              A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources
  * \param[in] pReleaseKeys               A pointer to an array of mutex key values to set when the submitted work has completed
- * \param[in] flags                      A bitmask of VkSubmitFlagBits
+ * \param[in] flags                      A bitmask of VkSubmitFlagBits; VK_SUBMIT_PROTECTED_BIT makes the batch protected
  * \param[in] waitSemaphoreInfoCount     The number of elements in pWaitSemaphoreInfos
  * \param[in] pWaitSemaphoreInfos        A pointer to an array of VkSemaphoreSubmitInfo structures defining semaphore wait operations
  * \param[in] commandBufferInfoCount     The number of elements in pCommandBufferInfos and the number of command buffers to execute in the batch
@@ -962,7 +962,7 @@ void cvkQueueSubmitInfo2WithWin32KeyedMutexAcquireReleaseInfo(VkQueue queue, con
  * \param[in] releaseCount                  The number of entries in the pReleaseSyncs and pReleaseKeys arrays
  * \param[in] pReleaseSyncs                 A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources
  * \param[in] pReleaseKeys                  A pointer to an array of mutex key values to set when the submitted work has completed
- * \param[in] flags                         A bitmask of VkSubmitFlagBits
+ * \param[in] flags                         A bitmask of VkSubmitFlagBits; VK_SUBMIT_PROTECTED_BIT makes the batch protected
  * \param[in] waitSemaphoreInfoCount        The number of elements in pWaitSemaphoreInfos
  * \param[in] pWaitSemaphoreInfos           A pointer to an array of VkSemaphoreSubmitInfo structures defining semaphore wait operations
  * \param[in] commandBufferInfoCount        The number of elements in pCommandBufferInfos and the number of command buffers to execute in the batch
@@ -979,13 +979,13 @@ void cvkQueueSubmitInfo2WithWin32KeyedMutexAcquireReleaseInfoNV(VkQueue queue, c
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceCapabilitiesFullScreenExclusiveEXT chained to the output.
  *
- * \param[in]  physicalDevice                                The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
- * \param[in]  pSurfaceInfoNext                              Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  surface                                       The surface that will be associated with the swapchain
- * \param[in]  pSurfaceCapabilitiesFullScreenExclusiveNext   Optional output extension chain attached to VkSurfaceCapabilitiesFullScreenExclusiveEXT, or NULL
- * \param[out] pSurfaceCapabilitiesFullScreenExclusive       Receives the structure describing full screen exclusive capabilities of a surface
+ * \param[in]     physicalDevice                                The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
+ * \param[in]     pSurfaceInfoNext                              Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
+ * \param[in]     surface                                       The surface that will be associated with the swapchain
+ * \param[in,out] pSurfaceCapabilitiesFullScreenExclusiveNext   Optional output extension chain attached to VkSurfaceCapabilitiesFullScreenExclusiveEXT, or NULL
+ * \param[out]    pSurfaceCapabilitiesFullScreenExclusive       Receives the structure describing full screen exclusive capabilities of a surface
  *
- * \retval     VK_SUCCESS   Command successfully completed.
+ * \retval        VK_SUCCESS   Command successfully completed.
  */
 VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesFullScreenExclusive(VkPhysicalDevice physicalDevice, const void* pSurfaceInfoNext, VkSurfaceKHR surface, void* pSurfaceCapabilitiesFullScreenExclusiveNext, VkSurfaceCapabilitiesFullScreenExclusiveEXT* pSurfaceCapabilitiesFullScreenExclusive);
 
@@ -1081,8 +1081,8 @@ void cvkImportWin32HandleImage2D(VkPhysicalDevice physicalDevice, VkDevice devic
  *
  *
  * \param[in] physicalDevice   Physical device to query
- * \param[in] format           Vulkan image format
- * \param[in] usage            Vulkan image usage
+ * \param[in] format           Format the imported Vulkan image would have
+ * \param[in] usage            Usage the imported Vulkan image would need
  *
  * \retval    VK_TRUE    The image description supports D3D11 texture import
  * \retval    VK_FALSE   The image description does not support D3D11 texture import
@@ -1099,9 +1099,9 @@ VkBool32 cvkGetPhysicalDeviceD3D11Texture2DImportSupport(VkPhysicalDevice physic
  *
  * \param[in]  physicalDevice   Physical device the image is created for
  * \param[in]  device           Logical device owning the image and memory
- * \param[in]  format           Vulkan image format
+ * \param[in]  format           Format of the Vulkan image created for the imported texture
  * \param[in]  extent2D         Image width and height
- * \param[in]  usage            Vulkan image usage
+ * \param[in]  usage            Usage of the Vulkan image created for the imported texture
  * \param[in]  handle           Shared D3D11 texture handle to import
  * \param[out] pImage           Receives the created VkImage
  * \param[out] pMemory          Receives the imported VkDeviceMemory

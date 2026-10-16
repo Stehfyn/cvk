@@ -28869,7 +28869,7 @@ void cvkCmdWriteDescriptorSet(
 
     cvkCmdPushDescriptorSet(commandBuffer, pipelineBindPoint, layout, set, 1, &descriptor_write);
 }
-void cvkCmdWriteAccelerationStructuresPropertie(
+void cvkCmdWriteAccelerationStructureProperties(
     VkCommandBuffer            commandBuffer,
     VkAccelerationStructureKHR accelerationStructure,
     VkQueryType                queryType,
@@ -28887,7 +28887,7 @@ void cvkCmdWriteAccelerationStructuresPropertiesSingleNV(
 {
     cvkCmdWriteAccelerationStructuresPropertiesNV(commandBuffer, 1, &accelerationStructure, queryType, queryPool, firstQuery);
 }
-void cvkCmdWriteMicromapsPropertie(
+void cvkCmdWriteMicromapProperties(
     VkCommandBuffer commandBuffer,
     VkMicromapEXT   micromap,
     VkQueryType     queryType,
@@ -29400,7 +29400,7 @@ VkResult cvkWaitForFence(
 {
     return cvkWaitForFences(device, 1, &fence, waitAll, timeout);
 }
-void cvkWriteAccelerationStructuresPropertie(
+void cvkWriteAccelerationStructureProperties(
     VkDevice                   device,
     VkAccelerationStructureKHR accelerationStructure,
     VkQueryType                queryType,
@@ -29410,7 +29410,7 @@ void cvkWriteAccelerationStructuresPropertie(
 {
     cvkWriteAccelerationStructuresProperties(device, 1, &accelerationStructure, queryType, dataSize, pData, stride);
 }
-void cvkWriteMicromapsPropertie(
+void cvkWriteMicromapProperties(
     VkDevice      device,
     VkMicromapEXT micromap,
     VkQueryType   queryType,
@@ -30830,7 +30830,7 @@ void cvkCmdDecodeVideoWithInlineQueryInfo(
 
     cvkCmdDecodeVideo(commandBuffer, &query_info, flags, srcBuffer, srcBufferOffset, srcBufferRange, dstPictureResource, pSetupReferenceSlot, referenceSlotCount, pReferenceSlots);
 }
-void cvkCmdDispatchDataGraphWithOpticalFlowInfoARMARM(
+void cvkCmdDispatchDataGraphWithOpticalFlowInfoARM(
     VkCommandBuffer                       commandBuffer,
     VkDataGraphPipelineSessionARM         session,
     void*                                 pNext,
@@ -31980,7 +31980,7 @@ void cvkCreateCommandPoolWithDataGraphProcessingEngineInfoARM(
 
     cvkCreateCommandPool(device, &create_info, flags, queueFamilyIndex, pAllocator, pCommandPool);
 }
-void cvkCreateCuModuleWithTexturingModeInfoNVXNVX(
+void cvkCreateCuModuleWithTexturingModeInfoNVX(
     VkDevice                     device,
     const void*                  pNext,
     VkBool32                     use64bitTexturing,
@@ -31998,7 +31998,7 @@ void cvkCreateCuModuleWithTexturingModeInfoNVXNVX(
 
     cvkCreateCuModuleNVX(device, &create_info, dataSize, pData, pAllocator, pModule);
 }
-void cvkCreateDataGraphPipelineSessionWithNeuralStatisticsInfoARMARM(
+void cvkCreateDataGraphPipelineSessionWithNeuralStatisticsInfoARM(
     VkDevice                                 device,
     const void*                              pNext,
     VkNeuralAcceleratorStatisticsModeARM     mode,
@@ -33707,7 +33707,7 @@ void cvkCreateInstanceWithValidationFlagsInfo(
 
     cvkCreateInstance(&validation_flags, flags, pApplicationInfo, enabledLayerCount, ppEnabledLayerNames, enabledExtensionCount, ppEnabledExtensionNames, pAllocator, pInstance);
 }
-void cvkCreateOpticalFlowSessionWithPrivateDataInfoNVNV(
+void cvkCreateOpticalFlowSessionWithPrivateDataInfoNV(
     VkDevice                          device,
     void*                             pNext,
     uint32_t                          id,
@@ -35477,7 +35477,7 @@ VkResult cvkCreateSwapchainWithPresentScalingInfo(
                               pAllocator,
                               pSwapchain);
 }
-void cvkCreateTensorWithExternalMemoryInfoARMARM(
+void cvkCreateTensorWithExternalMemoryInfoARM(
     VkDevice                        device,
     const void*                     pNext,
     VkExternalMemoryHandleTypeFlags handleTypes,
@@ -35540,7 +35540,7 @@ void cvkCreateTensorWithOpaqueCaptureDescriptorDataInfoARM(
 
     cvkCreateTensorARM(device, &create_info, flags, pDescription, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pTensor);
 }
-void cvkCreateTensorWithRollingBackingInfoARMARM(
+void cvkCreateTensorWithRollingBackingInfoARM(
     VkDevice                      device,
     const void*                   pNext,
     const uint32_t                wraps[VK_MAX_TENSOR_CREATE_INFO_ROLLING_BACKING_WRAP_COUNT_ARM],
@@ -36096,7 +36096,7 @@ void cvkGetDynamicRenderingMultiviewPerViewAttributesTilePropertiesNVXQCOM(
 
     cvkGetRenderingInfo(device, &attributes_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment, pPropertiesNext, pProperties);
 }
-void cvkGetDynamicRenderingMultiviewPerViewRenderAreasRenderPassTilePropertiesQCOMQCOM(
+void cvkGetDynamicRenderingMultiviewPerViewRenderAreasRenderPassTilePropertiesQCOM(
     VkDevice                         device,
     const void*                      pRenderingInfoNext,
     uint32_t                         perViewRenderAreaCount,
@@ -36180,7 +36180,7 @@ void cvkGetDynamicRenderingRenderPassStripeTilePropertiesARMQCOM(
 
     cvkGetRenderingInfo(device, &begin_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment, pPropertiesNext, pProperties);
 }
-void cvkGetDynamicRenderingRenderPassTileShadingTilePropertiesQCOMQCOM(
+void cvkGetDynamicRenderingRenderPassTileShadingTilePropertiesQCOM(
     VkDevice                         device,
     const void*                      pRenderingInfoNext,
     VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPass,
@@ -36260,7 +36260,7 @@ void cvkGetRenderingFragmentShadingRateAttachmentInfo(
 
     cvkGetRenderingInfo(device, &attachment_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment, pPropertiesNext, pProperties);
 }
-void cvkGetDynamicRenderingTileMemorySizeTilePropertiesQCOMQCOM(
+void cvkGetDynamicRenderingTileMemorySizeTilePropertiesQCOM(
     VkDevice                         device,
     const void*                      pRenderingInfoNext,
     VkDeviceSize                     size,
@@ -36397,7 +36397,7 @@ void cvkGetImagePlaneMemoryRequirementsInfo(
 
     cvkGetImageMemoryRequirementsInfo2(device, &requirements_info, image, pMemoryRequirementsNext, pMemoryRequirements);
 }
-void cvkGetPartitionedAccelerationStructuresBuildSizesWithFlagsInfoNVNV(
+void cvkGetPartitionedAccelerationStructuresBuildSizesWithFlagsInfoNV(
     VkDevice                                  device,
     void*                                     pInfoNext,
     VkBool32                                  enablePartitionTranslation,
@@ -37029,7 +37029,7 @@ void cvkGetPhysicalDeviceVideoProfileFormatListProperties(
 
     cvkGetPhysicalDeviceVideoFormatInfo(physicalDevice, &list_info, imageUsage, pVideoFormatPropertyCount, pVideoFormatProperties);
 }
-void cvkGetPipelineIndirectMemoryRequirementsWithIndirectBufferInfoNVNV(
+void cvkGetPipelineIndirectMemoryRequirementsWithIndirectBufferInfoNV(
     VkDevice                        device,
     const void*                     pCreateInfoNext,
     VkDeviceAddress                 deviceAddress,
@@ -38267,7 +38267,7 @@ VkResult cvkCreateDataGraphPipelineInfoWithBuiltinModelInfoARMQCOM(
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateDataGraphPipelineInfoWithCompilerControlInfoARMARM(
+VkResult cvkCreateDataGraphPipelineInfoWithCompilerControlInfoARM(
     VkDevice                                  device,
     VkDeferredOperationKHR                    deferredOperation,
     VkPipelineCache                           pipelineCache,
@@ -38289,7 +38289,7 @@ VkResult cvkCreateDataGraphPipelineInfoWithCompilerControlInfoARMARM(
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateDataGraphPipelineInfoWithIdentifierInfoARMARM(
+VkResult cvkCreateDataGraphPipelineInfoWithIdentifierInfoARM(
     VkDevice                                  device,
     VkDeferredOperationKHR                    deferredOperation,
     VkPipelineCache                           pipelineCache,
@@ -38313,7 +38313,7 @@ VkResult cvkCreateDataGraphPipelineInfoWithIdentifierInfoARMARM(
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateDataGraphPipelineInfoWithNeuralStatisticsInfoARMARM(
+VkResult cvkCreateDataGraphPipelineInfoWithNeuralStatisticsInfoARM(
     VkDevice                                  device,
     VkDeferredOperationKHR                    deferredOperation,
     VkPipelineCache                           pipelineCache,
@@ -38335,7 +38335,7 @@ VkResult cvkCreateDataGraphPipelineInfoWithNeuralStatisticsInfoARMARM(
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateDataGraphPipelineInfoWithOpticalFlowInfoARMARM(
+VkResult cvkCreateDataGraphPipelineInfoWithOpticalFlowInfoARM(
     VkDevice                                  device,
     VkDeferredOperationKHR                    deferredOperation,
     VkPipelineCache                           pipelineCache,
@@ -38373,7 +38373,7 @@ VkResult cvkCreateDataGraphPipelineInfoWithOpticalFlowInfoARMARM(
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateDataGraphPipelineInfoWithShaderModuleInfoARMARM(
+VkResult cvkCreateDataGraphPipelineInfoWithDataGraphShaderModuleInfoARM(
     VkDevice                                  device,
     VkDeferredOperationKHR                    deferredOperation,
     VkPipelineCache                           pipelineCache,
@@ -38403,7 +38403,7 @@ VkResult cvkCreateDataGraphPipelineInfoWithShaderModuleInfoARMARM(
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateDataGraphPipelineInfoWithSingleNodeInfoARMARM(
+VkResult cvkCreateDataGraphPipelineInfoWithSingleNodeInfoARM(
     VkDevice                                          device,
     VkDeferredOperationKHR                            deferredOperation,
     VkPipelineCache                                   pipelineCache,
@@ -38429,7 +38429,7 @@ VkResult cvkCreateDataGraphPipelineInfoWithSingleNodeInfoARMARM(
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateDataGraphPipelineInfoWithProcessingEngineInfoARMARM(
+VkResult cvkCreateDataGraphPipelineInfoWithProcessingEngineInfoARM(
     VkDevice                                      device,
     VkDeferredOperationKHR                        deferredOperation,
     VkPipelineCache                               pipelineCache,
@@ -41520,7 +41520,7 @@ VkResult cvkCreateIndirectBufferComputePipelineNVs(
     const void* const*                     ppNexts,
     const VkDeviceAddress*                 pDeviceAddress,
     const VkDeviceSize*                    pSizes,
-    const VkDeviceAddress*                 pPipelineDeviceAddressCaptureReplaies,
+    const VkDeviceAddress*                 pPipelineDeviceAddressCaptureReplays,
     const VkPipelineCreateFlags*           pFlags,
     const VkPipelineShaderStageCreateInfo* pStages,
     const VkPipelineLayout*                pLayouts,
@@ -41543,7 +41543,7 @@ VkResult cvkCreateIndirectBufferComputePipelineNVs(
             .pNext                              = (NULL != ppNexts) ? ppNexts[index] : NULL,
             .deviceAddress                      = pDeviceAddress[index],
             .size                               = pSizes[index],
-            .pipelineDeviceAddressCaptureReplay = pPipelineDeviceAddressCaptureReplaies[index]
+            .pipelineDeviceAddressCaptureReplay = pPipelineDeviceAddressCaptureReplays[index]
         };
         create_infos[index] = (VkComputePipelineCreateInfo)
         {

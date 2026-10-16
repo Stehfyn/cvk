@@ -12,7 +12,7 @@
 /**
  * \brief Parses a VkIOSSurfaceCreateFlagsMVK from JSON.
  *
- * \param[in] pValue   The value: bit names joined by |, a number, or NULL
+ * \param[in] pValue   JSON number holding the flags, or NULL for 0
  *
  * \retval    VkIOSSurfaceCreateFlagsMVK   The parsed value.
  */
@@ -23,7 +23,7 @@ VkIOSSurfaceCreateFlagsMVK cvkParseJsonIOSSurfaceCreateFlagsMVK(const cvkJsonVal
  * \brief Parses a VkIOSSurfaceCreateInfoMVK from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkIOSSurfaceCreateInfoMVK
+ * \param[in]  pObject    JSON object from pContext's document holding the VkIOSSurfaceCreateInfoMVK members, or NULL for a zeroed VkIOSSurfaceCreateInfoMVK
  * \param[out] pInfo      Receives the parsed VkIOSSurfaceCreateInfoMVK, zeroed first
  *
  * \retval     None

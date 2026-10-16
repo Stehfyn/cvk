@@ -13,7 +13,7 @@
 /**
  * \brief Parses a VkScreenSurfaceCreateFlagsQNX from JSON.
  *
- * \param[in] pValue   The value: bit names joined by |, a number, or NULL
+ * \param[in] pValue   JSON number holding the flags, or NULL for 0
  *
  * \retval    VkScreenSurfaceCreateFlagsQNX   The parsed value.
  */
@@ -24,7 +24,7 @@ VkScreenSurfaceCreateFlagsQNX cvkParseJsonScreenSurfaceCreateFlagsQNX(const cvkJ
  * \brief Parses a VkExternalFormatQNX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkExternalFormatQNX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkExternalFormatQNX members, or NULL for a zeroed VkExternalFormatQNX
  * \param[out] pInfo      Receives the parsed VkExternalFormatQNX, zeroed first
  *
  * \retval     None
@@ -36,7 +36,7 @@ void cvkParseJsonExternalFormatQNX(const cvkJsonContext* pContext, const cvkJson
  * \brief Parses a VkImportScreenBufferInfoQNX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkImportScreenBufferInfoQNX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkImportScreenBufferInfoQNX members, or NULL for a zeroed VkImportScreenBufferInfoQNX
  * \param[out] pInfo      Receives the parsed VkImportScreenBufferInfoQNX, zeroed first
  *
  * \retval     None
@@ -48,7 +48,7 @@ void cvkParseJsonImportScreenBufferInfoQNX(const cvkJsonContext* pContext, const
  * \brief Parses a VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX members, or NULL for a zeroed VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX
  * \param[out] pInfo      Receives the parsed VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX, zeroed first
  *
  * \retval     None
@@ -60,7 +60,7 @@ void cvkParseJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(const cvkJs
  * \brief Parses a VkScreenBufferFormatPropertiesQNX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkScreenBufferFormatPropertiesQNX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkScreenBufferFormatPropertiesQNX members, or NULL for a zeroed VkScreenBufferFormatPropertiesQNX
  * \param[out] pInfo      Receives the parsed VkScreenBufferFormatPropertiesQNX, zeroed first
  *
  * \retval     None
@@ -72,7 +72,7 @@ void cvkParseJsonScreenBufferFormatPropertiesQNX(const cvkJsonContext* pContext,
  * \brief Parses a VkScreenBufferPropertiesQNX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkScreenBufferPropertiesQNX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkScreenBufferPropertiesQNX members, or NULL for a zeroed VkScreenBufferPropertiesQNX
  * \param[out] pInfo      Receives the parsed VkScreenBufferPropertiesQNX, zeroed first
  *
  * \retval     None
@@ -84,7 +84,7 @@ void cvkParseJsonScreenBufferPropertiesQNX(const cvkJsonContext* pContext, const
  * \brief Parses a VkScreenSurfaceCreateInfoQNX from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkScreenSurfaceCreateInfoQNX
+ * \param[in]  pObject    JSON object from pContext's document holding the VkScreenSurfaceCreateInfoQNX members, or NULL for a zeroed VkScreenSurfaceCreateInfoQNX
  * \param[out] pInfo      Receives the parsed VkScreenSurfaceCreateInfoQNX, zeroed first
  *
  * \retval     None

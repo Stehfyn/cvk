@@ -225,20 +225,20 @@ void cvkInitPhysicalDeviceDisplacementMicromapPropertiesNV(VkPhysicalDeviceDispl
  *
  * \param[out] pInfo                                    Receives the initialized VkPhysicalDevicePortabilitySubsetFeaturesKHR
  * \param[in]  pNext                                    Optional extension chain attached to VkPhysicalDevicePortabilitySubsetFeaturesKHR, or NULL
- * \param[in]  constantAlphaColorBlendFactors           Indicates whether this implementation supports constant alpha framebuffer-blendfactors used as source or destination color framebuffer-blending
- * \param[in]  events                                   Indicates whether this implementation supports synchronization using synchronization-events
+ * \param[in]  constantAlphaColorBlendFactors           Indicates whether constant alpha blend factors can be used as source or destination color blend factors
+ * \param[in]  events                                   Indicates whether this implementation supports synchronization using VkEvent objects
  * \param[in]  imageViewFormatReinterpretation          Indicates whether this implementation supports a VkImageView being created with a texel format containing a different number of components, or a different number of bits in each component, than the texel format of the underlying VkImage
  * \param[in]  imageViewFormatSwizzle                   Indicates whether this implementation supports remapping format components using VkImageViewCreateInfo::components
  * \param[in]  imageView2DOn3DImage                     Indicates whether this implementation supports a VkImage being created with the VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT flag set, permitting a 2D or 2D array image view to be created on a 3D VkImage
  * \param[in]  multisampleArrayImage                    Indicates whether this implementation supports a VkImage being created as a 2D array with multiple samples per texel
  * \param[in]  mutableComparisonSamplers                Indicates whether this implementation allows descriptors with comparison samplers to be updated
- * \param[in]  pointPolygons                            Indicates whether this implementation supports primsrast using a point primsrast-polygonmode
+ * \param[in]  pointPolygons                            Indicates whether this implementation supports rasterizing polygons with VK_POLYGON_MODE_POINT
  * \param[in]  samplerMipLodBias                        Indicates whether this implementation supports setting a mipmap LOD bias value when creating a sampler
- * \param[in]  separateStencilMaskRef                   Indicates whether this implementation supports separate front and back fragops-stencil reference values
+ * \param[in]  separateStencilMaskRef                   Indicates whether this implementation supports separate front and back stencil reference values
  * \param[in]  shaderSampleRateInterpolationFunctions   Indicates whether this implementation supports fragment shaders which use the InterpolationFunction capability and the extended instructions InterpolateAtCentroid, InterpolateAtOffset, and InterpolateAtSample from the GLSL.std.450 extended instruction set
- * \param[in]  tessellationIsolines                     Indicates whether this implementation supports isoline output from the tessellation stage of a graphics pipeline
- * \param[in]  tessellationPointMode                    Indicates whether this implementation supports point output from the tessellation stage of a graphics pipeline
- * \param[in]  triangleFans                             Indicates whether this implementation supports drawing-triangle-fans primitive topology
+ * \param[in]  tessellationIsolines                     Indicates whether this implementation supports isoline output from the Tessellation stage of a graphics pipeline
+ * \param[in]  tessellationPointMode                    Indicates whether this implementation supports point output from the Tessellation stage of a graphics pipeline
+ * \param[in]  triangleFans                             Indicates whether this implementation supports the VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN primitive topology
  * \param[in]  vertexAttributeAccessBeyondStride        Indicates whether this implementation supports accessing a vertex input attribute beyond the stride of the corresponding vertex input binding
  *
  * \retval     None
@@ -427,7 +427,7 @@ void cvkCreateCudaModuleNV(VkDevice device, const void* pNext, size_t dataSize, 
  * \param[in]  device            The logical device that creates the execution graph pipelines
  * \param[in]  pipelineCache     Either VK_NULL_HANDLE, indicating that pipeline caching is disabled; or the handle of a valid pipeline cache object, in which case use of that cache is enabled for the duration of the command
  * \param[in]  createInfoCount   The length of the pCreateInfos and pPipelines arrays
- * \param[in]  pCreateInfos      A pointer to an array of VkExecutionGraphPipelineCreateInfoAMDX structures
+ * \param[in]  pCreateInfos      A pointer to an array of createInfoCount VkExecutionGraphPipelineCreateInfoAMDX structures, one per pipeline
  * \param[in]  pAllocator        Optional allocation callbacks, or NULL
  * \param[out] pPipelines        A pointer to an array of VkPipeline handles in which the resulting execution graph pipeline objects are returned
  *
@@ -440,7 +440,7 @@ VkResult cvkCreateExecutionGraphPipelinesAMDX(VkDevice device, VkPipelineCache p
 /**
  * \brief Destroys a cuda function.
  *
- * \param[in] device       The logical device that destroys the Function
+ * \param[in] device       The logical device that destroys the CUDA function
  * \param[in] function     The handle of the CUDA function to destroy
  * \param[in] pAllocator   Optional allocation callbacks, or NULL
  *
@@ -464,13 +464,13 @@ void cvkDestroyCudaModuleNV(VkDevice device, VkCudaModuleNV module, const VkAllo
 /**
  * \brief Retrieves cuda module cache.
  *
- * \param[in]  device       The logical device that destroys the Function
- * \param[in]  module       The CUDA module
- * \param[out] pCacheSize   A pointer containing the amount of bytes to be copied in pCacheData
- * \param[out] pCacheData   A pointer to a buffer in which to copy the binary cache
+ * \param[in]     device       The logical device that owns the CUDA module
+ * \param[in]     module       CUDA module whose binary cache is retrieved
+ * \param[in,out] pCacheSize   On input the byte capacity of pCacheData, on output the bytes written or required; tag it [in,out]
+ * \param[out]    pCacheData   A pointer to a buffer in which to copy the binary cache
  *
- * \retval     VK_SUCCESS      Command successfully completed.
- * \retval     VK_INCOMPLETE   A return array was too small for the result.
+ * \retval        VK_SUCCESS      Command successfully completed.
+ * \retval        VK_INCOMPLETE   A return array was too small for the result.
  */
 VkResult cvkGetCudaModuleCacheNV(VkDevice device, VkCudaModuleNV module, size_t* pCacheSize, void* pCacheData);
 
@@ -493,12 +493,12 @@ void cvkGetExecutionGraphPipelineNodeIndexAMDX(VkDevice device, VkPipeline execu
 /**
  * \brief Retrieves execution graph pipeline scratch size.
  *
- * \param[in]  device           The logical device that executionGraph was created on
- * \param[in]  executionGraph   The execution graph pipeline to query the scratch space for
- * \param[in]  pNext            Optional output extension chain attached to VkExecutionGraphPipelineScratchSizeAMDX, or NULL
- * \param[out] pSizeInfo        A pointer to a VkExecutionGraphPipelineScratchSizeAMDX structure that will contain the required scratch size
+ * \param[in]     device           The logical device that executionGraph was created on
+ * \param[in]     executionGraph   The execution graph pipeline to query the scratch space for
+ * \param[in,out] pNext            Optional output extension chain attached to VkExecutionGraphPipelineScratchSizeAMDX, or NULL
+ * \param[out]    pSizeInfo        A pointer to a VkExecutionGraphPipelineScratchSizeAMDX structure that will contain the required scratch size
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetExecutionGraphPipelineScratchSizeAMDX(VkDevice device, VkPipeline executionGraph, void* pNext, VkExecutionGraphPipelineScratchSizeAMDX* pSizeInfo);
 
@@ -506,7 +506,7 @@ void cvkGetExecutionGraphPipelineScratchSizeAMDX(VkDevice device, VkPipeline exe
 /**
  * \brief Destroys the function when it is not VK_NULL_HANDLE.
  *
- * \param[in] device       The logical device that destroys the Function
+ * \param[in] device       The logical device that destroys the CUDA function
  * \param[in] function     The handle of the CUDA function to destroy
  * \param[in] pAllocator   Optional allocation callbacks, or NULL
  *
@@ -539,7 +539,7 @@ void cvkDestroyCudaModuleSafeNV(VkDevice device, VkCudaModuleNV module, const Vk
  * \param[in]  pLibraryInfo         A pointer to a VkPipelineLibraryCreateInfoKHR structure defining pipeline libraries to include
  * \param[in]  layout               The description of binding locations used by both the pipeline and descriptor sets used with the pipeline
  * \param[in]  basePipelineHandle   A pipeline to derive from
- * \param[in]  basePipelineIndex    An index into the pCreateInfos parameter to use as a pipeline to derive from
+ * \param[in]  basePipelineIndex    Must be -1: this wrapper passes a single create info, so derive through basePipelineHandle
  * \param[in]  pAllocator           Optional allocation callbacks, or NULL
  * \param[out] pPipeline            Receives the created VkPipeline
  *
@@ -561,7 +561,7 @@ VkResult cvkCreateExecutionGraphPipelineInfoAMDX(VkDevice device, VkPipelineCach
  * \param[in]  pLibraryInfo           A pointer to a VkPipelineLibraryCreateInfoKHR structure defining pipeline libraries to include
  * \param[in]  layout                 The description of binding locations used by both the pipeline and descriptor sets used with the pipeline
  * \param[in]  basePipelineHandle     A pipeline to derive from
- * \param[in]  basePipelineIndex      An index into the pCreateInfos parameter to use as a pipeline to derive from
+ * \param[in]  basePipelineIndex      Must be -1: this wrapper passes a single create info, so derive through basePipelineHandle
  * \param[in]  pAllocator             Optional allocation callbacks, or NULL
  * \param[out] pPipeline              Receives the created VkPipeline
  *
@@ -576,16 +576,16 @@ VkResult cvkCreateExecutionGraphPipelineInfoWithCompilerControlInfoAMDXAMD(VkDev
  * \param[in]  device                               The logical device that creates the execution graph pipelines
  * \param[in]  pipelineCache                        Either VK_NULL_HANDLE, indicating that pipeline caching is disabled; or the handle of a valid pipeline cache object, in which case use of that cache is enabled for the duration of the command
  * \param[in]  pNext                                Optional extension chain attached to VkExecutionGraphPipelineCreateInfoAMDX, or NULL
- * \param[out] pPipelineCreationFeedback            A pointer to a VkPipelineCreationFeedback structure
+ * \param[in]  pPipelineCreationFeedback            Pointer to a VkPipelineCreationFeedback that receives feedback for the pipeline as a whole
  * \param[in]  pipelineStageCreationFeedbackCount   The number of elements in pPipelineStageCreationFeedbacks
- * \param[out] pPipelineStageCreationFeedbacks      A pointer to an array of pipelineStageCreationFeedbackCount VkPipelineCreationFeedback structures
+ * \param[in]  pPipelineStageCreationFeedbacks      Array of pipelineStageCreationFeedbackCount VkPipelineCreationFeedback structures that receive per-stage feedback, in pStages order
  * \param[in]  flags                                A bitmask of VkPipelineCreateFlagBits specifying how the pipeline will be generated
  * \param[in]  stageCount                           The number of entries in the pStages array
  * \param[in]  pStages                              A pointer to an array of stageCount VkPipelineShaderStageCreateInfo structures describing the set of the shader stages to be included in the execution graph pipeline
  * \param[in]  pLibraryInfo                         A pointer to a VkPipelineLibraryCreateInfoKHR structure defining pipeline libraries to include
  * \param[in]  layout                               The description of binding locations used by both the pipeline and descriptor sets used with the pipeline
  * \param[in]  basePipelineHandle                   A pipeline to derive from
- * \param[in]  basePipelineIndex                    An index into the pCreateInfos parameter to use as a pipeline to derive from
+ * \param[in]  basePipelineIndex                    Must be -1: this wrapper passes a single create info, so derive through basePipelineHandle
  * \param[in]  pAllocator                           Optional allocation callbacks, or NULL
  * \param[out] pPipeline                            Receives the created VkPipeline
  *
@@ -597,11 +597,11 @@ VkResult cvkCreateExecutionGraphPipelineInfoWithCreationFeedbackInfoAMDX(VkDevic
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceCudaKernelLaunchFeaturesNV chained to the output.
  *
- * \param[in]  physicalDevice                              The physical device from which to query the supported features
- * \param[in]  pNext                                       Optional output extension chain attached to VkPhysicalDeviceCudaKernelLaunchFeaturesNV, or NULL
- * \param[out] pPhysicalDeviceCudaKernelLaunchFeaturesNV   Receives the structure describing whether cuda kernel launch is supported by the implementation
+ * \param[in]     physicalDevice                              The physical device from which to query the supported features
+ * \param[in,out] pNext                                       Optional output extension chain attached to VkPhysicalDeviceCudaKernelLaunchFeaturesNV, or NULL
+ * \param[out]    pPhysicalDeviceCudaKernelLaunchFeaturesNV   Receives the structure describing whether cuda kernel launch is supported by the implementation
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetPhysicalDeviceCudaKernelLaunchFeaturesNV(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceCudaKernelLaunchFeaturesNV* pPhysicalDeviceCudaKernelLaunchFeaturesNV);
 
@@ -609,11 +609,11 @@ void cvkGetPhysicalDeviceCudaKernelLaunchFeaturesNV(VkPhysicalDevice physicalDev
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX chained to the output.
  *
- * \param[in]  physicalDevice                                   The physical device from which to query the supported features
- * \param[in]  pNext                                            Optional output extension chain attached to VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX, or NULL
- * \param[out] pPhysicalDeviceDenseGeometryFormatFeaturesAMDX   Receives the structure describing dense geometry format features that can be supported by an implementation
+ * \param[in]     physicalDevice                                   The physical device from which to query the supported features
+ * \param[in,out] pNext                                            Optional output extension chain attached to VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX, or NULL
+ * \param[out]    pPhysicalDeviceDenseGeometryFormatFeaturesAMDX   Receives the structure describing dense geometry format features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetPhysicalDeviceDenseGeometryFormatFeaturesAMDX(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX* pPhysicalDeviceDenseGeometryFormatFeaturesAMDX);
 
@@ -621,11 +621,11 @@ void cvkGetPhysicalDeviceDenseGeometryFormatFeaturesAMDX(VkPhysicalDevice physic
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceDisplacementMicromapFeaturesNV chained to the output.
  *
- * \param[in]  physicalDevice                                  The physical device from which to query the supported features
- * \param[in]  pNext                                           Optional output extension chain attached to VkPhysicalDeviceDisplacementMicromapFeaturesNV, or NULL
- * \param[out] pPhysicalDeviceDisplacementMicromapFeaturesNV   Receives the structure describing the ray tracing displacement micromap features that can be supported by an implementation
+ * \param[in]     physicalDevice                                  The physical device from which to query the supported features
+ * \param[in,out] pNext                                           Optional output extension chain attached to VkPhysicalDeviceDisplacementMicromapFeaturesNV, or NULL
+ * \param[out]    pPhysicalDeviceDisplacementMicromapFeaturesNV   Receives the structure describing the ray tracing displacement micromap features that can be supported by an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetPhysicalDeviceDisplacementMicromapFeaturesNV(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceDisplacementMicromapFeaturesNV* pPhysicalDeviceDisplacementMicromapFeaturesNV);
 
@@ -633,11 +633,11 @@ void cvkGetPhysicalDeviceDisplacementMicromapFeaturesNV(VkPhysicalDevice physica
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDevicePortabilitySubsetFeaturesKHR chained to the output.
  *
- * \param[in]  physicalDevice                             The physical device from which to query the supported features
- * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDevicePortabilitySubsetFeaturesKHR, or NULL
- * \param[out] pPhysicalDevicePortabilitySubsetFeatures   Receives the structure describing the features that may not be supported by an implementation of the Vulkan 1.0 Portability Subset
+ * \param[in]     physicalDevice                             The physical device from which to query the supported features
+ * \param[in,out] pNext                                      Optional output extension chain attached to VkPhysicalDevicePortabilitySubsetFeaturesKHR, or NULL
+ * \param[out]    pPhysicalDevicePortabilitySubsetFeatures   Receives the structure describing the features that may not be supported by an implementation of the Vulkan 1.0 Portability Subset
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetPhysicalDevicePortabilitySubsetFeatures(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDevicePortabilitySubsetFeaturesKHR* pPhysicalDevicePortabilitySubsetFeatures);
 
@@ -645,11 +645,11 @@ void cvkGetPhysicalDevicePortabilitySubsetFeatures(VkPhysicalDevice physicalDevi
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderEnqueueFeaturesAMDX chained to the output.
  *
- * \param[in]  physicalDevice                             The physical device from which to query the supported features
- * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDeviceShaderEnqueueFeaturesAMDX, or NULL
- * \param[out] pPhysicalDeviceShaderEnqueueFeaturesAMDX   Receives the structure describing whether shader enqueue within execution graphs are supported by the implementation
+ * \param[in]     physicalDevice                             The physical device from which to query the supported features
+ * \param[in,out] pNext                                      Optional output extension chain attached to VkPhysicalDeviceShaderEnqueueFeaturesAMDX, or NULL
+ * \param[out]    pPhysicalDeviceShaderEnqueueFeaturesAMDX   Receives the structure describing whether shader enqueue within execution graphs are supported by the implementation
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetPhysicalDeviceShaderEnqueueFeaturesAMDX(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceShaderEnqueueFeaturesAMDX* pPhysicalDeviceShaderEnqueueFeaturesAMDX);
 
@@ -657,11 +657,11 @@ void cvkGetPhysicalDeviceShaderEnqueueFeaturesAMDX(VkPhysicalDevice physicalDevi
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceCudaKernelLaunchPropertiesNV chained to the output.
  *
- * \param[in]  physicalDevice                                The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                         Optional output extension chain attached to VkPhysicalDeviceCudaKernelLaunchPropertiesNV, or NULL
- * \param[out] pPhysicalDeviceCudaKernelLaunchPropertiesNV   Receives the structure describing the compute capability version available
+ * \param[in]     physicalDevice                                The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                         Optional output extension chain attached to VkPhysicalDeviceCudaKernelLaunchPropertiesNV, or NULL
+ * \param[out]    pPhysicalDeviceCudaKernelLaunchPropertiesNV   Receives the structure describing the compute capability version available
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetPhysicalDeviceCudaKernelLaunchPropertiesNV(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceCudaKernelLaunchPropertiesNV* pPhysicalDeviceCudaKernelLaunchPropertiesNV);
 
@@ -669,11 +669,11 @@ void cvkGetPhysicalDeviceCudaKernelLaunchPropertiesNV(VkPhysicalDevice physicalD
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceDisplacementMicromapPropertiesNV chained to the output.
  *
- * \param[in]  physicalDevice                                    The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                             Optional output extension chain attached to VkPhysicalDeviceDisplacementMicromapPropertiesNV, or NULL
- * \param[out] pPhysicalDeviceDisplacementMicromapPropertiesNV   Receives the structure describing the displacement micromap properties of a physical device
+ * \param[in]     physicalDevice                                    The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                             Optional output extension chain attached to VkPhysicalDeviceDisplacementMicromapPropertiesNV, or NULL
+ * \param[out]    pPhysicalDeviceDisplacementMicromapPropertiesNV   Receives the structure describing the displacement micromap properties of a physical device
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetPhysicalDeviceDisplacementMicromapPropertiesNV(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceDisplacementMicromapPropertiesNV* pPhysicalDeviceDisplacementMicromapPropertiesNV);
 
@@ -681,11 +681,11 @@ void cvkGetPhysicalDeviceDisplacementMicromapPropertiesNV(VkPhysicalDevice physi
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDevicePortabilitySubsetPropertiesKHR chained to the output.
  *
- * \param[in]  physicalDevice                               The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                        Optional output extension chain attached to VkPhysicalDevicePortabilitySubsetPropertiesKHR, or NULL
- * \param[out] pPhysicalDevicePortabilitySubsetProperties   Receives the structure describing additional properties supported by a portable implementation
+ * \param[in]     physicalDevice                               The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                        Optional output extension chain attached to VkPhysicalDevicePortabilitySubsetPropertiesKHR, or NULL
+ * \param[out]    pPhysicalDevicePortabilitySubsetProperties   Receives the structure describing additional properties supported by a portable implementation
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetPhysicalDevicePortabilitySubsetProperties(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDevicePortabilitySubsetPropertiesKHR* pPhysicalDevicePortabilitySubsetProperties);
 
@@ -693,11 +693,11 @@ void cvkGetPhysicalDevicePortabilitySubsetProperties(VkPhysicalDevice physicalDe
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceShaderEnqueuePropertiesAMDX chained to the output.
  *
- * \param[in]  physicalDevice                               The handle to the physical device whose properties will be queried
- * \param[in]  pNext                                        Optional output extension chain attached to VkPhysicalDeviceShaderEnqueuePropertiesAMDX, or NULL
- * \param[out] pPhysicalDeviceShaderEnqueuePropertiesAMDX   Receives the structure describing shader enqueue limits of an implementation
+ * \param[in]     physicalDevice                               The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                                        Optional output extension chain attached to VkPhysicalDeviceShaderEnqueuePropertiesAMDX, or NULL
+ * \param[out]    pPhysicalDeviceShaderEnqueuePropertiesAMDX   Receives the structure describing shader enqueue limits of an implementation
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetPhysicalDeviceShaderEnqueuePropertiesAMDX(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceShaderEnqueuePropertiesAMDX* pPhysicalDeviceShaderEnqueuePropertiesAMDX);
 /* clang-format on */

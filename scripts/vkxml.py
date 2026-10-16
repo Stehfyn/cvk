@@ -56,8 +56,12 @@ class Param:
 
     @property
     def is_output(self) -> bool:
-        """Non-const pointer to something other than void = written by the command."""
-        return self.pointer_depth > 0 and not self.is_const
+        """Non-const pointer = written by the command. Vulkan names every pointer it writes
+        through p<Name> (one exception: vkGetDrmDisplayEXT's VkDisplayKHR* display); an
+        unprefixed non-const pointer to a platform type is an object it only reads
+        (Display* dpy, wl_display* display, xcb_connection_t* connection)."""
+        return (self.pointer_depth > 0 and not self.is_const
+                and (re.match(r"p+[A-Z]", self.name) is not None or self.type.startswith("Vk")))
 
 
 @dataclass

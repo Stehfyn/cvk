@@ -156,6 +156,7 @@ class EmittedParam:
     name: str
     doc: str
     is_out: bool
+    direction: str = ""  # "in,out" when the pointee is both read and written
 
 
 class Generator:
@@ -221,7 +222,8 @@ class Generator:
                         fragments.append(fh.read().rstrip("\n"))
         self.errors: List[str] = []
         self.builders: Dict[str, str] = {}                 # struct -> its cvkInit* builder
-        self.spec_docs = vkspec.load(os.path.join(REPO_ROOT, "external", "Vulkan-Docs"))
+        self.used_param_docs: Set[str] = set()
+        self.spec_docs = vkspec.load(os.path.join(REPO_ROOT, "external", "Vulkan-Docs"), sc=self.api == "vulkansc")
         for platform in sorted(self.platforms - set(reg.platforms)):
             self.errors.append(f"unknown registry platform: {platform}")
         for platform in sorted(self.platforms - set(self.PLATFORM_INCLUDES)):
@@ -272,9 +274,12 @@ class Generator:
         """Final name of an emitted function. Declared exceptions in the policy's
         `name_overrides` table are applied here, so every caller uses the overridden name."""
         name = self.hoist_vendor(name)
-        override = self.policy.get("name_overrides", {}).get(name)
+        # Keyed by the derived name, or by origin where two origins derive the same name.
+        overrides = self.policy.get("name_overrides", {})
+        key = origin if origin in overrides else name
+        override = overrides.get(key)
         if override:
-            self.used_overrides.add(name)
+            self.used_overrides.add(key)
             name = override
         if name in self.names and self.names[name] != origin:
             self.errors.append(f"name collision: {name} from {origin} and {self.names[name]}")
@@ -288,7 +293,7 @@ class Generator:
         the suffixes move to the end in order of appearance:
         cvkCreateImageWithExternalMemoryNVInfo -> cvkCreateImageWithExternalMemoryInfoNV."""
         t = tokens(name[3:]) if name.startswith("cvk") else tokens(name)
-        tags = [x for x in t if x in VENDORS]
+        tags = list(dict.fromkeys(x for x in t if x in VENDORS))   # an ARM command with an ARM extender: ARM once
         if not tags:
             return name
         rest = [x for x in t if x not in VENDORS]
@@ -476,8 +481,16 @@ class Generator:
         return name
 
     # ---------------------------------------------------------- documentation
+    @staticmethod
+    def member_direction(m) -> str:
+        """Documentation direction of a flattened member: a non-const typed pointer member is
+        storage Vulkan writes (VkPresentInfoKHR::pResults); everything else is read."""
+        return "out" if "*" in m.full_type and not m.full_type.startswith("const") and m.type != "void" else ""
+
     def member_doc(self, s: Struct, member: str) -> str:
         """The Vulkan specification's description of a structure member, from its reference page."""
+        if f"{s.name}::{member}" in self.policy.get("member_docs", {}):
+            return self.policy["member_docs"][f"{s.name}::{member}"]
         for page in (s.name, s.alias_of):
             if (page, member) in self.spec_docs:
                 return self.spec_docs[(page, member)]
@@ -682,10 +695,10 @@ class Generator:
                         fields.append(("pNext", pn))
                         continue
                     if m.array_len:
-                        params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, self.member_doc(s, m.name), False))
+                        params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, self.member_doc(s, m.name), False, self.member_direction(m)))
                         arrays.append((m.name, m.name))
                     else:
-                        params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, self.member_doc(s, m.name), False))
+                        params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, self.member_doc(s, m.name), False, self.member_direction(m)))
                         fields.append((m.name, m.name))
                     pre += self.member_assert(m, "", s.members)
                 members = [pn if m.name == "pNext" else m.name for m in s.members if m.name != "sType"]
@@ -700,7 +713,7 @@ class Generator:
                 s = reg.struct_of(p.type)
                 stem = p.name[1:] if p.name.startswith("p") else p.name
                 pn = "pNext" if filled == 1 else f"p{stem}Next"
-                params.append(EmittedParam(f"void* {pn}", pn, f"Optional output extension chain attached to {s.name}, or NULL", False))
+                params.append(EmittedParam(f"void* {pn}", pn, f"Optional output extension chain attached to {s.name}, or NULL", False, "in,out"))
                 params.append(EmittedParam(f"{p.full_type} {p.name}", p.name, self.command_doc(cmd, p.name), True))
                 pre.append(f"CVK_ASSERT(NULL != {p.name});")
                 var = snake(p.name)
@@ -733,7 +746,8 @@ class Generator:
                     call_args.append(p.name)
             else:
                 text = f"{p.full_type} {p.name}[{p.array_len}]" if p.array_len else f"{p.full_type} {p.name}"
-                params.append(EmittedParam(text, p.name, self.param_doc(cmd, p), p.is_output))
+                sized = p.is_output and any(q is not p and q.len and p.name in q.len.split(",") for q in cmd.params)
+                params.append(EmittedParam(text, p.name, self.param_doc(cmd, p), p.is_output, "in,out" if sized else ""))
                 if p.is_output:
                     if not (p.optional and p.optional[0]):
                         pre.append(f"CVK_ASSERT(NULL != {p.name});")
@@ -884,6 +898,8 @@ class Generator:
 
     def command_doc(self, cmd: Command, name: str) -> str:
         """The Vulkan specification's description of a command parameter, from its reference page."""
+        if f"{cmd.name}::{name}" in self.policy.get("member_docs", {}):
+            return self.policy["member_docs"][f"{cmd.name}::{name}"]
         for page in (cmd.name, cmd.alias_of):
             if (page, name) in self.spec_docs:
                 return self.spec_docs[(page, name)]
@@ -911,7 +927,7 @@ class Generator:
             return ""
         lines = ["/**", f" * \\brief {brief}", " *"]
         for p in params:
-            lines.append(f" * \\param[{'out' if p.is_out else 'in'}] {p.name} {p.doc}")
+            lines.append(f" * \\param[{p.direction or ('out' if p.is_out else 'in')}] {p.name} {p.doc}")
         if ret == "void":
             rows = ["None"]
         elif ret == "VkResult":
@@ -930,12 +946,35 @@ class Generator:
         lines.append(" */")
         return "\n".join(lines) + "\n"
 
+    def override_param_docs(self, decl: str) -> str:
+        """policy param_docs {"cvkFunction::param": description}: a reviewed description where the
+        specification's or the generator's text does not fit this wrapper's parameter."""
+        overrides = self.policy.get("param_docs", {})
+        name = re.search(r"\b(cvk\w+)\s*\(", decl.split("*/")[-1])
+        if not (overrides or self.policy.get("param_directions")) or not name:
+            return decl
+
+        directions = self.policy.get("param_directions", {})
+
+        def swap(m: re.Match) -> str:
+            key = f"{name.group(1)}::{m.group(3)}"
+            tag, text = m.group(2), m.group(4)
+            if key in directions:
+                self.used_param_docs.add(key)
+                tag = directions[key]
+            if key in overrides:
+                self.used_param_docs.add(key)
+                text = overrides[key]
+            return f"{m.group(1)}{tag}] {m.group(3)} {text}"
+        return re.sub(r"(?m)^( \* \\param\[)([^\]]*)\] +(\w+) +(.*)$", swap, decl)
+
     def place(self, plats: frozenset, decl: str, defn: str, *, json: bool = False) -> None:
         """Route an emitted function to the core files or to exactly one platform's files."""
         if len(plats) > 1:
             self.errors.append(f"entity spans several platforms {sorted(plats)}: {decl.splitlines()[-1]}")
             return
         key = next(iter(plats)) if plats else ""
+        decl = self.override_param_docs(decl)
         # These mutable pointers are Vulkan output storage. The wrapper stores or forwards
         # them; their pointees are written later by the driver.
         output_pointer_functions = {
@@ -1038,11 +1077,11 @@ class Generator:
                 if m.name in ("sType", "pNext"):
                     continue
                 if m.array_len:
-                    params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, self.member_doc(s, m.name), False))
+                    params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, self.member_doc(s, m.name), False, self.member_direction(m)))
                     body.append(f"cvkCopyMemory(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));")
                     arrays.append(m)
                 else:
-                    params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, self.member_doc(s, m.name), False))
+                    params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, self.member_doc(s, m.name), False, self.member_direction(m)))
                     body.append(f"pInfo->{m.name} = {m.name};")
                     fields.append((m.name, m.name))
         # Returned-only builders set chain headers without overwriting output members.
@@ -1064,10 +1103,10 @@ class Generator:
             name = self.register("cvkInit" + self.struct_short(s) + cap, f"{s.name}::{m.name}")
             params = [EmittedParam(f"{s.name}* pInfo", "pInfo", f"Receives the initialized {s.name}", True)]
             if m.array_len:
-                params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, self.member_doc(s, m.name), False))
+                params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, self.member_doc(s, m.name), False, self.member_direction(m)))
                 body = [f"cvkCopyMemory(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));"]
             else:
-                params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, self.member_doc(s, m.name), False))
+                params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, self.member_doc(s, m.name), False, self.member_direction(m)))
                 body = [f"pInfo->{m.name} = {m.name};"]
             if self.designated_initializers:
                 body = self.designated_builder_body(s, [] if m.array_len else [(m.name, m.name)], [m] if m.array_len else [])
@@ -1382,14 +1421,23 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             self.sigs[name] = (ret, params)
             self.place_json(frozenset(), doc + sig + ";", sig + "\n{\n" + indent("\n".join(body)) + "\n}")
         # enumerations and flag bits
-        enum_aliases = {entry.get("name"): entry.get("alias") for entry in ET.parse(self.reg.path).iter("enum")
+        enum_entries = list(ET.parse(self.reg.path).iter("enum"))
+        enum_aliases = {entry.get("name"): entry.get("alias") for entry in enum_entries
                         if entry.get("name") and entry.get("alias")}
+        zero_enumerants = {entry.get("name") for entry in enum_entries if entry.get("value") in ("0", "0x0", "0x00000000")}
         for enum in sorted(self.reg.enums):
             if not enum.startswith("Vk") or not self.json_type_required(enum) or enum in self.reg.type_aliases:
                 continue
             values = self.json_enum_values(enum)
             name = self.register("cvkParseJson" + self.enum_short(enum), f"json:{enum}")
-            params = [EmittedParam("const cvkJsonValue* pValue", "pValue", "The value: an enumerant name or a number, or NULL", False)]
+            zero = next((v for v in values if (enum_aliases.get(v) or v) in zero_enumerants), None)
+            if not values or enum in self.reg.enums64:
+                value_doc = "JSON value holding an enumerant name or its number, or NULL for 0"
+            elif zero:
+                value_doc = f"JSON value holding an enumerant name or its number, or NULL for {zero}"
+            else:
+                value_doc = f"JSON value holding an enumerant name or its number; must not be NULL ({enum} has no zero value)"
+            params = [EmittedParam("const cvkJsonValue* pValue", "pValue", value_doc, False)]
             body = []
             if values:
                 body += ["uint64_t enumerant;"]
@@ -1428,7 +1476,9 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             bits = self.reg.bitmasks[flags]
             values = self.json_enum_values(bits) if bits and self.json_type_required(bits) else []
             name = self.register("cvkParseJson" + self.enum_short(flags), f"json:{flags}")
-            params = [EmittedParam("const cvkJsonValue* pValue", "pValue", "The value: bit names joined by |, a number, or NULL", False)]
+            value_doc = (f"JSON value holding {bits} names joined by |, or a number; NULL reads as 0" if values
+                         else "JSON number holding the flags, or NULL for 0")
+            params = [EmittedParam("const cvkJsonValue* pValue", "pValue", value_doc, False)]
             body = []
             if values:
                 body += self.json_name_table(values, bits in self.reg.enums64)
@@ -1448,7 +1498,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
                 continue
             name = self.register("cvkParseJson" + self.struct_short(s), f"json:{s.name}")
             params = [EmittedParam(ctx, "pContext", "Parsing context: document, arena, handle resolver", False),
-                      EmittedParam("const cvkJsonValue* pObject", "pObject", f"The JSON object of the {s.name}", False),
+                      EmittedParam("const cvkJsonValue* pObject", "pObject", f"JSON object from pContext's document holding the {s.name} members, or NULL for a zeroed {s.name}", False),
                       EmittedParam(f"{s.name}* pInfo", "pInfo", f"Receives the parsed {s.name}, zeroed first", True)]
             body: List[str] = []
             needs_index = needs_storage = needs_inner = False
@@ -1497,8 +1547,8 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             worker = "cvkReadJson" + self.struct_short(s)
             worker_sig = f"void {worker}(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)"
             worker_doc = ("/**\n * \\brief Reads one structure and appends its nested objects to the work stack.\n"
-                          " * \\param[in,out] pWork Bounded parse workspace.\n"
-                          " * \\param[in] pObject JSON object to read.\n"
+                          " * \\param[in,out] pWork Parse work stack: supplies the document context and receives this structure's nested objects\n"
+                          f" * \\param[in] pObject JSON object whose keys are {s.name} member names, or NULL; absent keys leave their members zero\n"
                           f" * \\param[out] pOutput Storage for the {s.name}\n"
                           " * \\retval None\n */\n")
             self.json_worker_decls.append(worker_doc + worker_sig + ";")
@@ -1539,6 +1589,12 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
         struct names the form, verb removed once (vkQueueSubmit -> cvkQueueSubmitInfo,
         vkBindImageMemory2 -> cvkBindImageMemoryInfo)."""
         base = self.with_base(cmd)
+        if base.endswith("ies"):
+            # vkCmdWriteAccelerationStructuresPropertiesKHR: the array's word is the plural, not Properties.
+            for p in cmd.params:
+                word = p.name[1:] if p.len and p.name.startswith("p") else ""
+                if word.endswith("s") and word in base:
+                    return base.replace(word, word[:-1], 1)
         if base.endswith("s"):
             return base[:-1]
         if s is not None:
@@ -1608,10 +1664,10 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
                         params.append(EmittedParam(f"{self.pnext_type(s)} pNext", "pNext", f"Optional extension chain attached to {s.name}, or NULL", False))
                         fields.append(("pNext", "pNext"))
                     elif m.array_len:
-                        params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, self.member_doc(s, m.name), False))
+                        params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, self.member_doc(s, m.name), False, self.member_direction(m)))
                         arrays.append((m.name, m.name))
                     else:
-                        params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, self.member_doc(s, m.name), False))
+                        params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, self.member_doc(s, m.name), False, self.member_direction(m)))
                         fields.append((m.name, m.name))
                 body += self.struct_initialization(s, var, fields, arrays)
                 args.append(f"&{var}")
@@ -1687,7 +1743,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
                     # Two structs are filled here, so the output chain takes its stem name.
                     out_stem = p_out.name[1:] if p_out.name.startswith("p") else p_out.name
                     renamed = f"p{out_stem}Next"
-                    params.append(EmittedParam(f"void* {renamed}", renamed, p.doc, False))
+                    params.append(EmittedParam(f"void* {renamed}", renamed, p.doc, False, p.direction))
                     args.append(renamed)
                     continue
                 params.append(p)
@@ -1700,10 +1756,10 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
                     params.append(EmittedParam(f"{self.pnext_type(s)} {pn}", pn, f"Optional extension chain attached to {s.name}, or NULL", False))
                     fields.append(("pNext", pn))
                 elif m.array_len:
-                    params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, self.member_doc(s, m.name), False))
+                    params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, self.member_doc(s, m.name), False, self.member_direction(m)))
                     arrays.append((m.name, m.name))
                 else:
-                    params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, self.member_doc(s, m.name), False))
+                    params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, self.member_doc(s, m.name), False, self.member_direction(m)))
                     fields.append((m.name, m.name))
             args.append(f"&{var}")
         body += self.struct_initialization(s, var, fields, arrays)
@@ -1766,10 +1822,11 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
         call = f"{t0}({', '.join(args)})"
         body.append(("return " if ret != "void" else "") + call + ";")
         eparams = [EmittedParam(p, p.split()[-1].split("[")[0], "", False) for p in all_params]
-        base_docs = {p.name: p.doc for p in self.sigs[t0][1]}
+        base = {p.name: p for p in self.sigs[t0][1]}
         for e in eparams:
-            e.doc = ext_docs[e.name] if e.text in ext_params else base_docs.get(e.name, f"Optional extension chain attached to {ext.name}, or NULL")
-            e.is_out = e.text.split()[-1].startswith("p") and not e.text.startswith("const") and "*" in e.text
+            e.doc = ext_docs[e.name] if e.text in ext_params else (base[e.name].doc if e.name in base else f"Optional extension chain attached to {ext.name}, or NULL")
+            e.is_out = e.text not in ext_params and e.name in base and base[e.name].is_out
+            e.direction = base[e.name].direction if e.text not in ext_params and e.name in base else ""
         doc = self.doc_block(f"{self.brief(cmd)[:-1]} with {ext.name} chained.", eparams, ret, None, [])
         sig = self.signature(ret, name, eparams)
         self.sigs[name] = (ret, eparams)
@@ -1802,7 +1859,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
         cap = name[0].upper() + name[1:]
         if cap.endswith("Index"):
             return "p" + cap[:-5] + "Indices"
-        if cap.endswith("y"):
+        if cap.endswith("y") and cap[-2:-1] not in ("a", "e", "o", "u"):   # replay -> pReplays
             return "p" + cap[:-1] + "ies"
         if cap.endswith("s"):
             return "p" + cap
@@ -1913,7 +1970,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             elif p.name in singles:
                 elem_type = p.text.rsplit(" ", 1)[0][len("const "):].rstrip("*").strip()
                 member = singles[p.name]
-                s_params.append(EmittedParam(f"{elem_type} {member}", member, p.doc[: -len(" per element")], False))
+                s_params.append(EmittedParam(f"{elem_type} {member}", member, p.doc.removesuffix(", one per element."), False))
                 s_args.append(f"&{member}")
             else:
                 s_params.append(p)
@@ -1984,7 +2041,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
         var = self.struct_local_name(ext, {p.name for p in t_params} | {base_var, "result", ext_out, ext_next})
         for p in t_params:
             if p is chain_param:
-                params.append(EmittedParam(f"void* {ext_next}", ext_next, f"Optional output extension chain attached to {ext.name}, or NULL", False))
+                params.append(EmittedParam(f"void* {ext_next}", ext_next, f"Optional output extension chain attached to {ext.name}, or NULL", False, "in,out"))
                 args.append(f"&{var}")
             elif p.name == op.name:
                 args.append(f"&{base_var}")
@@ -2432,7 +2489,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
                     if p.name == "pNext" and product:          # an already qualified p<X>Next keeps its name
                         pname = "p" + product[0].upper() + product[1:] + "Next"
                     if pname not in inputs:
-                        inputs[pname] = EmittedParam(f"{ptype} {pname}", pname, self.step_param_doc(p.doc), False)
+                        inputs[pname] = EmittedParam(f"{ptype} {pname}", pname, self.step_param_doc(p.doc), False, p.direction)
                     elif inputs[pname].text != f"{ptype} {pname}":
                         # Two steps want the same name for different things (a shader module's flags
                         # and a pipeline's flags): the policy must bind one of them explicitly.
@@ -3086,8 +3143,14 @@ def main() -> None:
     reg = Registry.load(os.path.join(REPO_ROOT, policy["registry"]) if "registry" in policy else Registry.load.__defaults__[0], policy.get("api", "vulkan"))
     g = Generator(reg, policy)
     g.run()
+    profile_commands = {c.name for c in g.cmds}
     for stale in sorted(set(policy.get("name_overrides", {})) - g.used_overrides):
-        g.errors.append(f"name_overrides entry never matched a generated name: {stale}")
+        if ":" not in stale or stale.split(":")[0] in profile_commands:   # origin keys apply to their profile only
+            g.errors.append(f"name_overrides entry never matched a generated name: {stale}")
+    # A profile may lack a function (Vulkan SC); an override for a present function must match.
+    for stale in sorted((set(policy.get("param_docs", {})) | set(policy.get("param_directions", {}))) - g.used_param_docs):
+        if stale.split("::")[0] in g.sigs:
+            g.errors.append(f"param_docs entry never matched a documented parameter: {stale}")
     if g.errors:
         for e in g.errors:
             print("error:", e)

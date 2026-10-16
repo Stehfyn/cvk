@@ -14,7 +14,7 @@
 /**
  * \brief Parses a VkSciSyncClientTypeNV from JSON.
  *
- * \param[in] pValue   The value: an enumerant name or a number, or NULL
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_NV
  *
  * \retval    VkSciSyncClientTypeNV   The parsed value.
  */
@@ -24,7 +24,7 @@ VkSciSyncClientTypeNV scvkParseJsonSciSyncClientTypeNV(const scvkJsonValue* pVal
 /**
  * \brief Parses a VkSciSyncPrimitiveTypeNV from JSON.
  *
- * \param[in] pValue   The value: an enumerant name or a number, or NULL
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for VK_SCI_SYNC_PRIMITIVE_TYPE_FENCE_NV
  *
  * \retval    VkSciSyncPrimitiveTypeNV   The parsed value.
  */
@@ -35,7 +35,7 @@ VkSciSyncPrimitiveTypeNV scvkParseJsonSciSyncPrimitiveTypeNV(const scvkJsonValue
  * \brief Parses a VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV members, or NULL for a zeroed VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV
  * \param[out] pInfo      Receives the parsed VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV, zeroed first
  *
  * \retval     None
@@ -47,7 +47,7 @@ void scvkParseJsonDeviceSemaphoreSciSyncPoolReservationCreateInfoNV(const scvkJs
  * \brief Parses a VkExportFenceSciSyncInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkExportFenceSciSyncInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkExportFenceSciSyncInfoNV members, or NULL for a zeroed VkExportFenceSciSyncInfoNV
  * \param[out] pInfo      Receives the parsed VkExportFenceSciSyncInfoNV, zeroed first
  *
  * \retval     None
@@ -59,7 +59,7 @@ void scvkParseJsonExportFenceSciSyncInfoNV(const scvkJsonContext* pContext, cons
  * \brief Parses a VkExportMemorySciBufInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkExportMemorySciBufInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkExportMemorySciBufInfoNV members, or NULL for a zeroed VkExportMemorySciBufInfoNV
  * \param[out] pInfo      Receives the parsed VkExportMemorySciBufInfoNV, zeroed first
  *
  * \retval     None
@@ -71,7 +71,7 @@ void scvkParseJsonExportMemorySciBufInfoNV(const scvkJsonContext* pContext, cons
  * \brief Parses a VkExportSemaphoreSciSyncInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkExportSemaphoreSciSyncInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkExportSemaphoreSciSyncInfoNV members, or NULL for a zeroed VkExportSemaphoreSciSyncInfoNV
  * \param[out] pInfo      Receives the parsed VkExportSemaphoreSciSyncInfoNV, zeroed first
  *
  * \retval     None
@@ -83,7 +83,7 @@ void scvkParseJsonExportSemaphoreSciSyncInfoNV(const scvkJsonContext* pContext, 
  * \brief Parses a VkFenceGetSciSyncInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkFenceGetSciSyncInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkFenceGetSciSyncInfoNV members, or NULL for a zeroed VkFenceGetSciSyncInfoNV
  * \param[out] pInfo      Receives the parsed VkFenceGetSciSyncInfoNV, zeroed first
  *
  * \retval     None
@@ -95,7 +95,7 @@ void scvkParseJsonFenceGetSciSyncInfoNV(const scvkJsonContext* pContext, const s
  * \brief Parses a VkImportFenceSciSyncInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkImportFenceSciSyncInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkImportFenceSciSyncInfoNV members, or NULL for a zeroed VkImportFenceSciSyncInfoNV
  * \param[out] pInfo      Receives the parsed VkImportFenceSciSyncInfoNV, zeroed first
  *
  * \retval     None
@@ -107,7 +107,7 @@ void scvkParseJsonImportFenceSciSyncInfoNV(const scvkJsonContext* pContext, cons
  * \brief Parses a VkImportMemorySciBufInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkImportMemorySciBufInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkImportMemorySciBufInfoNV members, or NULL for a zeroed VkImportMemorySciBufInfoNV
  * \param[out] pInfo      Receives the parsed VkImportMemorySciBufInfoNV, zeroed first
  *
  * \retval     None
@@ -119,7 +119,7 @@ void scvkParseJsonImportMemorySciBufInfoNV(const scvkJsonContext* pContext, cons
  * \brief Parses a VkImportSemaphoreSciSyncInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkImportSemaphoreSciSyncInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkImportSemaphoreSciSyncInfoNV members, or NULL for a zeroed VkImportSemaphoreSciSyncInfoNV
  * \param[out] pInfo      Receives the parsed VkImportSemaphoreSciSyncInfoNV, zeroed first
  *
  * \retval     None
@@ -131,7 +131,7 @@ void scvkParseJsonImportSemaphoreSciSyncInfoNV(const scvkJsonContext* pContext, 
  * \brief Parses a VkMemoryGetSciBufInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkMemoryGetSciBufInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkMemoryGetSciBufInfoNV members, or NULL for a zeroed VkMemoryGetSciBufInfoNV
  * \param[out] pInfo      Receives the parsed VkMemoryGetSciBufInfoNV, zeroed first
  *
  * \retval     None
@@ -143,7 +143,7 @@ void scvkParseJsonMemoryGetSciBufInfoNV(const scvkJsonContext* pContext, const s
  * \brief Parses a VkMemorySciBufPropertiesNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkMemorySciBufPropertiesNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkMemorySciBufPropertiesNV members, or NULL for a zeroed VkMemorySciBufPropertiesNV
  * \param[out] pInfo      Receives the parsed VkMemorySciBufPropertiesNV, zeroed first
  *
  * \retval     None
@@ -155,7 +155,7 @@ void scvkParseJsonMemorySciBufPropertiesNV(const scvkJsonContext* pContext, cons
  * \brief Parses a VkPhysicalDeviceExternalMemorySciBufFeaturesNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPhysicalDeviceExternalMemorySciBufFeaturesNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPhysicalDeviceExternalMemorySciBufFeaturesNV members, or NULL for a zeroed VkPhysicalDeviceExternalMemorySciBufFeaturesNV
  * \param[out] pInfo      Receives the parsed VkPhysicalDeviceExternalMemorySciBufFeaturesNV, zeroed first
  *
  * \retval     None
@@ -167,7 +167,7 @@ void scvkParseJsonPhysicalDeviceExternalMemorySciBufFeaturesNV(const scvkJsonCon
  * \brief Parses a VkPhysicalDeviceExternalSciSync2FeaturesNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPhysicalDeviceExternalSciSync2FeaturesNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPhysicalDeviceExternalSciSync2FeaturesNV members, or NULL for a zeroed VkPhysicalDeviceExternalSciSync2FeaturesNV
  * \param[out] pInfo      Receives the parsed VkPhysicalDeviceExternalSciSync2FeaturesNV, zeroed first
  *
  * \retval     None
@@ -179,7 +179,7 @@ void scvkParseJsonPhysicalDeviceExternalSciSync2FeaturesNV(const scvkJsonContext
  * \brief Parses a VkPhysicalDeviceExternalSciSyncFeaturesNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkPhysicalDeviceExternalSciSyncFeaturesNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkPhysicalDeviceExternalSciSyncFeaturesNV members, or NULL for a zeroed VkPhysicalDeviceExternalSciSyncFeaturesNV
  * \param[out] pInfo      Receives the parsed VkPhysicalDeviceExternalSciSyncFeaturesNV, zeroed first
  *
  * \retval     None
@@ -191,7 +191,7 @@ void scvkParseJsonPhysicalDeviceExternalSciSyncFeaturesNV(const scvkJsonContext*
  * \brief Parses a VkSciSyncAttributesInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkSciSyncAttributesInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkSciSyncAttributesInfoNV members, or NULL for a zeroed VkSciSyncAttributesInfoNV
  * \param[out] pInfo      Receives the parsed VkSciSyncAttributesInfoNV, zeroed first
  *
  * \retval     None
@@ -203,7 +203,7 @@ void scvkParseJsonSciSyncAttributesInfoNV(const scvkJsonContext* pContext, const
  * \brief Parses a VkSemaphoreGetSciSyncInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkSemaphoreGetSciSyncInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkSemaphoreGetSciSyncInfoNV members, or NULL for a zeroed VkSemaphoreGetSciSyncInfoNV
  * \param[out] pInfo      Receives the parsed VkSemaphoreGetSciSyncInfoNV, zeroed first
  *
  * \retval     None
@@ -215,7 +215,7 @@ void scvkParseJsonSemaphoreGetSciSyncInfoNV(const scvkJsonContext* pContext, con
  * \brief Parses a VkSemaphoreSciSyncCreateInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkSemaphoreSciSyncCreateInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkSemaphoreSciSyncCreateInfoNV members, or NULL for a zeroed VkSemaphoreSciSyncCreateInfoNV
  * \param[out] pInfo      Receives the parsed VkSemaphoreSciSyncCreateInfoNV, zeroed first
  *
  * \retval     None
@@ -227,7 +227,7 @@ void scvkParseJsonSemaphoreSciSyncCreateInfoNV(const scvkJsonContext* pContext, 
  * \brief Parses a VkSemaphoreSciSyncPoolCreateInfoNV from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkSemaphoreSciSyncPoolCreateInfoNV
+ * \param[in]  pObject    JSON object from pContext's document holding the VkSemaphoreSciSyncPoolCreateInfoNV members, or NULL for a zeroed VkSemaphoreSciSyncPoolCreateInfoNV
  * \param[out] pInfo      Receives the parsed VkSemaphoreSciSyncPoolCreateInfoNV, zeroed first
  *
  * \retval     None

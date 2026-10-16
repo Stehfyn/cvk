@@ -12,7 +12,7 @@
 /**
  * \brief Parses a VkMacOSSurfaceCreateFlagsMVK from JSON.
  *
- * \param[in] pValue   The value: bit names joined by |, a number, or NULL
+ * \param[in] pValue   JSON number holding the flags, or NULL for 0
  *
  * \retval    VkMacOSSurfaceCreateFlagsMVK   The parsed value.
  */
@@ -23,7 +23,7 @@ VkMacOSSurfaceCreateFlagsMVK cvkParseJsonMacOSSurfaceCreateFlagsMVK(const cvkJso
  * \brief Parses a VkMacOSSurfaceCreateInfoMVK from a JSON object; members absent or NULL stay zero.
  *
  * \param[in]  pContext   Parsing context: document, arena, handle resolver
- * \param[in]  pObject    The JSON object of the VkMacOSSurfaceCreateInfoMVK
+ * \param[in]  pObject    JSON object from pContext's document holding the VkMacOSSurfaceCreateInfoMVK members, or NULL for a zeroed VkMacOSSurfaceCreateInfoMVK
  * \param[out] pInfo      Receives the parsed VkMacOSSurfaceCreateInfoMVK, zeroed first
  *
  * \retval     None

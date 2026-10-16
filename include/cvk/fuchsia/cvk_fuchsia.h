@@ -15,7 +15,7 @@
  *
  * \param[out] pInfo        Receives the initialized VkBufferCollectionBufferCreateInfoFUCHSIA
  * \param[in]  pNext        Optional extension chain attached to VkBufferCollectionBufferCreateInfoFUCHSIA, or NULL
- * \param[in]  collection   The VkBufferCollectionFUCHSIA handle
+ * \param[in]  collection   The buffer collection the buffer's memory will be imported from
  * \param[in]  index        The index of the buffer in the buffer collection from which the memory will be imported
  *
  * \retval     None
@@ -56,7 +56,7 @@ void cvkInitBufferCollectionCreateInfoFUCHSIA(VkBufferCollectionCreateInfoFUCHSI
  *
  * \param[out] pInfo        Receives the initialized VkBufferCollectionImageCreateInfoFUCHSIA
  * \param[in]  pNext        Optional extension chain attached to VkBufferCollectionImageCreateInfoFUCHSIA, or NULL
- * \param[in]  collection   The VkBufferCollectionFUCHSIA handle
+ * \param[in]  collection   The buffer collection the image's memory will be imported from
  * \param[in]  index        The index of the buffer in the buffer collection from which the memory will be imported
  *
  * \retval     None
@@ -80,7 +80,7 @@ void cvkInitBufferCollectionPropertiesFUCHSIA(VkBufferCollectionPropertiesFUCHSI
  *
  * \param[out] pInfo                         Receives the initialized VkBufferConstraintsInfoFUCHSIA
  * \param[in]  pNext                         Optional extension chain attached to VkBufferConstraintsInfoFUCHSIA, or NULL
- * \param[in]  createInfo                    A pointer to a VkBufferCreateInfo struct describing the buffer attributes for the buffer collection
+ * \param[in]  createInfo                    Buffer creation parameters (by value) describing the buffer attributes for the buffer collection
  * \param[in]  requiredFormatFeatures        A bitmask of VkFormatFeatureFlagBits required features of the buffers in the buffer collection
  * \param[in]  bufferCollectionConstraints   Used to supply parameters for the negotiation and allocation of the buffer collection
  *
@@ -139,7 +139,7 @@ void cvkInitImagePipeSurfaceCreateInfoFUCHSIA(VkImagePipeSurfaceCreateInfoFUCHSI
  *
  * \param[out] pInfo        Receives the initialized VkImportMemoryBufferCollectionFUCHSIA
  * \param[in]  pNext        Optional extension chain attached to VkImportMemoryBufferCollectionFUCHSIA, or NULL
- * \param[in]  collection   The VkBufferCollectionFUCHSIA handle
+ * \param[in]  collection   The buffer collection to import memory from
  * \param[in]  index        The index of the buffer to import from collection
  *
  * \retval     None
@@ -257,7 +257,7 @@ void cvkCreateImagePipeSurfaceFUCHSIA(VkInstance instance, const void* pNext, Vk
  * \brief Destroys a buffer collection.
  *
  * \param[in] device       The logical device that creates the VkBufferCollectionFUCHSIA
- * \param[in] collection   The VkBufferCollectionFUCHSIA handle
+ * \param[in] collection   The buffer collection to destroy
  * \param[in] pAllocator   Optional allocation callbacks, or NULL
  *
  * \retval    None
@@ -268,12 +268,12 @@ void cvkDestroyBufferCollectionFUCHSIA(VkDevice device, VkBufferCollectionFUCHSI
 /**
  * \brief Retrieves buffer collection properties.
  *
- * \param[in]  device        The logical device handle
- * \param[in]  collection    The VkBufferCollectionFUCHSIA handle
- * \param[in]  pNext         Optional output extension chain attached to VkBufferCollectionPropertiesFUCHSIA, or NULL
- * \param[out] pProperties   A pointer to the retrieved VkBufferCollectionPropertiesFUCHSIA struct
+ * \param[in]     device        Logical device that owns the buffer collection
+ * \param[in]     collection    The buffer collection to query
+ * \param[in,out] pNext         Optional output extension chain attached to VkBufferCollectionPropertiesFUCHSIA, or NULL
+ * \param[out]    pProperties   A pointer to the retrieved VkBufferCollectionPropertiesFUCHSIA struct
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetBufferCollectionPropertiesFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, void* pNext, VkBufferCollectionPropertiesFUCHSIA* pProperties);
 
@@ -281,10 +281,10 @@ void cvkGetBufferCollectionPropertiesFUCHSIA(VkDevice device, VkBufferCollection
 /**
  * \brief Retrieves memory zircon handle.
  *
- * \param[in]  device          The VkDevice
+ * \param[in]  device          Logical device that owns the memory
  * \param[in]  pNext           Optional extension chain attached to VkMemoryGetZirconHandleInfoFUCHSIA, or NULL
  * \param[in]  memory          The VkDeviceMemory being exported
- * \param[in]  handleType      A VkExternalMemoryHandleTypeFlagBits value specifying the type of the handle pointed to by vkGetMemoryZirconHandleFUCHSIA::pZirconHandle
+ * \param[in]  handleType      A VkExternalMemoryHandleTypeFlagBits value specifying the type of handle returned in pZirconHandle
  * \param[out] pZirconHandle   A pointer to a zx_handle_t which holds the resulting Zircon handle
  *
  * \retval     None
@@ -295,13 +295,13 @@ void cvkGetMemoryZirconHandleFUCHSIA(VkDevice device, const void* pNext, VkDevic
 /**
  * \brief Retrieves memory zircon handle properties.
  *
- * \param[in]  device                          The VkDevice
- * \param[in]  handleType                      A VkExternalMemoryHandleTypeFlagBits value specifying the type of zirconHandle
- * \param[in]  zirconHandle                    A zx_handle_t (Zircon) handle to the external resource
- * \param[in]  pNext                           Optional output extension chain attached to VkMemoryZirconHandlePropertiesFUCHSIA, or NULL
- * \param[out] pMemoryZirconHandleProperties   A pointer to a VkMemoryZirconHandlePropertiesFUCHSIA structure in which the result will be stored
+ * \param[in]     device                          Logical device that will import zirconHandle
+ * \param[in]     handleType                      A VkExternalMemoryHandleTypeFlagBits value specifying the type of zirconHandle
+ * \param[in]     zirconHandle                    A zx_handle_t (Zircon) handle to the external resource
+ * \param[in,out] pNext                           Optional output extension chain attached to VkMemoryZirconHandlePropertiesFUCHSIA, or NULL
+ * \param[out]    pMemoryZirconHandleProperties   A pointer to a VkMemoryZirconHandlePropertiesFUCHSIA structure in which the result will be stored
  *
- * \retval     None
+ * \retval        None
  */
 void cvkGetMemoryZirconHandlePropertiesFUCHSIA(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, zx_handle_t zirconHandle, void* pNext, VkMemoryZirconHandlePropertiesFUCHSIA* pMemoryZirconHandleProperties);
 
@@ -338,10 +338,10 @@ void cvkImportSemaphoreZirconHandleFUCHSIA(VkDevice device, const void* pNext, V
 /**
  * \brief Sets buffer collection buffer constraints.
  *
- * \param[in] device                        The logical device
- * \param[in] collection                    The VkBufferCollectionFUCHSIA handle
+ * \param[in] device                        Logical device that owns the buffer collection
+ * \param[in] collection                    The buffer collection to set buffer constraints on
  * \param[in] pNext                         Optional extension chain attached to VkBufferConstraintsInfoFUCHSIA, or NULL
- * \param[in] createInfo                    A pointer to a VkBufferCreateInfo struct describing the buffer attributes for the buffer collection
+ * \param[in] createInfo                    Buffer creation parameters (by value) describing the buffer attributes for the buffer collection
  * \param[in] requiredFormatFeatures        A bitmask of VkFormatFeatureFlagBits required features of the buffers in the buffer collection
  * \param[in] bufferCollectionConstraints   Used to supply parameters for the negotiation and allocation of the buffer collection
  *
@@ -354,8 +354,8 @@ VkResult cvkSetBufferCollectionBufferConstraintsFUCHSIA(VkDevice device, VkBuffe
 /**
  * \brief Sets buffer collection image constraints.
  *
- * \param[in] device                        The logical device
- * \param[in] collection                    The VkBufferCollectionFUCHSIA handle
+ * \param[in] device                        Logical device that owns the buffer collection
+ * \param[in] collection                    The buffer collection to set image constraints on
  * \param[in] pNext                         Optional extension chain attached to VkImageConstraintsInfoFUCHSIA, or NULL
  * \param[in] formatConstraintsCount        The number of elements in pFormatConstraints
  * \param[in] pFormatConstraints            A pointer to an array of VkImageFormatConstraintsInfoFUCHSIA structures of size formatConstraintsCount that is used to further constrain buffer collection format selection for image-based buffer collections
@@ -372,7 +372,7 @@ VkResult cvkSetBufferCollectionImageConstraintsFUCHSIA(VkDevice device, VkBuffer
  * \brief Destroys the collection when it is not VK_NULL_HANDLE.
  *
  * \param[in] device       The logical device that creates the VkBufferCollectionFUCHSIA
- * \param[in] collection   The VkBufferCollectionFUCHSIA handle
+ * \param[in] collection   The buffer collection to destroy
  * \param[in] pAllocator   Optional allocation callbacks, or NULL
  *
  * \retval    None
@@ -385,7 +385,7 @@ void cvkDestroyBufferCollectionSafeFUCHSIA(VkDevice device, VkBufferCollectionFU
  *
  * \param[in]  device            The logical device that owns the memory
  * \param[in]  pNext             Optional extension chain attached to VkMemoryAllocateInfo, or NULL
- * \param[in]  collection        The VkBufferCollectionFUCHSIA handle
+ * \param[in]  collection        The buffer collection to import memory from
  * \param[in]  index             The index of the buffer to import from collection
  * \param[in]  allocationSize    The size of the allocation in bytes
  * \param[in]  memoryTypeIndex   An index identifying a memory type from the memoryTypes array of the VkPhysicalDeviceMemoryProperties structure
@@ -419,7 +419,7 @@ void cvkAllocateImportMemoryZirconHandleFUCHSIA(VkDevice device, const void* pNe
  *
  * \param[in]  device                  The logical device that creates the buffer object
  * \param[in]  pNext                   Optional extension chain attached to VkBufferCreateInfo, or NULL
- * \param[in]  collection              The VkBufferCollectionFUCHSIA handle
+ * \param[in]  collection              The buffer collection whose memory will back the buffer
  * \param[in]  index                   The index of the buffer in the buffer collection from which the memory will be imported
  * \param[in]  flags                   A bitmask of VkBufferCreateFlagBits specifying additional parameters of the buffer
  * \param[in]  size                    The size in bytes of the buffer to be created
@@ -439,8 +439,8 @@ void cvkCreateBufferWithBufferCollectionInfoFUCHSIA(VkDevice device, const void*
  * \brief Creates a image with VkBufferCollectionImageCreateInfoFUCHSIA chained.
  *
  * \param[in]  device                  The logical device that creates the image
- * \param[in]  pNext                   Optional extension chain attached to VkImageCreateInfo, or NULL
- * \param[in]  collection              The VkBufferCollectionFUCHSIA handle
+ * \param[in]  pNext                   Optional input extension chain attached to VkImageCreateInfo, or NULL; tag it [in] despite the non-const type
+ * \param[in]  collection              The buffer collection whose memory will back the image
  * \param[in]  index                   The index of the buffer in the buffer collection from which the memory will be imported
  * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image
  * \param[in]  imageType               A VkImageType value specifying the basic dimensionality of the image

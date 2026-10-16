@@ -16,7 +16,7 @@
  * \param[out] pInfo    Receives the initialized VkXlibSurfaceCreateInfoKHR
  * \param[in]  pNext    Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
  * \param[in]  flags    Reserved for future use; must be 0
- * \param[in]  dpy      A pointer to an Xlib Display connection to the X server
+ * \param[out] dpy      A pointer to an Xlib Display connection to the X server
  * \param[in]  window   An Xlib Window to associate the surface with
  *
  * \retval     None
@@ -30,7 +30,7 @@ void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void*
  * \param[in]  instance     The instance to associate the surface with
  * \param[in]  pNext        Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
  * \param[in]  flags        Reserved for future use; must be 0
- * \param[in]  dpy          A pointer to an Xlib Display connection to the X server
+ * \param[out] dpy          A pointer to an Xlib Display connection to the X server
  * \param[in]  window       An Xlib Window to associate the surface with
  * \param[in]  pAllocator   Optional allocation callbacks, or NULL
  * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned
@@ -43,13 +43,13 @@ void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceC
 /**
  * \brief Retrieves physical device xlib presentation support.
  *
- * \param[in]  physicalDevice     The physical device
- * \param[in]  queueFamilyIndex   The queue family index
- * \param[out] dpy                A pointer to an Xlib Display connection to the server
- * \param[in]  visualID           An X11 visual (VisualID)
+ * \param[in] physicalDevice     Physical device to query
+ * \param[in] queueFamilyIndex   Queue family whose presentation support is queried
+ * \param[in] dpy                Xlib Display connection to the X server (input; tag should be [in], not [out])
+ * \param[in] visualID           An X11 visual (VisualID)
  *
- * \retval     VK_TRUE    The queried support is available.
- * \retval     VK_FALSE   The queried support is unavailable.
+ * \retval    VK_TRUE    The queried support is available.
+ * \retval    VK_FALSE   The queried support is unavailable.
  */
 VkBool32 cvkGetPhysicalDeviceXlibPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID);
 /* clang-format on */
