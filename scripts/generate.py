@@ -686,8 +686,15 @@ class Generator:
                 locals_.append("")
                 fields = [("sType", s.stype)]
                 arrays = []
+                returns = form.get("returns", {})
                 for m in s.members:
                     if m.name == "sType":
+                        continue
+                    if m.name in returns:
+                        out = returns[m.name]
+                        params.append(EmittedParam(f"{m.full_type}* {out}", out, form["docs"][out], True))
+                        pre.append(f"CVK_ASSERT(NULL != {out});")
+                        post.append(f"(*{out}) = {var}.{m.name};")
                         continue
                     if m.name == "pNext":
                         pn = "pNext" if filled == 1 else f"p{stem}Next"
@@ -701,13 +708,7 @@ class Generator:
                         params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, self.member_doc(s, m.name), False, self.member_direction(m)))
                         fields.append((m.name, m.name))
                     pre += self.member_assert(m, "", s.members)
-                members = [pn if m.name == "pNext" else m.name for m in s.members if m.name != "sType"]
-                builder = self.builders.get(s.name)
-                if builder and len(self.sigs[builder][1]) == 1 + len(members):
-                    # Tier 0 composes the struct's tier-1 builder.
-                    locals_.append(f"{builder}(&{var}, {', '.join(members)});")
-                else:
-                    locals_ += self.struct_initialization(s, var, fields, arrays)
+                locals_ += self.struct_initialization(s, var, fields, arrays)
                 call_args.append(f"&{var}")
             elif r == "P":
                 s = reg.struct_of(p.type)
@@ -1020,8 +1021,14 @@ class Generator:
 
     def struct_initialization(self, s: Struct, target: str, fields: List[Tuple[str, str]],
                               arrays: Optional[List[Tuple[str, str]]] = None) -> List[str]:
-        """Initialize wrapper-owned storage, including each element of a local array."""
+        """Initialize wrapper-owned storage, including each element of a local array. A struct
+        with a tier-1 builder is initialized by calling it; members the wrapper does not set are
+        passed as zero. Returned-only storage is zeroed first, since its builder sets only the
+        chain."""
         arrays = arrays or []
+        call = self.builder_call(s, target, fields, arrays)
+        if call is not None:
+            return call
         if (s.returnedonly or arrays) and self.designated_initializers:
             body = [f"cvkZeroMemory(&{target}, sizeof({target}));"]
             body += [f"{target}.{name} = {value};" for name, value in fields]
@@ -1030,6 +1037,39 @@ class Generator:
         else:
             body = [f"{target}.{name} = {value};" for name, value in fields]
         return body + [f"cvkCopyMemory({target}.{name}, {value}, sizeof({target}.{name}));" for name, value in arrays]
+
+    def builder_call(self, s: Struct, target: str, fields: List[Tuple[str, str]],
+                     arrays: List[Tuple[str, str]]) -> Optional[List[str]]:
+        """The struct's cvkInit* call for these values, or None when the builder cannot express them
+        (an unset struct-valued or fixed-array member has no zero argument)."""
+        builder = self.builders.get(s.name)
+        if builder is None or builder not in self.sigs:
+            return None
+        values = {name: value for name, value in fields + arrays if name != "sType"}
+        members = {m.name: m for m in s.members}
+        args = []
+        for param in self.sigs[builder][1][1:]:
+            if param.name in values:
+                args.append(values.pop(param.name))
+                continue
+            m = members.get(param.name)
+            if param.name == "pNext":
+                args.append("NULL")
+            elif m is None:
+                return None
+            elif m.array_len:
+                args.append(f"(const {m.full_type}[{self.array_extent(s, m)}]){{0}}")
+            elif not m.is_pointer and self.reg.struct_of(m.type) is not None:
+                args.append(f"({m.full_type}){{0}}")
+            else:
+                args.append(f"({m.full_type})0")
+        lines = [f"cvkZeroMemory(&{target}, sizeof({target}));"] if s.returnedonly else []
+        lines.append(f"{builder}(&{target}, {', '.join(args)});")
+        # A returned-only builder sets only the chain; caller storage it does not take follows.
+        arrays_left = dict(arrays)
+        lines += [f"{target}.{name} = {value};" for name, value in values.items() if name not in arrays_left]
+        lines += [f"cvkCopyMemory({target}.{name}, {value}, sizeof({target}.{name}));" for name, value in arrays_left.items() if name in values]
+        return lines
 
     def designated_builder_body(self, s: Struct, fields: List[Tuple[str, str]], arrays: List[Param]) -> List[str]:
         """Initialize the complete value, copying array arguments before writing pInfo."""

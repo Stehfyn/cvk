@@ -6853,10 +6853,7 @@ void scvkGetBufferMemoryRequirements2(
     VkMemoryRequirements2 memory_requirements;
 
     cvkZeroMemory(&memory_requirements, sizeof(memory_requirements));
-
-    memory_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
-    memory_requirements.pNext = pNext;
-
+    scvkInitMemoryRequirements2(&memory_requirements, pNext);
     vkGetBufferMemoryRequirements2(device, pInfo, &memory_requirements);
 
     (*pMemoryRequirements) = memory_requirements;
@@ -6891,10 +6888,7 @@ void scvkGetCommandPoolMemoryConsumption(
     VkCommandPoolMemoryConsumption consumption;
 
     cvkZeroMemory(&consumption, sizeof(consumption));
-
-    consumption.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_MEMORY_CONSUMPTION;
-    consumption.pNext = pNext;
-
+    scvkInitCommandPoolMemoryConsumption(&consumption, pNext);
     vkGetCommandPoolMemoryConsumption(device, commandPool, commandBuffer, &consumption);
 
     (*pConsumption) = consumption;
@@ -6914,10 +6908,7 @@ void scvkGetDescriptorSetLayoutSupport(
     scvkInitDescriptorSetLayoutCreateInfo(&create_info, pCreateInfoNext, flags, bindingCount, pBindings);
 
     cvkZeroMemory(&support, sizeof(support));
-
-    support.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT;
-    support.pNext = pSupportNext;
-
+    scvkInitDescriptorSetLayoutSupport(&support, pSupportNext);
     vkGetDescriptorSetLayoutSupport(device, &create_info, &support);
 
     (*pSupport) = support;
@@ -6939,10 +6930,7 @@ void scvkGetDeviceGroupPresentCapabilities(
     VkDeviceGroupPresentCapabilitiesKHR device_group_present_capabilities;
 
     cvkZeroMemory(&device_group_present_capabilities, sizeof(device_group_present_capabilities));
-
-    device_group_present_capabilities.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR;
-    device_group_present_capabilities.pNext = pNext;
-
+    scvkInitDeviceGroupPresentCapabilities(&device_group_present_capabilities, pNext);
     SCVK_CHECK(vkGetDeviceGroupPresentCapabilitiesKHR(device, &device_group_present_capabilities));
 
     (*pDeviceGroupPresentCapabilities) = device_group_present_capabilities;
@@ -7063,10 +7051,7 @@ void scvkGetDisplayPlaneCapabilities2(
     VkDisplayPlaneCapabilities2KHR capabilities;
 
     cvkZeroMemory(&capabilities, sizeof(capabilities));
-
-    capabilities.sType = VK_STRUCTURE_TYPE_DISPLAY_PLANE_CAPABILITIES_2_KHR;
-    capabilities.pNext = pNext;
-
+    scvkInitDisplayPlaneCapabilities2(&capabilities, pNext);
     SCVK_CHECK(vkGetDisplayPlaneCapabilities2KHR(physicalDevice, pDisplayPlaneInfo, &capabilities));
 
     (*pCapabilities) = capabilities;
@@ -7166,10 +7151,7 @@ void scvkGetImageDrmFormatModifierProperties(
     VkImageDrmFormatModifierPropertiesEXT properties;
 
     cvkZeroMemory(&properties, sizeof(properties));
-
-    properties.sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT;
-    properties.pNext = pNext;
-
+    scvkInitImageDrmFormatModifierProperties(&properties, pNext);
     SCVK_CHECK(vkGetImageDrmFormatModifierPropertiesEXT(device, image, &properties));
 
     (*pProperties) = properties;
@@ -7190,10 +7172,7 @@ void scvkGetImageMemoryRequirements2(
     VkMemoryRequirements2 memory_requirements;
 
     cvkZeroMemory(&memory_requirements, sizeof(memory_requirements));
-
-    memory_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
-    memory_requirements.pNext = pNext;
-
+    scvkInitMemoryRequirements2(&memory_requirements, pNext);
     vkGetImageMemoryRequirements2(device, pInfo, &memory_requirements);
 
     (*pMemoryRequirements) = memory_requirements;
@@ -7239,10 +7218,7 @@ void scvkGetMemoryFdProperties(
     VkMemoryFdPropertiesKHR memory_fd_properties;
 
     cvkZeroMemory(&memory_fd_properties, sizeof(memory_fd_properties));
-
-    memory_fd_properties.sType = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR;
-    memory_fd_properties.pNext = pNext;
-
+    scvkInitMemoryFdProperties(&memory_fd_properties, pNext);
     SCVK_CHECK(vkGetMemoryFdPropertiesKHR(device, handleType, fd, &memory_fd_properties));
 
     (*pMemoryFdProperties) = memory_fd_properties;
@@ -7257,10 +7233,7 @@ void scvkGetMemoryHostPointerProperties(
     VkMemoryHostPointerPropertiesEXT memory_host_pointer_properties;
 
     cvkZeroMemory(&memory_host_pointer_properties, sizeof(memory_host_pointer_properties));
-
-    memory_host_pointer_properties.sType = VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT;
-    memory_host_pointer_properties.pNext = pNext;
-
+    scvkInitMemoryHostPointerProperties(&memory_host_pointer_properties, pNext);
     SCVK_CHECK(vkGetMemoryHostPointerPropertiesEXT(device, handleType, pHostPointer, &memory_host_pointer_properties));
 
     (*pMemoryHostPointerProperties) = memory_host_pointer_properties;
@@ -7373,10 +7346,7 @@ void scvkGetPhysicalDeviceExternalBufferProperties(
     VkExternalBufferProperties external_buffer_properties;
 
     cvkZeroMemory(&external_buffer_properties, sizeof(external_buffer_properties));
-
-    external_buffer_properties.sType = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES;
-    external_buffer_properties.pNext = pNext;
-
+    scvkInitExternalBufferProperties(&external_buffer_properties, pNext);
     vkGetPhysicalDeviceExternalBufferProperties(physicalDevice, pExternalBufferInfo, &external_buffer_properties);
 
     (*pExternalBufferProperties) = external_buffer_properties;
@@ -7390,10 +7360,7 @@ void scvkGetPhysicalDeviceExternalFenceProperties(
     VkExternalFenceProperties external_fence_properties;
 
     cvkZeroMemory(&external_fence_properties, sizeof(external_fence_properties));
-
-    external_fence_properties.sType = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES;
-    external_fence_properties.pNext = pNext;
-
+    scvkInitExternalFenceProperties(&external_fence_properties, pNext);
     vkGetPhysicalDeviceExternalFenceProperties(physicalDevice, pExternalFenceInfo, &external_fence_properties);
 
     (*pExternalFenceProperties) = external_fence_properties;
@@ -7407,10 +7374,7 @@ void scvkGetPhysicalDeviceExternalSemaphoreProperties(
     VkExternalSemaphoreProperties external_semaphore_properties;
 
     cvkZeroMemory(&external_semaphore_properties, sizeof(external_semaphore_properties));
-
-    external_semaphore_properties.sType = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES;
-    external_semaphore_properties.pNext = pNext;
-
+    scvkInitExternalSemaphoreProperties(&external_semaphore_properties, pNext);
     vkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, pExternalSemaphoreInfo, &external_semaphore_properties);
 
     (*pExternalSemaphoreProperties) = external_semaphore_properties;
@@ -7426,12 +7390,9 @@ void scvkGetPhysicalDeviceFeatures2(
     void*                      pNext,
     VkPhysicalDeviceFeatures2* pFeatures)
 {
-    VkPhysicalDeviceFeatures2 features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceFeatures2 features;
 
+    scvkInitPhysicalDeviceFeatures2(&features, pNext, (VkPhysicalDeviceFeatures){0});
     vkGetPhysicalDeviceFeatures2(physicalDevice, &features);
 
     (*pFeatures) = features;
@@ -7452,10 +7413,7 @@ void scvkGetPhysicalDeviceFormatProperties2(
     VkFormatProperties2 format_properties;
 
     cvkZeroMemory(&format_properties, sizeof(format_properties));
-
-    format_properties.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
-    format_properties.pNext = pNext;
-
+    scvkInitFormatProperties2(&format_properties, pNext);
     vkGetPhysicalDeviceFormatProperties2(physicalDevice, format, &format_properties);
 
     (*pFormatProperties) = format_properties;
@@ -7510,9 +7468,7 @@ VkResult scvkGetPhysicalDeviceImageFormatProperties2(
     VkResult                 result;
 
     cvkZeroMemory(&image_format_properties, sizeof(image_format_properties));
-
-    image_format_properties.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
-    image_format_properties.pNext = pNext;
+    scvkInitImageFormatProperties2(&image_format_properties, pNext);
 
     result = vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, &image_format_properties);
     SCVK_ASSERT((VK_SUCCESS == result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result));
@@ -7538,10 +7494,7 @@ void scvkGetPhysicalDeviceMemoryProperties2(
     VkPhysicalDeviceMemoryProperties2 memory_properties;
 
     cvkZeroMemory(&memory_properties, sizeof(memory_properties));
-
-    memory_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
-    memory_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceMemoryProperties2(&memory_properties, pNext);
     vkGetPhysicalDeviceMemoryProperties2(physicalDevice, &memory_properties);
 
     (*pMemoryProperties) = memory_properties;
@@ -7555,10 +7508,7 @@ void scvkGetPhysicalDeviceMultisampleProperties(
     VkMultisamplePropertiesEXT multisample_properties;
 
     cvkZeroMemory(&multisample_properties, sizeof(multisample_properties));
-
-    multisample_properties.sType = VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT;
-    multisample_properties.pNext = pNext;
-
+    scvkInitMultisampleProperties(&multisample_properties, pNext);
     vkGetPhysicalDeviceMultisamplePropertiesEXT(physicalDevice, samples, &multisample_properties);
 
     (*pMultisampleProperties) = multisample_properties;
@@ -7595,10 +7545,7 @@ void scvkGetPhysicalDeviceProperties2(
     VkPhysicalDeviceProperties2 properties;
 
     cvkZeroMemory(&properties, sizeof(properties));
-
-    properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
-    properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceProperties2(&properties, pNext);
     vkGetPhysicalDeviceProperties2(physicalDevice, &properties);
 
     (*pProperties) = properties;
@@ -7684,9 +7631,7 @@ VkResult scvkGetPhysicalDeviceSurfaceCapabilities2EXT(
     VkResult                  result;
 
     cvkZeroMemory(&surface_capabilities, sizeof(surface_capabilities));
-
-    surface_capabilities.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT;
-    surface_capabilities.pNext = pNext;
+    scvkInitSurfaceCapabilities2EXT(&surface_capabilities, pNext);
 
     result = vkGetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice, surface, &surface_capabilities);
     SCVK_ASSERT((VK_SUCCESS == result) || (VK_ERROR_SURFACE_LOST_KHR == result));
@@ -7708,9 +7653,7 @@ VkResult scvkGetPhysicalDeviceSurfaceCapabilities2(
     VkResult                  result;
 
     cvkZeroMemory(&surface_capabilities, sizeof(surface_capabilities));
-
-    surface_capabilities.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
-    surface_capabilities.pNext = pNext;
+    scvkInitSurfaceCapabilities2(&surface_capabilities, pNext);
 
     result = vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, &surface_capabilities);
     SCVK_ASSERT((VK_SUCCESS == result) || (VK_ERROR_SURFACE_LOST_KHR == result));
@@ -8403,13 +8346,9 @@ void scvkGetBufferMemoryRequirementsInfo2(
     void*                  pMemoryRequirementsNext,
     VkMemoryRequirements2* pMemoryRequirements)
 {
-    VkBufferMemoryRequirementsInfo2 info =
-    {
-        .sType  = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2,
-        .pNext  = pInfoNext,
-        .buffer = buffer
-    };
+    VkBufferMemoryRequirementsInfo2 info;
 
+    scvkInitBufferMemoryRequirementsInfo2(&info, pInfoNext, buffer);
     scvkGetBufferMemoryRequirements2(device, &info, pMemoryRequirementsNext, pMemoryRequirements);
 }
 void scvkGetDisplayPlaneInfo2(
@@ -8420,14 +8359,9 @@ void scvkGetDisplayPlaneInfo2(
     void*                           pCapabilitiesNext,
     VkDisplayPlaneCapabilities2KHR* pCapabilities)
 {
-    VkDisplayPlaneInfo2KHR display_plane_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_DISPLAY_PLANE_INFO_2_KHR,
-        .pNext      = pDisplayPlaneInfoNext,
-        .mode       = mode,
-        .planeIndex = planeIndex
-    };
+    VkDisplayPlaneInfo2KHR display_plane_info;
 
+    scvkInitDisplayPlaneInfo2(&display_plane_info, pDisplayPlaneInfoNext, mode, planeIndex);
     scvkGetDisplayPlaneCapabilities2(physicalDevice, &display_plane_info, pCapabilitiesNext, pCapabilities);
 }
 void scvkGetImageMemoryRequirementsInfo2(
@@ -8437,13 +8371,9 @@ void scvkGetImageMemoryRequirementsInfo2(
     void*                  pMemoryRequirementsNext,
     VkMemoryRequirements2* pMemoryRequirements)
 {
-    VkImageMemoryRequirementsInfo2 info =
-    {
-        .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2,
-        .pNext = pInfoNext,
-        .image = image
-    };
+    VkImageMemoryRequirementsInfo2 info;
 
+    scvkInitImageMemoryRequirementsInfo2(&info, pInfoNext, image);
     scvkGetImageMemoryRequirements2(device, &info, pMemoryRequirementsNext, pMemoryRequirements);
 }
 void scvkGetPhysicalDeviceExternalBufferInfo(
@@ -8455,15 +8385,9 @@ void scvkGetPhysicalDeviceExternalBufferInfo(
     void*                              pExternalBufferPropertiesNext,
     VkExternalBufferProperties*        pExternalBufferProperties)
 {
-    VkPhysicalDeviceExternalBufferInfo external_buffer_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO,
-        .pNext      = pExternalBufferInfoNext,
-        .flags      = flags,
-        .usage      = usage,
-        .handleType = handleType
-    };
+    VkPhysicalDeviceExternalBufferInfo external_buffer_info;
 
+    scvkInitPhysicalDeviceExternalBufferInfo(&external_buffer_info, pExternalBufferInfoNext, flags, usage, handleType);
     scvkGetPhysicalDeviceExternalBufferProperties(physicalDevice, &external_buffer_info, pExternalBufferPropertiesNext, pExternalBufferProperties);
 }
 void scvkGetPhysicalDeviceExternalFenceInfo(
@@ -8473,13 +8397,9 @@ void scvkGetPhysicalDeviceExternalFenceInfo(
     void*                             pExternalFencePropertiesNext,
     VkExternalFenceProperties*        pExternalFenceProperties)
 {
-    VkPhysicalDeviceExternalFenceInfo external_fence_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO,
-        .pNext      = pExternalFenceInfoNext,
-        .handleType = handleType
-    };
+    VkPhysicalDeviceExternalFenceInfo external_fence_info;
 
+    scvkInitPhysicalDeviceExternalFenceInfo(&external_fence_info, pExternalFenceInfoNext, handleType);
     scvkGetPhysicalDeviceExternalFenceProperties(physicalDevice, &external_fence_info, pExternalFencePropertiesNext, pExternalFenceProperties);
 }
 void scvkGetPhysicalDeviceExternalSemaphoreInfo(
@@ -8489,13 +8409,9 @@ void scvkGetPhysicalDeviceExternalSemaphoreInfo(
     void*                                 pExternalSemaphorePropertiesNext,
     VkExternalSemaphoreProperties*        pExternalSemaphoreProperties)
 {
-    VkPhysicalDeviceExternalSemaphoreInfo external_semaphore_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO,
-        .pNext      = pExternalSemaphoreInfoNext,
-        .handleType = handleType
-    };
+    VkPhysicalDeviceExternalSemaphoreInfo external_semaphore_info;
 
+    scvkInitPhysicalDeviceExternalSemaphoreInfo(&external_semaphore_info, pExternalSemaphoreInfoNext, handleType);
     scvkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, &external_semaphore_info, pExternalSemaphorePropertiesNext, pExternalSemaphoreProperties);
 }
 VkResult scvkGetPhysicalDeviceImageFormatInfo2(
@@ -8509,16 +8425,9 @@ VkResult scvkGetPhysicalDeviceImageFormatInfo2(
     void*                     pImageFormatPropertiesNext,
     VkImageFormatProperties2* pImageFormatProperties)
 {
-    VkPhysicalDeviceImageFormatInfo2 image_format_info =
-    {
-        .sType  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2,
-        .pNext  = pImageFormatInfoNext,
-        .format = format,
-        .type   = type,
-        .tiling = tiling,
-        .usage  = usage,
-        .flags  = flags
-    };
+    VkPhysicalDeviceImageFormatInfo2 image_format_info;
+
+    scvkInitPhysicalDeviceImageFormatInfo2(&image_format_info, pImageFormatInfoNext, format, type, tiling, usage, flags);
 
     return scvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &image_format_info, pImageFormatPropertiesNext, pImageFormatProperties);
 }
@@ -8529,12 +8438,9 @@ VkResult scvkGetPhysicalDeviceSurfaceCapabilities2Info(
     void*                      pSurfaceCapabilitiesNext,
     VkSurfaceCapabilities2KHR* pSurfaceCapabilities)
 {
-    VkPhysicalDeviceSurfaceInfo2KHR surface_info =
-    {
-        .sType   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR,
-        .pNext   = pSurfaceInfoNext,
-        .surface = surface
-    };
+    VkPhysicalDeviceSurfaceInfo2KHR surface_info;
+
+    scvkInitPhysicalDeviceSurfaceInfo2(&surface_info, pSurfaceInfoNext, surface);
 
     return scvkGetPhysicalDeviceSurfaceCapabilities2(physicalDevice, &surface_info, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
 }
@@ -8545,13 +8451,9 @@ void scvkGetPhysicalDeviceSurfaceFormats2Info(
     uint32_t*           pSurfaceFormatCount,
     VkSurfaceFormat2KHR pSurfaceFormats[SCVK_MAX_SURFACE_FORMATS])
 {
-    VkPhysicalDeviceSurfaceInfo2KHR surface_info =
-    {
-        .sType   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR,
-        .pNext   = pNext,
-        .surface = surface
-    };
+    VkPhysicalDeviceSurfaceInfo2KHR surface_info;
 
+    scvkInitPhysicalDeviceSurfaceInfo2(&surface_info, pNext, surface);
     scvkGetPhysicalDeviceSurfaceFormats2(physicalDevice, &surface_info, pSurfaceFormatCount, pSurfaceFormats);
 }
 void scvkBindBufferMemoryInfo(
@@ -8561,15 +8463,9 @@ void scvkBindBufferMemoryInfo(
     VkDeviceMemory memory,
     VkDeviceSize   memoryOffset)
 {
-    VkBindBufferMemoryInfo bind_info =
-    {
-        .sType        = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO,
-        .pNext        = pNext,
-        .buffer       = buffer,
-        .memory       = memory,
-        .memoryOffset = memoryOffset
-    };
+    VkBindBufferMemoryInfo bind_info;
 
+    scvkInitBindBufferMemoryInfo(&bind_info, pNext, buffer, memory, memoryOffset);
     scvkBindBufferMemory2(device, 1, &bind_info);
 }
 void scvkBindImageMemoryInfo(
@@ -8579,15 +8475,9 @@ void scvkBindImageMemoryInfo(
     VkDeviceMemory memory,
     VkDeviceSize   memoryOffset)
 {
-    VkBindImageMemoryInfo bind_info =
-    {
-        .sType        = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO,
-        .pNext        = pNext,
-        .image        = image,
-        .memory       = memory,
-        .memoryOffset = memoryOffset
-    };
+    VkBindImageMemoryInfo bind_info;
 
+    scvkInitBindImageMemoryInfo(&bind_info, pNext, image, memory, memoryOffset);
     scvkBindImageMemory2(device, 1, &bind_info);
 }
 void scvkCreateComputePipeline(
@@ -8602,17 +8492,9 @@ void scvkCreateComputePipeline(
     const VkAllocationCallbacks*    pAllocator,
     VkPipeline*                     pPipeline)
 {
-    VkComputePipelineCreateInfo create_info =
-    {
-        .sType              = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
-        .pNext              = pNext,
-        .flags              = flags,
-        .stage              = stage,
-        .layout             = layout,
-        .basePipelineHandle = basePipelineHandle,
-        .basePipelineIndex  = basePipelineIndex
-    };
+    VkComputePipelineCreateInfo create_info;
 
+    scvkInitComputePipelineCreateInfo(&create_info, pNext, flags, stage, layout, basePipelineHandle, basePipelineIndex);
     scvkCreateComputePipelines(device, pipelineCache, 1, &create_info, pAllocator, pPipeline);
 }
 void scvkCreateGraphicsPipeline(
@@ -8639,29 +8521,27 @@ void scvkCreateGraphicsPipeline(
     const VkAllocationCallbacks*                  pAllocator,
     VkPipeline*                                   pPipeline)
 {
-    VkGraphicsPipelineCreateInfo create_info =
-    {
-        .sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-        .pNext               = pNext,
-        .flags               = flags,
-        .stageCount          = stageCount,
-        .pStages             = pStages,
-        .pVertexInputState   = pVertexInputState,
-        .pInputAssemblyState = pInputAssemblyState,
-        .pTessellationState  = pTessellationState,
-        .pViewportState      = pViewportState,
-        .pRasterizationState = pRasterizationState,
-        .pMultisampleState   = pMultisampleState,
-        .pDepthStencilState  = pDepthStencilState,
-        .pColorBlendState    = pColorBlendState,
-        .pDynamicState       = pDynamicState,
-        .layout              = layout,
-        .renderPass          = renderPass,
-        .subpass             = subpass,
-        .basePipelineHandle  = basePipelineHandle,
-        .basePipelineIndex   = basePipelineIndex
-    };
+    VkGraphicsPipelineCreateInfo create_info;
 
+    scvkInitGraphicsPipelineCreateInfo(&create_info,
+                                       pNext,
+                                       flags,
+                                       stageCount,
+                                       pStages,
+                                       pVertexInputState,
+                                       pInputAssemblyState,
+                                       pTessellationState,
+                                       pViewportState,
+                                       pRasterizationState,
+                                       pMultisampleState,
+                                       pDepthStencilState,
+                                       pColorBlendState,
+                                       pDynamicState,
+                                       layout,
+                                       renderPass,
+                                       subpass,
+                                       basePipelineHandle,
+                                       basePipelineIndex);
     scvkCreateGraphicsPipelines(device, pipelineCache, 1, &create_info, pAllocator, pPipeline);
 }
 VkResult scvkCreateSharedSwapchain(
@@ -8686,27 +8566,26 @@ VkResult scvkCreateSharedSwapchain(
     const VkAllocationCallbacks*  pAllocator,
     VkSwapchainKHR*               pSwapchain)
 {
-    VkSwapchainCreateInfoKHR create_info =
-    {
-        .sType                 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
-        .pNext                 = pNext,
-        .flags                 = flags,
-        .surface               = surface,
-        .minImageCount         = minImageCount,
-        .imageFormat           = imageFormat,
-        .imageColorSpace       = imageColorSpace,
-        .imageExtent           = imageExtent,
-        .imageArrayLayers      = imageArrayLayers,
-        .imageUsage            = imageUsage,
-        .imageSharingMode      = imageSharingMode,
-        .queueFamilyIndexCount = queueFamilyIndexCount,
-        .pQueueFamilyIndices   = pQueueFamilyIndices,
-        .preTransform          = preTransform,
-        .compositeAlpha        = compositeAlpha,
-        .presentMode           = presentMode,
-        .clipped               = clipped,
-        .oldSwapchain          = oldSwapchain
-    };
+    VkSwapchainCreateInfoKHR create_info;
+
+    scvkInitSwapchainCreateInfo(&create_info,
+                                pNext,
+                                flags,
+                                surface,
+                                minImageCount,
+                                imageFormat,
+                                imageColorSpace,
+                                imageExtent,
+                                imageArrayLayers,
+                                imageUsage,
+                                imageSharingMode,
+                                queueFamilyIndexCount,
+                                pQueueFamilyIndices,
+                                preTransform,
+                                compositeAlpha,
+                                presentMode,
+                                clipped,
+                                oldSwapchain);
 
     return scvkCreateSharedSwapchains(device, 1, &create_info, pAllocator, pSwapchain);
 }
@@ -8717,15 +8596,9 @@ void scvkFlushMappedMemoryRange(
     VkDeviceSize   offset,
     VkDeviceSize   size)
 {
-    VkMappedMemoryRange memory_range =
-    {
-        .sType  = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
-        .pNext  = pNext,
-        .memory = memory,
-        .offset = offset,
-        .size   = size
-    };
+    VkMappedMemoryRange memory_range;
 
+    scvkInitMappedMemoryRange(&memory_range, pNext, memory, offset, size);
     scvkFlushMappedMemoryRanges(device, 1, &memory_range);
 }
 void scvkFreeCommandBuffer(
@@ -8749,13 +8622,9 @@ void scvkGetCalibratedTimestamp(
     uint64_t*       pTimestamps,
     uint64_t*       pMaxDeviation)
 {
-    VkCalibratedTimestampInfoKHR timestamp_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR,
-        .pNext      = pNext,
-        .timeDomain = timeDomain
-    };
+    VkCalibratedTimestampInfoKHR timestamp_info;
 
+    scvkInitCalibratedTimestampInfo(&timestamp_info, pNext, timeDomain);
     scvkGetCalibratedTimestamps(device, 1, &timestamp_info, pTimestamps, pMaxDeviation);
 }
 void scvkInvalidateMappedMemoryRange(
@@ -8765,15 +8634,9 @@ void scvkInvalidateMappedMemoryRange(
     VkDeviceSize   offset,
     VkDeviceSize   size)
 {
-    VkMappedMemoryRange memory_range =
-    {
-        .sType  = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
-        .pNext  = pNext,
-        .memory = memory,
-        .offset = offset,
-        .size   = size
-    };
+    VkMappedMemoryRange memory_range;
 
+    scvkInitMappedMemoryRange(&memory_range, pNext, memory, offset, size);
     scvkInvalidateMappedMemoryRanges(device, 1, &memory_range);
 }
 void scvkQueueSubmitInfo(
@@ -8788,19 +8651,9 @@ void scvkQueueSubmitInfo(
     const VkSemaphore*          pSignalSemaphores,
     VkFence                     fence)
 {
-    VkSubmitInfo submit =
-    {
-        .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-        .pNext                = pNext,
-        .waitSemaphoreCount   = waitSemaphoreCount,
-        .pWaitSemaphores      = pWaitSemaphores,
-        .pWaitDstStageMask    = pWaitDstStageMask,
-        .commandBufferCount   = commandBufferCount,
-        .pCommandBuffers      = pCommandBuffers,
-        .signalSemaphoreCount = signalSemaphoreCount,
-        .pSignalSemaphores    = pSignalSemaphores
-    };
+    VkSubmitInfo submit;
 
+    scvkInitSubmitInfo(&submit, pNext, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, commandBufferCount, pCommandBuffers, signalSemaphoreCount, pSignalSemaphores);
     scvkQueueSubmit(queue, 1, &submit, fence);
 }
 void scvkResetFence(
@@ -8827,14 +8680,9 @@ void scvkAllocateDescriptorSetsWithVariableDescriptorCountInfo(
     const VkDescriptorSetLayout* pSetLayouts,
     VkDescriptorSet*             pDescriptorSets)
 {
-    VkDescriptorSetVariableDescriptorCountAllocateInfo allocate_info =
-    {
-        .sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO,
-        .pNext              = pNext,
-        .descriptorSetCount = variableDescriptorCountDescriptorSetCount,
-        .pDescriptorCounts  = pDescriptorCounts
-    };
+    VkDescriptorSetVariableDescriptorCountAllocateInfo allocate_info;
 
+    scvkInitDescriptorSetVariableDescriptorCountAllocateInfo(&allocate_info, pNext, variableDescriptorCountDescriptorSetCount, pDescriptorCounts);
     scvkAllocateDescriptorSets(device, &allocate_info, descriptorPool, descriptorSetCount, pSetLayouts, pDescriptorSets);
 }
 void scvkAllocateExportMemory(
@@ -8846,13 +8694,9 @@ void scvkAllocateExportMemory(
     const VkAllocationCallbacks*    pAllocator,
     VkDeviceMemory*                 pMemory)
 {
-    VkExportMemoryAllocateInfo allocate_info =
-    {
-        .sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO,
-        .pNext       = pNext,
-        .handleTypes = handleTypes
-    };
+    VkExportMemoryAllocateInfo allocate_info;
 
+    scvkInitExportMemoryAllocateInfo(&allocate_info, pNext, handleTypes);
     scvkAllocateMemory(device, &allocate_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void scvkAllocateImportMemoryFd(
@@ -8865,14 +8709,9 @@ void scvkAllocateImportMemoryFd(
     const VkAllocationCallbacks*       pAllocator,
     VkDeviceMemory*                    pMemory)
 {
-    VkImportMemoryFdInfoKHR fd_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR,
-        .pNext      = pNext,
-        .handleType = handleType,
-        .fd         = fd
-    };
+    VkImportMemoryFdInfoKHR fd_info;
 
+    scvkInitImportMemoryFdInfo(&fd_info, pNext, handleType, fd);
     scvkAllocateMemory(device, &fd_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void scvkAllocateImportMemoryHostPointer(
@@ -8885,14 +8724,9 @@ void scvkAllocateImportMemoryHostPointer(
     const VkAllocationCallbacks*       pAllocator,
     VkDeviceMemory*                    pMemory)
 {
-    VkImportMemoryHostPointerInfoEXT pointer_info =
-    {
-        .sType        = VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT,
-        .pNext        = pNext,
-        .handleType   = handleType,
-        .pHostPointer = pHostPointer
-    };
+    VkImportMemoryHostPointerInfoEXT pointer_info;
 
+    scvkInitImportMemoryHostPointerInfo(&pointer_info, pNext, handleType, pHostPointer);
     scvkAllocateMemory(device, &pointer_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void scvkAllocateMemoryWithFlagsInfo(
@@ -8905,14 +8739,9 @@ void scvkAllocateMemoryWithFlagsInfo(
     const VkAllocationCallbacks* pAllocator,
     VkDeviceMemory*              pMemory)
 {
-    VkMemoryAllocateFlagsInfo flags_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO,
-        .pNext      = pNext,
-        .flags      = flags,
-        .deviceMask = deviceMask
-    };
+    VkMemoryAllocateFlagsInfo flags_info;
 
+    scvkInitMemoryAllocateFlagsInfo(&flags_info, pNext, flags, deviceMask);
     scvkAllocateMemory(device, &flags_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void scvkAllocateMemoryWithDedicatedInfo(
@@ -8925,14 +8754,9 @@ void scvkAllocateMemoryWithDedicatedInfo(
     const VkAllocationCallbacks* pAllocator,
     VkDeviceMemory*              pMemory)
 {
-    VkMemoryDedicatedAllocateInfo allocate_info =
-    {
-        .sType  = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO,
-        .pNext  = pNext,
-        .image  = image,
-        .buffer = buffer
-    };
+    VkMemoryDedicatedAllocateInfo allocate_info;
 
+    scvkInitMemoryDedicatedAllocateInfo(&allocate_info, pNext, image, buffer);
     scvkAllocateMemory(device, &allocate_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void scvkAllocateMemoryWithOpaqueCaptureAddressInfo(
@@ -8944,13 +8768,9 @@ void scvkAllocateMemoryWithOpaqueCaptureAddressInfo(
     const VkAllocationCallbacks* pAllocator,
     VkDeviceMemory*              pMemory)
 {
-    VkMemoryOpaqueCaptureAddressAllocateInfo allocate_info =
-    {
-        .sType                = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO,
-        .pNext                = pNext,
-        .opaqueCaptureAddress = opaqueCaptureAddress
-    };
+    VkMemoryOpaqueCaptureAddressAllocateInfo allocate_info;
 
+    scvkInitMemoryOpaqueCaptureAddressAllocateInfo(&allocate_info, pNext, opaqueCaptureAddress);
     scvkAllocateMemory(device, &allocate_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void scvkBeginCommandBufferWithDeviceGroupInfo(
@@ -8960,13 +8780,9 @@ void scvkBeginCommandBufferWithDeviceGroupInfo(
     VkCommandBufferUsageFlags             flags,
     const VkCommandBufferInheritanceInfo* pInheritanceInfo)
 {
-    VkDeviceGroupCommandBufferBeginInfo begin_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO,
-        .pNext      = pNext,
-        .deviceMask = deviceMask
-    };
+    VkDeviceGroupCommandBufferBeginInfo begin_info;
 
+    scvkInitDeviceGroupCommandBufferBeginInfo(&begin_info, pNext, deviceMask);
     scvkBeginCommandBuffer(commandBuffer, &begin_info, flags, pInheritanceInfo);
 }
 void scvkCmdBeginRenderPassWithDeviceGroupInfo(
@@ -8982,15 +8798,9 @@ void scvkCmdBeginRenderPassWithDeviceGroupInfo(
     const VkClearValue* pClearValues,
     VkSubpassContents   contents)
 {
-    VkDeviceGroupRenderPassBeginInfo begin_info =
-    {
-        .sType                 = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO,
-        .pNext                 = pNext,
-        .deviceMask            = deviceMask,
-        .deviceRenderAreaCount = deviceRenderAreaCount,
-        .pDeviceRenderAreas    = pDeviceRenderAreas
-    };
+    VkDeviceGroupRenderPassBeginInfo begin_info;
 
+    scvkInitDeviceGroupRenderPassBeginInfo(&begin_info, pNext, deviceMask, deviceRenderAreaCount, pDeviceRenderAreas);
     scvkCmdBeginRenderPass(commandBuffer, &begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, contents);
 }
 void scvkCmdBeginRenderPassWithAttachmentInfo(
@@ -9005,14 +8815,9 @@ void scvkCmdBeginRenderPassWithAttachmentInfo(
     const VkClearValue* pClearValues,
     VkSubpassContents   contents)
 {
-    VkRenderPassAttachmentBeginInfo begin_info =
-    {
-        .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO,
-        .pNext           = pNext,
-        .attachmentCount = attachmentCount,
-        .pAttachments    = pAttachments
-    };
+    VkRenderPassAttachmentBeginInfo begin_info;
 
+    scvkInitRenderPassAttachmentBeginInfo(&begin_info, pNext, attachmentCount, pAttachments);
     scvkCmdBeginRenderPass(commandBuffer, &begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, contents);
 }
 void scvkCmdBeginRenderPassWithSampleLocationsInfo(
@@ -9029,16 +8834,14 @@ void scvkCmdBeginRenderPassWithSampleLocationsInfo(
     const VkClearValue*                   pClearValues,
     VkSubpassContents                     contents)
 {
-    VkRenderPassSampleLocationsBeginInfoEXT begin_info =
-    {
-        .sType                                 = VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT,
-        .pNext                                 = pNext,
-        .attachmentInitialSampleLocationsCount = attachmentInitialSampleLocationsCount,
-        .pAttachmentInitialSampleLocations     = pAttachmentInitialSampleLocations,
-        .postSubpassSampleLocationsCount       = postSubpassSampleLocationsCount,
-        .pPostSubpassSampleLocations           = pPostSubpassSampleLocations
-    };
+    VkRenderPassSampleLocationsBeginInfoEXT begin_info;
 
+    scvkInitRenderPassSampleLocationsBeginInfo(&begin_info,
+                                               pNext,
+                                               attachmentInitialSampleLocationsCount,
+                                               pAttachmentInitialSampleLocations,
+                                               postSubpassSampleLocationsCount,
+                                               pPostSubpassSampleLocations);
     scvkCmdBeginRenderPass(commandBuffer, &begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, contents);
 }
 void scvkCmdBeginRenderPass2WithDeviceGroupInfo(
@@ -9055,15 +8858,9 @@ void scvkCmdBeginRenderPass2WithDeviceGroupInfo(
     const void*         pSubpassBeginInfoNext,
     VkSubpassContents   contents)
 {
-    VkDeviceGroupRenderPassBeginInfo begin_info =
-    {
-        .sType                 = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO,
-        .pNext                 = pRenderPassBeginNext,
-        .deviceMask            = deviceMask,
-        .deviceRenderAreaCount = deviceRenderAreaCount,
-        .pDeviceRenderAreas    = pDeviceRenderAreas
-    };
+    VkDeviceGroupRenderPassBeginInfo begin_info;
 
+    scvkInitDeviceGroupRenderPassBeginInfo(&begin_info, pRenderPassBeginNext, deviceMask, deviceRenderAreaCount, pDeviceRenderAreas);
     scvkCmdBeginRenderPass2(commandBuffer, &begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, pSubpassBeginInfoNext, contents);
 }
 void scvkCmdBeginRenderPass2WithAttachmentInfo(
@@ -9079,14 +8876,9 @@ void scvkCmdBeginRenderPass2WithAttachmentInfo(
     const void*         pSubpassBeginInfoNext,
     VkSubpassContents   contents)
 {
-    VkRenderPassAttachmentBeginInfo begin_info =
-    {
-        .sType           = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO,
-        .pNext           = pRenderPassBeginNext,
-        .attachmentCount = attachmentCount,
-        .pAttachments    = pAttachments
-    };
+    VkRenderPassAttachmentBeginInfo begin_info;
 
+    scvkInitRenderPassAttachmentBeginInfo(&begin_info, pRenderPassBeginNext, attachmentCount, pAttachments);
     scvkCmdBeginRenderPass2(commandBuffer, &begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, pSubpassBeginInfoNext, contents);
 }
 void scvkCmdBeginRenderPass2WithSampleLocationsInfo(
@@ -9104,16 +8896,14 @@ void scvkCmdBeginRenderPass2WithSampleLocationsInfo(
     const void*                           pSubpassBeginInfoNext,
     VkSubpassContents                     contents)
 {
-    VkRenderPassSampleLocationsBeginInfoEXT begin_info =
-    {
-        .sType                                 = VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT,
-        .pNext                                 = pRenderPassBeginNext,
-        .attachmentInitialSampleLocationsCount = attachmentInitialSampleLocationsCount,
-        .pAttachmentInitialSampleLocations     = pAttachmentInitialSampleLocations,
-        .postSubpassSampleLocationsCount       = postSubpassSampleLocationsCount,
-        .pPostSubpassSampleLocations           = pPostSubpassSampleLocations
-    };
+    VkRenderPassSampleLocationsBeginInfoEXT begin_info;
 
+    scvkInitRenderPassSampleLocationsBeginInfo(&begin_info,
+                                               pRenderPassBeginNext,
+                                               attachmentInitialSampleLocationsCount,
+                                               pAttachmentInitialSampleLocations,
+                                               postSubpassSampleLocationsCount,
+                                               pPostSubpassSampleLocations);
     scvkCmdBeginRenderPass2(commandBuffer, &begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, pSubpassBeginInfoNext, contents);
 }
 void scvkCreateBufferWithOpaqueCaptureAddressInfo(
@@ -9129,13 +8919,9 @@ void scvkCreateBufferWithOpaqueCaptureAddressInfo(
     const VkAllocationCallbacks* pAllocator,
     VkBuffer*                    pBuffer)
 {
-    VkBufferOpaqueCaptureAddressCreateInfo create_info =
-    {
-        .sType                = VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO,
-        .pNext                = pNext,
-        .opaqueCaptureAddress = opaqueCaptureAddress
-    };
+    VkBufferOpaqueCaptureAddressCreateInfo create_info;
 
+    scvkInitBufferOpaqueCaptureAddressCreateInfo(&create_info, pNext, opaqueCaptureAddress);
     scvkCreateBuffer(device, &create_info, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
 }
 void scvkCreateBufferWithExternalMemoryInfo(
@@ -9151,13 +8937,9 @@ void scvkCreateBufferWithExternalMemoryInfo(
     const VkAllocationCallbacks*    pAllocator,
     VkBuffer*                       pBuffer)
 {
-    VkExternalMemoryBufferCreateInfo create_info =
-    {
-        .sType       = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO,
-        .pNext       = pNext,
-        .handleTypes = handleTypes
-    };
+    VkExternalMemoryBufferCreateInfo create_info;
 
+    scvkInitExternalMemoryBufferCreateInfo(&create_info, pNext, handleTypes);
     scvkCreateBuffer(device, &create_info, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
 }
 void scvkCreateCommandPoolWithMemoryReservationInfo(
@@ -9170,14 +8952,9 @@ void scvkCreateCommandPoolWithMemoryReservationInfo(
     const VkAllocationCallbacks* pAllocator,
     VkCommandPool*               pCommandPool)
 {
-    VkCommandPoolMemoryReservationCreateInfo create_info =
-    {
-        .sType                        = VK_STRUCTURE_TYPE_COMMAND_POOL_MEMORY_RESERVATION_CREATE_INFO,
-        .pNext                        = pNext,
-        .commandPoolReservedSize      = commandPoolReservedSize,
-        .commandPoolMaxCommandBuffers = commandPoolMaxCommandBuffers
-    };
+    VkCommandPoolMemoryReservationCreateInfo create_info;
 
+    scvkInitCommandPoolMemoryReservationCreateInfo(&create_info, pNext, commandPoolReservedSize, commandPoolMaxCommandBuffers);
     scvkCreateCommandPool(device, &create_info, flags, queueFamilyIndex, pAllocator, pCommandPool);
 }
 void scvkCreateDescriptorSetLayoutWithBindingFlagsInfo(
@@ -9191,14 +8968,9 @@ void scvkCreateDescriptorSetLayoutWithBindingFlagsInfo(
     const VkAllocationCallbacks*        pAllocator,
     VkDescriptorSetLayout*              pSetLayout)
 {
-    VkDescriptorSetLayoutBindingFlagsCreateInfo create_info =
-    {
-        .sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO,
-        .pNext         = pNext,
-        .bindingCount  = bindingFlagsBindingCount,
-        .pBindingFlags = pBindingFlags
-    };
+    VkDescriptorSetLayoutBindingFlagsCreateInfo create_info;
 
+    scvkInitDescriptorSetLayoutBindingFlagsCreateInfo(&create_info, pNext, bindingFlagsBindingCount, pBindingFlags);
     scvkCreateDescriptorSetLayout(device, &create_info, flags, bindingCount, pBindings, pAllocator, pSetLayout);
 }
 void scvkCreateDeviceWithApplicationParametersInfo(
@@ -9219,16 +8991,9 @@ void scvkCreateDeviceWithApplicationParametersInfo(
     const VkAllocationCallbacks*    pAllocator,
     VkDevice*                       pDevice)
 {
-    VkApplicationParametersEXT application_parameters =
-    {
-        .sType    = VK_STRUCTURE_TYPE_APPLICATION_PARAMETERS_EXT,
-        .pNext    = pNext,
-        .vendorID = vendorID,
-        .deviceID = deviceID,
-        .key      = key,
-        .value    = value
-    };
+    VkApplicationParametersEXT application_parameters;
 
+    scvkInitApplicationParameters(&application_parameters, pNext, vendorID, deviceID, key, value);
     scvkCreateDevice(physicalDevice,
                      &application_parameters,
                      flags,
@@ -9258,14 +9023,9 @@ void scvkCreateDeviceWithDeviceGroupInfo(
     const VkAllocationCallbacks*    pAllocator,
     VkDevice*                       pDevice)
 {
-    VkDeviceGroupDeviceCreateInfo create_info =
-    {
-        .sType               = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO,
-        .pNext               = pNext,
-        .physicalDeviceCount = physicalDeviceCount,
-        .pPhysicalDevices    = pPhysicalDevices
-    };
+    VkDeviceGroupDeviceCreateInfo create_info;
 
+    scvkInitDeviceGroupDeviceCreateInfo(&create_info, pNext, physicalDeviceCount, pPhysicalDevices);
     scvkCreateDevice(physicalDevice,
                      &create_info,
                      flags,
@@ -9334,53 +9094,51 @@ void scvkCreateDeviceWithObjectReservationInfo(
     const VkAllocationCallbacks*     pAllocator,
     VkDevice*                        pDevice)
 {
-    VkDeviceObjectReservationCreateInfo create_info =
-    {
-        .sType                                      = VK_STRUCTURE_TYPE_DEVICE_OBJECT_RESERVATION_CREATE_INFO,
-        .pNext                                      = pNext,
-        .pipelineCacheCreateInfoCount               = pipelineCacheCreateInfoCount,
-        .pPipelineCacheCreateInfos                  = pPipelineCacheCreateInfos,
-        .pipelinePoolSizeCount                      = pipelinePoolSizeCount,
-        .pPipelinePoolSizes                         = pPipelinePoolSizes,
-        .semaphoreRequestCount                      = semaphoreRequestCount,
-        .commandBufferRequestCount                  = commandBufferRequestCount,
-        .fenceRequestCount                          = fenceRequestCount,
-        .deviceMemoryRequestCount                   = deviceMemoryRequestCount,
-        .bufferRequestCount                         = bufferRequestCount,
-        .imageRequestCount                          = imageRequestCount,
-        .eventRequestCount                          = eventRequestCount,
-        .queryPoolRequestCount                      = queryPoolRequestCount,
-        .bufferViewRequestCount                     = bufferViewRequestCount,
-        .imageViewRequestCount                      = imageViewRequestCount,
-        .layeredImageViewRequestCount               = layeredImageViewRequestCount,
-        .pipelineCacheRequestCount                  = pipelineCacheRequestCount,
-        .pipelineLayoutRequestCount                 = pipelineLayoutRequestCount,
-        .renderPassRequestCount                     = renderPassRequestCount,
-        .graphicsPipelineRequestCount               = graphicsPipelineRequestCount,
-        .computePipelineRequestCount                = computePipelineRequestCount,
-        .descriptorSetLayoutRequestCount            = descriptorSetLayoutRequestCount,
-        .samplerRequestCount                        = samplerRequestCount,
-        .descriptorPoolRequestCount                 = descriptorPoolRequestCount,
-        .descriptorSetRequestCount                  = descriptorSetRequestCount,
-        .framebufferRequestCount                    = framebufferRequestCount,
-        .commandPoolRequestCount                    = commandPoolRequestCount,
-        .samplerYcbcrConversionRequestCount         = samplerYcbcrConversionRequestCount,
-        .surfaceRequestCount                        = surfaceRequestCount,
-        .swapchainRequestCount                      = swapchainRequestCount,
-        .displayModeRequestCount                    = displayModeRequestCount,
-        .subpassDescriptionRequestCount             = subpassDescriptionRequestCount,
-        .attachmentDescriptionRequestCount          = attachmentDescriptionRequestCount,
-        .descriptorSetLayoutBindingRequestCount     = descriptorSetLayoutBindingRequestCount,
-        .descriptorSetLayoutBindingLimit            = descriptorSetLayoutBindingLimit,
-        .maxImageViewMipLevels                      = maxImageViewMipLevels,
-        .maxImageViewArrayLayers                    = maxImageViewArrayLayers,
-        .maxLayeredImageViewMipLevels               = maxLayeredImageViewMipLevels,
-        .maxOcclusionQueriesPerPool                 = maxOcclusionQueriesPerPool,
-        .maxPipelineStatisticsQueriesPerPool        = maxPipelineStatisticsQueriesPerPool,
-        .maxTimestampQueriesPerPool                 = maxTimestampQueriesPerPool,
-        .maxImmutableSamplersPerDescriptorSetLayout = maxImmutableSamplersPerDescriptorSetLayout
-    };
+    VkDeviceObjectReservationCreateInfo create_info;
 
+    scvkInitDeviceObjectReservationCreateInfo(&create_info,
+                                              pNext,
+                                              pipelineCacheCreateInfoCount,
+                                              pPipelineCacheCreateInfos,
+                                              pipelinePoolSizeCount,
+                                              pPipelinePoolSizes,
+                                              semaphoreRequestCount,
+                                              commandBufferRequestCount,
+                                              fenceRequestCount,
+                                              deviceMemoryRequestCount,
+                                              bufferRequestCount,
+                                              imageRequestCount,
+                                              eventRequestCount,
+                                              queryPoolRequestCount,
+                                              bufferViewRequestCount,
+                                              imageViewRequestCount,
+                                              layeredImageViewRequestCount,
+                                              pipelineCacheRequestCount,
+                                              pipelineLayoutRequestCount,
+                                              renderPassRequestCount,
+                                              graphicsPipelineRequestCount,
+                                              computePipelineRequestCount,
+                                              descriptorSetLayoutRequestCount,
+                                              samplerRequestCount,
+                                              descriptorPoolRequestCount,
+                                              descriptorSetRequestCount,
+                                              framebufferRequestCount,
+                                              commandPoolRequestCount,
+                                              samplerYcbcrConversionRequestCount,
+                                              surfaceRequestCount,
+                                              swapchainRequestCount,
+                                              displayModeRequestCount,
+                                              subpassDescriptionRequestCount,
+                                              attachmentDescriptionRequestCount,
+                                              descriptorSetLayoutBindingRequestCount,
+                                              descriptorSetLayoutBindingLimit,
+                                              maxImageViewMipLevels,
+                                              maxImageViewArrayLayers,
+                                              maxLayeredImageViewMipLevels,
+                                              maxOcclusionQueriesPerPool,
+                                              maxPipelineStatisticsQueriesPerPool,
+                                              maxTimestampQueriesPerPool,
+                                              maxImmutableSamplersPerDescriptorSetLayout);
     scvkCreateDevice(physicalDevice,
                      &create_info,
                      flags,
@@ -9411,15 +9169,9 @@ void scvkCreateDeviceWithFaultCallbackInfo(
     const VkAllocationCallbacks*    pAllocator,
     VkDevice*                       pDevice)
 {
-    VkFaultCallbackInfo callback_info =
-    {
-        .sType            = VK_STRUCTURE_TYPE_FAULT_CALLBACK_INFO,
-        .pNext            = pNext,
-        .faultCount       = faultCount,
-        .pFaults          = pFaults,
-        .pfnFaultCallback = pfnFaultCallback
-    };
+    VkFaultCallbackInfo callback_info;
 
+    scvkInitFaultCallbackInfo(&callback_info, pNext, faultCount, pFaults, pfnFaultCallback);
     scvkCreateDevice(physicalDevice,
                      &callback_info,
                      flags,
@@ -9448,13 +9200,9 @@ void scvkCreateDeviceWithPerformanceQueryReservationInfo(
     const VkAllocationCallbacks*    pAllocator,
     VkDevice*                       pDevice)
 {
-    VkPerformanceQueryReservationInfoKHR reservation_info =
-    {
-        .sType                        = VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_RESERVATION_INFO_KHR,
-        .pNext                        = pNext,
-        .maxPerformanceQueriesPerPool = maxPerformanceQueriesPerPool
-    };
+    VkPerformanceQueryReservationInfoKHR reservation_info;
 
+    scvkInitPerformanceQueryReservationInfo(&reservation_info, pNext, maxPerformanceQueriesPerPool);
     scvkCreateDevice(physicalDevice,
                      &reservation_info,
                      flags,
@@ -9476,13 +9224,9 @@ void scvkCreateExportFence(
     const VkAllocationCallbacks*   pAllocator,
     VkFence*                       pFence)
 {
-    VkExportFenceCreateInfo create_info =
-    {
-        .sType       = VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO,
-        .pNext       = pNext,
-        .handleTypes = handleTypes
-    };
+    VkExportFenceCreateInfo create_info;
 
+    scvkInitExportFenceCreateInfo(&create_info, pNext, handleTypes);
     scvkCreateFence(device, &create_info, flags, pAllocator, pFence);
 }
 void scvkCreateFramebufferWithAttachmentsInfo(
@@ -9500,14 +9244,9 @@ void scvkCreateFramebufferWithAttachmentsInfo(
     const VkAllocationCallbacks*            pAllocator,
     VkFramebuffer*                          pFramebuffer)
 {
-    VkFramebufferAttachmentsCreateInfo create_info =
-    {
-        .sType                    = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO,
-        .pNext                    = pNext,
-        .attachmentImageInfoCount = attachmentImageInfoCount,
-        .pAttachmentImageInfos    = pAttachmentImageInfos
-    };
+    VkFramebufferAttachmentsCreateInfo create_info;
 
+    scvkInitFramebufferAttachmentsCreateInfo(&create_info, pNext, attachmentImageInfoCount, pAttachmentImageInfos);
     scvkCreateFramebuffer(device, &create_info, flags, renderPass, attachmentCount, pAttachments, width, height, layers, pAllocator, pFramebuffer);
 }
 void scvkCreateImageWithExternalMemoryInfo(
@@ -9530,13 +9269,9 @@ void scvkCreateImageWithExternalMemoryInfo(
     const VkAllocationCallbacks*    pAllocator,
     VkImage*                        pImage)
 {
-    VkExternalMemoryImageCreateInfo create_info =
-    {
-        .sType       = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO,
-        .pNext       = pNext,
-        .handleTypes = handleTypes
-    };
+    VkExternalMemoryImageCreateInfo create_info;
 
+    scvkInitExternalMemoryImageCreateInfo(&create_info, pNext, handleTypes);
     scvkCreateImage(device,
                     &create_info,
                     flags,
@@ -9577,15 +9312,9 @@ void scvkCreateImageWithDrmFormatModifierExplicitInfo(
     const VkAllocationCallbacks* pAllocator,
     VkImage*                     pImage)
 {
-    VkImageDrmFormatModifierExplicitCreateInfoEXT create_info =
-    {
-        .sType                       = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT,
-        .pNext                       = pNext,
-        .drmFormatModifier           = drmFormatModifier,
-        .drmFormatModifierPlaneCount = drmFormatModifierPlaneCount,
-        .pPlaneLayouts               = pPlaneLayouts
-    };
+    VkImageDrmFormatModifierExplicitCreateInfoEXT create_info;
 
+    scvkInitImageDrmFormatModifierExplicitCreateInfo(&create_info, pNext, drmFormatModifier, drmFormatModifierPlaneCount, pPlaneLayouts);
     scvkCreateImage(device,
                     &create_info,
                     flags,
@@ -9625,14 +9354,9 @@ void scvkCreateImageWithDrmFormatModifierListInfo(
     const VkAllocationCallbacks* pAllocator,
     VkImage*                     pImage)
 {
-    VkImageDrmFormatModifierListCreateInfoEXT create_info =
-    {
-        .sType                  = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT,
-        .pNext                  = pNext,
-        .drmFormatModifierCount = drmFormatModifierCount,
-        .pDrmFormatModifiers    = pDrmFormatModifiers
-    };
+    VkImageDrmFormatModifierListCreateInfoEXT create_info;
 
+    scvkInitImageDrmFormatModifierListCreateInfo(&create_info, pNext, drmFormatModifierCount, pDrmFormatModifiers);
     scvkCreateImage(device,
                     &create_info,
                     flags,
@@ -9672,14 +9396,9 @@ void scvkCreateImageWithFormatListInfo(
     const VkAllocationCallbacks* pAllocator,
     VkImage*                     pImage)
 {
-    VkImageFormatListCreateInfo create_info =
-    {
-        .sType           = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO,
-        .pNext           = pNext,
-        .viewFormatCount = viewFormatCount,
-        .pViewFormats    = pViewFormats
-    };
+    VkImageFormatListCreateInfo create_info;
 
+    scvkInitImageFormatListCreateInfo(&create_info, pNext, viewFormatCount, pViewFormats);
     scvkCreateImage(device,
                     &create_info,
                     flags,
@@ -9718,13 +9437,9 @@ void scvkCreateImageWithStencilUsageInfo(
     const VkAllocationCallbacks* pAllocator,
     VkImage*                     pImage)
 {
-    VkImageStencilUsageCreateInfo create_info =
-    {
-        .sType        = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO,
-        .pNext        = pNext,
-        .stencilUsage = stencilUsage
-    };
+    VkImageStencilUsageCreateInfo create_info;
 
+    scvkInitImageStencilUsageCreateInfo(&create_info, pNext, stencilUsage);
     scvkCreateImage(device,
                     &create_info,
                     flags,
@@ -9763,13 +9478,9 @@ void scvkCreateImageWithSwapchainInfo(
     const VkAllocationCallbacks* pAllocator,
     VkImage*                     pImage)
 {
-    VkImageSwapchainCreateInfoKHR create_info =
-    {
-        .sType     = VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR,
-        .pNext     = pNext,
-        .swapchain = swapchain
-    };
+    VkImageSwapchainCreateInfoKHR create_info;
 
+    scvkInitImageSwapchainCreateInfo(&create_info, pNext, swapchain);
     scvkCreateImage(device,
                     &create_info,
                     flags,
@@ -9801,13 +9512,9 @@ void scvkCreateImageViewWithASTCDecodeModeInfo(
     const VkAllocationCallbacks* pAllocator,
     VkImageView*                 pView)
 {
-    VkImageViewASTCDecodeModeEXT image_view_astc_decode_mode =
-    {
-        .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT,
-        .pNext      = pNext,
-        .decodeMode = decodeMode
-    };
+    VkImageViewASTCDecodeModeEXT image_view_astc_decode_mode;
 
+    scvkInitImageViewASTCDecodeMode(&image_view_astc_decode_mode, pNext, decodeMode);
     scvkCreateImageView(device, &image_view_astc_decode_mode, flags, image, viewType, format, components, subresourceRange, pAllocator, pView);
 }
 void scvkCreateImageViewWithUsageInfo(
@@ -9823,13 +9530,9 @@ void scvkCreateImageViewWithUsageInfo(
     const VkAllocationCallbacks* pAllocator,
     VkImageView*                 pView)
 {
-    VkImageViewUsageCreateInfo create_info =
-    {
-        .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO,
-        .pNext = pNext,
-        .usage = usage
-    };
+    VkImageViewUsageCreateInfo create_info;
 
+    scvkInitImageViewUsageCreateInfo(&create_info, pNext, usage);
     scvkCreateImageView(device, &create_info, flags, image, viewType, format, components, subresourceRange, pAllocator, pView);
 }
 void scvkCreateImageViewWithSamplerYcbcrConversionInfo(
@@ -9845,13 +9548,9 @@ void scvkCreateImageViewWithSamplerYcbcrConversionInfo(
     const VkAllocationCallbacks* pAllocator,
     VkImageView*                 pView)
 {
-    VkSamplerYcbcrConversionInfo conversion_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO,
-        .pNext      = pNext,
-        .conversion = conversion
-    };
+    VkSamplerYcbcrConversionInfo conversion_info;
 
+    scvkInitSamplerYcbcrConversionInfo(&conversion_info, pNext, conversion);
     scvkCreateImageView(device, &conversion_info, flags, image, viewType, format, components, subresourceRange, pAllocator, pView);
 }
 void scvkCreateInstanceWithDebugUtilsMessengerInfo(
@@ -9870,17 +9569,9 @@ void scvkCreateInstanceWithDebugUtilsMessengerInfo(
     const VkAllocationCallbacks*         pAllocator,
     VkInstance*                          pInstance)
 {
-    VkDebugUtilsMessengerCreateInfoEXT create_info =
-    {
-        .sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-        .pNext           = pNext,
-        .flags           = flagsDebugUtilsMessenger,
-        .messageSeverity = messageSeverity,
-        .messageType     = messageType,
-        .pfnUserCallback = pfnUserCallback,
-        .pUserData       = pUserData
-    };
+    VkDebugUtilsMessengerCreateInfoEXT create_info;
 
+    scvkInitDebugUtilsMessengerCreateInfo(&create_info, pNext, flagsDebugUtilsMessenger, messageSeverity, messageType, pfnUserCallback, pUserData);
     scvkCreateInstance(&create_info, flags, pApplicationInfo, enabledLayerCount, ppEnabledLayerNames, enabledExtensionCount, ppEnabledExtensionNames, pAllocator, pInstance);
 }
 void scvkCreateInstanceWithLayerSettingsInfo(
@@ -9896,14 +9587,9 @@ void scvkCreateInstanceWithLayerSettingsInfo(
     const VkAllocationCallbacks* pAllocator,
     VkInstance*                  pInstance)
 {
-    VkLayerSettingsCreateInfoEXT create_info =
-    {
-        .sType        = VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT,
-        .pNext        = pNext,
-        .settingCount = settingCount,
-        .pSettings    = pSettings
-    };
+    VkLayerSettingsCreateInfoEXT create_info;
 
+    scvkInitLayerSettingsCreateInfo(&create_info, pNext, settingCount, pSettings);
     scvkCreateInstance(&create_info, flags, pApplicationInfo, enabledLayerCount, ppEnabledLayerNames, enabledExtensionCount, ppEnabledExtensionNames, pAllocator, pInstance);
 }
 void scvkCreateInstanceWithValidationFeaturesInfo(
@@ -9921,16 +9607,9 @@ void scvkCreateInstanceWithValidationFeaturesInfo(
     const VkAllocationCallbacks*         pAllocator,
     VkInstance*                          pInstance)
 {
-    VkValidationFeaturesEXT features =
-    {
-        .sType                          = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT,
-        .pNext                          = pNext,
-        .enabledValidationFeatureCount  = enabledValidationFeatureCount,
-        .pEnabledValidationFeatures     = pEnabledValidationFeatures,
-        .disabledValidationFeatureCount = disabledValidationFeatureCount,
-        .pDisabledValidationFeatures    = pDisabledValidationFeatures
-    };
+    VkValidationFeaturesEXT features;
 
+    scvkInitValidationFeatures(&features, pNext, enabledValidationFeatureCount, pEnabledValidationFeatures, disabledValidationFeatureCount, pDisabledValidationFeatures);
     scvkCreateInstance(&features, flags, pApplicationInfo, enabledLayerCount, ppEnabledLayerNames, enabledExtensionCount, ppEnabledExtensionNames, pAllocator, pInstance);
 }
 void scvkCreateQueryPoolWithPerformanceInfo(
@@ -9946,15 +9625,9 @@ void scvkCreateQueryPoolWithPerformanceInfo(
     const VkAllocationCallbacks*  pAllocator,
     VkQueryPool*                  pQueryPool)
 {
-    VkQueryPoolPerformanceCreateInfoKHR create_info =
-    {
-        .sType             = VK_STRUCTURE_TYPE_QUERY_POOL_PERFORMANCE_CREATE_INFO_KHR,
-        .pNext             = pNext,
-        .queueFamilyIndex  = queueFamilyIndex,
-        .counterIndexCount = counterIndexCount,
-        .pCounterIndices   = pCounterIndices
-    };
+    VkQueryPoolPerformanceCreateInfoKHR create_info;
 
+    scvkInitQueryPoolPerformanceCreateInfo(&create_info, pNext, queueFamilyIndex, counterIndexCount, pCounterIndices);
     scvkCreateQueryPool(device, &create_info, flags, queryType, queryCount, pipelineStatistics, pAllocator, pQueryPool);
 }
 void scvkCreateRenderPassWithInputAttachmentAspectInfo(
@@ -9972,14 +9645,9 @@ void scvkCreateRenderPassWithInputAttachmentAspectInfo(
     const VkAllocationCallbacks*            pAllocator,
     VkRenderPass*                           pRenderPass)
 {
-    VkRenderPassInputAttachmentAspectCreateInfo create_info =
-    {
-        .sType                = VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO,
-        .pNext                = pNext,
-        .aspectReferenceCount = aspectReferenceCount,
-        .pAspectReferences    = pAspectReferences
-    };
+    VkRenderPassInputAttachmentAspectCreateInfo create_info;
 
+    scvkInitRenderPassInputAttachmentAspectCreateInfo(&create_info, pNext, aspectReferenceCount, pAspectReferences);
     scvkCreateRenderPass(device, &create_info, flags, attachmentCount, pAttachments, subpassCount, pSubpasses, dependencyCount, pDependencies, pAllocator, pRenderPass);
 }
 void scvkCreateRenderPassWithMultiviewInfo(
@@ -10001,18 +9669,9 @@ void scvkCreateRenderPassWithMultiviewInfo(
     const VkAllocationCallbacks*   pAllocator,
     VkRenderPass*                  pRenderPass)
 {
-    VkRenderPassMultiviewCreateInfo create_info =
-    {
-        .sType                = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO,
-        .pNext                = pNext,
-        .subpassCount         = multiviewSubpassCount,
-        .pViewMasks           = pViewMasks,
-        .dependencyCount      = multiviewDependencyCount,
-        .pViewOffsets         = pViewOffsets,
-        .correlationMaskCount = correlationMaskCount,
-        .pCorrelationMasks    = pCorrelationMasks
-    };
+    VkRenderPassMultiviewCreateInfo create_info;
 
+    scvkInitRenderPassMultiviewCreateInfo(&create_info, pNext, multiviewSubpassCount, pViewMasks, multiviewDependencyCount, pViewOffsets, correlationMaskCount, pCorrelationMasks);
     scvkCreateRenderPass(device, &create_info, flags, attachmentCount, pAttachments, subpassCount, pSubpasses, dependencyCount, pDependencies, pAllocator, pRenderPass);
 }
 void scvkCreateSamplerWithDebugUtilsObjectNameInfo(
@@ -10040,15 +9699,9 @@ void scvkCreateSamplerWithDebugUtilsObjectNameInfo(
     const VkAllocationCallbacks* pAllocator,
     VkSampler*                   pSampler)
 {
-    VkDebugUtilsObjectNameInfoEXT name_info =
-    {
-        .sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
-        .pNext        = pNext,
-        .objectType   = objectType,
-        .objectHandle = objectHandle,
-        .pObjectName  = pObjectName
-    };
+    VkDebugUtilsObjectNameInfoEXT name_info;
 
+    scvkInitDebugUtilsObjectNameInfo(&name_info, pNext, objectType, objectHandle, pObjectName);
     scvkCreateSampler(device,
                       &name_info,
                       flags,
@@ -10094,14 +9747,9 @@ void scvkCreateSamplerWithCustomBorderColorInfo(
     const VkAllocationCallbacks* pAllocator,
     VkSampler*                   pSampler)
 {
-    VkSamplerCustomBorderColorCreateInfoEXT create_info =
-    {
-        .sType             = VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT,
-        .pNext             = pNext,
-        .customBorderColor = customBorderColor,
-        .format            = format
-    };
+    VkSamplerCustomBorderColorCreateInfoEXT create_info;
 
+    scvkInitSamplerCustomBorderColorCreateInfo(&create_info, pNext, customBorderColor, format);
     scvkCreateSampler(device,
                       &create_info,
                       flags,
@@ -10146,13 +9794,9 @@ void scvkCreateSamplerWithReductionModeInfo(
     const VkAllocationCallbacks* pAllocator,
     VkSampler*                   pSampler)
 {
-    VkSamplerReductionModeCreateInfo create_info =
-    {
-        .sType         = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO,
-        .pNext         = pNext,
-        .reductionMode = reductionMode
-    };
+    VkSamplerReductionModeCreateInfo create_info;
 
+    scvkInitSamplerReductionModeCreateInfo(&create_info, pNext, reductionMode);
     scvkCreateSampler(device,
                       &create_info,
                       flags,
@@ -10197,13 +9841,9 @@ void scvkCreateSamplerWithYcbcrConversionInfo(
     const VkAllocationCallbacks* pAllocator,
     VkSampler*                   pSampler)
 {
-    VkSamplerYcbcrConversionInfo conversion_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO,
-        .pNext      = pNext,
-        .conversion = conversion
-    };
+    VkSamplerYcbcrConversionInfo conversion_info;
 
+    scvkInitSamplerYcbcrConversionInfo(&conversion_info, pNext, conversion);
     scvkCreateSampler(device,
                       &conversion_info,
                       flags,
@@ -10233,13 +9873,9 @@ void scvkCreateExportSemaphore(
     const VkAllocationCallbacks*       pAllocator,
     VkSemaphore*                       pSemaphore)
 {
-    VkExportSemaphoreCreateInfo create_info =
-    {
-        .sType       = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO,
-        .pNext       = pNext,
-        .handleTypes = handleTypes
-    };
+    VkExportSemaphoreCreateInfo create_info;
 
+    scvkInitExportSemaphoreCreateInfo(&create_info, pNext, handleTypes);
     scvkCreateSemaphore(device, &create_info, flags, pAllocator, pSemaphore);
 }
 void scvkCreateSemaphoreWithTypeInfo(
@@ -10251,14 +9887,9 @@ void scvkCreateSemaphoreWithTypeInfo(
     const VkAllocationCallbacks* pAllocator,
     VkSemaphore*                 pSemaphore)
 {
-    VkSemaphoreTypeCreateInfo create_info =
-    {
-        .sType         = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO,
-        .pNext         = pNext,
-        .semaphoreType = semaphoreType,
-        .initialValue  = initialValue
-    };
+    VkSemaphoreTypeCreateInfo create_info;
 
+    scvkInitSemaphoreTypeCreateInfo(&create_info, pNext, semaphoreType, initialValue);
     scvkCreateSemaphore(device, &create_info, flags, pAllocator, pSemaphore);
 }
 VkResult scvkCreateSwapchainWithDeviceGroupInfo(
@@ -10284,12 +9915,9 @@ VkResult scvkCreateSwapchainWithDeviceGroupInfo(
     const VkAllocationCallbacks*     pAllocator,
     VkSwapchainKHR*                  pSwapchain)
 {
-    VkDeviceGroupSwapchainCreateInfoKHR create_info =
-    {
-        .sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR,
-        .pNext = pNext,
-        .modes = modes
-    };
+    VkDeviceGroupSwapchainCreateInfoKHR create_info;
+
+    scvkInitDeviceGroupSwapchainCreateInfo(&create_info, pNext, modes);
 
     return scvkCreateSwapchain(device,
                                &create_info,
@@ -10336,13 +9964,9 @@ VkResult scvkCreateSwapchainWithImageFormatListInfo(
     const VkAllocationCallbacks*  pAllocator,
     VkSwapchainKHR*               pSwapchain)
 {
-    VkImageFormatListCreateInfo create_info =
-    {
-        .sType           = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO,
-        .pNext           = pNext,
-        .viewFormatCount = viewFormatCount,
-        .pViewFormats    = pViewFormats
-    };
+    VkImageFormatListCreateInfo create_info;
+
+    scvkInitImageFormatListCreateInfo(&create_info, pNext, viewFormatCount, pViewFormats);
 
     return scvkCreateSwapchain(device,
                                &create_info,
@@ -10388,12 +10012,9 @@ VkResult scvkCreateSwapchainWithCounterInfo(
     const VkAllocationCallbacks*  pAllocator,
     VkSwapchainKHR*               pSwapchain)
 {
-    VkSwapchainCounterCreateInfoEXT create_info =
-    {
-        .sType           = VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT,
-        .pNext           = pNext,
-        .surfaceCounters = surfaceCounters
-    };
+    VkSwapchainCounterCreateInfoEXT create_info;
+
+    scvkInitSwapchainCounterCreateInfo(&create_info, pNext, surfaceCounters);
 
     return scvkCreateSwapchain(device,
                                &create_info,
@@ -10427,14 +10048,9 @@ void scvkGetDescriptorSetLayoutBindingFlagsSupport(
     void*                               pSupportNext,
     VkDescriptorSetLayoutSupport*       pSupport)
 {
-    VkDescriptorSetLayoutBindingFlagsCreateInfo create_info =
-    {
-        .sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO,
-        .pNext         = pCreateInfoNext,
-        .bindingCount  = bindingFlagsBindingCount,
-        .pBindingFlags = pBindingFlags
-    };
+    VkDescriptorSetLayoutBindingFlagsCreateInfo create_info;
 
+    scvkInitDescriptorSetLayoutBindingFlagsCreateInfo(&create_info, pCreateInfoNext, bindingFlagsBindingCount, pBindingFlags);
     scvkGetDescriptorSetLayoutSupport(device, &create_info, flags, bindingCount, pBindings, pSupportNext, pSupport);
 }
 void scvkGetImagePlaneMemoryRequirementsInfo(
@@ -10445,13 +10061,9 @@ void scvkGetImagePlaneMemoryRequirementsInfo(
     void*                  pMemoryRequirementsNext,
     VkMemoryRequirements2* pMemoryRequirements)
 {
-    VkImagePlaneMemoryRequirementsInfo requirements_info =
-    {
-        .sType       = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO,
-        .pNext       = pInfoNext,
-        .planeAspect = planeAspect
-    };
+    VkImagePlaneMemoryRequirementsInfo requirements_info;
 
+    scvkInitImagePlaneMemoryRequirementsInfo(&requirements_info, pInfoNext, planeAspect);
     scvkGetImageMemoryRequirementsInfo2(device, &requirements_info, image, pMemoryRequirementsNext, pMemoryRequirements);
 }
 void scvkGetPhysicalDeviceExternalSemaphoreTypeProperties(
@@ -10463,14 +10075,9 @@ void scvkGetPhysicalDeviceExternalSemaphoreTypeProperties(
     void*                                 pExternalSemaphorePropertiesNext,
     VkExternalSemaphoreProperties*        pExternalSemaphoreProperties)
 {
-    VkSemaphoreTypeCreateInfo create_info =
-    {
-        .sType         = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO,
-        .pNext         = pExternalSemaphoreInfoNext,
-        .semaphoreType = semaphoreType,
-        .initialValue  = initialValue
-    };
+    VkSemaphoreTypeCreateInfo create_info;
 
+    scvkInitSemaphoreTypeCreateInfo(&create_info, pExternalSemaphoreInfoNext, semaphoreType, initialValue);
     scvkGetPhysicalDeviceExternalSemaphoreInfo(physicalDevice, &create_info, handleType, pExternalSemaphorePropertiesNext, pExternalSemaphoreProperties);
 }
 VkResult scvkGetPhysicalDeviceImageFormatListProperties(
@@ -10486,13 +10093,9 @@ VkResult scvkGetPhysicalDeviceImageFormatListProperties(
     void*                     pImageFormatPropertiesNext,
     VkImageFormatProperties2* pImageFormatProperties)
 {
-    VkImageFormatListCreateInfo create_info =
-    {
-        .sType           = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO,
-        .pNext           = pImageFormatInfoNext,
-        .viewFormatCount = viewFormatCount,
-        .pViewFormats    = pViewFormats
-    };
+    VkImageFormatListCreateInfo create_info;
+
+    scvkInitImageFormatListCreateInfo(&create_info, pImageFormatInfoNext, viewFormatCount, pViewFormats);
 
     return scvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
@@ -10508,12 +10111,9 @@ VkResult scvkGetPhysicalDeviceImageStencilFormatUsageProperties(
     void*                     pImageFormatPropertiesNext,
     VkImageFormatProperties2* pImageFormatProperties)
 {
-    VkImageStencilUsageCreateInfo create_info =
-    {
-        .sType        = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO,
-        .pNext        = pImageFormatInfoNext,
-        .stencilUsage = stencilUsage
-    };
+    VkImageStencilUsageCreateInfo create_info;
+
+    scvkInitImageStencilUsageCreateInfo(&create_info, pImageFormatInfoNext, stencilUsage);
 
     return scvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
@@ -10529,12 +10129,9 @@ VkResult scvkGetPhysicalDeviceExternalImageFormatInfo(
     void*                              pImageFormatPropertiesNext,
     VkImageFormatProperties2*          pImageFormatProperties)
 {
-    VkPhysicalDeviceExternalImageFormatInfo format_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO,
-        .pNext      = pImageFormatInfoNext,
-        .handleType = handleType
-    };
+    VkPhysicalDeviceExternalImageFormatInfo format_info;
+
+    scvkInitPhysicalDeviceExternalImageFormatInfo(&format_info, pImageFormatInfoNext, handleType);
 
     return scvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
@@ -10553,15 +10150,9 @@ VkResult scvkGetPhysicalDeviceImageDrmFormatModifierInfo(
     void*                     pImageFormatPropertiesNext,
     VkImageFormatProperties2* pImageFormatProperties)
 {
-    VkPhysicalDeviceImageDrmFormatModifierInfoEXT modifier_info =
-    {
-        .sType                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT,
-        .pNext                 = pImageFormatInfoNext,
-        .drmFormatModifier     = drmFormatModifier,
-        .sharingMode           = sharingMode,
-        .queueFamilyIndexCount = queueFamilyIndexCount,
-        .pQueueFamilyIndices   = pQueueFamilyIndices
-    };
+    VkPhysicalDeviceImageDrmFormatModifierInfoEXT modifier_info;
+
+    scvkInitPhysicalDeviceImageDrmFormatModifierInfo(&modifier_info, pImageFormatInfoNext, drmFormatModifier, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices);
 
     return scvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &modifier_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
@@ -10577,12 +10168,9 @@ VkResult scvkGetPhysicalDeviceImageViewImageFormatInfo(
     void*                     pImageFormatPropertiesNext,
     VkImageFormatProperties2* pImageFormatProperties)
 {
-    VkPhysicalDeviceImageViewImageFormatInfoEXT format_info =
-    {
-        .sType         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_IMAGE_FORMAT_INFO_EXT,
-        .pNext         = pImageFormatInfoNext,
-        .imageViewType = imageViewType
-    };
+    VkPhysicalDeviceImageViewImageFormatInfoEXT format_info;
+
+    scvkInitPhysicalDeviceImageViewImageFormatInfo(&format_info, pImageFormatInfoNext, imageViewType);
 
     return scvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
@@ -10599,14 +10187,9 @@ VkResult scvkQueuePresentWithDeviceGroupInfo(
     const uint32_t*                     pImageIndices,
     VkResult*                           pResults)
 {
-    VkDeviceGroupPresentInfoKHR present_info =
-    {
-        .sType          = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR,
-        .pNext          = pNext,
-        .swapchainCount = deviceGroupSwapchainCount,
-        .pDeviceMasks   = pDeviceMasks,
-        .mode           = mode
-    };
+    VkDeviceGroupPresentInfoKHR present_info;
+
+    scvkInitDeviceGroupPresentInfo(&present_info, pNext, deviceGroupSwapchainCount, pDeviceMasks, mode);
 
     return scvkQueuePresent(queue, &present_info, waitSemaphoreCount, pWaitSemaphores, swapchainCount, pSwapchains, pImageIndices, pResults);
 }
@@ -10623,14 +10206,9 @@ VkResult scvkQueuePresentWithDisplayInfo(
     const uint32_t*       pImageIndices,
     VkResult*             pResults)
 {
-    VkDisplayPresentInfoKHR present_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR,
-        .pNext      = pNext,
-        .srcRect    = srcRect,
-        .dstRect    = dstRect,
-        .persistent = persistent
-    };
+    VkDisplayPresentInfoKHR present_info;
+
+    scvkInitDisplayPresentInfo(&present_info, pNext, srcRect, dstRect, persistent);
 
     return scvkQueuePresent(queue, &present_info, waitSemaphoreCount, pWaitSemaphores, swapchainCount, pSwapchains, pImageIndices, pResults);
 }
@@ -10646,13 +10224,9 @@ VkResult scvkQueuePresentWithRegionsInfo(
     const uint32_t*           pImageIndices,
     VkResult*                 pResults)
 {
-    VkPresentRegionsKHR present_regions =
-    {
-        .sType          = VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR,
-        .pNext          = pNext,
-        .swapchainCount = regionsSwapchainCount,
-        .pRegions       = pRegions
-    };
+    VkPresentRegionsKHR present_regions;
+
+    scvkInitPresentRegions(&present_regions, pNext, regionsSwapchainCount, pRegions);
 
     return scvkQueuePresent(queue, &present_regions, waitSemaphoreCount, pWaitSemaphores, swapchainCount, pSwapchains, pImageIndices, pResults);
 }
@@ -10665,14 +10239,9 @@ void scvkBindBufferMemoryInfoWithDeviceGroupInfo(
     VkDeviceMemory  memory,
     VkDeviceSize    memoryOffset)
 {
-    VkBindBufferMemoryDeviceGroupInfo group_info =
-    {
-        .sType            = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO,
-        .pNext            = pNext,
-        .deviceIndexCount = deviceIndexCount,
-        .pDeviceIndices   = pDeviceIndices
-    };
+    VkBindBufferMemoryDeviceGroupInfo group_info;
 
+    scvkInitBindBufferMemoryDeviceGroupInfo(&group_info, pNext, deviceIndexCount, pDeviceIndices);
     scvkBindBufferMemoryInfo(device, &group_info, buffer, memory, memoryOffset);
 }
 void scvkBindImageMemoryInfoWithDeviceGroupInfo(
@@ -10686,16 +10255,9 @@ void scvkBindImageMemoryInfoWithDeviceGroupInfo(
     VkDeviceMemory  memory,
     VkDeviceSize    memoryOffset)
 {
-    VkBindImageMemoryDeviceGroupInfo group_info =
-    {
-        .sType                        = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO,
-        .pNext                        = pNext,
-        .deviceIndexCount             = deviceIndexCount,
-        .pDeviceIndices               = pDeviceIndices,
-        .splitInstanceBindRegionCount = splitInstanceBindRegionCount,
-        .pSplitInstanceBindRegions    = pSplitInstanceBindRegions
-    };
+    VkBindImageMemoryDeviceGroupInfo group_info;
 
+    scvkInitBindImageMemoryDeviceGroupInfo(&group_info, pNext, deviceIndexCount, pDeviceIndices, splitInstanceBindRegionCount, pSplitInstanceBindRegions);
     scvkBindImageMemoryInfo(device, &group_info, image, memory, memoryOffset);
 }
 void scvkBindImageMemoryInfoWithSwapchainInfo(
@@ -10707,14 +10269,9 @@ void scvkBindImageMemoryInfoWithSwapchainInfo(
     VkDeviceMemory memory,
     VkDeviceSize   memoryOffset)
 {
-    VkBindImageMemorySwapchainInfoKHR swapchain_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR,
-        .pNext      = pNext,
-        .swapchain  = swapchain,
-        .imageIndex = imageIndex
-    };
+    VkBindImageMemorySwapchainInfoKHR swapchain_info;
 
+    scvkInitBindImageMemorySwapchainInfo(&swapchain_info, pNext, swapchain, imageIndex);
     scvkBindImageMemoryInfo(device, &swapchain_info, image, memory, memoryOffset);
 }
 void scvkBindImageMemoryInfoWithPlaneInfo(
@@ -10725,13 +10282,9 @@ void scvkBindImageMemoryInfoWithPlaneInfo(
     VkDeviceMemory        memory,
     VkDeviceSize          memoryOffset)
 {
-    VkBindImagePlaneMemoryInfo memory_info =
-    {
-        .sType       = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO,
-        .pNext       = pNext,
-        .planeAspect = planeAspect
-    };
+    VkBindImagePlaneMemoryInfo memory_info;
 
+    scvkInitBindImagePlaneMemoryInfo(&memory_info, pNext, planeAspect);
     scvkBindImageMemoryInfo(device, &memory_info, image, memory, memoryOffset);
 }
 void scvkCreateComputePipelineWithOfflineInfo(
@@ -10751,14 +10304,7 @@ void scvkCreateComputePipelineWithOfflineInfo(
 {
     VkPipelineOfflineCreateInfo create_info;
 
-    cvkZeroMemory(&create_info, sizeof(create_info));
-
-    create_info.sType         = VK_STRUCTURE_TYPE_PIPELINE_OFFLINE_CREATE_INFO;
-    create_info.pNext         = pNext;
-    create_info.matchControl  = matchControl;
-    create_info.poolEntrySize = poolEntrySize;
-
-    cvkCopyMemory(create_info.pipelineIdentifier, pipelineIdentifier, sizeof(create_info.pipelineIdentifier));
+    scvkInitPipelineOfflineCreateInfo(&create_info, pNext, pipelineIdentifier, matchControl, poolEntrySize);
     scvkCreateComputePipeline(device, pipelineCache, &create_info, flags, stage, layout, basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
 }
 void scvkCreateGraphicsPipelineWithDiscardRectangleStateInfo(
@@ -10789,16 +10335,9 @@ void scvkCreateGraphicsPipelineWithDiscardRectangleStateInfo(
     const VkAllocationCallbacks*                  pAllocator,
     VkPipeline*                                   pPipeline)
 {
-    VkPipelineDiscardRectangleStateCreateInfoEXT create_info =
-    {
-        .sType                 = VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT,
-        .pNext                 = pNext,
-        .flags                 = flagsDiscardRectangleState,
-        .discardRectangleMode  = discardRectangleMode,
-        .discardRectangleCount = discardRectangleCount,
-        .pDiscardRectangles    = pDiscardRectangles
-    };
+    VkPipelineDiscardRectangleStateCreateInfoEXT create_info;
 
+    scvkInitPipelineDiscardRectangleStateCreateInfo(&create_info, pNext, flagsDiscardRectangleState, discardRectangleMode, discardRectangleCount, pDiscardRectangles);
     scvkCreateGraphicsPipeline(device,
                                pipelineCache,
                                &create_info,
@@ -10850,13 +10389,7 @@ void scvkCreateGraphicsPipelineWithFragmentShadingRateStateInfo(
 {
     VkPipelineFragmentShadingRateStateCreateInfoKHR create_info;
 
-    cvkZeroMemory(&create_info, sizeof(create_info));
-
-    create_info.sType        = VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR;
-    create_info.pNext        = pNext;
-    create_info.fragmentSize = fragmentSize;
-
-    cvkCopyMemory(create_info.combinerOps, combinerOps, sizeof(create_info.combinerOps));
+    scvkInitPipelineFragmentShadingRateStateCreateInfo(&create_info, pNext, fragmentSize, combinerOps);
     scvkCreateGraphicsPipeline(device,
                                pipelineCache,
                                &create_info,
@@ -10909,14 +10442,7 @@ void scvkCreateGraphicsPipelineWithOfflineInfo(
 {
     VkPipelineOfflineCreateInfo create_info;
 
-    cvkZeroMemory(&create_info, sizeof(create_info));
-
-    create_info.sType         = VK_STRUCTURE_TYPE_PIPELINE_OFFLINE_CREATE_INFO;
-    create_info.pNext         = pNext;
-    create_info.matchControl  = matchControl;
-    create_info.poolEntrySize = poolEntrySize;
-
-    cvkCopyMemory(create_info.pipelineIdentifier, pipelineIdentifier, sizeof(create_info.pipelineIdentifier));
+    scvkInitPipelineOfflineCreateInfo(&create_info, pNext, pipelineIdentifier, matchControl, poolEntrySize);
     scvkCreateGraphicsPipeline(device,
                                pipelineCache,
                                &create_info,
@@ -10963,12 +10489,9 @@ VkResult scvkCreateSharedSwapchainWithDeviceGroupInfo(
     const VkAllocationCallbacks*     pAllocator,
     VkSwapchainKHR*                  pSwapchain)
 {
-    VkDeviceGroupSwapchainCreateInfoKHR create_info =
-    {
-        .sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR,
-        .pNext = pNext,
-        .modes = modes
-    };
+    VkDeviceGroupSwapchainCreateInfoKHR create_info;
+
+    scvkInitDeviceGroupSwapchainCreateInfo(&create_info, pNext, modes);
 
     return scvkCreateSharedSwapchain(device,
                                      &create_info,
@@ -11015,13 +10538,9 @@ VkResult scvkCreateSharedSwapchainWithImageFormatListInfo(
     const VkAllocationCallbacks*  pAllocator,
     VkSwapchainKHR*               pSwapchain)
 {
-    VkImageFormatListCreateInfo create_info =
-    {
-        .sType           = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO,
-        .pNext           = pNext,
-        .viewFormatCount = viewFormatCount,
-        .pViewFormats    = pViewFormats
-    };
+    VkImageFormatListCreateInfo create_info;
+
+    scvkInitImageFormatListCreateInfo(&create_info, pNext, viewFormatCount, pViewFormats);
 
     return scvkCreateSharedSwapchain(device,
                                      &create_info,
@@ -11067,12 +10586,9 @@ VkResult scvkCreateSharedSwapchainWithCounterInfo(
     const VkAllocationCallbacks*  pAllocator,
     VkSwapchainKHR*               pSwapchain)
 {
-    VkSwapchainCounterCreateInfoEXT create_info =
-    {
-        .sType           = VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT,
-        .pNext           = pNext,
-        .surfaceCounters = surfaceCounters
-    };
+    VkSwapchainCounterCreateInfoEXT create_info;
+
+    scvkInitSwapchainCounterCreateInfo(&create_info, pNext, surfaceCounters);
 
     return scvkCreateSharedSwapchain(device,
                                      &create_info,
@@ -11113,18 +10629,16 @@ void scvkQueueSubmitInfoWithDeviceGroupInfo(
     const VkSemaphore*          pSignalSemaphores,
     VkFence                     fence)
 {
-    VkDeviceGroupSubmitInfo submit_info =
-    {
-        .sType                         = VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO,
-        .pNext                         = pNext,
-        .waitSemaphoreCount            = deviceGroupWaitSemaphoreCount,
-        .pWaitSemaphoreDeviceIndices   = pWaitSemaphoreDeviceIndices,
-        .commandBufferCount            = deviceGroupCommandBufferCount,
-        .pCommandBufferDeviceMasks     = pCommandBufferDeviceMasks,
-        .signalSemaphoreCount          = deviceGroupSignalSemaphoreCount,
-        .pSignalSemaphoreDeviceIndices = pSignalSemaphoreDeviceIndices
-    };
+    VkDeviceGroupSubmitInfo submit_info;
 
+    scvkInitDeviceGroupSubmitInfo(&submit_info,
+                                  pNext,
+                                  deviceGroupWaitSemaphoreCount,
+                                  pWaitSemaphoreDeviceIndices,
+                                  deviceGroupCommandBufferCount,
+                                  pCommandBufferDeviceMasks,
+                                  deviceGroupSignalSemaphoreCount,
+                                  pSignalSemaphoreDeviceIndices);
     scvkQueueSubmitInfo(queue, &submit_info, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, commandBufferCount, pCommandBuffers, signalSemaphoreCount, pSignalSemaphores, fence);
 }
 void scvkQueueSubmitInfoWithPerformanceQueryInfo(
@@ -11140,13 +10654,9 @@ void scvkQueueSubmitInfoWithPerformanceQueryInfo(
     const VkSemaphore*          pSignalSemaphores,
     VkFence                     fence)
 {
-    VkPerformanceQuerySubmitInfoKHR submit_info =
-    {
-        .sType            = VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_SUBMIT_INFO_KHR,
-        .pNext            = pNext,
-        .counterPassIndex = counterPassIndex
-    };
+    VkPerformanceQuerySubmitInfoKHR submit_info;
 
+    scvkInitPerformanceQuerySubmitInfo(&submit_info, pNext, counterPassIndex);
     scvkQueueSubmitInfo(queue, &submit_info, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, commandBufferCount, pCommandBuffers, signalSemaphoreCount, pSignalSemaphores, fence);
 }
 void scvkQueueSubmitInfoWithProtectedInfo(
@@ -11162,13 +10672,9 @@ void scvkQueueSubmitInfoWithProtectedInfo(
     const VkSemaphore*          pSignalSemaphores,
     VkFence                     fence)
 {
-    VkProtectedSubmitInfo submit_info =
-    {
-        .sType           = VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO,
-        .pNext           = pNext,
-        .protectedSubmit = protectedSubmit
-    };
+    VkProtectedSubmitInfo submit_info;
 
+    scvkInitProtectedSubmitInfo(&submit_info, pNext, protectedSubmit);
     scvkQueueSubmitInfo(queue, &submit_info, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, commandBufferCount, pCommandBuffers, signalSemaphoreCount, pSignalSemaphores, fence);
 }
 void scvkQueueSubmitInfoWithTimelineSemaphoreInfo(
@@ -11187,16 +10693,9 @@ void scvkQueueSubmitInfoWithTimelineSemaphoreInfo(
     const VkSemaphore*          pSignalSemaphores,
     VkFence                     fence)
 {
-    VkTimelineSemaphoreSubmitInfo submit_info =
-    {
-        .sType                     = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO,
-        .pNext                     = pNext,
-        .waitSemaphoreValueCount   = waitSemaphoreValueCount,
-        .pWaitSemaphoreValues      = pWaitSemaphoreValues,
-        .signalSemaphoreValueCount = signalSemaphoreValueCount,
-        .pSignalSemaphoreValues    = pSignalSemaphoreValues
-    };
+    VkTimelineSemaphoreSubmitInfo submit_info;
 
+    scvkInitTimelineSemaphoreSubmitInfo(&submit_info, pNext, waitSemaphoreValueCount, pWaitSemaphoreValues, signalSemaphoreValueCount, pSignalSemaphoreValues);
     scvkQueueSubmitInfo(queue, &submit_info, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, commandBufferCount, pCommandBuffers, signalSemaphoreCount, pSignalSemaphores, fence);
 }
 void scvkBindSwapchainImageMemories(
@@ -11217,21 +10716,8 @@ void scvkBindSwapchainImageMemories(
 
     for (index = 0; index < bindInfoCount; ++index)
     {
-        swapchain_infos[index] = (VkBindImageMemorySwapchainInfoKHR)
-        {
-            .sType      = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR,
-            .pNext      = (NULL != ppNexts) ? ppNexts[index] : NULL,
-            .swapchain  = pSwapchains[index],
-            .imageIndex = pImageIndices[index]
-        };
-        bind_infos[index] = (VkBindImageMemoryInfo)
-        {
-            .sType        = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO,
-            .pNext        = &swapchain_infos[index],
-            .image        = pImages[index],
-            .memory       = pMemories[index],
-            .memoryOffset = pMemoryOffsets[index]
-        };
+        scvkInitBindImageMemorySwapchainInfo(&swapchain_infos[index], (NULL != ppNexts) ? ppNexts[index] : NULL, pSwapchains[index], pImageIndices[index]);
+        scvkInitBindImageMemoryInfo(&bind_infos[index], &swapchain_infos[index], pImages[index], pMemories[index], pMemoryOffsets[index]);
     }
     scvkBindImageMemory2(device, bindInfoCount, bind_infos);
 }
@@ -11263,20 +10749,8 @@ void scvkBindPlaneImageMemories(
 
     for (index = 0; index < bindInfoCount; ++index)
     {
-        memory_infos[index] = (VkBindImagePlaneMemoryInfo)
-        {
-            .sType       = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO,
-            .pNext       = (NULL != ppNexts) ? ppNexts[index] : NULL,
-            .planeAspect = pPlaneAspects[index]
-        };
-        bind_infos[index] = (VkBindImageMemoryInfo)
-        {
-            .sType        = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO,
-            .pNext        = &memory_infos[index],
-            .image        = pImages[index],
-            .memory       = pMemories[index],
-            .memoryOffset = pMemoryOffsets[index]
-        };
+        scvkInitBindImagePlaneMemoryInfo(&memory_infos[index], (NULL != ppNexts) ? ppNexts[index] : NULL, pPlaneAspects[index]);
+        scvkInitBindImageMemoryInfo(&bind_infos[index], &memory_infos[index], pImages[index], pMemories[index], pMemoryOffsets[index]);
     }
     scvkBindImageMemory2(device, bindInfoCount, bind_infos);
 }
@@ -11301,10 +10775,7 @@ void scvkGetBufferMemoryDedicatedRequirements(
     VkMemoryDedicatedRequirements requirements;
 
     cvkZeroMemory(&requirements, sizeof(requirements));
-
-    requirements.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
-    requirements.pNext = pMemoryDedicatedRequirementsNext;
-
+    scvkInitMemoryDedicatedRequirements(&requirements, pMemoryDedicatedRequirementsNext);
     scvkGetBufferMemoryRequirementsInfo2(device, pInfoNext, buffer, &requirements, &memory_requirements);
 
     (*pMemoryDedicatedRequirements) = requirements;
@@ -11322,10 +10793,7 @@ void scvkGetDescriptorSetVariableDescriptorCountLayoutSupport(
     VkDescriptorSetVariableDescriptorCountLayoutSupport ext_support;
 
     cvkZeroMemory(&ext_support, sizeof(ext_support));
-
-    ext_support.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT;
-    ext_support.pNext = pDescriptorSetVariableDescriptorCountLayoutSupportNext;
-
+    scvkInitDescriptorSetVariableDescriptorCountLayoutSupport(&ext_support, pDescriptorSetVariableDescriptorCountLayoutSupportNext);
     scvkGetDescriptorSetLayoutSupport(device, pCreateInfoNext, flags, bindingCount, pBindings, &ext_support, &support);
 
     (*pDescriptorSetVariableDescriptorCountLayoutSupport) = ext_support;
@@ -11341,10 +10809,7 @@ void scvkGetImageMemoryDedicatedRequirements(
     VkMemoryDedicatedRequirements requirements;
 
     cvkZeroMemory(&requirements, sizeof(requirements));
-
-    requirements.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
-    requirements.pNext = pMemoryDedicatedRequirementsNext;
-
+    scvkInitMemoryDedicatedRequirements(&requirements, pMemoryDedicatedRequirementsNext);
     scvkGetImageMemoryRequirementsInfo2(device, pInfoNext, image, &requirements, &memory_requirements);
 
     (*pMemoryDedicatedRequirements) = requirements;
@@ -11355,12 +10820,9 @@ void scvkGetPhysicalDevice16BitStorageFeatures(
     VkPhysicalDevice16BitStorageFeatures* pPhysicalDevice16BitStorageFeatures)
 {
     VkPhysicalDeviceFeatures2            features;
-    VkPhysicalDevice16BitStorageFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDevice16BitStorageFeatures ext_features;
 
+    scvkInitPhysicalDevice16BitStorageFeatures(&ext_features, pNext, (VkBool32)0, (VkBool32)0, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDevice16BitStorageFeatures) = ext_features;
@@ -11371,12 +10833,9 @@ void scvkGetPhysicalDevice4444FormatsFeatures(
     VkPhysicalDevice4444FormatsFeaturesEXT* pPhysicalDevice4444FormatsFeatures)
 {
     VkPhysicalDeviceFeatures2              features;
-    VkPhysicalDevice4444FormatsFeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_4444_FORMATS_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDevice4444FormatsFeaturesEXT ext_features;
 
+    scvkInitPhysicalDevice4444FormatsFeatures(&ext_features, pNext, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDevice4444FormatsFeatures) = ext_features;
@@ -11387,12 +10846,9 @@ void scvkGetPhysicalDevice8BitStorageFeatures(
     VkPhysicalDevice8BitStorageFeatures* pPhysicalDevice8BitStorageFeatures)
 {
     VkPhysicalDeviceFeatures2           features;
-    VkPhysicalDevice8BitStorageFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDevice8BitStorageFeatures ext_features;
 
+    scvkInitPhysicalDevice8BitStorageFeatures(&ext_features, pNext, (VkBool32)0, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDevice8BitStorageFeatures) = ext_features;
@@ -11403,12 +10859,9 @@ void scvkGetPhysicalDeviceASTCDecodeFeatures(
     VkPhysicalDeviceASTCDecodeFeaturesEXT* pPhysicalDeviceASTCDecodeFeatures)
 {
     VkPhysicalDeviceFeatures2             features;
-    VkPhysicalDeviceASTCDecodeFeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceASTCDecodeFeaturesEXT ext_features;
 
+    scvkInitPhysicalDeviceASTCDecodeFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceASTCDecodeFeatures) = ext_features;
@@ -11419,12 +10872,9 @@ void scvkGetPhysicalDeviceBlendOperationAdvancedFeatures(
     VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT* pPhysicalDeviceBlendOperationAdvancedFeatures)
 {
     VkPhysicalDeviceFeatures2                         features;
-    VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT ext_features;
 
+    scvkInitPhysicalDeviceBlendOperationAdvancedFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceBlendOperationAdvancedFeatures) = ext_features;
@@ -11435,12 +10885,9 @@ void scvkGetPhysicalDeviceBufferDeviceAddressFeatures(
     VkPhysicalDeviceBufferDeviceAddressFeatures* pPhysicalDeviceBufferDeviceAddressFeatures)
 {
     VkPhysicalDeviceFeatures2                   features;
-    VkPhysicalDeviceBufferDeviceAddressFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceBufferDeviceAddressFeatures ext_features;
 
+    scvkInitPhysicalDeviceBufferDeviceAddressFeatures(&ext_features, pNext, (VkBool32)0, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceBufferDeviceAddressFeatures) = ext_features;
@@ -11451,12 +10898,9 @@ void scvkGetPhysicalDeviceColorWriteEnableFeatures(
     VkPhysicalDeviceColorWriteEnableFeaturesEXT* pPhysicalDeviceColorWriteEnableFeatures)
 {
     VkPhysicalDeviceFeatures2                   features;
-    VkPhysicalDeviceColorWriteEnableFeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COLOR_WRITE_ENABLE_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceColorWriteEnableFeaturesEXT ext_features;
 
+    scvkInitPhysicalDeviceColorWriteEnableFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceColorWriteEnableFeatures) = ext_features;
@@ -11467,12 +10911,9 @@ void scvkGetPhysicalDeviceCustomBorderColorFeatures(
     VkPhysicalDeviceCustomBorderColorFeaturesEXT* pPhysicalDeviceCustomBorderColorFeatures)
 {
     VkPhysicalDeviceFeatures2                    features;
-    VkPhysicalDeviceCustomBorderColorFeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceCustomBorderColorFeaturesEXT ext_features;
 
+    scvkInitPhysicalDeviceCustomBorderColorFeatures(&ext_features, pNext, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceCustomBorderColorFeatures) = ext_features;
@@ -11483,12 +10924,9 @@ void scvkGetPhysicalDeviceDepthClipEnableFeatures(
     VkPhysicalDeviceDepthClipEnableFeaturesEXT* pPhysicalDeviceDepthClipEnableFeatures)
 {
     VkPhysicalDeviceFeatures2                  features;
-    VkPhysicalDeviceDepthClipEnableFeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceDepthClipEnableFeaturesEXT ext_features;
 
+    scvkInitPhysicalDeviceDepthClipEnableFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceDepthClipEnableFeatures) = ext_features;
@@ -11499,12 +10937,30 @@ void scvkGetPhysicalDeviceDescriptorIndexingFeatures(
     VkPhysicalDeviceDescriptorIndexingFeatures* pPhysicalDeviceDescriptorIndexingFeatures)
 {
     VkPhysicalDeviceFeatures2                  features;
-    VkPhysicalDeviceDescriptorIndexingFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceDescriptorIndexingFeatures ext_features;
 
+    scvkInitPhysicalDeviceDescriptorIndexingFeatures(&ext_features,
+                                                     pNext,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0,
+                                                     (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceDescriptorIndexingFeatures) = ext_features;
@@ -11515,12 +10971,9 @@ void scvkGetPhysicalDeviceExtendedDynamicState2Features(
     VkPhysicalDeviceExtendedDynamicState2FeaturesEXT* pPhysicalDeviceExtendedDynamicState2Features)
 {
     VkPhysicalDeviceFeatures2                        features;
-    VkPhysicalDeviceExtendedDynamicState2FeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_2_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceExtendedDynamicState2FeaturesEXT ext_features;
 
+    scvkInitPhysicalDeviceExtendedDynamicState2Features(&ext_features, pNext, (VkBool32)0, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceExtendedDynamicState2Features) = ext_features;
@@ -11531,12 +10984,9 @@ void scvkGetPhysicalDeviceExtendedDynamicStateFeatures(
     VkPhysicalDeviceExtendedDynamicStateFeaturesEXT* pPhysicalDeviceExtendedDynamicStateFeatures)
 {
     VkPhysicalDeviceFeatures2                       features;
-    VkPhysicalDeviceExtendedDynamicStateFeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceExtendedDynamicStateFeaturesEXT ext_features;
 
+    scvkInitPhysicalDeviceExtendedDynamicStateFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceExtendedDynamicStateFeatures) = ext_features;
@@ -11547,12 +10997,9 @@ void scvkGetPhysicalDeviceFragmentShaderInterlockFeatures(
     VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT* pPhysicalDeviceFragmentShaderInterlockFeatures)
 {
     VkPhysicalDeviceFeatures2                          features;
-    VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT ext_features;
 
+    scvkInitPhysicalDeviceFragmentShaderInterlockFeatures(&ext_features, pNext, (VkBool32)0, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceFragmentShaderInterlockFeatures) = ext_features;
@@ -11563,12 +11010,9 @@ void scvkGetPhysicalDeviceFragmentShadingRateFeatures(
     VkPhysicalDeviceFragmentShadingRateFeaturesKHR* pPhysicalDeviceFragmentShadingRateFeatures)
 {
     VkPhysicalDeviceFeatures2                      features;
-    VkPhysicalDeviceFragmentShadingRateFeaturesKHR ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceFragmentShadingRateFeaturesKHR ext_features;
 
+    scvkInitPhysicalDeviceFragmentShadingRateFeatures(&ext_features, pNext, (VkBool32)0, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceFragmentShadingRateFeatures) = ext_features;
@@ -11579,12 +11023,9 @@ void scvkGetPhysicalDeviceHostQueryResetFeatures(
     VkPhysicalDeviceHostQueryResetFeatures* pPhysicalDeviceHostQueryResetFeatures)
 {
     VkPhysicalDeviceFeatures2              features;
-    VkPhysicalDeviceHostQueryResetFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceHostQueryResetFeatures ext_features;
 
+    scvkInitPhysicalDeviceHostQueryResetFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceHostQueryResetFeatures) = ext_features;
@@ -11595,12 +11036,9 @@ void scvkGetPhysicalDeviceImagelessFramebufferFeatures(
     VkPhysicalDeviceImagelessFramebufferFeatures* pPhysicalDeviceImagelessFramebufferFeatures)
 {
     VkPhysicalDeviceFeatures2                    features;
-    VkPhysicalDeviceImagelessFramebufferFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceImagelessFramebufferFeatures ext_features;
 
+    scvkInitPhysicalDeviceImagelessFramebufferFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceImagelessFramebufferFeatures) = ext_features;
@@ -11611,12 +11049,9 @@ void scvkGetPhysicalDeviceMultiviewFeatures(
     VkPhysicalDeviceMultiviewFeatures* pPhysicalDeviceMultiviewFeatures)
 {
     VkPhysicalDeviceFeatures2         features;
-    VkPhysicalDeviceMultiviewFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceMultiviewFeatures ext_features;
 
+    scvkInitPhysicalDeviceMultiviewFeatures(&ext_features, pNext, (VkBool32)0, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceMultiviewFeatures) = ext_features;
@@ -11627,12 +11062,9 @@ void scvkGetPhysicalDevicePerformanceQueryFeatures(
     VkPhysicalDevicePerformanceQueryFeaturesKHR* pPhysicalDevicePerformanceQueryFeatures)
 {
     VkPhysicalDeviceFeatures2                   features;
-    VkPhysicalDevicePerformanceQueryFeaturesKHR ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR,
-        .pNext = pNext
-    };
+    VkPhysicalDevicePerformanceQueryFeaturesKHR ext_features;
 
+    scvkInitPhysicalDevicePerformanceQueryFeatures(&ext_features, pNext, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDevicePerformanceQueryFeatures) = ext_features;
@@ -11643,12 +11075,9 @@ void scvkGetPhysicalDeviceProtectedMemoryFeatures(
     VkPhysicalDeviceProtectedMemoryFeatures* pPhysicalDeviceProtectedMemoryFeatures)
 {
     VkPhysicalDeviceFeatures2               features;
-    VkPhysicalDeviceProtectedMemoryFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceProtectedMemoryFeatures ext_features;
 
+    scvkInitPhysicalDeviceProtectedMemoryFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceProtectedMemoryFeatures) = ext_features;
@@ -11659,12 +11088,9 @@ void scvkGetPhysicalDeviceSamplerYcbcrConversionFeatures(
     VkPhysicalDeviceSamplerYcbcrConversionFeatures* pPhysicalDeviceSamplerYcbcrConversionFeatures)
 {
     VkPhysicalDeviceFeatures2                      features;
-    VkPhysicalDeviceSamplerYcbcrConversionFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceSamplerYcbcrConversionFeatures ext_features;
 
+    scvkInitPhysicalDeviceSamplerYcbcrConversionFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceSamplerYcbcrConversionFeatures) = ext_features;
@@ -11675,12 +11101,9 @@ void scvkGetPhysicalDeviceScalarBlockLayoutFeatures(
     VkPhysicalDeviceScalarBlockLayoutFeatures* pPhysicalDeviceScalarBlockLayoutFeatures)
 {
     VkPhysicalDeviceFeatures2                 features;
-    VkPhysicalDeviceScalarBlockLayoutFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceScalarBlockLayoutFeatures ext_features;
 
+    scvkInitPhysicalDeviceScalarBlockLayoutFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceScalarBlockLayoutFeatures) = ext_features;
@@ -11691,12 +11114,9 @@ void scvkGetPhysicalDeviceSeparateDepthStencilLayoutsFeatures(
     VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures* pPhysicalDeviceSeparateDepthStencilLayoutsFeatures)
 {
     VkPhysicalDeviceFeatures2                           features;
-    VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures ext_features;
 
+    scvkInitPhysicalDeviceSeparateDepthStencilLayoutsFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceSeparateDepthStencilLayoutsFeatures) = ext_features;
@@ -11707,12 +11127,22 @@ void scvkGetPhysicalDeviceShaderAtomicFloatFeatures(
     VkPhysicalDeviceShaderAtomicFloatFeaturesEXT* pPhysicalDeviceShaderAtomicFloatFeatures)
 {
     VkPhysicalDeviceFeatures2                    features;
-    VkPhysicalDeviceShaderAtomicFloatFeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceShaderAtomicFloatFeaturesEXT ext_features;
 
+    scvkInitPhysicalDeviceShaderAtomicFloatFeatures(&ext_features,
+                                                    pNext,
+                                                    (VkBool32)0,
+                                                    (VkBool32)0,
+                                                    (VkBool32)0,
+                                                    (VkBool32)0,
+                                                    (VkBool32)0,
+                                                    (VkBool32)0,
+                                                    (VkBool32)0,
+                                                    (VkBool32)0,
+                                                    (VkBool32)0,
+                                                    (VkBool32)0,
+                                                    (VkBool32)0,
+                                                    (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceShaderAtomicFloatFeatures) = ext_features;
@@ -11723,12 +11153,9 @@ void scvkGetPhysicalDeviceShaderAtomicInt64Features(
     VkPhysicalDeviceShaderAtomicInt64Features* pPhysicalDeviceShaderAtomicInt64Features)
 {
     VkPhysicalDeviceFeatures2                 features;
-    VkPhysicalDeviceShaderAtomicInt64Features ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceShaderAtomicInt64Features ext_features;
 
+    scvkInitPhysicalDeviceShaderAtomicInt64Features(&ext_features, pNext, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceShaderAtomicInt64Features) = ext_features;
@@ -11739,12 +11166,9 @@ void scvkGetPhysicalDeviceShaderClockFeatures(
     VkPhysicalDeviceShaderClockFeaturesKHR* pPhysicalDeviceShaderClockFeatures)
 {
     VkPhysicalDeviceFeatures2              features;
-    VkPhysicalDeviceShaderClockFeaturesKHR ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceShaderClockFeaturesKHR ext_features;
 
+    scvkInitPhysicalDeviceShaderClockFeatures(&ext_features, pNext, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceShaderClockFeatures) = ext_features;
@@ -11755,12 +11179,9 @@ void scvkGetPhysicalDeviceShaderDrawParametersFeatures(
     VkPhysicalDeviceShaderDrawParametersFeatures* pPhysicalDeviceShaderDrawParametersFeatures)
 {
     VkPhysicalDeviceFeatures2                    features;
-    VkPhysicalDeviceShaderDrawParametersFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceShaderDrawParametersFeatures ext_features;
 
+    scvkInitPhysicalDeviceShaderDrawParametersFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceShaderDrawParametersFeatures) = ext_features;
@@ -11771,12 +11192,9 @@ void scvkGetPhysicalDeviceShaderFloat16Int8Features(
     VkPhysicalDeviceShaderFloat16Int8Features* pPhysicalDeviceShaderFloat16Int8Features)
 {
     VkPhysicalDeviceFeatures2                 features;
-    VkPhysicalDeviceShaderFloat16Int8Features ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceShaderFloat16Int8Features ext_features;
 
+    scvkInitPhysicalDeviceShaderFloat16Int8Features(&ext_features, pNext, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceShaderFloat16Int8Features) = ext_features;
@@ -11787,12 +11205,9 @@ void scvkGetPhysicalDeviceShaderImageAtomicInt64Features(
     VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT* pPhysicalDeviceShaderImageAtomicInt64Features)
 {
     VkPhysicalDeviceFeatures2                         features;
-    VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_ATOMIC_INT64_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT ext_features;
 
+    scvkInitPhysicalDeviceShaderImageAtomicInt64Features(&ext_features, pNext, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceShaderImageAtomicInt64Features) = ext_features;
@@ -11803,12 +11218,9 @@ void scvkGetPhysicalDeviceShaderSubgroupExtendedTypesFeatures(
     VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures* pPhysicalDeviceShaderSubgroupExtendedTypesFeatures)
 {
     VkPhysicalDeviceFeatures2                           features;
-    VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures ext_features;
 
+    scvkInitPhysicalDeviceShaderSubgroupExtendedTypesFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceShaderSubgroupExtendedTypesFeatures) = ext_features;
@@ -11819,12 +11231,9 @@ void scvkGetPhysicalDeviceTexelBufferAlignmentFeatures(
     VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT* pPhysicalDeviceTexelBufferAlignmentFeatures)
 {
     VkPhysicalDeviceFeatures2                       features;
-    VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT ext_features;
 
+    scvkInitPhysicalDeviceTexelBufferAlignmentFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceTexelBufferAlignmentFeatures) = ext_features;
@@ -11835,12 +11244,9 @@ void scvkGetPhysicalDeviceTimelineSemaphoreFeatures(
     VkPhysicalDeviceTimelineSemaphoreFeatures* pPhysicalDeviceTimelineSemaphoreFeatures)
 {
     VkPhysicalDeviceFeatures2                 features;
-    VkPhysicalDeviceTimelineSemaphoreFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceTimelineSemaphoreFeatures ext_features;
 
+    scvkInitPhysicalDeviceTimelineSemaphoreFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceTimelineSemaphoreFeatures) = ext_features;
@@ -11851,12 +11257,9 @@ void scvkGetPhysicalDeviceUniformBufferStandardLayoutFeatures(
     VkPhysicalDeviceUniformBufferStandardLayoutFeatures* pPhysicalDeviceUniformBufferStandardLayoutFeatures)
 {
     VkPhysicalDeviceFeatures2                           features;
-    VkPhysicalDeviceUniformBufferStandardLayoutFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceUniformBufferStandardLayoutFeatures ext_features;
 
+    scvkInitPhysicalDeviceUniformBufferStandardLayoutFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceUniformBufferStandardLayoutFeatures) = ext_features;
@@ -11867,12 +11270,9 @@ void scvkGetPhysicalDeviceVariablePointersFeatures(
     VkPhysicalDeviceVariablePointersFeatures* pPhysicalDeviceVariablePointersFeatures)
 {
     VkPhysicalDeviceFeatures2                features;
-    VkPhysicalDeviceVariablePointersFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceVariablePointersFeatures ext_features;
 
+    scvkInitPhysicalDeviceVariablePointersFeatures(&ext_features, pNext, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceVariablePointersFeatures) = ext_features;
@@ -11883,12 +11283,9 @@ void scvkGetPhysicalDeviceVertexInputDynamicStateFeatures(
     VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT* pPhysicalDeviceVertexInputDynamicStateFeatures)
 {
     VkPhysicalDeviceFeatures2                          features;
-    VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_INPUT_DYNAMIC_STATE_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT ext_features;
 
+    scvkInitPhysicalDeviceVertexInputDynamicStateFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceVertexInputDynamicStateFeatures) = ext_features;
@@ -11899,12 +11296,22 @@ void scvkGetPhysicalDeviceVulkan11Features(
     VkPhysicalDeviceVulkan11Features* pPhysicalDeviceVulkan11Features)
 {
     VkPhysicalDeviceFeatures2        features;
-    VkPhysicalDeviceVulkan11Features ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceVulkan11Features ext_features;
 
+    scvkInitPhysicalDeviceVulkan11Features(&ext_features,
+                                           pNext,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceVulkan11Features) = ext_features;
@@ -11915,12 +11322,57 @@ void scvkGetPhysicalDeviceVulkan12Features(
     VkPhysicalDeviceVulkan12Features* pPhysicalDeviceVulkan12Features)
 {
     VkPhysicalDeviceFeatures2        features;
-    VkPhysicalDeviceVulkan12Features ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceVulkan12Features ext_features;
 
+    scvkInitPhysicalDeviceVulkan12Features(&ext_features,
+                                           pNext,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0,
+                                           (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceVulkan12Features) = ext_features;
@@ -11931,12 +11383,9 @@ void scvkGetPhysicalDeviceVulkanMemoryModelFeatures(
     VkPhysicalDeviceVulkanMemoryModelFeatures* pPhysicalDeviceVulkanMemoryModelFeatures)
 {
     VkPhysicalDeviceFeatures2                 features;
-    VkPhysicalDeviceVulkanMemoryModelFeatures ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceVulkanMemoryModelFeatures ext_features;
 
+    scvkInitPhysicalDeviceVulkanMemoryModelFeatures(&ext_features, pNext, (VkBool32)0, (VkBool32)0, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceVulkanMemoryModelFeatures) = ext_features;
@@ -11947,12 +11396,9 @@ void scvkGetPhysicalDeviceVulkanSC10Features(
     VkPhysicalDeviceVulkanSC10Features* pPhysicalDeviceVulkanSC10Features)
 {
     VkPhysicalDeviceFeatures2          features;
-    VkPhysicalDeviceVulkanSC10Features ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_SC_1_0_FEATURES,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceVulkanSC10Features ext_features;
 
+    scvkInitPhysicalDeviceVulkanSC10Features(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceVulkanSC10Features) = ext_features;
@@ -11963,12 +11409,9 @@ void scvkGetPhysicalDeviceYcbcr2Plane444FormatsFeatures(
     VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT* pPhysicalDeviceYcbcr2Plane444FormatsFeatures)
 {
     VkPhysicalDeviceFeatures2                        features;
-    VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_2_PLANE_444_FORMATS_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT ext_features;
 
+    scvkInitPhysicalDeviceYcbcr2Plane444FormatsFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceYcbcr2Plane444FormatsFeatures) = ext_features;
@@ -11979,12 +11422,9 @@ void scvkGetPhysicalDeviceYcbcrImageArraysFeatures(
     VkPhysicalDeviceYcbcrImageArraysFeaturesEXT* pPhysicalDeviceYcbcrImageArraysFeatures)
 {
     VkPhysicalDeviceFeatures2                   features;
-    VkPhysicalDeviceYcbcrImageArraysFeaturesEXT ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceYcbcrImageArraysFeaturesEXT ext_features;
 
+    scvkInitPhysicalDeviceYcbcrImageArraysFeatures(&ext_features, pNext, (VkBool32)0);
     scvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceYcbcrImageArraysFeatures) = ext_features;
@@ -12001,9 +11441,8 @@ void scvkGetPhysicalDeviceDrmFormatModifierPropertiesList(
     VkDrmFormatModifierPropertiesListEXT drm_format_modifier_properties_list;
 
     cvkZeroMemory(&drm_format_modifier_properties_list, sizeof(drm_format_modifier_properties_list));
+    scvkInitDrmFormatModifierPropertiesList(&drm_format_modifier_properties_list, pNext);
 
-    drm_format_modifier_properties_list.sType                        = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT;
-    drm_format_modifier_properties_list.pNext                        = pNext;
     drm_format_modifier_properties_list.drmFormatModifierCount       = drmFormatModifierCount;
     drm_format_modifier_properties_list.pDrmFormatModifierProperties = pDrmFormatModifierProperties;
 
@@ -12027,9 +11466,7 @@ VkResult scvkGetPhysicalDeviceExternalImageFormatProperties(
     VkExternalImageFormatProperties properties;
 
     cvkZeroMemory(&properties, sizeof(properties));
-
-    properties.sType = VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES;
-    properties.pNext = pExternalImageFormatPropertiesNext;
+    scvkInitExternalImageFormatProperties(&properties, pExternalImageFormatPropertiesNext);
 
     result = scvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &properties, &image_format_properties);
 
@@ -12053,9 +11490,7 @@ VkResult scvkGetPhysicalDeviceFilterCubicImageViewImageFormatProperties(
     VkFilterCubicImageViewImageFormatPropertiesEXT properties;
 
     cvkZeroMemory(&properties, sizeof(properties));
-
-    properties.sType = VK_STRUCTURE_TYPE_FILTER_CUBIC_IMAGE_VIEW_IMAGE_FORMAT_PROPERTIES_EXT;
-    properties.pNext = pFilterCubicImageViewImageFormatPropertiesNext;
+    scvkInitFilterCubicImageViewImageFormatProperties(&properties, pFilterCubicImageViewImageFormatPropertiesNext);
 
     result = scvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &properties, &image_format_properties);
 
@@ -12079,9 +11514,7 @@ VkResult scvkGetPhysicalDeviceSamplerYcbcrConversionImageFormatProperties(
     VkSamplerYcbcrConversionImageFormatProperties properties;
 
     cvkZeroMemory(&properties, sizeof(properties));
-
-    properties.sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES;
-    properties.pNext = pSamplerYcbcrConversionImageFormatPropertiesNext;
+    scvkInitSamplerYcbcrConversionImageFormatProperties(&properties, pSamplerYcbcrConversionImageFormatPropertiesNext);
 
     result = scvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &properties, &image_format_properties);
 
@@ -12098,10 +11531,7 @@ void scvkGetPhysicalDeviceMemoryBudgetProperties(
     VkPhysicalDeviceMemoryBudgetPropertiesEXT properties;
 
     cvkZeroMemory(&properties, sizeof(properties));
-
-    properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT;
-    properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceMemoryBudgetProperties(&properties, pNext);
     scvkGetPhysicalDeviceMemoryProperties2(physicalDevice, &properties, &memory_properties);
 
     (*pPhysicalDeviceMemoryBudgetProperties) = properties;
@@ -12115,10 +11545,7 @@ void scvkGetPhysicalDeviceBlendOperationAdvancedProperties(
     VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceBlendOperationAdvancedProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceBlendOperationAdvancedProperties) = ext_properties;
@@ -12132,10 +11559,7 @@ void scvkGetPhysicalDeviceConservativeRasterizationProperties(
     VkPhysicalDeviceConservativeRasterizationPropertiesEXT ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceConservativeRasterizationProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceConservativeRasterizationProperties) = ext_properties;
@@ -12149,10 +11573,7 @@ void scvkGetPhysicalDeviceCustomBorderColorProperties(
     VkPhysicalDeviceCustomBorderColorPropertiesEXT ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceCustomBorderColorProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceCustomBorderColorProperties) = ext_properties;
@@ -12166,10 +11587,7 @@ void scvkGetPhysicalDeviceDepthStencilResolveProperties(
     VkPhysicalDeviceDepthStencilResolveProperties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceDepthStencilResolveProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceDepthStencilResolveProperties) = ext_properties;
@@ -12183,10 +11601,7 @@ void scvkGetPhysicalDeviceDescriptorIndexingProperties(
     VkPhysicalDeviceDescriptorIndexingProperties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceDescriptorIndexingProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceDescriptorIndexingProperties) = ext_properties;
@@ -12200,10 +11615,7 @@ void scvkGetPhysicalDeviceDiscardRectangleProperties(
     VkPhysicalDeviceDiscardRectanglePropertiesEXT ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceDiscardRectangleProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceDiscardRectangleProperties) = ext_properties;
@@ -12217,10 +11629,7 @@ void scvkGetPhysicalDeviceDriverProperties(
     VkPhysicalDeviceDriverProperties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceDriverProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceDriverProperties) = ext_properties;
@@ -12234,10 +11643,7 @@ void scvkGetPhysicalDeviceExternalMemoryHostProperties(
     VkPhysicalDeviceExternalMemoryHostPropertiesEXT ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceExternalMemoryHostProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceExternalMemoryHostProperties) = ext_properties;
@@ -12251,10 +11657,7 @@ void scvkGetPhysicalDeviceFloatControlsProperties(
     VkPhysicalDeviceFloatControlsProperties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceFloatControlsProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceFloatControlsProperties) = ext_properties;
@@ -12268,10 +11671,7 @@ void scvkGetPhysicalDeviceFragmentShadingRateProperties(
     VkPhysicalDeviceFragmentShadingRatePropertiesKHR ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceFragmentShadingRateProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceFragmentShadingRateProperties) = ext_properties;
@@ -12285,10 +11685,7 @@ void scvkGetPhysicalDeviceIDProperties(
     VkPhysicalDeviceIDProperties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceIDProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceIDProperties) = ext_properties;
@@ -12302,10 +11699,7 @@ void scvkGetPhysicalDeviceMaintenance3Properties(
     VkPhysicalDeviceMaintenance3Properties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceMaintenance3Properties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceMaintenance3Properties) = ext_properties;
@@ -12319,10 +11713,7 @@ void scvkGetPhysicalDeviceMultiviewProperties(
     VkPhysicalDeviceMultiviewProperties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceMultiviewProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceMultiviewProperties) = ext_properties;
@@ -12336,10 +11727,7 @@ void scvkGetPhysicalDevicePCIBusInfoProperties(
     VkPhysicalDevicePCIBusInfoPropertiesEXT ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDevicePCIBusInfoProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDevicePCIBusInfoProperties) = ext_properties;
@@ -12353,10 +11741,7 @@ void scvkGetPhysicalDevicePerformanceQueryProperties(
     VkPhysicalDevicePerformanceQueryPropertiesKHR ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDevicePerformanceQueryProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDevicePerformanceQueryProperties) = ext_properties;
@@ -12370,10 +11755,7 @@ void scvkGetPhysicalDevicePointClippingProperties(
     VkPhysicalDevicePointClippingProperties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDevicePointClippingProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDevicePointClippingProperties) = ext_properties;
@@ -12387,10 +11769,7 @@ void scvkGetPhysicalDeviceProtectedMemoryProperties(
     VkPhysicalDeviceProtectedMemoryProperties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceProtectedMemoryProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceProtectedMemoryProperties) = ext_properties;
@@ -12404,10 +11783,7 @@ void scvkGetPhysicalDeviceSampleLocationsProperties(
     VkPhysicalDeviceSampleLocationsPropertiesEXT ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceSampleLocationsProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceSampleLocationsProperties) = ext_properties;
@@ -12421,10 +11797,7 @@ void scvkGetPhysicalDeviceSamplerFilterMinmaxProperties(
     VkPhysicalDeviceSamplerFilterMinmaxProperties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceSamplerFilterMinmaxProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceSamplerFilterMinmaxProperties) = ext_properties;
@@ -12438,10 +11811,7 @@ void scvkGetPhysicalDeviceSubgroupProperties(
     VkPhysicalDeviceSubgroupProperties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceSubgroupProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceSubgroupProperties) = ext_properties;
@@ -12455,10 +11825,7 @@ void scvkGetPhysicalDeviceTimelineSemaphoreProperties(
     VkPhysicalDeviceTimelineSemaphoreProperties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceTimelineSemaphoreProperties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceTimelineSemaphoreProperties) = ext_properties;
@@ -12472,10 +11839,7 @@ void scvkGetPhysicalDeviceVulkan11Properties(
     VkPhysicalDeviceVulkan11Properties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceVulkan11Properties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceVulkan11Properties) = ext_properties;
@@ -12489,10 +11853,7 @@ void scvkGetPhysicalDeviceVulkan12Properties(
     VkPhysicalDeviceVulkan12Properties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceVulkan12Properties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceVulkan12Properties) = ext_properties;
@@ -12506,10 +11867,7 @@ void scvkGetPhysicalDeviceVulkanSC10Properties(
     VkPhysicalDeviceVulkanSC10Properties ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_SC_1_0_PROPERTIES;
-    ext_properties.pNext = pNext;
-
+    scvkInitPhysicalDeviceVulkanSC10Properties(&ext_properties, pNext);
     scvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceVulkanSC10Properties) = ext_properties;
@@ -12526,9 +11884,7 @@ VkResult scvkGetPhysicalDeviceSharedPresentSurfaceCapabilities(
     VkSharedPresentSurfaceCapabilitiesKHR capabilities;
 
     cvkZeroMemory(&capabilities, sizeof(capabilities));
-
-    capabilities.sType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR;
-    capabilities.pNext = pSharedPresentSurfaceCapabilitiesNext;
+    scvkInitSharedPresentSurfaceCapabilities(&capabilities, pSharedPresentSurfaceCapabilitiesNext);
 
     result = scvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &capabilities, &surface_capabilities);
 

@@ -1576,8 +1576,6 @@
     "cvkSetBufferCollectionImageConstraintsFUCHSIA::collection": "The buffer collection to set image constraints on",
     "cvkSetBufferCollectionImageConstraintsFUCHSIA::device": "Logical device that owns the buffer collection",
     "cvkSetGpaDeviceClockModeAMD::clockMode": "A VkGpaDeviceClockModeAMD value specifying which clock mode to set, or whether to query the current clocks",
-    "cvkSetGpaDeviceClockModeAMD::engineClockRatioToPeak": "Ignored input (pass 0); the ratio queried by VK_GPA_DEVICE_CLOCK_MODE_QUERY_AMD is discarded by this wrapper",
-    "cvkSetGpaDeviceClockModeAMD::memoryClockRatioToPeak": "Ignored input (pass 0); the ratio queried by VK_GPA_DEVICE_CLOCK_MODE_QUERY_AMD is discarded by this wrapper",
     "cvkSetLocalDimmingAMD::swapChain": "Swapchain whose local dimming localDimmingEnable turns on or off",
     "cvkSetupAccelerationStructure::geometryCount": "Number of elements in pGeometries and pMaxPrimitiveCounts",
     "cvkSetupAccelerationStructure::pAccelerationStructure": "Receives the created acceleration structure, placed at offset 0 of *pBuffer; the caller destroys it",
@@ -1857,6 +1855,16 @@
     "VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT"
   ],
   "command_forms": {
+    "vkSetGpaDeviceClockModeAMD": {
+      "returns": {
+        "memoryClockRatioToPeak": "pMemoryClockRatioToPeak",
+        "engineClockRatioToPeak": "pEngineClockRatioToPeak"
+      },
+      "docs": {
+        "pMemoryClockRatioToPeak": "Receives the memory clock as a ratio of its peak under the selected clockMode",
+        "pEngineClockRatioToPeak": "Receives the engine clock as a ratio of its peak under the selected clockMode"
+      }
+    },
     "vkCmdSetScissor": {
       "brief": "Sets scissor zero.",
       "bind": {

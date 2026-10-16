@@ -61,12 +61,9 @@ VkResult cvkQueuePresentWithFrameTokenInfoGGP(
     const uint32_t*       pImageIndices,
     VkResult*             pResults)
 {
-    VkPresentFrameTokenGGP present_frame_token =
-    {
-        .sType      = VK_STRUCTURE_TYPE_PRESENT_FRAME_TOKEN_GGP,
-        .pNext      = pNext,
-        .frameToken = frameToken
-    };
+    VkPresentFrameTokenGGP present_frame_token;
+
+    cvkInitPresentFrameTokenGGP(&present_frame_token, pNext, frameToken);
 
     return cvkQueuePresent(queue, &present_frame_token, waitSemaphoreCount, pWaitSemaphores, swapchainCount, pSwapchains, pImageIndices, pResults);
 }

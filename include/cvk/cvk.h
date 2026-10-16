@@ -26995,15 +26995,15 @@ void cvkSetEvent(VkDevice device, VkEvent event);
 /**
  * \brief Sets gpa device clock mode.
  *
- * \param[in] device                   The logical device that sets the clocks
- * \param[in] pNext                    Optional extension chain attached to VkGpaDeviceClockModeInfoAMD, or NULL
- * \param[in] clockMode                A VkGpaDeviceClockModeAMD value specifying which clock mode to set, or whether to query the current clocks
- * \param[in] memoryClockRatioToPeak   Ignored input (pass 0); the ratio queried by VK_GPA_DEVICE_CLOCK_MODE_QUERY_AMD is discarded by this wrapper
- * \param[in] engineClockRatioToPeak   Ignored input (pass 0); the ratio queried by VK_GPA_DEVICE_CLOCK_MODE_QUERY_AMD is discarded by this wrapper
+ * \param[in]  device                    The logical device that sets the clocks
+ * \param[in]  pNext                     Optional extension chain attached to VkGpaDeviceClockModeInfoAMD, or NULL
+ * \param[in]  clockMode                 A VkGpaDeviceClockModeAMD value specifying which clock mode to set, or whether to query the current clocks
+ * \param[out] pMemoryClockRatioToPeak   Receives the memory clock as a ratio of its peak under the selected clockMode
+ * \param[out] pEngineClockRatioToPeak   Receives the engine clock as a ratio of its peak under the selected clockMode
  *
- * \retval    None
+ * \retval     None
  */
-void cvkSetGpaDeviceClockModeAMD(VkDevice device, const void* pNext, VkGpaDeviceClockModeAMD clockMode, float memoryClockRatioToPeak, float engineClockRatioToPeak);
+void cvkSetGpaDeviceClockModeAMD(VkDevice device, const void* pNext, VkGpaDeviceClockModeAMD clockMode, float* pMemoryClockRatioToPeak, float* pEngineClockRatioToPeak);
 
 /*************************************************************************************************/
 /**

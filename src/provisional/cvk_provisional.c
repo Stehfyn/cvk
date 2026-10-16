@@ -500,12 +500,9 @@ void cvkGetExecutionGraphPipelineScratchSizeAMDX(
     void*                                    pNext,
     VkExecutionGraphPipelineScratchSizeAMDX* pSizeInfo)
 {
-    VkExecutionGraphPipelineScratchSizeAMDX size_info =
-    {
-        .sType = VK_STRUCTURE_TYPE_EXECUTION_GRAPH_PIPELINE_SCRATCH_SIZE_AMDX,
-        .pNext = pNext
-    };
+    VkExecutionGraphPipelineScratchSizeAMDX size_info;
 
+    cvkInitExecutionGraphPipelineScratchSizeAMDX(&size_info, pNext, (VkDeviceSize)0, (VkDeviceSize)0, (VkDeviceSize)0);
     CVK_CHECK(vkGetExecutionGraphPipelineScratchSizeAMDX(device, executionGraph, &size_info));
 
     (*pSizeInfo) = size_info;
@@ -544,18 +541,9 @@ VkResult cvkCreateExecutionGraphPipelineInfoAMDX(
     const VkAllocationCallbacks*           pAllocator,
     VkPipeline*                            pPipeline)
 {
-    VkExecutionGraphPipelineCreateInfoAMDX create_info =
-    {
-        .sType              = VK_STRUCTURE_TYPE_EXECUTION_GRAPH_PIPELINE_CREATE_INFO_AMDX,
-        .pNext              = pNext,
-        .flags              = flags,
-        .stageCount         = stageCount,
-        .pStages            = pStages,
-        .pLibraryInfo       = pLibraryInfo,
-        .layout             = layout,
-        .basePipelineHandle = basePipelineHandle,
-        .basePipelineIndex  = basePipelineIndex
-    };
+    VkExecutionGraphPipelineCreateInfoAMDX create_info;
+
+    cvkInitExecutionGraphPipelineCreateInfoAMDX(&create_info, pNext, flags, stageCount, pStages, pLibraryInfo, layout, basePipelineHandle, basePipelineIndex);
 
     return cvkCreateExecutionGraphPipelinesAMDX(device, pipelineCache, 1, &create_info, pAllocator, pPipeline);
 }
@@ -574,12 +562,9 @@ VkResult cvkCreateExecutionGraphPipelineInfoWithCompilerControlInfoAMDXAMD(
     const VkAllocationCallbacks*           pAllocator,
     VkPipeline*                            pPipeline)
 {
-    VkPipelineCompilerControlCreateInfoAMD create_info =
-    {
-        .sType                = VK_STRUCTURE_TYPE_PIPELINE_COMPILER_CONTROL_CREATE_INFO_AMD,
-        .pNext                = pNext,
-        .compilerControlFlags = compilerControlFlags
-    };
+    VkPipelineCompilerControlCreateInfoAMD create_info;
+
+    cvkInitPipelineCompilerControlCreateInfoAMD(&create_info, pNext, compilerControlFlags);
 
     return cvkCreateExecutionGraphPipelineInfoAMDX(device, pipelineCache, &create_info, flags, stageCount, pStages, pLibraryInfo, layout, basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
 }
@@ -600,14 +585,9 @@ VkResult cvkCreateExecutionGraphPipelineInfoWithCreationFeedbackInfoAMDX(
     const VkAllocationCallbacks*           pAllocator,
     VkPipeline*                            pPipeline)
 {
-    VkPipelineCreationFeedbackCreateInfo create_info =
-    {
-        .sType                              = VK_STRUCTURE_TYPE_PIPELINE_CREATION_FEEDBACK_CREATE_INFO,
-        .pNext                              = pNext,
-        .pPipelineCreationFeedback          = pPipelineCreationFeedback,
-        .pipelineStageCreationFeedbackCount = pipelineStageCreationFeedbackCount,
-        .pPipelineStageCreationFeedbacks    = pPipelineStageCreationFeedbacks
-    };
+    VkPipelineCreationFeedbackCreateInfo create_info;
+
+    cvkInitPipelineCreationFeedbackCreateInfo(&create_info, pNext, pPipelineCreationFeedback, pipelineStageCreationFeedbackCount, pPipelineStageCreationFeedbacks);
 
     return cvkCreateExecutionGraphPipelineInfoAMDX(device, pipelineCache, &create_info, flags, stageCount, pStages, pLibraryInfo, layout, basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
 }
@@ -617,12 +597,9 @@ void cvkGetPhysicalDeviceCudaKernelLaunchFeaturesNV(
     VkPhysicalDeviceCudaKernelLaunchFeaturesNV* pPhysicalDeviceCudaKernelLaunchFeaturesNV)
 {
     VkPhysicalDeviceFeatures2                  features;
-    VkPhysicalDeviceCudaKernelLaunchFeaturesNV ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAUNCH_FEATURES_NV,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceCudaKernelLaunchFeaturesNV ext_features;
 
+    cvkInitPhysicalDeviceCudaKernelLaunchFeaturesNV(&ext_features, pNext, (VkBool32)0);
     cvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceCudaKernelLaunchFeaturesNV) = ext_features;
@@ -633,12 +610,9 @@ void cvkGetPhysicalDeviceDenseGeometryFormatFeaturesAMDX(
     VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX* pPhysicalDeviceDenseGeometryFormatFeaturesAMDX)
 {
     VkPhysicalDeviceFeatures2                       features;
-    VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DENSE_GEOMETRY_FORMAT_FEATURES_AMDX,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX ext_features;
 
+    cvkInitPhysicalDeviceDenseGeometryFormatFeaturesAMDX(&ext_features, pNext, (VkBool32)0);
     cvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceDenseGeometryFormatFeaturesAMDX) = ext_features;
@@ -649,12 +623,9 @@ void cvkGetPhysicalDeviceDisplacementMicromapFeaturesNV(
     VkPhysicalDeviceDisplacementMicromapFeaturesNV* pPhysicalDeviceDisplacementMicromapFeaturesNV)
 {
     VkPhysicalDeviceFeatures2                      features;
-    VkPhysicalDeviceDisplacementMicromapFeaturesNV ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISPLACEMENT_MICROMAP_FEATURES_NV,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceDisplacementMicromapFeaturesNV ext_features;
 
+    cvkInitPhysicalDeviceDisplacementMicromapFeaturesNV(&ext_features, pNext, (VkBool32)0);
     cvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceDisplacementMicromapFeaturesNV) = ext_features;
@@ -665,12 +636,25 @@ void cvkGetPhysicalDevicePortabilitySubsetFeatures(
     VkPhysicalDevicePortabilitySubsetFeaturesKHR* pPhysicalDevicePortabilitySubsetFeatures)
 {
     VkPhysicalDeviceFeatures2                    features;
-    VkPhysicalDevicePortabilitySubsetFeaturesKHR ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR,
-        .pNext = pNext
-    };
+    VkPhysicalDevicePortabilitySubsetFeaturesKHR ext_features;
 
+    cvkInitPhysicalDevicePortabilitySubsetFeatures(&ext_features,
+                                                   pNext,
+                                                   (VkBool32)0,
+                                                   (VkBool32)0,
+                                                   (VkBool32)0,
+                                                   (VkBool32)0,
+                                                   (VkBool32)0,
+                                                   (VkBool32)0,
+                                                   (VkBool32)0,
+                                                   (VkBool32)0,
+                                                   (VkBool32)0,
+                                                   (VkBool32)0,
+                                                   (VkBool32)0,
+                                                   (VkBool32)0,
+                                                   (VkBool32)0,
+                                                   (VkBool32)0,
+                                                   (VkBool32)0);
     cvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDevicePortabilitySubsetFeatures) = ext_features;
@@ -681,12 +665,9 @@ void cvkGetPhysicalDeviceShaderEnqueueFeaturesAMDX(
     VkPhysicalDeviceShaderEnqueueFeaturesAMDX* pPhysicalDeviceShaderEnqueueFeaturesAMDX)
 {
     VkPhysicalDeviceFeatures2                 features;
-    VkPhysicalDeviceShaderEnqueueFeaturesAMDX ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_FEATURES_AMDX,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceShaderEnqueueFeaturesAMDX ext_features;
 
+    cvkInitPhysicalDeviceShaderEnqueueFeaturesAMDX(&ext_features, pNext, (VkBool32)0, (VkBool32)0);
     cvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceShaderEnqueueFeaturesAMDX) = ext_features;
@@ -700,10 +681,7 @@ void cvkGetPhysicalDeviceCudaKernelLaunchPropertiesNV(
     VkPhysicalDeviceCudaKernelLaunchPropertiesNV ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAUNCH_PROPERTIES_NV;
-    ext_properties.pNext = pNext;
-
+    cvkInitPhysicalDeviceCudaKernelLaunchPropertiesNV(&ext_properties, pNext);
     cvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceCudaKernelLaunchPropertiesNV) = ext_properties;
@@ -717,10 +695,7 @@ void cvkGetPhysicalDeviceDisplacementMicromapPropertiesNV(
     VkPhysicalDeviceDisplacementMicromapPropertiesNV ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISPLACEMENT_MICROMAP_PROPERTIES_NV;
-    ext_properties.pNext = pNext;
-
+    cvkInitPhysicalDeviceDisplacementMicromapPropertiesNV(&ext_properties, pNext);
     cvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceDisplacementMicromapPropertiesNV) = ext_properties;
@@ -734,10 +709,7 @@ void cvkGetPhysicalDevicePortabilitySubsetProperties(
     VkPhysicalDevicePortabilitySubsetPropertiesKHR ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_KHR;
-    ext_properties.pNext = pNext;
-
+    cvkInitPhysicalDevicePortabilitySubsetProperties(&ext_properties, pNext);
     cvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDevicePortabilitySubsetProperties) = ext_properties;
@@ -751,10 +723,7 @@ void cvkGetPhysicalDeviceShaderEnqueuePropertiesAMDX(
     VkPhysicalDeviceShaderEnqueuePropertiesAMDX ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_PROPERTIES_AMDX;
-    ext_properties.pNext = pNext;
-
+    cvkInitPhysicalDeviceShaderEnqueuePropertiesAMDX(&ext_properties, pNext);
     cvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceShaderEnqueuePropertiesAMDX) = ext_properties;

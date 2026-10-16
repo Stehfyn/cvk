@@ -125,10 +125,7 @@ void cvkGetNativeBufferPropertiesOHOS(
     VkNativeBufferPropertiesOHOS properties;
 
     cvkZeroMemory(&properties, sizeof(properties));
-
-    properties.sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_PROPERTIES_OHOS;
-    properties.pNext = pNext;
-
+    cvkInitNativeBufferPropertiesOHOS(&properties, pNext);
     CVK_CHECK(vkGetNativeBufferPropertiesOHOS(device, buffer, &properties));
 
     (*pProperties) = properties;
@@ -142,13 +139,9 @@ void cvkAllocateImportNativeBufferOHOS(
     const VkAllocationCallbacks* pAllocator,
     VkDeviceMemory*              pMemory)
 {
-    VkImportNativeBufferInfoOHOS buffer_info =
-    {
-        .sType  = VK_STRUCTURE_TYPE_IMPORT_NATIVE_BUFFER_INFO_OHOS,
-        .pNext  = pNext,
-        .buffer = buffer
-    };
+    VkImportNativeBufferInfoOHOS buffer_info;
 
+    cvkInitImportNativeBufferInfoOHOS(&buffer_info, pNext, buffer);
     cvkAllocateMemory(device, &buffer_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkCreateImageWithExternalFormatInfoOHOS(
@@ -171,13 +164,9 @@ void cvkCreateImageWithExternalFormatInfoOHOS(
     const VkAllocationCallbacks* pAllocator,
     VkImage*                     pImage)
 {
-    VkExternalFormatOHOS external_format =
-    {
-        .sType          = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_OHOS,
-        .pNext          = pNext,
-        .externalFormat = externalFormat
-    };
+    VkExternalFormatOHOS external_format;
 
+    cvkInitExternalFormatOHOS(&external_format, pNext, externalFormat);
     cvkCreateImage(device,
                    &external_format,
                    flags,
@@ -211,13 +200,9 @@ void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoOHOS(
     const VkAllocationCallbacks*  pAllocator,
     VkSamplerYcbcrConversion*     pYcbcrConversion)
 {
-    VkExternalFormatOHOS external_format =
-    {
-        .sType          = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_OHOS,
-        .pNext          = pNext,
-        .externalFormat = externalFormat
-    };
+    VkExternalFormatOHOS external_format;
 
+    cvkInitExternalFormatOHOS(&external_format, pNext, externalFormat);
     cvkCreateSamplerYcbcrConversion(device,
                                     &external_format,
                                     format,
@@ -256,12 +241,9 @@ VkResult cvkCreateGraphicsPipelineWithExternalFormatInfoOHOS(
     const VkAllocationCallbacks*                  pAllocator,
     VkPipeline*                                   pPipeline)
 {
-    VkExternalFormatOHOS external_format =
-    {
-        .sType          = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_OHOS,
-        .pNext          = pNext,
-        .externalFormat = externalFormat
-    };
+    VkExternalFormatOHOS external_format;
+
+    cvkInitExternalFormatOHOS(&external_format, pNext, externalFormat);
 
     return cvkCreateGraphicsPipeline(device,
                                      pipelineCache,
@@ -296,10 +278,7 @@ void cvkGetNativeBufferFormatPropertiesOHOS(
     VkNativeBufferFormatPropertiesOHOS ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_FORMAT_PROPERTIES_OHOS;
-    ext_properties.pNext = pNext;
-
+    cvkInitNativeBufferFormatPropertiesOHOS(&ext_properties, pNext);
     cvkGetNativeBufferPropertiesOHOS(device, buffer, &ext_properties, &properties);
 
     (*pNativeBufferFormatPropertiesOHOS) = ext_properties;
@@ -320,9 +299,7 @@ VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithNativeBufferUsageOHOS(
     VkNativeBufferUsageOHOS  native_buffer_usage;
 
     cvkZeroMemory(&native_buffer_usage, sizeof(native_buffer_usage));
-
-    native_buffer_usage.sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_USAGE_OHOS;
-    native_buffer_usage.pNext = pNativeBufferUsageOHOSNext;
+    cvkInitNativeBufferUsageOHOS(&native_buffer_usage, pNativeBufferUsageOHOSNext);
 
     result = cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &native_buffer_usage, &image_format_properties);
 

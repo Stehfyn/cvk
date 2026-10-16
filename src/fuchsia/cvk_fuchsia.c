@@ -284,10 +284,7 @@ void cvkGetBufferCollectionPropertiesFUCHSIA(
     VkBufferCollectionPropertiesFUCHSIA properties;
 
     cvkZeroMemory(&properties, sizeof(properties));
-
-    properties.sType = VK_STRUCTURE_TYPE_BUFFER_COLLECTION_PROPERTIES_FUCHSIA;
-    properties.pNext = pNext;
-
+    cvkInitBufferCollectionPropertiesFUCHSIA(&properties, pNext);
     CVK_CHECK(vkGetBufferCollectionPropertiesFUCHSIA(device, collection, &properties));
 
     (*pProperties) = properties;
@@ -314,10 +311,7 @@ void cvkGetMemoryZirconHandlePropertiesFUCHSIA(
     VkMemoryZirconHandlePropertiesFUCHSIA memory_zircon_handle_properties;
 
     cvkZeroMemory(&memory_zircon_handle_properties, sizeof(memory_zircon_handle_properties));
-
-    memory_zircon_handle_properties.sType = VK_STRUCTURE_TYPE_MEMORY_ZIRCON_HANDLE_PROPERTIES_FUCHSIA;
-    memory_zircon_handle_properties.pNext = pNext;
-
+    cvkInitMemoryZirconHandlePropertiesFUCHSIA(&memory_zircon_handle_properties, pNext);
     CVK_CHECK(vkGetMemoryZirconHandlePropertiesFUCHSIA(device, handleType, zirconHandle, &memory_zircon_handle_properties));
 
     (*pMemoryZirconHandleProperties) = memory_zircon_handle_properties;
@@ -404,14 +398,9 @@ void cvkAllocateImportMemoryBufferCollectionFUCHSIA(
     const VkAllocationCallbacks* pAllocator,
     VkDeviceMemory*              pMemory)
 {
-    VkImportMemoryBufferCollectionFUCHSIA import_memory_buffer_collection =
-    {
-        .sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_BUFFER_COLLECTION_FUCHSIA,
-        .pNext      = pNext,
-        .collection = collection,
-        .index      = index
-    };
+    VkImportMemoryBufferCollectionFUCHSIA import_memory_buffer_collection;
 
+    cvkInitImportMemoryBufferCollectionFUCHSIA(&import_memory_buffer_collection, pNext, collection, index);
     cvkAllocateMemory(device, &import_memory_buffer_collection, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkAllocateImportMemoryZirconHandleFUCHSIA(
@@ -424,14 +413,9 @@ void cvkAllocateImportMemoryZirconHandleFUCHSIA(
     const VkAllocationCallbacks*       pAllocator,
     VkDeviceMemory*                    pMemory)
 {
-    VkImportMemoryZirconHandleInfoFUCHSIA handle_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_ZIRCON_HANDLE_INFO_FUCHSIA,
-        .pNext      = pNext,
-        .handleType = handleType,
-        .handle     = handle
-    };
+    VkImportMemoryZirconHandleInfoFUCHSIA handle_info;
 
+    cvkInitImportMemoryZirconHandleInfoFUCHSIA(&handle_info, pNext, handleType, handle);
     cvkAllocateMemory(device, &handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkCreateBufferWithBufferCollectionInfoFUCHSIA(
@@ -448,14 +432,9 @@ void cvkCreateBufferWithBufferCollectionInfoFUCHSIA(
     const VkAllocationCallbacks* pAllocator,
     VkBuffer*                    pBuffer)
 {
-    VkBufferCollectionBufferCreateInfoFUCHSIA create_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_BUFFER_COLLECTION_BUFFER_CREATE_INFO_FUCHSIA,
-        .pNext      = pNext,
-        .collection = collection,
-        .index      = index
-    };
+    VkBufferCollectionBufferCreateInfoFUCHSIA create_info;
 
+    cvkInitBufferCollectionBufferCreateInfoFUCHSIA(&create_info, pNext, collection, index);
     cvkCreateBuffer(device, &create_info, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
 }
 void cvkCreateImageWithBufferCollectionInfoFUCHSIA(
@@ -479,14 +458,9 @@ void cvkCreateImageWithBufferCollectionInfoFUCHSIA(
     const VkAllocationCallbacks* pAllocator,
     VkImage*                     pImage)
 {
-    VkBufferCollectionImageCreateInfoFUCHSIA create_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_BUFFER_COLLECTION_IMAGE_CREATE_INFO_FUCHSIA,
-        .pNext      = pNext,
-        .collection = collection,
-        .index      = index
-    };
+    VkBufferCollectionImageCreateInfoFUCHSIA create_info;
 
+    cvkInitBufferCollectionImageCreateInfoFUCHSIA(&create_info, pNext, collection, index);
     cvkCreateImage(device,
                    &create_info,
                    flags,

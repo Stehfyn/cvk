@@ -241,12 +241,9 @@ void cvkExportMetalObjects(
     void*                        pNext,
     VkExportMetalObjectsInfoEXT* pMetalObjectsInfo)
 {
-    VkExportMetalObjectsInfoEXT metal_objects_info =
-    {
-        .sType = VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECTS_INFO_EXT,
-        .pNext = pNext
-    };
+    VkExportMetalObjectsInfoEXT metal_objects_info;
 
+    cvkInitExportMetalObjectsInfo(&metal_objects_info, pNext);
     vkExportMetalObjectsEXT(device, &metal_objects_info);
 
     (*pMetalObjectsInfo) = metal_objects_info;
@@ -273,10 +270,7 @@ void cvkGetMemoryMetalHandleProperties(
     VkMemoryMetalHandlePropertiesEXT memory_metal_handle_properties;
 
     cvkZeroMemory(&memory_metal_handle_properties, sizeof(memory_metal_handle_properties));
-
-    memory_metal_handle_properties.sType = VK_STRUCTURE_TYPE_MEMORY_METAL_HANDLE_PROPERTIES_EXT;
-    memory_metal_handle_properties.pNext = pNext;
-
+    cvkInitMemoryMetalHandleProperties(&memory_metal_handle_properties, pNext);
     CVK_CHECK(vkGetMemoryMetalHandlePropertiesEXT(device, handleType, pHandle, &memory_metal_handle_properties));
 
     (*pMemoryMetalHandleProperties) = memory_metal_handle_properties;
@@ -290,13 +284,9 @@ void cvkAllocateExportMetalObject(
     const VkAllocationCallbacks*       pAllocator,
     VkDeviceMemory*                    pMemory)
 {
-    VkExportMetalObjectCreateInfoEXT create_info =
-    {
-        .sType            = VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECT_CREATE_INFO_EXT,
-        .pNext            = pNext,
-        .exportObjectType = exportObjectType
-    };
+    VkExportMetalObjectCreateInfoEXT create_info;
 
+    cvkInitExportMetalObjectCreateInfo(&create_info, pNext, exportObjectType);
     cvkAllocateMemory(device, &create_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkAllocateImportMemoryMetalHandle(
@@ -309,14 +299,9 @@ void cvkAllocateImportMemoryMetalHandle(
     const VkAllocationCallbacks*       pAllocator,
     VkDeviceMemory*                    pMemory)
 {
-    VkImportMemoryMetalHandleInfoEXT handle_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_METAL_HANDLE_INFO_EXT,
-        .pNext      = pNext,
-        .handleType = handleType,
-        .handle     = handle
-    };
+    VkImportMemoryMetalHandleInfoEXT handle_info;
 
+    cvkInitImportMemoryMetalHandleInfo(&handle_info, pNext, handleType, handle);
     cvkAllocateMemory(device, &handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkAllocateImportMetalBuffer(
@@ -328,13 +313,9 @@ void cvkAllocateImportMetalBuffer(
     const VkAllocationCallbacks* pAllocator,
     VkDeviceMemory*              pMemory)
 {
-    VkImportMetalBufferInfoEXT buffer_info =
-    {
-        .sType     = VK_STRUCTURE_TYPE_IMPORT_METAL_BUFFER_INFO_EXT,
-        .pNext     = pNext,
-        .mtlBuffer = mtlBuffer
-    };
+    VkImportMetalBufferInfoEXT buffer_info;
 
+    cvkInitImportMetalBufferInfo(&buffer_info, pNext, mtlBuffer);
     cvkAllocateMemory(device, &buffer_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkCreateBufferViewWithExportMetalObjectInfo(
@@ -349,13 +330,9 @@ void cvkCreateBufferViewWithExportMetalObjectInfo(
     const VkAllocationCallbacks*       pAllocator,
     VkBufferView*                      pView)
 {
-    VkExportMetalObjectCreateInfoEXT create_info =
-    {
-        .sType            = VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECT_CREATE_INFO_EXT,
-        .pNext            = pNext,
-        .exportObjectType = exportObjectType
-    };
+    VkExportMetalObjectCreateInfoEXT create_info;
 
+    cvkInitExportMetalObjectCreateInfo(&create_info, pNext, exportObjectType);
     cvkCreateBufferView(device, &create_info, flags, buffer, format, offset, range, pAllocator, pView);
 }
 void cvkCreateEventWithExportMetalObjectInfo(
@@ -366,13 +343,9 @@ void cvkCreateEventWithExportMetalObjectInfo(
     const VkAllocationCallbacks*       pAllocator,
     VkEvent*                           pEvent)
 {
-    VkExportMetalObjectCreateInfoEXT create_info =
-    {
-        .sType            = VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECT_CREATE_INFO_EXT,
-        .pNext            = pNext,
-        .exportObjectType = exportObjectType
-    };
+    VkExportMetalObjectCreateInfoEXT create_info;
 
+    cvkInitExportMetalObjectCreateInfo(&create_info, pNext, exportObjectType);
     cvkCreateEvent(device, &create_info, flags, pAllocator, pEvent);
 }
 void cvkCreateEventWithImportMetalSharedEventInfo(
@@ -383,13 +356,9 @@ void cvkCreateEventWithImportMetalSharedEventInfo(
     const VkAllocationCallbacks* pAllocator,
     VkEvent*                     pEvent)
 {
-    VkImportMetalSharedEventInfoEXT event_info =
-    {
-        .sType          = VK_STRUCTURE_TYPE_IMPORT_METAL_SHARED_EVENT_INFO_EXT,
-        .pNext          = pNext,
-        .mtlSharedEvent = mtlSharedEvent
-    };
+    VkImportMetalSharedEventInfoEXT event_info;
 
+    cvkInitImportMetalSharedEventInfo(&event_info, pNext, mtlSharedEvent);
     cvkCreateEvent(device, &event_info, flags, pAllocator, pEvent);
 }
 void cvkCreateImageWithExportMetalObjectInfo(
@@ -412,13 +381,9 @@ void cvkCreateImageWithExportMetalObjectInfo(
     const VkAllocationCallbacks*       pAllocator,
     VkImage*                           pImage)
 {
-    VkExportMetalObjectCreateInfoEXT create_info =
-    {
-        .sType            = VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECT_CREATE_INFO_EXT,
-        .pNext            = pNext,
-        .exportObjectType = exportObjectType
-    };
+    VkExportMetalObjectCreateInfoEXT create_info;
 
+    cvkInitExportMetalObjectCreateInfo(&create_info, pNext, exportObjectType);
     cvkCreateImage(device,
                    &create_info,
                    flags,
@@ -457,13 +422,9 @@ void cvkCreateImportMetalIOSurface(
     const VkAllocationCallbacks* pAllocator,
     VkImage*                     pImage)
 {
-    VkImportMetalIOSurfaceInfoEXT surface_info =
-    {
-        .sType     = VK_STRUCTURE_TYPE_IMPORT_METAL_IO_SURFACE_INFO_EXT,
-        .pNext     = pNext,
-        .ioSurface = ioSurface
-    };
+    VkImportMetalIOSurfaceInfoEXT surface_info;
 
+    cvkInitImportMetalIOSurfaceInfo(&surface_info, pNext, ioSurface);
     cvkCreateImage(device,
                    &surface_info,
                    flags,
@@ -503,14 +464,9 @@ void cvkCreateImportMetalTexture(
     const VkAllocationCallbacks* pAllocator,
     VkImage*                     pImage)
 {
-    VkImportMetalTextureInfoEXT texture_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_IMPORT_METAL_TEXTURE_INFO_EXT,
-        .pNext      = pNext,
-        .plane      = plane,
-        .mtlTexture = mtlTexture
-    };
+    VkImportMetalTextureInfoEXT texture_info;
 
+    cvkInitImportMetalTextureInfo(&texture_info, pNext, plane, mtlTexture);
     cvkCreateImage(device,
                    &texture_info,
                    flags,
@@ -542,13 +498,9 @@ void cvkCreateImageViewWithExportMetalObjectInfo(
     const VkAllocationCallbacks*       pAllocator,
     VkImageView*                       pView)
 {
-    VkExportMetalObjectCreateInfoEXT create_info =
-    {
-        .sType            = VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECT_CREATE_INFO_EXT,
-        .pNext            = pNext,
-        .exportObjectType = exportObjectType
-    };
+    VkExportMetalObjectCreateInfoEXT create_info;
 
+    cvkInitExportMetalObjectCreateInfo(&create_info, pNext, exportObjectType);
     cvkCreateImageView(device, &create_info, flags, image, viewType, format, components, subresourceRange, pAllocator, pView);
 }
 void cvkCreateInstanceWithExportMetalObjectInfo(
@@ -563,13 +515,9 @@ void cvkCreateInstanceWithExportMetalObjectInfo(
     const VkAllocationCallbacks*       pAllocator,
     VkInstance*                        pInstance)
 {
-    VkExportMetalObjectCreateInfoEXT create_info =
-    {
-        .sType            = VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECT_CREATE_INFO_EXT,
-        .pNext            = pNext,
-        .exportObjectType = exportObjectType
-    };
+    VkExportMetalObjectCreateInfoEXT create_info;
 
+    cvkInitExportMetalObjectCreateInfo(&create_info, pNext, exportObjectType);
     cvkCreateInstance(&create_info, flags, pApplicationInfo, enabledLayerCount, ppEnabledLayerNames, enabledExtensionCount, ppEnabledExtensionNames, pAllocator, pInstance);
 }
 void cvkCreateSemaphoreWithExportMetalObjectInfo(
@@ -580,13 +528,9 @@ void cvkCreateSemaphoreWithExportMetalObjectInfo(
     const VkAllocationCallbacks*       pAllocator,
     VkSemaphore*                       pSemaphore)
 {
-    VkExportMetalObjectCreateInfoEXT create_info =
-    {
-        .sType            = VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECT_CREATE_INFO_EXT,
-        .pNext            = pNext,
-        .exportObjectType = exportObjectType
-    };
+    VkExportMetalObjectCreateInfoEXT create_info;
 
+    cvkInitExportMetalObjectCreateInfo(&create_info, pNext, exportObjectType);
     cvkCreateSemaphore(device, &create_info, flags, pAllocator, pSemaphore);
 }
 void cvkCreateSemaphoreWithImportMetalSharedEventInfo(
@@ -597,13 +541,9 @@ void cvkCreateSemaphoreWithImportMetalSharedEventInfo(
     const VkAllocationCallbacks* pAllocator,
     VkSemaphore*                 pSemaphore)
 {
-    VkImportMetalSharedEventInfoEXT event_info =
-    {
-        .sType          = VK_STRUCTURE_TYPE_IMPORT_METAL_SHARED_EVENT_INFO_EXT,
-        .pNext          = pNext,
-        .mtlSharedEvent = mtlSharedEvent
-    };
+    VkImportMetalSharedEventInfoEXT event_info;
 
+    cvkInitImportMetalSharedEventInfo(&event_info, pNext, mtlSharedEvent);
     cvkCreateSemaphore(device, &event_info, flags, pAllocator, pSemaphore);
 }
 void cvkExportMetalObjectsWithBufferInfo(
@@ -612,12 +552,9 @@ void cvkExportMetalObjectsWithBufferInfo(
     VkExportMetalBufferInfoEXT* pExportMetalBufferInfo)
 {
     VkExportMetalObjectsInfoEXT metal_objects_info;
-    VkExportMetalBufferInfoEXT buffer_info =
-    {
-        .sType = VK_STRUCTURE_TYPE_EXPORT_METAL_BUFFER_INFO_EXT,
-        .pNext = pNext
-    };
+    VkExportMetalBufferInfoEXT  buffer_info;
 
+    cvkInitExportMetalBufferInfo(&buffer_info, pNext, (VkDeviceMemory)0, (MTLBuffer_id)0);
     cvkExportMetalObjects(device, &buffer_info, &metal_objects_info);
 
     (*pExportMetalBufferInfo) = buffer_info;
@@ -628,12 +565,9 @@ void cvkExportMetalObjectsWithCommandQueueInfo(
     VkExportMetalCommandQueueInfoEXT* pExportMetalCommandQueueInfo)
 {
     VkExportMetalObjectsInfoEXT      metal_objects_info;
-    VkExportMetalCommandQueueInfoEXT queue_info =
-    {
-        .sType = VK_STRUCTURE_TYPE_EXPORT_METAL_COMMAND_QUEUE_INFO_EXT,
-        .pNext = pNext
-    };
+    VkExportMetalCommandQueueInfoEXT queue_info;
 
+    cvkInitExportMetalCommandQueueInfo(&queue_info, pNext, (VkQueue)0, (MTLCommandQueue_id)0);
     cvkExportMetalObjects(device, &queue_info, &metal_objects_info);
 
     (*pExportMetalCommandQueueInfo) = queue_info;
@@ -644,12 +578,9 @@ void cvkExportMetalObjectsWithDeviceInfo(
     VkExportMetalDeviceInfoEXT* pExportMetalDeviceInfo)
 {
     VkExportMetalObjectsInfoEXT metal_objects_info;
-    VkExportMetalDeviceInfoEXT device_info =
-    {
-        .sType = VK_STRUCTURE_TYPE_EXPORT_METAL_DEVICE_INFO_EXT,
-        .pNext = pNext
-    };
+    VkExportMetalDeviceInfoEXT  device_info;
 
+    cvkInitExportMetalDeviceInfo(&device_info, pNext, (MTLDevice_id)0);
     cvkExportMetalObjects(device, &device_info, &metal_objects_info);
 
     (*pExportMetalDeviceInfo) = device_info;
@@ -660,12 +591,9 @@ void cvkExportMetalObjectsWithIOSurfaceInfo(
     VkExportMetalIOSurfaceInfoEXT* pExportMetalIOSurfaceInfo)
 {
     VkExportMetalObjectsInfoEXT   metal_objects_info;
-    VkExportMetalIOSurfaceInfoEXT surface_info =
-    {
-        .sType = VK_STRUCTURE_TYPE_EXPORT_METAL_IO_SURFACE_INFO_EXT,
-        .pNext = pNext
-    };
+    VkExportMetalIOSurfaceInfoEXT surface_info;
 
+    cvkInitExportMetalIOSurfaceInfo(&surface_info, pNext, (VkImage)0, (IOSurfaceRef)0);
     cvkExportMetalObjects(device, &surface_info, &metal_objects_info);
 
     (*pExportMetalIOSurfaceInfo) = surface_info;
@@ -676,12 +604,9 @@ void cvkExportMetalObjectsWithSharedEventInfo(
     VkExportMetalSharedEventInfoEXT* pExportMetalSharedEventInfo)
 {
     VkExportMetalObjectsInfoEXT     metal_objects_info;
-    VkExportMetalSharedEventInfoEXT event_info =
-    {
-        .sType = VK_STRUCTURE_TYPE_EXPORT_METAL_SHARED_EVENT_INFO_EXT,
-        .pNext = pNext
-    };
+    VkExportMetalSharedEventInfoEXT event_info;
 
+    cvkInitExportMetalSharedEventInfo(&event_info, pNext, (VkSemaphore)0, (VkEvent)0, (MTLSharedEvent_id)0);
     cvkExportMetalObjects(device, &event_info, &metal_objects_info);
 
     (*pExportMetalSharedEventInfo) = event_info;
@@ -692,12 +617,9 @@ void cvkExportMetalObjectsWithTextureInfo(
     VkExportMetalTextureInfoEXT* pExportMetalTextureInfo)
 {
     VkExportMetalObjectsInfoEXT metal_objects_info;
-    VkExportMetalTextureInfoEXT texture_info =
-    {
-        .sType = VK_STRUCTURE_TYPE_EXPORT_METAL_TEXTURE_INFO_EXT,
-        .pNext = pNext
-    };
+    VkExportMetalTextureInfoEXT texture_info;
 
+    cvkInitExportMetalTextureInfo(&texture_info, pNext, (VkImage)0, (VkImageView)0, (VkBufferView)0, (VkImageAspectFlagBits)0, (MTLTexture_id)0);
     cvkExportMetalObjects(device, &texture_info, &metal_objects_info);
 
     (*pExportMetalTextureInfo) = texture_info;

@@ -108,10 +108,7 @@ void cvkGetScreenBufferPropertiesQNX(
     VkScreenBufferPropertiesQNX properties;
 
     cvkZeroMemory(&properties, sizeof(properties));
-
-    properties.sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_PROPERTIES_QNX;
-    properties.pNext = pNext;
-
+    cvkInitScreenBufferPropertiesQNX(&properties, pNext);
     CVK_CHECK(vkGetScreenBufferPropertiesQNX(device, buffer, &properties));
 
     (*pProperties) = properties;
@@ -125,13 +122,9 @@ void cvkAllocateImportScreenBufferQNX(
     const VkAllocationCallbacks* pAllocator,
     VkDeviceMemory*              pMemory)
 {
-    VkImportScreenBufferInfoQNX buffer_info =
-    {
-        .sType  = VK_STRUCTURE_TYPE_IMPORT_SCREEN_BUFFER_INFO_QNX,
-        .pNext  = pNext,
-        .buffer = buffer
-    };
+    VkImportScreenBufferInfoQNX buffer_info;
 
+    cvkInitImportScreenBufferInfoQNX(&buffer_info, pNext, buffer);
     cvkAllocateMemory(device, &buffer_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkCreateImageWithExternalFormatInfoQNX(
@@ -154,13 +147,9 @@ void cvkCreateImageWithExternalFormatInfoQNX(
     const VkAllocationCallbacks* pAllocator,
     VkImage*                     pImage)
 {
-    VkExternalFormatQNX external_format =
-    {
-        .sType          = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_QNX,
-        .pNext          = pNext,
-        .externalFormat = externalFormat
-    };
+    VkExternalFormatQNX external_format;
 
+    cvkInitExternalFormatQNX(&external_format, pNext, externalFormat);
     cvkCreateImage(device,
                    &external_format,
                    flags,
@@ -194,13 +183,9 @@ void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoQNX(
     const VkAllocationCallbacks*  pAllocator,
     VkSamplerYcbcrConversion*     pYcbcrConversion)
 {
-    VkExternalFormatQNX external_format =
-    {
-        .sType          = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_QNX,
-        .pNext          = pNext,
-        .externalFormat = externalFormat
-    };
+    VkExternalFormatQNX external_format;
 
+    cvkInitExternalFormatQNX(&external_format, pNext, externalFormat);
     cvkCreateSamplerYcbcrConversion(device,
                                     &external_format,
                                     format,
@@ -220,12 +205,9 @@ void cvkGetPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
     VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX)
 {
     VkPhysicalDeviceFeatures2                             features;
-    VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX ext_features =
-    {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_SCREEN_BUFFER_FEATURES_QNX,
-        .pNext = pNext
-    };
+    VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX ext_features;
 
+    cvkInitPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(&ext_features, pNext, (VkBool32)0);
     cvkGetPhysicalDeviceFeatures2(physicalDevice, &ext_features, &features);
 
     (*pPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX) = ext_features;
@@ -240,10 +222,7 @@ void cvkGetScreenBufferFormatPropertiesQNX(
     VkScreenBufferFormatPropertiesQNX ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
-
-    ext_properties.sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_FORMAT_PROPERTIES_QNX;
-    ext_properties.pNext = pNext;
-
+    cvkInitScreenBufferFormatPropertiesQNX(&ext_properties, pNext);
     cvkGetScreenBufferPropertiesQNX(device, buffer, &ext_properties, &properties);
 
     (*pScreenBufferFormatPropertiesQNX) = ext_properties;
