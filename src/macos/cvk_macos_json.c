@@ -37,12 +37,12 @@ void cvkReadJsonMacOSSurfaceCreateInfoMVK(
 
     pInfo->flags = cvkParseJsonMacOSSurfaceCreateFlagsMVK(value);
 }
-extern CVK_FORCE_INLINE VkMacOSSurfaceCreateFlagsMVK cvkParseJsonMacOSSurfaceCreateFlagsMVK(
+VkMacOSSurfaceCreateFlagsMVK cvkParseJsonMacOSSurfaceCreateFlagsMVK(
     const cvkJsonValue* pValue)
 {
     return (VkMacOSSurfaceCreateFlagsMVK)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMacOSSurfaceCreateInfoMVK(
+void cvkParseJsonMacOSSurfaceCreateInfoMVK(
     const cvkJsonContext*        pContext,
     const cvkJsonValue*          pObject,
     VkMacOSSurfaceCreateInfoMVK* pInfo)

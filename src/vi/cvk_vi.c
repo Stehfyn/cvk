@@ -9,7 +9,7 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_vi.h>
 
-extern CVK_FORCE_INLINE void cvkInitViSurfaceCreateInfoNN(
+void cvkInitViSurfaceCreateInfoNN(
     VkViSurfaceCreateInfoNN* pInfo,
     const void*              pNext,
     VkViSurfaceCreateFlagsNN flags,
@@ -23,7 +23,7 @@ extern CVK_FORCE_INLINE void cvkInitViSurfaceCreateInfoNN(
         .window = window
     };
 }
-extern CVK_FORCE_INLINE void cvkCreateViSurfaceNN(
+void cvkCreateViSurfaceNN(
     VkInstance                   instance,
     const void*                  pNext,
     VkViSurfaceCreateFlagsNN     flags,
@@ -31,14 +31,9 @@ extern CVK_FORCE_INLINE void cvkCreateViSurfaceNN(
     const VkAllocationCallbacks* pAllocator,
     VkSurfaceKHR*                pSurface)
 {
-    VkViSurfaceCreateInfoNN create_info =
-    {
-        .sType  = VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN,
-        .pNext  = pNext,
-        .flags  = flags,
-        .window = window
-    };
+    VkViSurfaceCreateInfoNN create_info;
 
+    cvkInitViSurfaceCreateInfoNN(&create_info, pNext, flags, window);
     CVK_CHECK(vkCreateViSurfaceNN(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }

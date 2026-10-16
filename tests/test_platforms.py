@@ -64,6 +64,7 @@ class PlatformTests(unittest.TestCase):
             "nvscisync.h": "typedef struct NvSciSyncAttrListRec* NvSciSyncAttrList; typedef struct NvSciSyncObjRec* NvSciSyncObj; typedef struct NvSciSyncFence NvSciSyncFence;",
             "nvscibuf.h": "typedef struct NvSciBufAttrListRec* NvSciBufAttrList; typedef struct NvSciBufObjRec* NvSciBufObj;",
             "unistd.h": "int dup(int);",
+            "ubm.h": "struct ubm_device; struct ubm_surface;",
         }
         with tempfile.TemporaryDirectory() as tmp:
             for name, declarations in headers.items():
@@ -71,7 +72,7 @@ class PlatformTests(unittest.TestCase):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text("#pragma once\n#include <stdint.h>\n" + declarations + "\n")
             for profile, gen in self.profiles.items():
-                includes = ["-I", str(ROOT / "include"), "-isystem", tmp,
+                includes = ["-I", str(ROOT / "include"), "-I", str(ROOT / "platform"), "-isystem", tmp,
                             "-isystem", str(ROOT / "external" / ("Vulkan-Headers" if profile == "cvk" else "VulkanSC-Headers") / "include")]
                 if profile == "cvk":
                     includes += ["-isystem", str(ROOT / "external/volk")]

@@ -13,13 +13,13 @@
 #include <windef.h>
 #include <winnt.h>
 
-extern SCVK_FORCE_INLINE void scvkAcquireWinrtDisplayNV(
+void scvkAcquireWinrtDisplayNV(
     VkPhysicalDevice physicalDevice,
     VkDisplayKHR     display)
 {
     SCVK_CHECK(vkAcquireWinrtDisplayNV(physicalDevice, display));
 }
-extern SCVK_FORCE_INLINE void scvkGetWinrtDisplayNV(
+void scvkGetWinrtDisplayNV(
     VkPhysicalDevice physicalDevice,
     uint32_t         deviceRelativeId,
     VkDisplayKHR*    pDisplay)
@@ -124,7 +124,7 @@ static SCVK_FORCE_INLINE void* VKAPI_CALL scvkWin32Reallocate(
 
     return pMemory;
 }
-extern SCVK_FORCE_INLINE void scvkInitWin32AllocationCallbacks(
+void scvkInitWin32AllocationCallbacks(
     VkAllocationCallbacks* pCallbacks)
 {
     SCVK_ASSERT(NULL != pCallbacks);

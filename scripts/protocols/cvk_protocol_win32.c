@@ -140,7 +140,7 @@ void cvkInitWin32AllocationCallbacks(VkAllocationCallbacks* pCallbacks)
  * \param[out] pImage                  Receives the created VkImage
  * \param[out] pMemory                 Receives the imported VkDeviceMemory
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice,
                                VkDevice                           device,
@@ -296,7 +296,7 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
  * \param[out] pImage                  Receives the created VkImage
  * \param[out] pMemory                 Receives the imported VkDeviceMemory
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkImportWin32HandleImage2D(VkPhysicalDevice                   physicalDevice,
                                  VkDevice                           device,
@@ -362,7 +362,7 @@ void cvkImportWin32HandleImage2D(VkPhysicalDevice                   physicalDevi
  * \param[in] format           Vulkan image format
  * \param[in] usage            Vulkan image usage
  *
- * \retval VK_TRUE  The image description supports D3D11 texture import
+ * \retval VK_TRUE The image description supports D3D11 texture import
  * \retval VK_FALSE The image description does not support D3D11 texture import
  */
 VkBool32 cvkGetPhysicalDeviceD3D11Texture2DImportSupport(VkPhysicalDevice physicalDevice, VkFormat format, VkImageUsageFlags usage)
@@ -396,7 +396,7 @@ VkBool32 cvkGetPhysicalDeviceD3D11Texture2DImportSupport(VkPhysicalDevice physic
  * \param[out] pImage           Receives the created VkImage
  * \param[out] pMemory          Receives the imported VkDeviceMemory
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkImportD3D11Texture2D(VkPhysicalDevice physicalDevice, VkDevice device, VkFormat format, VkExtent2D extent2D, VkImageUsageFlags usage, HANDLE handle, VkImage* pImage, VkDeviceMemory* pMemory)
 {
@@ -457,7 +457,7 @@ void cvkImportD3D11Texture2D(VkPhysicalDevice physicalDevice, VkDevice device, V
  * \param[out] pBuffer                 Receives the created VkBuffer
  * \param[out] pMemory                 Receives the imported VkDeviceMemory
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevice,
                                 VkDevice                           device,
@@ -594,7 +594,7 @@ void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
  * \param[out] pMemory                 Receives the exportable VkDeviceMemory
  * \param[out] pHandle                 Receives the exported handle, owned by the caller
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkExportWin32HandleImage(VkPhysicalDevice                   physicalDevice,
                                VkDevice                           device,
@@ -717,7 +717,7 @@ void cvkExportWin32HandleImage(VkPhysicalDevice                   physicalDevice
  * \param[out] pMemory                 Receives the exportable VkDeviceMemory
  * \param[out] pHandle                 Receives the exported handle, owned by the caller
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkExportWin32HandleBuffer(VkPhysicalDevice                   physicalDevice,
                                 VkDevice                           device,

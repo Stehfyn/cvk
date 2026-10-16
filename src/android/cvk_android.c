@@ -11,42 +11,42 @@
 #include <vulkan/vulkan_android.h>
 #include <vulkan/vulkan_core.h>
 
-extern CVK_FORCE_INLINE void cvkInitAndroidHardwareBufferFormatProperties2ANDROID(
+void cvkInitAndroidHardwareBufferFormatProperties2ANDROID(
     VkAndroidHardwareBufferFormatProperties2ANDROID* pInfo,
     void*                                            pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_2_ANDROID;
     pInfo->pNext = pNext;
 }
-extern CVK_FORCE_INLINE void cvkInitAndroidHardwareBufferFormatPropertiesANDROID(
+void cvkInitAndroidHardwareBufferFormatPropertiesANDROID(
     VkAndroidHardwareBufferFormatPropertiesANDROID* pInfo,
     void*                                           pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_ANDROID;
     pInfo->pNext = pNext;
 }
-extern CVK_FORCE_INLINE void cvkInitAndroidHardwareBufferFormatResolvePropertiesANDROID(
+void cvkInitAndroidHardwareBufferFormatResolvePropertiesANDROID(
     VkAndroidHardwareBufferFormatResolvePropertiesANDROID* pInfo,
     void*                                                  pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_RESOLVE_PROPERTIES_ANDROID;
     pInfo->pNext = pNext;
 }
-extern CVK_FORCE_INLINE void cvkInitAndroidHardwareBufferPropertiesANDROID(
+void cvkInitAndroidHardwareBufferPropertiesANDROID(
     VkAndroidHardwareBufferPropertiesANDROID* pInfo,
     void*                                     pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_PROPERTIES_ANDROID;
     pInfo->pNext = pNext;
 }
-extern CVK_FORCE_INLINE void cvkInitAndroidHardwareBufferUsageANDROID(
+void cvkInitAndroidHardwareBufferUsageANDROID(
     VkAndroidHardwareBufferUsageANDROID* pInfo,
     void*                                pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_USAGE_ANDROID;
     pInfo->pNext = pNext;
 }
-extern CVK_FORCE_INLINE void cvkInitAndroidSurfaceCreateInfo(
+void cvkInitAndroidSurfaceCreateInfo(
     VkAndroidSurfaceCreateInfoKHR* pInfo,
     const void*                    pNext,
     VkAndroidSurfaceCreateFlagsKHR flags,
@@ -60,7 +60,7 @@ extern CVK_FORCE_INLINE void cvkInitAndroidSurfaceCreateInfo(
         .window = window
     };
 }
-extern CVK_FORCE_INLINE void cvkInitExternalFormatANDROID(
+void cvkInitExternalFormatANDROID(
     VkExternalFormatANDROID* pInfo,
     void*                    pNext,
     uint64_t                 externalFormat)
@@ -72,7 +72,7 @@ extern CVK_FORCE_INLINE void cvkInitExternalFormatANDROID(
         .externalFormat = externalFormat
     };
 }
-extern CVK_FORCE_INLINE void cvkInitImportAndroidHardwareBufferInfoANDROID(
+void cvkInitImportAndroidHardwareBufferInfoANDROID(
     VkImportAndroidHardwareBufferInfoANDROID* pInfo,
     const void*                               pNext,
     struct AHardwareBuffer*                   buffer)
@@ -84,7 +84,7 @@ extern CVK_FORCE_INLINE void cvkInitImportAndroidHardwareBufferInfoANDROID(
         .buffer = buffer
     };
 }
-extern CVK_FORCE_INLINE void cvkInitMemoryGetAndroidHardwareBufferInfoANDROID(
+void cvkInitMemoryGetAndroidHardwareBufferInfoANDROID(
     VkMemoryGetAndroidHardwareBufferInfoANDROID* pInfo,
     const void*                                  pNext,
     VkDeviceMemory                               memory)
@@ -96,7 +96,7 @@ extern CVK_FORCE_INLINE void cvkInitMemoryGetAndroidHardwareBufferInfoANDROID(
         .memory = memory
     };
 }
-extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceExternalFormatResolveFeaturesANDROID(
+void cvkInitPhysicalDeviceExternalFormatResolveFeaturesANDROID(
     VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* pInfo,
     void*                                                 pNext,
     VkBool32                                              externalFormatResolve)
@@ -108,14 +108,14 @@ extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceExternalFormatResolveFeaturesA
         .externalFormatResolve = externalFormatResolve
     };
 }
-extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceExternalFormatResolvePropertiesANDROID(
+void cvkInitPhysicalDeviceExternalFormatResolvePropertiesANDROID(
     VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* pInfo,
     void*                                                   pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_PROPERTIES_ANDROID;
     pInfo->pNext = pNext;
 }
-extern CVK_FORCE_INLINE void cvkCreateAndroidSurface(
+void cvkCreateAndroidSurface(
     VkInstance                     instance,
     const void*                    pNext,
     VkAndroidSurfaceCreateFlagsKHR flags,
@@ -123,18 +123,13 @@ extern CVK_FORCE_INLINE void cvkCreateAndroidSurface(
     const VkAllocationCallbacks*   pAllocator,
     VkSurfaceKHR*                  pSurface)
 {
-    VkAndroidSurfaceCreateInfoKHR create_info =
-    {
-        .sType  = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR,
-        .pNext  = pNext,
-        .flags  = flags,
-        .window = window
-    };
+    VkAndroidSurfaceCreateInfoKHR create_info;
 
+    cvkInitAndroidSurfaceCreateInfo(&create_info, pNext, flags, window);
     CVK_CHECK(vkCreateAndroidSurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
-extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferPropertiesANDROID(
+void cvkGetAndroidHardwareBufferPropertiesANDROID(
     VkDevice                                  device,
     const struct AHardwareBuffer*             buffer,
     void*                                     pNext,
@@ -151,22 +146,18 @@ extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferPropertiesANDROID(
 
     (*pProperties) = properties;
 }
-extern CVK_FORCE_INLINE void cvkGetMemoryAndroidHardwareBufferANDROID(
+void cvkGetMemoryAndroidHardwareBufferANDROID(
     VkDevice                 device,
     const void*              pNext,
     VkDeviceMemory           memory,
     struct AHardwareBuffer** pBuffer)
 {
-    VkMemoryGetAndroidHardwareBufferInfoANDROID info =
-    {
-        .sType  = VK_STRUCTURE_TYPE_MEMORY_GET_ANDROID_HARDWARE_BUFFER_INFO_ANDROID,
-        .pNext  = pNext,
-        .memory = memory
-    };
+    VkMemoryGetAndroidHardwareBufferInfoANDROID info;
 
+    cvkInitMemoryGetAndroidHardwareBufferInfoANDROID(&info, pNext, memory);
     CVK_CHECK(vkGetMemoryAndroidHardwareBufferANDROID(device, &info, pBuffer));
 }
-extern CVK_FORCE_INLINE void cvkAllocateImportAndroidHardwareBufferANDROID(
+void cvkAllocateImportAndroidHardwareBufferANDROID(
     VkDevice                     device,
     const void*                  pNext,
     struct AHardwareBuffer*      buffer,
@@ -184,7 +175,7 @@ extern CVK_FORCE_INLINE void cvkAllocateImportAndroidHardwareBufferANDROID(
 
     cvkAllocateMemory(device, &buffer_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-extern CVK_FORCE_INLINE void cvkCreateImageWithExternalFormatInfoANDROID(
+void cvkCreateImageWithExternalFormatInfoANDROID(
     VkDevice                     device,
     void*                        pNext,
     uint64_t                     externalFormat,
@@ -229,7 +220,7 @@ extern CVK_FORCE_INLINE void cvkCreateImageWithExternalFormatInfoANDROID(
                    pAllocator,
                    pImage);
 }
-extern CVK_FORCE_INLINE void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoANDROID(
+void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoANDROID(
     VkDevice                      device,
     void*                         pNext,
     uint64_t                      externalFormat,
@@ -264,7 +255,7 @@ extern CVK_FORCE_INLINE void cvkCreateSamplerYcbcrConversionWithExternalFormatIn
                                     pAllocator,
                                     pYcbcrConversion);
 }
-extern CVK_FORCE_INLINE VkResult cvkCreateGraphicsPipelineWithExternalFormatInfoANDROID(
+VkResult cvkCreateGraphicsPipelineWithExternalFormatInfoANDROID(
     VkDevice                                      device,
     VkPipelineCache                               pipelineCache,
     void*                                         pNext,
@@ -319,7 +310,7 @@ extern CVK_FORCE_INLINE VkResult cvkCreateGraphicsPipelineWithExternalFormatInfo
                                      pAllocator,
                                      pPipeline);
 }
-extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferFormatProperties2ANDROID(
+void cvkGetAndroidHardwareBufferFormatProperties2ANDROID(
     VkDevice                                         device,
     const struct AHardwareBuffer*                    buffer,
     void*                                            pNext,
@@ -337,7 +328,7 @@ extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferFormatProperties2ANDROID
 
     (*pAndroidHardwareBufferFormatProperties2ANDROID) = ext_properties;
 }
-extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferFormatPropertiesANDROID(
+void cvkGetAndroidHardwareBufferFormatPropertiesANDROID(
     VkDevice                                        device,
     const struct AHardwareBuffer*                   buffer,
     void*                                           pNext,
@@ -355,7 +346,7 @@ extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferFormatPropertiesANDROID(
 
     (*pAndroidHardwareBufferFormatPropertiesANDROID) = ext_properties;
 }
-extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferFormatResolvePropertiesANDROID(
+void cvkGetAndroidHardwareBufferFormatResolvePropertiesANDROID(
     VkDevice                                               device,
     const struct AHardwareBuffer*                          buffer,
     void*                                                  pNext,
@@ -373,7 +364,7 @@ extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferFormatResolvePropertiesA
 
     (*pAndroidHardwareBufferFormatResolvePropertiesANDROID) = ext_properties;
 }
-extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceExternalFormatResolveFeaturesANDROID(
+void cvkGetPhysicalDeviceExternalFormatResolveFeaturesANDROID(
     VkPhysicalDevice                                      physicalDevice,
     void*                                                 pNext,
     VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* pPhysicalDeviceExternalFormatResolveFeaturesANDROID)
@@ -389,7 +380,7 @@ extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceExternalFormatResolveFeaturesAN
 
     (*pPhysicalDeviceExternalFormatResolveFeaturesANDROID) = ext_features;
 }
-extern CVK_FORCE_INLINE VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithAndroidHardwareBufferUsageANDROID(
+VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithAndroidHardwareBufferUsageANDROID(
     VkPhysicalDevice                     physicalDevice,
     const void*                          pImageFormatInfoNext,
     VkFormat                             format,
@@ -409,21 +400,13 @@ extern CVK_FORCE_INLINE VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithAn
     android_hardware_buffer_usage.sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_USAGE_ANDROID;
     android_hardware_buffer_usage.pNext = pAndroidHardwareBufferUsageANDROIDNext;
 
-    result = cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice,
-                                                  pImageFormatInfoNext,
-                                                  format,
-                                                  type,
-                                                  tiling,
-                                                  usage,
-                                                  flags,
-                                                  &android_hardware_buffer_usage,
-                                                  &image_format_properties);
+    result = cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &android_hardware_buffer_usage, &image_format_properties);
 
     (*pAndroidHardwareBufferUsageANDROID) = android_hardware_buffer_usage;
 
     return result;
 }
-extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceExternalFormatResolvePropertiesANDROID(
+void cvkGetPhysicalDeviceExternalFormatResolvePropertiesANDROID(
     VkPhysicalDevice                                        physicalDevice,
     void*                                                   pNext,
     VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* pPhysicalDeviceExternalFormatResolvePropertiesANDROID)

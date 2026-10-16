@@ -2,6 +2,7 @@
 
 import copy
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -12,6 +13,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from generate import Generator, load_policy
 from vkxml import Registry
+
+# Builders use the platform's memory helpers (platform/vk_diagnostic.h); the C library stands in here.
+MEMORY_HELPERS = ("#include <string.h>\n"
+                  "static void cvkZeroMemory(void* pMemory, size_t byteCount) { memset(pMemory, 0, byteCount); }\n"
+                  "static void cvkCopyMemory(void* pDestination, const void* pSource, size_t byteCount)"
+                  " { memcpy(pDestination, pSource, byteCount); }\n")
 
 
 class DesignatedInitializerTests(unittest.TestCase):
@@ -83,13 +90,11 @@ class DesignatedInitializerTests(unittest.TestCase):
                 self.assertNotRegex(finished, r",\s*}")
                 self.assertEqual(finished, gen.finish_source(subprocess.check_output(formatter, input=finished, text=True)))
         gen = self.variants["cvk", True]
-        name = "cvkGetPhysicalDeviceNestedCommandBufferProperties"
-        source = next(d for d in gen.defs[""] if d.startswith("void " + name + "("))
-        # Keep exercising the long-name wrapping case even though locals now use short role names.
-        source = source.replace("VkPhysicalDeviceNestedCommandBufferPropertiesEXT ext_properties =",
-                                "VkPhysicalDeviceNestedCommandBufferPropertiesEXT ext_properties;\n\n"
-                                "    ext_properties = (VkPhysicalDeviceNestedCommandBufferPropertiesEXT)")
-        source = source.replace("ext_properties", "physical_device_nested_command_buffer_properties")
+        # Returned-only outputs are zeroed and assigned, so exercise the long-name wrapping case directly.
+        source = ("void cvkInitLongName(void* pNext)\n{\n"
+                  "    VkPhysicalDeviceNestedCommandBufferPropertiesEXT physical_device_nested_command_buffer_properties;\n\n"
+                  "    physical_device_nested_command_buffer_properties = (VkPhysicalDeviceNestedCommandBufferPropertiesEXT){\n"
+                  "        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_NESTED_COMMAND_BUFFER_PROPERTIES_EXT, .pNext = pNext};\n}\n")
         formatted = gen.finish_source(subprocess.check_output(formatter, input=source, text=True))
         self.assertIn("physical_device_nested_command_buffer_properties = (VkPhysicalDeviceNestedCommandBufferPropertiesEXT)\n    {\n", formatted)
 
@@ -99,9 +104,12 @@ class DesignatedInitializerTests(unittest.TestCase):
             with self.subTest(profile=profile, enabled=enabled), tempfile.TemporaryDirectory() as tmp:
                 names = ("cvkCreateBuffer", "cvkBindImageMemory2", "cvkBindPlaneImageMemories")
                 definitions = [next(d for d in gen.defs[""] if d.startswith("void " + name + "(")) for name in names]
+                builders = sorted(set(re.findall(r"\b(cvkInit\w+)\(", "\n".join(definitions))))
+                definitions = [next(d for d in gen.defs[""] if d.startswith("void " + name + "(")) for name in builders] + definitions
+                self.assertIn("cvkInitBufferCreateInfo(&create_info", definitions[len(builders)])
                 if enabled:
-                    self.assertIn("VkBufferCreateInfo create_info =", definitions[0])
-                    self.assertIn("bind_infos[index] = (VkBindImageMemoryInfo)", definitions[2])
+                    self.assertIn("(*pInfo) = (VkBufferCreateInfo)", definitions[builders.index("cvkInitBufferCreateInfo")])
+                    self.assertIn("bind_infos[index] = (VkBindImageMemoryInfo)", definitions[len(builders) + 2])
                 body = r'''
 #define CHECK(x) do { if (!(x)) { fprintf(stderr, "line %d: %s\n", __LINE__, #x); abort(); } } while (0)
 #define CVK_ASSERT(x) CHECK(x)
@@ -157,7 +165,7 @@ int main(void)
 '''
                 source = Path(tmp) / "wrappers.c"
                 source.write_text(f"#include {gen.vk_header}\n#include <stdio.h>\n#include <stdlib.h>\n"
-                                  + body + "\n".join(definitions) + main, encoding="utf-8")
+                                  + MEMORY_HELPERS + body + "\n".join(definitions) + main, encoding="utf-8")
                 exe = Path(tmp) / "wrappers.exe"
                 headers = ROOT / "external" / ("Vulkan-Headers" if profile == "cvk" else "VulkanSC-Headers") / "include"
                 subprocess.run(["clang", "-std=c99", "-Wall", "-Wextra", "-pedantic-errors", "-isystem", str(headers),
@@ -218,7 +226,7 @@ int main(void)
                 extents = "\n".join(f"#define {name} ({value})" for name, value in gen.array_extents.items())
                 source.write_text(f"#include {gen.vk_header}\n#include <string.h>\n#include <stdio.h>\n"
                                   '#define CHECK(x) do { if (!(x)) { fprintf(stderr, "line %d: %s\\n", __LINE__, #x); return 1; } } while (0)\n'
-                                  + extents + "\n" + "\n".join(definitions) + "\nint main(void) {\n" + body + "return 0;\n}\n", encoding="utf-8")
+                                  + MEMORY_HELPERS + extents + "\n" + "\n".join(definitions) + "\nint main(void) {\n" + body + "return 0;\n}\n", encoding="utf-8")
                 exe = Path(tmp) / "builders.exe"
                 headers = ROOT / "external" / ("Vulkan-Headers" if profile == "cvk" else "VulkanSC-Headers") / "include"
                 subprocess.run(["clang", "-std=c99", "-Wall", "-Wextra", "-pedantic-errors", "-isystem", str(headers),

@@ -12,7 +12,7 @@
  * \param[out] ppIds        Receives the arena array of ids, one per entry
  * \param[out] ppElements   Receives the arena array of structures, zeroed; the caller parses each
  *
- * \retval Number of entries
+ * \retval uint32_t Number of entries
  */
 uint32_t cvkParsePipelineJsonObjectList(const cvkJsonContext* pContext, const cvkJsonValue* pList, size_t elementSize, uint64_t** ppIds, void** ppElements)
 {
@@ -42,7 +42,7 @@ uint32_t cvkParsePipelineJsonObjectList(const cvkJsonContext* pContext, const cv
  * \param[in] pContext Parsing context.
  * \param[in] root Document root.
  * \param[out] pPipeline Parsed pipeline and render pass.
- * \retval Other The graphics or compute state object.
+ * \retval const cvkJsonValue* The graphics or compute state object.
  */
 static CVK_FORCE_INLINE const cvkJsonValue* cvkReadPipelineJsonState(const cvkJsonContext* pContext,
                                                                    const cvkJsonValue* root,
@@ -105,7 +105,7 @@ static CVK_FORCE_INLINE const cvkJsonValue* cvkReadPipelineJsonState(const cvkJs
  * \param[in]  pContext   Parsing context whose document is the pipeline JSON
  * \param[out] pPipeline  Receives the parsed pipeline description
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkParsePipelineJson(const cvkJsonContext* pContext, cvkPipelineJson* pPipeline)
 {
@@ -200,7 +200,7 @@ void cvkParsePipelineJson(const cvkJsonContext* pContext, cvkPipelineJson* pPipe
  * \param[in]  pHandles  The handles, as integers, one per id
  * \param[in]  id        The id to find
  *
- * \retval The handle as an integer, or 0
+ * \retval uint64_t The handle as an integer, or 0 when no ID matches.
  */
 uint64_t cvkGetPipelineJsonHandle(uint32_t count, const uint64_t* pIds, const uint64_t* pHandles, uint64_t id)
 {
@@ -221,8 +221,7 @@ uint64_t cvkGetPipelineJsonHandle(uint32_t count, const uint64_t* pIds, const ui
  * \param[in] count Number of entries.
  * \param[in] pIds Object IDs.
  * \param[in] id Requested ID.
- * \retval VK_INVALID No matching ID.
- * \retval Other The matching index into a typed handle table.
+ * \retval uint32_t The matching index into a typed handle table, or VK_INVALID when no ID matches.
  */
 uint32_t cvkGetPipelineJsonHandleIndex(uint32_t        count,
                                      const uint64_t* pIds,
@@ -249,7 +248,8 @@ uint32_t cvkGetPipelineJsonHandleIndex(uint32_t        count,
  * \param[in] pObjects Previously created native samplers.
  * \param[in] pInfo Descriptor set layout description.
  * \param[in,out] pArena Caller-owned output storage.
- * \retval Other Resolved bindings, or NULL for an empty layout.
+ * \retval NULL The layout is empty.
+ * \retval non-NULL Resolved bindings.
  */
 static CVK_FORCE_INLINE VkDescriptorSetLayoutBinding* cvkResolvePipelineJsonBindings(const cvkPipelineJson* pPipeline,
                                                                                     const cvkPipelineJsonObjects* pObjects,
@@ -296,7 +296,7 @@ static CVK_FORCE_INLINE VkDescriptorSetLayoutBinding* cvkResolvePipelineJsonBind
  * \param[in,out] pUser Resolver state.
  * \param[in] pSource Stage with its parse-time address intact.
  * \param[out] pStage Resolved stage copy.
- * \retval None No value is returned.
+ * \retval None
  */
 static CVK_FORCE_INLINE void cvkResolvePipelineJsonShader(const cvkPipelineJson* pPipeline,
                                                           PFN_cvkResolveJsonHandle resolveExternal,
@@ -370,7 +370,7 @@ static CVK_FORCE_INLINE VkRenderPass cvkResolvePipelineJsonRenderPass(const cvkP
  * \param[in]  pAllocator       Optional allocation callbacks, or NULL
  * \param[out] pObjects         Receives every created handle beside its id
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCreatePipelineJsonObjects(VkDevice                     device,
                                   VkPipelineCache              pipelineCache,
@@ -531,7 +531,7 @@ void cvkCreatePipelineJsonObjects(VkDevice                     device,
  * \param[out] pPipeline          Receives the parsed description; numeric IDs are retained in pHandleReferences
  * \param[out] pObjects           Receives every created handle beside its id
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCreatePipelineFromJson(VkDevice                     device,
                                VkPipelineCache              pipelineCache,
@@ -596,7 +596,7 @@ static CVK_FORCE_INLINE void cvkInitPipelineJsonScratch(size_t jsonLength, const
  * \param[in] jsonLength Byte length of the text.
  * \param[in] pAllocator Allocation callbacks for scratch and Vulkan objects.
  * \param[out] pRenderPass Receives the render pass.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCreateRenderPassFromPipelineJson(VkDevice                     device,
                                          const char*                  pJsonText,
@@ -734,7 +734,7 @@ static CVK_FORCE_INLINE VkBool32 cvkResolveGraphicsPipelineJsonHandle(void* pUse
  * \param[in] externalRenderPass Caller-owned render pass if the JSON omits one, or VK_NULL_HANDLE.
  * \param[in] pAllocator Allocation callbacks for scratch and Vulkan objects.
  * \param[out] pObjects Receives the created JSON objects.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevice                     device,
                                                    VkPipelineCache              pipelineCache,
@@ -811,7 +811,7 @@ void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevice                     d
  * \param[in] externalRenderPass Caller-owned render pass if the JSON omits one, or VK_NULL_HANDLE.
  * \param[in] pAllocator Allocation callbacks for scratch and Vulkan objects.
  * \param[out] pObjects Receives the created JSON objects.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCreateGraphicsPipelineFromJson(VkDevice                     device,
                                        VkPipelineCache              pipelineCache,
@@ -828,8 +828,8 @@ void cvkCreateGraphicsPipelineFromJson(VkDevice                     device,
     VkShaderModule vertex;
     VkShaderModule fragment;
 
-    cvkCreateShaderModule(device, NULL, 0, vertexCodeSize, pVertexCode, pAllocator, &vertex);
-    cvkCreateShaderModule(device, NULL, 0, fragmentCodeSize, pFragmentCode, pAllocator, &fragment);
+    cvkCreateShaderModule(device, NULL, (VkShaderModuleCreateFlags)0, vertexCodeSize, pVertexCode, pAllocator, &vertex);
+    cvkCreateShaderModule(device, NULL, (VkShaderModuleCreateFlags)0, fragmentCodeSize, pFragmentCode, pAllocator, &fragment);
     cvkCreateGraphicsPipelineFromJsonWithModules(device,
                                                  pipelineCache,
                                                  pJsonText,
@@ -867,7 +867,7 @@ void cvkCreateGraphicsPipelineFromJson(VkDevice                     device,
  * \param[out] pPipeline          Receives the parsed description; numeric IDs are retained in pHandleReferences
  * \param[out] pObjects           Receives every created handle beside its id
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCreateOfflinePipelineFromJson(VkDevice                     device,
                                       VkPipelineCache              pipelineCache,

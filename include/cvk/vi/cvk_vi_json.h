@@ -7,22 +7,26 @@
 #include <vulkan/vulkan_vi.h>
 
 /* clang-format off */
+
+/*************************************************************************************************/
 /**
  * \brief Parses a VkViSurfaceCreateFlagsNN from JSON.
  *
- * \param[in] pValue  The value: bit names joined by |, a number, or NULL
+ * \param[in] pValue   The value: bit names joined by |, a number, or NULL
  *
- * \return The VkViSurfaceCreateFlagsNN returned by the command.
+ * \retval    VkViSurfaceCreateFlagsNN   The parsed value.
  */
 VkViSurfaceCreateFlagsNN cvkParseJsonViSurfaceCreateFlagsNN(const cvkJsonValue* pValue);
+
+/*************************************************************************************************/
 /**
  * \brief Parses a VkViSurfaceCreateInfoNN from a JSON object; members absent or NULL stay zero.
  *
- * \param[in]  pContext  Parsing context: document, arena, handle resolver
- * \param[in]  pObject   The JSON object of the VkViSurfaceCreateInfoNN
- * \param[out] pInfo     Receives the parsed VkViSurfaceCreateInfoNN, zeroed first
+ * \param[in]  pContext   Parsing context: document, arena, handle resolver
+ * \param[in]  pObject    The JSON object of the VkViSurfaceCreateInfoNN
+ * \param[out] pInfo      Receives the parsed VkViSurfaceCreateInfoNN, zeroed first
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkParseJsonViSurfaceCreateInfoNN(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkViSurfaceCreateInfoNN* pInfo);
 /* clang-format on */

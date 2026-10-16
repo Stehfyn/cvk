@@ -10,7 +10,7 @@
  *
  * \param[in] format  Vulkan format
  *
- * \return Plane count from the format tables.
+ * \retval uint32_t Plane count from the format tables.
  */
 uint32_t cvkGetFormatPlaneCount(VkFormat format)
 {
@@ -23,7 +23,10 @@ uint32_t cvkGetFormatPlaneCount(VkFormat format)
  * \param[in] format      Vulkan format
  * \param[in] planeIndex  Plane index below the format's plane count
  *
- * \return The aspect bit for the plane.
+ * \retval VK_IMAGE_ASPECT_COLOR_BIT The format has one plane.
+ * \retval VK_IMAGE_ASPECT_PLANE_0_BIT planeIndex is 0 for a multi-planar format.
+ * \retval VK_IMAGE_ASPECT_PLANE_1_BIT planeIndex is 1 for a multi-planar format.
+ * \retval VK_IMAGE_ASPECT_PLANE_2_BIT planeIndex is 2 for a multi-planar format.
  */
 VkImageAspectFlagBits cvkGetFormatPlaneAspect(VkFormat format, uint32_t planeIndex)
 {
@@ -39,7 +42,10 @@ VkImageAspectFlagBits cvkGetFormatPlaneAspect(VkFormat format, uint32_t planeInd
  *
  * \param[in] planeIndex  Memory plane index below CVK_MAX_DRM_FORMAT_MODIFIER_PLANES
  *
- * \return The memory plane aspect bit.
+ * \retval VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT planeIndex is 0.
+ * \retval VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT planeIndex is 1.
+ * \retval VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT planeIndex is 2.
+ * \retval VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT planeIndex is 3.
  */
 VkImageAspectFlagBits cvkGetMemoryPlaneAspect(uint32_t planeIndex)
 {
@@ -51,7 +57,7 @@ VkImageAspectFlagBits cvkGetMemoryPlaneAspect(uint32_t planeIndex)
  *
  * \param[in] format  Vulkan format
  *
- * \return The complete aspect mask of the format.
+ * \retval VkImageAspectFlags The complete aspect mask of the format.
  */
 VkImageAspectFlags cvkGetFormatAspectMask(VkFormat format)
 {
@@ -90,7 +96,7 @@ VkImageAspectFlags cvkGetFormatAspectMask(VkFormat format)
  * \param[in] baseArrayLayer  First array layer
  * \param[in] layerCount      Number of array layers
  *
- * \return The subresource layers.
+ * \retval VkImageSubresourceLayers The subresource layers.
  */
 VkImageSubresourceLayers cvkGetFormatSubresourceLayers(VkFormat format, uint32_t mipLevel, uint32_t baseArrayLayer, uint32_t layerCount)
 {
@@ -105,7 +111,7 @@ VkImageSubresourceLayers cvkGetFormatSubresourceLayers(VkFormat format, uint32_t
  *
  * \param[in] format  Vulkan format
  *
- * \return The subresource layers.
+ * \retval VkImageSubresourceLayers The subresource layers.
  */
 VkImageSubresourceLayers cvkGetFormatBaseSubresourceLayers(VkFormat format)
 {
@@ -121,7 +127,7 @@ VkImageSubresourceLayers cvkGetFormatBaseSubresourceLayers(VkFormat format)
  * \param[in] baseArrayLayer  First array layer
  * \param[in] layerCount      Number of array layers
  *
- * \return The subresource range.
+ * \retval VkImageSubresourceRange The subresource range.
  */
 VkImageSubresourceRange cvkGetFormatSubresourceRange(VkFormat format, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount)
 {
@@ -136,7 +142,7 @@ VkImageSubresourceRange cvkGetFormatSubresourceRange(VkFormat format, uint32_t b
  *
  * \param[in] format  Vulkan format
  *
- * \return The subresource range.
+ * \retval VkImageSubresourceRange The subresource range.
  */
 VkImageSubresourceRange cvkGetFormatBaseSubresourceRange(VkFormat format)
 {
@@ -162,7 +168,7 @@ VkImageSubresourceRange cvkGetFormatBaseSubresourceRange(VkFormat format)
  * \param[out] pPlaneExtents  Receives each plane's extent in texels
  * \param[out] pSize          Receives the total byte count
  *
- * \return The format's plane count.
+ * \retval uint32_t The format's plane count.
  */
 uint32_t cvkCalculateFormatPlaneLayouts(VkFormat      format,
                                         uint32_t      width,
@@ -231,7 +237,7 @@ uint32_t cvkCalculateFormatPlaneLayouts(VkFormat      format,
  * \param[in] width   Image width in texels
  * \param[in] height  Image height in texels
  *
- * \return Total byte count of every plane laid out with row alignment one.
+ * \retval VkDeviceSize Total byte count of every plane laid out with row alignment one.
  */
 VkDeviceSize cvkGetFormatSize(VkFormat format, uint32_t width, uint32_t height)
 {
@@ -262,7 +268,7 @@ VkDeviceSize cvkGetFormatSize(VkFormat format, uint32_t width, uint32_t height)
  * \param[out] pTransferByteCount  Receives the byte count covered in the buffer
  * \param[out] pAspectMask         Receives the union of the plane aspects
  *
- * \return The number of regions written.
+ * \retval uint32_t The number of regions written.
  */
 uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
                                       VkDeviceSize             bufferRowAlignment,
@@ -365,7 +371,7 @@ uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
  * \param[in] imageSrcQueueFamilyIndex         Image ownership source after the transfer
  * \param[in] imageDstQueueFamilyIndex         Image ownership destination after the transfer
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCmdTransferBufferToImageQueueOwnership(VkCommandBuffer          commandBuffer,
                                                VkDependencyFlags        dependencyFlags,
@@ -489,7 +495,7 @@ void cvkCmdTransferBufferToImageQueueOwnership(VkCommandBuffer          commandB
  * \param[in] bufferSrcQueueFamilyIndex         Buffer ownership source after the transfer
  * \param[in] bufferDstQueueFamilyIndex         Buffer ownership destination after the transfer
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCmdTransferImageToBufferQueueOwnership(VkCommandBuffer          commandBuffer,
                                                VkDependencyFlags        dependencyFlags,
@@ -631,7 +637,7 @@ void cvkCmdTransferImageToBufferQueueOwnership(VkCommandBuffer          commandB
  * \param[in] dstReleaseQueueFamilyIndex   Destination ownership during the release
  * \param[in] dstDstQueueFamilyIndex       Destination ownership after the transfer
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCmdTransferImageToImageQueueOwnership(VkCommandBuffer          commandBuffer,
                                               VkDependencyFlags        dependencyFlags,
@@ -769,7 +775,7 @@ void cvkCmdTransferImageToImageQueueOwnership(VkCommandBuffer          commandBu
  * \param[in] dstDstAccessMask        Access that next uses the destination
  * \param[in] dstFinalLayout          Layout of the destination after the transfer
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCmdTransferBlitImage(VkCommandBuffer          commandBuffer,
                              VkDependencyFlags        dependencyFlags,

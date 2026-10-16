@@ -8,29 +8,27 @@
 #include <vulkan/vulkan_win32.h>
 
 /* clang-format off */
+
+/*************************************************************************************************/
 /**
  * \brief Acquires winrt display.
  *
- * \par Details:
- *  Wraps vkAcquireWinrtDisplayNV. Aborts on any error result.
+ * \param[in] physicalDevice   The physical device the display is on.
+ * \param[in] display          The display the caller wishes to control in Vulkan.
  *
- * \param[in] physicalDevice  VkPhysicalDevice value
- * \param[in] display         VkDisplayKHR value
- *
- * \retval None No value is returned.
+ * \retval    None
  */
 void scvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves winrt display.
  *
- * \par Details:
- *  Wraps vkGetWinrtDisplayNV. Aborts on any error result.
+ * \param[in]  physicalDevice     The physical device on which to query the display handle.
+ * \param[in]  deviceRelativeId   The value of the https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displaytarget.adapterrelativeid["AdapterRelativeId"] property of a https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displaytarget["DisplayTarget"] that is enumerated by a https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displayadapter["DisplayAdapter"] with an https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displayadapter.id["Id"] property matching the deviceLUID property of a VkPhysicalDeviceIDProperties for physicalDevice.
+ * \param[out] pDisplay           A pointer to a VkDisplayKHR handle where the display is returned.
  *
- * \param[in]  physicalDevice    VkPhysicalDevice value
- * \param[in]  deviceRelativeId  uint32_t value
- * \param[out] pDisplay          Receives the created VkDisplayKHR
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkGetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay);
 

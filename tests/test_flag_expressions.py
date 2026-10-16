@@ -96,10 +96,11 @@ class FlagExpressionTests(unittest.TestCase):
         for profile in ("cvk", "scvk"):
             policy = load_policy(str(ROOT / f"{profile}.policy.json"))
             reg = Registry.load(str(ROOT / policy["registry"]), policy["api"]) if "registry" in policy else Registry.load()
-            includes = ["-I", str(ROOT / "include"), "-isystem", str(ROOT / "external" / ("VulkanSC-Headers" if profile == "scvk" else "Vulkan-Headers") / "include")]
+            includes = ["-I", str(ROOT / "include"), "-I", str(ROOT / "platform"), "-isystem", str(ROOT / "external" / ("VulkanSC-Headers" if profile == "scvk" else "Vulkan-Headers") / "include")]
             if profile == "cvk":
                 includes += ["-DVK_NO_PROTOTYPES", "-isystem", str(ROOT / "external/volk"),
-                             "-isystem", str(ROOT / "external/Vulkan-Utility-Libraries/include")]
+                             "-isystem", str(ROOT / "external/Vulkan-Utility-Libraries/include"),
+                             "-I", str(ROOT / "assets/bicubic")]
             for filename in (f"{profile}.c", f"{profile}_json.c"):
                 path = ROOT / "src" / filename
                 with self.subTest(source=filename):

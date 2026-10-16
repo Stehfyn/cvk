@@ -9,31 +9,29 @@
 #include <vulkan/vulkan_xlib_xrandr.h>
 
 /* clang-format off */
+
+/*************************************************************************************************/
 /**
  * \brief Acquires xlib display.
  *
- * \par Details:
- *  Wraps vkAcquireXlibDisplayEXT. Aborts on any error result.
+ * \param[in]  physicalDevice   The physical device the display is on.
+ * \param[out] dpy              A connection to the X11 server that currently owns display.
+ * \param[in]  display          The display the caller wishes to control in Vulkan.
  *
- * \param[in]  physicalDevice  VkPhysicalDevice value
- * \param[out] dpy             Receives the Display
- * \param[in]  display         VkDisplayKHR value
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkAcquireXlibDisplay(VkPhysicalDevice physicalDevice, Display* dpy, VkDisplayKHR display);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves rand r output display.
  *
- * \par Details:
- *  Wraps vkGetRandROutputDisplayEXT. Aborts on any error result.
+ * \param[in]  physicalDevice   The physical device to query the display handle on.
+ * \param[out] dpy              A connection to the X11 server from which rrOutput was queried.
+ * \param[in]  rrOutput         An X11 RandR output ID.
+ * \param[out] pDisplay         A pointer to a VkDisplayKHR handle where the display is returned.
  *
- * \param[in]  physicalDevice  VkPhysicalDevice value
- * \param[out] dpy             Receives the Display
- * \param[in]  rrOutput        RROutput value
- * \param[out] pDisplay        Receives the created VkDisplayKHR
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkGetRandROutputDisplay(VkPhysicalDevice physicalDevice, Display* dpy, RROutput rrOutput, VkDisplayKHR* pDisplay);
 /* clang-format on */

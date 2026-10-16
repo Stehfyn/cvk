@@ -7,31 +7,32 @@
 #include <vulkan/vulkan_ios.h>
 
 /* clang-format off */
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkIOSSurfaceCreateInfoMVK.
  *
- * \param[out] pInfo  Receives the initialized VkIOSSurfaceCreateInfoMVK
- * \param[in]  pNext  Optional extension chain attached to VkIOSSurfaceCreateInfoMVK, or NULL
- * \param[in]  flags  VkIOSSurfaceCreateInfoMVK::flags
- * \param[in]  pView  VkIOSSurfaceCreateInfoMVK::pView
+ * \param[out] pInfo   Receives the initialized VkIOSSurfaceCreateInfoMVK
+ * \param[in]  pNext   Optional extension chain attached to VkIOSSurfaceCreateInfoMVK, or NULL
+ * \param[in]  flags   VkIOSSurfaceCreateInfoMVK::flags
+ * \param[in]  pView   VkIOSSurfaceCreateInfoMVK::pView
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkInitIOSSurfaceCreateInfoMVK(VkIOSSurfaceCreateInfoMVK* pInfo, const void* pNext, VkIOSSurfaceCreateFlagsMVK flags, const void* pView);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a ios surface.
  *
- * \par Details:
- *  Wraps vkCreateIOSSurfaceMVK. Aborts on any error result.
+ * \param[in]  instance     The instance with which to associate the surface.
+ * \param[in]  pNext        Optional extension chain attached to VkIOSSurfaceCreateInfoMVK, or NULL
+ * \param[in]  flags        Reserved for future use; must be 0.
+ * \param[in]  pView        A reference to either a CAMetalLayer object or a UIView object.
+ * \param[in]  pAllocator   Optional allocation callbacks, or NULL
+ * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned.
  *
- * \param[in]  instance    VkInstance value
- * \param[in]  pNext       Optional extension chain attached to VkIOSSurfaceCreateInfoMVK, or NULL
- * \param[in]  flags       VkIOSSurfaceCreateInfoMVK::flags
- * \param[in]  pView       VkIOSSurfaceCreateInfoMVK::pView
- * \param[in]  pAllocator  Optional allocation callbacks, or NULL
- * \param[out] pSurface    Receives the created VkSurfaceKHR
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkCreateIOSSurfaceMVK(VkInstance instance, const void* pNext, VkIOSSurfaceCreateFlagsMVK flags, const void* pView, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 /* clang-format on */

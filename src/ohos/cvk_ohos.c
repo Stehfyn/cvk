@@ -11,7 +11,7 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_ohos.h>
 
-extern CVK_FORCE_INLINE void cvkInitExternalFormatOHOS(
+void cvkInitExternalFormatOHOS(
     VkExternalFormatOHOS* pInfo,
     void*                 pNext,
     uint64_t              externalFormat)
@@ -23,7 +23,7 @@ extern CVK_FORCE_INLINE void cvkInitExternalFormatOHOS(
         .externalFormat = externalFormat
     };
 }
-extern CVK_FORCE_INLINE void cvkInitImportNativeBufferInfoOHOS(
+void cvkInitImportNativeBufferInfoOHOS(
     VkImportNativeBufferInfoOHOS* pInfo,
     const void*                   pNext,
     struct OH_NativeBuffer*       buffer)
@@ -35,7 +35,7 @@ extern CVK_FORCE_INLINE void cvkInitImportNativeBufferInfoOHOS(
         .buffer = buffer
     };
 }
-extern CVK_FORCE_INLINE void cvkInitMemoryGetNativeBufferInfoOHOS(
+void cvkInitMemoryGetNativeBufferInfoOHOS(
     VkMemoryGetNativeBufferInfoOHOS* pInfo,
     const void*                      pNext,
     VkDeviceMemory                   memory)
@@ -47,28 +47,28 @@ extern CVK_FORCE_INLINE void cvkInitMemoryGetNativeBufferInfoOHOS(
         .memory = memory
     };
 }
-extern CVK_FORCE_INLINE void cvkInitNativeBufferFormatPropertiesOHOS(
+void cvkInitNativeBufferFormatPropertiesOHOS(
     VkNativeBufferFormatPropertiesOHOS* pInfo,
     void*                               pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_FORMAT_PROPERTIES_OHOS;
     pInfo->pNext = pNext;
 }
-extern CVK_FORCE_INLINE void cvkInitNativeBufferPropertiesOHOS(
+void cvkInitNativeBufferPropertiesOHOS(
     VkNativeBufferPropertiesOHOS* pInfo,
     void*                         pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_PROPERTIES_OHOS;
     pInfo->pNext = pNext;
 }
-extern CVK_FORCE_INLINE void cvkInitNativeBufferUsageOHOS(
+void cvkInitNativeBufferUsageOHOS(
     VkNativeBufferUsageOHOS* pInfo,
     void*                    pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_USAGE_OHOS;
     pInfo->pNext = pNext;
 }
-extern CVK_FORCE_INLINE void cvkInitSurfaceCreateInfoOHOS(
+void cvkInitSurfaceCreateInfoOHOS(
     VkSurfaceCreateInfoOHOS* pInfo,
     const void*              pNext,
     VkSurfaceCreateFlagsOHOS flags,
@@ -82,7 +82,7 @@ extern CVK_FORCE_INLINE void cvkInitSurfaceCreateInfoOHOS(
         .window = window
     };
 }
-extern CVK_FORCE_INLINE VkResult cvkCreateSurfaceOHOS(
+VkResult cvkCreateSurfaceOHOS(
     VkInstance                   instance,
     const void*                  pNext,
     VkSurfaceCreateFlagsOHOS     flags,
@@ -93,13 +93,7 @@ extern CVK_FORCE_INLINE VkResult cvkCreateSurfaceOHOS(
     VkSurfaceCreateInfoOHOS create_info;
     VkResult                result;
 
-    create_info = (VkSurfaceCreateInfoOHOS)
-    {
-        .sType  = VK_STRUCTURE_TYPE_SURFACE_CREATE_INFO_OHOS,
-        .pNext  = pNext,
-        .flags  = flags,
-        .window = window
-    };
+    cvkInitSurfaceCreateInfoOHOS(&create_info, pNext, flags, window);
 
     result = vkCreateSurfaceOHOS(instance, &create_info, pAllocator, pSurface);
     CVK_ASSERT((VK_SUCCESS == result) || (VK_ERROR_SURFACE_LOST_KHR == result));
@@ -111,22 +105,18 @@ extern CVK_FORCE_INLINE VkResult cvkCreateSurfaceOHOS(
 
     return result;
 }
-extern CVK_FORCE_INLINE void cvkGetMemoryNativeBufferOHOS(
+void cvkGetMemoryNativeBufferOHOS(
     VkDevice                 device,
     const void*              pNext,
     VkDeviceMemory           memory,
     struct OH_NativeBuffer** pBuffer)
 {
-    VkMemoryGetNativeBufferInfoOHOS info =
-    {
-        .sType  = VK_STRUCTURE_TYPE_MEMORY_GET_NATIVE_BUFFER_INFO_OHOS,
-        .pNext  = pNext,
-        .memory = memory
-    };
+    VkMemoryGetNativeBufferInfoOHOS info;
 
+    cvkInitMemoryGetNativeBufferInfoOHOS(&info, pNext, memory);
     CVK_CHECK(vkGetMemoryNativeBufferOHOS(device, &info, pBuffer));
 }
-extern CVK_FORCE_INLINE void cvkGetNativeBufferPropertiesOHOS(
+void cvkGetNativeBufferPropertiesOHOS(
     VkDevice                      device,
     const struct OH_NativeBuffer* buffer,
     void*                         pNext,
@@ -143,7 +133,7 @@ extern CVK_FORCE_INLINE void cvkGetNativeBufferPropertiesOHOS(
 
     (*pProperties) = properties;
 }
-extern CVK_FORCE_INLINE void cvkAllocateImportNativeBufferOHOS(
+void cvkAllocateImportNativeBufferOHOS(
     VkDevice                     device,
     const void*                  pNext,
     struct OH_NativeBuffer*      buffer,
@@ -161,7 +151,7 @@ extern CVK_FORCE_INLINE void cvkAllocateImportNativeBufferOHOS(
 
     cvkAllocateMemory(device, &buffer_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-extern CVK_FORCE_INLINE void cvkCreateImageWithExternalFormatInfoOHOS(
+void cvkCreateImageWithExternalFormatInfoOHOS(
     VkDevice                     device,
     void*                        pNext,
     uint64_t                     externalFormat,
@@ -206,7 +196,7 @@ extern CVK_FORCE_INLINE void cvkCreateImageWithExternalFormatInfoOHOS(
                    pAllocator,
                    pImage);
 }
-extern CVK_FORCE_INLINE void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoOHOS(
+void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoOHOS(
     VkDevice                      device,
     void*                         pNext,
     uint64_t                      externalFormat,
@@ -241,7 +231,7 @@ extern CVK_FORCE_INLINE void cvkCreateSamplerYcbcrConversionWithExternalFormatIn
                                     pAllocator,
                                     pYcbcrConversion);
 }
-extern CVK_FORCE_INLINE VkResult cvkCreateGraphicsPipelineWithExternalFormatInfoOHOS(
+VkResult cvkCreateGraphicsPipelineWithExternalFormatInfoOHOS(
     VkDevice                                      device,
     VkPipelineCache                               pipelineCache,
     void*                                         pNext,
@@ -296,7 +286,7 @@ extern CVK_FORCE_INLINE VkResult cvkCreateGraphicsPipelineWithExternalFormatInfo
                                      pAllocator,
                                      pPipeline);
 }
-extern CVK_FORCE_INLINE void cvkGetNativeBufferFormatPropertiesOHOS(
+void cvkGetNativeBufferFormatPropertiesOHOS(
     VkDevice                            device,
     const struct OH_NativeBuffer*       buffer,
     void*                               pNext,
@@ -314,7 +304,7 @@ extern CVK_FORCE_INLINE void cvkGetNativeBufferFormatPropertiesOHOS(
 
     (*pNativeBufferFormatPropertiesOHOS) = ext_properties;
 }
-extern CVK_FORCE_INLINE VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithNativeBufferUsageOHOS(
+VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithNativeBufferUsageOHOS(
     VkPhysicalDevice         physicalDevice,
     const void*              pImageFormatInfoNext,
     VkFormat                 format,
@@ -334,15 +324,7 @@ extern CVK_FORCE_INLINE VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithNa
     native_buffer_usage.sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_USAGE_OHOS;
     native_buffer_usage.pNext = pNativeBufferUsageOHOSNext;
 
-    result = cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice,
-                                                  pImageFormatInfoNext,
-                                                  format,
-                                                  type,
-                                                  tiling,
-                                                  usage,
-                                                  flags,
-                                                  &native_buffer_usage,
-                                                  &image_format_properties);
+    result = cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &native_buffer_usage, &image_format_properties);
 
     (*pNativeBufferUsageOHOS) = native_buffer_usage;
 

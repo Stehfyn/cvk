@@ -7,31 +7,32 @@
 #include <vulkan/vulkan_macos.h>
 
 /* clang-format off */
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkMacOSSurfaceCreateInfoMVK.
  *
- * \param[out] pInfo  Receives the initialized VkMacOSSurfaceCreateInfoMVK
- * \param[in]  pNext  Optional extension chain attached to VkMacOSSurfaceCreateInfoMVK, or NULL
- * \param[in]  flags  VkMacOSSurfaceCreateInfoMVK::flags
- * \param[in]  pView  VkMacOSSurfaceCreateInfoMVK::pView
+ * \param[out] pInfo   Receives the initialized VkMacOSSurfaceCreateInfoMVK
+ * \param[in]  pNext   Optional extension chain attached to VkMacOSSurfaceCreateInfoMVK, or NULL
+ * \param[in]  flags   VkMacOSSurfaceCreateInfoMVK::flags
+ * \param[in]  pView   VkMacOSSurfaceCreateInfoMVK::pView
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkInitMacOSSurfaceCreateInfoMVK(VkMacOSSurfaceCreateInfoMVK* pInfo, const void* pNext, VkMacOSSurfaceCreateFlagsMVK flags, const void* pView);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a mac os surface.
  *
- * \par Details:
- *  Wraps vkCreateMacOSSurfaceMVK. Aborts on any error result.
+ * \param[in]  instance     The instance with which to associate the surface.
+ * \param[in]  pNext        Optional extension chain attached to VkMacOSSurfaceCreateInfoMVK, or NULL
+ * \param[in]  flags        Reserved for future use; must be 0.
+ * \param[in]  pView        A reference to either a CAMetalLayer object or an NSView object.
+ * \param[in]  pAllocator   Optional allocation callbacks, or NULL
+ * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned.
  *
- * \param[in]  instance    VkInstance value
- * \param[in]  pNext       Optional extension chain attached to VkMacOSSurfaceCreateInfoMVK, or NULL
- * \param[in]  flags       VkMacOSSurfaceCreateInfoMVK::flags
- * \param[in]  pView       VkMacOSSurfaceCreateInfoMVK::pView
- * \param[in]  pAllocator  Optional allocation callbacks, or NULL
- * \param[out] pSurface    Receives the created VkSurfaceKHR
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkCreateMacOSSurfaceMVK(VkInstance instance, const void* pNext, VkMacOSSurfaceCreateFlagsMVK flags, const void* pView, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 /* clang-format on */

@@ -8,47 +8,48 @@
 #include <vulkan/vulkan_xcb.h>
 
 /* clang-format off */
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkXcbSurfaceCreateInfoKHR.
  *
- * \param[out] pInfo       Receives the initialized VkXcbSurfaceCreateInfoKHR
- * \param[in]  pNext       Optional extension chain attached to VkXcbSurfaceCreateInfoKHR, or NULL
- * \param[in]  flags       VkXcbSurfaceCreateInfoKHR::flags
- * \param[in]  connection  VkXcbSurfaceCreateInfoKHR::connection
- * \param[in]  window      VkXcbSurfaceCreateInfoKHR::window
+ * \param[out] pInfo        Receives the initialized VkXcbSurfaceCreateInfoKHR
+ * \param[in]  pNext        Optional extension chain attached to VkXcbSurfaceCreateInfoKHR, or NULL
+ * \param[in]  flags        VkXcbSurfaceCreateInfoKHR::flags
+ * \param[in]  connection   VkXcbSurfaceCreateInfoKHR::connection
+ * \param[in]  window       VkXcbSurfaceCreateInfoKHR::window
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkInitXcbSurfaceCreateInfo(VkXcbSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXcbSurfaceCreateFlagsKHR flags, xcb_connection_t* connection, xcb_window_t window);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a xcb surface.
  *
- * \par Details:
- *  Wraps vkCreateXcbSurfaceKHR. Aborts on any error result.
+ * \param[in]  instance     The instance to associate the surface with.
+ * \param[in]  pNext        Optional extension chain attached to VkXcbSurfaceCreateInfoKHR, or NULL
+ * \param[in]  flags        Reserved for future use; must be 0.
+ * \param[in]  connection   A pointer to an xcb_connection_t to the X server.
+ * \param[in]  window       The xcb_window_t for the X11 window to associate the surface with.
+ * \param[in]  pAllocator   Optional allocation callbacks, or NULL
+ * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned.
  *
- * \param[in]  instance    VkInstance value
- * \param[in]  pNext       Optional extension chain attached to VkXcbSurfaceCreateInfoKHR, or NULL
- * \param[in]  flags       VkXcbSurfaceCreateInfoKHR::flags
- * \param[in]  connection  VkXcbSurfaceCreateInfoKHR::connection
- * \param[in]  window      VkXcbSurfaceCreateInfoKHR::window
- * \param[in]  pAllocator  Optional allocation callbacks, or NULL
- * \param[out] pSurface    Receives the created VkSurfaceKHR
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkCreateXcbSurface(VkInstance instance, const void* pNext, VkXcbSurfaceCreateFlagsKHR flags, xcb_connection_t* connection, xcb_window_t window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves physical device xcb presentation support.
  *
- * \par Details:
- *  Wraps vkGetPhysicalDeviceXcbPresentationSupportKHR.
+ * \param[in]  physicalDevice     The physical device.
+ * \param[in]  queueFamilyIndex   The queue family index.
+ * \param[out] connection         A pointer to an xcb_connection_t to the X server.
+ * \param[in]  visual_id          An X11 visual (xcb_visualid_t).
  *
- * \param[in]  physicalDevice    VkPhysicalDevice value
- * \param[in]  queueFamilyIndex  uint32_t value
- * \param[out] connection        Receives the xcb_connection_t
- * \param[in]  visual_id         xcb_visualid_t value
- *
- * \return The VkBool32 returned by the command.
+ * \retval     VK_TRUE    The queried support is available.
+ * \retval     VK_FALSE   The queried support is unavailable.
  */
 VkBool32 cvkGetPhysicalDeviceXcbPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, xcb_connection_t* connection, xcb_visualid_t visual_id);
 /* clang-format on */

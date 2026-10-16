@@ -37,12 +37,12 @@ void cvkReadJsonXlibSurfaceCreateInfo(
 
     pInfo->flags = cvkParseJsonXlibSurfaceCreateFlags(value);
 }
-extern CVK_FORCE_INLINE VkXlibSurfaceCreateFlagsKHR cvkParseJsonXlibSurfaceCreateFlags(
+VkXlibSurfaceCreateFlagsKHR cvkParseJsonXlibSurfaceCreateFlags(
     const cvkJsonValue* pValue)
 {
     return (VkXlibSurfaceCreateFlagsKHR)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonXlibSurfaceCreateInfo(
+void cvkParseJsonXlibSurfaceCreateInfo(
     const cvkJsonContext*       pContext,
     const cvkJsonValue*         pObject,
     VkXlibSurfaceCreateInfoKHR* pInfo)

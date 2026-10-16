@@ -41,7 +41,7 @@ typedef char char_t; ///< Character in a terminated execution-character-set stri
  * \param[out] pDigits   Storage for CVK_DIAGNOSTIC_CAPACITY characters.
  * \param[in]  line      Source line to format.
  *
- * \retval    char_t*    Start of the terminated decimal string inside pDigits.
+ * \retval char_t* Start of the terminated decimal string inside pDigits.
  */
 static CVK_FORCE_INLINE char_t* cvkFormatDiagnosticLine(char_t pDigits[CVK_DIAGNOSTIC_CAPACITY],
                                                       int    line);

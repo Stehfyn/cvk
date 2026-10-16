@@ -10,7 +10,7 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_ggp.h>
 
-extern CVK_FORCE_INLINE void cvkInitPresentFrameTokenGGP(
+void cvkInitPresentFrameTokenGGP(
     VkPresentFrameTokenGGP* pInfo,
     const void*             pNext,
     GgpFrameToken           frameToken)
@@ -22,7 +22,7 @@ extern CVK_FORCE_INLINE void cvkInitPresentFrameTokenGGP(
         .frameToken = frameToken
     };
 }
-extern CVK_FORCE_INLINE void cvkInitStreamDescriptorSurfaceCreateInfoGGP(
+void cvkInitStreamDescriptorSurfaceCreateInfoGGP(
     VkStreamDescriptorSurfaceCreateInfoGGP* pInfo,
     const void*                             pNext,
     VkStreamDescriptorSurfaceCreateFlagsGGP flags,
@@ -36,7 +36,7 @@ extern CVK_FORCE_INLINE void cvkInitStreamDescriptorSurfaceCreateInfoGGP(
         .streamDescriptor = streamDescriptor
     };
 }
-extern CVK_FORCE_INLINE void cvkCreateStreamDescriptorSurfaceGGP(
+void cvkCreateStreamDescriptorSurfaceGGP(
     VkInstance                              instance,
     const void*                             pNext,
     VkStreamDescriptorSurfaceCreateFlagsGGP flags,
@@ -44,18 +44,13 @@ extern CVK_FORCE_INLINE void cvkCreateStreamDescriptorSurfaceGGP(
     const VkAllocationCallbacks*            pAllocator,
     VkSurfaceKHR*                           pSurface)
 {
-    VkStreamDescriptorSurfaceCreateInfoGGP create_info =
-    {
-        .sType            = VK_STRUCTURE_TYPE_STREAM_DESCRIPTOR_SURFACE_CREATE_INFO_GGP,
-        .pNext            = pNext,
-        .flags            = flags,
-        .streamDescriptor = streamDescriptor
-    };
+    VkStreamDescriptorSurfaceCreateInfoGGP create_info;
 
+    cvkInitStreamDescriptorSurfaceCreateInfoGGP(&create_info, pNext, flags, streamDescriptor);
     CVK_CHECK(vkCreateStreamDescriptorSurfaceGGP(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
-extern CVK_FORCE_INLINE VkResult cvkQueuePresentWithFrameTokenInfoGGP(
+VkResult cvkQueuePresentWithFrameTokenInfoGGP(
     VkQueue               queue,
     const void*           pNext,
     GgpFrameToken         frameToken,
@@ -73,12 +68,5 @@ extern CVK_FORCE_INLINE VkResult cvkQueuePresentWithFrameTokenInfoGGP(
         .frameToken = frameToken
     };
 
-    return cvkQueuePresent(queue,
-                           &present_frame_token,
-                           waitSemaphoreCount,
-                           pWaitSemaphores,
-                           swapchainCount,
-                           pSwapchains,
-                           pImageIndices,
-                           pResults);
+    return cvkQueuePresent(queue, &present_frame_token, waitSemaphoreCount, pWaitSemaphores, swapchainCount, pSwapchains, pImageIndices, pResults);
 }

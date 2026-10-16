@@ -8,57 +8,62 @@
 #include <vulkan/vulkan_ggp.h>
 
 /* clang-format off */
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkPresentFrameTokenGGP.
  *
- * \param[out] pInfo       Receives the initialized VkPresentFrameTokenGGP
- * \param[in]  pNext       Optional extension chain attached to VkPresentFrameTokenGGP, or NULL
- * \param[in]  frameToken  VkPresentFrameTokenGGP::frameToken
+ * \param[out] pInfo        Receives the initialized VkPresentFrameTokenGGP
+ * \param[in]  pNext        Optional extension chain attached to VkPresentFrameTokenGGP, or NULL
+ * \param[in]  frameToken   VkPresentFrameTokenGGP::frameToken
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkInitPresentFrameTokenGGP(VkPresentFrameTokenGGP* pInfo, const void* pNext, GgpFrameToken frameToken);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkStreamDescriptorSurfaceCreateInfoGGP.
  *
- * \param[out] pInfo             Receives the initialized VkStreamDescriptorSurfaceCreateInfoGGP
- * \param[in]  pNext             Optional extension chain attached to VkStreamDescriptorSurfaceCreateInfoGGP, or NULL
- * \param[in]  flags             VkStreamDescriptorSurfaceCreateInfoGGP::flags
- * \param[in]  streamDescriptor  VkStreamDescriptorSurfaceCreateInfoGGP::streamDescriptor
+ * \param[out] pInfo              Receives the initialized VkStreamDescriptorSurfaceCreateInfoGGP
+ * \param[in]  pNext              Optional extension chain attached to VkStreamDescriptorSurfaceCreateInfoGGP, or NULL
+ * \param[in]  flags              VkStreamDescriptorSurfaceCreateInfoGGP::flags
+ * \param[in]  streamDescriptor   VkStreamDescriptorSurfaceCreateInfoGGP::streamDescriptor
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkInitStreamDescriptorSurfaceCreateInfoGGP(VkStreamDescriptorSurfaceCreateInfoGGP* pInfo, const void* pNext, VkStreamDescriptorSurfaceCreateFlagsGGP flags, GgpStreamDescriptor streamDescriptor);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a stream descriptor surface.
  *
- * \par Details:
- *  Wraps vkCreateStreamDescriptorSurfaceGGP. Aborts on any error result.
+ * \param[in]  instance           The instance to associate with the surface.
+ * \param[in]  pNext              Optional extension chain attached to VkStreamDescriptorSurfaceCreateInfoGGP, or NULL
+ * \param[in]  flags              Reserved for future use; must be 0.
+ * \param[in]  streamDescriptor   A GgpStreamDescriptor referring to the GGP stream descriptor to associate with the surface.
+ * \param[in]  pAllocator         Optional allocation callbacks, or NULL
+ * \param[out] pSurface           A pointer to a VkSurfaceKHR handle in which the created surface object is returned.
  *
- * \param[in]  instance          VkInstance value
- * \param[in]  pNext             Optional extension chain attached to VkStreamDescriptorSurfaceCreateInfoGGP, or NULL
- * \param[in]  flags             VkStreamDescriptorSurfaceCreateInfoGGP::flags
- * \param[in]  streamDescriptor  VkStreamDescriptorSurfaceCreateInfoGGP::streamDescriptor
- * \param[in]  pAllocator        Optional allocation callbacks, or NULL
- * \param[out] pSurface          Receives the created VkSurfaceKHR
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkCreateStreamDescriptorSurfaceGGP(VkInstance instance, const void* pNext, VkStreamDescriptorSurfaceCreateFlagsGGP flags, GgpStreamDescriptor streamDescriptor, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+
+/*************************************************************************************************/
 /**
  * \brief Queues present with VkPresentFrameTokenGGP chained.
  *
- * \param[in]  queue               See cvkQueuePresent
- * \param[in]  pNext               See cvkQueuePresent
- * \param[in]  frameToken          VkPresentFrameTokenGGP::frameToken
- * \param[in]  waitSemaphoreCount  See cvkQueuePresent
- * \param[in]  pWaitSemaphores     See cvkQueuePresent
- * \param[in]  swapchainCount      See cvkQueuePresent
- * \param[in]  pSwapchains         See cvkQueuePresent
- * \param[in]  pImageIndices       See cvkQueuePresent
- * \param[out] pResults            See cvkQueuePresent
+ * \param[in]  queue                A queue that is capable of presentation to the target surface's platform on the same device as the image's swapchain.
+ * \param[in]  pNext                Optional extension chain attached to VkPresentInfoKHR, or NULL
+ * \param[in]  frameToken           The Google Games Platform frame token.
+ * \param[in]  waitSemaphoreCount   The number of semaphores to wait for before issuing the present request.
+ * \param[in]  pWaitSemaphores      NULL or a pointer to an array of VkSemaphore objects with waitSemaphoreCount entries, and specifies the semaphores to wait for before issuing the present request.
+ * \param[in]  swapchainCount       The number of swapchains being presented to by this command.
+ * \param[in]  pSwapchains          A pointer to an array of VkSwapchainKHR objects with swapchainCount entries.
+ * \param[in]  pImageIndices        A pointer to an array of indices into the array of each swapchain's presentable images, with swapchainCount entries.
+ * \param[out] pResults             A pointer to an array of VkResult typed elements with swapchainCount entries.
  *
- * \return VK_SUCCESS or one of: . Error results abort.
+ * \retval     VK_SUCCESS   Command successfully completed.
  */
 VkResult cvkQueuePresentWithFrameTokenInfoGGP(VkQueue queue, const void* pNext, GgpFrameToken frameToken, uint32_t waitSemaphoreCount, const VkSemaphore* pWaitSemaphores, uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, const uint32_t* pImageIndices, VkResult* pResults);
 /* clang-format on */

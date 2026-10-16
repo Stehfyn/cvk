@@ -6,6 +6,8 @@
 #include "scvk/scvk.h"
 
 /* clang-format off */
+
+/*************************************************************************************************/
 /**
  * \brief Imports a file descriptor as a new image; the caller's descriptor stays valid.
  *
@@ -20,34 +22,36 @@
  *  binding. The capability query is made with handleType alone; image-creation extension
  *  structs in pImageNext are not forwarded to it.
  *
- * \param[in]  physicalDevice         Physical device the image is created for
- * \param[in]  device                 Logical device owning the image and memory
- * \param[in]  pImageNext             Optional extension chain for VkImageCreateInfo, or NULL
- * \param[in]  flags                  VkImageCreateInfo::flags
- * \param[in]  imageType              VkImageCreateInfo::imageType
- * \param[in]  format                 VkImageCreateInfo::format
- * \param[in]  extent                 VkImageCreateInfo::extent
- * \param[in]  mipLevels              VkImageCreateInfo::mipLevels
- * \param[in]  arrayLayers            VkImageCreateInfo::arrayLayers
- * \param[in]  samples                VkImageCreateInfo::samples
- * \param[in]  tiling                 VkImageCreateInfo::tiling
- * \param[in]  usage                  VkImageCreateInfo::usage
- * \param[in]  sharingMode            VkImageCreateInfo::sharingMode
- * \param[in]  queueFamilyIndexCount  VkImageCreateInfo::queueFamilyIndexCount
- * \param[in]  pQueueFamilyIndices    VkImageCreateInfo::pQueueFamilyIndices
- * \param[in]  initialLayout          VkImageCreateInfo::initialLayout
- * \param[in]  handleType             File-descriptor external memory handle type being imported
- * \param[in]  fd                     Descriptor to import; remains owned by the caller
- * \param[in]  allocationSize         Size of the external memory object; must cover the image's requirements
- * \param[in]  requiredProperties     Memory property flags the selected type must cover
- * \param[in]  pMemoryNext            Optional extension chain behind the import info, or NULL
- * \param[in]  pAllocator             Optional allocation callbacks, or NULL
- * \param[out] pImage                 Receives the created VkImage
- * \param[out] pMemory                Receives the imported VkDeviceMemory
+ * \param[in]  physicalDevice          Physical device the image is created for
+ * \param[in]  device                  Logical device owning the image and memory
+ * \param[in]  pImageNext              Optional extension chain for VkImageCreateInfo, or NULL
+ * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image.
+ * \param[in]  imageType               A VkImageType value specifying the basic dimensionality of the image.
+ * \param[in]  format                  A VkFormat describing the format and type of the texel blocks that will be contained in the image.
+ * \param[in]  extent                  A VkExtent3D describing the number of texels/pixels in each dimension of the base level.
+ * \param[in]  mipLevels               Describes the number of levels of detail available for minified sampling of the image.
+ * \param[in]  arrayLayers             The number of layers in the image.
+ * \param[in]  samples                 A VkSampleCountFlagBits value specifying the number of samples per texel.
+ * \param[in]  tiling                  A VkImageTiling value specifying the tiling arrangement of the texel blocks in memory.
+ * \param[in]  usage                   A bitmask of VkImageUsageFlagBits describing the intended usage of the image.
+ * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the image when it will be accessed by multiple queue families.
+ * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array.
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this image.
+ * \param[in]  initialLayout           A VkImageLayout value specifying the initial VkImageLayout of all image subresources of the image.
+ * \param[in]  handleType              File-descriptor external memory handle type being imported
+ * \param[in]  fd                      Descriptor to import; remains owned by the caller
+ * \param[in]  allocationSize          Size of the external memory object; must cover the image's requirements
+ * \param[in]  requiredProperties      Memory property flags the selected type must cover
+ * \param[in]  pMemoryNext             Optional extension chain behind the import info, or NULL
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pImage                  Receives the created VkImage
+ * \param[out] pMemory                 Receives the imported VkDeviceMemory
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkImportFdImage(VkPhysicalDevice physicalDevice, VkDevice device, const void* pImageNext, VkImageCreateFlags flags, VkImageType imageType, VkFormat format, VkExtent3D extent, uint32_t mipLevels, uint32_t arrayLayers, VkSampleCountFlagBits samples, VkImageTiling tiling, VkImageUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices, VkImageLayout initialLayout, VkExternalMemoryHandleTypeFlagBits handleType, int fd, VkDeviceSize allocationSize, VkMemoryPropertyFlags requiredProperties, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkImage* pImage, VkDeviceMemory* pMemory);
+
+/*************************************************************************************************/
 /**
  * \brief Imports a DRM PRIME layout (modifier, plane layouts, memory objects) as a new 2D image.
  *
@@ -62,33 +66,35 @@ void scvkImportFdImage(VkPhysicalDevice physicalDevice, VkDevice device, const v
  *  the import info chained (dedicated info in front for one object when required), and
  *  binding (whole image, or every memory plane at once). Caller descriptors stay valid.
  *
- * \param[in]  physicalDevice             Physical device the image is created for
- * \param[in]  device                     Logical device owning the image and memory
- * \param[in]  pImageNext                 Optional extension chain for VkImageCreateInfo, or NULL
- * \param[in]  format                     VkImageCreateInfo::format
- * \param[in]  extent                     VkImageCreateInfo::extent; depth must be one
- * \param[in]  usage                      VkImageCreateInfo::usage
- * \param[in]  sharingMode                VkImageCreateInfo::sharingMode
- * \param[in]  queueFamilyIndexCount      VkImageCreateInfo::queueFamilyIndexCount
- * \param[in]  pQueueFamilyIndices        VkImageCreateInfo::pQueueFamilyIndices
- * \param[in]  initialLayout              VkImageCreateInfo::initialLayout
- * \param[in]  drmFormatModifier          DRM format modifier of the layout
- * \param[in]  planeCount                 Number of memory planes in the layout, at most SCVK_MAX_DRM_FORMAT_MODIFIER_PLANES
- * \param[in]  pPlaneOffsets              Byte offset of each memory plane within its memory object
- * \param[in]  pPlaneRowPitches           Row pitch in bytes of each memory plane
- * \param[in]  pPlaneMemoryObjectIndices  Memory object backing each memory plane
- * \param[in]  memoryObjectCount          Number of memory objects, at most planeCount
- * \param[in]  pMemoryObjectSizes         Size in bytes of each memory object
- * \param[in]  pMemoryObjectFds           DMA-BUF descriptor of each memory object; remain owned by the caller
- * \param[in]  requiredProperties         Memory property flags every selected type must cover
- * \param[in]  pMemoryNext                Optional extension chain behind each import info, or NULL
- * \param[in]  pAllocator                 Optional allocation callbacks, or NULL
- * \param[out] pImage                     Receives the created VkImage
- * \param[out] pMemories                  Receives one VkDeviceMemory per memory object; memoryObjectCount entries
+ * \param[in]  physicalDevice              Physical device the image is created for
+ * \param[in]  device                      Logical device owning the image and memory
+ * \param[in]  pImageNext                  Optional extension chain for VkImageCreateInfo, or NULL
+ * \param[in]  format                      A VkFormat describing the format and type of the texel blocks that will be contained in the image.
+ * \param[in]  extent                      VkImageCreateInfo::extent; depth must be one
+ * \param[in]  usage                       A bitmask of VkImageUsageFlagBits describing the intended usage of the image.
+ * \param[in]  sharingMode                 A VkSharingMode value specifying the sharing mode of the image when it will be accessed by multiple queue families.
+ * \param[in]  queueFamilyIndexCount       The number of entries in the pQueueFamilyIndices array.
+ * \param[in]  pQueueFamilyIndices         A pointer to an array of queue families that will access this image.
+ * \param[in]  initialLayout               A VkImageLayout value specifying the initial VkImageLayout of all image subresources of the image.
+ * \param[in]  drmFormatModifier           DRM format modifier of the layout
+ * \param[in]  planeCount                  Number of memory planes in the layout, at most SCVK_MAX_DRM_FORMAT_MODIFIER_PLANES
+ * \param[in]  pPlaneOffsets               Byte offset of each memory plane within its memory object
+ * \param[in]  pPlaneRowPitches            Row pitch in bytes of each memory plane
+ * \param[in]  pPlaneMemoryObjectIndices   Memory object backing each memory plane
+ * \param[in]  memoryObjectCount           Number of memory objects, at most planeCount
+ * \param[in]  pMemoryObjectSizes          Size in bytes of each memory object
+ * \param[in]  pMemoryObjectFds            DMA-BUF descriptor of each memory object; remain owned by the caller
+ * \param[in]  requiredProperties          Memory property flags every selected type must cover
+ * \param[in]  pMemoryNext                 Optional extension chain behind each import info, or NULL
+ * \param[in]  pAllocator                  Optional allocation callbacks, or NULL
+ * \param[out] pImage                      Receives the created VkImage
+ * \param[out] pMemories                   Receives one VkDeviceMemory per memory object; memoryObjectCount entries
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkImportDmaBufImage(VkPhysicalDevice physicalDevice, VkDevice device, const void* pImageNext, VkFormat format, VkExtent3D extent, VkImageUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices, VkImageLayout initialLayout, uint64_t drmFormatModifier, uint32_t planeCount, const uint32_t* pPlaneOffsets, const uint32_t* pPlaneRowPitches, const uint32_t* pPlaneMemoryObjectIndices, uint32_t memoryObjectCount, const VkDeviceSize* pMemoryObjectSizes, const int* pMemoryObjectFds, VkMemoryPropertyFlags requiredProperties, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkImage* pImage, VkDeviceMemory* pMemories);
+
+/*************************************************************************************************/
 /**
  * \brief Imports a file descriptor as a new buffer; the caller's descriptor stays valid.
  *
@@ -101,27 +107,29 @@ void scvkImportDmaBufImage(VkPhysicalDevice physicalDevice, VkDevice device, con
  *  because a successful import consumes it, allocation with the import info chained
  *  (dedicated info in front when required), and binding.
  *
- * \param[in]  physicalDevice         Physical device the buffer is created for
- * \param[in]  device                 Logical device owning the buffer and memory
- * \param[in]  pBufferNext            Optional extension chain for VkBufferCreateInfo, or NULL
- * \param[in]  flags                  VkBufferCreateInfo::flags
- * \param[in]  size                   VkBufferCreateInfo::size
- * \param[in]  usage                  VkBufferCreateInfo::usage
- * \param[in]  sharingMode            VkBufferCreateInfo::sharingMode
- * \param[in]  queueFamilyIndexCount  VkBufferCreateInfo::queueFamilyIndexCount
- * \param[in]  pQueueFamilyIndices    VkBufferCreateInfo::pQueueFamilyIndices
- * \param[in]  handleType             File-descriptor external memory handle type being imported
- * \param[in]  fd                     Descriptor to import; remains owned by the caller
- * \param[in]  allocationSize         Size of the external memory object; must cover the buffer's requirements
- * \param[in]  requiredProperties     Memory property flags the selected type must cover
- * \param[in]  pMemoryNext            Optional extension chain behind the import info, or NULL
- * \param[in]  pAllocator             Optional allocation callbacks, or NULL
- * \param[out] pBuffer                Receives the created VkBuffer
- * \param[out] pMemory                Receives the imported VkDeviceMemory
+ * \param[in]  physicalDevice          Physical device the buffer is created for
+ * \param[in]  device                  Logical device owning the buffer and memory
+ * \param[in]  pBufferNext             Optional extension chain for VkBufferCreateInfo, or NULL
+ * \param[in]  flags                   A bitmask of VkBufferCreateFlagBits specifying additional parameters of the buffer.
+ * \param[in]  size                    The size in bytes of the buffer to be created.
+ * \param[in]  usage                   A bitmask of VkBufferUsageFlagBits specifying allowed usages of the buffer.
+ * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the buffer when it will be accessed by multiple queue families.
+ * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array.
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this buffer.
+ * \param[in]  handleType              File-descriptor external memory handle type being imported
+ * \param[in]  fd                      Descriptor to import; remains owned by the caller
+ * \param[in]  allocationSize          Size of the external memory object; must cover the buffer's requirements
+ * \param[in]  requiredProperties      Memory property flags the selected type must cover
+ * \param[in]  pMemoryNext             Optional extension chain behind the import info, or NULL
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pBuffer                 Receives the created VkBuffer
+ * \param[out] pMemory                 Receives the imported VkDeviceMemory
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkImportFdBuffer(VkPhysicalDevice physicalDevice, VkDevice device, const void* pBufferNext, VkBufferCreateFlags flags, VkDeviceSize size, VkBufferUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices, VkExternalMemoryHandleTypeFlagBits handleType, int fd, VkDeviceSize allocationSize, VkMemoryPropertyFlags requiredProperties, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer, VkDeviceMemory* pMemory);
+
+/*************************************************************************************************/
 /**
  * \brief Creates an image whose memory is exportable and exports it as a file descriptor.
  *
@@ -133,33 +141,35 @@ void scvkImportFdBuffer(VkPhysicalDevice physicalDevice, VkDevice device, const 
  *  behind it when required), binding, and the descriptor export. The descriptor is owned by
  *  the caller, who closes it; the memory stays valid while the image and memory live.
  *
- * \param[in]  physicalDevice         Physical device the image is created for
- * \param[in]  device                 Logical device owning the image and memory
- * \param[in]  pImageNext             Optional extension chain for VkImageCreateInfo, or NULL
- * \param[in]  flags                  VkImageCreateInfo::flags
- * \param[in]  imageType              VkImageCreateInfo::imageType
- * \param[in]  format                 VkImageCreateInfo::format
- * \param[in]  extent                 VkImageCreateInfo::extent
- * \param[in]  mipLevels              VkImageCreateInfo::mipLevels
- * \param[in]  arrayLayers            VkImageCreateInfo::arrayLayers
- * \param[in]  samples                VkImageCreateInfo::samples
- * \param[in]  tiling                 VkImageCreateInfo::tiling
- * \param[in]  usage                  VkImageCreateInfo::usage
- * \param[in]  sharingMode            VkImageCreateInfo::sharingMode
- * \param[in]  queueFamilyIndexCount  VkImageCreateInfo::queueFamilyIndexCount
- * \param[in]  pQueueFamilyIndices    VkImageCreateInfo::pQueueFamilyIndices
- * \param[in]  initialLayout          VkImageCreateInfo::initialLayout
- * \param[in]  handleType             File-descriptor external memory handle type to export
- * \param[in]  requiredProperties     Memory property flags the selected type must cover
- * \param[in]  pMemoryNext            Optional extension chain behind the export info, or NULL
- * \param[in]  pAllocator             Optional allocation callbacks, or NULL
- * \param[out] pImage                 Receives the created VkImage
- * \param[out] pMemory                Receives the exportable VkDeviceMemory
- * \param[out] pFd                    Receives the exported descriptor, owned by the caller
+ * \param[in]  physicalDevice          Physical device the image is created for
+ * \param[in]  device                  Logical device owning the image and memory
+ * \param[in]  pImageNext              Optional extension chain for VkImageCreateInfo, or NULL
+ * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image.
+ * \param[in]  imageType               A VkImageType value specifying the basic dimensionality of the image.
+ * \param[in]  format                  A VkFormat describing the format and type of the texel blocks that will be contained in the image.
+ * \param[in]  extent                  A VkExtent3D describing the number of texels/pixels in each dimension of the base level.
+ * \param[in]  mipLevels               Describes the number of levels of detail available for minified sampling of the image.
+ * \param[in]  arrayLayers             The number of layers in the image.
+ * \param[in]  samples                 A VkSampleCountFlagBits value specifying the number of samples per texel.
+ * \param[in]  tiling                  A VkImageTiling value specifying the tiling arrangement of the texel blocks in memory.
+ * \param[in]  usage                   A bitmask of VkImageUsageFlagBits describing the intended usage of the image.
+ * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the image when it will be accessed by multiple queue families.
+ * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array.
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this image.
+ * \param[in]  initialLayout           A VkImageLayout value specifying the initial VkImageLayout of all image subresources of the image.
+ * \param[in]  handleType              File-descriptor external memory handle type to export
+ * \param[in]  requiredProperties      Memory property flags the selected type must cover
+ * \param[in]  pMemoryNext             Optional extension chain behind the export info, or NULL
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pImage                  Receives the created VkImage
+ * \param[out] pMemory                 Receives the exportable VkDeviceMemory
+ * \param[out] pFd                     Receives the exported descriptor, owned by the caller
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkExportFdImage(VkPhysicalDevice physicalDevice, VkDevice device, const void* pImageNext, VkImageCreateFlags flags, VkImageType imageType, VkFormat format, VkExtent3D extent, uint32_t mipLevels, uint32_t arrayLayers, VkSampleCountFlagBits samples, VkImageTiling tiling, VkImageUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices, VkImageLayout initialLayout, VkExternalMemoryHandleTypeFlagBits handleType, VkMemoryPropertyFlags requiredProperties, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkImage* pImage, VkDeviceMemory* pMemory, int* pFd);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a buffer whose memory is exportable and exports it as a file descriptor.
  *
@@ -169,24 +179,24 @@ void scvkExportFdImage(VkPhysicalDevice physicalDevice, VkDevice device, const v
  *  the export info chained (dedicated info behind it when required), binding, and the
  *  descriptor export. The descriptor is owned by the caller, who closes it.
  *
- * \param[in]  physicalDevice         Physical device the buffer is created for
- * \param[in]  device                 Logical device owning the buffer and memory
- * \param[in]  pBufferNext            Optional extension chain for VkBufferCreateInfo, or NULL
- * \param[in]  flags                  VkBufferCreateInfo::flags
- * \param[in]  size                   VkBufferCreateInfo::size
- * \param[in]  usage                  VkBufferCreateInfo::usage
- * \param[in]  sharingMode            VkBufferCreateInfo::sharingMode
- * \param[in]  queueFamilyIndexCount  VkBufferCreateInfo::queueFamilyIndexCount
- * \param[in]  pQueueFamilyIndices    VkBufferCreateInfo::pQueueFamilyIndices
- * \param[in]  handleType             File-descriptor external memory handle type to export
- * \param[in]  requiredProperties     Memory property flags the selected type must cover
- * \param[in]  pMemoryNext            Optional extension chain behind the export info, or NULL
- * \param[in]  pAllocator             Optional allocation callbacks, or NULL
- * \param[out] pBuffer                Receives the created VkBuffer
- * \param[out] pMemory                Receives the exportable VkDeviceMemory
- * \param[out] pFd                    Receives the exported descriptor, owned by the caller
+ * \param[in]  physicalDevice          Physical device the buffer is created for
+ * \param[in]  device                  Logical device owning the buffer and memory
+ * \param[in]  pBufferNext             Optional extension chain for VkBufferCreateInfo, or NULL
+ * \param[in]  flags                   A bitmask of VkBufferCreateFlagBits specifying additional parameters of the buffer.
+ * \param[in]  size                    The size in bytes of the buffer to be created.
+ * \param[in]  usage                   A bitmask of VkBufferUsageFlagBits specifying allowed usages of the buffer.
+ * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the buffer when it will be accessed by multiple queue families.
+ * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array.
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this buffer.
+ * \param[in]  handleType              File-descriptor external memory handle type to export
+ * \param[in]  requiredProperties      Memory property flags the selected type must cover
+ * \param[in]  pMemoryNext             Optional extension chain behind the export info, or NULL
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pBuffer                 Receives the created VkBuffer
+ * \param[out] pMemory                 Receives the exportable VkDeviceMemory
+ * \param[out] pFd                     Receives the exported descriptor, owned by the caller
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkExportFdBuffer(VkPhysicalDevice physicalDevice, VkDevice device, const void* pBufferNext, VkBufferCreateFlags flags, VkDeviceSize size, VkBufferUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices, VkExternalMemoryHandleTypeFlagBits handleType, VkMemoryPropertyFlags requiredProperties, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer, VkDeviceMemory* pMemory, int* pFd);
 /* clang-format on */

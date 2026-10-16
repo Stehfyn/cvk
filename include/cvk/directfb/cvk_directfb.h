@@ -8,46 +8,47 @@
 #include <vulkan/vulkan_directfb.h>
 
 /* clang-format off */
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkDirectFBSurfaceCreateInfoEXT.
  *
- * \param[out] pInfo    Receives the initialized VkDirectFBSurfaceCreateInfoEXT
- * \param[in]  pNext    Optional extension chain attached to VkDirectFBSurfaceCreateInfoEXT, or NULL
- * \param[in]  flags    VkDirectFBSurfaceCreateInfoEXT::flags
- * \param[in]  dfb      VkDirectFBSurfaceCreateInfoEXT::dfb
- * \param[in]  surface  VkDirectFBSurfaceCreateInfoEXT::surface
+ * \param[out] pInfo     Receives the initialized VkDirectFBSurfaceCreateInfoEXT
+ * \param[in]  pNext     Optional extension chain attached to VkDirectFBSurfaceCreateInfoEXT, or NULL
+ * \param[in]  flags     VkDirectFBSurfaceCreateInfoEXT::flags
+ * \param[in]  dfb       VkDirectFBSurfaceCreateInfoEXT::dfb
+ * \param[in]  surface   VkDirectFBSurfaceCreateInfoEXT::surface
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkInitDirectFBSurfaceCreateInfo(VkDirectFBSurfaceCreateInfoEXT* pInfo, const void* pNext, VkDirectFBSurfaceCreateFlagsEXT flags, IDirectFB* dfb, IDirectFBSurface* surface);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a direct fb surface.
  *
- * \par Details:
- *  Wraps vkCreateDirectFBSurfaceEXT. Aborts on any error result.
+ * \param[in]  instance     The instance to associate the surface with.
+ * \param[in]  pNext        Optional extension chain attached to VkDirectFBSurfaceCreateInfoEXT, or NULL
+ * \param[in]  flags        Reserved for future use; must be 0.
+ * \param[in]  dfb          A pointer to the IDirectFB main interface of DirectFB.
+ * \param[in]  surface      A pointer to a IDirectFBSurface surface interface.
+ * \param[in]  pAllocator   Optional allocation callbacks, or NULL
+ * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned.
  *
- * \param[in]  instance    VkInstance value
- * \param[in]  pNext       Optional extension chain attached to VkDirectFBSurfaceCreateInfoEXT, or NULL
- * \param[in]  flags       VkDirectFBSurfaceCreateInfoEXT::flags
- * \param[in]  dfb         VkDirectFBSurfaceCreateInfoEXT::dfb
- * \param[in]  surface     VkDirectFBSurfaceCreateInfoEXT::surface
- * \param[in]  pAllocator  Optional allocation callbacks, or NULL
- * \param[out] pSurface    Receives the created VkSurfaceKHR
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkCreateDirectFBSurface(VkInstance instance, const void* pNext, VkDirectFBSurfaceCreateFlagsEXT flags, IDirectFB* dfb, IDirectFBSurface* surface, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves physical device direct fb presentation support.
  *
- * \par Details:
- *  Wraps vkGetPhysicalDeviceDirectFBPresentationSupportEXT.
+ * \param[in]  physicalDevice     The physical device.
+ * \param[in]  queueFamilyIndex   The queue family index.
+ * \param[out] dfb                A pointer to the IDirectFB main interface of DirectFB.
  *
- * \param[in]  physicalDevice    VkPhysicalDevice value
- * \param[in]  queueFamilyIndex  uint32_t value
- * \param[out] dfb               Receives the IDirectFB
- *
- * \return The VkBool32 returned by the command.
+ * \retval     VK_TRUE    The queried support is available.
+ * \retval     VK_FALSE   The queried support is unavailable.
  */
 VkBool32 cvkGetPhysicalDeviceDirectFBPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, IDirectFB* dfb);
 /* clang-format on */

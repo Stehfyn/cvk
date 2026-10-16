@@ -38,6 +38,7 @@ void cvkReadJsonExternalFormatQNX(
 
     pInfo->externalFormat = cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -65,6 +66,7 @@ void cvkReadJsonImportScreenBufferInfoQNX(
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -95,6 +97,7 @@ void cvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
 
     pInfo->screenBufferImport = cvkGetJsonBool32(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -164,6 +167,7 @@ void cvkReadJsonScreenBufferFormatPropertiesQNX(
         pInfo->suggestedYChromaOffset = cvkParseJsonChromaLocation(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -198,6 +202,7 @@ void cvkReadJsonScreenBufferPropertiesQNX(
 
     pInfo->memoryTypeBits = (uint32_t)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -228,12 +233,12 @@ void cvkReadJsonScreenSurfaceCreateInfoQNX(
 
     pInfo->flags = cvkParseJsonScreenSurfaceCreateFlagsQNX(value);
 }
-extern CVK_FORCE_INLINE VkScreenSurfaceCreateFlagsQNX cvkParseJsonScreenSurfaceCreateFlagsQNX(
+VkScreenSurfaceCreateFlagsQNX cvkParseJsonScreenSurfaceCreateFlagsQNX(
     const cvkJsonValue* pValue)
 {
     return (VkScreenSurfaceCreateFlagsQNX)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExternalFormatQNX(
+void cvkParseJsonExternalFormatQNX(
     const cvkJsonContext* pContext,
     const cvkJsonValue*   pObject,
     VkExternalFormatQNX*  pInfo)
@@ -244,7 +249,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonExternalFormatQNX(
     cvkAppendJsonWork(&work, cvkReadJsonExternalFormatQNX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportScreenBufferInfoQNX(
+void cvkParseJsonImportScreenBufferInfoQNX(
     const cvkJsonContext*        pContext,
     const cvkJsonValue*          pObject,
     VkImportScreenBufferInfoQNX* pInfo)
@@ -255,7 +260,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportScreenBufferInfoQNX(
     cvkAppendJsonWork(&work, cvkReadJsonImportScreenBufferInfoQNX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
+void cvkParseJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
     const cvkJsonContext*                                  pContext,
     const cvkJsonValue*                                    pObject,
     VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pInfo)
@@ -266,7 +271,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceExternalMemoryScreenBuffe
     cvkAppendJsonWork(&work, cvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonScreenBufferFormatPropertiesQNX(
+void cvkParseJsonScreenBufferFormatPropertiesQNX(
     const cvkJsonContext*              pContext,
     const cvkJsonValue*                pObject,
     VkScreenBufferFormatPropertiesQNX* pInfo)
@@ -277,7 +282,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonScreenBufferFormatPropertiesQNX(
     cvkAppendJsonWork(&work, cvkReadJsonScreenBufferFormatPropertiesQNX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonScreenBufferPropertiesQNX(
+void cvkParseJsonScreenBufferPropertiesQNX(
     const cvkJsonContext*        pContext,
     const cvkJsonValue*          pObject,
     VkScreenBufferPropertiesQNX* pInfo)
@@ -288,7 +293,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonScreenBufferPropertiesQNX(
     cvkAppendJsonWork(&work, cvkReadJsonScreenBufferPropertiesQNX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonScreenSurfaceCreateInfoQNX(
+void cvkParseJsonScreenSurfaceCreateInfoQNX(
     const cvkJsonContext*         pContext,
     const cvkJsonValue*           pObject,
     VkScreenSurfaceCreateInfoQNX* pInfo)

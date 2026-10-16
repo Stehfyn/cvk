@@ -6,7 +6,7 @@
 #include <vulkan/vulkan_sc_core.h>
 #include <vulkan/vulkan_sci.h>
 
-extern SCVK_FORCE_INLINE void scvkInitDeviceSemaphoreSciSyncPoolReservationCreateInfoNV(
+void scvkInitDeviceSemaphoreSciSyncPoolReservationCreateInfoNV(
     VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV* pInfo,
     const void*                                          pNext,
     uint32_t                                             semaphoreSciSyncPoolRequestCount)
@@ -18,7 +18,7 @@ extern SCVK_FORCE_INLINE void scvkInitDeviceSemaphoreSciSyncPoolReservationCreat
         .semaphoreSciSyncPoolRequestCount = semaphoreSciSyncPoolRequestCount
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitExportFenceSciSyncInfoNV(
+void scvkInitExportFenceSciSyncInfoNV(
     VkExportFenceSciSyncInfoNV* pInfo,
     const void*                 pNext,
     NvSciSyncAttrList           pAttributes)
@@ -30,7 +30,7 @@ extern SCVK_FORCE_INLINE void scvkInitExportFenceSciSyncInfoNV(
         .pAttributes = pAttributes
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitExportMemorySciBufInfoNV(
+void scvkInitExportMemorySciBufInfoNV(
     VkExportMemorySciBufInfoNV* pInfo,
     const void*                 pNext,
     NvSciBufAttrList            pAttributes)
@@ -42,7 +42,7 @@ extern SCVK_FORCE_INLINE void scvkInitExportMemorySciBufInfoNV(
         .pAttributes = pAttributes
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitExportSemaphoreSciSyncInfoNV(
+void scvkInitExportSemaphoreSciSyncInfoNV(
     VkExportSemaphoreSciSyncInfoNV* pInfo,
     const void*                     pNext,
     NvSciSyncAttrList               pAttributes)
@@ -54,7 +54,7 @@ extern SCVK_FORCE_INLINE void scvkInitExportSemaphoreSciSyncInfoNV(
         .pAttributes = pAttributes
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitFenceGetSciSyncInfoNV(
+void scvkInitFenceGetSciSyncInfoNV(
     VkFenceGetSciSyncInfoNV*          pInfo,
     const void*                       pNext,
     VkFence                           fence,
@@ -68,7 +68,7 @@ extern SCVK_FORCE_INLINE void scvkInitFenceGetSciSyncInfoNV(
         .handleType = handleType
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitImportFenceSciSyncInfoNV(
+void scvkInitImportFenceSciSyncInfoNV(
     VkImportFenceSciSyncInfoNV*       pInfo,
     const void*                       pNext,
     VkFence                           fence,
@@ -84,7 +84,7 @@ extern SCVK_FORCE_INLINE void scvkInitImportFenceSciSyncInfoNV(
         .handle     = handle
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitImportMemorySciBufInfoNV(
+void scvkInitImportMemorySciBufInfoNV(
     VkImportMemorySciBufInfoNV*        pInfo,
     const void*                        pNext,
     VkExternalMemoryHandleTypeFlagBits handleType,
@@ -98,7 +98,7 @@ extern SCVK_FORCE_INLINE void scvkInitImportMemorySciBufInfoNV(
         .handle     = handle
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitImportSemaphoreSciSyncInfoNV(
+void scvkInitImportSemaphoreSciSyncInfoNV(
     VkImportSemaphoreSciSyncInfoNV*       pInfo,
     const void*                           pNext,
     VkSemaphore                           semaphore,
@@ -114,7 +114,7 @@ extern SCVK_FORCE_INLINE void scvkInitImportSemaphoreSciSyncInfoNV(
         .handle     = handle
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitMemoryGetSciBufInfoNV(
+void scvkInitMemoryGetSciBufInfoNV(
     VkMemoryGetSciBufInfoNV*           pInfo,
     const void*                        pNext,
     VkDeviceMemory                     memory,
@@ -128,7 +128,7 @@ extern SCVK_FORCE_INLINE void scvkInitMemoryGetSciBufInfoNV(
         .handleType = handleType
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitMemorySciBufPropertiesNV(
+void scvkInitMemorySciBufPropertiesNV(
     VkMemorySciBufPropertiesNV* pInfo,
     const void*                 pNext,
     uint32_t                    memoryTypeBits)
@@ -140,7 +140,7 @@ extern SCVK_FORCE_INLINE void scvkInitMemorySciBufPropertiesNV(
         .memoryTypeBits = memoryTypeBits
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitPhysicalDeviceExternalMemorySciBufFeaturesNV(
+void scvkInitPhysicalDeviceExternalMemorySciBufFeaturesNV(
     VkPhysicalDeviceExternalMemorySciBufFeaturesNV* pInfo,
     void*                                           pNext,
     VkBool32                                        sciBufImport,
@@ -154,7 +154,7 @@ extern SCVK_FORCE_INLINE void scvkInitPhysicalDeviceExternalMemorySciBufFeatures
         .sciBufExport = sciBufExport
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitPhysicalDeviceExternalSciSync2FeaturesNV(
+void scvkInitPhysicalDeviceExternalSciSync2FeaturesNV(
     VkPhysicalDeviceExternalSciSync2FeaturesNV* pInfo,
     void*                                       pNext,
     VkBool32                                    sciSyncFence,
@@ -172,7 +172,7 @@ extern SCVK_FORCE_INLINE void scvkInitPhysicalDeviceExternalSciSync2FeaturesNV(
         .sciSyncExport     = sciSyncExport
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitPhysicalDeviceExternalSciSyncFeaturesNV(
+void scvkInitPhysicalDeviceExternalSciSyncFeaturesNV(
     VkPhysicalDeviceExternalSciSyncFeaturesNV* pInfo,
     void*                                      pNext,
     VkBool32                                   sciSyncFence,
@@ -190,7 +190,7 @@ extern SCVK_FORCE_INLINE void scvkInitPhysicalDeviceExternalSciSyncFeaturesNV(
         .sciSyncExport    = sciSyncExport
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitSciSyncAttributesInfoNV(
+void scvkInitSciSyncAttributesInfoNV(
     VkSciSyncAttributesInfoNV* pInfo,
     const void*                pNext,
     VkSciSyncClientTypeNV      clientType,
@@ -204,7 +204,7 @@ extern SCVK_FORCE_INLINE void scvkInitSciSyncAttributesInfoNV(
         .primitiveType = primitiveType
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitSemaphoreGetSciSyncInfoNV(
+void scvkInitSemaphoreGetSciSyncInfoNV(
     VkSemaphoreGetSciSyncInfoNV*          pInfo,
     const void*                           pNext,
     VkSemaphore                           semaphore,
@@ -218,7 +218,7 @@ extern SCVK_FORCE_INLINE void scvkInitSemaphoreGetSciSyncInfoNV(
         .handleType = handleType
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitSemaphoreSciSyncCreateInfoNV(
+void scvkInitSemaphoreSciSyncCreateInfoNV(
     VkSemaphoreSciSyncCreateInfoNV* pInfo,
     const void*                     pNext,
     VkSemaphoreSciSyncPoolNV        semaphorePool,
@@ -232,7 +232,7 @@ extern SCVK_FORCE_INLINE void scvkInitSemaphoreSciSyncCreateInfoNV(
         .pFence        = pFence
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitSemaphoreSciSyncPoolCreateInfoNV(
+void scvkInitSemaphoreSciSyncPoolCreateInfoNV(
     VkSemaphoreSciSyncPoolCreateInfoNV* pInfo,
     const void*                         pNext,
     NvSciSyncObj                        handle)
@@ -244,75 +244,56 @@ extern SCVK_FORCE_INLINE void scvkInitSemaphoreSciSyncPoolCreateInfoNV(
         .handle = handle
     };
 }
-extern SCVK_FORCE_INLINE void scvkCreateSemaphoreSciSyncPoolNV(
+void scvkCreateSemaphoreSciSyncPoolNV(
     VkDevice                     device,
     const void*                  pNext,
     NvSciSyncObj                 handle,
     const VkAllocationCallbacks* pAllocator,
     VkSemaphoreSciSyncPoolNV*    pSemaphorePool)
 {
-    VkSemaphoreSciSyncPoolCreateInfoNV create_info =
-    {
-        .sType  = VK_STRUCTURE_TYPE_SEMAPHORE_SCI_SYNC_POOL_CREATE_INFO_NV,
-        .pNext  = pNext,
-        .handle = handle
-    };
+    VkSemaphoreSciSyncPoolCreateInfoNV create_info;
 
+    scvkInitSemaphoreSciSyncPoolCreateInfoNV(&create_info, pNext, handle);
     SCVK_CHECK(vkCreateSemaphoreSciSyncPoolNV(device, &create_info, pAllocator, pSemaphorePool));
     SCVK_ASSERT(VK_NULL_HANDLE != (*pSemaphorePool));
 }
-extern SCVK_FORCE_INLINE void scvkGetFenceSciSyncFenceNV(
+void scvkGetFenceSciSyncFenceNV(
     VkDevice                          device,
     const void*                       pNext,
     VkFence                           fence,
     VkExternalFenceHandleTypeFlagBits handleType,
     void*                             pHandle)
 {
-    VkFenceGetSciSyncInfoNV get_sci_sync_handle_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_FENCE_GET_SCI_SYNC_INFO_NV,
-        .pNext      = pNext,
-        .fence      = fence,
-        .handleType = handleType
-    };
+    VkFenceGetSciSyncInfoNV get_sci_sync_handle_info;
 
+    scvkInitFenceGetSciSyncInfoNV(&get_sci_sync_handle_info, pNext, fence, handleType);
     SCVK_CHECK(vkGetFenceSciSyncFenceNV(device, &get_sci_sync_handle_info, pHandle));
 }
-extern SCVK_FORCE_INLINE void scvkGetFenceSciSyncObjNV(
+void scvkGetFenceSciSyncObjNV(
     VkDevice                          device,
     const void*                       pNext,
     VkFence                           fence,
     VkExternalFenceHandleTypeFlagBits handleType,
     void*                             pHandle)
 {
-    VkFenceGetSciSyncInfoNV get_sci_sync_handle_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_FENCE_GET_SCI_SYNC_INFO_NV,
-        .pNext      = pNext,
-        .fence      = fence,
-        .handleType = handleType
-    };
+    VkFenceGetSciSyncInfoNV get_sci_sync_handle_info;
 
+    scvkInitFenceGetSciSyncInfoNV(&get_sci_sync_handle_info, pNext, fence, handleType);
     SCVK_CHECK(vkGetFenceSciSyncObjNV(device, &get_sci_sync_handle_info, pHandle));
 }
-extern SCVK_FORCE_INLINE void scvkGetMemorySciBufNV(
+void scvkGetMemorySciBufNV(
     VkDevice                           device,
     const void*                        pNext,
     VkDeviceMemory                     memory,
     VkExternalMemoryHandleTypeFlagBits handleType,
     NvSciBufObj*                       pHandle)
 {
-    VkMemoryGetSciBufInfoNV get_sci_buf_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_MEMORY_GET_SCI_BUF_INFO_NV,
-        .pNext      = pNext,
-        .memory     = memory,
-        .handleType = handleType
-    };
+    VkMemoryGetSciBufInfoNV get_sci_buf_info;
 
+    scvkInitMemoryGetSciBufInfoNV(&get_sci_buf_info, pNext, memory, handleType);
     SCVK_CHECK(vkGetMemorySciBufNV(device, &get_sci_buf_info, pHandle));
 }
-extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalMemorySciBufPropertiesNV(
+void scvkGetPhysicalDeviceExternalMemorySciBufPropertiesNV(
     VkPhysicalDevice                   physicalDevice,
     VkExternalMemoryHandleTypeFlagBits handleType,
     NvSciBufObj                        handle,
@@ -325,108 +306,77 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalMemorySciBufPropertie
         .pNext = pNext
     };
 
-    SCVK_CHECK(vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV(physicalDevice,
-                                                                   handleType,
-                                                                   handle,
-                                                                   &memory_sci_buf_properties));
+    SCVK_CHECK(vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV(physicalDevice, handleType, handle, &memory_sci_buf_properties));
 
     (*pMemorySciBufProperties) = memory_sci_buf_properties;
 }
-extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceSciBufAttributesNV(
+void scvkGetPhysicalDeviceSciBufAttributesNV(
     VkPhysicalDevice physicalDevice,
     NvSciBufAttrList pAttributes)
 {
     SCVK_CHECK(vkGetPhysicalDeviceSciBufAttributesNV(physicalDevice, pAttributes));
 }
-extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceSciSyncAttributesNV(
+void scvkGetPhysicalDeviceSciSyncAttributesNV(
     VkPhysicalDevice         physicalDevice,
     const void*              pNext,
     VkSciSyncClientTypeNV    clientType,
     VkSciSyncPrimitiveTypeNV primitiveType,
     NvSciSyncAttrList        pAttributes)
 {
-    VkSciSyncAttributesInfoNV sci_sync_attributes_info =
-    {
-        .sType         = VK_STRUCTURE_TYPE_SCI_SYNC_ATTRIBUTES_INFO_NV,
-        .pNext         = pNext,
-        .clientType    = clientType,
-        .primitiveType = primitiveType
-    };
+    VkSciSyncAttributesInfoNV sci_sync_attributes_info;
 
+    scvkInitSciSyncAttributesInfoNV(&sci_sync_attributes_info, pNext, clientType, primitiveType);
     SCVK_CHECK(vkGetPhysicalDeviceSciSyncAttributesNV(physicalDevice, &sci_sync_attributes_info, pAttributes));
 }
-extern SCVK_FORCE_INLINE void scvkGetSemaphoreSciSyncObjNV(
+void scvkGetSemaphoreSciSyncObjNV(
     VkDevice                              device,
     const void*                           pNext,
     VkSemaphore                           semaphore,
     VkExternalSemaphoreHandleTypeFlagBits handleType,
     void*                                 pHandle)
 {
-    VkSemaphoreGetSciSyncInfoNV get_sci_sync_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_SEMAPHORE_GET_SCI_SYNC_INFO_NV,
-        .pNext      = pNext,
-        .semaphore  = semaphore,
-        .handleType = handleType
-    };
+    VkSemaphoreGetSciSyncInfoNV get_sci_sync_info;
 
+    scvkInitSemaphoreGetSciSyncInfoNV(&get_sci_sync_info, pNext, semaphore, handleType);
     SCVK_CHECK(vkGetSemaphoreSciSyncObjNV(device, &get_sci_sync_info, pHandle));
 }
-extern SCVK_FORCE_INLINE void scvkImportFenceSciSyncFenceNV(
+void scvkImportFenceSciSyncFenceNV(
     VkDevice                          device,
     const void*                       pNext,
     VkFence                           fence,
     VkExternalFenceHandleTypeFlagBits handleType,
     void*                             handle)
 {
-    VkImportFenceSciSyncInfoNV import_fence_sci_sync_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_IMPORT_FENCE_SCI_SYNC_INFO_NV,
-        .pNext      = pNext,
-        .fence      = fence,
-        .handleType = handleType,
-        .handle     = handle
-    };
+    VkImportFenceSciSyncInfoNV import_fence_sci_sync_info;
 
+    scvkInitImportFenceSciSyncInfoNV(&import_fence_sci_sync_info, pNext, fence, handleType, handle);
     SCVK_CHECK(vkImportFenceSciSyncFenceNV(device, &import_fence_sci_sync_info));
 }
-extern SCVK_FORCE_INLINE void scvkImportFenceSciSyncObjNV(
+void scvkImportFenceSciSyncObjNV(
     VkDevice                          device,
     const void*                       pNext,
     VkFence                           fence,
     VkExternalFenceHandleTypeFlagBits handleType,
     void*                             handle)
 {
-    VkImportFenceSciSyncInfoNV import_fence_sci_sync_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_IMPORT_FENCE_SCI_SYNC_INFO_NV,
-        .pNext      = pNext,
-        .fence      = fence,
-        .handleType = handleType,
-        .handle     = handle
-    };
+    VkImportFenceSciSyncInfoNV import_fence_sci_sync_info;
 
+    scvkInitImportFenceSciSyncInfoNV(&import_fence_sci_sync_info, pNext, fence, handleType, handle);
     SCVK_CHECK(vkImportFenceSciSyncObjNV(device, &import_fence_sci_sync_info));
 }
-extern SCVK_FORCE_INLINE void scvkImportSemaphoreSciSyncObjNV(
+void scvkImportSemaphoreSciSyncObjNV(
     VkDevice                              device,
     const void*                           pNext,
     VkSemaphore                           semaphore,
     VkExternalSemaphoreHandleTypeFlagBits handleType,
     void*                                 handle)
 {
-    VkImportSemaphoreSciSyncInfoNV import_semaphore_sci_sync_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_SCI_SYNC_INFO_NV,
-        .pNext      = pNext,
-        .semaphore  = semaphore,
-        .handleType = handleType,
-        .handle     = handle
-    };
+    VkImportSemaphoreSciSyncInfoNV import_semaphore_sci_sync_info;
 
+    scvkInitImportSemaphoreSciSyncInfoNV(&import_semaphore_sci_sync_info, pNext, semaphore, handleType, handle);
     SCVK_CHECK(vkImportSemaphoreSciSyncObjNV(device, &import_semaphore_sci_sync_info));
 }
-extern SCVK_FORCE_INLINE void scvkAllocateExportMemorySciBufNV(
+void scvkAllocateExportMemorySciBufNV(
     VkDevice                     device,
     const void*                  pNext,
     NvSciBufAttrList             pAttributes,
@@ -444,7 +394,7 @@ extern SCVK_FORCE_INLINE void scvkAllocateExportMemorySciBufNV(
 
     scvkAllocateMemory(device, &buf_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-extern SCVK_FORCE_INLINE void scvkAllocateImportMemorySciBufNV(
+void scvkAllocateImportMemorySciBufNV(
     VkDevice                           device,
     const void*                        pNext,
     VkExternalMemoryHandleTypeFlagBits handleType,
@@ -464,7 +414,7 @@ extern SCVK_FORCE_INLINE void scvkAllocateImportMemorySciBufNV(
 
     scvkAllocateMemory(device, &buf_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-extern SCVK_FORCE_INLINE void scvkCreateDeviceWithSemaphoreSciSyncPoolReservationInfoNV(
+void scvkCreateDeviceWithSemaphoreSciSyncPoolReservationInfoNV(
     VkPhysicalDevice                physicalDevice,
     const void*                     pNext,
     uint32_t                        semaphoreSciSyncPoolRequestCount,
@@ -499,7 +449,7 @@ extern SCVK_FORCE_INLINE void scvkCreateDeviceWithSemaphoreSciSyncPoolReservatio
                      pAllocator,
                      pDevice);
 }
-extern SCVK_FORCE_INLINE void scvkCreateExportFenceSciSyncNV(
+void scvkCreateExportFenceSciSyncNV(
     VkDevice                     device,
     const void*                  pNext,
     NvSciSyncAttrList            pAttributes,
@@ -516,7 +466,7 @@ extern SCVK_FORCE_INLINE void scvkCreateExportFenceSciSyncNV(
 
     scvkCreateFence(device, &sync_info, flags, pAllocator, pFence);
 }
-extern SCVK_FORCE_INLINE void scvkCreateExportSemaphoreSciSyncNV(
+void scvkCreateExportSemaphoreSciSyncNV(
     VkDevice                     device,
     const void*                  pNext,
     NvSciSyncAttrList            pAttributes,
@@ -533,7 +483,7 @@ extern SCVK_FORCE_INLINE void scvkCreateExportSemaphoreSciSyncNV(
 
     scvkCreateSemaphore(device, &sync_info, flags, pAllocator, pSemaphore);
 }
-extern SCVK_FORCE_INLINE void scvkCreateSemaphoreWithSciSyncInfoNV(
+void scvkCreateSemaphoreWithSciSyncInfoNV(
     VkDevice                     device,
     const void*                  pNext,
     VkSemaphoreSciSyncPoolNV     semaphorePool,
@@ -552,7 +502,7 @@ extern SCVK_FORCE_INLINE void scvkCreateSemaphoreWithSciSyncInfoNV(
 
     scvkCreateSemaphore(device, &create_info, flags, pAllocator, pSemaphore);
 }
-extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalMemorySciBufFeaturesNV(
+void scvkGetPhysicalDeviceExternalMemorySciBufFeaturesNV(
     VkPhysicalDevice                                physicalDevice,
     void*                                           pNext,
     VkPhysicalDeviceExternalMemorySciBufFeaturesNV* pPhysicalDeviceExternalMemorySciBufFeaturesNV)
@@ -568,7 +518,7 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalMemorySciBufFeaturesN
 
     (*pPhysicalDeviceExternalMemorySciBufFeaturesNV) = ext_features;
 }
-extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalSciSync2FeaturesNV(
+void scvkGetPhysicalDeviceExternalSciSync2FeaturesNV(
     VkPhysicalDevice                            physicalDevice,
     void*                                       pNext,
     VkPhysicalDeviceExternalSciSync2FeaturesNV* pPhysicalDeviceExternalSciSync2FeaturesNV)
@@ -584,7 +534,7 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalSciSync2FeaturesNV(
 
     (*pPhysicalDeviceExternalSciSync2FeaturesNV) = ext_features;
 }
-extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalSciSyncFeaturesNV(
+void scvkGetPhysicalDeviceExternalSciSyncFeaturesNV(
     VkPhysicalDevice                           physicalDevice,
     void*                                      pNext,
     VkPhysicalDeviceExternalSciSyncFeaturesNV* pPhysicalDeviceExternalSciSyncFeaturesNV)

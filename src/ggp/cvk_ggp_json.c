@@ -34,6 +34,7 @@ void cvkReadJsonPresentFrameTokenGGP(
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -64,12 +65,12 @@ void cvkReadJsonStreamDescriptorSurfaceCreateInfoGGP(
 
     pInfo->flags = cvkParseJsonStreamDescriptorSurfaceCreateFlagsGGP(value);
 }
-extern CVK_FORCE_INLINE VkStreamDescriptorSurfaceCreateFlagsGGP cvkParseJsonStreamDescriptorSurfaceCreateFlagsGGP(
+VkStreamDescriptorSurfaceCreateFlagsGGP cvkParseJsonStreamDescriptorSurfaceCreateFlagsGGP(
     const cvkJsonValue* pValue)
 {
     return (VkStreamDescriptorSurfaceCreateFlagsGGP)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPresentFrameTokenGGP(
+void cvkParseJsonPresentFrameTokenGGP(
     const cvkJsonContext*   pContext,
     const cvkJsonValue*     pObject,
     VkPresentFrameTokenGGP* pInfo)
@@ -80,7 +81,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonPresentFrameTokenGGP(
     cvkAppendJsonWork(&work, cvkReadJsonPresentFrameTokenGGP, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonStreamDescriptorSurfaceCreateInfoGGP(
+void cvkParseJsonStreamDescriptorSurfaceCreateInfoGGP(
     const cvkJsonContext*                   pContext,
     const cvkJsonValue*                     pObject,
     VkStreamDescriptorSurfaceCreateInfoGGP* pInfo)

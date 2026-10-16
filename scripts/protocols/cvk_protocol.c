@@ -20,7 +20,7 @@
  * \param[in] clearValueCount Number of clear values.
  * \param[in] pClearValues Clear values, or NULL when the count is zero.
  * \param[in] contents Subpass contents mode.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCmdBeginRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
                                           const void*             pBarrierNext,
@@ -72,7 +72,7 @@ void cvkCmdBeginRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
  * \param[in] subresourceRange Attachment subresources to release.
  * \param[in] srcStageMask Stage that accessed the image.
  * \param[in] dependencyFlags Image barrier dependency flags.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCmdEndRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
                                         const void*             pBarrierNext,
@@ -112,7 +112,7 @@ void cvkCmdEndRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
  * \param[in] pipeline Fullscreen triangle-strip pipeline.
  * \param[in] layout Pipeline layout for the descriptor set.
  * \param[in] descriptorSet Descriptor set bound at set zero.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCmdExecuteFullscreenQuadRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
                                                           VkImageLayout           externalLayout,
@@ -183,7 +183,7 @@ void cvkCmdExecuteFullscreenQuadRenderPassOnExternalImage(VkCommandBuffer       
  * \param[in] pImages Images to acquire.
  * \param[in] subresourceRange Subresources of each image.
  * \param[in] sampledStageMask Shader stages that sample the images.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCmdAcquireSampledImagesFromExternal(VkCommandBuffer         commandBuffer,
                                             VkImageLayout           externalLayout,
@@ -222,7 +222,7 @@ void cvkCmdAcquireSampledImagesFromExternal(VkCommandBuffer         commandBuffe
  * \param[in] pImages Images to release.
  * \param[in] subresourceRange Subresources of each image.
  * \param[in] sampledStageMask Shader stages that sampled the images.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCmdReleaseSampledImagesToExternal(VkCommandBuffer         commandBuffer,
                                           VkImageLayout           sampledLayout,
@@ -258,7 +258,7 @@ void cvkCmdReleaseSampledImagesToExternal(VkCommandBuffer         commandBuffer,
  * \param[in] image Image to transition.
  * \param[in] subresourceRange Subresources to transition.
  * \param[in] sampledStageMask Shader stages that sample the image.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCmdTransitionUndefinedImageToSampledImage(VkCommandBuffer         commandBuffer,
                                                   VkImageLayout           sampledLayout,
@@ -289,7 +289,7 @@ void cvkCmdTransitionUndefinedImageToSampledImage(VkCommandBuffer         comman
  * \param[in] layout Pipeline layout for the descriptor set.
  * \param[in] descriptorSet Descriptor set bound at set zero.
  * \param[in] vertexCount Number of vertices to draw.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  commandBuffer,
                                   VkRenderPass     renderPass,
@@ -339,7 +339,7 @@ void cvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  commandBuffer,
  * \param[in] vertexCount Number of vertices to draw.
  * \param[in] pushConstantSize Size of the fragment push constants.
  * \param[in] pPushConstants Fragment push constants.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCmdExecuteGraphicsRenderPassWithPushConstants(VkCommandBuffer  commandBuffer,
                                                    VkRenderPass     renderPass,
@@ -398,6 +398,7 @@ void cvkCmdExecuteGraphicsRenderPassWithPushConstants(VkCommandBuffer  commandBu
  * \param[in] pCallbackData    Message identifier and text supplied by the loader, or NULL
  * \param[in] pUserData        Unused application context
  *
+ * \retval VK_TRUE Never returned.
  * \retval VK_FALSE The triggering Vulkan call is never aborted.
  */
 VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
@@ -448,7 +449,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeve
  * \param[out] pInstance                Receives the created VkInstance
  * \param[out] pMessenger               Receives the created VkDebugUtilsMessengerEXT
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCreateDebugInstance(const void*                          pNext,
                             VkInstanceCreateFlags                flags,
@@ -514,7 +515,7 @@ void cvkCreateDebugInstance(const void*                          pNext,
  * \param[in] instance  Instance whose physical devices are searched
  * \param[in] pLuid     Locally unique identifier of VK_LUID_SIZE bytes
  *
- * \return The matching physical device, or VK_NULL_HANDLE when none matches.
+ * \retval VkPhysicalDevice The matching physical device, or VK_NULL_HANDLE when none matches.
  */
 VkPhysicalDevice cvkGetPhysicalDeviceByLuid(VkInstance instance, const uint8_t pLuid[VK_LUID_SIZE])
 {
@@ -549,7 +550,7 @@ VkPhysicalDevice cvkGetPhysicalDeviceByLuid(VkInstance instance, const uint8_t p
  * \param[in] pciFunction  PCI function of the adapter
  * \param[out] pProperties Caller-owned CVK_MAX_PROPERTIES enumeration workspace, reused per device
  *
- * \return The matching physical device, or VK_NULL_HANDLE when none matches.
+ * \retval VkPhysicalDevice The matching physical device, or VK_NULL_HANDLE when none matches.
  */
 VkPhysicalDevice cvkGetPhysicalDeviceByPciBusInfo(VkInstance instance,
                                                uint32_t pciDomain,
@@ -595,7 +596,7 @@ VkPhysicalDevice cvkGetPhysicalDeviceByPciBusInfo(VkInstance instance,
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pMemories               Receives one VkDeviceMemory per requirement; up to CVK_MAX_MEMORY_REQUIREMENTS entries
  *
- * \retval Number of memory objects allocated and bound
+ * \retval uint32_t Number of memory objects allocated and bound
  */
 uint32_t cvkAllocateVideoSessionMemory(VkPhysicalDevice             physicalDevice,
                                        VkDevice                     device,
@@ -652,7 +653,7 @@ uint32_t cvkAllocateVideoSessionMemory(VkPhysicalDevice             physicalDevi
  * \param[out] pScratchMemory          Receives the scratch memory
  * \param[out] pScratchDeviceAddress   Receives the aligned scratch device address for the build
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkSetupAccelerationStructure(VkPhysicalDevice                         physicalDevice,
                                    VkDevice                                 device,
@@ -716,7 +717,7 @@ void cvkSetupAccelerationStructure(VkPhysicalDevice                         phys
  * \param[out] pHitRegion              Receives the hit region
  * \param[out] pCallableRegion         Receives the callable region
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkSetupRayTracingShaderBindingTable(VkPhysicalDevice                 physicalDevice,
                                           VkDevice                         device,
@@ -800,7 +801,7 @@ void cvkSetupRayTracingShaderBindingTable(VkPhysicalDevice                 physi
  * \param[in]  pRangeNext              Optional extension chain for the VkMappedMemoryRange, or NULL
  * \param[in]  pData                   Bytes to write; size bytes
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkWriteMemory(VkDevice         device,
                     VkDeviceMemory   memory,
@@ -834,7 +835,7 @@ void cvkWriteMemory(VkDevice         device,
  * \param[in]  pRangeNext              Optional extension chain for the VkMappedMemoryRange, or NULL
  * \param[out] pData                   Receives size bytes
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkReadMemory(VkDevice         device,
                    VkDeviceMemory   memory,
@@ -863,7 +864,7 @@ void cvkReadMemory(VkDevice         device,
  * \param[in]  flags                   vkMapMemory flags
  * \param[in]  pData                   Bytes to write; size bytes
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkWriteCoherentMemory(VkDevice         device,
                             VkDeviceMemory   memory,
@@ -890,7 +891,7 @@ void cvkWriteCoherentMemory(VkDevice         device,
  * \param[in]  flags                   vkMapMemory flags
  * \param[out] pData                   Receives size bytes
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkReadCoherentMemory(VkDevice         device,
                            VkDeviceMemory   memory,

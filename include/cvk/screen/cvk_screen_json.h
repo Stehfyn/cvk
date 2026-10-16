@@ -8,72 +8,86 @@
 #include <vulkan/vulkan_screen.h>
 
 /* clang-format off */
+
+/*************************************************************************************************/
 /**
  * \brief Parses a VkScreenSurfaceCreateFlagsQNX from JSON.
  *
- * \param[in] pValue  The value: bit names joined by |, a number, or NULL
+ * \param[in] pValue   The value: bit names joined by |, a number, or NULL
  *
- * \return The VkScreenSurfaceCreateFlagsQNX returned by the command.
+ * \retval    VkScreenSurfaceCreateFlagsQNX   The parsed value.
  */
 VkScreenSurfaceCreateFlagsQNX cvkParseJsonScreenSurfaceCreateFlagsQNX(const cvkJsonValue* pValue);
+
+/*************************************************************************************************/
 /**
  * \brief Parses a VkExternalFormatQNX from a JSON object; members absent or NULL stay zero.
  *
- * \param[in]  pContext  Parsing context: document, arena, handle resolver
- * \param[in]  pObject   The JSON object of the VkExternalFormatQNX
- * \param[out] pInfo     Receives the parsed VkExternalFormatQNX, zeroed first
+ * \param[in]  pContext   Parsing context: document, arena, handle resolver
+ * \param[in]  pObject    The JSON object of the VkExternalFormatQNX
+ * \param[out] pInfo      Receives the parsed VkExternalFormatQNX, zeroed first
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkParseJsonExternalFormatQNX(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExternalFormatQNX* pInfo);
+
+/*************************************************************************************************/
 /**
  * \brief Parses a VkImportScreenBufferInfoQNX from a JSON object; members absent or NULL stay zero.
  *
- * \param[in]  pContext  Parsing context: document, arena, handle resolver
- * \param[in]  pObject   The JSON object of the VkImportScreenBufferInfoQNX
- * \param[out] pInfo     Receives the parsed VkImportScreenBufferInfoQNX, zeroed first
+ * \param[in]  pContext   Parsing context: document, arena, handle resolver
+ * \param[in]  pObject    The JSON object of the VkImportScreenBufferInfoQNX
+ * \param[out] pInfo      Receives the parsed VkImportScreenBufferInfoQNX, zeroed first
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkParseJsonImportScreenBufferInfoQNX(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportScreenBufferInfoQNX* pInfo);
+
+/*************************************************************************************************/
 /**
  * \brief Parses a VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX from a JSON object; members absent or NULL stay zero.
  *
- * \param[in]  pContext  Parsing context: document, arena, handle resolver
- * \param[in]  pObject   The JSON object of the VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX
- * \param[out] pInfo     Receives the parsed VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX, zeroed first
+ * \param[in]  pContext   Parsing context: document, arena, handle resolver
+ * \param[in]  pObject    The JSON object of the VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX
+ * \param[out] pInfo      Receives the parsed VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX, zeroed first
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkParseJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pInfo);
+
+/*************************************************************************************************/
 /**
  * \brief Parses a VkScreenBufferFormatPropertiesQNX from a JSON object; members absent or NULL stay zero.
  *
- * \param[in]  pContext  Parsing context: document, arena, handle resolver
- * \param[in]  pObject   The JSON object of the VkScreenBufferFormatPropertiesQNX
- * \param[out] pInfo     Receives the parsed VkScreenBufferFormatPropertiesQNX, zeroed first
+ * \param[in]  pContext   Parsing context: document, arena, handle resolver
+ * \param[in]  pObject    The JSON object of the VkScreenBufferFormatPropertiesQNX
+ * \param[out] pInfo      Receives the parsed VkScreenBufferFormatPropertiesQNX, zeroed first
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkParseJsonScreenBufferFormatPropertiesQNX(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkScreenBufferFormatPropertiesQNX* pInfo);
+
+/*************************************************************************************************/
 /**
  * \brief Parses a VkScreenBufferPropertiesQNX from a JSON object; members absent or NULL stay zero.
  *
- * \param[in]  pContext  Parsing context: document, arena, handle resolver
- * \param[in]  pObject   The JSON object of the VkScreenBufferPropertiesQNX
- * \param[out] pInfo     Receives the parsed VkScreenBufferPropertiesQNX, zeroed first
+ * \param[in]  pContext   Parsing context: document, arena, handle resolver
+ * \param[in]  pObject    The JSON object of the VkScreenBufferPropertiesQNX
+ * \param[out] pInfo      Receives the parsed VkScreenBufferPropertiesQNX, zeroed first
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkParseJsonScreenBufferPropertiesQNX(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkScreenBufferPropertiesQNX* pInfo);
+
+/*************************************************************************************************/
 /**
  * \brief Parses a VkScreenSurfaceCreateInfoQNX from a JSON object; members absent or NULL stay zero.
  *
- * \param[in]  pContext  Parsing context: document, arena, handle resolver
- * \param[in]  pObject   The JSON object of the VkScreenSurfaceCreateInfoQNX
- * \param[out] pInfo     Receives the parsed VkScreenSurfaceCreateInfoQNX, zeroed first
+ * \param[in]  pContext   Parsing context: document, arena, handle resolver
+ * \param[in]  pObject    The JSON object of the VkScreenSurfaceCreateInfoQNX
+ * \param[out] pInfo      Receives the parsed VkScreenSurfaceCreateInfoQNX, zeroed first
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkParseJsonScreenSurfaceCreateInfoQNX(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkScreenSurfaceCreateInfoQNX* pInfo);
 /* clang-format on */

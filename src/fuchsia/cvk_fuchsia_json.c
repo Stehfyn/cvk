@@ -40,16 +40,13 @@ void cvkReadJsonBufferCollectionBufferCreateInfoFUCHSIA(
     {
         pInfo->collection = VK_NULL_HANDLE;
 
-        (void)cvkResolveJsonHandle(pContext,
-                                   "VkBufferCollectionFUCHSIA",
-                                   value,
-                                   sizeof(VkBufferCollectionFUCHSIA),
-                                   (void*)&pInfo->collection);
+        (void)cvkResolveJsonHandle(pContext, "VkBufferCollectionFUCHSIA", value, sizeof(VkBufferCollectionFUCHSIA), (void*)&pInfo->collection);
     }
     value        = cvkGetJsonMember(&pContext->document, pObject, "index");
 
     pInfo->index = (uint32_t)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -76,26 +73,27 @@ void cvkReadJsonBufferCollectionConstraintsInfoFUCHSIA(
     {
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
-    value                           = cvkGetJsonMember(&pContext->document, pObject, "minBufferCount");
+    value                                  = cvkGetJsonMember(&pContext->document, pObject, "minBufferCount");
 
-    pInfo->minBufferCount           = (uint32_t)cvkParseJsonUint64(value);
+    pInfo->minBufferCount                  = (uint32_t)cvkParseJsonUint64(value);
 
-    value                           = cvkGetJsonMember(&pContext->document, pObject, "maxBufferCount");
+    value                                  = cvkGetJsonMember(&pContext->document, pObject, "maxBufferCount");
 
-    pInfo->maxBufferCount           = (uint32_t)cvkParseJsonUint64(value);
+    pInfo->maxBufferCount                  = (uint32_t)cvkParseJsonUint64(value);
 
-    value                           = cvkGetJsonMember(&pContext->document, pObject, "minBufferCountForCamping");
+    value                                  = cvkGetJsonMember(&pContext->document, pObject, "minBufferCountForCamping");
 
-    pInfo->minBufferCountForCamping = (uint32_t)cvkParseJsonUint64(value);
+    pInfo->minBufferCountForCamping        = (uint32_t)cvkParseJsonUint64(value);
 
-    value                           = cvkGetJsonMember(&pContext->document, pObject, "minBufferCountForDedicatedSlack");
+    value                                  = cvkGetJsonMember(&pContext->document, pObject, "minBufferCountForDedicatedSlack");
 
     pInfo->minBufferCountForDedicatedSlack = (uint32_t)cvkParseJsonUint64(value);
 
-    value = cvkGetJsonMember(&pContext->document, pObject, "minBufferCountForSharedSlack");
+    value                                  = cvkGetJsonMember(&pContext->document, pObject, "minBufferCountForSharedSlack");
 
-    pInfo->minBufferCountForSharedSlack = (uint32_t)cvkParseJsonUint64(value);
+    pInfo->minBufferCountForSharedSlack    = (uint32_t)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -123,6 +121,7 @@ void cvkReadJsonBufferCollectionCreateInfoFUCHSIA(
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -154,16 +153,13 @@ void cvkReadJsonBufferCollectionImageCreateInfoFUCHSIA(
     {
         pInfo->collection = VK_NULL_HANDLE;
 
-        (void)cvkResolveJsonHandle(pContext,
-                                   "VkBufferCollectionFUCHSIA",
-                                   value,
-                                   sizeof(VkBufferCollectionFUCHSIA),
-                                   (void*)&pInfo->collection);
+        (void)cvkResolveJsonHandle(pContext, "VkBufferCollectionFUCHSIA", value, sizeof(VkBufferCollectionFUCHSIA), (void*)&pInfo->collection);
     }
     value        = cvkGetJsonMember(&pContext->document, pObject, "index");
 
     pInfo->index = (uint32_t)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -241,6 +237,7 @@ void cvkReadJsonBufferCollectionPropertiesFUCHSIA(
         pInfo->suggestedYChromaOffset = cvkParseJsonChromaLocation(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -279,12 +276,10 @@ void cvkReadJsonBufferConstraintsInfoFUCHSIA(
     value                         = cvkGetJsonMember(&pContext->document, pObject, "bufferCollectionConstraints");
     if (!cvkIsJsonNull(value))
     {
-        cvkAppendJsonWork(pWork,
-                          cvkReadJsonBufferCollectionConstraintsInfoFUCHSIA,
-                          value,
-                          &pInfo->bufferCollectionConstraints);
+        cvkAppendJsonWork(pWork, cvkReadJsonBufferCollectionConstraintsInfoFUCHSIA, value, &pInfo->bufferCollectionConstraints);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -322,15 +317,10 @@ void cvkReadJsonImageConstraintsInfoFUCHSIA(
     {
         if (CVK_JSON_ARRAY == value->kind)
         {
-            storage = cvkAllocateArena(pContext->pArena,
-                                       value->childCount * sizeof(VkImageFormatConstraintsInfoFUCHSIA),
-                                       CVK_JSON_ARENA_ALIGNMENT);
+            storage = cvkAllocateArena(pContext->pArena, value->childCount * sizeof(VkImageFormatConstraintsInfoFUCHSIA), CVK_JSON_ARENA_ALIGNMENT);
             for (index = 0; index < value->childCount; ++index)
             {
-                cvkAppendJsonWork(pWork,
-                                  cvkReadJsonImageFormatConstraintsInfoFUCHSIA,
-                                  cvkGetJsonElement(&pContext->document, value, index),
-                                  &((VkImageFormatConstraintsInfoFUCHSIA*)storage)[index]);
+                cvkAppendJsonWork(pWork, cvkReadJsonImageFormatConstraintsInfoFUCHSIA, cvkGetJsonElement(&pContext->document, value, index), &((VkImageFormatConstraintsInfoFUCHSIA*)storage)[index]);
             }
             pInfo->pFormatConstraints = (const VkImageFormatConstraintsInfoFUCHSIA*)storage;
         }
@@ -338,15 +328,13 @@ void cvkReadJsonImageConstraintsInfoFUCHSIA(
     value = cvkGetJsonMember(&pContext->document, pObject, "bufferCollectionConstraints");
     if (!cvkIsJsonNull(value))
     {
-        cvkAppendJsonWork(pWork,
-                          cvkReadJsonBufferCollectionConstraintsInfoFUCHSIA,
-                          value,
-                          &pInfo->bufferCollectionConstraints);
+        cvkAppendJsonWork(pWork, cvkReadJsonBufferCollectionConstraintsInfoFUCHSIA, value, &pInfo->bufferCollectionConstraints);
     }
     value        = cvkGetJsonMember(&pContext->document, pObject, "flags");
 
     pInfo->flags = cvkParseJsonImageConstraintsInfoFlagsFUCHSIA(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -401,20 +389,16 @@ void cvkReadJsonImageFormatConstraintsInfoFUCHSIA(
     {
         if (CVK_JSON_ARRAY == value->kind)
         {
-            storage = cvkAllocateArena(pContext->pArena,
-                                       value->childCount * sizeof(VkSysmemColorSpaceFUCHSIA),
-                                       CVK_JSON_ARENA_ALIGNMENT);
+            storage = cvkAllocateArena(pContext->pArena, value->childCount * sizeof(VkSysmemColorSpaceFUCHSIA), CVK_JSON_ARENA_ALIGNMENT);
             for (index = 0; index < value->childCount; ++index)
             {
-                cvkAppendJsonWork(pWork,
-                                  cvkReadJsonSysmemColorSpaceFUCHSIA,
-                                  cvkGetJsonElement(&pContext->document, value, index),
-                                  &((VkSysmemColorSpaceFUCHSIA*)storage)[index]);
+                cvkAppendJsonWork(pWork, cvkReadJsonSysmemColorSpaceFUCHSIA, cvkGetJsonElement(&pContext->document, value, index), &((VkSysmemColorSpaceFUCHSIA*)storage)[index]);
             }
             pInfo->pColorSpaces = (const VkSysmemColorSpaceFUCHSIA*)storage;
         }
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -445,6 +429,7 @@ void cvkReadJsonImagePipeSurfaceCreateInfoFUCHSIA(
 
     pInfo->flags = cvkParseJsonImagePipeSurfaceCreateFlagsFUCHSIA(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -476,16 +461,13 @@ void cvkReadJsonImportMemoryBufferCollectionFUCHSIA(
     {
         pInfo->collection = VK_NULL_HANDLE;
 
-        (void)cvkResolveJsonHandle(pContext,
-                                   "VkBufferCollectionFUCHSIA",
-                                   value,
-                                   sizeof(VkBufferCollectionFUCHSIA),
-                                   (void*)&pInfo->collection);
+        (void)cvkResolveJsonHandle(pContext, "VkBufferCollectionFUCHSIA", value, sizeof(VkBufferCollectionFUCHSIA), (void*)&pInfo->collection);
     }
     value        = cvkGetJsonMember(&pContext->document, pObject, "index");
 
     pInfo->index = (uint32_t)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -518,6 +500,7 @@ void cvkReadJsonImportMemoryZirconHandleInfoFUCHSIA(
         pInfo->handleType = cvkParseJsonExternalMemoryHandleTypeFlagBits(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -561,6 +544,7 @@ void cvkReadJsonImportSemaphoreZirconHandleInfoFUCHSIA(
         pInfo->handleType = cvkParseJsonExternalSemaphoreHandleTypeFlagBits(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -600,6 +584,7 @@ void cvkReadJsonMemoryGetZirconHandleInfoFUCHSIA(
         pInfo->handleType = cvkParseJsonExternalMemoryHandleTypeFlagBits(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -630,6 +615,7 @@ void cvkReadJsonMemoryZirconHandlePropertiesFUCHSIA(
 
     pInfo->memoryTypeBits = (uint32_t)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -669,6 +655,7 @@ void cvkReadJsonSemaphoreGetZirconHandleInfoFUCHSIA(
         pInfo->handleType = cvkParseJsonExternalSemaphoreHandleTypeFlagBits(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -699,61 +686,49 @@ void cvkReadJsonSysmemColorSpaceFUCHSIA(
 
     pInfo->colorSpace = (uint32_t)cvkParseJsonUint64(value);
 }
-extern CVK_FORCE_INLINE VkImageConstraintsInfoFlagBitsFUCHSIA cvkParseJsonImageConstraintsInfoFlagBitsFUCHSIA(
+VkImageConstraintsInfoFlagBitsFUCHSIA cvkParseJsonImageConstraintsInfoFlagBitsFUCHSIA(
     const cvkJsonValue* pValue)
 {
     uint64_t enumerant;
     VkBool32 found;
 
-    static const cvkJsonName table[] = {{"VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_RARELY_FUCHSIA",
-                                         (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_RARELY_FUCHSIA},
-                                        {"VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_OFTEN_FUCHSIA",
-                                         (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_OFTEN_FUCHSIA},
-                                        {"VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_RARELY_FUCHSIA",
-                                         (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_RARELY_FUCHSIA},
-                                        {"VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_OFTEN_FUCHSIA",
-                                         (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_OFTEN_FUCHSIA},
-                                        {"VK_IMAGE_CONSTRAINTS_INFO_PROTECTED_OPTIONAL_FUCHSIA",
-                                         (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_PROTECTED_OPTIONAL_FUCHSIA}};
+    static const cvkJsonName table[] = {{"VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_RARELY_FUCHSIA", (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_RARELY_FUCHSIA},
+                                        {"VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_OFTEN_FUCHSIA", (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_OFTEN_FUCHSIA},
+                                        {"VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_RARELY_FUCHSIA", (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_RARELY_FUCHSIA},
+                                        {"VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_OFTEN_FUCHSIA", (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_OFTEN_FUCHSIA},
+                                        {"VK_IMAGE_CONSTRAINTS_INFO_PROTECTED_OPTIONAL_FUCHSIA", (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_PROTECTED_OPTIONAL_FUCHSIA}};
 
     enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_RARELY_FUCHSIA) ||
-            (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_OFTEN_FUCHSIA) ||
-            (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_RARELY_FUCHSIA) ||
-            (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_OFTEN_FUCHSIA) ||
+    found = (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_RARELY_FUCHSIA) || (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_OFTEN_FUCHSIA) ||
+            (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_RARELY_FUCHSIA) || (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_OFTEN_FUCHSIA) ||
             (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_PROTECTED_OPTIONAL_FUCHSIA);
     CVK_ASSERT(found);
 
     return (VkImageConstraintsInfoFlagBitsFUCHSIA)enumerant;
 }
-extern CVK_FORCE_INLINE VkImageConstraintsInfoFlagsFUCHSIA cvkParseJsonImageConstraintsInfoFlagsFUCHSIA(
+VkImageConstraintsInfoFlagsFUCHSIA cvkParseJsonImageConstraintsInfoFlagsFUCHSIA(
     const cvkJsonValue* pValue)
 {
-    static const cvkJsonName table[] = {{"VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_RARELY_FUCHSIA",
-                                         (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_RARELY_FUCHSIA},
-                                        {"VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_OFTEN_FUCHSIA",
-                                         (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_OFTEN_FUCHSIA},
-                                        {"VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_RARELY_FUCHSIA",
-                                         (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_RARELY_FUCHSIA},
-                                        {"VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_OFTEN_FUCHSIA",
-                                         (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_OFTEN_FUCHSIA},
-                                        {"VK_IMAGE_CONSTRAINTS_INFO_PROTECTED_OPTIONAL_FUCHSIA",
-                                         (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_PROTECTED_OPTIONAL_FUCHSIA}};
+    static const cvkJsonName table[] = {{"VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_RARELY_FUCHSIA", (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_RARELY_FUCHSIA},
+                                        {"VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_OFTEN_FUCHSIA", (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_OFTEN_FUCHSIA},
+                                        {"VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_RARELY_FUCHSIA", (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_RARELY_FUCHSIA},
+                                        {"VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_OFTEN_FUCHSIA", (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_OFTEN_FUCHSIA},
+                                        {"VK_IMAGE_CONSTRAINTS_INFO_PROTECTED_OPTIONAL_FUCHSIA", (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_PROTECTED_OPTIONAL_FUCHSIA}};
 
     return (VkImageConstraintsInfoFlagsFUCHSIA)cvkParseJsonFlags(pValue, table, VK_COUNT_OF(table));
 }
-extern CVK_FORCE_INLINE VkImageFormatConstraintsFlagsFUCHSIA cvkParseJsonImageFormatConstraintsFlagsFUCHSIA(
+VkImageFormatConstraintsFlagsFUCHSIA cvkParseJsonImageFormatConstraintsFlagsFUCHSIA(
     const cvkJsonValue* pValue)
 {
     return (VkImageFormatConstraintsFlagsFUCHSIA)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE VkImagePipeSurfaceCreateFlagsFUCHSIA cvkParseJsonImagePipeSurfaceCreateFlagsFUCHSIA(
+VkImagePipeSurfaceCreateFlagsFUCHSIA cvkParseJsonImagePipeSurfaceCreateFlagsFUCHSIA(
     const cvkJsonValue* pValue)
 {
     return (VkImagePipeSurfaceCreateFlagsFUCHSIA)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonBufferCollectionBufferCreateInfoFUCHSIA(
+void cvkParseJsonBufferCollectionBufferCreateInfoFUCHSIA(
     const cvkJsonContext*                      pContext,
     const cvkJsonValue*                        pObject,
     VkBufferCollectionBufferCreateInfoFUCHSIA* pInfo)
@@ -764,7 +739,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonBufferCollectionBufferCreateInfoFUCHSIA
     cvkAppendJsonWork(&work, cvkReadJsonBufferCollectionBufferCreateInfoFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonBufferCollectionConstraintsInfoFUCHSIA(
+void cvkParseJsonBufferCollectionConstraintsInfoFUCHSIA(
     const cvkJsonContext*                     pContext,
     const cvkJsonValue*                       pObject,
     VkBufferCollectionConstraintsInfoFUCHSIA* pInfo)
@@ -775,7 +750,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonBufferCollectionConstraintsInfoFUCHSIA(
     cvkAppendJsonWork(&work, cvkReadJsonBufferCollectionConstraintsInfoFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonBufferCollectionCreateInfoFUCHSIA(
+void cvkParseJsonBufferCollectionCreateInfoFUCHSIA(
     const cvkJsonContext*                pContext,
     const cvkJsonValue*                  pObject,
     VkBufferCollectionCreateInfoFUCHSIA* pInfo)
@@ -786,7 +761,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonBufferCollectionCreateInfoFUCHSIA(
     cvkAppendJsonWork(&work, cvkReadJsonBufferCollectionCreateInfoFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonBufferCollectionImageCreateInfoFUCHSIA(
+void cvkParseJsonBufferCollectionImageCreateInfoFUCHSIA(
     const cvkJsonContext*                     pContext,
     const cvkJsonValue*                       pObject,
     VkBufferCollectionImageCreateInfoFUCHSIA* pInfo)
@@ -797,7 +772,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonBufferCollectionImageCreateInfoFUCHSIA(
     cvkAppendJsonWork(&work, cvkReadJsonBufferCollectionImageCreateInfoFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonBufferCollectionPropertiesFUCHSIA(
+void cvkParseJsonBufferCollectionPropertiesFUCHSIA(
     const cvkJsonContext*                pContext,
     const cvkJsonValue*                  pObject,
     VkBufferCollectionPropertiesFUCHSIA* pInfo)
@@ -808,7 +783,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonBufferCollectionPropertiesFUCHSIA(
     cvkAppendJsonWork(&work, cvkReadJsonBufferCollectionPropertiesFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonBufferConstraintsInfoFUCHSIA(
+void cvkParseJsonBufferConstraintsInfoFUCHSIA(
     const cvkJsonContext*           pContext,
     const cvkJsonValue*             pObject,
     VkBufferConstraintsInfoFUCHSIA* pInfo)
@@ -819,7 +794,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonBufferConstraintsInfoFUCHSIA(
     cvkAppendJsonWork(&work, cvkReadJsonBufferConstraintsInfoFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImageConstraintsInfoFUCHSIA(
+void cvkParseJsonImageConstraintsInfoFUCHSIA(
     const cvkJsonContext*          pContext,
     const cvkJsonValue*            pObject,
     VkImageConstraintsInfoFUCHSIA* pInfo)
@@ -830,7 +805,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonImageConstraintsInfoFUCHSIA(
     cvkAppendJsonWork(&work, cvkReadJsonImageConstraintsInfoFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImageFormatConstraintsInfoFUCHSIA(
+void cvkParseJsonImageFormatConstraintsInfoFUCHSIA(
     const cvkJsonContext*                pContext,
     const cvkJsonValue*                  pObject,
     VkImageFormatConstraintsInfoFUCHSIA* pInfo)
@@ -841,7 +816,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonImageFormatConstraintsInfoFUCHSIA(
     cvkAppendJsonWork(&work, cvkReadJsonImageFormatConstraintsInfoFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImagePipeSurfaceCreateInfoFUCHSIA(
+void cvkParseJsonImagePipeSurfaceCreateInfoFUCHSIA(
     const cvkJsonContext*                pContext,
     const cvkJsonValue*                  pObject,
     VkImagePipeSurfaceCreateInfoFUCHSIA* pInfo)
@@ -852,7 +827,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonImagePipeSurfaceCreateInfoFUCHSIA(
     cvkAppendJsonWork(&work, cvkReadJsonImagePipeSurfaceCreateInfoFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryBufferCollectionFUCHSIA(
+void cvkParseJsonImportMemoryBufferCollectionFUCHSIA(
     const cvkJsonContext*                  pContext,
     const cvkJsonValue*                    pObject,
     VkImportMemoryBufferCollectionFUCHSIA* pInfo)
@@ -863,7 +838,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryBufferCollectionFUCHSIA(
     cvkAppendJsonWork(&work, cvkReadJsonImportMemoryBufferCollectionFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryZirconHandleInfoFUCHSIA(
+void cvkParseJsonImportMemoryZirconHandleInfoFUCHSIA(
     const cvkJsonContext*                  pContext,
     const cvkJsonValue*                    pObject,
     VkImportMemoryZirconHandleInfoFUCHSIA* pInfo)
@@ -874,7 +849,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryZirconHandleInfoFUCHSIA(
     cvkAppendJsonWork(&work, cvkReadJsonImportMemoryZirconHandleInfoFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportSemaphoreZirconHandleInfoFUCHSIA(
+void cvkParseJsonImportSemaphoreZirconHandleInfoFUCHSIA(
     const cvkJsonContext*                     pContext,
     const cvkJsonValue*                       pObject,
     VkImportSemaphoreZirconHandleInfoFUCHSIA* pInfo)
@@ -885,7 +860,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportSemaphoreZirconHandleInfoFUCHSIA(
     cvkAppendJsonWork(&work, cvkReadJsonImportSemaphoreZirconHandleInfoFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetZirconHandleInfoFUCHSIA(
+void cvkParseJsonMemoryGetZirconHandleInfoFUCHSIA(
     const cvkJsonContext*               pContext,
     const cvkJsonValue*                 pObject,
     VkMemoryGetZirconHandleInfoFUCHSIA* pInfo)
@@ -896,7 +871,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetZirconHandleInfoFUCHSIA(
     cvkAppendJsonWork(&work, cvkReadJsonMemoryGetZirconHandleInfoFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMemoryZirconHandlePropertiesFUCHSIA(
+void cvkParseJsonMemoryZirconHandlePropertiesFUCHSIA(
     const cvkJsonContext*                  pContext,
     const cvkJsonValue*                    pObject,
     VkMemoryZirconHandlePropertiesFUCHSIA* pInfo)
@@ -907,7 +882,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonMemoryZirconHandlePropertiesFUCHSIA(
     cvkAppendJsonWork(&work, cvkReadJsonMemoryZirconHandlePropertiesFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonSemaphoreGetZirconHandleInfoFUCHSIA(
+void cvkParseJsonSemaphoreGetZirconHandleInfoFUCHSIA(
     const cvkJsonContext*                  pContext,
     const cvkJsonValue*                    pObject,
     VkSemaphoreGetZirconHandleInfoFUCHSIA* pInfo)
@@ -918,7 +893,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonSemaphoreGetZirconHandleInfoFUCHSIA(
     cvkAppendJsonWork(&work, cvkReadJsonSemaphoreGetZirconHandleInfoFUCHSIA, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonSysmemColorSpaceFUCHSIA(
+void cvkParseJsonSysmemColorSpaceFUCHSIA(
     const cvkJsonContext*      pContext,
     const cvkJsonValue*        pObject,
     VkSysmemColorSpaceFUCHSIA* pInfo)

@@ -10,7 +10,7 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_xcb.h>
 
-extern CVK_FORCE_INLINE void cvkInitXcbSurfaceCreateInfo(
+void cvkInitXcbSurfaceCreateInfo(
     VkXcbSurfaceCreateInfoKHR* pInfo,
     const void*                pNext,
     VkXcbSurfaceCreateFlagsKHR flags,
@@ -26,7 +26,7 @@ extern CVK_FORCE_INLINE void cvkInitXcbSurfaceCreateInfo(
         .window     = window
     };
 }
-extern CVK_FORCE_INLINE void cvkCreateXcbSurface(
+void cvkCreateXcbSurface(
     VkInstance                   instance,
     const void*                  pNext,
     VkXcbSurfaceCreateFlagsKHR   flags,
@@ -35,19 +35,13 @@ extern CVK_FORCE_INLINE void cvkCreateXcbSurface(
     const VkAllocationCallbacks* pAllocator,
     VkSurfaceKHR*                pSurface)
 {
-    VkXcbSurfaceCreateInfoKHR create_info =
-    {
-        .sType      = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR,
-        .pNext      = pNext,
-        .flags      = flags,
-        .connection = connection,
-        .window     = window
-    };
+    VkXcbSurfaceCreateInfoKHR create_info;
 
+    cvkInitXcbSurfaceCreateInfo(&create_info, pNext, flags, connection, window);
     CVK_CHECK(vkCreateXcbSurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
-extern CVK_FORCE_INLINE VkBool32 cvkGetPhysicalDeviceXcbPresentationSupport(
+VkBool32 cvkGetPhysicalDeviceXcbPresentationSupport(
     VkPhysicalDevice  physicalDevice,
     uint32_t          queueFamilyIndex,
     xcb_connection_t* connection,

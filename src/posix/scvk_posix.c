@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <vulkan/vulkan_sc_core.h>
 
-extern SCVK_FORCE_INLINE void scvkImportFdImage(
+void scvkImportFdImage(
     VkPhysicalDevice                   physicalDevice,
     VkDevice                           device,
     const void*                        pImageNext,
@@ -45,15 +45,7 @@ extern SCVK_FORCE_INLINE void scvkImportFdImage(
     int                           imported_fd;
 
     /* capability: the handle type must be importable for this image description */
-    importable = scvkGetPhysicalDeviceExternalImageImportSupport(physicalDevice,
-                                                                 handleType,
-                                                                 format,
-                                                                 imageType,
-                                                                 tiling,
-                                                                 usage,
-                                                                 flags,
-                                                                 NULL,
-                                                                 &dedicated);
+    importable = scvkGetPhysicalDeviceExternalImageImportSupport(physicalDevice, handleType, format, imageType, tiling, usage, flags, NULL, &dedicated);
     SCVK_ASSERT(importable);
 
     /* create, with the handle type declared */
@@ -96,10 +88,7 @@ extern SCVK_FORCE_INLINE void scvkImportFdImage(
     }
 
     /* select within the external object's memory types */
-    memory_type_index = scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(
-        physicalDevice,
-        memory_requirements.memoryRequirements.memoryTypeBits & external_memory_type_bits,
-        requiredProperties);
+    memory_type_index = scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryRequirements.memoryTypeBits & external_memory_type_bits, requiredProperties);
     SCVK_ASSERT(VK_INVALID != memory_type_index);
 
     /* ownership: a successful import consumes the descriptor, so import a duplicate */
@@ -112,10 +101,7 @@ extern SCVK_FORCE_INLINE void scvkImportFdImage(
     allocate_next = &import_memory_fd_info;
     if (dedicated)
     {
-        scvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info,
-                                            &import_memory_fd_info,
-                                            (*pImage),
-                                            VK_NULL_HANDLE);
+        scvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info, &import_memory_fd_info, (*pImage), VK_NULL_HANDLE);
 
         allocate_next = &memory_dedicated_allocate_info;
     }
@@ -124,7 +110,7 @@ extern SCVK_FORCE_INLINE void scvkImportFdImage(
     /* bind */
     scvkBindImageMemory(device, (*pImage), (*pMemory), VK_NO_OFFSET);
 }
-extern SCVK_FORCE_INLINE void scvkImportDmaBufImage(
+void scvkImportDmaBufImage(
     VkPhysicalDevice             physicalDevice,
     VkDevice                     device,
     const void*                  pImageNext,
@@ -180,17 +166,10 @@ extern SCVK_FORCE_INLINE void scvkImportDmaBufImage(
     SCVK_ASSERT((0 != memoryObjectCount) && (planeCount >= memoryObjectCount));
 
     /* modifier: the layout's plane count must be the modifier's memory plane count */
-    drm_format_modifier_properties_list.drmFormatModifierCount       = SCVK_MAX_DRM_FORMAT_MODIFIERS;
-    drm_format_modifier_properties_list.pDrmFormatModifierProperties = drm_format_modifier_properties;
-
-    scvkGetPhysicalDeviceDrmFormatModifierPropertiesList(physicalDevice,
-                                                         format,
-                                                         NULL,
-                                                         &drm_format_modifier_properties_list);
+    scvkGetPhysicalDeviceDrmFormatModifierPropertiesList(physicalDevice, format, NULL, SCVK_MAX_DRM_FORMAT_MODIFIERS, drm_format_modifier_properties, &drm_format_modifier_properties_list);
 
     modifier_plane_count = 0;
-    for (modifier_index = 0; modifier_index < drm_format_modifier_properties_list.drmFormatModifierCount;
-         ++modifier_index)
+    for (modifier_index = 0; modifier_index < drm_format_modifier_properties_list.drmFormatModifierCount; ++modifier_index)
     {
         if (drmFormatModifier == drm_format_modifier_properties[modifier_index].drmFormatModifier)
         {
@@ -202,12 +181,7 @@ extern SCVK_FORCE_INLINE void scvkImportDmaBufImage(
     /* capability: importable with this modifier; several memory objects need a disjoint image, which cannot be dedicated-only */
     flags = (1 < memoryObjectCount) ? (VkImageCreateFlags)VK_IMAGE_CREATE_DISJOINT_BIT : 0;
 
-    scvkInitPhysicalDeviceImageDrmFormatModifierInfo(&physical_device_image_drm_format_modifier_info,
-                                                     NULL,
-                                                     drmFormatModifier,
-                                                     sharingMode,
-                                                     queueFamilyIndexCount,
-                                                     pQueueFamilyIndices);
+    scvkInitPhysicalDeviceImageDrmFormatModifierInfo(&physical_device_image_drm_format_modifier_info, NULL, drmFormatModifier, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices);
 
     importable = scvkGetPhysicalDeviceExternalImageImportSupport(physicalDevice,
                                                                  VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
@@ -230,39 +204,30 @@ extern SCVK_FORCE_INLINE void scvkImportDmaBufImage(
         plane_layouts[plane_index].arrayPitch = 0;
         plane_layouts[plane_index].depthPitch = 0;
     }
-    scvkInitImageDrmFormatModifierExplicitCreateInfo(&image_drm_format_modifier_explicit_create_info,
-                                                     pImageNext,
-                                                     drmFormatModifier,
-                                                     planeCount,
-                                                     plane_layouts);
-    scvkCreateImageWithExternalMemoryInfo(
-        device,
-        &image_drm_format_modifier_explicit_create_info,
-        (VkExternalMemoryHandleTypeFlags)VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
-        flags,
-        VK_IMAGE_TYPE_2D,
-        format,
-        extent,
-        1,
-        1,
-        VK_SAMPLE_COUNT_1_BIT,
-        VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT,
-        usage,
-        sharingMode,
-        queueFamilyIndexCount,
-        pQueueFamilyIndices,
-        initialLayout,
-        pAllocator,
-        pImage);
+    scvkInitImageDrmFormatModifierExplicitCreateInfo(&image_drm_format_modifier_explicit_create_info, pImageNext, drmFormatModifier, planeCount, plane_layouts);
+    scvkCreateImageWithExternalMemoryInfo(device,
+                                          &image_drm_format_modifier_explicit_create_info,
+                                          (VkExternalMemoryHandleTypeFlags)VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
+                                          flags,
+                                          VK_IMAGE_TYPE_2D,
+                                          format,
+                                          extent,
+                                          1,
+                                          1,
+                                          VK_SAMPLE_COUNT_1_BIT,
+                                          VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT,
+                                          usage,
+                                          sharingMode,
+                                          queueFamilyIndexCount,
+                                          pQueueFamilyIndices,
+                                          initialLayout,
+                                          pAllocator,
+                                          pImage);
 
     /* constraint: each memory object's memory types */
     for (object_index = 0; object_index < memoryObjectCount; ++object_index)
     {
-        scvkGetMemoryFdProperties(device,
-                                  VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
-                                  pMemoryObjectFds[object_index],
-                                  NULL,
-                                  &memory_fd_properties);
+        scvkGetMemoryFdProperties(device, VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT, pMemoryObjectFds[object_index], NULL, &memory_fd_properties);
 
         object_memory_type_bits[object_index] = memory_fd_properties.memoryTypeBits;
     }
@@ -271,38 +236,25 @@ extern SCVK_FORCE_INLINE void scvkImportDmaBufImage(
     {
         /* one memory object: whole-image requirements with dedicated requirements chained */
         scvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
-        scvkGetImageMemoryRequirementsInfo2(device,
-                                            NULL,
-                                            (*pImage),
-                                            &memory_dedicated_requirements,
-                                            &memory_requirements);
+        scvkGetImageMemoryRequirementsInfo2(device, NULL, (*pImage), &memory_dedicated_requirements, &memory_requirements);
         SCVK_ASSERT(pMemoryObjectSizes[0] >= memory_requirements.memoryRequirements.size);
 
         if (memory_dedicated_requirements.requiresDedicatedAllocation)
         {
             dedicated = VK_TRUE;
         }
-        memory_type_index = scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(
-            physicalDevice,
-            memory_requirements.memoryRequirements.memoryTypeBits & object_memory_type_bits[0],
-            requiredProperties);
+        memory_type_index = scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryRequirements.memoryTypeBits & object_memory_type_bits[0], requiredProperties);
         SCVK_ASSERT(VK_INVALID != memory_type_index);
 
         imported_fd = dup(pMemoryObjectFds[0]);
         SCVK_ASSERT(0 <= imported_fd);
 
-        scvkInitImportMemoryFdInfo(&import_memory_fd_info,
-                                   pMemoryNext,
-                                   VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
-                                   imported_fd);
+        scvkInitImportMemoryFdInfo(&import_memory_fd_info, pMemoryNext, VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT, imported_fd);
 
         allocate_next = &import_memory_fd_info;
         if (dedicated)
         {
-            scvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info,
-                                                &import_memory_fd_info,
-                                                (*pImage),
-                                                VK_NULL_HANDLE);
+            scvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info, &import_memory_fd_info, (*pImage), VK_NULL_HANDLE);
 
             allocate_next = &memory_dedicated_allocate_info;
         }
@@ -320,36 +272,21 @@ extern SCVK_FORCE_INLINE void scvkImportDmaBufImage(
 
         plane_aspects[plane_index] = (VkImageAspectFlagBits)(VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT << plane_index);
 
-        scvkGetImagePlaneMemoryRequirementsInfo(device,
-                                                NULL,
-                                                plane_aspects[plane_index],
-                                                (*pImage),
-                                                NULL,
-                                                &memory_requirements);
+        scvkGetImagePlaneMemoryRequirementsInfo(device, NULL, plane_aspects[plane_index], (*pImage), NULL, &memory_requirements);
         SCVK_ASSERT(pMemoryObjectSizes[object_index] >= memory_requirements.memoryRequirements.size);
 
         object_memory_type_bits[object_index] &= memory_requirements.memoryRequirements.memoryTypeBits;
     }
     for (object_index = 0; object_index < memoryObjectCount; ++object_index)
     {
-        memory_type_index = scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice,
-                                                                           object_memory_type_bits[object_index],
-                                                                           requiredProperties);
+        memory_type_index = scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, object_memory_type_bits[object_index], requiredProperties);
         SCVK_ASSERT(VK_INVALID != memory_type_index);
 
         imported_fd = dup(pMemoryObjectFds[object_index]);
         SCVK_ASSERT(0 <= imported_fd);
 
-        scvkInitImportMemoryFdInfo(&import_memory_fd_info,
-                                   pMemoryNext,
-                                   VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
-                                   imported_fd);
-        scvkAllocateMemory(device,
-                           &import_memory_fd_info,
-                           pMemoryObjectSizes[object_index],
-                           memory_type_index,
-                           pAllocator,
-                           &pMemories[object_index]);
+        scvkInitImportMemoryFdInfo(&import_memory_fd_info, pMemoryNext, VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT, imported_fd);
+        scvkAllocateMemory(device, &import_memory_fd_info, pMemoryObjectSizes[object_index], memory_type_index, pAllocator, &pMemories[object_index]);
     }
     for (plane_index = 0; plane_index < planeCount; ++plane_index)
     {
@@ -359,7 +296,7 @@ extern SCVK_FORCE_INLINE void scvkImportDmaBufImage(
     }
     scvkBindPlaneImageMemories(device, planeCount, NULL, plane_aspects, plane_images, plane_memories, plane_offsets);
 }
-extern SCVK_FORCE_INLINE void scvkImportFdBuffer(
+void scvkImportFdBuffer(
     VkPhysicalDevice                   physicalDevice,
     VkDevice                           device,
     const void*                        pBufferNext,
@@ -391,8 +328,7 @@ extern SCVK_FORCE_INLINE void scvkImportFdBuffer(
     int                           imported_fd;
 
     /* capability: the handle type must be importable for this buffer description */
-    importable =
-        scvkGetPhysicalDeviceExternalBufferImportSupport(physicalDevice, NULL, flags, usage, handleType, &dedicated);
+    importable = scvkGetPhysicalDeviceExternalBufferImportSupport(physicalDevice, NULL, flags, usage, handleType, &dedicated);
     SCVK_ASSERT(importable);
 
     /* create, with the handle type declared */
@@ -419,11 +355,7 @@ extern SCVK_FORCE_INLINE void scvkImportFdBuffer(
 
     /* requirements, with dedicated requirements chained */
     scvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
-    scvkGetBufferMemoryRequirementsInfo2(device,
-                                         NULL,
-                                         (*pBuffer),
-                                         &memory_dedicated_requirements,
-                                         &memory_requirements);
+    scvkGetBufferMemoryRequirementsInfo2(device, NULL, (*pBuffer), &memory_dedicated_requirements, &memory_requirements);
     SCVK_ASSERT(allocationSize >= memory_requirements.memoryRequirements.size);
 
     if (memory_dedicated_requirements.requiresDedicatedAllocation)
@@ -432,10 +364,7 @@ extern SCVK_FORCE_INLINE void scvkImportFdBuffer(
     }
 
     /* select within the external object's memory types */
-    memory_type_index = scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(
-        physicalDevice,
-        memory_requirements.memoryRequirements.memoryTypeBits & external_memory_type_bits,
-        requiredProperties);
+    memory_type_index = scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryRequirements.memoryTypeBits & external_memory_type_bits, requiredProperties);
     SCVK_ASSERT(VK_INVALID != memory_type_index);
 
     /* ownership: a successful import consumes the descriptor, so import a duplicate */
@@ -448,10 +377,7 @@ extern SCVK_FORCE_INLINE void scvkImportFdBuffer(
     allocate_next = &import_memory_fd_info;
     if (dedicated)
     {
-        scvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info,
-                                            &import_memory_fd_info,
-                                            VK_NULL_HANDLE,
-                                            (*pBuffer));
+        scvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info, &import_memory_fd_info, VK_NULL_HANDLE, (*pBuffer));
 
         allocate_next = &memory_dedicated_allocate_info;
     }
@@ -460,7 +386,7 @@ extern SCVK_FORCE_INLINE void scvkImportFdBuffer(
     /* bind */
     scvkBindBufferMemory(device, (*pBuffer), (*pMemory), VK_NO_OFFSET);
 }
-extern SCVK_FORCE_INLINE void scvkExportFdImage(
+void scvkExportFdImage(
     VkPhysicalDevice                   physicalDevice,
     VkDevice                           device,
     const void*                        pImageNext,
@@ -494,15 +420,7 @@ extern SCVK_FORCE_INLINE void scvkExportFdImage(
     uint32_t                      memory_type_index;
 
     /* capability: the handle type must be exportable for this image description */
-    exportable = scvkGetPhysicalDeviceExternalImageExportSupport(physicalDevice,
-                                                                 handleType,
-                                                                 format,
-                                                                 imageType,
-                                                                 tiling,
-                                                                 usage,
-                                                                 flags,
-                                                                 NULL,
-                                                                 &dedicated);
+    exportable = scvkGetPhysicalDeviceExternalImageExportSupport(physicalDevice, handleType, format, imageType, tiling, usage, flags, NULL, &dedicated);
     SCVK_ASSERT(exportable);
 
     /* create, with the handle type declared */
@@ -534,10 +452,7 @@ extern SCVK_FORCE_INLINE void scvkExportFdImage(
     }
 
     /* select */
-    memory_type_index =
-        scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice,
-                                                       memory_requirements.memoryRequirements.memoryTypeBits,
-                                                       requiredProperties);
+    memory_type_index = scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryRequirements.memoryTypeBits, requiredProperties);
     SCVK_ASSERT(VK_INVALID != memory_type_index);
 
     /* allocate: export info heads the chain, dedicated info behind it when required */
@@ -548,19 +463,13 @@ extern SCVK_FORCE_INLINE void scvkExportFdImage(
 
         allocate_next = &memory_dedicated_allocate_info;
     }
-    scvkAllocateExportMemory(device,
-                             allocate_next,
-                             (VkExternalMemoryHandleTypeFlags)handleType,
-                             memory_requirements.memoryRequirements.size,
-                             memory_type_index,
-                             pAllocator,
-                             pMemory);
+    scvkAllocateExportMemory(device, allocate_next, (VkExternalMemoryHandleTypeFlags)handleType, memory_requirements.memoryRequirements.size, memory_type_index, pAllocator, pMemory);
 
     /* bind, then export */
     scvkBindImageMemory(device, (*pImage), (*pMemory), VK_NO_OFFSET);
     scvkGetMemoryFd(device, NULL, (*pMemory), handleType, pFd);
 }
-extern SCVK_FORCE_INLINE void scvkExportFdBuffer(
+void scvkExportFdBuffer(
     VkPhysicalDevice                   physicalDevice,
     VkDevice                           device,
     const void*                        pBufferNext,
@@ -587,8 +496,7 @@ extern SCVK_FORCE_INLINE void scvkExportFdBuffer(
     uint32_t                      memory_type_index;
 
     /* capability: the handle type must be exportable for this buffer description */
-    exportable =
-        scvkGetPhysicalDeviceExternalBufferExportSupport(physicalDevice, NULL, flags, usage, handleType, &dedicated);
+    exportable = scvkGetPhysicalDeviceExternalBufferExportSupport(physicalDevice, NULL, flags, usage, handleType, &dedicated);
     SCVK_ASSERT(exportable);
 
     /* create, with the handle type declared */
@@ -606,21 +514,14 @@ extern SCVK_FORCE_INLINE void scvkExportFdBuffer(
 
     /* requirements, with dedicated requirements chained */
     scvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
-    scvkGetBufferMemoryRequirementsInfo2(device,
-                                         NULL,
-                                         (*pBuffer),
-                                         &memory_dedicated_requirements,
-                                         &memory_requirements);
+    scvkGetBufferMemoryRequirementsInfo2(device, NULL, (*pBuffer), &memory_dedicated_requirements, &memory_requirements);
     if (memory_dedicated_requirements.requiresDedicatedAllocation)
     {
         dedicated = VK_TRUE;
     }
 
     /* select */
-    memory_type_index =
-        scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice,
-                                                       memory_requirements.memoryRequirements.memoryTypeBits,
-                                                       requiredProperties);
+    memory_type_index = scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryRequirements.memoryTypeBits, requiredProperties);
     SCVK_ASSERT(VK_INVALID != memory_type_index);
 
     /* allocate: export info heads the chain, dedicated info behind it when required */
@@ -631,13 +532,7 @@ extern SCVK_FORCE_INLINE void scvkExportFdBuffer(
 
         allocate_next = &memory_dedicated_allocate_info;
     }
-    scvkAllocateExportMemory(device,
-                             allocate_next,
-                             (VkExternalMemoryHandleTypeFlags)handleType,
-                             memory_requirements.memoryRequirements.size,
-                             memory_type_index,
-                             pAllocator,
-                             pMemory);
+    scvkAllocateExportMemory(device, allocate_next, (VkExternalMemoryHandleTypeFlags)handleType, memory_requirements.memoryRequirements.size, memory_type_index, pAllocator, pMemory);
 
     /* bind, then export */
     scvkBindBufferMemory(device, (*pBuffer), (*pMemory), VK_NO_OFFSET);

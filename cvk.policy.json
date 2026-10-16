@@ -24,6 +24,70 @@
   "shared_extender_members": {
     "VkPresentTimesInfoGOOGLE": ["swapchainCount"]
   },
+  "member_docs": {
+    "VkCuModuleCreateInfoNVX::dataSize": "Size in bytes of the module binary pointed to by pData.",
+    "VkCuModuleCreateInfoNVX::pData": "Pointer to the CUDA module binary to import.",
+    "VkCuFunctionCreateInfoNVX::module": "Imported module containing the kernel.",
+    "VkCuFunctionCreateInfoNVX::pName": "Null-terminated name of the kernel entry point in module.",
+    "VkCuLaunchInfoNVX::function": "Imported kernel to launch.",
+    "VkCuLaunchInfoNVX::gridDimX": "Number of thread blocks in the X dimension of the grid.",
+    "VkCuLaunchInfoNVX::gridDimY": "Number of thread blocks in the Y dimension of the grid.",
+    "VkCuLaunchInfoNVX::gridDimZ": "Number of thread blocks in the Z dimension of the grid.",
+    "VkCuLaunchInfoNVX::blockDimX": "Number of threads in the X dimension of each block.",
+    "VkCuLaunchInfoNVX::blockDimY": "Number of threads in the Y dimension of each block.",
+    "VkCuLaunchInfoNVX::blockDimZ": "Number of threads in the Z dimension of each block.",
+    "VkCuLaunchInfoNVX::sharedMemBytes": "Bytes of dynamic shared memory allocated to each block.",
+    "VkCuLaunchInfoNVX::paramCount": "Number of kernel parameter pointers in pParams.",
+    "VkCuLaunchInfoNVX::pParams": "Pointer to an array of paramCount pointers to the kernel parameter values.",
+    "VkCuLaunchInfoNVX::extraCount": "Number of launch option entries in pExtras.",
+    "VkCuLaunchInfoNVX::pExtras": "Pointer to an array of extraCount additional launch options.",
+    "VkDescriptorSetBindingReferenceVALVE::descriptorSetLayout": "Descriptor set layout containing the binding.",
+    "VkDescriptorSetBindingReferenceVALVE::binding": "Binding number within descriptorSetLayout.",
+    "VkSurfaceCreateInfoOHOS::window": "Pointer to the OHNativeWindow to associate the surface with.",
+    "VkAmigoProfilingSubmitInfoSEC::firstDrawTimestamp": "Timestamp of the frame's first draw call, reported to the Amigo profiler.",
+    "VkAmigoProfilingSubmitInfoSEC::swapBufferTimestamp": "Timestamp of the frame's buffer swap, reported to the Amigo profiler.",
+    "VkCuModuleTexturingModeCreateInfoNVX::use64bitTexturing": "VK_TRUE if the module uses 64-bit texture handles.",
+    "VkDisplayPresentInfoKHR::persistent": "VK_TRUE to enable buffered refresh on displays that support it.",
+    "VkImageTilingControlCreateInfoEXT::tilingControl": "VkImageTilingControlEXT value selecting the tiling layout used for the image.",
+    "VkThrottleHintSubmitInfoSEC::throttleHint": "VkThrottleHintTypeSEC hint describing how the submission may be throttled.",
+    "vkCmdBindVertexBuffers3KHR::pBindingInfos": "Pointer to an array of bindingCount VkBindVertexBuffer3InfoKHR structures giving each binding's address range and stride.",
+    "vkCmdEndTransformFeedback2EXT::firstCounterRange": "Index of the first transform feedback buffer corresponding to pCounterInfos[0].",
+    "vkCmdCuLaunchKernelNVX::commandBuffer": "Command buffer into which the command is recorded.",
+    "vkCmdSetPerformanceMarkerINTEL::commandBuffer": "Command buffer into which the command is recorded.",
+    "vkCreateCuFunctionNVX::device": "Logical device that creates the function.",
+    "vkCreateCuFunctionNVX::pFunction": "Pointer to a VkCuFunctionNVX handle in which the created function is returned.",
+    "vkCreateCuModuleNVX::device": "Logical device that creates the module.",
+    "vkCreateCuModuleNVX::pModule": "Pointer to a VkCuModuleNVX handle in which the created module is returned.",
+    "vkDestroyCuFunctionNVX::device": "Logical device that destroys the function.",
+    "vkDestroyCuFunctionNVX::function": "Function to destroy.",
+    "vkDestroyCuModuleNVX::device": "Logical device that destroys the module.",
+    "vkDestroyCuModuleNVX::module": "Module to destroy.",
+    "vkGetDescriptorSetHostMappingVALVE::device": "Logical device that owns the descriptor set.",
+    "vkGetDescriptorSetHostMappingVALVE::descriptorSet": "Descriptor set whose host mapping is queried.",
+    "vkGetDescriptorSetHostMappingVALVE::ppData": "Pointer to a pointer in which the host address of the descriptor set's storage is returned.",
+    "vkGetDescriptorSetLayoutHostMappingInfoVALVE::device": "Logical device that owns the descriptor set layout.",
+    "vkGetDescriptorSetLayoutHostMappingInfoVALVE::pHostMapping": "Pointer to a VkDescriptorSetLayoutHostMappingInfoVALVE structure in which the binding's descriptor offset and size are returned.",
+    "vkGetDeviceProcAddr::device": "Logical device the returned entry point dispatches to.",
+    "vkGetDeviceProcAddr::pName": "Null-terminated name of the command to obtain.",
+    "vkGetDrmDisplayEXT::display": "Pointer to a VkDisplayKHR handle in which the display for connectorId is returned.",
+    "vkGetLatencyTimingsLegacyNV::device": "Logical device whose latency timings are queried.",
+    "vkGetLatencyTimingsLegacyNV::pTimings": "Pointer to storage in which the latency timing reports are returned.",
+    "vkGetSleepStatusLegacyNV::device": "Logical device whose low latency sleep status is queried.",
+    "vkGetSleepStatusLegacyNV::pLowLatencyMode": "Pointer to a VkBool32 in which VK_TRUE is returned if low latency mode is enabled.",
+    "vkLatencySleepLegacyNV::device": "Logical device that sleeps until the next frame should start.",
+    "vkLatencySleepLegacyNV::signalSemaphore": "Timeline semaphore signaled when the application should resume.",
+    "vkLatencySleepLegacyNV::value": "Value signalSemaphore is set to when the sleep completes.",
+    "vkQueueNotifyOutOfBandLegacyNV::queue": "Queue being placed out of band.",
+    "vkQueueNotifyOutOfBandLegacyNV::queueType": "VkOutOfBandQueueTypeNV value identifying the kind of out-of-band work.",
+    "vkSetLatencyMarkerLegacyNV::device": "Logical device for which the latency marker is set.",
+    "vkSetLatencyMarkerLegacyNV::frameID": "Application-provided identifier of the frame the marker belongs to.",
+    "vkSetLatencyMarkerLegacyNV::marker": "VkLatencyMarkerNV value identifying the timing point being recorded.",
+    "vkSetLatencySleepModeLegacyNV::device": "Logical device whose low latency mode is set.",
+    "vkSetLatencySleepModeLegacyNV::lowLatencyBoost": "VK_TRUE to let the GPU run at maximum clocks to reduce latency.",
+    "vkSetLatencySleepModeLegacyNV::lowLatencyMode": "VK_TRUE to enable low latency mode.",
+    "vkSetLatencySleepModeLegacyNV::minimumIntervalUs": "Minimum number of microseconds between presents; 0 disables frame limiting.",
+    "vkShutdownLatencyDeviceLegacyNV::device": "Logical device whose latency tracking is shut down."
+  },
   "role_overrides": {
     "vkGetExternalComputeQueueDataNV::params": "I",
     "vkSetGpaDeviceClockModeAMD::pInfo": "I"
@@ -48,6 +112,9 @@
       },
       "by_value": {
         "pScissors": "scissor"
+      },
+      "docs": {
+        "scissor": "Scissor rectangle for viewport zero."
       }
     },
     "vkCmdSetViewport": {
@@ -58,6 +125,9 @@
       },
       "by_value": {
         "pViewports": "viewport"
+      },
+      "docs": {
+        "viewport": "Bounds and depth range of viewport zero."
       }
     }
   },

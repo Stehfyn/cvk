@@ -60,7 +60,7 @@
  * \param[in] itemsPerInvocation Items processed by one invocation on this axis
  * \param[in] localSize          Invocations per workgroup on this axis
  *
- * \retval    0..itemCount   Required workgroups, including any partial final group.
+ * \retval uint32_t Required workgroups, including any partial final group.
  */
 uint32_t cvkGetWorkgroupCount(uint32_t itemCount, uint32_t itemsPerInvocation, uint32_t localSize)
 {

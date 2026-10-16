@@ -25,7 +25,7 @@ void scvkReadJsonExternalFormatQNX(
     pContext = pWork->pContext;
     pInfo    = (VkExternalFormatQNX*)pOutput;
 
-    scvkZeroMemory(pInfo, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_QNX;
 
@@ -38,6 +38,7 @@ void scvkReadJsonExternalFormatQNX(
 
     pInfo->externalFormat = scvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -55,7 +56,7 @@ void scvkReadJsonImportScreenBufferInfoQNX(
     pContext = pWork->pContext;
     pInfo    = (VkImportScreenBufferInfoQNX*)pOutput;
 
-    scvkZeroMemory(pInfo, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_SCREEN_BUFFER_INFO_QNX;
 
@@ -65,6 +66,7 @@ void scvkReadJsonImportScreenBufferInfoQNX(
         pInfo->pNext = scvkScheduleJsonStructureChain(pWork, value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -82,7 +84,7 @@ void scvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
     pContext = pWork->pContext;
     pInfo    = (VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX*)pOutput;
 
-    scvkZeroMemory(pInfo, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_SCREEN_BUFFER_FEATURES_QNX;
 
@@ -95,6 +97,7 @@ void scvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
 
     pInfo->screenBufferImport = scvkGetJsonBool32(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -112,7 +115,7 @@ void scvkReadJsonScreenBufferFormatPropertiesQNX(
     pContext = pWork->pContext;
     pInfo    = (VkScreenBufferFormatPropertiesQNX*)pOutput;
 
-    scvkZeroMemory(pInfo, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_FORMAT_PROPERTIES_QNX;
 
@@ -164,6 +167,7 @@ void scvkReadJsonScreenBufferFormatPropertiesQNX(
         pInfo->suggestedYChromaOffset = scvkParseJsonChromaLocation(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -181,7 +185,7 @@ void scvkReadJsonScreenBufferPropertiesQNX(
     pContext = pWork->pContext;
     pInfo    = (VkScreenBufferPropertiesQNX*)pOutput;
 
-    scvkZeroMemory(pInfo, sizeof(*pInfo));
+    cvkZeroMemory(pInfo, sizeof(*pInfo));
 
     pInfo->sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_PROPERTIES_QNX;
 
@@ -198,7 +202,7 @@ void scvkReadJsonScreenBufferPropertiesQNX(
 
     pInfo->memoryTypeBits = (uint32_t)scvkParseJsonUint64(value);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonExternalFormatQNX(
+void scvkParseJsonExternalFormatQNX(
     const scvkJsonContext* pContext,
     const scvkJsonValue*   pObject,
     VkExternalFormatQNX*   pInfo)
@@ -209,7 +213,7 @@ extern SCVK_FORCE_INLINE void scvkParseJsonExternalFormatQNX(
     scvkAppendJsonWork(&work, scvkReadJsonExternalFormatQNX, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonImportScreenBufferInfoQNX(
+void scvkParseJsonImportScreenBufferInfoQNX(
     const scvkJsonContext*       pContext,
     const scvkJsonValue*         pObject,
     VkImportScreenBufferInfoQNX* pInfo)
@@ -220,7 +224,7 @@ extern SCVK_FORCE_INLINE void scvkParseJsonImportScreenBufferInfoQNX(
     scvkAppendJsonWork(&work, scvkReadJsonImportScreenBufferInfoQNX, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
+void scvkParseJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
     const scvkJsonContext*                                 pContext,
     const scvkJsonValue*                                   pObject,
     VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pInfo)
@@ -231,7 +235,7 @@ extern SCVK_FORCE_INLINE void scvkParseJsonPhysicalDeviceExternalMemoryScreenBuf
     scvkAppendJsonWork(&work, scvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonScreenBufferFormatPropertiesQNX(
+void scvkParseJsonScreenBufferFormatPropertiesQNX(
     const scvkJsonContext*             pContext,
     const scvkJsonValue*               pObject,
     VkScreenBufferFormatPropertiesQNX* pInfo)
@@ -242,7 +246,7 @@ extern SCVK_FORCE_INLINE void scvkParseJsonScreenBufferFormatPropertiesQNX(
     scvkAppendJsonWork(&work, scvkReadJsonScreenBufferFormatPropertiesQNX, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonScreenBufferPropertiesQNX(
+void scvkParseJsonScreenBufferPropertiesQNX(
     const scvkJsonContext*       pContext,
     const scvkJsonValue*         pObject,
     VkScreenBufferPropertiesQNX* pInfo)

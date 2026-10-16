@@ -10,18 +10,18 @@
 #include <vulkan/vulkan_beta.h>
 #include <vulkan/vulkan_core.h>
 
+/*************************************************************************************************/
 /**
  * \brief Reads up to the declared native array capacity.
- * \param[in]  pContext  Parsing document and arena.
- * \param[in]  pValue    JSON array, or NULL.
- * \param[out] pOutput   Native element storage, already zeroed.
- * \param[in]  capacity  Native element count.
- * \retval None No value is returned.
+ *
+ * \param[in]  pContext   Parsing document and arena.
+ * \param[in]  pValue     JSON array, or NULL.
+ * \param[out] pOutput    Native element storage, already zeroed.
+ * \param[in]  capacity   Native element count.
+ *
+ * \retval     None
  */
-static CVK_FORCE_INLINE void cvkReadJsonUint32FixedArray(const cvkJsonContext* pContext,
-                                                         const cvkJsonValue*   pValue,
-                                                         uint32_t*             pOutput,
-                                                         uint32_t              capacity);
+static CVK_FORCE_INLINE void cvkReadJsonUint32FixedArray(const cvkJsonContext* pContext, const cvkJsonValue* pValue, uint32_t* pOutput, uint32_t capacity);
 
 /*************************************************************************************************/
 /**
@@ -106,6 +106,7 @@ void cvkReadJsonAccelerationStructureDenseGeometryFormatTrianglesDataAMDX(
         pInfo->format = cvkParseJsonCompressedTriangleFormatAMDX(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -149,7 +150,7 @@ void cvkReadJsonAccelerationStructureTrianglesDisplacementMicromapNV(
     {
         cvkAppendJsonWork(pWork, cvkReadJsonDeviceOrHostAddressConst, value, &pInfo->displacementBiasAndScaleBuffer);
     }
-    value = cvkGetJsonMember(&pContext->document, pObject, "displacementBiasAndScaleStride");
+    value                                 = cvkGetJsonMember(&pContext->document, pObject, "displacementBiasAndScaleStride");
 
     pInfo->displacementBiasAndScaleStride = (VkDeviceSize)cvkParseJsonUint64(value);
 
@@ -167,7 +168,7 @@ void cvkReadJsonAccelerationStructureTrianglesDisplacementMicromapNV(
     {
         cvkAppendJsonWork(pWork, cvkReadJsonDeviceOrHostAddressConst, value, &pInfo->displacedMicromapPrimitiveFlags);
     }
-    value = cvkGetJsonMember(&pContext->document, pObject, "displacedMicromapPrimitiveFlagsStride");
+    value                                        = cvkGetJsonMember(&pContext->document, pObject, "displacedMicromapPrimitiveFlagsStride");
 
     pInfo->displacedMicromapPrimitiveFlagsStride = (VkDeviceSize)cvkParseJsonUint64(value);
 
@@ -198,15 +199,10 @@ void cvkReadJsonAccelerationStructureTrianglesDisplacementMicromapNV(
     {
         if (CVK_JSON_ARRAY == value->kind)
         {
-            storage = cvkAllocateArena(pContext->pArena,
-                                       value->childCount * sizeof(VkMicromapUsageEXT),
-                                       CVK_JSON_ARENA_ALIGNMENT);
+            storage = cvkAllocateArena(pContext->pArena, value->childCount * sizeof(VkMicromapUsageEXT), CVK_JSON_ARENA_ALIGNMENT);
             for (index = 0; index < value->childCount; ++index)
             {
-                cvkAppendJsonWork(pWork,
-                                  cvkReadJsonMicromapUsageEXT,
-                                  cvkGetJsonElement(&pContext->document, value, index),
-                                  &((VkMicromapUsageEXT*)storage)[index]);
+                cvkAppendJsonWork(pWork, cvkReadJsonMicromapUsageEXT, cvkGetJsonElement(&pContext->document, value, index), &((VkMicromapUsageEXT*)storage)[index]);
             }
             pInfo->pUsageCounts = (const VkMicromapUsageEXT*)storage;
         }
@@ -216,20 +212,12 @@ void cvkReadJsonAccelerationStructureTrianglesDisplacementMicromapNV(
     {
         if (CVK_JSON_ARRAY == value->kind)
         {
-            storage = cvkAllocateArena(pContext->pArena,
-                                       value->childCount * sizeof(VkMicromapUsageEXT*),
-                                       CVK_JSON_ARENA_ALIGNMENT);
+            storage = cvkAllocateArena(pContext->pArena, value->childCount * sizeof(VkMicromapUsageEXT*), CVK_JSON_ARENA_ALIGNMENT);
             for (index = 0; index < value->childCount; ++index)
             {
-                ((VkMicromapUsageEXT**)storage)[index] =
-                    (VkMicromapUsageEXT*)cvkAllocateArena(pContext->pArena,
-                                                          sizeof(VkMicromapUsageEXT),
-                                                          CVK_JSON_ARENA_ALIGNMENT);
+                ((VkMicromapUsageEXT**)storage)[index] = (VkMicromapUsageEXT*)cvkAllocateArena(pContext->pArena, sizeof(VkMicromapUsageEXT), CVK_JSON_ARENA_ALIGNMENT);
 
-                cvkAppendJsonWork(pWork,
-                                  cvkReadJsonMicromapUsageEXT,
-                                  cvkGetJsonElement(&pContext->document, value, index),
-                                  ((VkMicromapUsageEXT**)storage)[index]);
+                cvkAppendJsonWork(pWork, cvkReadJsonMicromapUsageEXT, cvkGetJsonElement(&pContext->document, value, index), ((VkMicromapUsageEXT**)storage)[index]);
             }
             pInfo->ppUsageCounts = (const VkMicromapUsageEXT* const*)storage;
         }
@@ -242,6 +230,7 @@ void cvkReadJsonAccelerationStructureTrianglesDisplacementMicromapNV(
         (void)cvkResolveJsonHandle(pContext, "VkMicromapEXT", value, sizeof(VkMicromapEXT), (void*)&pInfo->micromap);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -281,6 +270,7 @@ void cvkReadJsonCudaFunctionCreateInfoNV(
         pInfo->pName = cvkCopyJsonString(pContext->pArena, value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -312,11 +302,7 @@ void cvkReadJsonCudaLaunchInfoNV(
     {
         pInfo->function = VK_NULL_HANDLE;
 
-        (void)cvkResolveJsonHandle(pContext,
-                                   "VkCudaFunctionNV",
-                                   value,
-                                   sizeof(VkCudaFunctionNV),
-                                   (void*)&pInfo->function);
+        (void)cvkResolveJsonHandle(pContext, "VkCudaFunctionNV", value, sizeof(VkCudaFunctionNV), (void*)&pInfo->function);
     }
     value                 = cvkGetJsonMember(&pContext->document, pObject, "gridDimX");
 
@@ -354,6 +340,7 @@ void cvkReadJsonCudaLaunchInfoNV(
 
     pInfo->extraCount     = (size_t)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -384,6 +371,7 @@ void cvkReadJsonCudaModuleCreateInfoNV(
 
     pInfo->dataSize = (size_t)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -411,6 +399,7 @@ void cvkReadJsonDeviceOrHostAddressConstAMDX(
         pInfo->deviceAddress = (VkDeviceAddress)cvkParseJsonUint64(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -443,6 +432,7 @@ void cvkReadJsonDispatchGraphCountInfoAMDX(
 
     pInfo->stride = cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -479,6 +469,7 @@ void cvkReadJsonDispatchGraphInfoAMDX(
 
     pInfo->payloadStride = cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -520,15 +511,10 @@ void cvkReadJsonExecutionGraphPipelineCreateInfoAMDX(
     {
         if (CVK_JSON_ARRAY == value->kind)
         {
-            storage = cvkAllocateArena(pContext->pArena,
-                                       value->childCount * sizeof(VkPipelineShaderStageCreateInfo),
-                                       CVK_JSON_ARENA_ALIGNMENT);
+            storage = cvkAllocateArena(pContext->pArena, value->childCount * sizeof(VkPipelineShaderStageCreateInfo), CVK_JSON_ARENA_ALIGNMENT);
             for (index = 0; index < value->childCount; ++index)
             {
-                cvkAppendJsonWork(pWork,
-                                  cvkReadJsonPipelineShaderStageCreateInfo,
-                                  cvkGetJsonElement(&pContext->document, value, index),
-                                  &((VkPipelineShaderStageCreateInfo*)storage)[index]);
+                cvkAppendJsonWork(pWork, cvkReadJsonPipelineShaderStageCreateInfo, cvkGetJsonElement(&pContext->document, value, index), &((VkPipelineShaderStageCreateInfo*)storage)[index]);
             }
             pInfo->pStages = (const VkPipelineShaderStageCreateInfo*)storage;
         }
@@ -547,21 +533,20 @@ void cvkReadJsonExecutionGraphPipelineCreateInfoAMDX(
     {
         pInfo->layout = VK_NULL_HANDLE;
 
-        (void)
-            cvkResolveJsonHandle(pContext, "VkPipelineLayout", value, sizeof(VkPipelineLayout), (void*)&pInfo->layout);
+        (void)cvkResolveJsonHandle(pContext, "VkPipelineLayout", value, sizeof(VkPipelineLayout), (void*)&pInfo->layout);
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "basePipelineHandle");
     if (!cvkIsJsonNull(value))
     {
         pInfo->basePipelineHandle = VK_NULL_HANDLE;
 
-        (void)
-            cvkResolveJsonHandle(pContext, "VkPipeline", value, sizeof(VkPipeline), (void*)&pInfo->basePipelineHandle);
+        (void)cvkResolveJsonHandle(pContext, "VkPipeline", value, sizeof(VkPipeline), (void*)&pInfo->basePipelineHandle);
     }
     value                    = cvkGetJsonMember(&pContext->document, pObject, "basePipelineIndex");
 
     pInfo->basePipelineIndex = (int32_t)cvkParseJsonInt64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -600,6 +585,7 @@ void cvkReadJsonExecutionGraphPipelineScratchSizeAMDX(
 
     pInfo->sizeGranularity = (VkDeviceSize)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -630,6 +616,7 @@ void cvkReadJsonPhysicalDeviceCudaKernelLaunchFeaturesNV(
 
     pInfo->cudaKernelLaunchFeatures = cvkGetJsonBool32(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -664,6 +651,7 @@ void cvkReadJsonPhysicalDeviceCudaKernelLaunchPropertiesNV(
 
     pInfo->computeCapabilityMajor = (uint32_t)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -694,6 +682,7 @@ void cvkReadJsonPhysicalDeviceDenseGeometryFormatFeaturesAMDX(
 
     pInfo->denseGeometryFormat = cvkGetJsonBool32(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -724,6 +713,7 @@ void cvkReadJsonPhysicalDeviceDisplacementMicromapFeaturesNV(
 
     pInfo->displacementMicromap = cvkGetJsonBool32(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -750,10 +740,11 @@ void cvkReadJsonPhysicalDeviceDisplacementMicromapPropertiesNV(
     {
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
-    value = cvkGetJsonMember(&pContext->document, pObject, "maxDisplacementMicromapSubdivisionLevel");
+    value                                          = cvkGetJsonMember(&pContext->document, pObject, "maxDisplacementMicromapSubdivisionLevel");
 
     pInfo->maxDisplacementMicromapSubdivisionLevel = (uint32_t)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -780,66 +771,67 @@ void cvkReadJsonPhysicalDevicePortabilitySubsetFeatures(
     {
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
-    value = cvkGetJsonMember(&pContext->document, pObject, "constantAlphaColorBlendFactors");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "constantAlphaColorBlendFactors");
 
-    pInfo->constantAlphaColorBlendFactors = cvkGetJsonBool32(value);
+    pInfo->constantAlphaColorBlendFactors         = cvkGetJsonBool32(value);
 
-    value                                 = cvkGetJsonMember(&pContext->document, pObject, "events");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "events");
 
-    pInfo->events                         = cvkGetJsonBool32(value);
+    pInfo->events                                 = cvkGetJsonBool32(value);
 
-    value = cvkGetJsonMember(&pContext->document, pObject, "imageViewFormatReinterpretation");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "imageViewFormatReinterpretation");
 
-    pInfo->imageViewFormatReinterpretation = cvkGetJsonBool32(value);
+    pInfo->imageViewFormatReinterpretation        = cvkGetJsonBool32(value);
 
-    value                                  = cvkGetJsonMember(&pContext->document, pObject, "imageViewFormatSwizzle");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "imageViewFormatSwizzle");
 
-    pInfo->imageViewFormatSwizzle          = cvkGetJsonBool32(value);
+    pInfo->imageViewFormatSwizzle                 = cvkGetJsonBool32(value);
 
-    value                                  = cvkGetJsonMember(&pContext->document, pObject, "imageView2DOn3DImage");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "imageView2DOn3DImage");
 
-    pInfo->imageView2DOn3DImage            = cvkGetJsonBool32(value);
+    pInfo->imageView2DOn3DImage                   = cvkGetJsonBool32(value);
 
-    value                                  = cvkGetJsonMember(&pContext->document, pObject, "multisampleArrayImage");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "multisampleArrayImage");
 
-    pInfo->multisampleArrayImage           = cvkGetJsonBool32(value);
+    pInfo->multisampleArrayImage                  = cvkGetJsonBool32(value);
 
-    value                            = cvkGetJsonMember(&pContext->document, pObject, "mutableComparisonSamplers");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "mutableComparisonSamplers");
 
-    pInfo->mutableComparisonSamplers = cvkGetJsonBool32(value);
+    pInfo->mutableComparisonSamplers              = cvkGetJsonBool32(value);
 
-    value                            = cvkGetJsonMember(&pContext->document, pObject, "pointPolygons");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "pointPolygons");
 
-    pInfo->pointPolygons             = cvkGetJsonBool32(value);
+    pInfo->pointPolygons                          = cvkGetJsonBool32(value);
 
-    value                            = cvkGetJsonMember(&pContext->document, pObject, "samplerMipLodBias");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "samplerMipLodBias");
 
-    pInfo->samplerMipLodBias         = cvkGetJsonBool32(value);
+    pInfo->samplerMipLodBias                      = cvkGetJsonBool32(value);
 
-    value                            = cvkGetJsonMember(&pContext->document, pObject, "separateStencilMaskRef");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "separateStencilMaskRef");
 
-    pInfo->separateStencilMaskRef    = cvkGetJsonBool32(value);
+    pInfo->separateStencilMaskRef                 = cvkGetJsonBool32(value);
 
-    value = cvkGetJsonMember(&pContext->document, pObject, "shaderSampleRateInterpolationFunctions");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "shaderSampleRateInterpolationFunctions");
 
     pInfo->shaderSampleRateInterpolationFunctions = cvkGetJsonBool32(value);
 
-    value                        = cvkGetJsonMember(&pContext->document, pObject, "tessellationIsolines");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "tessellationIsolines");
 
-    pInfo->tessellationIsolines  = cvkGetJsonBool32(value);
+    pInfo->tessellationIsolines                   = cvkGetJsonBool32(value);
 
-    value                        = cvkGetJsonMember(&pContext->document, pObject, "tessellationPointMode");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "tessellationPointMode");
 
-    pInfo->tessellationPointMode = cvkGetJsonBool32(value);
+    pInfo->tessellationPointMode                  = cvkGetJsonBool32(value);
 
-    value                        = cvkGetJsonMember(&pContext->document, pObject, "triangleFans");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "triangleFans");
 
-    pInfo->triangleFans          = cvkGetJsonBool32(value);
+    pInfo->triangleFans                           = cvkGetJsonBool32(value);
 
-    value                        = cvkGetJsonMember(&pContext->document, pObject, "vertexAttributeAccessBeyondStride");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "vertexAttributeAccessBeyondStride");
 
-    pInfo->vertexAttributeAccessBeyondStride = cvkGetJsonBool32(value);
+    pInfo->vertexAttributeAccessBeyondStride      = cvkGetJsonBool32(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -866,10 +858,11 @@ void cvkReadJsonPhysicalDevicePortabilitySubsetProperties(
     {
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
-    value = cvkGetJsonMember(&pContext->document, pObject, "minVertexInputBindingStrideAlignment");
+    value                                       = cvkGetJsonMember(&pContext->document, pObject, "minVertexInputBindingStrideAlignment");
 
     pInfo->minVertexInputBindingStrideAlignment = (uint32_t)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -904,6 +897,7 @@ void cvkReadJsonPhysicalDeviceShaderEnqueueFeaturesAMDX(
 
     pInfo->shaderMeshEnqueue = cvkGetJsonBool32(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -930,38 +924,36 @@ void cvkReadJsonPhysicalDeviceShaderEnqueuePropertiesAMDX(
     {
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
-    value                         = cvkGetJsonMember(&pContext->document, pObject, "maxExecutionGraphDepth");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "maxExecutionGraphDepth");
 
-    pInfo->maxExecutionGraphDepth = (uint32_t)cvkParseJsonUint64(value);
+    pInfo->maxExecutionGraphDepth                 = (uint32_t)cvkParseJsonUint64(value);
 
-    value = cvkGetJsonMember(&pContext->document, pObject, "maxExecutionGraphShaderOutputNodes");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "maxExecutionGraphShaderOutputNodes");
 
-    pInfo->maxExecutionGraphShaderOutputNodes = (uint32_t)cvkParseJsonUint64(value);
+    pInfo->maxExecutionGraphShaderOutputNodes     = (uint32_t)cvkParseJsonUint64(value);
 
-    value = cvkGetJsonMember(&pContext->document, pObject, "maxExecutionGraphShaderPayloadSize");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "maxExecutionGraphShaderPayloadSize");
 
-    pInfo->maxExecutionGraphShaderPayloadSize = (uint32_t)cvkParseJsonUint64(value);
+    pInfo->maxExecutionGraphShaderPayloadSize     = (uint32_t)cvkParseJsonUint64(value);
 
-    value = cvkGetJsonMember(&pContext->document, pObject, "maxExecutionGraphShaderPayloadCount");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "maxExecutionGraphShaderPayloadCount");
 
-    pInfo->maxExecutionGraphShaderPayloadCount = (uint32_t)cvkParseJsonUint64(value);
+    pInfo->maxExecutionGraphShaderPayloadCount    = (uint32_t)cvkParseJsonUint64(value);
 
-    value = cvkGetJsonMember(&pContext->document, pObject, "executionGraphDispatchAddressAlignment");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "executionGraphDispatchAddressAlignment");
 
     pInfo->executionGraphDispatchAddressAlignment = (uint32_t)cvkParseJsonUint64(value);
 
-    value = cvkGetJsonMember(&pContext->document, pObject, "maxExecutionGraphWorkgroupCount");
+    value                                         = cvkGetJsonMember(&pContext->document, pObject, "maxExecutionGraphWorkgroupCount");
     if (!cvkIsJsonNull(value))
     {
-        cvkReadJsonUint32FixedArray(pContext,
-                                    value,
-                                    pInfo->maxExecutionGraphWorkgroupCount,
-                                    VK_COUNT_OF(pInfo->maxExecutionGraphWorkgroupCount));
+        cvkReadJsonUint32FixedArray(pContext, value, pInfo->maxExecutionGraphWorkgroupCount, VK_COUNT_OF(pInfo->maxExecutionGraphWorkgroupCount));
     }
     value                              = cvkGetJsonMember(&pContext->document, pObject, "maxExecutionGraphWorkgroups");
 
     pInfo->maxExecutionGraphWorkgroups = (uint32_t)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -997,14 +989,13 @@ void cvkReadJsonPipelineShaderStageNodeCreateInfoAMDX(
 
     pInfo->index = (uint32_t)cvkParseJsonUint64(value);
 }
-extern CVK_FORCE_INLINE VkCompressedTriangleFormatAMDX cvkParseJsonCompressedTriangleFormatAMDX(
+VkCompressedTriangleFormatAMDX cvkParseJsonCompressedTriangleFormatAMDX(
     const cvkJsonValue* pValue)
 {
     uint64_t enumerant;
     VkBool32 found;
 
-    static const cvkJsonName table[] = {
-        {"VK_COMPRESSED_TRIANGLE_FORMAT_DGF1_AMDX", (uint64_t)VK_COMPRESSED_TRIANGLE_FORMAT_DGF1_AMDX}};
+    static const cvkJsonName table[] = {{"VK_COMPRESSED_TRIANGLE_FORMAT_DGF1_AMDX", (uint64_t)VK_COMPRESSED_TRIANGLE_FORMAT_DGF1_AMDX}};
 
     enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
@@ -1013,29 +1004,25 @@ extern CVK_FORCE_INLINE VkCompressedTriangleFormatAMDX cvkParseJsonCompressedTri
 
     return (VkCompressedTriangleFormatAMDX)enumerant;
 }
-extern CVK_FORCE_INLINE VkDisplacementMicromapFormatNV cvkParseJsonDisplacementMicromapFormatNV(
+VkDisplacementMicromapFormatNV cvkParseJsonDisplacementMicromapFormatNV(
     const cvkJsonValue* pValue)
 {
     uint64_t enumerant;
     VkBool32 found;
 
-    static const cvkJsonName table[] = {{"VK_DISPLACEMENT_MICROMAP_FORMAT_64_TRIANGLES_64_BYTES_NV",
-                                         (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_64_TRIANGLES_64_BYTES_NV},
-                                        {"VK_DISPLACEMENT_MICROMAP_FORMAT_256_TRIANGLES_128_BYTES_NV",
-                                         (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_256_TRIANGLES_128_BYTES_NV},
-                                        {"VK_DISPLACEMENT_MICROMAP_FORMAT_1024_TRIANGLES_128_BYTES_NV",
-                                         (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_1024_TRIANGLES_128_BYTES_NV}};
+    static const cvkJsonName table[] = {{"VK_DISPLACEMENT_MICROMAP_FORMAT_64_TRIANGLES_64_BYTES_NV", (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_64_TRIANGLES_64_BYTES_NV},
+                                        {"VK_DISPLACEMENT_MICROMAP_FORMAT_256_TRIANGLES_128_BYTES_NV", (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_256_TRIANGLES_128_BYTES_NV},
+                                        {"VK_DISPLACEMENT_MICROMAP_FORMAT_1024_TRIANGLES_128_BYTES_NV", (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_1024_TRIANGLES_128_BYTES_NV}};
 
     enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_64_TRIANGLES_64_BYTES_NV) ||
-            (enumerant == (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_256_TRIANGLES_128_BYTES_NV) ||
+    found = (enumerant == (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_64_TRIANGLES_64_BYTES_NV) || (enumerant == (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_256_TRIANGLES_128_BYTES_NV) ||
             (enumerant == (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_1024_TRIANGLES_128_BYTES_NV);
     CVK_ASSERT(found);
 
     return (VkDisplacementMicromapFormatNV)enumerant;
 }
-extern CVK_FORCE_INLINE void cvkParseJsonAccelerationStructureDenseGeometryFormatTrianglesDataAMDX(
+void cvkParseJsonAccelerationStructureDenseGeometryFormatTrianglesDataAMDX(
     const cvkJsonContext*                                        pContext,
     const cvkJsonValue*                                          pObject,
     VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX* pInfo)
@@ -1046,7 +1033,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonAccelerationStructureDenseGeometryForma
     cvkAppendJsonWork(&work, cvkReadJsonAccelerationStructureDenseGeometryFormatTrianglesDataAMDX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonAccelerationStructureTrianglesDisplacementMicromapNV(
+void cvkParseJsonAccelerationStructureTrianglesDisplacementMicromapNV(
     const cvkJsonContext*                                   pContext,
     const cvkJsonValue*                                     pObject,
     VkAccelerationStructureTrianglesDisplacementMicromapNV* pInfo)
@@ -1057,7 +1044,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonAccelerationStructureTrianglesDisplacem
     cvkAppendJsonWork(&work, cvkReadJsonAccelerationStructureTrianglesDisplacementMicromapNV, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonCudaFunctionCreateInfoNV(
+void cvkParseJsonCudaFunctionCreateInfoNV(
     const cvkJsonContext*       pContext,
     const cvkJsonValue*         pObject,
     VkCudaFunctionCreateInfoNV* pInfo)
@@ -1068,7 +1055,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonCudaFunctionCreateInfoNV(
     cvkAppendJsonWork(&work, cvkReadJsonCudaFunctionCreateInfoNV, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonCudaLaunchInfoNV(
+void cvkParseJsonCudaLaunchInfoNV(
     const cvkJsonContext* pContext,
     const cvkJsonValue*   pObject,
     VkCudaLaunchInfoNV*   pInfo)
@@ -1079,7 +1066,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonCudaLaunchInfoNV(
     cvkAppendJsonWork(&work, cvkReadJsonCudaLaunchInfoNV, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonCudaModuleCreateInfoNV(
+void cvkParseJsonCudaModuleCreateInfoNV(
     const cvkJsonContext*     pContext,
     const cvkJsonValue*       pObject,
     VkCudaModuleCreateInfoNV* pInfo)
@@ -1090,7 +1077,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonCudaModuleCreateInfoNV(
     cvkAppendJsonWork(&work, cvkReadJsonCudaModuleCreateInfoNV, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonDeviceOrHostAddressConstAMDX(
+void cvkParseJsonDeviceOrHostAddressConstAMDX(
     const cvkJsonContext*           pContext,
     const cvkJsonValue*             pObject,
     VkDeviceOrHostAddressConstAMDX* pInfo)
@@ -1101,7 +1088,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonDeviceOrHostAddressConstAMDX(
     cvkAppendJsonWork(&work, cvkReadJsonDeviceOrHostAddressConstAMDX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonDispatchGraphCountInfoAMDX(
+void cvkParseJsonDispatchGraphCountInfoAMDX(
     const cvkJsonContext*         pContext,
     const cvkJsonValue*           pObject,
     VkDispatchGraphCountInfoAMDX* pInfo)
@@ -1112,7 +1099,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonDispatchGraphCountInfoAMDX(
     cvkAppendJsonWork(&work, cvkReadJsonDispatchGraphCountInfoAMDX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonDispatchGraphInfoAMDX(
+void cvkParseJsonDispatchGraphInfoAMDX(
     const cvkJsonContext*    pContext,
     const cvkJsonValue*      pObject,
     VkDispatchGraphInfoAMDX* pInfo)
@@ -1123,7 +1110,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonDispatchGraphInfoAMDX(
     cvkAppendJsonWork(&work, cvkReadJsonDispatchGraphInfoAMDX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExecutionGraphPipelineCreateInfoAMDX(
+void cvkParseJsonExecutionGraphPipelineCreateInfoAMDX(
     const cvkJsonContext*                   pContext,
     const cvkJsonValue*                     pObject,
     VkExecutionGraphPipelineCreateInfoAMDX* pInfo)
@@ -1134,7 +1121,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonExecutionGraphPipelineCreateInfoAMDX(
     cvkAppendJsonWork(&work, cvkReadJsonExecutionGraphPipelineCreateInfoAMDX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExecutionGraphPipelineScratchSizeAMDX(
+void cvkParseJsonExecutionGraphPipelineScratchSizeAMDX(
     const cvkJsonContext*                    pContext,
     const cvkJsonValue*                      pObject,
     VkExecutionGraphPipelineScratchSizeAMDX* pInfo)
@@ -1145,7 +1132,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonExecutionGraphPipelineScratchSizeAMDX(
     cvkAppendJsonWork(&work, cvkReadJsonExecutionGraphPipelineScratchSizeAMDX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceCudaKernelLaunchFeaturesNV(
+void cvkParseJsonPhysicalDeviceCudaKernelLaunchFeaturesNV(
     const cvkJsonContext*                       pContext,
     const cvkJsonValue*                         pObject,
     VkPhysicalDeviceCudaKernelLaunchFeaturesNV* pInfo)
@@ -1156,7 +1143,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceCudaKernelLaunchFeaturesN
     cvkAppendJsonWork(&work, cvkReadJsonPhysicalDeviceCudaKernelLaunchFeaturesNV, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceCudaKernelLaunchPropertiesNV(
+void cvkParseJsonPhysicalDeviceCudaKernelLaunchPropertiesNV(
     const cvkJsonContext*                         pContext,
     const cvkJsonValue*                           pObject,
     VkPhysicalDeviceCudaKernelLaunchPropertiesNV* pInfo)
@@ -1167,7 +1154,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceCudaKernelLaunchPropertie
     cvkAppendJsonWork(&work, cvkReadJsonPhysicalDeviceCudaKernelLaunchPropertiesNV, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceDenseGeometryFormatFeaturesAMDX(
+void cvkParseJsonPhysicalDeviceDenseGeometryFormatFeaturesAMDX(
     const cvkJsonContext*                            pContext,
     const cvkJsonValue*                              pObject,
     VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX* pInfo)
@@ -1178,7 +1165,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceDenseGeometryFormatFeatur
     cvkAppendJsonWork(&work, cvkReadJsonPhysicalDeviceDenseGeometryFormatFeaturesAMDX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceDisplacementMicromapFeaturesNV(
+void cvkParseJsonPhysicalDeviceDisplacementMicromapFeaturesNV(
     const cvkJsonContext*                           pContext,
     const cvkJsonValue*                             pObject,
     VkPhysicalDeviceDisplacementMicromapFeaturesNV* pInfo)
@@ -1189,7 +1176,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceDisplacementMicromapFeatu
     cvkAppendJsonWork(&work, cvkReadJsonPhysicalDeviceDisplacementMicromapFeaturesNV, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceDisplacementMicromapPropertiesNV(
+void cvkParseJsonPhysicalDeviceDisplacementMicromapPropertiesNV(
     const cvkJsonContext*                             pContext,
     const cvkJsonValue*                               pObject,
     VkPhysicalDeviceDisplacementMicromapPropertiesNV* pInfo)
@@ -1200,7 +1187,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceDisplacementMicromapPrope
     cvkAppendJsonWork(&work, cvkReadJsonPhysicalDeviceDisplacementMicromapPropertiesNV, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDevicePortabilitySubsetFeatures(
+void cvkParseJsonPhysicalDevicePortabilitySubsetFeatures(
     const cvkJsonContext*                         pContext,
     const cvkJsonValue*                           pObject,
     VkPhysicalDevicePortabilitySubsetFeaturesKHR* pInfo)
@@ -1211,7 +1198,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDevicePortabilitySubsetFeatures
     cvkAppendJsonWork(&work, cvkReadJsonPhysicalDevicePortabilitySubsetFeatures, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDevicePortabilitySubsetProperties(
+void cvkParseJsonPhysicalDevicePortabilitySubsetProperties(
     const cvkJsonContext*                           pContext,
     const cvkJsonValue*                             pObject,
     VkPhysicalDevicePortabilitySubsetPropertiesKHR* pInfo)
@@ -1222,7 +1209,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDevicePortabilitySubsetProperti
     cvkAppendJsonWork(&work, cvkReadJsonPhysicalDevicePortabilitySubsetProperties, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceShaderEnqueueFeaturesAMDX(
+void cvkParseJsonPhysicalDeviceShaderEnqueueFeaturesAMDX(
     const cvkJsonContext*                      pContext,
     const cvkJsonValue*                        pObject,
     VkPhysicalDeviceShaderEnqueueFeaturesAMDX* pInfo)
@@ -1233,7 +1220,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceShaderEnqueueFeaturesAMDX
     cvkAppendJsonWork(&work, cvkReadJsonPhysicalDeviceShaderEnqueueFeaturesAMDX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceShaderEnqueuePropertiesAMDX(
+void cvkParseJsonPhysicalDeviceShaderEnqueuePropertiesAMDX(
     const cvkJsonContext*                        pContext,
     const cvkJsonValue*                          pObject,
     VkPhysicalDeviceShaderEnqueuePropertiesAMDX* pInfo)
@@ -1244,7 +1231,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceShaderEnqueuePropertiesAM
     cvkAppendJsonWork(&work, cvkReadJsonPhysicalDeviceShaderEnqueuePropertiesAMDX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPipelineShaderStageNodeCreateInfoAMDX(
+void cvkParseJsonPipelineShaderStageNodeCreateInfoAMDX(
     const cvkJsonContext*                    pContext,
     const cvkJsonValue*                      pObject,
     VkPipelineShaderStageNodeCreateInfoAMDX* pInfo)

@@ -37,12 +37,12 @@ void cvkReadJsonWaylandSurfaceCreateInfo(
 
     pInfo->flags = cvkParseJsonWaylandSurfaceCreateFlags(value);
 }
-extern CVK_FORCE_INLINE VkWaylandSurfaceCreateFlagsKHR cvkParseJsonWaylandSurfaceCreateFlags(
+VkWaylandSurfaceCreateFlagsKHR cvkParseJsonWaylandSurfaceCreateFlags(
     const cvkJsonValue* pValue)
 {
     return (VkWaylandSurfaceCreateFlagsKHR)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonWaylandSurfaceCreateInfo(
+void cvkParseJsonWaylandSurfaceCreateInfo(
     const cvkJsonContext*          pContext,
     const cvkJsonValue*            pObject,
     VkWaylandSurfaceCreateInfoKHR* pInfo)

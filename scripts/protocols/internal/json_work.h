@@ -32,7 +32,7 @@ typedef struct cvkJsonStructureReader
  * \brief Reserves bounded parse scratch from callbacks or the unused end of the caller's arena.
  * \param[out] pWork Receives the initialized work stack.
  * \param[in] pContext Document and caller-owned arena.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkInitializeJsonWork(cvkJsonWork*        pWork,
                            const cvkJsonContext* pContext);
@@ -43,7 +43,7 @@ void cvkInitializeJsonWork(cvkJsonWork*        pWork,
  * \param[in] read Reader for the object's native structure type.
  * \param[in] pObject JSON object, or NULL for a zeroed structure.
  * \param[out] pOutput Native structure storage.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkAppendJsonWork(cvkJsonWork*        pWork,
                        PFN_cvkReadJsonObject read,
@@ -53,7 +53,7 @@ void cvkAppendJsonWork(cvkJsonWork*        pWork,
 /**
  * \brief Drains pending objects iteratively and releases the reserved scratch.
  * \param[in,out] pWork Initialized work stack.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkRunJsonWork(cvkJsonWork* pWork);
 
@@ -61,7 +61,7 @@ void cvkRunJsonWork(cvkJsonWork* pWork);
  * \brief Allocates an extension structure selected by sType and appends its reader.
  * \param[in,out] pWork Initialized work stack.
  * \param[in] pObject Non-null extension JSON object.
- * \retval Other The allocated native structure.
+ * \retval void* The allocated native structure.
  */
 void* cvkScheduleJsonStructureChain(cvkJsonWork*        pWork,
                                     const cvkJsonValue* pObject);

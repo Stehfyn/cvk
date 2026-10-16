@@ -10,7 +10,7 @@ static CVK_FORCE_INLINE VkBool32 cvkIsJsonTextSpace(char value)
 /**
  * \brief Advances over JSON whitespace.
  * \param[in,out] pReader Input cursor and bounds.
- * \retval None No value is returned.
+ * \retval None
  */
 static CVK_FORCE_INLINE void cvkSkipJsonSpace(cvkJsonReader* pReader)
 {
@@ -31,7 +31,7 @@ static CVK_FORCE_INLINE void cvkSkipJsonSpace(cvkJsonReader* pReader)
 /**
  * \brief Consumes at least one decimal digit.
  * \param[in,out] pReader Input cursor and bounds.
- * \retval None No value is returned.
+ * \retval None
  */
 static CVK_FORCE_INLINE void cvkReadJsonDigits(cvkJsonReader* pReader)
 {
@@ -54,7 +54,7 @@ static CVK_FORCE_INLINE void cvkReadJsonDigits(cvkJsonReader* pReader)
 /**
  * \brief Consumes a JSON number according to its integer, fraction and exponent grammar.
  * \param[in,out] pReader Input cursor and bounds.
- * \retval None No value is returned.
+ * \retval None
  */
 static CVK_FORCE_INLINE void cvkReadJsonNumber(cvkJsonReader* pReader)
 {
@@ -103,7 +103,7 @@ static CVK_FORCE_INLINE void cvkReadJsonNumber(cvkJsonReader* pReader)
  * \brief Reads a quoted span while preserving its escape spelling.
  * \param[in,out] pReader Input cursor at the opening quote.
  * \param[out] pLength Receives the length excluding quotes.
- * \retval Other The start of the quoted content.
+ * \retval const char* The start of the quoted content.
  */
 static CVK_FORCE_INLINE const char* cvkReadJsonQuoted(cvkJsonReader* pReader,
                                                      uint32_t* pLength)
@@ -141,7 +141,7 @@ static CVK_FORCE_INLINE const char* cvkReadJsonQuoted(cvkJsonReader* pReader,
  * \brief Consumes a literal and records its kind.
  * \param[in,out] pReader Input cursor and bounds.
  * \param[out] pValue Value receiving the literal kind.
- * \retval None No value is returned.
+ * \retval None
  */
 static CVK_FORCE_INLINE void cvkReadJsonLiteral(cvkJsonReader* pReader,
                                                cvkJsonValue* pValue)
@@ -182,7 +182,7 @@ static CVK_FORCE_INLINE void cvkReadJsonLiteral(cvkJsonReader* pReader,
 /**
  * \brief Appends one token; containers are opened without descending into them.
  * \param[in,out] pReader Input and caller-owned value storage.
- * \retval Other The new value index.
+ * \retval uint32_t The new value index.
  */
 static CVK_FORCE_INLINE uint32_t cvkReadJsonToken(cvkJsonReader* pReader)
 {
@@ -235,7 +235,7 @@ static CVK_FORCE_INLINE uint32_t cvkReadJsonToken(cvkJsonReader* pReader)
  * \brief Appends a child and its object key, linking it to the active container.
  * \param[in,out] pReader Input and caller-owned value storage.
  * \param[in] parent Active container index.
- * \retval Other The new child index.
+ * \retval uint32_t The new child index.
  */
 static CVK_FORCE_INLINE uint32_t cvkReadJsonChild(cvkJsonReader* pReader,
                                                 uint32_t parent)
@@ -317,7 +317,7 @@ static CVK_FORCE_INLINE VkBool32 cvkReadJsonSeparator(cvkJsonReader* pReader,
  *  links. Closing a container restores the public first-child and sibling links.
  *  Neither depth-dependent stack storage nor allocation is required.
  * \param[in,out] pReader Reader state and caller-owned values.
- * \retval Other The parsed root index.
+ * \retval uint32_t The parsed root index.
  */
 uint32_t cvkParseJsonValue(cvkJsonReader* pReader)
 {
@@ -387,7 +387,7 @@ uint32_t cvkParseJsonValue(cvkJsonReader* pReader)
  * \param[out] pValues        Receives the values, root first
  * \param[in]  valueCapacity  Capacity of pValues; exceeding it is fatal
  *
- * \retval Number of values written
+ * \retval uint32_t Number of values written
  */
 uint32_t cvkParseJsonDocument(const char* pText, size_t length, cvkJsonValue* pValues, uint32_t valueCapacity)
 {
@@ -414,7 +414,8 @@ uint32_t cvkParseJsonDocument(const char* pText, size_t length, cvkJsonValue* pV
  * \param[in]  pObject    The object, or NULL
  * \param[in]  pKey       Member name
  *
- * \retval The member value, or NULL
+ * \retval NULL pObject is NULL or not an object, or has no member named pKey.
+ * \retval non-NULL The member value.
  */
 const cvkJsonValue* cvkGetJsonMember(const cvkJsonDocument* pDocument, const cvkJsonValue* pObject, const char* pKey)
 {
@@ -444,7 +445,8 @@ const cvkJsonValue* cvkGetJsonMember(const cvkJsonDocument* pDocument, const cvk
  * \param[in]  pArray     The array, or NULL
  * \param[in]  index      Element index
  *
- * \retval The element, or NULL
+ * \retval NULL pArray is NULL or not an array or object, or index is out of range.
+ * \retval non-NULL The element.
  */
 const cvkJsonValue* cvkGetJsonElement(const cvkJsonDocument* pDocument, const cvkJsonValue* pArray, uint32_t index)
 {
@@ -487,6 +489,7 @@ const cvkJsonValue* cvkGetJsonElement(const cvkJsonDocument* pDocument, const cv
  * \param[in]  pString  The string to compare with
  *
  * \retval VK_TRUE when equal
+ * \retval VK_FALSE otherwise
  */
 VkBool32 cvkJsonStringEquals(const cvkJsonValue* pValue, const char* pString)
 {
@@ -501,6 +504,7 @@ VkBool32 cvkJsonStringEquals(const cvkJsonValue* pValue, const char* pString)
  * \param[in]  pValue  The value, or NULL
  *
  * \retval VK_TRUE when there is no value
+ * \retval VK_FALSE otherwise
  */
 VkBool32 cvkIsJsonNull(const cvkJsonValue* pValue)
 {
@@ -512,7 +516,7 @@ VkBool32 cvkIsJsonNull(const cvkJsonValue* pValue)
  *
  * \param[in]  pText  Null-terminated integer text
  *
- * \retval The integer
+ * \retval uint64_t The integer
  */
 uint64_t cvkParseUint64Text(const char* pText)
 {
@@ -578,7 +582,7 @@ uint64_t cvkParseUint64Text(const char* pText)
 /**
  * \brief Reads a number as an unsigned 64-bit integer; a string holding a number is accepted.
  * \param[in] pValue The value, or NULL for zero
- * \return The integer
+ * \retval uint64_t The integer
  */
 uint64_t cvkGetJsonUint64(const cvkJsonValue* pValue)
 {
@@ -598,7 +602,7 @@ uint64_t cvkGetJsonUint64(const cvkJsonValue* pValue)
  *
  * \param[in]  pValue  The value, or NULL for zero
  *
- * \retval The integer
+ * \retval int64_t The integer
  */
 int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
 {
@@ -751,7 +755,7 @@ static CVK_FORCE_INLINE double cvkScaleJsonDouble(double value, int32_t exponent
  *
  * \param[in]  pValue  The value, or NULL for zero
  *
- * \retval The number
+ * \retval double The number
  */
 double cvkGetJsonDouble(const cvkJsonValue* pValue)
 {
@@ -790,7 +794,8 @@ double cvkGetJsonDouble(const cvkJsonValue* pValue)
  *
  * \param[in]  pValue  The value, or NULL for VK_FALSE
  *
- * \retval The boolean
+ * \retval VK_TRUE pValue is true, "VK_TRUE", or a nonzero number.
+ * \retval VK_FALSE otherwise
  */
 VkBool32 cvkGetJsonBool32(const cvkJsonValue* pValue)
 {
@@ -819,6 +824,7 @@ VkBool32 cvkGetJsonBool32(const cvkJsonValue* pValue)
  * \param[out] pValue      Receives the entry's value when found
  *
  * \retval VK_TRUE when found
+ * \retval VK_FALSE otherwise
  */
 VkBool32 cvkLookupJsonName(const cvkJsonName* pTable, uint32_t tableCount, const char* pName, uint32_t nameLength, uint64_t* pValue)
 {
@@ -842,7 +848,7 @@ VkBool32 cvkLookupJsonName(const cvkJsonName* pTable, uint32_t tableCount, const
  * \param[in]  pTable      Name table of the enumeration
  * \param[in]  tableCount  Number of entries
  *
- * \retval The enumerant's value
+ * \retval uint64_t The enumerant's value
  */
 uint64_t cvkParseJsonEnumerant(const cvkJsonValue* pValue, const cvkJsonName* pTable, uint32_t tableCount)
 {
@@ -871,7 +877,7 @@ uint64_t cvkParseJsonEnumerant(const cvkJsonValue* pValue, const cvkJsonName* pT
  * \param[in]  pTable      Name table of the flag bits
  * \param[in]  tableCount  Number of entries
  *
- * \retval The flags
+ * \retval uint64_t The flags
  */
 uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, const cvkJsonName* pTable, uint32_t tableCount)
 {
@@ -982,7 +988,8 @@ static CVK_FORCE_INLINE void cvkGrowArena(cvkArena* pArena, size_t size, size_t 
  * \param[in]     size       Byte count; zero returns NULL
  * \param[in]     alignment  Power-of-two alignment
  *
- * \retval The storage, or NULL for a zero size
+ * \retval NULL size is zero.
+ * \retval non-NULL The storage.
  */
 void* cvkAllocateArena(cvkArena* pArena, size_t size, size_t alignment)
 {
@@ -1037,7 +1044,7 @@ void* cvkAllocateArena(cvkArena* pArena, size_t size, size_t alignment)
 /**
  * \brief Frees callback-backed arena blocks and resets the arena.
  * \param[in,out] pArena Arena to release.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkFreeArena(cvkArena* pArena)
 {
@@ -1065,7 +1072,8 @@ void cvkFreeArena(cvkArena* pArena)
  * \param[in,out] pArena  The arena
  * \param[in]     pValue  The string value; a null yields NULL
  *
- * \retval The C string, or NULL
+ * \retval NULL pValue is null, absent, or not a string.
+ * \retval non-NULL The C string.
  */
 char* cvkCopyJsonString(cvkArena* pArena, const cvkJsonValue* pValue)
 {
@@ -1108,8 +1116,7 @@ char* cvkCopyJsonString(cvkArena* pArena, const cvkJsonValue* pValue)
  * \param[in] pReferences First reference, or NULL for an empty list.
  * \param[in] pHandle Address of the native handle field.
  *
- * \retval 0 No reference was recorded.
- * \retval Other The JSON object ID.
+ * \retval uint64_t The JSON object ID, or 0 when no reference was recorded.
  */
 uint64_t cvkGetJsonHandleId(const cvkJsonHandleReference* pReferences,
                           const void*                   pHandle)

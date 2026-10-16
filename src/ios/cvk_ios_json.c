@@ -37,12 +37,12 @@ void cvkReadJsonIOSSurfaceCreateInfoMVK(
 
     pInfo->flags = cvkParseJsonIOSSurfaceCreateFlagsMVK(value);
 }
-extern CVK_FORCE_INLINE VkIOSSurfaceCreateFlagsMVK cvkParseJsonIOSSurfaceCreateFlagsMVK(
+VkIOSSurfaceCreateFlagsMVK cvkParseJsonIOSSurfaceCreateFlagsMVK(
     const cvkJsonValue* pValue)
 {
     return (VkIOSSurfaceCreateFlagsMVK)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonIOSSurfaceCreateInfoMVK(
+void cvkParseJsonIOSSurfaceCreateInfoMVK(
     const cvkJsonContext*      pContext,
     const cvkJsonValue*        pObject,
     VkIOSSurfaceCreateInfoMVK* pInfo)

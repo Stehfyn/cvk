@@ -73,6 +73,7 @@ void cvkReadJsonAndroidHardwareBufferFormatProperties2ANDROID(
         pInfo->suggestedYChromaOffset = cvkParseJsonChromaLocation(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -138,6 +139,7 @@ void cvkReadJsonAndroidHardwareBufferFormatPropertiesANDROID(
         pInfo->suggestedYChromaOffset = cvkParseJsonChromaLocation(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -170,6 +172,7 @@ void cvkReadJsonAndroidHardwareBufferFormatResolvePropertiesANDROID(
         pInfo->colorAttachmentFormat = cvkParseJsonFormat(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -204,6 +207,7 @@ void cvkReadJsonAndroidHardwareBufferPropertiesANDROID(
 
     pInfo->memoryTypeBits = (uint32_t)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -234,6 +238,7 @@ void cvkReadJsonAndroidHardwareBufferUsageANDROID(
 
     pInfo->androidHardwareBufferUsage = cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -264,6 +269,7 @@ void cvkReadJsonAndroidSurfaceCreateInfo(
 
     pInfo->flags = cvkParseJsonAndroidSurfaceCreateFlags(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -294,6 +300,7 @@ void cvkReadJsonExternalFormatANDROID(
 
     pInfo->externalFormat = cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -321,6 +328,7 @@ void cvkReadJsonImportAndroidHardwareBufferInfoANDROID(
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -355,6 +363,7 @@ void cvkReadJsonMemoryGetAndroidHardwareBufferInfoANDROID(
         (void)cvkResolveJsonHandle(pContext, "VkDeviceMemory", value, sizeof(VkDeviceMemory), (void*)&pInfo->memory);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -385,6 +394,7 @@ void cvkReadJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID(
 
     pInfo->externalFormatResolve = cvkGetJsonBool32(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -411,11 +421,11 @@ void cvkReadJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(
     {
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
-    value = cvkGetJsonMember(&pContext->document, pObject, "nullColorAttachmentWithExternalFormatResolve");
+    value                                               = cvkGetJsonMember(&pContext->document, pObject, "nullColorAttachmentWithExternalFormatResolve");
 
     pInfo->nullColorAttachmentWithExternalFormatResolve = cvkGetJsonBool32(value);
 
-    value = cvkGetJsonMember(&pContext->document, pObject, "externalFormatResolveChromaOffsetX");
+    value                                               = cvkGetJsonMember(&pContext->document, pObject, "externalFormatResolveChromaOffsetX");
     if (!cvkIsJsonNull(value))
     {
         pInfo->externalFormatResolveChromaOffsetX = cvkParseJsonChromaLocation(value);
@@ -426,12 +436,12 @@ void cvkReadJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(
         pInfo->externalFormatResolveChromaOffsetY = cvkParseJsonChromaLocation(value);
     }
 }
-extern CVK_FORCE_INLINE VkAndroidSurfaceCreateFlagsKHR cvkParseJsonAndroidSurfaceCreateFlags(
+VkAndroidSurfaceCreateFlagsKHR cvkParseJsonAndroidSurfaceCreateFlags(
     const cvkJsonValue* pValue)
 {
     return (VkAndroidSurfaceCreateFlagsKHR)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatProperties2ANDROID(
+void cvkParseJsonAndroidHardwareBufferFormatProperties2ANDROID(
     const cvkJsonContext*                            pContext,
     const cvkJsonValue*                              pObject,
     VkAndroidHardwareBufferFormatProperties2ANDROID* pInfo)
@@ -442,7 +452,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatProperties2A
     cvkAppendJsonWork(&work, cvkReadJsonAndroidHardwareBufferFormatProperties2ANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatPropertiesANDROID(
+void cvkParseJsonAndroidHardwareBufferFormatPropertiesANDROID(
     const cvkJsonContext*                           pContext,
     const cvkJsonValue*                             pObject,
     VkAndroidHardwareBufferFormatPropertiesANDROID* pInfo)
@@ -453,7 +463,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatPropertiesAN
     cvkAppendJsonWork(&work, cvkReadJsonAndroidHardwareBufferFormatPropertiesANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatResolvePropertiesANDROID(
+void cvkParseJsonAndroidHardwareBufferFormatResolvePropertiesANDROID(
     const cvkJsonContext*                                  pContext,
     const cvkJsonValue*                                    pObject,
     VkAndroidHardwareBufferFormatResolvePropertiesANDROID* pInfo)
@@ -464,7 +474,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatResolvePrope
     cvkAppendJsonWork(&work, cvkReadJsonAndroidHardwareBufferFormatResolvePropertiesANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferPropertiesANDROID(
+void cvkParseJsonAndroidHardwareBufferPropertiesANDROID(
     const cvkJsonContext*                     pContext,
     const cvkJsonValue*                       pObject,
     VkAndroidHardwareBufferPropertiesANDROID* pInfo)
@@ -475,7 +485,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferPropertiesANDROID(
     cvkAppendJsonWork(&work, cvkReadJsonAndroidHardwareBufferPropertiesANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferUsageANDROID(
+void cvkParseJsonAndroidHardwareBufferUsageANDROID(
     const cvkJsonContext*                pContext,
     const cvkJsonValue*                  pObject,
     VkAndroidHardwareBufferUsageANDROID* pInfo)
@@ -486,7 +496,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferUsageANDROID(
     cvkAppendJsonWork(&work, cvkReadJsonAndroidHardwareBufferUsageANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonAndroidSurfaceCreateInfo(
+void cvkParseJsonAndroidSurfaceCreateInfo(
     const cvkJsonContext*          pContext,
     const cvkJsonValue*            pObject,
     VkAndroidSurfaceCreateInfoKHR* pInfo)
@@ -497,7 +507,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonAndroidSurfaceCreateInfo(
     cvkAppendJsonWork(&work, cvkReadJsonAndroidSurfaceCreateInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExternalFormatANDROID(
+void cvkParseJsonExternalFormatANDROID(
     const cvkJsonContext*    pContext,
     const cvkJsonValue*      pObject,
     VkExternalFormatANDROID* pInfo)
@@ -508,7 +518,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonExternalFormatANDROID(
     cvkAppendJsonWork(&work, cvkReadJsonExternalFormatANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportAndroidHardwareBufferInfoANDROID(
+void cvkParseJsonImportAndroidHardwareBufferInfoANDROID(
     const cvkJsonContext*                     pContext,
     const cvkJsonValue*                       pObject,
     VkImportAndroidHardwareBufferInfoANDROID* pInfo)
@@ -519,7 +529,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportAndroidHardwareBufferInfoANDROID(
     cvkAppendJsonWork(&work, cvkReadJsonImportAndroidHardwareBufferInfoANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetAndroidHardwareBufferInfoANDROID(
+void cvkParseJsonMemoryGetAndroidHardwareBufferInfoANDROID(
     const cvkJsonContext*                        pContext,
     const cvkJsonValue*                          pObject,
     VkMemoryGetAndroidHardwareBufferInfoANDROID* pInfo)
@@ -530,7 +540,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetAndroidHardwareBufferInfoANDRO
     cvkAppendJsonWork(&work, cvkReadJsonMemoryGetAndroidHardwareBufferInfoANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID(
+void cvkParseJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID(
     const cvkJsonContext*                                 pContext,
     const cvkJsonValue*                                   pObject,
     VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* pInfo)
@@ -541,7 +551,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceExternalFormatResolveFeat
     cvkAppendJsonWork(&work, cvkReadJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(
+void cvkParseJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(
     const cvkJsonContext*                                   pContext,
     const cvkJsonValue*                                     pObject,
     VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* pInfo)

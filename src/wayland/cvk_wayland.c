@@ -10,7 +10,7 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_wayland.h>
 
-extern CVK_FORCE_INLINE void cvkInitWaylandSurfaceCreateInfo(
+void cvkInitWaylandSurfaceCreateInfo(
     VkWaylandSurfaceCreateInfoKHR* pInfo,
     const void*                    pNext,
     VkWaylandSurfaceCreateFlagsKHR flags,
@@ -26,7 +26,7 @@ extern CVK_FORCE_INLINE void cvkInitWaylandSurfaceCreateInfo(
         .surface = surface
     };
 }
-extern CVK_FORCE_INLINE void cvkCreateWaylandSurface(
+void cvkCreateWaylandSurface(
     VkInstance                     instance,
     const void*                    pNext,
     VkWaylandSurfaceCreateFlagsKHR flags,
@@ -35,19 +35,13 @@ extern CVK_FORCE_INLINE void cvkCreateWaylandSurface(
     const VkAllocationCallbacks*   pAllocator,
     VkSurfaceKHR*                  pSurface)
 {
-    VkWaylandSurfaceCreateInfoKHR create_info =
-    {
-        .sType   = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR,
-        .pNext   = pNext,
-        .flags   = flags,
-        .display = display,
-        .surface = surface
-    };
+    VkWaylandSurfaceCreateInfoKHR create_info;
 
+    cvkInitWaylandSurfaceCreateInfo(&create_info, pNext, flags, display, surface);
     CVK_CHECK(vkCreateWaylandSurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
-extern CVK_FORCE_INLINE VkBool32 cvkGetPhysicalDeviceWaylandPresentationSupport(
+VkBool32 cvkGetPhysicalDeviceWaylandPresentationSupport(
     VkPhysicalDevice   physicalDevice,
     uint32_t           queueFamilyIndex,
     struct wl_display* display)

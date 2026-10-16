@@ -7,7 +7,7 @@
 #include <vulkan/vulkan_sc_core.h>
 #include <vulkan/vulkan_screen.h>
 
-extern SCVK_FORCE_INLINE void scvkInitExternalFormatQNX(
+void scvkInitExternalFormatQNX(
     VkExternalFormatQNX* pInfo,
     void*                pNext,
     uint64_t             externalFormat)
@@ -19,7 +19,7 @@ extern SCVK_FORCE_INLINE void scvkInitExternalFormatQNX(
         .externalFormat = externalFormat
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitImportScreenBufferInfoQNX(
+void scvkInitImportScreenBufferInfoQNX(
     VkImportScreenBufferInfoQNX* pInfo,
     const void*                  pNext,
     struct _screen_buffer*       buffer)
@@ -31,7 +31,7 @@ extern SCVK_FORCE_INLINE void scvkInitImportScreenBufferInfoQNX(
         .buffer = buffer
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
+void scvkInitPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
     VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pInfo,
     void*                                                  pNext,
     VkBool32                                               screenBufferImport)
@@ -43,21 +43,21 @@ extern SCVK_FORCE_INLINE void scvkInitPhysicalDeviceExternalMemoryScreenBufferFe
         .screenBufferImport = screenBufferImport
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitScreenBufferFormatPropertiesQNX(
+void scvkInitScreenBufferFormatPropertiesQNX(
     VkScreenBufferFormatPropertiesQNX* pInfo,
     void*                              pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_FORMAT_PROPERTIES_QNX;
     pInfo->pNext = pNext;
 }
-extern SCVK_FORCE_INLINE void scvkInitScreenBufferPropertiesQNX(
+void scvkInitScreenBufferPropertiesQNX(
     VkScreenBufferPropertiesQNX* pInfo,
     void*                        pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_PROPERTIES_QNX;
     pInfo->pNext = pNext;
 }
-extern SCVK_FORCE_INLINE void scvkGetScreenBufferPropertiesQNX(
+void scvkGetScreenBufferPropertiesQNX(
     VkDevice                     device,
     const struct _screen_buffer* buffer,
     void*                        pNext,
@@ -65,7 +65,7 @@ extern SCVK_FORCE_INLINE void scvkGetScreenBufferPropertiesQNX(
 {
     VkScreenBufferPropertiesQNX properties;
 
-    scvkZeroMemory(&properties, sizeof(properties));
+    cvkZeroMemory(&properties, sizeof(properties));
 
     properties.sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_PROPERTIES_QNX;
     properties.pNext = pNext;
@@ -74,7 +74,7 @@ extern SCVK_FORCE_INLINE void scvkGetScreenBufferPropertiesQNX(
 
     (*pProperties) = properties;
 }
-extern SCVK_FORCE_INLINE void scvkAllocateImportScreenBufferQNX(
+void scvkAllocateImportScreenBufferQNX(
     VkDevice                     device,
     const void*                  pNext,
     struct _screen_buffer*       buffer,
@@ -92,7 +92,7 @@ extern SCVK_FORCE_INLINE void scvkAllocateImportScreenBufferQNX(
 
     scvkAllocateMemory(device, &buffer_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-extern SCVK_FORCE_INLINE void scvkCreateImageWithExternalFormatInfoQNX(
+void scvkCreateImageWithExternalFormatInfoQNX(
     VkDevice                     device,
     void*                        pNext,
     uint64_t                     externalFormat,
@@ -137,7 +137,7 @@ extern SCVK_FORCE_INLINE void scvkCreateImageWithExternalFormatInfoQNX(
                     pAllocator,
                     pImage);
 }
-extern SCVK_FORCE_INLINE void scvkCreateSamplerYcbcrConversionWithExternalFormatInfoQNX(
+void scvkCreateSamplerYcbcrConversionWithExternalFormatInfoQNX(
     VkDevice                      device,
     void*                         pNext,
     uint64_t                      externalFormat,
@@ -172,7 +172,7 @@ extern SCVK_FORCE_INLINE void scvkCreateSamplerYcbcrConversionWithExternalFormat
                                      pAllocator,
                                      pYcbcrConversion);
 }
-extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
+void scvkGetPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
     VkPhysicalDevice                                       physicalDevice,
     void*                                                  pNext,
     VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX)
@@ -188,7 +188,7 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalMemoryScreenBufferFea
 
     (*pPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX) = ext_features;
 }
-extern SCVK_FORCE_INLINE void scvkGetScreenBufferFormatPropertiesQNX(
+void scvkGetScreenBufferFormatPropertiesQNX(
     VkDevice                           device,
     const struct _screen_buffer*       buffer,
     void*                              pNext,
@@ -197,7 +197,7 @@ extern SCVK_FORCE_INLINE void scvkGetScreenBufferFormatPropertiesQNX(
     VkScreenBufferPropertiesQNX       properties;
     VkScreenBufferFormatPropertiesQNX ext_properties;
 
-    scvkZeroMemory(&ext_properties, sizeof(ext_properties));
+    cvkZeroMemory(&ext_properties, sizeof(ext_properties));
 
     ext_properties.sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_FORMAT_PROPERTIES_QNX;
     ext_properties.pNext = pNext;

@@ -37,12 +37,12 @@ void cvkReadJsonDirectFBSurfaceCreateInfo(
 
     pInfo->flags = cvkParseJsonDirectFBSurfaceCreateFlags(value);
 }
-extern CVK_FORCE_INLINE VkDirectFBSurfaceCreateFlagsEXT cvkParseJsonDirectFBSurfaceCreateFlags(
+VkDirectFBSurfaceCreateFlagsEXT cvkParseJsonDirectFBSurfaceCreateFlags(
     const cvkJsonValue* pValue)
 {
     return (VkDirectFBSurfaceCreateFlagsEXT)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonDirectFBSurfaceCreateInfo(
+void cvkParseJsonDirectFBSurfaceCreateInfo(
     const cvkJsonContext*           pContext,
     const cvkJsonValue*             pObject,
     VkDirectFBSurfaceCreateInfoEXT* pInfo)

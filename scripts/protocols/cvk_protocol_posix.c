@@ -42,7 +42,7 @@
  * \param[out] pImage                  Receives the created VkImage
  * \param[out] pMemory                 Receives the imported VkDeviceMemory
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkImportFdImage(VkPhysicalDevice                   physicalDevice,
                       VkDevice                           device,
@@ -182,7 +182,7 @@ void cvkImportFdImage(VkPhysicalDevice                   physicalDevice,
  * \param[out] pImage                     Receives the created VkImage
  * \param[out] pMemories                  Receives one VkDeviceMemory per memory object; memoryObjectCount entries
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
                           VkDevice                     device,
@@ -239,9 +239,8 @@ void cvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
     CVK_ASSERT((0 != memoryObjectCount) && (planeCount >= memoryObjectCount));
 
     /* modifier: the layout's plane count must be the modifier's memory plane count */
-    drm_format_modifier_properties_list.drmFormatModifierCount       = CVK_MAX_DRM_FORMAT_MODIFIERS;
-    drm_format_modifier_properties_list.pDrmFormatModifierProperties = drm_format_modifier_properties;
-    cvkGetPhysicalDeviceDrmFormatModifierPropertiesList(physicalDevice, format, NULL, &drm_format_modifier_properties_list);
+    cvkGetPhysicalDeviceDrmFormatModifierPropertiesList(physicalDevice, format, NULL, CVK_MAX_DRM_FORMAT_MODIFIERS,
+                                                        drm_format_modifier_properties, &drm_format_modifier_properties_list);
     modifier_plane_count = 0;
     for (modifier_index = 0; modifier_index < drm_format_modifier_properties_list.drmFormatModifierCount; ++modifier_index)
     {
@@ -388,7 +387,7 @@ void cvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
  * \param[out] pBuffer                 Receives the created VkBuffer
  * \param[out] pMemory                 Receives the imported VkDeviceMemory
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkImportFdBuffer(VkPhysicalDevice                   physicalDevice,
                        VkDevice                           device,
@@ -501,7 +500,7 @@ void cvkImportFdBuffer(VkPhysicalDevice                   physicalDevice,
  * \param[out] pMemory                 Receives the exportable VkDeviceMemory
  * \param[out] pFd                     Receives the exported descriptor, owned by the caller
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkExportFdImage(VkPhysicalDevice                   physicalDevice,
                       VkDevice                           device,
@@ -611,7 +610,7 @@ void cvkExportFdImage(VkPhysicalDevice                   physicalDevice,
  * \param[out] pMemory                 Receives the exportable VkDeviceMemory
  * \param[out] pFd                     Receives the exported descriptor, owned by the caller
  *
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkExportFdBuffer(VkPhysicalDevice                   physicalDevice,
                        VkDevice                           device,

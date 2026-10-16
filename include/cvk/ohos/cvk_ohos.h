@@ -7,232 +7,256 @@
 #include <vulkan/vulkan_ohos.h>
 
 /* clang-format off */
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkExternalFormatOHOS.
  *
- * \param[out] pInfo           Receives the initialized VkExternalFormatOHOS
- * \param[in]  pNext           Optional extension chain attached to VkExternalFormatOHOS, or NULL
- * \param[in]  externalFormat  VkExternalFormatOHOS::externalFormat
+ * \param[out] pInfo            Receives the initialized VkExternalFormatOHOS
+ * \param[in]  pNext            Optional extension chain attached to VkExternalFormatOHOS, or NULL
+ * \param[in]  externalFormat   VkExternalFormatOHOS::externalFormat
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkInitExternalFormatOHOS(VkExternalFormatOHOS* pInfo, void* pNext, uint64_t externalFormat);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkImportNativeBufferInfoOHOS.
  *
- * \param[out] pInfo   Receives the initialized VkImportNativeBufferInfoOHOS
- * \param[in]  pNext   Optional extension chain attached to VkImportNativeBufferInfoOHOS, or NULL
- * \param[in]  buffer  VkImportNativeBufferInfoOHOS::buffer
+ * \param[out] pInfo    Receives the initialized VkImportNativeBufferInfoOHOS
+ * \param[in]  pNext    Optional extension chain attached to VkImportNativeBufferInfoOHOS, or NULL
+ * \param[in]  buffer   VkImportNativeBufferInfoOHOS::buffer
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkInitImportNativeBufferInfoOHOS(VkImportNativeBufferInfoOHOS* pInfo, const void* pNext, struct OH_NativeBuffer* buffer);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkMemoryGetNativeBufferInfoOHOS.
  *
- * \param[out] pInfo   Receives the initialized VkMemoryGetNativeBufferInfoOHOS
- * \param[in]  pNext   Optional extension chain attached to VkMemoryGetNativeBufferInfoOHOS, or NULL
- * \param[in]  memory  VkMemoryGetNativeBufferInfoOHOS::memory
+ * \param[out] pInfo    Receives the initialized VkMemoryGetNativeBufferInfoOHOS
+ * \param[in]  pNext    Optional extension chain attached to VkMemoryGetNativeBufferInfoOHOS, or NULL
+ * \param[in]  memory   VkMemoryGetNativeBufferInfoOHOS::memory
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkInitMemoryGetNativeBufferInfoOHOS(VkMemoryGetNativeBufferInfoOHOS* pInfo, const void* pNext, VkDeviceMemory memory);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkNativeBufferFormatPropertiesOHOS.
  *
- * \param[out] pInfo  Receives the initialized VkNativeBufferFormatPropertiesOHOS
- * \param[in]  pNext  Optional extension chain attached to VkNativeBufferFormatPropertiesOHOS, or NULL
+ * \param[out] pInfo   Receives the initialized VkNativeBufferFormatPropertiesOHOS
+ * \param[in]  pNext   Optional extension chain attached to VkNativeBufferFormatPropertiesOHOS, or NULL
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkInitNativeBufferFormatPropertiesOHOS(VkNativeBufferFormatPropertiesOHOS* pInfo, void* pNext);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkNativeBufferPropertiesOHOS.
  *
- * \param[out] pInfo  Receives the initialized VkNativeBufferPropertiesOHOS
- * \param[in]  pNext  Optional extension chain attached to VkNativeBufferPropertiesOHOS, or NULL
+ * \param[out] pInfo   Receives the initialized VkNativeBufferPropertiesOHOS
+ * \param[in]  pNext   Optional extension chain attached to VkNativeBufferPropertiesOHOS, or NULL
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkInitNativeBufferPropertiesOHOS(VkNativeBufferPropertiesOHOS* pInfo, void* pNext);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkNativeBufferUsageOHOS.
  *
- * \param[out] pInfo  Receives the initialized VkNativeBufferUsageOHOS
- * \param[in]  pNext  Optional extension chain attached to VkNativeBufferUsageOHOS, or NULL
+ * \param[out] pInfo   Receives the initialized VkNativeBufferUsageOHOS
+ * \param[in]  pNext   Optional extension chain attached to VkNativeBufferUsageOHOS, or NULL
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkInitNativeBufferUsageOHOS(VkNativeBufferUsageOHOS* pInfo, void* pNext);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkSurfaceCreateInfoOHOS.
  *
- * \param[out] pInfo   Receives the initialized VkSurfaceCreateInfoOHOS
- * \param[in]  pNext   Optional extension chain attached to VkSurfaceCreateInfoOHOS, or NULL
- * \param[in]  flags   VkSurfaceCreateInfoOHOS::flags
- * \param[in]  window  VkSurfaceCreateInfoOHOS::window
+ * \param[out] pInfo    Receives the initialized VkSurfaceCreateInfoOHOS
+ * \param[in]  pNext    Optional extension chain attached to VkSurfaceCreateInfoOHOS, or NULL
+ * \param[in]  flags    VkSurfaceCreateInfoOHOS::flags
+ * \param[in]  window   VkSurfaceCreateInfoOHOS::window
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkInitSurfaceCreateInfoOHOS(VkSurfaceCreateInfoOHOS* pInfo, const void* pNext, VkSurfaceCreateFlagsOHOS flags, OHNativeWindow* window);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a surface.
  *
- * \par Details:
- *  Wraps vkCreateSurfaceOHOS. Aborts on any error result.
+ * \param[in]  instance     The instance to associate the surface with.
+ * \param[in]  pNext        Optional extension chain attached to VkSurfaceCreateInfoOHOS, or NULL
+ * \param[in]  flags        Reserved for future use; must be 0.
+ * \param[in]  window       Pointer to the OHNativeWindow to associate the surface with.
+ * \param[in]  pAllocator   Optional allocation callbacks, or NULL
+ * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned.
  *
- * \param[in]  instance    VkInstance value
- * \param[in]  pNext       Optional extension chain attached to VkSurfaceCreateInfoOHOS, or NULL
- * \param[in]  flags       VkSurfaceCreateInfoOHOS::flags
- * \param[in]  window      VkSurfaceCreateInfoOHOS::window
- * \param[in]  pAllocator  Optional allocation callbacks, or NULL
- * \param[out] pSurface    Receives the created VkSurfaceKHR
- *
- * \return VK_SUCCESS or one of: VK_ERROR_SURFACE_LOST_KHR. Error results abort.
+ * \retval     VK_SUCCESS                  Command successfully completed.
+ * \retval     VK_ERROR_SURFACE_LOST_KHR   The surface is no longer available.
  */
 VkResult cvkCreateSurfaceOHOS(VkInstance instance, const void* pNext, VkSurfaceCreateFlagsOHOS flags, OHNativeWindow* window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves memory native buffer.
  *
- * \par Details:
- *  Wraps vkGetMemoryNativeBufferOHOS. Aborts on any error result.
+ * \param[in]  device    A valid Vulkan device object.
+ * \param[in]  pNext     Optional extension chain attached to VkMemoryGetNativeBufferInfoOHOS, or NULL
+ * \param[in]  memory    A valid VkDeviceMemory object from which the Open Harmony OS native buffer will be exported.
+ * \param[out] pBuffer   A pointer to an OH_NativeBuffer object.
  *
- * \param[in]  device   VkDevice value
- * \param[in]  pNext    Optional extension chain attached to VkMemoryGetNativeBufferInfoOHOS, or NULL
- * \param[in]  memory   VkMemoryGetNativeBufferInfoOHOS::memory
- * \param[out] pBuffer  Receives the OH_NativeBuffer
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkGetMemoryNativeBufferOHOS(VkDevice device, const void* pNext, VkDeviceMemory memory, struct OH_NativeBuffer** pBuffer);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves native buffer properties.
  *
- * \par Details:
- *  Wraps vkGetNativeBufferPropertiesOHOS. Aborts on any error result.
+ * \param[in]  device        The logical device that will be importing buffer.
+ * \param[in]  buffer        The OH_NativeBuffer object specifies the buffer for which its properties are to be queried.
+ * \param[in]  pNext         Optional output extension chain attached to VkNativeBufferPropertiesOHOS, or NULL
+ * \param[out] pProperties   A pointer to a VkNativeBufferPropertiesOHOS structure in which the properties of buffer are returned.
  *
- * \param[in]  device       VkDevice value
- * \param[in]  buffer       OH_NativeBuffer value
- * \param[in]  pNext        Optional output extension chain attached to VkNativeBufferPropertiesOHOS, or NULL
- * \param[out] pProperties  Receives the VkNativeBufferPropertiesOHOS
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkGetNativeBufferPropertiesOHOS(VkDevice device, const struct OH_NativeBuffer* buffer, void* pNext, VkNativeBufferPropertiesOHOS* pProperties);
+
+/*************************************************************************************************/
 /**
  * \brief Allocates memory with VkImportNativeBufferInfoOHOS chained.
  *
- * \param[in]  device           See cvkAllocateMemory
- * \param[in]  pNext            See cvkAllocateMemory
- * \param[in]  buffer           VkImportNativeBufferInfoOHOS::buffer
- * \param[in]  allocationSize   See cvkAllocateMemory
- * \param[in]  memoryTypeIndex  See cvkAllocateMemory
- * \param[in]  pAllocator       See cvkAllocateMemory
- * \param[out] pMemory          See cvkAllocateMemory
+ * \param[in]  device            The logical device that owns the memory.
+ * \param[in]  pNext             Optional extension chain attached to VkMemoryAllocateInfo, or NULL
+ * \param[in]  buffer            A pointer to an OH_NativeBuffer structure.
+ * \param[in]  allocationSize    The size of the allocation in bytes.
+ * \param[in]  memoryTypeIndex   An index identifying a memory type from the memoryTypes array of the VkPhysicalDeviceMemoryProperties structure.
+ * \param[in]  pAllocator        Optional allocation callbacks, or NULL
+ * \param[out] pMemory           A pointer to a VkDeviceMemory handle in which information about the allocated memory is returned.
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkAllocateImportNativeBufferOHOS(VkDevice device, const void* pNext, struct OH_NativeBuffer* buffer, VkDeviceSize allocationSize, uint32_t memoryTypeIndex, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a image with VkExternalFormatOHOS chained.
  *
- * \param[in]  device                 See cvkCreateImage
- * \param[out] pNext                  See cvkCreateImage
- * \param[in]  externalFormat         VkExternalFormatOHOS::externalFormat
- * \param[in]  flags                  See cvkCreateImage
- * \param[in]  imageType              See cvkCreateImage
- * \param[in]  format                 See cvkCreateImage
- * \param[in]  extent                 See cvkCreateImage
- * \param[in]  mipLevels              See cvkCreateImage
- * \param[in]  arrayLayers            See cvkCreateImage
- * \param[in]  samples                See cvkCreateImage
- * \param[in]  tiling                 See cvkCreateImage
- * \param[in]  usage                  See cvkCreateImage
- * \param[in]  sharingMode            See cvkCreateImage
- * \param[in]  queueFamilyIndexCount  See cvkCreateImage
- * \param[in]  pQueueFamilyIndices    See cvkCreateImage
- * \param[in]  initialLayout          See cvkCreateImage
- * \param[in]  pAllocator             See cvkCreateImage
- * \param[out] pImage                 See cvkCreateImage
+ * \param[in]  device                  The logical device that creates the image.
+ * \param[out] pNext                   Optional extension chain attached to VkImageCreateInfo, or NULL
+ * \param[in]  externalFormat          An implementation-defined identifier for the external format.
+ * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image.
+ * \param[in]  imageType               A VkImageType value specifying the basic dimensionality of the image.
+ * \param[in]  format                  A VkFormat describing the format and type of the texel blocks that will be contained in the image.
+ * \param[in]  extent                  A VkExtent3D describing the number of texels/pixels in each dimension of the base level.
+ * \param[in]  mipLevels               Describes the number of levels of detail available for minified sampling of the image.
+ * \param[in]  arrayLayers             The number of layers in the image.
+ * \param[in]  samples                 A VkSampleCountFlagBits value specifying the number of samples per texel.
+ * \param[in]  tiling                  A VkImageTiling value specifying the tiling arrangement of the texel blocks in memory.
+ * \param[in]  usage                   A bitmask of VkImageUsageFlagBits describing the intended usage of the image.
+ * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the image when it will be accessed by multiple queue families.
+ * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array.
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this image.
+ * \param[in]  initialLayout           A VkImageLayout value specifying the initial VkImageLayout of all image subresources of the image.
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pImage                  A pointer to a VkImage handle in which the resulting image object is returned.
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkCreateImageWithExternalFormatInfoOHOS(VkDevice device, void* pNext, uint64_t externalFormat, VkImageCreateFlags flags, VkImageType imageType, VkFormat format, VkExtent3D extent, uint32_t mipLevels, uint32_t arrayLayers, VkSampleCountFlagBits samples, VkImageTiling tiling, VkImageUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices, VkImageLayout initialLayout, const VkAllocationCallbacks* pAllocator, VkImage* pImage);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a sampler ycbcr conversion with VkExternalFormatOHOS chained.
  *
- * \param[in]  device                       See cvkCreateSamplerYcbcrConversion
- * \param[out] pNext                        See cvkCreateSamplerYcbcrConversion
- * \param[in]  externalFormat               VkExternalFormatOHOS::externalFormat
- * \param[in]  format                       See cvkCreateSamplerYcbcrConversion
- * \param[in]  ycbcrModel                   See cvkCreateSamplerYcbcrConversion
- * \param[in]  ycbcrRange                   See cvkCreateSamplerYcbcrConversion
- * \param[in]  components                   See cvkCreateSamplerYcbcrConversion
- * \param[in]  xChromaOffset                See cvkCreateSamplerYcbcrConversion
- * \param[in]  yChromaOffset                See cvkCreateSamplerYcbcrConversion
- * \param[in]  chromaFilter                 See cvkCreateSamplerYcbcrConversion
- * \param[in]  forceExplicitReconstruction  See cvkCreateSamplerYcbcrConversion
- * \param[in]  pAllocator                   See cvkCreateSamplerYcbcrConversion
- * \param[out] pYcbcrConversion             See cvkCreateSamplerYcbcrConversion
+ * \param[in]  device                        The logical device that creates the sampler {YCbCr} conversion.
+ * \param[out] pNext                         Optional extension chain attached to VkSamplerYcbcrConversionCreateInfo, or NULL
+ * \param[in]  externalFormat                An implementation-defined identifier for the external format.
+ * \param[in]  format                        The format of the image from which color information will be retrieved.
+ * \param[in]  ycbcrModel                    Describes the color matrix for conversion between color models.
+ * \param[in]  ycbcrRange                    Describes whether the encoded values have headroom and foot room, or whether the encoding uses the full numerical range.
+ * \param[in]  components                    Applies a swizzle based on VkComponentSwizzle enums prior to range expansion and color model conversion.
+ * \param[in]  xChromaOffset                 Describes the sample location associated with downsampled chroma components in the x dimension.
+ * \param[in]  yChromaOffset                 Describes the sample location associated with downsampled chroma components in the y dimension.
+ * \param[in]  chromaFilter                  The filter for chroma reconstruction.
+ * \param[in]  forceExplicitReconstruction   Can be used to ensure that reconstruction is done explicitly, if supported.
+ * \param[in]  pAllocator                    Optional allocation callbacks, or NULL
+ * \param[out] pYcbcrConversion              A pointer to a VkSamplerYcbcrConversion handle in which the resulting sampler {YCbCr} conversion is returned.
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoOHOS(VkDevice device, void* pNext, uint64_t externalFormat, VkFormat format, VkSamplerYcbcrModelConversion ycbcrModel, VkSamplerYcbcrRange ycbcrRange, VkComponentMapping components, VkChromaLocation xChromaOffset, VkChromaLocation yChromaOffset, VkFilter chromaFilter, VkBool32 forceExplicitReconstruction, const VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversion* pYcbcrConversion);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a graphics pipelines with VkExternalFormatOHOS chained.
  *
- * \param[in]  device               See cvkCreateGraphicsPipeline
- * \param[in]  pipelineCache        See cvkCreateGraphicsPipeline
- * \param[out] pNext                See cvkCreateGraphicsPipeline
- * \param[in]  externalFormat       VkExternalFormatOHOS::externalFormat
- * \param[in]  flags                See cvkCreateGraphicsPipeline
- * \param[in]  stageCount           See cvkCreateGraphicsPipeline
- * \param[in]  pStages              See cvkCreateGraphicsPipeline
- * \param[in]  pVertexInputState    See cvkCreateGraphicsPipeline
- * \param[in]  pInputAssemblyState  See cvkCreateGraphicsPipeline
- * \param[in]  pTessellationState   See cvkCreateGraphicsPipeline
- * \param[in]  pViewportState       See cvkCreateGraphicsPipeline
- * \param[in]  pRasterizationState  See cvkCreateGraphicsPipeline
- * \param[in]  pMultisampleState    See cvkCreateGraphicsPipeline
- * \param[in]  pDepthStencilState   See cvkCreateGraphicsPipeline
- * \param[in]  pColorBlendState     See cvkCreateGraphicsPipeline
- * \param[in]  pDynamicState        See cvkCreateGraphicsPipeline
- * \param[in]  layout               See cvkCreateGraphicsPipeline
- * \param[in]  renderPass           See cvkCreateGraphicsPipeline
- * \param[in]  subpass              See cvkCreateGraphicsPipeline
- * \param[in]  basePipelineHandle   See cvkCreateGraphicsPipeline
- * \param[in]  basePipelineIndex    See cvkCreateGraphicsPipeline
- * \param[in]  pAllocator           See cvkCreateGraphicsPipeline
- * \param[out] pPipeline            See cvkCreateGraphicsPipeline
+ * \param[in]  device                The logical device that creates the graphics pipelines.
+ * \param[in]  pipelineCache         Either VK_NULL_HANDLE, indicating that pipeline caching is disabled, or to enable caching, the handle of a valid VkPipelineCache object.
+ * \param[out] pNext                 Optional extension chain attached to VkGraphicsPipelineCreateInfo, or NULL
+ * \param[in]  externalFormat        An implementation-defined identifier for the external format.
+ * \param[in]  flags                 A bitmask of VkPipelineCreateFlagBits specifying how the pipeline will be generated.
+ * \param[in]  stageCount            The number of entries in the pStages array.
+ * \param[in]  pStages               A pointer to an array of stageCount VkPipelineShaderStageCreateInfo structures describing the set of the shader stages to be included in the graphics pipeline.
+ * \param[in]  pVertexInputState     A pointer to a VkPipelineVertexInputStateCreateInfo structure.
+ * \param[in]  pInputAssemblyState   A pointer to a VkPipelineInputAssemblyStateCreateInfo structure which determines input assembly behavior for vertex shading, as described in Drawing Commands.
+ * \param[in]  pTessellationState    A pointer to a VkPipelineTessellationStateCreateInfo structure defining tessellation state used by tessellation shaders.
+ * \param[in]  pViewportState        A pointer to a VkPipelineViewportStateCreateInfo structure defining viewport state used when rasterization is enabled.
+ * \param[in]  pRasterizationState   A pointer to a VkPipelineRasterizationStateCreateInfo structure defining rasterization state.
+ * \param[in]  pMultisampleState     A pointer to a VkPipelineMultisampleStateCreateInfo structure defining multisample state used when rasterization is enabled.
+ * \param[in]  pDepthStencilState    A pointer to a VkPipelineDepthStencilStateCreateInfo structure defining depth/stencil state used when rasterization is enabled for depth or stencil attachments accessed during rendering.
+ * \param[in]  pColorBlendState      A pointer to a VkPipelineColorBlendStateCreateInfo structure defining color blend state used when rasterization is enabled for any color attachments accessed during rendering.
+ * \param[in]  pDynamicState         A pointer to a VkPipelineDynamicStateCreateInfo structure defining which properties of the pipeline state object are dynamic and can be changed independently of the pipeline state.
+ * \param[in]  layout                The description of binding locations used by both the pipeline and descriptor sets used with the pipeline.
+ * \param[in]  renderPass            A handle to a render pass object describing the environment in which the pipeline will be used.
+ * \param[in]  subpass               The index of the subpass in the render pass where this pipeline will be used.
+ * \param[in]  basePipelineHandle    A pipeline to derive from.
+ * \param[in]  basePipelineIndex     An index into the pCreateInfos parameter to use as a pipeline to derive from.
+ * \param[in]  pAllocator            Optional allocation callbacks, or NULL
+ * \param[out] pPipeline             Receives the created VkPipeline
  *
- * \return VK_SUCCESS or one of: . Error results abort.
+ * \retval     VK_SUCCESS   Command successfully completed.
  */
 VkResult cvkCreateGraphicsPipelineWithExternalFormatInfoOHOS(VkDevice device, VkPipelineCache pipelineCache, void* pNext, uint64_t externalFormat, VkPipelineCreateFlags flags, uint32_t stageCount, const VkPipelineShaderStageCreateInfo* pStages, const VkPipelineVertexInputStateCreateInfo* pVertexInputState, const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState, const VkPipelineTessellationStateCreateInfo* pTessellationState, const VkPipelineViewportStateCreateInfo* pViewportState, const VkPipelineRasterizationStateCreateInfo* pRasterizationState, const VkPipelineMultisampleStateCreateInfo* pMultisampleState, const VkPipelineDepthStencilStateCreateInfo* pDepthStencilState, const VkPipelineColorBlendStateCreateInfo* pColorBlendState, const VkPipelineDynamicStateCreateInfo* pDynamicState, VkPipelineLayout layout, VkRenderPass renderPass, uint32_t subpass, VkPipeline basePipelineHandle, int32_t basePipelineIndex, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipeline);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves native buffer properties with VkNativeBufferFormatPropertiesOHOS chained to the output.
  *
- * \param[in]  device                             VkDevice value
- * \param[in]  buffer                             OH_NativeBuffer value
- * \param[in]  pNext                              Optional output extension chain attached to VkNativeBufferFormatPropertiesOHOS, or NULL
- * \param[out] pNativeBufferFormatPropertiesOHOS  Receives the VkNativeBufferFormatPropertiesOHOS
+ * \param[in]  device                              The logical device that will be importing buffer.
+ * \param[in]  buffer                              The OH_NativeBuffer object specifies the buffer for which its properties are to be queried.
+ * \param[in]  pNext                               Optional output extension chain attached to VkNativeBufferFormatPropertiesOHOS, or NULL
+ * \param[out] pNativeBufferFormatPropertiesOHOS   Receives the VkNativeBufferFormatPropertiesOHOS
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkGetNativeBufferFormatPropertiesOHOS(VkDevice device, const struct OH_NativeBuffer* buffer, void* pNext, VkNativeBufferFormatPropertiesOHOS* pNativeBufferFormatPropertiesOHOS);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves physical device image format properties 2 with VkNativeBufferUsageOHOS chained to the output.
  *
- * \param[in]  physicalDevice              VkPhysicalDevice value
- * \param[in]  pImageFormatInfoNext        Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
- * \param[in]  format                      VkPhysicalDeviceImageFormatInfo2::format
- * \param[in]  type                        VkPhysicalDeviceImageFormatInfo2::type
- * \param[in]  tiling                      VkPhysicalDeviceImageFormatInfo2::tiling
- * \param[in]  usage                       VkPhysicalDeviceImageFormatInfo2::usage
- * \param[in]  flags                       VkPhysicalDeviceImageFormatInfo2::flags
- * \param[in]  pNativeBufferUsageOHOSNext  Optional output extension chain attached to VkNativeBufferUsageOHOS, or NULL
- * \param[out] pNativeBufferUsageOHOS      Receives the VkNativeBufferUsageOHOS
+ * \param[in]  physicalDevice               The physical device from which to query the image capabilities.
+ * \param[in]  pImageFormatInfoNext         Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
+ * \param[in]  format                       A VkFormat value indicating the image format, corresponding to VkImageCreateInfo::format.
+ * \param[in]  type                         A VkImageType value indicating the image type, corresponding to VkImageCreateInfo::imageType.
+ * \param[in]  tiling                       A VkImageTiling value indicating the image tiling, corresponding to VkImageCreateInfo::tiling.
+ * \param[in]  usage                        A bitmask of VkImageUsageFlagBits indicating the intended usage of the image, corresponding to VkImageCreateInfo::usage.
+ * \param[in]  flags                        A bitmask of VkImageCreateFlagBits indicating additional parameters of the image, corresponding to VkImageCreateInfo::flags.
+ * \param[in]  pNativeBufferUsageOHOSNext   Optional output extension chain attached to VkNativeBufferUsageOHOS, or NULL
+ * \param[out] pNativeBufferUsageOHOS       Receives the VkNativeBufferUsageOHOS
  *
- * \return VK_SUCCESS or one of: . Error results abort.
+ * \retval     VK_SUCCESS   Command successfully completed.
  */
 VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithNativeBufferUsageOHOS(VkPhysicalDevice physicalDevice, const void* pImageFormatInfoNext, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, void* pNativeBufferUsageOHOSNext, VkNativeBufferUsageOHOS* pNativeBufferUsageOHOS);
 /* clang-format on */

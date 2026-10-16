@@ -23,7 +23,7 @@ typedef struct cvkBicubicScalingConstants
  * \param[in] renderPass Caller-owned compatible render pass.
  * \param[in] pAllocator Allocation callbacks for scratch and Vulkan objects.
  * \param[out] pObjects Receives the created JSON objects.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCreateBicubicScalingPipeline(VkDevice                     device,
                                      VkPipelineCache              pipelineCache,
@@ -59,7 +59,7 @@ void cvkCreateBicubicScalingPipeline(VkDevice                     device,
  * \param[in] contentExtent Dimensions of the destination content.
  * \param[in] backingExtent Dimensions of the backing image.
  * \param[in] blend Bicubic-to-original blend in the range zero to one.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCmdDrawFullscreenQuadWithBicubicScaling(VkCommandBuffer  commandBuffer,
                                                 VkPipeline       pipeline,
@@ -112,7 +112,7 @@ void cvkCmdDrawFullscreenQuadWithBicubicScaling(VkCommandBuffer  commandBuffer,
  * \param[in] sourceExtent Dimensions of the sampled image.
  * \param[in] contentExtent Dimensions of the destination content.
  * \param[in] blend Bicubic-to-original blend in the range zero to one.
- * \retval None No value is returned.
+ * \retval None
  */
 void cvkCmdExecuteBicubicScalingRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
                                                           VkImageLayout           externalLayout,

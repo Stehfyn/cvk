@@ -43,6 +43,7 @@ void cvkReadJsonExportMetalBufferInfo(
         (void)cvkResolveJsonHandle(pContext, "VkDeviceMemory", value, sizeof(VkDeviceMemory), (void*)&pInfo->memory);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -77,6 +78,7 @@ void cvkReadJsonExportMetalCommandQueueInfo(
         (void)cvkResolveJsonHandle(pContext, "VkQueue", value, sizeof(VkQueue), (void*)&pInfo->queue);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -104,6 +106,7 @@ void cvkReadJsonExportMetalDeviceInfo(
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -138,6 +141,7 @@ void cvkReadJsonExportMetalIOSurfaceInfo(
         (void)cvkResolveJsonHandle(pContext, "VkImage", value, sizeof(VkImage), (void*)&pInfo->image);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -170,6 +174,7 @@ void cvkReadJsonExportMetalObjectCreateInfo(
         pInfo->exportObjectType = cvkParseJsonExportMetalObjectTypeFlagBits(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -197,6 +202,7 @@ void cvkReadJsonExportMetalObjectsInfo(
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -238,6 +244,7 @@ void cvkReadJsonExportMetalSharedEventInfo(
         (void)cvkResolveJsonHandle(pContext, "VkEvent", value, sizeof(VkEvent), (void*)&pInfo->event);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -291,6 +298,7 @@ void cvkReadJsonExportMetalTextureInfo(
         pInfo->plane = cvkParseJsonImageAspectFlagBits(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -323,6 +331,7 @@ void cvkReadJsonImportMemoryMetalHandleInfo(
         pInfo->handleType = cvkParseJsonExternalMemoryHandleTypeFlagBits(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -350,6 +359,7 @@ void cvkReadJsonImportMetalBufferInfo(
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -377,6 +387,7 @@ void cvkReadJsonImportMetalIOSurfaceInfo(
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -404,6 +415,7 @@ void cvkReadJsonImportMetalSharedEventInfo(
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -436,6 +448,7 @@ void cvkReadJsonImportMetalTextureInfo(
         pInfo->plane = cvkParseJsonImageAspectFlagBits(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -475,6 +488,7 @@ void cvkReadJsonMemoryGetMetalHandleInfo(
         pInfo->handleType = cvkParseJsonExternalMemoryHandleTypeFlagBits(value);
     }
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -505,6 +519,7 @@ void cvkReadJsonMemoryMetalHandleProperties(
 
     pInfo->memoryTypeBits = (uint32_t)cvkParseJsonUint64(value);
 }
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -535,61 +550,46 @@ void cvkReadJsonMetalSurfaceCreateInfo(
 
     pInfo->flags = cvkParseJsonMetalSurfaceCreateFlags(value);
 }
-extern CVK_FORCE_INLINE VkExportMetalObjectTypeFlagBitsEXT cvkParseJsonExportMetalObjectTypeFlagBits(
+VkExportMetalObjectTypeFlagBitsEXT cvkParseJsonExportMetalObjectTypeFlagBits(
     const cvkJsonValue* pValue)
 {
     uint64_t enumerant;
     VkBool32 found;
 
-    static const cvkJsonName table[] = {{"VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT",
-                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT",
-                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT",
-                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT",
-                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT",
-                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT",
-                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT}};
+    static const cvkJsonName table[] = {{"VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT}};
 
     enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT) ||
-            (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT) ||
-            (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT) ||
-            (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT) ||
-            (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT) ||
-            (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT);
+    found = (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT) || (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT) || (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT) || (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT);
     CVK_ASSERT(found);
 
     return (VkExportMetalObjectTypeFlagBitsEXT)enumerant;
 }
-extern CVK_FORCE_INLINE VkExportMetalObjectTypeFlagsEXT cvkParseJsonExportMetalObjectTypeFlags(
+VkExportMetalObjectTypeFlagsEXT cvkParseJsonExportMetalObjectTypeFlags(
     const cvkJsonValue* pValue)
 {
-    static const cvkJsonName table[] = {{"VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT",
-                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT",
-                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT",
-                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT",
-                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT",
-                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT",
-                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT}};
+    static const cvkJsonName table[] = {{"VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT}};
 
     return (VkExportMetalObjectTypeFlagsEXT)cvkParseJsonFlags(pValue, table, VK_COUNT_OF(table));
 }
-extern CVK_FORCE_INLINE VkMetalSurfaceCreateFlagsEXT cvkParseJsonMetalSurfaceCreateFlags(
+VkMetalSurfaceCreateFlagsEXT cvkParseJsonMetalSurfaceCreateFlags(
     const cvkJsonValue* pValue)
 {
     return (VkMetalSurfaceCreateFlagsEXT)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalBufferInfo(
+void cvkParseJsonExportMetalBufferInfo(
     const cvkJsonContext*       pContext,
     const cvkJsonValue*         pObject,
     VkExportMetalBufferInfoEXT* pInfo)
@@ -600,7 +600,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalBufferInfo(
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalBufferInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalCommandQueueInfo(
+void cvkParseJsonExportMetalCommandQueueInfo(
     const cvkJsonContext*             pContext,
     const cvkJsonValue*               pObject,
     VkExportMetalCommandQueueInfoEXT* pInfo)
@@ -611,7 +611,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalCommandQueueInfo(
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalCommandQueueInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalDeviceInfo(
+void cvkParseJsonExportMetalDeviceInfo(
     const cvkJsonContext*       pContext,
     const cvkJsonValue*         pObject,
     VkExportMetalDeviceInfoEXT* pInfo)
@@ -622,7 +622,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalDeviceInfo(
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalDeviceInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalIOSurfaceInfo(
+void cvkParseJsonExportMetalIOSurfaceInfo(
     const cvkJsonContext*          pContext,
     const cvkJsonValue*            pObject,
     VkExportMetalIOSurfaceInfoEXT* pInfo)
@@ -633,7 +633,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalIOSurfaceInfo(
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalIOSurfaceInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalObjectCreateInfo(
+void cvkParseJsonExportMetalObjectCreateInfo(
     const cvkJsonContext*             pContext,
     const cvkJsonValue*               pObject,
     VkExportMetalObjectCreateInfoEXT* pInfo)
@@ -644,7 +644,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalObjectCreateInfo(
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalObjectCreateInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalObjectsInfo(
+void cvkParseJsonExportMetalObjectsInfo(
     const cvkJsonContext*        pContext,
     const cvkJsonValue*          pObject,
     VkExportMetalObjectsInfoEXT* pInfo)
@@ -655,7 +655,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalObjectsInfo(
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalObjectsInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalSharedEventInfo(
+void cvkParseJsonExportMetalSharedEventInfo(
     const cvkJsonContext*            pContext,
     const cvkJsonValue*              pObject,
     VkExportMetalSharedEventInfoEXT* pInfo)
@@ -666,7 +666,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalSharedEventInfo(
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalSharedEventInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalTextureInfo(
+void cvkParseJsonExportMetalTextureInfo(
     const cvkJsonContext*        pContext,
     const cvkJsonValue*          pObject,
     VkExportMetalTextureInfoEXT* pInfo)
@@ -677,7 +677,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalTextureInfo(
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalTextureInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryMetalHandleInfo(
+void cvkParseJsonImportMemoryMetalHandleInfo(
     const cvkJsonContext*             pContext,
     const cvkJsonValue*               pObject,
     VkImportMemoryMetalHandleInfoEXT* pInfo)
@@ -688,7 +688,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryMetalHandleInfo(
     cvkAppendJsonWork(&work, cvkReadJsonImportMemoryMetalHandleInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportMetalBufferInfo(
+void cvkParseJsonImportMetalBufferInfo(
     const cvkJsonContext*       pContext,
     const cvkJsonValue*         pObject,
     VkImportMetalBufferInfoEXT* pInfo)
@@ -699,7 +699,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportMetalBufferInfo(
     cvkAppendJsonWork(&work, cvkReadJsonImportMetalBufferInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportMetalIOSurfaceInfo(
+void cvkParseJsonImportMetalIOSurfaceInfo(
     const cvkJsonContext*          pContext,
     const cvkJsonValue*            pObject,
     VkImportMetalIOSurfaceInfoEXT* pInfo)
@@ -710,7 +710,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportMetalIOSurfaceInfo(
     cvkAppendJsonWork(&work, cvkReadJsonImportMetalIOSurfaceInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportMetalSharedEventInfo(
+void cvkParseJsonImportMetalSharedEventInfo(
     const cvkJsonContext*            pContext,
     const cvkJsonValue*              pObject,
     VkImportMetalSharedEventInfoEXT* pInfo)
@@ -721,7 +721,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportMetalSharedEventInfo(
     cvkAppendJsonWork(&work, cvkReadJsonImportMetalSharedEventInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportMetalTextureInfo(
+void cvkParseJsonImportMetalTextureInfo(
     const cvkJsonContext*        pContext,
     const cvkJsonValue*          pObject,
     VkImportMetalTextureInfoEXT* pInfo)
@@ -732,7 +732,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportMetalTextureInfo(
     cvkAppendJsonWork(&work, cvkReadJsonImportMetalTextureInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetMetalHandleInfo(
+void cvkParseJsonMemoryGetMetalHandleInfo(
     const cvkJsonContext*          pContext,
     const cvkJsonValue*            pObject,
     VkMemoryGetMetalHandleInfoEXT* pInfo)
@@ -743,7 +743,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetMetalHandleInfo(
     cvkAppendJsonWork(&work, cvkReadJsonMemoryGetMetalHandleInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMemoryMetalHandleProperties(
+void cvkParseJsonMemoryMetalHandleProperties(
     const cvkJsonContext*             pContext,
     const cvkJsonValue*               pObject,
     VkMemoryMetalHandlePropertiesEXT* pInfo)
@@ -754,7 +754,7 @@ extern CVK_FORCE_INLINE void cvkParseJsonMemoryMetalHandleProperties(
     cvkAppendJsonWork(&work, cvkReadJsonMemoryMetalHandleProperties, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMetalSurfaceCreateInfo(
+void cvkParseJsonMetalSurfaceCreateInfo(
     const cvkJsonContext*        pContext,
     const cvkJsonValue*          pObject,
     VkMetalSurfaceCreateInfoEXT* pInfo)

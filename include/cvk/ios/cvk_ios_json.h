@@ -7,22 +7,26 @@
 #include <vulkan/vulkan_ios.h>
 
 /* clang-format off */
+
+/*************************************************************************************************/
 /**
  * \brief Parses a VkIOSSurfaceCreateFlagsMVK from JSON.
  *
- * \param[in] pValue  The value: bit names joined by |, a number, or NULL
+ * \param[in] pValue   The value: bit names joined by |, a number, or NULL
  *
- * \return The VkIOSSurfaceCreateFlagsMVK returned by the command.
+ * \retval    VkIOSSurfaceCreateFlagsMVK   The parsed value.
  */
 VkIOSSurfaceCreateFlagsMVK cvkParseJsonIOSSurfaceCreateFlagsMVK(const cvkJsonValue* pValue);
+
+/*************************************************************************************************/
 /**
  * \brief Parses a VkIOSSurfaceCreateInfoMVK from a JSON object; members absent or NULL stay zero.
  *
- * \param[in]  pContext  Parsing context: document, arena, handle resolver
- * \param[in]  pObject   The JSON object of the VkIOSSurfaceCreateInfoMVK
- * \param[out] pInfo     Receives the parsed VkIOSSurfaceCreateInfoMVK, zeroed first
+ * \param[in]  pContext   Parsing context: document, arena, handle resolver
+ * \param[in]  pObject    The JSON object of the VkIOSSurfaceCreateInfoMVK
+ * \param[out] pInfo      Receives the parsed VkIOSSurfaceCreateInfoMVK, zeroed first
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkParseJsonIOSSurfaceCreateInfoMVK(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkIOSSurfaceCreateInfoMVK* pInfo);
 /* clang-format on */

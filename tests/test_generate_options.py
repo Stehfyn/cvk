@@ -11,7 +11,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from generate import Generator, align_param_docs, load_policy
+from generate import DOC_BANNER, Generator, finish_doc_comments, load_policy
 from vkxml import Registry
 
 
@@ -48,19 +48,42 @@ class GeneratorOptionsTests(unittest.TestCase):
         for platform in off.json_decls:
             self.assertNotIn("/**", off.json_header(platform))
 
-    def test_param_documentation_columns_align(self):
-        block = (" * \\param[in,out] pWork Work stack.\n"
+    def test_doc_comments_align_params_and_open_with_banner(self):
+        block = ("void cvkA(void);\n"
+                 "/**\n"
+                 " * \\param[in,out] pWork Work stack.\n"
                  " * \\param[in] read Reader.\n"
-                 " * \\retval None No value is returned.\n")
-        self.assertEqual(align_param_docs(block),
-                         " * \\param[in,out] pWork  Work stack.\n"
-                         " * \\param[in]     read   Reader.\n"
-                         " * \\retval None No value is returned.\n")
+                 " * \\retval VK_SUCCESS Command successfully completed.\n"
+                 " * \\retval VK_ERROR_SURFACE_LOST_KHR The surface is no longer available.\n"
+                 " */\n"
+                 "void cvkB(cvkJsonWork* pWork, int read);\n"
+                 "/**\n"
+                 " * \\brief Not a function.\n"
+                 " */\n"
+                 "typedef struct cvkC cvkC;\n")
+        expected = ("void cvkA(void);\n"
+                    "\n"
+                    f"{DOC_BANNER}\n"
+                    "/**\n"
+                    " * \\param[in,out] pWork   Work stack.\n"
+                    " * \\param[in]     read    Reader.\n"
+                    " *\n"
+                    " * \\retval        VK_SUCCESS                  Command successfully completed.\n"
+                    " * \\retval        VK_ERROR_SURFACE_LOST_KHR   The surface is no longer available.\n"
+                    " */\n"
+                    "void cvkB(cvkJsonWork* pWork, int read);\n"
+                    "/**\n"
+                    " * \\brief Not a function.\n"
+                    " */\n"
+                    "typedef struct cvkC cvkC;\n")
+        self.assertEqual(finish_doc_comments(block), expected)
+        self.assertEqual(finish_doc_comments(expected), expected)
 
     @unittest.skipUnless(shutil.which("clang"), "clang is required for diagnostic boundary checks")
     def test_diagnostic_line_signed_boundaries(self):
         source = r'''
 #include "cvk/cvk.h"
+#include "vk_diagnostic.h"
 #include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -122,9 +145,13 @@ int main(void)
             fixture = directory / "diagnostic.c"
             executable = directory / "diagnostic.exe"
             fixture.write_text(source, encoding="utf-8")
+            # The diagnostic output comes from the host's platform backend, as in the vk-diagnostic target.
+            backend = "win32" if sys.platform == "win32" else "posix"
             subprocess.run([shutil.which("clang"), "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",
                             "-I", str(ROOT / "include"), "-I", str(ROOT / "external/Vulkan-Headers/include"),
-                            str(fixture), "-o", str(executable)], check=True)
+                            "-I", str(ROOT / "platform"), "-I", str(ROOT / "examples/CastDemo"),
+                            str(fixture), str(ROOT / f"platform/{backend}/vk_diagnostic.c"),
+                            str(ROOT / "examples/CastDemo/utl/utl_decimal.c"), "-o", str(executable)], check=True)
             subprocess.run([str(executable)], check=True)
 
     def test_json_api_is_separate_from_core_and_platform_wrappers(self):
@@ -144,7 +171,8 @@ int main(void)
         for function in ("cvkParseJsonDocument", "cvkParsePipelineJson", "cvkCreatePipelineFromJson"):
             self.assertIn(function, gen.json_header())
             self.assertIn(function, gen.json_source())
-        self.assertIn("#include <ctype.h>", gen.json_source())
+        # JSON text classification is self-contained (cvkIsJsonTextSpace); neither side needs <ctype.h>.
+        self.assertNotIn("#include <ctype.h>", gen.json_source())
         self.assertNotIn("#include <ctype.h>", gen.source())
 
     def test_child_handles_do_not_gain_lookup_arguments(self):
@@ -233,9 +261,9 @@ int main(void)
                 self.assertNotIn("__cplusplus", gen.platform_header(platform))
                 self.assertIn("#include <volk.h>", gen.platform_source(platform))
 
-    def test_sc_policy_inherits_disabled_docs_and_keeps_native_header(self):
+    def test_sc_policy_inherits_enabled_docs_and_keeps_native_header(self):
         policy = load_policy(str(ROOT / "scvk.policy.json"))
-        self.assertFalse(policy["doc_comments"])
+        self.assertTrue(policy["doc_comments"])
         self.assertEqual(policy["header"], "<vulkan/vulkan_sc_core.h>")
         self.assertTrue(policy["single_line_prototypes"])
 
@@ -246,7 +274,9 @@ int main(void)
                            + [gen.json_header(p) for p in gen.json_decls]):
                 declarations = list(re.finditer(pattern, header))
                 self.assertTrue(declarations)
-                self.assertTrue(all("\n" not in m.group() for m in declarations))
+                # Protocols marked "\par Prototype: multiline" keep their authored layout.
+                self.assertTrue(all("\n" not in m.group() for m in declarations
+                                    if m.group(1) not in gen.multiline_protocol_prototypes))
             one_line = gen.header()
             gen.single_line_prototypes = False
             try:
@@ -257,7 +287,7 @@ int main(void)
                 gen.single_line_prototypes = True
 
     def test_clang_format_respects_each_layout_configuration(self):
-        pattern = r"(?m)^[ \t]*(?:[A-Za-z_]\w*[ \t*]+)+cvk[A-Z]\w*[ \t]*\([^;{}]*\)[ \t]*;"
+        pattern = r"(?m)^[ \t]*(?:[A-Za-z_]\w*[ \t*]+)+(cvk[A-Z]\w*)[ \t]*\([^;{}]*\)[ \t]*;"
         formatter = ["clang-format", f"--style=file:{ROOT / '.clang-format'}"]
         for gen in self.variants.values():
             for single_line in (False, True):
@@ -268,7 +298,8 @@ int main(void)
                     declarations = list(re.finditer(pattern, formatted))
                     self.assertTrue(declarations)
                     if single_line:
-                        self.assertTrue(all("\n" not in m.group() for m in declarations))
+                        self.assertTrue(all("\n" not in m.group() for m in declarations
+                                            if m.group(1) not in gen.multiline_protocol_prototypes))
                     else:
                         self.assertTrue(any("\n" in m.group() for m in declarations))
                 finally:

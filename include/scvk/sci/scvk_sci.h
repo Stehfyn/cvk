@@ -9,472 +9,513 @@
 #include <vulkan/vulkan_sci.h>
 
 /* clang-format off */
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV.
  *
- * \param[out] pInfo                             Receives the initialized VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV
- * \param[in]  pNext                             Optional extension chain attached to VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV, or NULL
- * \param[in]  semaphoreSciSyncPoolRequestCount  VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV::semaphoreSciSyncPoolRequestCount
+ * \param[out] pInfo                              Receives the initialized VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV
+ * \param[in]  pNext                              Optional extension chain attached to VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV, or NULL
+ * \param[in]  semaphoreSciSyncPoolRequestCount   VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV::semaphoreSciSyncPoolRequestCount
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitDeviceSemaphoreSciSyncPoolReservationCreateInfoNV(VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV* pInfo, const void* pNext, uint32_t semaphoreSciSyncPoolRequestCount);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkExportFenceSciSyncInfoNV.
  *
- * \param[out] pInfo        Receives the initialized VkExportFenceSciSyncInfoNV
- * \param[in]  pNext        Optional extension chain attached to VkExportFenceSciSyncInfoNV, or NULL
- * \param[in]  pAttributes  VkExportFenceSciSyncInfoNV::pAttributes
+ * \param[out] pInfo         Receives the initialized VkExportFenceSciSyncInfoNV
+ * \param[in]  pNext         Optional extension chain attached to VkExportFenceSciSyncInfoNV, or NULL
+ * \param[in]  pAttributes   VkExportFenceSciSyncInfoNV::pAttributes
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitExportFenceSciSyncInfoNV(VkExportFenceSciSyncInfoNV* pInfo, const void* pNext, NvSciSyncAttrList pAttributes);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkExportMemorySciBufInfoNV.
  *
- * \param[out] pInfo        Receives the initialized VkExportMemorySciBufInfoNV
- * \param[in]  pNext        Optional extension chain attached to VkExportMemorySciBufInfoNV, or NULL
- * \param[in]  pAttributes  VkExportMemorySciBufInfoNV::pAttributes
+ * \param[out] pInfo         Receives the initialized VkExportMemorySciBufInfoNV
+ * \param[in]  pNext         Optional extension chain attached to VkExportMemorySciBufInfoNV, or NULL
+ * \param[in]  pAttributes   VkExportMemorySciBufInfoNV::pAttributes
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitExportMemorySciBufInfoNV(VkExportMemorySciBufInfoNV* pInfo, const void* pNext, NvSciBufAttrList pAttributes);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkExportSemaphoreSciSyncInfoNV.
  *
- * \param[out] pInfo        Receives the initialized VkExportSemaphoreSciSyncInfoNV
- * \param[in]  pNext        Optional extension chain attached to VkExportSemaphoreSciSyncInfoNV, or NULL
- * \param[in]  pAttributes  VkExportSemaphoreSciSyncInfoNV::pAttributes
+ * \param[out] pInfo         Receives the initialized VkExportSemaphoreSciSyncInfoNV
+ * \param[in]  pNext         Optional extension chain attached to VkExportSemaphoreSciSyncInfoNV, or NULL
+ * \param[in]  pAttributes   VkExportSemaphoreSciSyncInfoNV::pAttributes
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitExportSemaphoreSciSyncInfoNV(VkExportSemaphoreSciSyncInfoNV* pInfo, const void* pNext, NvSciSyncAttrList pAttributes);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkFenceGetSciSyncInfoNV.
  *
- * \param[out] pInfo       Receives the initialized VkFenceGetSciSyncInfoNV
- * \param[in]  pNext       Optional extension chain attached to VkFenceGetSciSyncInfoNV, or NULL
- * \param[in]  fence       VkFenceGetSciSyncInfoNV::fence
- * \param[in]  handleType  VkFenceGetSciSyncInfoNV::handleType
+ * \param[out] pInfo        Receives the initialized VkFenceGetSciSyncInfoNV
+ * \param[in]  pNext        Optional extension chain attached to VkFenceGetSciSyncInfoNV, or NULL
+ * \param[in]  fence        VkFenceGetSciSyncInfoNV::fence
+ * \param[in]  handleType   VkFenceGetSciSyncInfoNV::handleType
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitFenceGetSciSyncInfoNV(VkFenceGetSciSyncInfoNV* pInfo, const void* pNext, VkFence fence, VkExternalFenceHandleTypeFlagBits handleType);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkImportFenceSciSyncInfoNV.
  *
- * \param[out] pInfo       Receives the initialized VkImportFenceSciSyncInfoNV
- * \param[in]  pNext       Optional extension chain attached to VkImportFenceSciSyncInfoNV, or NULL
- * \param[in]  fence       VkImportFenceSciSyncInfoNV::fence
- * \param[in]  handleType  VkImportFenceSciSyncInfoNV::handleType
- * \param[in]  handle      VkImportFenceSciSyncInfoNV::handle
+ * \param[out] pInfo        Receives the initialized VkImportFenceSciSyncInfoNV
+ * \param[in]  pNext        Optional extension chain attached to VkImportFenceSciSyncInfoNV, or NULL
+ * \param[in]  fence        VkImportFenceSciSyncInfoNV::fence
+ * \param[in]  handleType   VkImportFenceSciSyncInfoNV::handleType
+ * \param[in]  handle       VkImportFenceSciSyncInfoNV::handle
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitImportFenceSciSyncInfoNV(VkImportFenceSciSyncInfoNV* pInfo, const void* pNext, VkFence fence, VkExternalFenceHandleTypeFlagBits handleType, void* handle);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkImportMemorySciBufInfoNV.
  *
- * \param[out] pInfo       Receives the initialized VkImportMemorySciBufInfoNV
- * \param[in]  pNext       Optional extension chain attached to VkImportMemorySciBufInfoNV, or NULL
- * \param[in]  handleType  VkImportMemorySciBufInfoNV::handleType
- * \param[in]  handle      VkImportMemorySciBufInfoNV::handle
+ * \param[out] pInfo        Receives the initialized VkImportMemorySciBufInfoNV
+ * \param[in]  pNext        Optional extension chain attached to VkImportMemorySciBufInfoNV, or NULL
+ * \param[in]  handleType   VkImportMemorySciBufInfoNV::handleType
+ * \param[in]  handle       VkImportMemorySciBufInfoNV::handle
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitImportMemorySciBufInfoNV(VkImportMemorySciBufInfoNV* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlagBits handleType, NvSciBufObj handle);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkImportSemaphoreSciSyncInfoNV.
  *
- * \param[out] pInfo       Receives the initialized VkImportSemaphoreSciSyncInfoNV
- * \param[in]  pNext       Optional extension chain attached to VkImportSemaphoreSciSyncInfoNV, or NULL
- * \param[in]  semaphore   VkImportSemaphoreSciSyncInfoNV::semaphore
- * \param[in]  handleType  VkImportSemaphoreSciSyncInfoNV::handleType
- * \param[in]  handle      VkImportSemaphoreSciSyncInfoNV::handle
+ * \param[out] pInfo        Receives the initialized VkImportSemaphoreSciSyncInfoNV
+ * \param[in]  pNext        Optional extension chain attached to VkImportSemaphoreSciSyncInfoNV, or NULL
+ * \param[in]  semaphore    VkImportSemaphoreSciSyncInfoNV::semaphore
+ * \param[in]  handleType   VkImportSemaphoreSciSyncInfoNV::handleType
+ * \param[in]  handle       VkImportSemaphoreSciSyncInfoNV::handle
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitImportSemaphoreSciSyncInfoNV(VkImportSemaphoreSciSyncInfoNV* pInfo, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, void* handle);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkMemoryGetSciBufInfoNV.
  *
- * \param[out] pInfo       Receives the initialized VkMemoryGetSciBufInfoNV
- * \param[in]  pNext       Optional extension chain attached to VkMemoryGetSciBufInfoNV, or NULL
- * \param[in]  memory      VkMemoryGetSciBufInfoNV::memory
- * \param[in]  handleType  VkMemoryGetSciBufInfoNV::handleType
+ * \param[out] pInfo        Receives the initialized VkMemoryGetSciBufInfoNV
+ * \param[in]  pNext        Optional extension chain attached to VkMemoryGetSciBufInfoNV, or NULL
+ * \param[in]  memory       VkMemoryGetSciBufInfoNV::memory
+ * \param[in]  handleType   VkMemoryGetSciBufInfoNV::handleType
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitMemoryGetSciBufInfoNV(VkMemoryGetSciBufInfoNV* pInfo, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkMemorySciBufPropertiesNV.
  *
- * \param[out] pInfo           Receives the initialized VkMemorySciBufPropertiesNV
- * \param[in]  pNext           Optional extension chain attached to VkMemorySciBufPropertiesNV, or NULL
- * \param[in]  memoryTypeBits  VkMemorySciBufPropertiesNV::memoryTypeBits
+ * \param[out] pInfo            Receives the initialized VkMemorySciBufPropertiesNV
+ * \param[in]  pNext            Optional extension chain attached to VkMemorySciBufPropertiesNV, or NULL
+ * \param[in]  memoryTypeBits   VkMemorySciBufPropertiesNV::memoryTypeBits
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitMemorySciBufPropertiesNV(VkMemorySciBufPropertiesNV* pInfo, const void* pNext, uint32_t memoryTypeBits);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkPhysicalDeviceExternalMemorySciBufFeaturesNV.
  *
- * \param[out] pInfo         Receives the initialized VkPhysicalDeviceExternalMemorySciBufFeaturesNV
- * \param[in]  pNext         Optional extension chain attached to VkPhysicalDeviceExternalMemorySciBufFeaturesNV, or NULL
- * \param[in]  sciBufImport  VkPhysicalDeviceExternalMemorySciBufFeaturesNV::sciBufImport
- * \param[in]  sciBufExport  VkPhysicalDeviceExternalMemorySciBufFeaturesNV::sciBufExport
+ * \param[out] pInfo          Receives the initialized VkPhysicalDeviceExternalMemorySciBufFeaturesNV
+ * \param[in]  pNext          Optional extension chain attached to VkPhysicalDeviceExternalMemorySciBufFeaturesNV, or NULL
+ * \param[in]  sciBufImport   VkPhysicalDeviceExternalMemorySciBufFeaturesNV::sciBufImport
+ * \param[in]  sciBufExport   VkPhysicalDeviceExternalMemorySciBufFeaturesNV::sciBufExport
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitPhysicalDeviceExternalMemorySciBufFeaturesNV(VkPhysicalDeviceExternalMemorySciBufFeaturesNV* pInfo, void* pNext, VkBool32 sciBufImport, VkBool32 sciBufExport);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkPhysicalDeviceExternalSciSync2FeaturesNV.
  *
- * \param[out] pInfo              Receives the initialized VkPhysicalDeviceExternalSciSync2FeaturesNV
- * \param[in]  pNext              Optional extension chain attached to VkPhysicalDeviceExternalSciSync2FeaturesNV, or NULL
- * \param[in]  sciSyncFence       VkPhysicalDeviceExternalSciSync2FeaturesNV::sciSyncFence
- * \param[in]  sciSyncSemaphore2  VkPhysicalDeviceExternalSciSync2FeaturesNV::sciSyncSemaphore2
- * \param[in]  sciSyncImport      VkPhysicalDeviceExternalSciSync2FeaturesNV::sciSyncImport
- * \param[in]  sciSyncExport      VkPhysicalDeviceExternalSciSync2FeaturesNV::sciSyncExport
+ * \param[out] pInfo               Receives the initialized VkPhysicalDeviceExternalSciSync2FeaturesNV
+ * \param[in]  pNext               Optional extension chain attached to VkPhysicalDeviceExternalSciSync2FeaturesNV, or NULL
+ * \param[in]  sciSyncFence        VkPhysicalDeviceExternalSciSync2FeaturesNV::sciSyncFence
+ * \param[in]  sciSyncSemaphore2   VkPhysicalDeviceExternalSciSync2FeaturesNV::sciSyncSemaphore2
+ * \param[in]  sciSyncImport       VkPhysicalDeviceExternalSciSync2FeaturesNV::sciSyncImport
+ * \param[in]  sciSyncExport       VkPhysicalDeviceExternalSciSync2FeaturesNV::sciSyncExport
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitPhysicalDeviceExternalSciSync2FeaturesNV(VkPhysicalDeviceExternalSciSync2FeaturesNV* pInfo, void* pNext, VkBool32 sciSyncFence, VkBool32 sciSyncSemaphore2, VkBool32 sciSyncImport, VkBool32 sciSyncExport);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkPhysicalDeviceExternalSciSyncFeaturesNV.
  *
- * \param[out] pInfo             Receives the initialized VkPhysicalDeviceExternalSciSyncFeaturesNV
- * \param[in]  pNext             Optional extension chain attached to VkPhysicalDeviceExternalSciSyncFeaturesNV, or NULL
- * \param[in]  sciSyncFence      VkPhysicalDeviceExternalSciSyncFeaturesNV::sciSyncFence
- * \param[in]  sciSyncSemaphore  VkPhysicalDeviceExternalSciSyncFeaturesNV::sciSyncSemaphore
- * \param[in]  sciSyncImport     VkPhysicalDeviceExternalSciSyncFeaturesNV::sciSyncImport
- * \param[in]  sciSyncExport     VkPhysicalDeviceExternalSciSyncFeaturesNV::sciSyncExport
+ * \param[out] pInfo              Receives the initialized VkPhysicalDeviceExternalSciSyncFeaturesNV
+ * \param[in]  pNext              Optional extension chain attached to VkPhysicalDeviceExternalSciSyncFeaturesNV, or NULL
+ * \param[in]  sciSyncFence       VkPhysicalDeviceExternalSciSyncFeaturesNV::sciSyncFence
+ * \param[in]  sciSyncSemaphore   VkPhysicalDeviceExternalSciSyncFeaturesNV::sciSyncSemaphore
+ * \param[in]  sciSyncImport      VkPhysicalDeviceExternalSciSyncFeaturesNV::sciSyncImport
+ * \param[in]  sciSyncExport      VkPhysicalDeviceExternalSciSyncFeaturesNV::sciSyncExport
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitPhysicalDeviceExternalSciSyncFeaturesNV(VkPhysicalDeviceExternalSciSyncFeaturesNV* pInfo, void* pNext, VkBool32 sciSyncFence, VkBool32 sciSyncSemaphore, VkBool32 sciSyncImport, VkBool32 sciSyncExport);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkSciSyncAttributesInfoNV.
  *
- * \param[out] pInfo          Receives the initialized VkSciSyncAttributesInfoNV
- * \param[in]  pNext          Optional extension chain attached to VkSciSyncAttributesInfoNV, or NULL
- * \param[in]  clientType     VkSciSyncAttributesInfoNV::clientType
- * \param[in]  primitiveType  VkSciSyncAttributesInfoNV::primitiveType
+ * \param[out] pInfo           Receives the initialized VkSciSyncAttributesInfoNV
+ * \param[in]  pNext           Optional extension chain attached to VkSciSyncAttributesInfoNV, or NULL
+ * \param[in]  clientType      VkSciSyncAttributesInfoNV::clientType
+ * \param[in]  primitiveType   VkSciSyncAttributesInfoNV::primitiveType
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitSciSyncAttributesInfoNV(VkSciSyncAttributesInfoNV* pInfo, const void* pNext, VkSciSyncClientTypeNV clientType, VkSciSyncPrimitiveTypeNV primitiveType);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkSemaphoreGetSciSyncInfoNV.
  *
- * \param[out] pInfo       Receives the initialized VkSemaphoreGetSciSyncInfoNV
- * \param[in]  pNext       Optional extension chain attached to VkSemaphoreGetSciSyncInfoNV, or NULL
- * \param[in]  semaphore   VkSemaphoreGetSciSyncInfoNV::semaphore
- * \param[in]  handleType  VkSemaphoreGetSciSyncInfoNV::handleType
+ * \param[out] pInfo        Receives the initialized VkSemaphoreGetSciSyncInfoNV
+ * \param[in]  pNext        Optional extension chain attached to VkSemaphoreGetSciSyncInfoNV, or NULL
+ * \param[in]  semaphore    VkSemaphoreGetSciSyncInfoNV::semaphore
+ * \param[in]  handleType   VkSemaphoreGetSciSyncInfoNV::handleType
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitSemaphoreGetSciSyncInfoNV(VkSemaphoreGetSciSyncInfoNV* pInfo, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkSemaphoreSciSyncCreateInfoNV.
  *
- * \param[out] pInfo          Receives the initialized VkSemaphoreSciSyncCreateInfoNV
- * \param[in]  pNext          Optional extension chain attached to VkSemaphoreSciSyncCreateInfoNV, or NULL
- * \param[in]  semaphorePool  VkSemaphoreSciSyncCreateInfoNV::semaphorePool
- * \param[in]  pFence         VkSemaphoreSciSyncCreateInfoNV::pFence
+ * \param[out] pInfo           Receives the initialized VkSemaphoreSciSyncCreateInfoNV
+ * \param[in]  pNext           Optional extension chain attached to VkSemaphoreSciSyncCreateInfoNV, or NULL
+ * \param[in]  semaphorePool   VkSemaphoreSciSyncCreateInfoNV::semaphorePool
+ * \param[in]  pFence          VkSemaphoreSciSyncCreateInfoNV::pFence
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitSemaphoreSciSyncCreateInfoNV(VkSemaphoreSciSyncCreateInfoNV* pInfo, const void* pNext, VkSemaphoreSciSyncPoolNV semaphorePool, const NvSciSyncFence* pFence);
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkSemaphoreSciSyncPoolCreateInfoNV.
  *
- * \param[out] pInfo   Receives the initialized VkSemaphoreSciSyncPoolCreateInfoNV
- * \param[in]  pNext   Optional extension chain attached to VkSemaphoreSciSyncPoolCreateInfoNV, or NULL
- * \param[in]  handle  VkSemaphoreSciSyncPoolCreateInfoNV::handle
+ * \param[out] pInfo    Receives the initialized VkSemaphoreSciSyncPoolCreateInfoNV
+ * \param[in]  pNext    Optional extension chain attached to VkSemaphoreSciSyncPoolCreateInfoNV, or NULL
+ * \param[in]  handle   VkSemaphoreSciSyncPoolCreateInfoNV::handle
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkInitSemaphoreSciSyncPoolCreateInfoNV(VkSemaphoreSciSyncPoolCreateInfoNV* pInfo, const void* pNext, NvSciSyncObj handle);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a semaphore sci sync pool.
  *
- * \par Details:
- *  Wraps vkCreateSemaphoreSciSyncPoolNV. Aborts on any error result.
+ * \param[in]  device           The logical device that creates the semaphore pool.
+ * \param[in]  pNext            Optional extension chain attached to VkSemaphoreSciSyncPoolCreateInfoNV, or NULL
+ * \param[in]  handle           An external NvSciSyncObj to import.
+ * \param[in]  pAllocator       Optional allocation callbacks, or NULL
+ * \param[out] pSemaphorePool   A pointer to a handle in which the resulting semaphore pool object is returned.
  *
- * \param[in]  device          VkDevice value
- * \param[in]  pNext           Optional extension chain attached to VkSemaphoreSciSyncPoolCreateInfoNV, or NULL
- * \param[in]  handle          VkSemaphoreSciSyncPoolCreateInfoNV::handle
- * \param[in]  pAllocator      Optional allocation callbacks, or NULL
- * \param[out] pSemaphorePool  Receives the created VkSemaphoreSciSyncPoolNV
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkCreateSemaphoreSciSyncPoolNV(VkDevice device, const void* pNext, NvSciSyncObj handle, const VkAllocationCallbacks* pAllocator, VkSemaphoreSciSyncPoolNV* pSemaphorePool);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves fence sci sync fence.
  *
- * \par Details:
- *  Wraps vkGetFenceSciSyncFenceNV. Aborts on any error result.
+ * \param[in]  device       The logical device that created the fence being exported.
+ * \param[in]  pNext        Optional extension chain attached to VkFenceGetSciSyncInfoNV, or NULL
+ * \param[in]  fence        The fence from which state will be exported.
+ * \param[in]  handleType   The type of NvSciSync handle (NvSciSyncObj or NvSciSyncFence) representing the fence payload that will be exported.
+ * \param[out] pHandle      A pointer to a NvSciSyncFence which will contain the fence payload on return.
  *
- * \param[in]  device      VkDevice value
- * \param[in]  pNext       Optional extension chain attached to VkFenceGetSciSyncInfoNV, or NULL
- * \param[in]  fence       VkFenceGetSciSyncInfoNV::fence
- * \param[in]  handleType  VkFenceGetSciSyncInfoNV::handleType
- * \param[out] pHandle     Receives the void
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkGetFenceSciSyncFenceNV(VkDevice device, const void* pNext, VkFence fence, VkExternalFenceHandleTypeFlagBits handleType, void* pHandle);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves fence sci sync obj.
  *
- * \par Details:
- *  Wraps vkGetFenceSciSyncObjNV. Aborts on any error result.
+ * \param[in]  device       The logical device that created the fence being exported.
+ * \param[in]  pNext        Optional extension chain attached to VkFenceGetSciSyncInfoNV, or NULL
+ * \param[in]  fence        The fence from which state will be exported.
+ * \param[in]  handleType   The type of NvSciSync handle (NvSciSyncObj or NvSciSyncFence) representing the fence payload that will be exported.
+ * \param[out] pHandle      Will return the NvSciSyncObj handle representing the fence payload.
  *
- * \param[in]  device      VkDevice value
- * \param[in]  pNext       Optional extension chain attached to VkFenceGetSciSyncInfoNV, or NULL
- * \param[in]  fence       VkFenceGetSciSyncInfoNV::fence
- * \param[in]  handleType  VkFenceGetSciSyncInfoNV::handleType
- * \param[out] pHandle     Receives the void
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkGetFenceSciSyncObjNV(VkDevice device, const void* pNext, VkFence fence, VkExternalFenceHandleTypeFlagBits handleType, void* pHandle);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves memory sci buf.
  *
- * \par Details:
- *  Wraps vkGetMemorySciBufNV. Aborts on any error result.
+ * \param[in]  device       The logical device that created the device memory being exported.
+ * \param[in]  pNext        Optional extension chain attached to VkMemoryGetSciBufInfoNV, or NULL
+ * \param[in]  memory       The memory object from which the handle will be exported.
+ * \param[in]  handleType   The type of handle requested.
+ * \param[out] pHandle      Will return the NvSciBufObj representing the payload of the device memory object.
  *
- * \param[in]  device      VkDevice value
- * \param[in]  pNext       Optional extension chain attached to VkMemoryGetSciBufInfoNV, or NULL
- * \param[in]  memory      VkMemoryGetSciBufInfoNV::memory
- * \param[in]  handleType  VkMemoryGetSciBufInfoNV::handleType
- * \param[out] pHandle     Receives the NvSciBufObj
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkGetMemorySciBufNV(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, NvSciBufObj* pHandle);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves physical device external memory sci buf properties.
  *
- * \par Details:
- *  Wraps vkGetPhysicalDeviceExternalMemorySciBufPropertiesNV. Aborts on any error result.
+ * \param[in]  physicalDevice            The handle to the physical device whose properties will be queried.
+ * \param[in]  handleType                The type of the handle handle.
+ * \param[in]  handle                    The NvSciBuffObj handle which will be imported.
+ * \param[in]  pNext                     Optional output extension chain attached to VkMemorySciBufPropertiesNV, or NULL
+ * \param[out] pMemorySciBufProperties   A pointer to a VkMemorySciBufPropertiesNV structure.
  *
- * \param[in]  physicalDevice           VkPhysicalDevice value
- * \param[in]  handleType               VkExternalMemoryHandleTypeFlagBits value
- * \param[in]  handle                   NvSciBufObj value
- * \param[in]  pNext                    Optional output extension chain attached to VkMemorySciBufPropertiesNV, or NULL
- * \param[out] pMemorySciBufProperties  Receives the VkMemorySciBufPropertiesNV
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkGetPhysicalDeviceExternalMemorySciBufPropertiesNV(VkPhysicalDevice physicalDevice, VkExternalMemoryHandleTypeFlagBits handleType, NvSciBufObj handle, void* pNext, VkMemorySciBufPropertiesNV* pMemorySciBufProperties);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves physical device sci buf attributes.
  *
- * \par Details:
- *  Wraps vkGetPhysicalDeviceSciBufAttributesNV. Aborts on any error result.
+ * \param[in] physicalDevice   The handle to the physical device that will be used to determine the attributes.
+ * \param[in] pAttributes      An opaque NvSciBufAttrList in which the implementation will set the requested attributes.
  *
- * \param[in] physicalDevice  VkPhysicalDevice value
- * \param[in] pAttributes     NvSciBufAttrList value
- *
- * \retval None No value is returned.
+ * \retval    None
  */
 void scvkGetPhysicalDeviceSciBufAttributesNV(VkPhysicalDevice physicalDevice, NvSciBufAttrList pAttributes);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves physical device sci sync attributes.
  *
- * \par Details:
- *  Wraps vkGetPhysicalDeviceSciSyncAttributesNV. Aborts on any error result.
+ * \param[in] physicalDevice   The handle to the physical device that will be used to determine the attributes.
+ * \param[in] pNext            Optional extension chain attached to VkSciSyncAttributesInfoNV, or NULL
+ * \param[in] clientType       The permission type of client.
+ * \param[in] primitiveType    The synchronization primitive type.
+ * \param[in] pAttributes      An opaque NvSciSyncAttrList in which the implementation will set the requested attributes.
  *
- * \param[in] physicalDevice  VkPhysicalDevice value
- * \param[in] pNext           Optional extension chain attached to VkSciSyncAttributesInfoNV, or NULL
- * \param[in] clientType      VkSciSyncAttributesInfoNV::clientType
- * \param[in] primitiveType   VkSciSyncAttributesInfoNV::primitiveType
- * \param[in] pAttributes     NvSciSyncAttrList value
- *
- * \retval None No value is returned.
+ * \retval    None
  */
 void scvkGetPhysicalDeviceSciSyncAttributesNV(VkPhysicalDevice physicalDevice, const void* pNext, VkSciSyncClientTypeNV clientType, VkSciSyncPrimitiveTypeNV primitiveType, NvSciSyncAttrList pAttributes);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves semaphore sci sync obj.
  *
- * \par Details:
- *  Wraps vkGetSemaphoreSciSyncObjNV. Aborts on any error result.
+ * \param[in]  device       The logical device that created the semaphore being exported.
+ * \param[in]  pNext        Optional extension chain attached to VkSemaphoreGetSciSyncInfoNV, or NULL
+ * \param[in]  semaphore    The semaphore from which state will be exported.
+ * \param[in]  handleType   The type of NvSciSync handle (NvSciSyncObj) representing the semaphore that will be exported.
+ * \param[out] pHandle      Will return the NvSciSyncObj representing the semaphore payload.
  *
- * \param[in]  device      VkDevice value
- * \param[in]  pNext       Optional extension chain attached to VkSemaphoreGetSciSyncInfoNV, or NULL
- * \param[in]  semaphore   VkSemaphoreGetSciSyncInfoNV::semaphore
- * \param[in]  handleType  VkSemaphoreGetSciSyncInfoNV::handleType
- * \param[out] pHandle     Receives the void
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkGetSemaphoreSciSyncObjNV(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, void* pHandle);
+
+/*************************************************************************************************/
 /**
  * \brief Imports fence sci sync fence.
  *
- * \par Details:
- *  Wraps vkImportFenceSciSyncFenceNV. Aborts on any error result.
+ * \param[in] device       The logical device that created the fence.
+ * \param[in] pNext        Optional extension chain attached to VkImportFenceSciSyncInfoNV, or NULL
+ * \param[in] fence        The fence into which the state will be imported.
+ * \param[in] handleType   Specifies the type of handle.
+ * \param[in] handle       The external handle to import.
  *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkImportFenceSciSyncInfoNV, or NULL
- * \param[in] fence       VkImportFenceSciSyncInfoNV::fence
- * \param[in] handleType  VkImportFenceSciSyncInfoNV::handleType
- * \param[in] handle      VkImportFenceSciSyncInfoNV::handle
- *
- * \retval None No value is returned.
+ * \retval    None
  */
 void scvkImportFenceSciSyncFenceNV(VkDevice device, const void* pNext, VkFence fence, VkExternalFenceHandleTypeFlagBits handleType, void* handle);
+
+/*************************************************************************************************/
 /**
  * \brief Imports fence sci sync obj.
  *
- * \par Details:
- *  Wraps vkImportFenceSciSyncObjNV. Aborts on any error result.
+ * \param[in] device       The logical device that created the fence.
+ * \param[in] pNext        Optional extension chain attached to VkImportFenceSciSyncInfoNV, or NULL
+ * \param[in] fence        The fence into which the state will be imported.
+ * \param[in] handleType   Specifies the type of handle.
+ * \param[in] handle       The external handle to import.
  *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkImportFenceSciSyncInfoNV, or NULL
- * \param[in] fence       VkImportFenceSciSyncInfoNV::fence
- * \param[in] handleType  VkImportFenceSciSyncInfoNV::handleType
- * \param[in] handle      VkImportFenceSciSyncInfoNV::handle
- *
- * \retval None No value is returned.
+ * \retval    None
  */
 void scvkImportFenceSciSyncObjNV(VkDevice device, const void* pNext, VkFence fence, VkExternalFenceHandleTypeFlagBits handleType, void* handle);
+
+/*************************************************************************************************/
 /**
  * \brief Imports semaphore sci sync obj.
  *
- * \par Details:
- *  Wraps vkImportSemaphoreSciSyncObjNV. Aborts on any error result.
+ * \param[in] device       The logical device that created the semaphore.
+ * \param[in] pNext        Optional extension chain attached to VkImportSemaphoreSciSyncInfoNV, or NULL
+ * \param[in] semaphore    The semaphore into which the payload will be imported.
+ * \param[in] handleType   Specifies the type of handle.
+ * \param[in] handle       The external handle to import.
  *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkImportSemaphoreSciSyncInfoNV, or NULL
- * \param[in] semaphore   VkImportSemaphoreSciSyncInfoNV::semaphore
- * \param[in] handleType  VkImportSemaphoreSciSyncInfoNV::handleType
- * \param[in] handle      VkImportSemaphoreSciSyncInfoNV::handle
- *
- * \retval None No value is returned.
+ * \retval    None
  */
 void scvkImportSemaphoreSciSyncObjNV(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, void* handle);
+
+/*************************************************************************************************/
 /**
  * \brief Allocates memory with VkExportMemorySciBufInfoNV chained.
  *
- * \param[in]  device           See scvkAllocateMemory
- * \param[in]  pNext            See scvkAllocateMemory
- * \param[in]  pAttributes      VkExportMemorySciBufInfoNV::pAttributes
- * \param[in]  allocationSize   See scvkAllocateMemory
- * \param[in]  memoryTypeIndex  See scvkAllocateMemory
- * \param[in]  pAllocator       See scvkAllocateMemory
- * \param[out] pMemory          See scvkAllocateMemory
+ * \param[in]  device            The logical device that owns the memory.
+ * \param[in]  pNext             Optional extension chain attached to VkMemoryAllocateInfo, or NULL
+ * \param[in]  pAttributes       An opaque NvSciBufAttrList describing the attributes of the NvSciBuf object that will be exported.
+ * \param[in]  allocationSize    The size of the allocation in bytes.
+ * \param[in]  memoryTypeIndex   An index identifying a memory type from the memoryTypes array of the VkPhysicalDeviceMemoryProperties structure.
+ * \param[in]  pAllocator        Optional allocation callbacks, or NULL
+ * \param[out] pMemory           A pointer to a VkDeviceMemory handle in which information about the allocated memory is returned.
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkAllocateExportMemorySciBufNV(VkDevice device, const void* pNext, NvSciBufAttrList pAttributes, VkDeviceSize allocationSize, uint32_t memoryTypeIndex, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory);
+
+/*************************************************************************************************/
 /**
  * \brief Allocates memory with VkImportMemorySciBufInfoNV chained.
  *
- * \param[in]  device           See scvkAllocateMemory
- * \param[in]  pNext            See scvkAllocateMemory
- * \param[in]  handleType       VkImportMemorySciBufInfoNV::handleType
- * \param[in]  handle           VkImportMemorySciBufInfoNV::handle
- * \param[in]  allocationSize   See scvkAllocateMemory
- * \param[in]  memoryTypeIndex  See scvkAllocateMemory
- * \param[in]  pAllocator       See scvkAllocateMemory
- * \param[out] pMemory          See scvkAllocateMemory
+ * \param[in]  device            The logical device that owns the memory.
+ * \param[in]  pNext             Optional extension chain attached to VkMemoryAllocateInfo, or NULL
+ * \param[in]  handleType        Specifies the type of handle or name.
+ * \param[in]  handle            The external handle to import.
+ * \param[in]  allocationSize    The size of the allocation in bytes.
+ * \param[in]  memoryTypeIndex   An index identifying a memory type from the memoryTypes array of the VkPhysicalDeviceMemoryProperties structure.
+ * \param[in]  pAllocator        Optional allocation callbacks, or NULL
+ * \param[out] pMemory           A pointer to a VkDeviceMemory handle in which information about the allocated memory is returned.
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkAllocateImportMemorySciBufNV(VkDevice device, const void* pNext, VkExternalMemoryHandleTypeFlagBits handleType, NvSciBufObj handle, VkDeviceSize allocationSize, uint32_t memoryTypeIndex, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a device with VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV chained.
  *
- * \param[in]  physicalDevice                    See scvkCreateDevice
- * \param[in]  pNext                             See scvkCreateDevice
- * \param[in]  semaphoreSciSyncPoolRequestCount  VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV::semaphoreSciSyncPoolRequestCount
- * \param[in]  flags                             See scvkCreateDevice
- * \param[in]  queueCreateInfoCount              See scvkCreateDevice
- * \param[in]  pQueueCreateInfos                 See scvkCreateDevice
- * \param[in]  enabledLayerCount                 See scvkCreateDevice
- * \param[in]  ppEnabledLayerNames               See scvkCreateDevice
- * \param[in]  enabledExtensionCount             See scvkCreateDevice
- * \param[in]  ppEnabledExtensionNames           See scvkCreateDevice
- * \param[in]  pEnabledFeatures                  See scvkCreateDevice
- * \param[in]  pAllocator                        See scvkCreateDevice
- * \param[out] pDevice                           See scvkCreateDevice
+ * \param[in]  physicalDevice                     Must be one of the device handles returned from a call to vkEnumeratePhysicalDevices (see Physical Device Enumeration).
+ * \param[in]  pNext                              Optional extension chain attached to VkDeviceCreateInfo, or NULL
+ * \param[in]  semaphoreSciSyncPoolRequestCount   The requested maximum number of VkSemaphoreSciSyncPoolNV objects that can exist at the same time.
+ * \param[in]  flags                              Reserved for future use; must be 0.
+ * \param[in]  queueCreateInfoCount               The unsigned integer size of the pQueueCreateInfos array.
+ * \param[in]  pQueueCreateInfos                  A pointer to an array of VkDeviceQueueCreateInfo structures describing the queues that are requested to be created along with the logical device.
+ * \param[in]  enabledLayerCount                  Legacy and not used.
+ * \param[in]  ppEnabledLayerNames                Legacy and not used.
+ * \param[in]  enabledExtensionCount              The number of device extensions to enable.
+ * \param[in]  ppEnabledExtensionNames            A pointer to an array of enabledExtensionCount null-terminated UTF-8 strings containing the names of extensions to enable for the created device.
+ * \param[in]  pEnabledFeatures                   NULL or a pointer to a VkPhysicalDeviceFeatures structure containing boolean indicators of all the features to be enabled.
+ * \param[in]  pAllocator                         Optional allocation callbacks, or NULL
+ * \param[out] pDevice                            A pointer to a handle in which the created VkDevice is returned.
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkCreateDeviceWithSemaphoreSciSyncPoolReservationInfoNV(VkPhysicalDevice physicalDevice, const void* pNext, uint32_t semaphoreSciSyncPoolRequestCount, VkDeviceCreateFlags flags, uint32_t queueCreateInfoCount, const VkDeviceQueueCreateInfo* pQueueCreateInfos, uint32_t enabledLayerCount, const char* const* ppEnabledLayerNames, uint32_t enabledExtensionCount, const char* const* ppEnabledExtensionNames, const VkPhysicalDeviceFeatures* pEnabledFeatures, const VkAllocationCallbacks* pAllocator, VkDevice* pDevice);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a fence with VkExportFenceSciSyncInfoNV chained.
  *
- * \param[in]  device       See scvkCreateFence
- * \param[in]  pNext        See scvkCreateFence
- * \param[in]  pAttributes  VkExportFenceSciSyncInfoNV::pAttributes
- * \param[in]  flags        See scvkCreateFence
- * \param[in]  pAllocator   See scvkCreateFence
- * \param[out] pFence       See scvkCreateFence
+ * \param[in]  device        The logical device that creates the fence.
+ * \param[in]  pNext         Optional extension chain attached to VkFenceCreateInfo, or NULL
+ * \param[in]  pAttributes   An opaque NvSciSyncAttrList describing the attributes of the NvSciSync object that will be exported.
+ * \param[in]  flags         A bitmask of VkFenceCreateFlagBits specifying the initial state and behavior of the fence.
+ * \param[in]  pAllocator    Optional allocation callbacks, or NULL
+ * \param[out] pFence        A pointer to a handle in which the resulting fence object is returned.
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkCreateExportFenceSciSyncNV(VkDevice device, const void* pNext, NvSciSyncAttrList pAttributes, VkFenceCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a semaphore with VkExportSemaphoreSciSyncInfoNV chained.
  *
- * \param[in]  device       See scvkCreateSemaphore
- * \param[in]  pNext        See scvkCreateSemaphore
- * \param[in]  pAttributes  VkExportSemaphoreSciSyncInfoNV::pAttributes
- * \param[in]  flags        See scvkCreateSemaphore
- * \param[in]  pAllocator   See scvkCreateSemaphore
- * \param[out] pSemaphore   See scvkCreateSemaphore
+ * \param[in]  device        The logical device that creates the semaphore.
+ * \param[in]  pNext         Optional extension chain attached to VkSemaphoreCreateInfo, or NULL
+ * \param[in]  pAttributes   An opaque NvSciSyncAttrList describing the attributes of the NvSciSync object that will be exported.
+ * \param[in]  flags         Reserved for future use; must be 0.
+ * \param[in]  pAllocator    Optional allocation callbacks, or NULL
+ * \param[out] pSemaphore    A pointer to a handle in which the resulting semaphore object is returned.
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkCreateExportSemaphoreSciSyncNV(VkDevice device, const void* pNext, NvSciSyncAttrList pAttributes, VkSemaphoreCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a semaphore with VkSemaphoreSciSyncCreateInfoNV chained.
  *
- * \param[in]  device         See scvkCreateSemaphore
- * \param[in]  pNext          See scvkCreateSemaphore
- * \param[in]  semaphorePool  VkSemaphoreSciSyncCreateInfoNV::semaphorePool
- * \param[in]  pFence         VkSemaphoreSciSyncCreateInfoNV::pFence
- * \param[in]  flags          See scvkCreateSemaphore
- * \param[in]  pAllocator     See scvkCreateSemaphore
- * \param[out] pSemaphore     See scvkCreateSemaphore
+ * \param[in]  device          The logical device that creates the semaphore.
+ * \param[in]  pNext           Optional extension chain attached to VkSemaphoreCreateInfo, or NULL
+ * \param[in]  semaphorePool   A VkSemaphoreSciSyncPoolNV handle.
+ * \param[in]  pFence          A pointer to a NvSciSyncFence.
+ * \param[in]  flags           Reserved for future use; must be 0.
+ * \param[in]  pAllocator      Optional allocation callbacks, or NULL
+ * \param[out] pSemaphore      A pointer to a handle in which the resulting semaphore object is returned.
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkCreateSemaphoreWithSciSyncInfoNV(VkDevice device, const void* pNext, VkSemaphoreSciSyncPoolNV semaphorePool, const NvSciSyncFence* pFence, VkSemaphoreCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceExternalMemorySciBufFeaturesNV chained to the output.
  *
- * \param[in]  physicalDevice                                 VkPhysicalDevice value
- * \param[in]  pNext                                          Optional output extension chain attached to VkPhysicalDeviceExternalMemorySciBufFeaturesNV, or NULL
- * \param[out] pPhysicalDeviceExternalMemorySciBufFeaturesNV  Receives the VkPhysicalDeviceExternalMemorySciBufFeaturesNV
+ * \param[in]  physicalDevice                                  The physical device from which to query the supported features.
+ * \param[in]  pNext                                           Optional output extension chain attached to VkPhysicalDeviceExternalMemorySciBufFeaturesNV, or NULL
+ * \param[out] pPhysicalDeviceExternalMemorySciBufFeaturesNV   Receives the VkPhysicalDeviceExternalMemorySciBufFeaturesNV
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkGetPhysicalDeviceExternalMemorySciBufFeaturesNV(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceExternalMemorySciBufFeaturesNV* pPhysicalDeviceExternalMemorySciBufFeaturesNV);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceExternalSciSync2FeaturesNV chained to the output.
  *
- * \param[in]  physicalDevice                             VkPhysicalDevice value
- * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDeviceExternalSciSync2FeaturesNV, or NULL
- * \param[out] pPhysicalDeviceExternalSciSync2FeaturesNV  Receives the VkPhysicalDeviceExternalSciSync2FeaturesNV
+ * \param[in]  physicalDevice                              The physical device from which to query the supported features.
+ * \param[in]  pNext                                       Optional output extension chain attached to VkPhysicalDeviceExternalSciSync2FeaturesNV, or NULL
+ * \param[out] pPhysicalDeviceExternalSciSync2FeaturesNV   Receives the VkPhysicalDeviceExternalSciSync2FeaturesNV
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkGetPhysicalDeviceExternalSciSync2FeaturesNV(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceExternalSciSync2FeaturesNV* pPhysicalDeviceExternalSciSync2FeaturesNV);
+
+/*************************************************************************************************/
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceExternalSciSyncFeaturesNV chained to the output.
  *
- * \param[in]  physicalDevice                            VkPhysicalDevice value
- * \param[in]  pNext                                     Optional output extension chain attached to VkPhysicalDeviceExternalSciSyncFeaturesNV, or NULL
- * \param[out] pPhysicalDeviceExternalSciSyncFeaturesNV  Receives the VkPhysicalDeviceExternalSciSyncFeaturesNV
+ * \param[in]  physicalDevice                             The physical device from which to query the supported features.
+ * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDeviceExternalSciSyncFeaturesNV, or NULL
+ * \param[out] pPhysicalDeviceExternalSciSyncFeaturesNV   Receives the VkPhysicalDeviceExternalSciSyncFeaturesNV
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void scvkGetPhysicalDeviceExternalSciSyncFeaturesNV(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceExternalSciSyncFeaturesNV* pPhysicalDeviceExternalSciSyncFeaturesNV);
 /* clang-format on */

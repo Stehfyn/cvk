@@ -7,31 +7,32 @@
 #include <vulkan/vulkan_vi.h>
 
 /* clang-format off */
+
+/*************************************************************************************************/
 /**
  * \brief Initializes a VkViSurfaceCreateInfoNN.
  *
- * \param[out] pInfo   Receives the initialized VkViSurfaceCreateInfoNN
- * \param[in]  pNext   Optional extension chain attached to VkViSurfaceCreateInfoNN, or NULL
- * \param[in]  flags   VkViSurfaceCreateInfoNN::flags
- * \param[in]  window  VkViSurfaceCreateInfoNN::window
+ * \param[out] pInfo    Receives the initialized VkViSurfaceCreateInfoNN
+ * \param[in]  pNext    Optional extension chain attached to VkViSurfaceCreateInfoNN, or NULL
+ * \param[in]  flags    VkViSurfaceCreateInfoNN::flags
+ * \param[in]  window   VkViSurfaceCreateInfoNN::window
  *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkInitViSurfaceCreateInfoNN(VkViSurfaceCreateInfoNN* pInfo, const void* pNext, VkViSurfaceCreateFlagsNN flags, void* window);
+
+/*************************************************************************************************/
 /**
  * \brief Creates a vi surface.
  *
- * \par Details:
- *  Wraps vkCreateViSurfaceNN. Aborts on any error result.
+ * \param[in]  instance     The instance with which to associate the surface.
+ * \param[in]  pNext        Optional extension chain attached to VkViSurfaceCreateInfoNN, or NULL
+ * \param[in]  flags        Reserved for future use; must be 0.
+ * \param[in]  window       The nn::vi::NativeWindowHandle for the nn::vi::Layer with which to associate the surface.
+ * \param[in]  pAllocator   Optional allocation callbacks, or NULL
+ * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned.
  *
- * \param[in]  instance    VkInstance value
- * \param[in]  pNext       Optional extension chain attached to VkViSurfaceCreateInfoNN, or NULL
- * \param[in]  flags       VkViSurfaceCreateInfoNN::flags
- * \param[in]  window      VkViSurfaceCreateInfoNN::window
- * \param[in]  pAllocator  Optional allocation callbacks, or NULL
- * \param[out] pSurface    Receives the created VkSurfaceKHR
- *
- * \retval None No value is returned.
+ * \retval     None
  */
 void cvkCreateViSurfaceNN(VkInstance instance, const void* pNext, VkViSurfaceCreateFlagsNN flags, void* window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 /* clang-format on */
