@@ -11,7 +11,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from generate import Generator, load_policy
+from generate import Generator, align_param_docs, load_policy
 from vkxml import Registry
 
 
@@ -47,6 +47,15 @@ class GeneratorOptionsTests(unittest.TestCase):
                 self.assertNotIn("/**", off.platform_header(platform))
         for platform in off.json_decls:
             self.assertNotIn("/**", off.json_header(platform))
+
+    def test_param_documentation_columns_align(self):
+        block = (" * \\param[in,out] pWork Work stack.\n"
+                 " * \\param[in] read Reader.\n"
+                 " * \\retval None No value is returned.\n")
+        self.assertEqual(align_param_docs(block),
+                         " * \\param[in,out] pWork  Work stack.\n"
+                         " * \\param[in]     read   Reader.\n"
+                         " * \\retval None No value is returned.\n")
 
     @unittest.skipUnless(shutil.which("clang"), "clang is required for diagnostic boundary checks")
     def test_diagnostic_line_signed_boundaries(self):

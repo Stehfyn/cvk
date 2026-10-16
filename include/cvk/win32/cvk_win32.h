@@ -12,11 +12,11 @@
  * \brief Initializes a VkD3D12FenceSubmitInfoKHR.
  *
  * \param[out] pInfo                       Receives the initialized VkD3D12FenceSubmitInfoKHR
- * \param[in] pNext                       Optional extension chain attached to VkD3D12FenceSubmitInfoKHR, or NULL
- * \param[in] waitSemaphoreValuesCount    VkD3D12FenceSubmitInfoKHR::waitSemaphoreValuesCount
- * \param[in] pWaitSemaphoreValues        VkD3D12FenceSubmitInfoKHR::pWaitSemaphoreValues
- * \param[in] signalSemaphoreValuesCount  VkD3D12FenceSubmitInfoKHR::signalSemaphoreValuesCount
- * \param[in] pSignalSemaphoreValues      VkD3D12FenceSubmitInfoKHR::pSignalSemaphoreValues
+ * \param[in]  pNext                       Optional extension chain attached to VkD3D12FenceSubmitInfoKHR, or NULL
+ * \param[in]  waitSemaphoreValuesCount    VkD3D12FenceSubmitInfoKHR::waitSemaphoreValuesCount
+ * \param[in]  pWaitSemaphoreValues        VkD3D12FenceSubmitInfoKHR::pWaitSemaphoreValues
+ * \param[in]  signalSemaphoreValuesCount  VkD3D12FenceSubmitInfoKHR::signalSemaphoreValuesCount
+ * \param[in]  pSignalSemaphoreValues      VkD3D12FenceSubmitInfoKHR::pSignalSemaphoreValues
  *
  * \retval None No value is returned.
  */
@@ -25,10 +25,10 @@ void cvkInitD3D12FenceSubmitInfo(VkD3D12FenceSubmitInfoKHR* pInfo, const void* p
  * \brief Initializes a VkExportFenceWin32HandleInfoKHR.
  *
  * \param[out] pInfo        Receives the initialized VkExportFenceWin32HandleInfoKHR
- * \param[in] pNext        Optional extension chain attached to VkExportFenceWin32HandleInfoKHR, or NULL
- * \param[in] pAttributes  VkExportFenceWin32HandleInfoKHR::pAttributes
- * \param[in] dwAccess     VkExportFenceWin32HandleInfoKHR::dwAccess
- * \param[in] name         VkExportFenceWin32HandleInfoKHR::name
+ * \param[in]  pNext        Optional extension chain attached to VkExportFenceWin32HandleInfoKHR, or NULL
+ * \param[in]  pAttributes  VkExportFenceWin32HandleInfoKHR::pAttributes
+ * \param[in]  dwAccess     VkExportFenceWin32HandleInfoKHR::dwAccess
+ * \param[in]  name         VkExportFenceWin32HandleInfoKHR::name
  *
  * \retval None No value is returned.
  */
@@ -37,10 +37,10 @@ void cvkInitExportFenceWin32HandleInfo(VkExportFenceWin32HandleInfoKHR* pInfo, c
  * \brief Initializes a VkExportMemoryWin32HandleInfoKHR.
  *
  * \param[out] pInfo        Receives the initialized VkExportMemoryWin32HandleInfoKHR
- * \param[in] pNext        Optional extension chain attached to VkExportMemoryWin32HandleInfoKHR, or NULL
- * \param[in] pAttributes  VkExportMemoryWin32HandleInfoKHR::pAttributes
- * \param[in] dwAccess     VkExportMemoryWin32HandleInfoKHR::dwAccess
- * \param[in] name         VkExportMemoryWin32HandleInfoKHR::name
+ * \param[in]  pNext        Optional extension chain attached to VkExportMemoryWin32HandleInfoKHR, or NULL
+ * \param[in]  pAttributes  VkExportMemoryWin32HandleInfoKHR::pAttributes
+ * \param[in]  dwAccess     VkExportMemoryWin32HandleInfoKHR::dwAccess
+ * \param[in]  name         VkExportMemoryWin32HandleInfoKHR::name
  *
  * \retval None No value is returned.
  */
@@ -49,9 +49,9 @@ void cvkInitExportMemoryWin32HandleInfo(VkExportMemoryWin32HandleInfoKHR* pInfo,
  * \brief Initializes a VkExportMemoryWin32HandleInfoNV.
  *
  * \param[out] pInfo        Receives the initialized VkExportMemoryWin32HandleInfoNV
- * \param[in] pNext        Optional extension chain attached to VkExportMemoryWin32HandleInfoNV, or NULL
- * \param[in] pAttributes  VkExportMemoryWin32HandleInfoNV::pAttributes
- * \param[in] dwAccess     VkExportMemoryWin32HandleInfoNV::dwAccess
+ * \param[in]  pNext        Optional extension chain attached to VkExportMemoryWin32HandleInfoNV, or NULL
+ * \param[in]  pAttributes  VkExportMemoryWin32HandleInfoNV::pAttributes
+ * \param[in]  dwAccess     VkExportMemoryWin32HandleInfoNV::dwAccess
  *
  * \retval None No value is returned.
  */
@@ -60,10 +60,10 @@ void cvkInitExportMemoryWin32HandleInfoNV(VkExportMemoryWin32HandleInfoNV* pInfo
  * \brief Initializes a VkExportSemaphoreWin32HandleInfoKHR.
  *
  * \param[out] pInfo        Receives the initialized VkExportSemaphoreWin32HandleInfoKHR
- * \param[in] pNext        Optional extension chain attached to VkExportSemaphoreWin32HandleInfoKHR, or NULL
- * \param[in] pAttributes  VkExportSemaphoreWin32HandleInfoKHR::pAttributes
- * \param[in] dwAccess     VkExportSemaphoreWin32HandleInfoKHR::dwAccess
- * \param[in] name         VkExportSemaphoreWin32HandleInfoKHR::name
+ * \param[in]  pNext        Optional extension chain attached to VkExportSemaphoreWin32HandleInfoKHR, or NULL
+ * \param[in]  pAttributes  VkExportSemaphoreWin32HandleInfoKHR::pAttributes
+ * \param[in]  dwAccess     VkExportSemaphoreWin32HandleInfoKHR::dwAccess
+ * \param[in]  name         VkExportSemaphoreWin32HandleInfoKHR::name
  *
  * \retval None No value is returned.
  */
@@ -72,9 +72,9 @@ void cvkInitExportSemaphoreWin32HandleInfo(VkExportSemaphoreWin32HandleInfoKHR* 
  * \brief Initializes a VkFenceGetWin32HandleInfoKHR.
  *
  * \param[out] pInfo       Receives the initialized VkFenceGetWin32HandleInfoKHR
- * \param[in] pNext       Optional extension chain attached to VkFenceGetWin32HandleInfoKHR, or NULL
- * \param[in] fence       VkFenceGetWin32HandleInfoKHR::fence
- * \param[in] handleType  VkFenceGetWin32HandleInfoKHR::handleType
+ * \param[in]  pNext       Optional extension chain attached to VkFenceGetWin32HandleInfoKHR, or NULL
+ * \param[in]  fence       VkFenceGetWin32HandleInfoKHR::fence
+ * \param[in]  handleType  VkFenceGetWin32HandleInfoKHR::handleType
  *
  * \retval None No value is returned.
  */
@@ -83,12 +83,12 @@ void cvkInitFenceGetWin32HandleInfo(VkFenceGetWin32HandleInfoKHR* pInfo, const v
  * \brief Initializes a VkImportFenceWin32HandleInfoKHR.
  *
  * \param[out] pInfo       Receives the initialized VkImportFenceWin32HandleInfoKHR
- * \param[in] pNext       Optional extension chain attached to VkImportFenceWin32HandleInfoKHR, or NULL
- * \param[in] fence       VkImportFenceWin32HandleInfoKHR::fence
- * \param[in] flags       VkImportFenceWin32HandleInfoKHR::flags
- * \param[in] handleType  VkImportFenceWin32HandleInfoKHR::handleType
- * \param[in] handle      VkImportFenceWin32HandleInfoKHR::handle
- * \param[in] name        VkImportFenceWin32HandleInfoKHR::name
+ * \param[in]  pNext       Optional extension chain attached to VkImportFenceWin32HandleInfoKHR, or NULL
+ * \param[in]  fence       VkImportFenceWin32HandleInfoKHR::fence
+ * \param[in]  flags       VkImportFenceWin32HandleInfoKHR::flags
+ * \param[in]  handleType  VkImportFenceWin32HandleInfoKHR::handleType
+ * \param[in]  handle      VkImportFenceWin32HandleInfoKHR::handle
+ * \param[in]  name        VkImportFenceWin32HandleInfoKHR::name
  *
  * \retval None No value is returned.
  */
@@ -97,10 +97,10 @@ void cvkInitImportFenceWin32HandleInfo(VkImportFenceWin32HandleInfoKHR* pInfo, c
  * \brief Initializes a VkImportMemoryWin32HandleInfoKHR.
  *
  * \param[out] pInfo       Receives the initialized VkImportMemoryWin32HandleInfoKHR
- * \param[in] pNext       Optional extension chain attached to VkImportMemoryWin32HandleInfoKHR, or NULL
- * \param[in] handleType  VkImportMemoryWin32HandleInfoKHR::handleType
- * \param[in] handle      VkImportMemoryWin32HandleInfoKHR::handle
- * \param[in] name        VkImportMemoryWin32HandleInfoKHR::name
+ * \param[in]  pNext       Optional extension chain attached to VkImportMemoryWin32HandleInfoKHR, or NULL
+ * \param[in]  handleType  VkImportMemoryWin32HandleInfoKHR::handleType
+ * \param[in]  handle      VkImportMemoryWin32HandleInfoKHR::handle
+ * \param[in]  name        VkImportMemoryWin32HandleInfoKHR::name
  *
  * \retval None No value is returned.
  */
@@ -109,9 +109,9 @@ void cvkInitImportMemoryWin32HandleInfo(VkImportMemoryWin32HandleInfoKHR* pInfo,
  * \brief Initializes a VkImportMemoryWin32HandleInfoNV.
  *
  * \param[out] pInfo       Receives the initialized VkImportMemoryWin32HandleInfoNV
- * \param[in] pNext       Optional extension chain attached to VkImportMemoryWin32HandleInfoNV, or NULL
- * \param[in] handleType  VkImportMemoryWin32HandleInfoNV::handleType
- * \param[in] handle      VkImportMemoryWin32HandleInfoNV::handle
+ * \param[in]  pNext       Optional extension chain attached to VkImportMemoryWin32HandleInfoNV, or NULL
+ * \param[in]  handleType  VkImportMemoryWin32HandleInfoNV::handleType
+ * \param[in]  handle      VkImportMemoryWin32HandleInfoNV::handle
  *
  * \retval None No value is returned.
  */
@@ -120,12 +120,12 @@ void cvkInitImportMemoryWin32HandleInfoNV(VkImportMemoryWin32HandleInfoNV* pInfo
  * \brief Initializes a VkImportSemaphoreWin32HandleInfoKHR.
  *
  * \param[out] pInfo       Receives the initialized VkImportSemaphoreWin32HandleInfoKHR
- * \param[in] pNext       Optional extension chain attached to VkImportSemaphoreWin32HandleInfoKHR, or NULL
- * \param[in] semaphore   VkImportSemaphoreWin32HandleInfoKHR::semaphore
- * \param[in] flags       VkImportSemaphoreWin32HandleInfoKHR::flags
- * \param[in] handleType  VkImportSemaphoreWin32HandleInfoKHR::handleType
- * \param[in] handle      VkImportSemaphoreWin32HandleInfoKHR::handle
- * \param[in] name        VkImportSemaphoreWin32HandleInfoKHR::name
+ * \param[in]  pNext       Optional extension chain attached to VkImportSemaphoreWin32HandleInfoKHR, or NULL
+ * \param[in]  semaphore   VkImportSemaphoreWin32HandleInfoKHR::semaphore
+ * \param[in]  flags       VkImportSemaphoreWin32HandleInfoKHR::flags
+ * \param[in]  handleType  VkImportSemaphoreWin32HandleInfoKHR::handleType
+ * \param[in]  handle      VkImportSemaphoreWin32HandleInfoKHR::handle
+ * \param[in]  name        VkImportSemaphoreWin32HandleInfoKHR::name
  *
  * \retval None No value is returned.
  */
@@ -134,9 +134,9 @@ void cvkInitImportSemaphoreWin32HandleInfo(VkImportSemaphoreWin32HandleInfoKHR* 
  * \brief Initializes a VkMemoryGetWin32HandleInfoKHR.
  *
  * \param[out] pInfo       Receives the initialized VkMemoryGetWin32HandleInfoKHR
- * \param[in] pNext       Optional extension chain attached to VkMemoryGetWin32HandleInfoKHR, or NULL
- * \param[in] memory      VkMemoryGetWin32HandleInfoKHR::memory
- * \param[in] handleType  VkMemoryGetWin32HandleInfoKHR::handleType
+ * \param[in]  pNext       Optional extension chain attached to VkMemoryGetWin32HandleInfoKHR, or NULL
+ * \param[in]  memory      VkMemoryGetWin32HandleInfoKHR::memory
+ * \param[in]  handleType  VkMemoryGetWin32HandleInfoKHR::handleType
  *
  * \retval None No value is returned.
  */
@@ -145,7 +145,7 @@ void cvkInitMemoryGetWin32HandleInfo(VkMemoryGetWin32HandleInfoKHR* pInfo, const
  * \brief Initializes a VkMemoryWin32HandlePropertiesKHR.
  *
  * \param[out] pInfo  Receives the initialized VkMemoryWin32HandlePropertiesKHR
- * \param[in] pNext  Optional extension chain attached to VkMemoryWin32HandlePropertiesKHR, or NULL
+ * \param[in]  pNext  Optional extension chain attached to VkMemoryWin32HandlePropertiesKHR, or NULL
  *
  * \retval None No value is returned.
  */
@@ -154,9 +154,9 @@ void cvkInitMemoryWin32HandleProperties(VkMemoryWin32HandlePropertiesKHR* pInfo,
  * \brief Initializes a VkSemaphoreGetWin32HandleInfoKHR.
  *
  * \param[out] pInfo       Receives the initialized VkSemaphoreGetWin32HandleInfoKHR
- * \param[in] pNext       Optional extension chain attached to VkSemaphoreGetWin32HandleInfoKHR, or NULL
- * \param[in] semaphore   VkSemaphoreGetWin32HandleInfoKHR::semaphore
- * \param[in] handleType  VkSemaphoreGetWin32HandleInfoKHR::handleType
+ * \param[in]  pNext       Optional extension chain attached to VkSemaphoreGetWin32HandleInfoKHR, or NULL
+ * \param[in]  semaphore   VkSemaphoreGetWin32HandleInfoKHR::semaphore
+ * \param[in]  handleType  VkSemaphoreGetWin32HandleInfoKHR::handleType
  *
  * \retval None No value is returned.
  */
@@ -165,7 +165,7 @@ void cvkInitSemaphoreGetWin32HandleInfo(VkSemaphoreGetWin32HandleInfoKHR* pInfo,
  * \brief Initializes a VkSurfaceCapabilitiesFullScreenExclusiveEXT.
  *
  * \param[out] pInfo  Receives the initialized VkSurfaceCapabilitiesFullScreenExclusiveEXT
- * \param[in] pNext  Optional extension chain attached to VkSurfaceCapabilitiesFullScreenExclusiveEXT, or NULL
+ * \param[in]  pNext  Optional extension chain attached to VkSurfaceCapabilitiesFullScreenExclusiveEXT, or NULL
  *
  * \retval None No value is returned.
  */
@@ -174,8 +174,8 @@ void cvkInitSurfaceCapabilitiesFullScreenExclusive(VkSurfaceCapabilitiesFullScre
  * \brief Initializes a VkSurfaceFullScreenExclusiveInfoEXT.
  *
  * \param[out] pInfo                Receives the initialized VkSurfaceFullScreenExclusiveInfoEXT
- * \param[in] pNext                Optional extension chain attached to VkSurfaceFullScreenExclusiveInfoEXT, or NULL
- * \param[in] fullScreenExclusive  VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
+ * \param[in]  pNext                Optional extension chain attached to VkSurfaceFullScreenExclusiveInfoEXT, or NULL
+ * \param[in]  fullScreenExclusive  VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
  *
  * \retval None No value is returned.
  */
@@ -184,8 +184,8 @@ void cvkInitSurfaceFullScreenExclusiveInfo(VkSurfaceFullScreenExclusiveInfoEXT* 
  * \brief Initializes a VkSurfaceFullScreenExclusiveWin32InfoEXT.
  *
  * \param[out] pInfo     Receives the initialized VkSurfaceFullScreenExclusiveWin32InfoEXT
- * \param[in] pNext     Optional extension chain attached to VkSurfaceFullScreenExclusiveWin32InfoEXT, or NULL
- * \param[in] hmonitor  VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
+ * \param[in]  pNext     Optional extension chain attached to VkSurfaceFullScreenExclusiveWin32InfoEXT, or NULL
+ * \param[in]  hmonitor  VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
  *
  * \retval None No value is returned.
  */
@@ -194,14 +194,14 @@ void cvkInitSurfaceFullScreenExclusiveWin32Info(VkSurfaceFullScreenExclusiveWin3
  * \brief Initializes a VkWin32KeyedMutexAcquireReleaseInfoKHR.
  *
  * \param[out] pInfo             Receives the initialized VkWin32KeyedMutexAcquireReleaseInfoKHR
- * \param[in] pNext             Optional extension chain attached to VkWin32KeyedMutexAcquireReleaseInfoKHR, or NULL
- * \param[in] acquireCount      VkWin32KeyedMutexAcquireReleaseInfoKHR::acquireCount
- * \param[in] pAcquireSyncs     VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireSyncs
- * \param[in] pAcquireKeys      VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireKeys
- * \param[in] pAcquireTimeouts  VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireTimeouts
- * \param[in] releaseCount      VkWin32KeyedMutexAcquireReleaseInfoKHR::releaseCount
- * \param[in] pReleaseSyncs     VkWin32KeyedMutexAcquireReleaseInfoKHR::pReleaseSyncs
- * \param[in] pReleaseKeys      VkWin32KeyedMutexAcquireReleaseInfoKHR::pReleaseKeys
+ * \param[in]  pNext             Optional extension chain attached to VkWin32KeyedMutexAcquireReleaseInfoKHR, or NULL
+ * \param[in]  acquireCount      VkWin32KeyedMutexAcquireReleaseInfoKHR::acquireCount
+ * \param[in]  pAcquireSyncs     VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireSyncs
+ * \param[in]  pAcquireKeys      VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireKeys
+ * \param[in]  pAcquireTimeouts  VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireTimeouts
+ * \param[in]  releaseCount      VkWin32KeyedMutexAcquireReleaseInfoKHR::releaseCount
+ * \param[in]  pReleaseSyncs     VkWin32KeyedMutexAcquireReleaseInfoKHR::pReleaseSyncs
+ * \param[in]  pReleaseKeys      VkWin32KeyedMutexAcquireReleaseInfoKHR::pReleaseKeys
  *
  * \retval None No value is returned.
  */
@@ -210,14 +210,14 @@ void cvkInitWin32KeyedMutexAcquireReleaseInfo(VkWin32KeyedMutexAcquireReleaseInf
  * \brief Initializes a VkWin32KeyedMutexAcquireReleaseInfoNV.
  *
  * \param[out] pInfo                        Receives the initialized VkWin32KeyedMutexAcquireReleaseInfoNV
- * \param[in] pNext                        Optional extension chain attached to VkWin32KeyedMutexAcquireReleaseInfoNV, or NULL
- * \param[in] acquireCount                 VkWin32KeyedMutexAcquireReleaseInfoNV::acquireCount
- * \param[in] pAcquireSyncs                VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireSyncs
- * \param[in] pAcquireKeys                 VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireKeys
- * \param[in] pAcquireTimeoutMilliseconds  VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireTimeoutMilliseconds
- * \param[in] releaseCount                 VkWin32KeyedMutexAcquireReleaseInfoNV::releaseCount
- * \param[in] pReleaseSyncs                VkWin32KeyedMutexAcquireReleaseInfoNV::pReleaseSyncs
- * \param[in] pReleaseKeys                 VkWin32KeyedMutexAcquireReleaseInfoNV::pReleaseKeys
+ * \param[in]  pNext                        Optional extension chain attached to VkWin32KeyedMutexAcquireReleaseInfoNV, or NULL
+ * \param[in]  acquireCount                 VkWin32KeyedMutexAcquireReleaseInfoNV::acquireCount
+ * \param[in]  pAcquireSyncs                VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireSyncs
+ * \param[in]  pAcquireKeys                 VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireKeys
+ * \param[in]  pAcquireTimeoutMilliseconds  VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireTimeoutMilliseconds
+ * \param[in]  releaseCount                 VkWin32KeyedMutexAcquireReleaseInfoNV::releaseCount
+ * \param[in]  pReleaseSyncs                VkWin32KeyedMutexAcquireReleaseInfoNV::pReleaseSyncs
+ * \param[in]  pReleaseKeys                 VkWin32KeyedMutexAcquireReleaseInfoNV::pReleaseKeys
  *
  * \retval None No value is returned.
  */
@@ -226,10 +226,10 @@ void cvkInitWin32KeyedMutexAcquireReleaseInfoNV(VkWin32KeyedMutexAcquireReleaseI
  * \brief Initializes a VkWin32SurfaceCreateInfoKHR.
  *
  * \param[out] pInfo      Receives the initialized VkWin32SurfaceCreateInfoKHR
- * \param[in] pNext      Optional extension chain attached to VkWin32SurfaceCreateInfoKHR, or NULL
- * \param[in] flags      VkWin32SurfaceCreateInfoKHR::flags
- * \param[in] hinstance  VkWin32SurfaceCreateInfoKHR::hinstance
- * \param[in] hwnd       VkWin32SurfaceCreateInfoKHR::hwnd
+ * \param[in]  pNext      Optional extension chain attached to VkWin32SurfaceCreateInfoKHR, or NULL
+ * \param[in]  flags      VkWin32SurfaceCreateInfoKHR::flags
+ * \param[in]  hinstance  VkWin32SurfaceCreateInfoKHR::hinstance
+ * \param[in]  hwnd       VkWin32SurfaceCreateInfoKHR::hwnd
  *
  * \retval None No value is returned.
  */
@@ -264,12 +264,12 @@ void cvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR disp
  * \par Details:
  *  Wraps vkCreateWin32SurfaceKHR. Aborts on any error result.
  *
- * \param[in] instance    VkInstance value
- * \param[in] pNext       Optional extension chain attached to VkWin32SurfaceCreateInfoKHR, or NULL
- * \param[in] flags       VkWin32SurfaceCreateInfoKHR::flags
- * \param[in] hinstance   VkWin32SurfaceCreateInfoKHR::hinstance
- * \param[in] hwnd        VkWin32SurfaceCreateInfoKHR::hwnd
- * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[in]  instance    VkInstance value
+ * \param[in]  pNext       Optional extension chain attached to VkWin32SurfaceCreateInfoKHR, or NULL
+ * \param[in]  flags       VkWin32SurfaceCreateInfoKHR::flags
+ * \param[in]  hinstance   VkWin32SurfaceCreateInfoKHR::hinstance
+ * \param[in]  hwnd        VkWin32SurfaceCreateInfoKHR::hwnd
+ * \param[in]  pAllocator  Optional allocation callbacks, or NULL
  * \param[out] pSurface    Receives the created VkSurfaceKHR
  *
  * \retval None No value is returned.
@@ -281,9 +281,9 @@ void cvkCreateWin32Surface(VkInstance instance, const void* pNext, VkWin32Surfac
  * \par Details:
  *  Wraps vkGetDeviceGroupSurfacePresentModes2EXT. Aborts on any error result.
  *
- * \param[in] device   VkDevice value
- * \param[in] pNext    Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in] surface  VkPhysicalDeviceSurfaceInfo2KHR::surface
+ * \param[in]  device   VkDevice value
+ * \param[in]  pNext    Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
+ * \param[in]  surface  VkPhysicalDeviceSurfaceInfo2KHR::surface
  * \param[out] pModes   Receives the VkDeviceGroupPresentModeFlagsKHR
  *
  * \return VK_SUCCESS or one of: VK_ERROR_SURFACE_LOST_KHR. Error results abort.
@@ -295,10 +295,10 @@ VkResult cvkGetDeviceGroupSurfacePresentModes2(VkDevice device, const void* pNex
  * \par Details:
  *  Wraps vkGetFenceWin32HandleKHR. Aborts on any error result.
  *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkFenceGetWin32HandleInfoKHR, or NULL
- * \param[in] fence       VkFenceGetWin32HandleInfoKHR::fence
- * \param[in] handleType  VkFenceGetWin32HandleInfoKHR::handleType
+ * \param[in]  device      VkDevice value
+ * \param[in]  pNext       Optional extension chain attached to VkFenceGetWin32HandleInfoKHR, or NULL
+ * \param[in]  fence       VkFenceGetWin32HandleInfoKHR::fence
+ * \param[in]  handleType  VkFenceGetWin32HandleInfoKHR::handleType
  * \param[out] pHandle     Receives the HANDLE
  *
  * \retval None No value is returned.
@@ -310,10 +310,10 @@ void cvkGetFenceWin32Handle(VkDevice device, const void* pNext, VkFence fence, V
  * \par Details:
  *  Wraps vkGetMemoryWin32HandleKHR. Aborts on any error result.
  *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkMemoryGetWin32HandleInfoKHR, or NULL
- * \param[in] memory      VkMemoryGetWin32HandleInfoKHR::memory
- * \param[in] handleType  VkMemoryGetWin32HandleInfoKHR::handleType
+ * \param[in]  device      VkDevice value
+ * \param[in]  pNext       Optional extension chain attached to VkMemoryGetWin32HandleInfoKHR, or NULL
+ * \param[in]  memory      VkMemoryGetWin32HandleInfoKHR::memory
+ * \param[in]  handleType  VkMemoryGetWin32HandleInfoKHR::handleType
  * \param[out] pHandle     Receives the HANDLE
  *
  * \retval None No value is returned.
@@ -325,9 +325,9 @@ void cvkGetMemoryWin32Handle(VkDevice device, const void* pNext, VkDeviceMemory 
  * \par Details:
  *  Wraps vkGetMemoryWin32HandleNV. Aborts on any error result.
  *
- * \param[in] device      VkDevice value
- * \param[in] memory      VkDeviceMemory value
- * \param[in] handleType  VkExternalMemoryHandleTypeFlagsNV value
+ * \param[in]  device      VkDevice value
+ * \param[in]  memory      VkDeviceMemory value
+ * \param[in]  handleType  VkExternalMemoryHandleTypeFlagsNV value
  * \param[out] pHandle     Receives the HANDLE
  *
  * \retval None No value is returned.
@@ -339,10 +339,10 @@ void cvkGetMemoryWin32HandleNV(VkDevice device, VkDeviceMemory memory, VkExterna
  * \par Details:
  *  Wraps vkGetMemoryWin32HandlePropertiesKHR. Aborts on any error result.
  *
- * \param[in] device                        VkDevice value
- * \param[in] handleType                    VkExternalMemoryHandleTypeFlagBits value
- * \param[in] handle                        HANDLE value
- * \param[in] pNext                         Optional output extension chain attached to VkMemoryWin32HandlePropertiesKHR, or NULL
+ * \param[in]  device                        VkDevice value
+ * \param[in]  handleType                    VkExternalMemoryHandleTypeFlagBits value
+ * \param[in]  handle                        HANDLE value
+ * \param[in]  pNext                         Optional output extension chain attached to VkMemoryWin32HandlePropertiesKHR, or NULL
  * \param[out] pMemoryWin32HandleProperties  Receives the VkMemoryWin32HandlePropertiesKHR
  *
  * \retval None No value is returned.
@@ -354,9 +354,9 @@ void cvkGetMemoryWin32HandleProperties(VkDevice device, VkExternalMemoryHandleTy
  * \par Details:
  *  Wraps vkGetPhysicalDeviceSurfacePresentModes2EXT. Aborts on any error result.
  *
- * \param[in] physicalDevice     VkPhysicalDevice value
- * \param[in] pNext              Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in] surface            VkPhysicalDeviceSurfaceInfo2KHR::surface
+ * \param[in]  physicalDevice     VkPhysicalDevice value
+ * \param[in]  pNext              Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
+ * \param[in]  surface            VkPhysicalDeviceSurfaceInfo2KHR::surface
  * \param[out] pPresentModeCount  Receives the number of entries written
  * \param[out] pPresentModes      Receives up to CVK_MAX_PRESENT_MODES entries
  *
@@ -381,10 +381,10 @@ VkBool32 cvkGetPhysicalDeviceWin32PresentationSupport(VkPhysicalDevice physicalD
  * \par Details:
  *  Wraps vkGetSemaphoreWin32HandleKHR. Aborts on any error result.
  *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkSemaphoreGetWin32HandleInfoKHR, or NULL
- * \param[in] semaphore   VkSemaphoreGetWin32HandleInfoKHR::semaphore
- * \param[in] handleType  VkSemaphoreGetWin32HandleInfoKHR::handleType
+ * \param[in]  device      VkDevice value
+ * \param[in]  pNext       Optional extension chain attached to VkSemaphoreGetWin32HandleInfoKHR, or NULL
+ * \param[in]  semaphore   VkSemaphoreGetWin32HandleInfoKHR::semaphore
+ * \param[in]  handleType  VkSemaphoreGetWin32HandleInfoKHR::handleType
  * \param[out] pHandle     Receives the HANDLE
  *
  * \retval None No value is returned.
@@ -396,8 +396,8 @@ void cvkGetSemaphoreWin32Handle(VkDevice device, const void* pNext, VkSemaphore 
  * \par Details:
  *  Wraps vkGetWinrtDisplayNV. Aborts on any error result.
  *
- * \param[in] physicalDevice    VkPhysicalDevice value
- * \param[in] deviceRelativeId  uint32_t value
+ * \param[in]  physicalDevice    VkPhysicalDevice value
+ * \param[in]  deviceRelativeId  uint32_t value
  * \param[out] pDisplay          Receives the created VkDisplayKHR
  *
  * \retval None No value is returned.
@@ -452,14 +452,14 @@ VkResult cvkReleaseFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapc
 /**
  * \brief Allocates memory with VkExportMemoryWin32HandleInfoKHR chained.
  *
- * \param[in] device           See cvkAllocateMemory
- * \param[in] pNext            See cvkAllocateMemory
- * \param[in] pAttributes      VkExportMemoryWin32HandleInfoKHR::pAttributes
- * \param[in] dwAccess         VkExportMemoryWin32HandleInfoKHR::dwAccess
- * \param[in] name             VkExportMemoryWin32HandleInfoKHR::name
- * \param[in] allocationSize   See cvkAllocateMemory
- * \param[in] memoryTypeIndex  See cvkAllocateMemory
- * \param[in] pAllocator       See cvkAllocateMemory
+ * \param[in]  device           See cvkAllocateMemory
+ * \param[in]  pNext            See cvkAllocateMemory
+ * \param[in]  pAttributes      VkExportMemoryWin32HandleInfoKHR::pAttributes
+ * \param[in]  dwAccess         VkExportMemoryWin32HandleInfoKHR::dwAccess
+ * \param[in]  name             VkExportMemoryWin32HandleInfoKHR::name
+ * \param[in]  allocationSize   See cvkAllocateMemory
+ * \param[in]  memoryTypeIndex  See cvkAllocateMemory
+ * \param[in]  pAllocator       See cvkAllocateMemory
  * \param[out] pMemory          See cvkAllocateMemory
  *
  * \retval None No value is returned.
@@ -468,13 +468,13 @@ void cvkAllocateExportMemoryWin32Handle(VkDevice device, const void* pNext, cons
 /**
  * \brief Allocates memory with VkExportMemoryWin32HandleInfoNV chained.
  *
- * \param[in] device           See cvkAllocateMemory
- * \param[in] pNext            See cvkAllocateMemory
- * \param[in] pAttributes      VkExportMemoryWin32HandleInfoNV::pAttributes
- * \param[in] dwAccess         VkExportMemoryWin32HandleInfoNV::dwAccess
- * \param[in] allocationSize   See cvkAllocateMemory
- * \param[in] memoryTypeIndex  See cvkAllocateMemory
- * \param[in] pAllocator       See cvkAllocateMemory
+ * \param[in]  device           See cvkAllocateMemory
+ * \param[in]  pNext            See cvkAllocateMemory
+ * \param[in]  pAttributes      VkExportMemoryWin32HandleInfoNV::pAttributes
+ * \param[in]  dwAccess         VkExportMemoryWin32HandleInfoNV::dwAccess
+ * \param[in]  allocationSize   See cvkAllocateMemory
+ * \param[in]  memoryTypeIndex  See cvkAllocateMemory
+ * \param[in]  pAllocator       See cvkAllocateMemory
  * \param[out] pMemory          See cvkAllocateMemory
  *
  * \retval None No value is returned.
@@ -483,14 +483,14 @@ void cvkAllocateExportMemoryWin32HandleNV(VkDevice device, const void* pNext, co
 /**
  * \brief Allocates memory with VkImportMemoryWin32HandleInfoKHR chained.
  *
- * \param[in] device           See cvkAllocateMemory
- * \param[in] pNext            See cvkAllocateMemory
- * \param[in] handleType       VkImportMemoryWin32HandleInfoKHR::handleType
- * \param[in] handle           VkImportMemoryWin32HandleInfoKHR::handle
- * \param[in] name             VkImportMemoryWin32HandleInfoKHR::name
- * \param[in] allocationSize   See cvkAllocateMemory
- * \param[in] memoryTypeIndex  See cvkAllocateMemory
- * \param[in] pAllocator       See cvkAllocateMemory
+ * \param[in]  device           See cvkAllocateMemory
+ * \param[in]  pNext            See cvkAllocateMemory
+ * \param[in]  handleType       VkImportMemoryWin32HandleInfoKHR::handleType
+ * \param[in]  handle           VkImportMemoryWin32HandleInfoKHR::handle
+ * \param[in]  name             VkImportMemoryWin32HandleInfoKHR::name
+ * \param[in]  allocationSize   See cvkAllocateMemory
+ * \param[in]  memoryTypeIndex  See cvkAllocateMemory
+ * \param[in]  pAllocator       See cvkAllocateMemory
  * \param[out] pMemory          See cvkAllocateMemory
  *
  * \retval None No value is returned.
@@ -499,13 +499,13 @@ void cvkAllocateImportMemoryWin32Handle(VkDevice device, const void* pNext, VkEx
 /**
  * \brief Allocates memory with VkImportMemoryWin32HandleInfoNV chained.
  *
- * \param[in] device           See cvkAllocateMemory
- * \param[in] pNext            See cvkAllocateMemory
- * \param[in] handleType       VkImportMemoryWin32HandleInfoNV::handleType
- * \param[in] handle           VkImportMemoryWin32HandleInfoNV::handle
- * \param[in] allocationSize   See cvkAllocateMemory
- * \param[in] memoryTypeIndex  See cvkAllocateMemory
- * \param[in] pAllocator       See cvkAllocateMemory
+ * \param[in]  device           See cvkAllocateMemory
+ * \param[in]  pNext            See cvkAllocateMemory
+ * \param[in]  handleType       VkImportMemoryWin32HandleInfoNV::handleType
+ * \param[in]  handle           VkImportMemoryWin32HandleInfoNV::handle
+ * \param[in]  allocationSize   See cvkAllocateMemory
+ * \param[in]  memoryTypeIndex  See cvkAllocateMemory
+ * \param[in]  pAllocator       See cvkAllocateMemory
  * \param[out] pMemory          See cvkAllocateMemory
  *
  * \retval None No value is returned.
@@ -514,13 +514,13 @@ void cvkAllocateImportMemoryWin32HandleNV(VkDevice device, const void* pNext, Vk
 /**
  * \brief Creates a fence with VkExportFenceWin32HandleInfoKHR chained.
  *
- * \param[in] device       See cvkCreateFence
- * \param[in] pNext        See cvkCreateFence
- * \param[in] pAttributes  VkExportFenceWin32HandleInfoKHR::pAttributes
- * \param[in] dwAccess     VkExportFenceWin32HandleInfoKHR::dwAccess
- * \param[in] name         VkExportFenceWin32HandleInfoKHR::name
- * \param[in] flags        See cvkCreateFence
- * \param[in] pAllocator   See cvkCreateFence
+ * \param[in]  device       See cvkCreateFence
+ * \param[in]  pNext        See cvkCreateFence
+ * \param[in]  pAttributes  VkExportFenceWin32HandleInfoKHR::pAttributes
+ * \param[in]  dwAccess     VkExportFenceWin32HandleInfoKHR::dwAccess
+ * \param[in]  name         VkExportFenceWin32HandleInfoKHR::name
+ * \param[in]  flags        See cvkCreateFence
+ * \param[in]  pAllocator   See cvkCreateFence
  * \param[out] pFence       See cvkCreateFence
  *
  * \retval None No value is returned.
@@ -529,13 +529,13 @@ void cvkCreateExportFenceWin32Handle(VkDevice device, const void* pNext, const S
 /**
  * \brief Creates a semaphore with VkExportSemaphoreWin32HandleInfoKHR chained.
  *
- * \param[in] device       See cvkCreateSemaphore
- * \param[in] pNext        See cvkCreateSemaphore
- * \param[in] pAttributes  VkExportSemaphoreWin32HandleInfoKHR::pAttributes
- * \param[in] dwAccess     VkExportSemaphoreWin32HandleInfoKHR::dwAccess
- * \param[in] name         VkExportSemaphoreWin32HandleInfoKHR::name
- * \param[in] flags        See cvkCreateSemaphore
- * \param[in] pAllocator   See cvkCreateSemaphore
+ * \param[in]  device       See cvkCreateSemaphore
+ * \param[in]  pNext        See cvkCreateSemaphore
+ * \param[in]  pAttributes  VkExportSemaphoreWin32HandleInfoKHR::pAttributes
+ * \param[in]  dwAccess     VkExportSemaphoreWin32HandleInfoKHR::dwAccess
+ * \param[in]  name         VkExportSemaphoreWin32HandleInfoKHR::name
+ * \param[in]  flags        See cvkCreateSemaphore
+ * \param[in]  pAllocator   See cvkCreateSemaphore
  * \param[out] pSemaphore   See cvkCreateSemaphore
  *
  * \retval None No value is returned.
@@ -544,26 +544,26 @@ void cvkCreateExportSemaphoreWin32Handle(VkDevice device, const void* pNext, con
 /**
  * \brief Creates a swapchain with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
- * \param[in] device                 See cvkCreateSwapchain
+ * \param[in]  device                 See cvkCreateSwapchain
  * \param[out] pNext                  See cvkCreateSwapchain
- * \param[in] fullScreenExclusive    VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
- * \param[in] flags                  See cvkCreateSwapchain
- * \param[in] surface                See cvkCreateSwapchain
- * \param[in] minImageCount          See cvkCreateSwapchain
- * \param[in] imageFormat            See cvkCreateSwapchain
- * \param[in] imageColorSpace        See cvkCreateSwapchain
- * \param[in] imageExtent            See cvkCreateSwapchain
- * \param[in] imageArrayLayers       See cvkCreateSwapchain
- * \param[in] imageUsage             See cvkCreateSwapchain
- * \param[in] imageSharingMode       See cvkCreateSwapchain
- * \param[in] queueFamilyIndexCount  See cvkCreateSwapchain
- * \param[in] pQueueFamilyIndices    See cvkCreateSwapchain
- * \param[in] preTransform           See cvkCreateSwapchain
- * \param[in] compositeAlpha         See cvkCreateSwapchain
- * \param[in] presentMode            See cvkCreateSwapchain
- * \param[in] clipped                See cvkCreateSwapchain
- * \param[in] oldSwapchain           See cvkCreateSwapchain
- * \param[in] pAllocator             See cvkCreateSwapchain
+ * \param[in]  fullScreenExclusive    VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
+ * \param[in]  flags                  See cvkCreateSwapchain
+ * \param[in]  surface                See cvkCreateSwapchain
+ * \param[in]  minImageCount          See cvkCreateSwapchain
+ * \param[in]  imageFormat            See cvkCreateSwapchain
+ * \param[in]  imageColorSpace        See cvkCreateSwapchain
+ * \param[in]  imageExtent            See cvkCreateSwapchain
+ * \param[in]  imageArrayLayers       See cvkCreateSwapchain
+ * \param[in]  imageUsage             See cvkCreateSwapchain
+ * \param[in]  imageSharingMode       See cvkCreateSwapchain
+ * \param[in]  queueFamilyIndexCount  See cvkCreateSwapchain
+ * \param[in]  pQueueFamilyIndices    See cvkCreateSwapchain
+ * \param[in]  preTransform           See cvkCreateSwapchain
+ * \param[in]  compositeAlpha         See cvkCreateSwapchain
+ * \param[in]  presentMode            See cvkCreateSwapchain
+ * \param[in]  clipped                See cvkCreateSwapchain
+ * \param[in]  oldSwapchain           See cvkCreateSwapchain
+ * \param[in]  pAllocator             See cvkCreateSwapchain
  * \param[out] pSwapchain             See cvkCreateSwapchain
  *
  * \return VK_SUCCESS or one of: . Error results abort.
@@ -572,26 +572,26 @@ VkResult cvkCreateSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice device, v
 /**
  * \brief Creates a swapchain with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
- * \param[in] device                 See cvkCreateSwapchain
- * \param[in] pNext                  See cvkCreateSwapchain
- * \param[in] hmonitor               VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
- * \param[in] flags                  See cvkCreateSwapchain
- * \param[in] surface                See cvkCreateSwapchain
- * \param[in] minImageCount          See cvkCreateSwapchain
- * \param[in] imageFormat            See cvkCreateSwapchain
- * \param[in] imageColorSpace        See cvkCreateSwapchain
- * \param[in] imageExtent            See cvkCreateSwapchain
- * \param[in] imageArrayLayers       See cvkCreateSwapchain
- * \param[in] imageUsage             See cvkCreateSwapchain
- * \param[in] imageSharingMode       See cvkCreateSwapchain
- * \param[in] queueFamilyIndexCount  See cvkCreateSwapchain
- * \param[in] pQueueFamilyIndices    See cvkCreateSwapchain
- * \param[in] preTransform           See cvkCreateSwapchain
- * \param[in] compositeAlpha         See cvkCreateSwapchain
- * \param[in] presentMode            See cvkCreateSwapchain
- * \param[in] clipped                See cvkCreateSwapchain
- * \param[in] oldSwapchain           See cvkCreateSwapchain
- * \param[in] pAllocator             See cvkCreateSwapchain
+ * \param[in]  device                 See cvkCreateSwapchain
+ * \param[in]  pNext                  See cvkCreateSwapchain
+ * \param[in]  hmonitor               VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
+ * \param[in]  flags                  See cvkCreateSwapchain
+ * \param[in]  surface                See cvkCreateSwapchain
+ * \param[in]  minImageCount          See cvkCreateSwapchain
+ * \param[in]  imageFormat            See cvkCreateSwapchain
+ * \param[in]  imageColorSpace        See cvkCreateSwapchain
+ * \param[in]  imageExtent            See cvkCreateSwapchain
+ * \param[in]  imageArrayLayers       See cvkCreateSwapchain
+ * \param[in]  imageUsage             See cvkCreateSwapchain
+ * \param[in]  imageSharingMode       See cvkCreateSwapchain
+ * \param[in]  queueFamilyIndexCount  See cvkCreateSwapchain
+ * \param[in]  pQueueFamilyIndices    See cvkCreateSwapchain
+ * \param[in]  preTransform           See cvkCreateSwapchain
+ * \param[in]  compositeAlpha         See cvkCreateSwapchain
+ * \param[in]  presentMode            See cvkCreateSwapchain
+ * \param[in]  clipped                See cvkCreateSwapchain
+ * \param[in]  oldSwapchain           See cvkCreateSwapchain
+ * \param[in]  pAllocator             See cvkCreateSwapchain
  * \param[out] pSwapchain             See cvkCreateSwapchain
  *
  * \return VK_SUCCESS or one of: . Error results abort.
@@ -600,10 +600,10 @@ VkResult cvkCreateSwapchainWithSurfaceFullScreenExclusiveWin32Info(VkDevice devi
 /**
  * \brief Retrieves device group surface present modes 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
- * \param[in] device               See cvkGetDeviceGroupSurfacePresentModes2
+ * \param[in]  device               See cvkGetDeviceGroupSurfacePresentModes2
  * \param[out] pNext                See cvkGetDeviceGroupSurfacePresentModes2
- * \param[in] fullScreenExclusive  VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
- * \param[in] surface              See cvkGetDeviceGroupSurfacePresentModes2
+ * \param[in]  fullScreenExclusive  VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
+ * \param[in]  surface              See cvkGetDeviceGroupSurfacePresentModes2
  * \param[out] pModes               See cvkGetDeviceGroupSurfacePresentModes2
  *
  * \return VK_SUCCESS or one of: . Error results abort.
@@ -612,10 +612,10 @@ VkResult cvkGetDeviceGroupSurfaceFullScreenExclusivePresentModes(VkDevice device
 /**
  * \brief Retrieves device group surface present modes 2 with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
- * \param[in] device    See cvkGetDeviceGroupSurfacePresentModes2
- * \param[in] pNext     See cvkGetDeviceGroupSurfacePresentModes2
- * \param[in] hmonitor  VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
- * \param[in] surface   See cvkGetDeviceGroupSurfacePresentModes2
+ * \param[in]  device    See cvkGetDeviceGroupSurfacePresentModes2
+ * \param[in]  pNext     See cvkGetDeviceGroupSurfacePresentModes2
+ * \param[in]  hmonitor  VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
+ * \param[in]  surface   See cvkGetDeviceGroupSurfacePresentModes2
  * \param[out] pModes    See cvkGetDeviceGroupSurfacePresentModes2
  *
  * \return VK_SUCCESS or one of: . Error results abort.
@@ -624,10 +624,10 @@ VkResult cvkGetDeviceGroupSurfaceFullScreenExclusiveWin32PresentModes(VkDevice d
 /**
  * \brief Retrieves device group surface present modes 2 with VkSurfacePresentModeKHR chained.
  *
- * \param[in] device       See cvkGetDeviceGroupSurfacePresentModes2
+ * \param[in]  device       See cvkGetDeviceGroupSurfacePresentModes2
  * \param[out] pNext        See cvkGetDeviceGroupSurfacePresentModes2
- * \param[in] presentMode  VkSurfacePresentModeKHR::presentMode
- * \param[in] surface      See cvkGetDeviceGroupSurfacePresentModes2
+ * \param[in]  presentMode  VkSurfacePresentModeKHR::presentMode
+ * \param[in]  surface      See cvkGetDeviceGroupSurfacePresentModes2
  * \param[out] pModes       See cvkGetDeviceGroupSurfacePresentModes2
  *
  * \return VK_SUCCESS or one of: . Error results abort.
@@ -636,10 +636,10 @@ VkResult cvkGetDeviceGroupSurfacePresentModePresentModes(VkDevice device, void* 
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
- * \param[in] physicalDevice            See cvkGetPhysicalDeviceSurfaceCapabilities2Info
+ * \param[in]  physicalDevice            See cvkGetPhysicalDeviceSurfaceCapabilities2Info
  * \param[out] pSurfaceInfoNext          See cvkGetPhysicalDeviceSurfaceCapabilities2Info
- * \param[in] fullScreenExclusive       VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
- * \param[in] surface                   See cvkGetPhysicalDeviceSurfaceCapabilities2Info
+ * \param[in]  fullScreenExclusive       VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
+ * \param[in]  surface                   See cvkGetPhysicalDeviceSurfaceCapabilities2Info
  * \param[out] pSurfaceCapabilitiesNext  See cvkGetPhysicalDeviceSurfaceCapabilities2Info
  * \param[out] pSurfaceCapabilities      See cvkGetPhysicalDeviceSurfaceCapabilities2Info
  *
@@ -649,10 +649,10 @@ VkResult cvkGetPhysicalDeviceSurfaceFullScreenExclusiveCapabilities(VkPhysicalDe
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
- * \param[in] physicalDevice            See cvkGetPhysicalDeviceSurfaceCapabilities2Info
- * \param[in] pSurfaceInfoNext          See cvkGetPhysicalDeviceSurfaceCapabilities2Info
- * \param[in] hmonitor                  VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
- * \param[in] surface                   See cvkGetPhysicalDeviceSurfaceCapabilities2Info
+ * \param[in]  physicalDevice            See cvkGetPhysicalDeviceSurfaceCapabilities2Info
+ * \param[in]  pSurfaceInfoNext          See cvkGetPhysicalDeviceSurfaceCapabilities2Info
+ * \param[in]  hmonitor                  VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
+ * \param[in]  surface                   See cvkGetPhysicalDeviceSurfaceCapabilities2Info
  * \param[out] pSurfaceCapabilitiesNext  See cvkGetPhysicalDeviceSurfaceCapabilities2Info
  * \param[out] pSurfaceCapabilities      See cvkGetPhysicalDeviceSurfaceCapabilities2Info
  *
@@ -662,12 +662,12 @@ VkResult cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Capabilities(VkPhysi
 /**
  * \brief Retrieves physical device surface formats 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
- * \param[in] physicalDevice       See cvkGetPhysicalDeviceSurfaceFormats2Info
+ * \param[in]  physicalDevice       See cvkGetPhysicalDeviceSurfaceFormats2Info
  * \param[out] pNext                See cvkGetPhysicalDeviceSurfaceFormats2Info
- * \param[in] fullScreenExclusive  VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
- * \param[in] surface              See cvkGetPhysicalDeviceSurfaceFormats2Info
+ * \param[in]  fullScreenExclusive  VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
+ * \param[in]  surface              See cvkGetPhysicalDeviceSurfaceFormats2Info
  * \param[out] pSurfaceFormatCount  See cvkGetPhysicalDeviceSurfaceFormats2Info
- * \param[in] pSurfaceFormats      See cvkGetPhysicalDeviceSurfaceFormats2Info
+ * \param[in]  pSurfaceFormats      See cvkGetPhysicalDeviceSurfaceFormats2Info
  *
  * \retval None No value is returned.
  */
@@ -675,12 +675,12 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveFormats(VkPhysicalDevice phys
 /**
  * \brief Retrieves physical device surface formats 2 with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
- * \param[in] physicalDevice       See cvkGetPhysicalDeviceSurfaceFormats2Info
- * \param[in] pNext                See cvkGetPhysicalDeviceSurfaceFormats2Info
- * \param[in] hmonitor             VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
- * \param[in] surface              See cvkGetPhysicalDeviceSurfaceFormats2Info
+ * \param[in]  physicalDevice       See cvkGetPhysicalDeviceSurfaceFormats2Info
+ * \param[in]  pNext                See cvkGetPhysicalDeviceSurfaceFormats2Info
+ * \param[in]  hmonitor             VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
+ * \param[in]  surface              See cvkGetPhysicalDeviceSurfaceFormats2Info
  * \param[out] pSurfaceFormatCount  See cvkGetPhysicalDeviceSurfaceFormats2Info
- * \param[in] pSurfaceFormats      See cvkGetPhysicalDeviceSurfaceFormats2Info
+ * \param[in]  pSurfaceFormats      See cvkGetPhysicalDeviceSurfaceFormats2Info
  *
  * \retval None No value is returned.
  */
@@ -688,12 +688,12 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Formats(VkPhysicalDevice
 /**
  * \brief Retrieves physical device surface present modes 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
- * \param[in] physicalDevice       See cvkGetPhysicalDeviceSurfacePresentModes2
+ * \param[in]  physicalDevice       See cvkGetPhysicalDeviceSurfacePresentModes2
  * \param[out] pNext                See cvkGetPhysicalDeviceSurfacePresentModes2
- * \param[in] fullScreenExclusive  VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
- * \param[in] surface              See cvkGetPhysicalDeviceSurfacePresentModes2
+ * \param[in]  fullScreenExclusive  VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
+ * \param[in]  surface              See cvkGetPhysicalDeviceSurfacePresentModes2
  * \param[out] pPresentModeCount    See cvkGetPhysicalDeviceSurfacePresentModes2
- * \param[in] pPresentModes        See cvkGetPhysicalDeviceSurfacePresentModes2
+ * \param[in]  pPresentModes        See cvkGetPhysicalDeviceSurfacePresentModes2
  *
  * \retval None No value is returned.
  */
@@ -701,12 +701,12 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusivePresentModes(VkPhysicalDevice
 /**
  * \brief Retrieves physical device surface present modes 2 with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
- * \param[in] physicalDevice     See cvkGetPhysicalDeviceSurfacePresentModes2
- * \param[in] pNext              See cvkGetPhysicalDeviceSurfacePresentModes2
- * \param[in] hmonitor           VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
- * \param[in] surface            See cvkGetPhysicalDeviceSurfacePresentModes2
+ * \param[in]  physicalDevice     See cvkGetPhysicalDeviceSurfacePresentModes2
+ * \param[in]  pNext              See cvkGetPhysicalDeviceSurfacePresentModes2
+ * \param[in]  hmonitor           VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
+ * \param[in]  surface            See cvkGetPhysicalDeviceSurfacePresentModes2
  * \param[out] pPresentModeCount  See cvkGetPhysicalDeviceSurfacePresentModes2
- * \param[in] pPresentModes      See cvkGetPhysicalDeviceSurfacePresentModes2
+ * \param[in]  pPresentModes      See cvkGetPhysicalDeviceSurfacePresentModes2
  *
  * \retval None No value is returned.
  */
@@ -714,12 +714,12 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32PresentModes(VkPhysicalD
 /**
  * \brief Retrieves physical device surface present modes 2 with VkSurfacePresentModeKHR chained.
  *
- * \param[in] physicalDevice     See cvkGetPhysicalDeviceSurfacePresentModes2
+ * \param[in]  physicalDevice     See cvkGetPhysicalDeviceSurfacePresentModes2
  * \param[out] pNext              See cvkGetPhysicalDeviceSurfacePresentModes2
- * \param[in] presentMode        VkSurfacePresentModeKHR::presentMode
- * \param[in] surface            See cvkGetPhysicalDeviceSurfacePresentModes2
+ * \param[in]  presentMode        VkSurfacePresentModeKHR::presentMode
+ * \param[in]  surface            See cvkGetPhysicalDeviceSurfacePresentModes2
  * \param[out] pPresentModeCount  See cvkGetPhysicalDeviceSurfacePresentModes2
- * \param[in] pPresentModes      See cvkGetPhysicalDeviceSurfacePresentModes2
+ * \param[in]  pPresentModes      See cvkGetPhysicalDeviceSurfacePresentModes2
  *
  * \retval None No value is returned.
  */
@@ -727,26 +727,26 @@ void cvkGetPhysicalDeviceSurfacePresentModePresentModes(VkPhysicalDevice physica
 /**
  * \brief Creates a shared swapchains with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
- * \param[in] device                 See cvkCreateSharedSwapchain
+ * \param[in]  device                 See cvkCreateSharedSwapchain
  * \param[out] pNext                  See cvkCreateSharedSwapchain
- * \param[in] fullScreenExclusive    VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
- * \param[in] flags                  See cvkCreateSharedSwapchain
- * \param[in] surface                See cvkCreateSharedSwapchain
- * \param[in] minImageCount          See cvkCreateSharedSwapchain
- * \param[in] imageFormat            See cvkCreateSharedSwapchain
- * \param[in] imageColorSpace        See cvkCreateSharedSwapchain
- * \param[in] imageExtent            See cvkCreateSharedSwapchain
- * \param[in] imageArrayLayers       See cvkCreateSharedSwapchain
- * \param[in] imageUsage             See cvkCreateSharedSwapchain
- * \param[in] imageSharingMode       See cvkCreateSharedSwapchain
- * \param[in] queueFamilyIndexCount  See cvkCreateSharedSwapchain
- * \param[in] pQueueFamilyIndices    See cvkCreateSharedSwapchain
- * \param[in] preTransform           See cvkCreateSharedSwapchain
- * \param[in] compositeAlpha         See cvkCreateSharedSwapchain
- * \param[in] presentMode            See cvkCreateSharedSwapchain
- * \param[in] clipped                See cvkCreateSharedSwapchain
- * \param[in] oldSwapchain           See cvkCreateSharedSwapchain
- * \param[in] pAllocator             See cvkCreateSharedSwapchain
+ * \param[in]  fullScreenExclusive    VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
+ * \param[in]  flags                  See cvkCreateSharedSwapchain
+ * \param[in]  surface                See cvkCreateSharedSwapchain
+ * \param[in]  minImageCount          See cvkCreateSharedSwapchain
+ * \param[in]  imageFormat            See cvkCreateSharedSwapchain
+ * \param[in]  imageColorSpace        See cvkCreateSharedSwapchain
+ * \param[in]  imageExtent            See cvkCreateSharedSwapchain
+ * \param[in]  imageArrayLayers       See cvkCreateSharedSwapchain
+ * \param[in]  imageUsage             See cvkCreateSharedSwapchain
+ * \param[in]  imageSharingMode       See cvkCreateSharedSwapchain
+ * \param[in]  queueFamilyIndexCount  See cvkCreateSharedSwapchain
+ * \param[in]  pQueueFamilyIndices    See cvkCreateSharedSwapchain
+ * \param[in]  preTransform           See cvkCreateSharedSwapchain
+ * \param[in]  compositeAlpha         See cvkCreateSharedSwapchain
+ * \param[in]  presentMode            See cvkCreateSharedSwapchain
+ * \param[in]  clipped                See cvkCreateSharedSwapchain
+ * \param[in]  oldSwapchain           See cvkCreateSharedSwapchain
+ * \param[in]  pAllocator             See cvkCreateSharedSwapchain
  * \param[out] pSwapchain             See cvkCreateSharedSwapchain
  *
  * \return VK_SUCCESS or one of: . Error results abort.
@@ -755,26 +755,26 @@ VkResult cvkCreateSharedSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice dev
 /**
  * \brief Creates a shared swapchains with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
- * \param[in] device                 See cvkCreateSharedSwapchain
- * \param[in] pNext                  See cvkCreateSharedSwapchain
- * \param[in] hmonitor               VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
- * \param[in] flags                  See cvkCreateSharedSwapchain
- * \param[in] surface                See cvkCreateSharedSwapchain
- * \param[in] minImageCount          See cvkCreateSharedSwapchain
- * \param[in] imageFormat            See cvkCreateSharedSwapchain
- * \param[in] imageColorSpace        See cvkCreateSharedSwapchain
- * \param[in] imageExtent            See cvkCreateSharedSwapchain
- * \param[in] imageArrayLayers       See cvkCreateSharedSwapchain
- * \param[in] imageUsage             See cvkCreateSharedSwapchain
- * \param[in] imageSharingMode       See cvkCreateSharedSwapchain
- * \param[in] queueFamilyIndexCount  See cvkCreateSharedSwapchain
- * \param[in] pQueueFamilyIndices    See cvkCreateSharedSwapchain
- * \param[in] preTransform           See cvkCreateSharedSwapchain
- * \param[in] compositeAlpha         See cvkCreateSharedSwapchain
- * \param[in] presentMode            See cvkCreateSharedSwapchain
- * \param[in] clipped                See cvkCreateSharedSwapchain
- * \param[in] oldSwapchain           See cvkCreateSharedSwapchain
- * \param[in] pAllocator             See cvkCreateSharedSwapchain
+ * \param[in]  device                 See cvkCreateSharedSwapchain
+ * \param[in]  pNext                  See cvkCreateSharedSwapchain
+ * \param[in]  hmonitor               VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
+ * \param[in]  flags                  See cvkCreateSharedSwapchain
+ * \param[in]  surface                See cvkCreateSharedSwapchain
+ * \param[in]  minImageCount          See cvkCreateSharedSwapchain
+ * \param[in]  imageFormat            See cvkCreateSharedSwapchain
+ * \param[in]  imageColorSpace        See cvkCreateSharedSwapchain
+ * \param[in]  imageExtent            See cvkCreateSharedSwapchain
+ * \param[in]  imageArrayLayers       See cvkCreateSharedSwapchain
+ * \param[in]  imageUsage             See cvkCreateSharedSwapchain
+ * \param[in]  imageSharingMode       See cvkCreateSharedSwapchain
+ * \param[in]  queueFamilyIndexCount  See cvkCreateSharedSwapchain
+ * \param[in]  pQueueFamilyIndices    See cvkCreateSharedSwapchain
+ * \param[in]  preTransform           See cvkCreateSharedSwapchain
+ * \param[in]  compositeAlpha         See cvkCreateSharedSwapchain
+ * \param[in]  presentMode            See cvkCreateSharedSwapchain
+ * \param[in]  clipped                See cvkCreateSharedSwapchain
+ * \param[in]  oldSwapchain           See cvkCreateSharedSwapchain
+ * \param[in]  pAllocator             See cvkCreateSharedSwapchain
  * \param[out] pSwapchain             See cvkCreateSharedSwapchain
  *
  * \return VK_SUCCESS or one of: . Error results abort.
@@ -900,10 +900,10 @@ void cvkQueueSubmitInfo2WithWin32KeyedMutexAcquireReleaseInfoNV(VkQueue queue, c
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceCapabilitiesFullScreenExclusiveEXT chained to the output.
  *
- * \param[in] physicalDevice                               VkPhysicalDevice value
- * \param[in] pSurfaceInfoNext                             Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in] surface                                      VkPhysicalDeviceSurfaceInfo2KHR::surface
- * \param[in] pSurfaceCapabilitiesFullScreenExclusiveNext  Optional output extension chain attached to VkSurfaceCapabilitiesFullScreenExclusiveEXT, or NULL
+ * \param[in]  physicalDevice                               VkPhysicalDevice value
+ * \param[in]  pSurfaceInfoNext                             Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
+ * \param[in]  surface                                      VkPhysicalDeviceSurfaceInfo2KHR::surface
+ * \param[in]  pSurfaceCapabilitiesFullScreenExclusiveNext  Optional output extension chain attached to VkSurfaceCapabilitiesFullScreenExclusiveEXT, or NULL
  * \param[out] pSurfaceCapabilitiesFullScreenExclusive      Receives the VkSurfaceCapabilitiesFullScreenExclusiveEXT
  *
  * \return VK_SUCCESS or one of: . Error results abort.
@@ -927,31 +927,31 @@ void cvkInitWin32AllocationCallbacks(VkAllocationCallbacks* pCallbacks);
  *  query is made with handleType alone; image-creation extension structs in pImageNext are
  *  not forwarded to it.
  *
- * \param[in]  physicalDevice          Physical device the image is created for
- * \param[in]  device                  Logical device owning the image and memory
- * \param[in]  pImageNext              Optional extension chain for VkImageCreateInfo, or NULL
- * \param[in]  flags                   VkImageCreateInfo::flags
- * \param[in]  imageType               VkImageCreateInfo::imageType
- * \param[in]  format                  VkImageCreateInfo::format
- * \param[in]  extent                  VkImageCreateInfo::extent
- * \param[in]  mipLevels               VkImageCreateInfo::mipLevels
- * \param[in]  arrayLayers             VkImageCreateInfo::arrayLayers
- * \param[in]  samples                 VkImageCreateInfo::samples
- * \param[in]  tiling                  VkImageCreateInfo::tiling
- * \param[in]  usage                   VkImageCreateInfo::usage
- * \param[in]  sharingMode             VkImageCreateInfo::sharingMode
- * \param[in]  queueFamilyIndexCount   VkImageCreateInfo::queueFamilyIndexCount
- * \param[in]  pQueueFamilyIndices     VkImageCreateInfo::pQueueFamilyIndices
- * \param[in]  initialLayout           VkImageCreateInfo::initialLayout
- * \param[in]  handleType              Win32 external memory handle type being imported
- * \param[in]  handle                  Handle to import, or NULL when name is used
- * \param[in]  name                    Name of the object to import, or NULL when handle is used
- * \param[in]  allocationSize          Complete external extent for heap/opaque imports; ignored for D3D texture/resource imports
- * \param[in]  requiredProperties      Memory property flags the selected type must cover
- * \param[in]  pMemoryNext             Optional extension chain behind the import info, or NULL
- * \param[in]  pAllocator              Optional allocation callbacks, or NULL
- * \param[out] pImage                  Receives the created VkImage
- * \param[out] pMemory                 Receives the imported VkDeviceMemory
+ * \param[in]  physicalDevice         Physical device the image is created for
+ * \param[in]  device                 Logical device owning the image and memory
+ * \param[in]  pImageNext             Optional extension chain for VkImageCreateInfo, or NULL
+ * \param[in]  flags                  VkImageCreateInfo::flags
+ * \param[in]  imageType              VkImageCreateInfo::imageType
+ * \param[in]  format                 VkImageCreateInfo::format
+ * \param[in]  extent                 VkImageCreateInfo::extent
+ * \param[in]  mipLevels              VkImageCreateInfo::mipLevels
+ * \param[in]  arrayLayers            VkImageCreateInfo::arrayLayers
+ * \param[in]  samples                VkImageCreateInfo::samples
+ * \param[in]  tiling                 VkImageCreateInfo::tiling
+ * \param[in]  usage                  VkImageCreateInfo::usage
+ * \param[in]  sharingMode            VkImageCreateInfo::sharingMode
+ * \param[in]  queueFamilyIndexCount  VkImageCreateInfo::queueFamilyIndexCount
+ * \param[in]  pQueueFamilyIndices    VkImageCreateInfo::pQueueFamilyIndices
+ * \param[in]  initialLayout          VkImageCreateInfo::initialLayout
+ * \param[in]  handleType             Win32 external memory handle type being imported
+ * \param[in]  handle                 Handle to import, or NULL when name is used
+ * \param[in]  name                   Name of the object to import, or NULL when handle is used
+ * \param[in]  allocationSize         Complete external extent for heap/opaque imports; ignored for D3D texture/resource imports
+ * \param[in]  requiredProperties     Memory property flags the selected type must cover
+ * \param[in]  pMemoryNext            Optional extension chain behind the import info, or NULL
+ * \param[in]  pAllocator             Optional allocation callbacks, or NULL
+ * \param[out] pImage                 Receives the created VkImage
+ * \param[out] pMemory                Receives the imported VkDeviceMemory
  *
  * \retval None No value is returned.
  */
@@ -963,30 +963,30 @@ void cvkImportWin32HandleImage(VkPhysicalDevice physicalDevice, VkDevice device,
  *  Uses cvkImportWin32HandleImage with VK_IMAGE_TYPE_2D and an extent depth of one.
  *  The handle remains owned by the caller.
  *
- * \param[in]  physicalDevice          Physical device the image is created for
- * \param[in]  device                  Logical device owning the image and memory
- * \param[in]  pImageNext              Optional extension chain for VkImageCreateInfo, or NULL
- * \param[in]  flags                   VkImageCreateInfo::flags
- * \param[in]  format                  VkImageCreateInfo::format
- * \param[in]  mipLevels               VkImageCreateInfo::mipLevels
- * \param[in]  arrayLayers             VkImageCreateInfo::arrayLayers
- * \param[in]  samples                 VkImageCreateInfo::samples
- * \param[in]  tiling                  VkImageCreateInfo::tiling
- * \param[in]  usage                   VkImageCreateInfo::usage
- * \param[in]  sharingMode             VkImageCreateInfo::sharingMode
- * \param[in]  queueFamilyIndexCount   VkImageCreateInfo::queueFamilyIndexCount
- * \param[in]  pQueueFamilyIndices     VkImageCreateInfo::pQueueFamilyIndices
- * \param[in]  initialLayout           VkImageCreateInfo::initialLayout
- * \param[in]  extent2D                Image width and height
- * \param[in]  handleType              Win32 external memory handle type being imported
- * \param[in]  handle                  Handle to import, or NULL when name is used
- * \param[in]  name                    Name of the object to import, or NULL when handle is used
- * \param[in]  allocationSize          Complete external extent for heap/opaque imports; ignored for D3D texture/resource imports
- * \param[in]  requiredProperties      Memory property flags the selected type must cover
- * \param[in]  pMemoryNext             Optional extension chain behind the import info, or NULL
- * \param[in]  pAllocator              Optional allocation callbacks, or NULL
- * \param[out] pImage                  Receives the created VkImage
- * \param[out] pMemory                 Receives the imported VkDeviceMemory
+ * \param[in]  physicalDevice         Physical device the image is created for
+ * \param[in]  device                 Logical device owning the image and memory
+ * \param[in]  pImageNext             Optional extension chain for VkImageCreateInfo, or NULL
+ * \param[in]  flags                  VkImageCreateInfo::flags
+ * \param[in]  format                 VkImageCreateInfo::format
+ * \param[in]  mipLevels              VkImageCreateInfo::mipLevels
+ * \param[in]  arrayLayers            VkImageCreateInfo::arrayLayers
+ * \param[in]  samples                VkImageCreateInfo::samples
+ * \param[in]  tiling                 VkImageCreateInfo::tiling
+ * \param[in]  usage                  VkImageCreateInfo::usage
+ * \param[in]  sharingMode            VkImageCreateInfo::sharingMode
+ * \param[in]  queueFamilyIndexCount  VkImageCreateInfo::queueFamilyIndexCount
+ * \param[in]  pQueueFamilyIndices    VkImageCreateInfo::pQueueFamilyIndices
+ * \param[in]  initialLayout          VkImageCreateInfo::initialLayout
+ * \param[in]  extent2D               Image width and height
+ * \param[in]  handleType             Win32 external memory handle type being imported
+ * \param[in]  handle                 Handle to import, or NULL when name is used
+ * \param[in]  name                   Name of the object to import, or NULL when handle is used
+ * \param[in]  allocationSize         Complete external extent for heap/opaque imports; ignored for D3D texture/resource imports
+ * \param[in]  requiredProperties     Memory property flags the selected type must cover
+ * \param[in]  pMemoryNext            Optional extension chain behind the import info, or NULL
+ * \param[in]  pAllocator             Optional allocation callbacks, or NULL
+ * \param[out] pImage                 Receives the created VkImage
+ * \param[out] pMemory                Receives the imported VkDeviceMemory
  *
  * \retval None No value is returned.
  */
@@ -995,9 +995,9 @@ void cvkImportWin32HandleImage2D(VkPhysicalDevice physicalDevice, VkDevice devic
  * \brief Reports whether a D3D11 texture can be imported as an optimal 2D Vulkan image.
  *
  *
- * \param[in] physicalDevice   Physical device to query
- * \param[in] format           Vulkan image format
- * \param[in] usage            Vulkan image usage
+ * \param[in] physicalDevice  Physical device to query
+ * \param[in] format          Vulkan image format
+ * \param[in] usage           Vulkan image usage
  *
  * \retval VK_TRUE  The image description supports D3D11 texture import
  * \retval VK_FALSE The image description does not support D3D11 texture import
@@ -1010,14 +1010,14 @@ VkBool32 cvkGetPhysicalDeviceD3D11Texture2DImportSupport(VkPhysicalDevice physic
  *  Uses one mip level, one array layer, one sample, optimal tiling, exclusive sharing,
  *  and an undefined initial layout. The handle remains owned by the caller.
  *
- * \param[in]  physicalDevice   Physical device the image is created for
- * \param[in]  device           Logical device owning the image and memory
- * \param[in]  format           Vulkan image format
- * \param[in]  extent2D         Image width and height
- * \param[in]  usage            Vulkan image usage
- * \param[in]  handle           Shared D3D11 texture handle to import
- * \param[out] pImage           Receives the created VkImage
- * \param[out] pMemory          Receives the imported VkDeviceMemory
+ * \param[in]  physicalDevice  Physical device the image is created for
+ * \param[in]  device          Logical device owning the image and memory
+ * \param[in]  format          Vulkan image format
+ * \param[in]  extent2D        Image width and height
+ * \param[in]  usage           Vulkan image usage
+ * \param[in]  handle          Shared D3D11 texture handle to import
+ * \param[out] pImage          Receives the created VkImage
+ * \param[out] pMemory         Receives the imported VkDeviceMemory
  *
  * \retval None No value is returned.
  */
@@ -1034,24 +1034,24 @@ void cvkImportD3D11Texture2D(VkPhysicalDevice physicalDevice, VkDevice device, V
  *  (dedicated info in front when required), and binding. The handle stays owned by the
  *  caller as Vulkan specifies for Win32 imports.
  *
- * \param[in]  physicalDevice          Physical device the buffer is created for
- * \param[in]  device                  Logical device owning the buffer and memory
- * \param[in]  pBufferNext             Optional extension chain for VkBufferCreateInfo, or NULL
- * \param[in]  flags                   VkBufferCreateInfo::flags
- * \param[in]  size                    VkBufferCreateInfo::size
- * \param[in]  usage                   VkBufferCreateInfo::usage
- * \param[in]  sharingMode             VkBufferCreateInfo::sharingMode
- * \param[in]  queueFamilyIndexCount   VkBufferCreateInfo::queueFamilyIndexCount
- * \param[in]  pQueueFamilyIndices     VkBufferCreateInfo::pQueueFamilyIndices
- * \param[in]  handleType              Win32 external memory handle type being imported
- * \param[in]  handle                  Handle to import, or NULL when name is used
- * \param[in]  name                    Name of the object to import, or NULL when handle is used
- * \param[in]  allocationSize          Complete external extent for heap/opaque imports; ignored for D3D12 resource imports
- * \param[in]  requiredProperties      Memory property flags the selected type must cover
- * \param[in]  pMemoryNext             Optional extension chain behind the import info, or NULL
- * \param[in]  pAllocator              Optional allocation callbacks, or NULL
- * \param[out] pBuffer                 Receives the created VkBuffer
- * \param[out] pMemory                 Receives the imported VkDeviceMemory
+ * \param[in]  physicalDevice         Physical device the buffer is created for
+ * \param[in]  device                 Logical device owning the buffer and memory
+ * \param[in]  pBufferNext            Optional extension chain for VkBufferCreateInfo, or NULL
+ * \param[in]  flags                  VkBufferCreateInfo::flags
+ * \param[in]  size                   VkBufferCreateInfo::size
+ * \param[in]  usage                  VkBufferCreateInfo::usage
+ * \param[in]  sharingMode            VkBufferCreateInfo::sharingMode
+ * \param[in]  queueFamilyIndexCount  VkBufferCreateInfo::queueFamilyIndexCount
+ * \param[in]  pQueueFamilyIndices    VkBufferCreateInfo::pQueueFamilyIndices
+ * \param[in]  handleType             Win32 external memory handle type being imported
+ * \param[in]  handle                 Handle to import, or NULL when name is used
+ * \param[in]  name                   Name of the object to import, or NULL when handle is used
+ * \param[in]  allocationSize         Complete external extent for heap/opaque imports; ignored for D3D12 resource imports
+ * \param[in]  requiredProperties     Memory property flags the selected type must cover
+ * \param[in]  pMemoryNext            Optional extension chain behind the import info, or NULL
+ * \param[in]  pAllocator             Optional allocation callbacks, or NULL
+ * \param[out] pBuffer                Receives the created VkBuffer
+ * \param[out] pMemory                Receives the imported VkDeviceMemory
  *
  * \retval None No value is returned.
  */
@@ -1068,32 +1068,32 @@ void cvkImportWin32HandleBuffer(VkPhysicalDevice physicalDevice, VkDevice device
  *  permit it, then dedicated info when required), binding, and the handle export. The handle
  *  is owned by the caller, who closes it; the memory stays valid while the image and memory live.
  *
- * \param[in]  physicalDevice          Physical device the image is created for
- * \param[in]  device                  Logical device owning the image and memory
- * \param[in]  pImageNext              Optional extension chain for VkImageCreateInfo, or NULL
- * \param[in]  flags                   VkImageCreateInfo::flags
- * \param[in]  imageType               VkImageCreateInfo::imageType
- * \param[in]  format                  VkImageCreateInfo::format
- * \param[in]  extent                  VkImageCreateInfo::extent
- * \param[in]  mipLevels               VkImageCreateInfo::mipLevels
- * \param[in]  arrayLayers             VkImageCreateInfo::arrayLayers
- * \param[in]  samples                 VkImageCreateInfo::samples
- * \param[in]  tiling                  VkImageCreateInfo::tiling
- * \param[in]  usage                   VkImageCreateInfo::usage
- * \param[in]  sharingMode             VkImageCreateInfo::sharingMode
- * \param[in]  queueFamilyIndexCount   VkImageCreateInfo::queueFamilyIndexCount
- * \param[in]  pQueueFamilyIndices     VkImageCreateInfo::pQueueFamilyIndices
- * \param[in]  initialLayout           VkImageCreateInfo::initialLayout
- * \param[in]  handleType              Win32 external memory handle type to export
- * \param[in]  pAttributes             VkExportMemoryWin32HandleInfoKHR::pAttributes, or NULL for the defaults
- * \param[in]  dwAccess                VkExportMemoryWin32HandleInfoKHR::dwAccess
- * \param[in]  name                    VkExportMemoryWin32HandleInfoKHR::name, or NULL for an unnamed object
- * \param[in]  requiredProperties      Memory property flags the selected type must cover
- * \param[in]  pMemoryNext             Optional extension chain behind the export infos, or NULL
- * \param[in]  pAllocator              Optional allocation callbacks, or NULL
- * \param[out] pImage                  Receives the created VkImage
- * \param[out] pMemory                 Receives the exportable VkDeviceMemory
- * \param[out] pHandle                 Receives the exported handle, owned by the caller
+ * \param[in]  physicalDevice         Physical device the image is created for
+ * \param[in]  device                 Logical device owning the image and memory
+ * \param[in]  pImageNext             Optional extension chain for VkImageCreateInfo, or NULL
+ * \param[in]  flags                  VkImageCreateInfo::flags
+ * \param[in]  imageType              VkImageCreateInfo::imageType
+ * \param[in]  format                 VkImageCreateInfo::format
+ * \param[in]  extent                 VkImageCreateInfo::extent
+ * \param[in]  mipLevels              VkImageCreateInfo::mipLevels
+ * \param[in]  arrayLayers            VkImageCreateInfo::arrayLayers
+ * \param[in]  samples                VkImageCreateInfo::samples
+ * \param[in]  tiling                 VkImageCreateInfo::tiling
+ * \param[in]  usage                  VkImageCreateInfo::usage
+ * \param[in]  sharingMode            VkImageCreateInfo::sharingMode
+ * \param[in]  queueFamilyIndexCount  VkImageCreateInfo::queueFamilyIndexCount
+ * \param[in]  pQueueFamilyIndices    VkImageCreateInfo::pQueueFamilyIndices
+ * \param[in]  initialLayout          VkImageCreateInfo::initialLayout
+ * \param[in]  handleType             Win32 external memory handle type to export
+ * \param[in]  pAttributes            VkExportMemoryWin32HandleInfoKHR::pAttributes, or NULL for the defaults
+ * \param[in]  dwAccess               VkExportMemoryWin32HandleInfoKHR::dwAccess
+ * \param[in]  name                   VkExportMemoryWin32HandleInfoKHR::name, or NULL for an unnamed object
+ * \param[in]  requiredProperties     Memory property flags the selected type must cover
+ * \param[in]  pMemoryNext            Optional extension chain behind the export infos, or NULL
+ * \param[in]  pAllocator             Optional allocation callbacks, or NULL
+ * \param[out] pImage                 Receives the created VkImage
+ * \param[out] pMemory                Receives the exportable VkDeviceMemory
+ * \param[out] pHandle                Receives the exported handle, owned by the caller
  *
  * \retval None No value is returned.
  */
@@ -1108,25 +1108,25 @@ void cvkExportWin32HandleImage(VkPhysicalDevice physicalDevice, VkDevice device,
  *  and D3D handle types, then dedicated info when required), binding, and the handle export.
  *  The handle is owned by the caller, who closes it.
  *
- * \param[in]  physicalDevice          Physical device the buffer is created for
- * \param[in]  device                  Logical device owning the buffer and memory
- * \param[in]  pBufferNext             Optional extension chain for VkBufferCreateInfo, or NULL
- * \param[in]  flags                   VkBufferCreateInfo::flags
- * \param[in]  size                    VkBufferCreateInfo::size
- * \param[in]  usage                   VkBufferCreateInfo::usage
- * \param[in]  sharingMode             VkBufferCreateInfo::sharingMode
- * \param[in]  queueFamilyIndexCount   VkBufferCreateInfo::queueFamilyIndexCount
- * \param[in]  pQueueFamilyIndices     VkBufferCreateInfo::pQueueFamilyIndices
- * \param[in]  handleType              Win32 external memory handle type to export
- * \param[in]  pAttributes             VkExportMemoryWin32HandleInfoKHR::pAttributes, or NULL for the defaults
- * \param[in]  dwAccess                VkExportMemoryWin32HandleInfoKHR::dwAccess
- * \param[in]  name                    VkExportMemoryWin32HandleInfoKHR::name, or NULL for an unnamed object
- * \param[in]  requiredProperties      Memory property flags the selected type must cover
- * \param[in]  pMemoryNext             Optional extension chain behind the export infos, or NULL
- * \param[in]  pAllocator              Optional allocation callbacks, or NULL
- * \param[out] pBuffer                 Receives the created VkBuffer
- * \param[out] pMemory                 Receives the exportable VkDeviceMemory
- * \param[out] pHandle                 Receives the exported handle, owned by the caller
+ * \param[in]  physicalDevice         Physical device the buffer is created for
+ * \param[in]  device                 Logical device owning the buffer and memory
+ * \param[in]  pBufferNext            Optional extension chain for VkBufferCreateInfo, or NULL
+ * \param[in]  flags                  VkBufferCreateInfo::flags
+ * \param[in]  size                   VkBufferCreateInfo::size
+ * \param[in]  usage                  VkBufferCreateInfo::usage
+ * \param[in]  sharingMode            VkBufferCreateInfo::sharingMode
+ * \param[in]  queueFamilyIndexCount  VkBufferCreateInfo::queueFamilyIndexCount
+ * \param[in]  pQueueFamilyIndices    VkBufferCreateInfo::pQueueFamilyIndices
+ * \param[in]  handleType             Win32 external memory handle type to export
+ * \param[in]  pAttributes            VkExportMemoryWin32HandleInfoKHR::pAttributes, or NULL for the defaults
+ * \param[in]  dwAccess               VkExportMemoryWin32HandleInfoKHR::dwAccess
+ * \param[in]  name                   VkExportMemoryWin32HandleInfoKHR::name, or NULL for an unnamed object
+ * \param[in]  requiredProperties     Memory property flags the selected type must cover
+ * \param[in]  pMemoryNext            Optional extension chain behind the export infos, or NULL
+ * \param[in]  pAllocator             Optional allocation callbacks, or NULL
+ * \param[out] pBuffer                Receives the created VkBuffer
+ * \param[out] pMemory                Receives the exportable VkDeviceMemory
+ * \param[out] pHandle                Receives the exported handle, owned by the caller
  *
  * \retval None No value is returned.
  */

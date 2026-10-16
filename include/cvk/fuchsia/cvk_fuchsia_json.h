@@ -43,8 +43,8 @@ VkImagePipeSurfaceCreateFlagsFUCHSIA cvkParseJsonImagePipeSurfaceCreateFlagsFUCH
 /**
  * \brief Parses a VkBufferCollectionBufferCreateInfoFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBufferCollectionBufferCreateInfoFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBufferCollectionBufferCreateInfoFUCHSIA
  * \param[out] pInfo     Receives the parsed VkBufferCollectionBufferCreateInfoFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -53,8 +53,8 @@ void cvkParseJsonBufferCollectionBufferCreateInfoFUCHSIA(const cvkJsonContext* p
 /**
  * \brief Parses a VkBufferCollectionConstraintsInfoFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBufferCollectionConstraintsInfoFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBufferCollectionConstraintsInfoFUCHSIA
  * \param[out] pInfo     Receives the parsed VkBufferCollectionConstraintsInfoFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -63,8 +63,8 @@ void cvkParseJsonBufferCollectionConstraintsInfoFUCHSIA(const cvkJsonContext* pC
 /**
  * \brief Parses a VkBufferCollectionCreateInfoFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBufferCollectionCreateInfoFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBufferCollectionCreateInfoFUCHSIA
  * \param[out] pInfo     Receives the parsed VkBufferCollectionCreateInfoFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -73,8 +73,8 @@ void cvkParseJsonBufferCollectionCreateInfoFUCHSIA(const cvkJsonContext* pContex
 /**
  * \brief Parses a VkBufferCollectionImageCreateInfoFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBufferCollectionImageCreateInfoFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBufferCollectionImageCreateInfoFUCHSIA
  * \param[out] pInfo     Receives the parsed VkBufferCollectionImageCreateInfoFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -83,8 +83,8 @@ void cvkParseJsonBufferCollectionImageCreateInfoFUCHSIA(const cvkJsonContext* pC
 /**
  * \brief Parses a VkBufferCollectionPropertiesFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBufferCollectionPropertiesFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBufferCollectionPropertiesFUCHSIA
  * \param[out] pInfo     Receives the parsed VkBufferCollectionPropertiesFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -93,8 +93,8 @@ void cvkParseJsonBufferCollectionPropertiesFUCHSIA(const cvkJsonContext* pContex
 /**
  * \brief Parses a VkBufferConstraintsInfoFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBufferConstraintsInfoFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBufferConstraintsInfoFUCHSIA
  * \param[out] pInfo     Receives the parsed VkBufferConstraintsInfoFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -103,8 +103,8 @@ void cvkParseJsonBufferConstraintsInfoFUCHSIA(const cvkJsonContext* pContext, co
 /**
  * \brief Parses a VkImageConstraintsInfoFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageConstraintsInfoFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageConstraintsInfoFUCHSIA
  * \param[out] pInfo     Receives the parsed VkImageConstraintsInfoFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -113,8 +113,8 @@ void cvkParseJsonImageConstraintsInfoFUCHSIA(const cvkJsonContext* pContext, con
 /**
  * \brief Parses a VkImageFormatConstraintsInfoFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageFormatConstraintsInfoFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageFormatConstraintsInfoFUCHSIA
  * \param[out] pInfo     Receives the parsed VkImageFormatConstraintsInfoFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -123,8 +123,8 @@ void cvkParseJsonImageFormatConstraintsInfoFUCHSIA(const cvkJsonContext* pContex
 /**
  * \brief Parses a VkImagePipeSurfaceCreateInfoFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImagePipeSurfaceCreateInfoFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImagePipeSurfaceCreateInfoFUCHSIA
  * \param[out] pInfo     Receives the parsed VkImagePipeSurfaceCreateInfoFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -133,8 +133,8 @@ void cvkParseJsonImagePipeSurfaceCreateInfoFUCHSIA(const cvkJsonContext* pContex
 /**
  * \brief Parses a VkImportMemoryBufferCollectionFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImportMemoryBufferCollectionFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImportMemoryBufferCollectionFUCHSIA
  * \param[out] pInfo     Receives the parsed VkImportMemoryBufferCollectionFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -143,8 +143,8 @@ void cvkParseJsonImportMemoryBufferCollectionFUCHSIA(const cvkJsonContext* pCont
 /**
  * \brief Parses a VkImportMemoryZirconHandleInfoFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImportMemoryZirconHandleInfoFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImportMemoryZirconHandleInfoFUCHSIA
  * \param[out] pInfo     Receives the parsed VkImportMemoryZirconHandleInfoFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -153,8 +153,8 @@ void cvkParseJsonImportMemoryZirconHandleInfoFUCHSIA(const cvkJsonContext* pCont
 /**
  * \brief Parses a VkImportSemaphoreZirconHandleInfoFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImportSemaphoreZirconHandleInfoFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImportSemaphoreZirconHandleInfoFUCHSIA
  * \param[out] pInfo     Receives the parsed VkImportSemaphoreZirconHandleInfoFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -163,8 +163,8 @@ void cvkParseJsonImportSemaphoreZirconHandleInfoFUCHSIA(const cvkJsonContext* pC
 /**
  * \brief Parses a VkMemoryGetZirconHandleInfoFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryGetZirconHandleInfoFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryGetZirconHandleInfoFUCHSIA
  * \param[out] pInfo     Receives the parsed VkMemoryGetZirconHandleInfoFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -173,8 +173,8 @@ void cvkParseJsonMemoryGetZirconHandleInfoFUCHSIA(const cvkJsonContext* pContext
 /**
  * \brief Parses a VkMemoryZirconHandlePropertiesFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryZirconHandlePropertiesFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryZirconHandlePropertiesFUCHSIA
  * \param[out] pInfo     Receives the parsed VkMemoryZirconHandlePropertiesFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -183,8 +183,8 @@ void cvkParseJsonMemoryZirconHandlePropertiesFUCHSIA(const cvkJsonContext* pCont
 /**
  * \brief Parses a VkSemaphoreGetZirconHandleInfoFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSemaphoreGetZirconHandleInfoFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSemaphoreGetZirconHandleInfoFUCHSIA
  * \param[out] pInfo     Receives the parsed VkSemaphoreGetZirconHandleInfoFUCHSIA, zeroed first
  *
  * \retval None No value is returned.
@@ -193,8 +193,8 @@ void cvkParseJsonSemaphoreGetZirconHandleInfoFUCHSIA(const cvkJsonContext* pCont
 /**
  * \brief Parses a VkSysmemColorSpaceFUCHSIA from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSysmemColorSpaceFUCHSIA
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSysmemColorSpaceFUCHSIA
  * \param[out] pInfo     Receives the parsed VkSysmemColorSpaceFUCHSIA, zeroed first
  *
  * \retval None No value is returned.

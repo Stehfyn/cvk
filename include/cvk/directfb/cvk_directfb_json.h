@@ -19,8 +19,8 @@ VkDirectFBSurfaceCreateFlagsEXT cvkParseJsonDirectFBSurfaceCreateFlags(const cvk
 /**
  * \brief Parses a VkDirectFBSurfaceCreateInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDirectFBSurfaceCreateInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDirectFBSurfaceCreateInfoEXT
  * \param[out] pInfo     Receives the parsed VkDirectFBSurfaceCreateInfoEXT, zeroed first
  *
  * \retval None No value is returned.

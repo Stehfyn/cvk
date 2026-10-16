@@ -11,9 +11,9 @@
  * \brief Initializes a VkMacOSSurfaceCreateInfoMVK.
  *
  * \param[out] pInfo  Receives the initialized VkMacOSSurfaceCreateInfoMVK
- * \param[in] pNext  Optional extension chain attached to VkMacOSSurfaceCreateInfoMVK, or NULL
- * \param[in] flags  VkMacOSSurfaceCreateInfoMVK::flags
- * \param[in] pView  VkMacOSSurfaceCreateInfoMVK::pView
+ * \param[in]  pNext  Optional extension chain attached to VkMacOSSurfaceCreateInfoMVK, or NULL
+ * \param[in]  flags  VkMacOSSurfaceCreateInfoMVK::flags
+ * \param[in]  pView  VkMacOSSurfaceCreateInfoMVK::pView
  *
  * \retval None No value is returned.
  */
@@ -24,11 +24,11 @@ void cvkInitMacOSSurfaceCreateInfoMVK(VkMacOSSurfaceCreateInfoMVK* pInfo, const 
  * \par Details:
  *  Wraps vkCreateMacOSSurfaceMVK. Aborts on any error result.
  *
- * \param[in] instance    VkInstance value
- * \param[in] pNext       Optional extension chain attached to VkMacOSSurfaceCreateInfoMVK, or NULL
- * \param[in] flags       VkMacOSSurfaceCreateInfoMVK::flags
- * \param[in] pView       VkMacOSSurfaceCreateInfoMVK::pView
- * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[in]  instance    VkInstance value
+ * \param[in]  pNext       Optional extension chain attached to VkMacOSSurfaceCreateInfoMVK, or NULL
+ * \param[in]  flags       VkMacOSSurfaceCreateInfoMVK::flags
+ * \param[in]  pView       VkMacOSSurfaceCreateInfoMVK::pView
+ * \param[in]  pAllocator  Optional allocation callbacks, or NULL
  * \param[out] pSurface    Receives the created VkSurfaceKHR
  *
  * \retval None No value is returned.

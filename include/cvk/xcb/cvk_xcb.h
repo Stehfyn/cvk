@@ -12,10 +12,10 @@
  * \brief Initializes a VkXcbSurfaceCreateInfoKHR.
  *
  * \param[out] pInfo       Receives the initialized VkXcbSurfaceCreateInfoKHR
- * \param[in] pNext       Optional extension chain attached to VkXcbSurfaceCreateInfoKHR, or NULL
- * \param[in] flags       VkXcbSurfaceCreateInfoKHR::flags
- * \param[in] connection  VkXcbSurfaceCreateInfoKHR::connection
- * \param[in] window      VkXcbSurfaceCreateInfoKHR::window
+ * \param[in]  pNext       Optional extension chain attached to VkXcbSurfaceCreateInfoKHR, or NULL
+ * \param[in]  flags       VkXcbSurfaceCreateInfoKHR::flags
+ * \param[in]  connection  VkXcbSurfaceCreateInfoKHR::connection
+ * \param[in]  window      VkXcbSurfaceCreateInfoKHR::window
  *
  * \retval None No value is returned.
  */
@@ -26,12 +26,12 @@ void cvkInitXcbSurfaceCreateInfo(VkXcbSurfaceCreateInfoKHR* pInfo, const void* p
  * \par Details:
  *  Wraps vkCreateXcbSurfaceKHR. Aborts on any error result.
  *
- * \param[in] instance    VkInstance value
- * \param[in] pNext       Optional extension chain attached to VkXcbSurfaceCreateInfoKHR, or NULL
- * \param[in] flags       VkXcbSurfaceCreateInfoKHR::flags
- * \param[in] connection  VkXcbSurfaceCreateInfoKHR::connection
- * \param[in] window      VkXcbSurfaceCreateInfoKHR::window
- * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[in]  instance    VkInstance value
+ * \param[in]  pNext       Optional extension chain attached to VkXcbSurfaceCreateInfoKHR, or NULL
+ * \param[in]  flags       VkXcbSurfaceCreateInfoKHR::flags
+ * \param[in]  connection  VkXcbSurfaceCreateInfoKHR::connection
+ * \param[in]  window      VkXcbSurfaceCreateInfoKHR::window
+ * \param[in]  pAllocator  Optional allocation callbacks, or NULL
  * \param[out] pSurface    Receives the created VkSurfaceKHR
  *
  * \retval None No value is returned.
@@ -43,10 +43,10 @@ void cvkCreateXcbSurface(VkInstance instance, const void* pNext, VkXcbSurfaceCre
  * \par Details:
  *  Wraps vkGetPhysicalDeviceXcbPresentationSupportKHR.
  *
- * \param[in] physicalDevice    VkPhysicalDevice value
- * \param[in] queueFamilyIndex  uint32_t value
+ * \param[in]  physicalDevice    VkPhysicalDevice value
+ * \param[in]  queueFamilyIndex  uint32_t value
  * \param[out] connection        Receives the xcb_connection_t
- * \param[in] visual_id         xcb_visualid_t value
+ * \param[in]  visual_id         xcb_visualid_t value
  *
  * \return The VkBool32 returned by the command.
  */

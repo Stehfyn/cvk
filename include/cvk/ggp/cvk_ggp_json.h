@@ -19,8 +19,8 @@ VkStreamDescriptorSurfaceCreateFlagsGGP cvkParseJsonStreamDescriptorSurfaceCreat
 /**
  * \brief Parses a VkPresentFrameTokenGGP from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPresentFrameTokenGGP
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPresentFrameTokenGGP
  * \param[out] pInfo     Receives the parsed VkPresentFrameTokenGGP, zeroed first
  *
  * \retval None No value is returned.
@@ -29,8 +29,8 @@ void cvkParseJsonPresentFrameTokenGGP(const cvkJsonContext* pContext, const cvkJ
 /**
  * \brief Parses a VkStreamDescriptorSurfaceCreateInfoGGP from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkStreamDescriptorSurfaceCreateInfoGGP
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkStreamDescriptorSurfaceCreateInfoGGP
  * \param[out] pInfo     Receives the parsed VkStreamDescriptorSurfaceCreateInfoGGP, zeroed first
  *
  * \retval None No value is returned.

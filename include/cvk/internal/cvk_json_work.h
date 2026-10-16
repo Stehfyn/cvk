@@ -33,74 +33,74 @@ typedef struct cvkJsonStructureReader
 
 /**
  * \brief Reserves bounded parse scratch from callbacks or the unused end of the caller's arena.
- * \param[out] pWork Receives the initialized work stack.
- * \param[in] pContext Document and caller-owned arena.
+ * \param[out] pWork     Receives the initialized work stack.
+ * \param[in]  pContext  Document and caller-owned arena.
  * \retval None No value is returned.
  */
 void cvkInitializeJsonWork(cvkJsonWork* pWork, const cvkJsonContext* pContext);
 
 /**
  * \brief Appends one object without invoking another parser.
- * \param[in,out] pWork Initialized work stack.
- * \param[in] read Reader for the object's native structure type.
- * \param[in] pObject JSON object, or NULL for a zeroed structure.
- * \param[out] pOutput Native structure storage.
+ * \param[in,out] pWork    Initialized work stack.
+ * \param[in]     read     Reader for the object's native structure type.
+ * \param[in]     pObject  JSON object, or NULL for a zeroed structure.
+ * \param[out]    pOutput  Native structure storage.
  * \retval None No value is returned.
  */
 void cvkAppendJsonWork(cvkJsonWork* pWork, PFN_cvkReadJsonObject read, const cvkJsonValue* pObject, void* pOutput);
 
 /**
  * \brief Drains pending objects iteratively and releases the reserved scratch.
- * \param[in,out] pWork Initialized work stack.
+ * \param[in,out] pWork  Initialized work stack.
  * \retval None No value is returned.
  */
 void cvkRunJsonWork(cvkJsonWork* pWork);
 
 /**
  * \brief Allocates an extension structure selected by sType and appends its reader.
- * \param[in,out] pWork Initialized work stack.
- * \param[in] pObject Non-null extension JSON object.
+ * \param[in,out] pWork    Initialized work stack.
+ * \param[in]     pObject  Non-null extension JSON object.
  * \retval Other The allocated native structure.
  */
 void* cvkScheduleJsonStructureChain(cvkJsonWork* pWork, const cvkJsonValue* pObject);
 
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAabbPositions(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureBuildGeometryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureBuildRangeInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureBuildSizesInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureCaptureDescriptorDataInfo(cvkJsonWork*        pWork,
@@ -108,33 +108,33 @@ void cvkReadJsonAccelerationStructureCaptureDescriptorDataInfo(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureCreateInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureDenseGeometryFormatTrianglesDataAMDX(cvkJsonWork*        pWork,
@@ -142,33 +142,33 @@ void cvkReadJsonAccelerationStructureDenseGeometryFormatTrianglesDataAMDX(cvkJso
                                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureDeviceAddressInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometryAabbsData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometryData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometryInstancesData(cvkJsonWork*        pWork,
@@ -176,17 +176,17 @@ void cvkReadJsonAccelerationStructureGeometryInstancesData(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometry(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometryLinearSweptSpheresDataNV(cvkJsonWork*        pWork,
@@ -194,9 +194,9 @@ void cvkReadJsonAccelerationStructureGeometryLinearSweptSpheresDataNV(cvkJsonWor
                                                                       void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometryMicromapData(cvkJsonWork*        pWork,
@@ -204,9 +204,9 @@ void cvkReadJsonAccelerationStructureGeometryMicromapData(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometryMotionTrianglesDataNV(cvkJsonWork*        pWork,
@@ -214,9 +214,9 @@ void cvkReadJsonAccelerationStructureGeometryMotionTrianglesDataNV(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometrySpheresDataNV(cvkJsonWork*        pWork,
@@ -224,9 +224,9 @@ void cvkReadJsonAccelerationStructureGeometrySpheresDataNV(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureGeometryTrianglesData(cvkJsonWork*        pWork,
@@ -234,25 +234,25 @@ void cvkReadJsonAccelerationStructureGeometryTrianglesData(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureInstance(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureMatrixMotionInstanceNV(cvkJsonWork*        pWork,
@@ -260,9 +260,9 @@ void cvkReadJsonAccelerationStructureMatrixMotionInstanceNV(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureMemoryRequirementsInfoNV(cvkJsonWork*        pWork,
@@ -270,17 +270,17 @@ void cvkReadJsonAccelerationStructureMemoryRequirementsInfoNV(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureMotionInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureMotionInstanceDataNV(cvkJsonWork*        pWork,
@@ -288,17 +288,17 @@ void cvkReadJsonAccelerationStructureMotionInstanceDataNV(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureMotionInstanceNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureSRTMotionInstanceNV(cvkJsonWork*        pWork,
@@ -306,9 +306,9 @@ void cvkReadJsonAccelerationStructureSRTMotionInstanceNV(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureTrianglesDisplacementMicromapNV(cvkJsonWork*        pWork,
@@ -316,9 +316,9 @@ void cvkReadJsonAccelerationStructureTrianglesDisplacementMicromapNV(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureTrianglesOpacityMicromapEXT(cvkJsonWork*        pWork,
@@ -326,9 +326,9 @@ void cvkReadJsonAccelerationStructureTrianglesOpacityMicromapEXT(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureTrianglesOpacityMicromap(cvkJsonWork*        pWork,
@@ -336,49 +336,49 @@ void cvkReadJsonAccelerationStructureTrianglesOpacityMicromap(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAccelerationStructureVersionInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAcquireNextImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAcquireProfilingLockInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAllocationCallbacks(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAmigoProfilingSubmitInfoSEC(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAndroidHardwareBufferFormatProperties2ANDROID(cvkJsonWork*        pWork,
@@ -386,9 +386,9 @@ void cvkReadJsonAndroidHardwareBufferFormatProperties2ANDROID(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAndroidHardwareBufferFormatPropertiesANDROID(cvkJsonWork*        pWork,
@@ -396,9 +396,9 @@ void cvkReadJsonAndroidHardwareBufferFormatPropertiesANDROID(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAndroidHardwareBufferFormatResolvePropertiesANDROID(cvkJsonWork*        pWork,
@@ -406,161 +406,161 @@ void cvkReadJsonAndroidHardwareBufferFormatResolvePropertiesANDROID(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAndroidHardwareBufferPropertiesANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAndroidHardwareBufferUsageANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAndroidSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAntiLagDataAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAntiLagPresentationInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonApplicationInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentDescription(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentDescription2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentDescriptionStencilLayout(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentFeedbackLoopInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentReference(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentReference2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentReferenceStencilLayout(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentSampleCountInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonAttachmentSampleLocations(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBeginCustomResolveInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindAccelerationStructureMemoryInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindBufferMemoryDeviceGroupInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindBufferMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindDataGraphPipelineSessionMemoryInfoARM(cvkJsonWork*        pWork,
@@ -568,9 +568,9 @@ void cvkReadJsonBindDataGraphPipelineSessionMemoryInfoARM(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindDescriptorBufferEmbeddedSamplersInfo(cvkJsonWork*        pWork,
@@ -578,257 +578,257 @@ void cvkReadJsonBindDescriptorBufferEmbeddedSamplersInfo(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindDescriptorSetsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindHeapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindImageMemoryDeviceGroupInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindImageMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindImageMemorySwapchainInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindImagePlaneMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindIndexBuffer3Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindIndexBufferIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindIndexBufferIndirectCommandNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindMemoryStatus(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindPipelineIndirectCommandNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindShaderGroupIndirectCommandNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindSparseInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindTensorMemoryInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindTransformFeedbackBuffer2Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindVertexBuffer3Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindVertexBufferIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindVertexBufferIndirectCommandNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBindVideoSessionMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBlitImageCubicWeightsInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBlitImageInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferCaptureDescriptorDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferCollectionBufferCreateInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferCollectionConstraintsInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferCollectionCreateInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferCollectionImageCreateInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferCollectionPropertiesFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferConstraintsInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferCopy2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferDeviceAddressAlignmentAllocateInfoVALVE(cvkJsonWork*        pWork,
@@ -836,89 +836,89 @@ void cvkReadJsonBufferDeviceAddressAlignmentAllocateInfoVALVE(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferDeviceAddressCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferDeviceAddressInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferImageCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferImageCopy2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferMemoryBarrier(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferMemoryBarrier2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferMemoryRequirementsInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferOpaqueCaptureAddressCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferUsageFlags2CreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBufferViewCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBuildPartitionedAccelerationStructureIndirectCommandNV(cvkJsonWork*        pWork,
@@ -926,9 +926,9 @@ void cvkReadJsonBuildPartitionedAccelerationStructureIndirectCommandNV(cvkJsonWo
                                                                        void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonBuildPartitionedAccelerationStructureInfoNV(cvkJsonWork*        pWork,
@@ -936,73 +936,73 @@ void cvkReadJsonBuildPartitionedAccelerationStructureInfoNV(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCalibratedTimestampInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCheckpointData2NV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCheckpointDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClearAttachment(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClearColorValue(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClearDepthStencilValue(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClearRect(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClearValue(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureBuildClustersBottomLevelInfoNV(cvkJsonWork*        pWork,
@@ -1010,9 +1010,9 @@ void cvkReadJsonClusterAccelerationStructureBuildClustersBottomLevelInfoNV(cvkJs
                                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureBuildTriangleClusterInfoNV(cvkJsonWork*        pWork,
@@ -1020,9 +1020,9 @@ void cvkReadJsonClusterAccelerationStructureBuildTriangleClusterInfoNV(cvkJsonWo
                                                                        void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureBuildTriangleClusterTemplateInfoNV(cvkJsonWork*        pWork,
@@ -1030,9 +1030,9 @@ void cvkReadJsonClusterAccelerationStructureBuildTriangleClusterTemplateInfoNV(c
                                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureClustersBottomLevelInputNV(cvkJsonWork*        pWork,
@@ -1040,9 +1040,9 @@ void cvkReadJsonClusterAccelerationStructureClustersBottomLevelInputNV(cvkJsonWo
                                                                        void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureCommandsInfoNV(cvkJsonWork*        pWork,
@@ -1050,9 +1050,9 @@ void cvkReadJsonClusterAccelerationStructureCommandsInfoNV(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureGeometryIndexAndGeometryFlagsNV(cvkJsonWork*        pWork,
@@ -1060,9 +1060,9 @@ void cvkReadJsonClusterAccelerationStructureGeometryIndexAndGeometryFlagsNV(cvkJ
                                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureGetTemplateIndicesInfoNV(cvkJsonWork*        pWork,
@@ -1070,17 +1070,17 @@ void cvkReadJsonClusterAccelerationStructureGetTemplateIndicesInfoNV(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureInputInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureInstantiateClusterInfoNV(cvkJsonWork*        pWork,
@@ -1088,9 +1088,9 @@ void cvkReadJsonClusterAccelerationStructureInstantiateClusterInfoNV(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureMoveObjectsInfoNV(cvkJsonWork*        pWork,
@@ -1098,9 +1098,9 @@ void cvkReadJsonClusterAccelerationStructureMoveObjectsInfoNV(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureMoveObjectsInputNV(cvkJsonWork*        pWork,
@@ -1108,17 +1108,17 @@ void cvkReadJsonClusterAccelerationStructureMoveObjectsInputNV(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureOpInputNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonClusterAccelerationStructureTriangleClusterInputNV(cvkJsonWork*        pWork,
@@ -1126,57 +1126,57 @@ void cvkReadJsonClusterAccelerationStructureTriangleClusterInputNV(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCoarseSampleLocationNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCoarseSampleOrderCustomNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonColorBlendAdvanced(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonColorBlendEquation(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferInheritanceConditionalRenderingInfo(cvkJsonWork*        pWork,
@@ -1184,9 +1184,9 @@ void cvkReadJsonCommandBufferInheritanceConditionalRenderingInfo(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferInheritanceDescriptorHeapInfo(cvkJsonWork*        pWork,
@@ -1194,17 +1194,17 @@ void cvkReadJsonCommandBufferInheritanceDescriptorHeapInfo(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferInheritanceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferInheritanceRenderPassTransformInfoQCOM(cvkJsonWork*        pWork,
@@ -1212,17 +1212,17 @@ void cvkReadJsonCommandBufferInheritanceRenderPassTransformInfoQCOM(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferInheritanceRenderingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferInheritanceViewportScissorInfoNV(cvkJsonWork*        pWork,
@@ -1230,89 +1230,89 @@ void cvkReadJsonCommandBufferInheritanceViewportScissorInfoNV(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCommandBufferSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCommandPoolCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonComponentMapping(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonComputeOccupancyPriorityParametersNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonComputePipelineCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonComputePipelineIndirectBufferInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonConditionalRenderingBeginInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonConditionalRenderingBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonConformanceVersion(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonConvertCooperativeVectorMatrixInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCooperativeMatrixFlexibleDimensionsPropertiesNV(cvkJsonWork*        pWork,
@@ -1320,297 +1320,297 @@ void cvkReadJsonCooperativeMatrixFlexibleDimensionsPropertiesNV(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCooperativeMatrixProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCooperativeMatrixProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCooperativeMatrixPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCooperativeVectorPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyAccelerationStructureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyAccelerationStructureToMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyBufferInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyBufferToImageInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyCommandTransformInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyDescriptorSet(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyDeviceMemoryImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyDeviceMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyImageInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyImageToBufferInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyImageToImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyImageToMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyMemoryIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyMemoryIndirectInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyMemoryToAccelerationStructureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyMemoryToImageIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyMemoryToImageIndirectInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyMemoryToImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyMemoryToMicromapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyMicromapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyMicromapToMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCopyTensorInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCuFunctionCreateInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCuLaunchInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCuModuleCreateInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCuModuleTexturingModeCreateInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCudaFunctionCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCudaLaunchInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCudaModuleCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonCustomResolveCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonD3D12FenceSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphOpticalFlowImageFormatInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphOpticalFlowImageFormatPropertiesARM(cvkJsonWork*        pWork,
@@ -1618,9 +1618,9 @@ void cvkReadJsonDataGraphOpticalFlowImageFormatPropertiesARM(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineBuiltinModelCreateInfoQCOM(cvkJsonWork*        pWork,
@@ -1628,9 +1628,9 @@ void cvkReadJsonDataGraphPipelineBuiltinModelCreateInfoQCOM(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineCompilerControlCreateInfoARM(cvkJsonWork*        pWork,
@@ -1638,17 +1638,17 @@ void cvkReadJsonDataGraphPipelineCompilerControlCreateInfoARM(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineConstantARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineConstantTensorSemiStructuredSparsityInfoARM(cvkJsonWork*        pWork,
@@ -1656,25 +1656,25 @@ void cvkReadJsonDataGraphPipelineConstantTensorSemiStructuredSparsityInfoARM(cvk
                                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineDispatchInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineIdentifierCreateInfoARM(cvkJsonWork*        pWork,
@@ -1682,17 +1682,17 @@ void cvkReadJsonDataGraphPipelineIdentifierCreateInfoARM(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineNeuralStatisticsCreateInfoARM(cvkJsonWork*        pWork,
@@ -1700,9 +1700,9 @@ void cvkReadJsonDataGraphPipelineNeuralStatisticsCreateInfoARM(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineOpticalFlowCreateInfoARM(cvkJsonWork*        pWork,
@@ -1710,9 +1710,9 @@ void cvkReadJsonDataGraphPipelineOpticalFlowCreateInfoARM(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineOpticalFlowDispatchInfoARM(cvkJsonWork*        pWork,
@@ -1720,25 +1720,25 @@ void cvkReadJsonDataGraphPipelineOpticalFlowDispatchInfoARM(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelinePropertyQueryResultARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineResourceInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineResourceInfoImageLayoutARM(cvkJsonWork*        pWork,
@@ -1746,9 +1746,9 @@ void cvkReadJsonDataGraphPipelineResourceInfoImageLayoutARM(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineSessionBindPointRequirementARM(cvkJsonWork*        pWork,
@@ -1756,9 +1756,9 @@ void cvkReadJsonDataGraphPipelineSessionBindPointRequirementARM(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineSessionBindPointRequirementsInfoARM(cvkJsonWork*        pWork,
@@ -1766,17 +1766,17 @@ void cvkReadJsonDataGraphPipelineSessionBindPointRequirementsInfoARM(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineSessionCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineSessionMemoryRequirementsInfoARM(cvkJsonWork*        pWork,
@@ -1784,9 +1784,9 @@ void cvkReadJsonDataGraphPipelineSessionMemoryRequirementsInfoARM(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineSessionNeuralStatisticsCreateInfoARM(cvkJsonWork*        pWork,
@@ -1794,9 +1794,9 @@ void cvkReadJsonDataGraphPipelineSessionNeuralStatisticsCreateInfoARM(cvkJsonWor
                                                                       void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineShaderModuleCreateInfoARM(cvkJsonWork*        pWork,
@@ -1804,9 +1804,9 @@ void cvkReadJsonDataGraphPipelineShaderModuleCreateInfoARM(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineSingleNodeConnectionARM(cvkJsonWork*        pWork,
@@ -1814,9 +1814,9 @@ void cvkReadJsonDataGraphPipelineSingleNodeConnectionARM(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphPipelineSingleNodeCreateInfoARM(cvkJsonWork*        pWork,
@@ -1824,193 +1824,193 @@ void cvkReadJsonDataGraphPipelineSingleNodeCreateInfoARM(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphProcessingEngineCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDataGraphTOSANameQualityARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDebugMarkerMarkerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDebugMarkerObjectNameInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDebugMarkerObjectTagInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDebugReportCallbackCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDebugUtilsLabel(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDebugUtilsMessengerCallbackData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDebugUtilsMessengerCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDebugUtilsObjectNameInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDebugUtilsObjectTagInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDecompressMemoryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDecompressMemoryRegion(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDecompressMemoryRegionNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDedicatedAllocationBufferCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDedicatedAllocationImageCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDedicatedAllocationMemoryAllocateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDependencyInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDepthBiasInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDepthBiasRepresentationInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDepthClampRange(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorAddressInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorBufferBindingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorBufferBindingPushDescriptorBufferHandle(cvkJsonWork*        pWork,
@@ -2018,81 +2018,81 @@ void cvkReadJsonDescriptorBufferBindingPushDescriptorBufferHandle(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorGetInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorGetTensorInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourceConstantOffset(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourceData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourceHeapData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourceIndirectAddress(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourceIndirectIndexArray(cvkJsonWork*        pWork,
@@ -2100,25 +2100,25 @@ void cvkReadJsonDescriptorMappingSourceIndirectIndexArray(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourceIndirectIndex(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourcePushIndex(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorMappingSourceShaderRecordIndex(cvkJsonWork*        pWork,
@@ -2126,17 +2126,17 @@ void cvkReadJsonDescriptorMappingSourceShaderRecordIndex(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorPoolCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorPoolInlineUniformBlockCreateInfo(cvkJsonWork*        pWork,
@@ -2144,49 +2144,49 @@ void cvkReadJsonDescriptorPoolInlineUniformBlockCreateInfo(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorPoolSize(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetAndBindingMapping(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetBindingReferenceVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetLayoutBinding(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetLayoutBindingFlagsCreateInfo(cvkJsonWork*        pWork,
@@ -2194,33 +2194,33 @@ void cvkReadJsonDescriptorSetLayoutBindingFlagsCreateInfo(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetLayoutCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetLayoutHostMappingInfoVALVE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetLayoutSupport(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetVariableDescriptorCountAllocateInfo(cvkJsonWork*        pWork,
@@ -2228,9 +2228,9 @@ void cvkReadJsonDescriptorSetVariableDescriptorCountAllocateInfo(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorSetVariableDescriptorCountLayoutSupport(cvkJsonWork*        pWork,
@@ -2238,289 +2238,289 @@ void cvkReadJsonDescriptorSetVariableDescriptorCountLayoutSupport(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorUpdateTemplateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDescriptorUpdateTemplateEntry(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceAddressBindingCallbackData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceAddressRange(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceBufferMemoryRequirements(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceDeviceMemoryReportCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceDiagnosticsConfigCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceEventInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultAddressInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultCounts(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultDebugInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultInfoEXT(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultShaderAbortMessageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultVendorBinaryHeaderVersionOne(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceFaultVendorInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupBindSparseInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupCommandBufferBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupDeviceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupPresentCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupPresentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupRenderPassBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceGroupSwapchainCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceImageMemoryRequirements(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceImageSubresourceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceMemoryCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceMemoryImageCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceMemoryOpaqueCaptureAddressInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceMemoryOverallocationCreateInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceMemoryReportCallbackData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceOrHostAddressConstAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceOrHostAddressConst(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceOrHostAddress(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDevicePipelineBinaryInternalCacheControl(cvkJsonWork*        pWork,
@@ -2528,41 +2528,41 @@ void cvkReadJsonDevicePipelineBinaryInternalCacheControl(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDevicePrivateDataCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceQueueCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceQueueGlobalPriorityCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceQueueInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceQueueShaderCoreControlCreateInfoARM(cvkJsonWork*        pWork,
@@ -2570,665 +2570,665 @@ void cvkReadJsonDeviceQueueShaderCoreControlCreateInfoARM(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDeviceTensorMemoryRequirementsARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDirectDriverLoadingInfoLUNARG(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDirectDriverLoadingListLUNARG(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDirectFBSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDispatchGraphCountInfoAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDispatchGraphInfoAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDispatchIndirect2Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDispatchIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDispatchParametersARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDispatchTileInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayEventInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayModeCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayModeParameters(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayModeProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayModeProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayModeStereoPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayNativeHdrSurfaceCapabilitiesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayPlaneCapabilities2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayPlaneCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayPlaneInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayPlaneProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayPlaneProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayPowerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayPresentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplayProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplaySurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDisplaySurfaceStereoCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDrawIndexedIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDrawIndirect2Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDrawIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDrawIndirectCount2Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDrawIndirectCountIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDrawMeshTasksIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDrawMeshTasksIndirectCommandNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDrmFormatModifierProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDrmFormatModifierProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDrmFormatModifierPropertiesList2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonDrmFormatModifierPropertiesList(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonEventCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExecutionGraphPipelineCreateInfoAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExecutionGraphPipelineScratchSizeAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportFenceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportFenceWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportMemoryAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportMemoryAllocateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportMemoryWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportMemoryWin32HandleInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalCommandQueueInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalDeviceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalIOSurfaceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalObjectCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalObjectsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalSharedEventInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportMetalTextureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportSemaphoreCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExportSemaphoreWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExtensionProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExtent2D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExtent3D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalBufferProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalComputeQueueCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalComputeQueueDataParamsNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalComputeQueueDeviceCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalFenceProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalFormatANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalFormatOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalFormatQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalImageFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalImageFormatPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalMemoryAcquireUnmodified(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalMemoryBufferCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalMemoryImageCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalMemoryImageCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalMemoryProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalMemoryTensorCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalSemaphoreProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonExternalTensorPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFenceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFenceGetFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFenceGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFilterCubicImageViewImageFormatProperties(cvkJsonWork*        pWork,
@@ -3236,121 +3236,121 @@ void cvkReadJsonFilterCubicImageViewImageFormatProperties(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFormatProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFormatProperties3(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFormatProperties4(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFragmentShadingRateAttachmentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFrameBoundary(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFrameBoundaryTensorsARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFramebufferAttachmentImageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFramebufferAttachmentsCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFramebufferCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonFramebufferMixedSamplesCombinationNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGeneratedCommandsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGeneratedCommandsInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGeneratedCommandsMemoryRequirementsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGeneratedCommandsMemoryRequirementsInfoNV(cvkJsonWork*        pWork,
@@ -3358,129 +3358,129 @@ void cvkReadJsonGeneratedCommandsMemoryRequirementsInfoNV(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGeneratedCommandsPipelineInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGeneratedCommandsShaderInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGeometryAABBNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGeometryDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGeometryNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGeometryTrianglesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGetLatencyMarkerInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGpaDeviceClockModeInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGpaDeviceGetClockInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGpaPerfBlockPropertiesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGpaPerfCounterAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGpaSampleBeginInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGpaSessionCreateInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGraphicsPipelineCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGraphicsPipelineLibraryCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGraphicsPipelineShaderGroupsCreateInfoNV(cvkJsonWork*        pWork,
@@ -3488,177 +3488,177 @@ void cvkReadJsonGraphicsPipelineShaderGroupsCreateInfoNV(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonGraphicsShaderGroupCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonHdrMetadata(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonHdrVividDynamicMetadataHUAWEI(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonHeadlessSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonHostAddressRangeConst(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonHostAddressRange(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonHostImageCopyDevicePerformanceQuery(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonHostImageLayoutTransitionInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIOSSurfaceCreateInfoMVK(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageAlignmentControlCreateInfoMESA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageBlit(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageBlit2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageCaptureDescriptorDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageCompressionControl(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageCompressionProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageConstraintsInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageCopy2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageCreateFlags2CreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageDescriptorInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageDrmFormatModifierExplicitCreateInfo(cvkJsonWork*        pWork,
@@ -3666,737 +3666,737 @@ void cvkReadJsonImageDrmFormatModifierExplicitCreateInfo(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageDrmFormatModifierListCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageDrmFormatModifierProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageFormatConstraintsInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageFormatListCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageFormatProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageMemoryBarrier(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageMemoryBarrier2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageMemoryRequirementsInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImagePipeSurfaceCreateInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImagePlaneMemoryRequirementsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageResolve(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageResolve2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageSparseMemoryRequirementsInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageStencilUsage2CreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageStencilUsageCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageSubresource(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageSubresource2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageSubresourceLayers(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageSubresourceRange(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageSwapchainCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageTilingControlCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageToMemoryCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageUsageFlags2CreateInfoKHR(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageViewASTCDecodeMode(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageViewAddressPropertiesNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageViewCaptureDescriptorDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageViewCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageViewHandleInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageViewMinLodCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageViewSampleWeightCreateInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageViewSlicedCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageViewUsage2CreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImageViewUsageCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportAndroidHardwareBufferInfoANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportFenceFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportFenceWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportMemoryBufferCollectionFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportMemoryFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportMemoryHostPointerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportMemoryMetalHandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportMemoryWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportMemoryWin32HandleInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportMemoryZirconHandleInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportMetalBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportMetalIOSurfaceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportMetalSharedEventInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportMetalTextureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportNativeBufferInfoOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportScreenBufferInfoQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportSemaphoreFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportSemaphoreWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonImportSemaphoreZirconHandleInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsExecutionSetToken(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsIndexBufferToken(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsLayoutCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsLayoutCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsLayoutPushDataTokenNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsLayoutToken(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsLayoutTokenNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsPushConstantToken(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsStreamNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsTokenData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectCommandsVertexBufferToken(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectExecutionSetCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectExecutionSetInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectExecutionSetPipelineInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectExecutionSetShaderInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonIndirectExecutionSetShaderLayoutInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonInitializePerformanceApiInfoINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonInputAttachmentAspectReference(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonInstanceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonLatencySleepInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonLatencySleepModeInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonLatencySubmissionPresentIdNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonLatencySurfaceCapabilitiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonLatencyTimingsFrameReportNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonLayerProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonLayerSetting(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonLayerSettingsCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMacOSSurfaceCreateInfoMVK(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMappedMemoryRange(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryAllocateFlagsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryBarrier(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryBarrier2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryBarrierAccessFlags3(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryDedicatedAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryDedicatedAllocateInfoTensorARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryDedicatedRequirements(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryFdProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryGetAndroidHardwareBufferInfoANDROID(cvkJsonWork*        pWork,
@@ -4404,297 +4404,297 @@ void cvkReadJsonMemoryGetAndroidHardwareBufferInfoANDROID(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryGetFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryGetMetalHandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryGetNativeBufferInfoOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryGetRemoteAddressInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryGetZirconHandleInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryHeap(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryHostPointerProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryMapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryMapPlacedInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryMarkerInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryMetalHandleProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryOpaqueCaptureAddressAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryPriorityAllocateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryRangeBarrier(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryRangeBarriersInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryRequirements(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryRequirements2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryToImageCopy(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryType(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryUnmapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryWin32HandleProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMemoryZirconHandlePropertiesFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMetalSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMicromapBuildInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMicromapBuildSizesInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMicromapCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMicromapTriangle(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMicromapUsageEXT(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMicromapUsage(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMicromapVersionInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMultiDrawIndexedInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMultiDrawInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMultisampleProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMultisampledRenderToSingleSampledInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMultiviewPerViewAttributesInfoNVX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM(cvkJsonWork*        pWork,
@@ -4702,113 +4702,113 @@ void cvkReadJsonMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMutableDescriptorTypeCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonMutableDescriptorTypeList(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonNativeBufferFormatPropertiesOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonNativeBufferPropertiesOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonNativeBufferUsageOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonOffset2D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonOffset3D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonOpaqueCaptureDataCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonOpaqueCaptureDescriptorDataCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonOpticalFlowExecuteInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonOpticalFlowImageFormatInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonOpticalFlowImageFormatPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonOpticalFlowSessionCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonOpticalFlowSessionCreatePrivateDataInfoNV(cvkJsonWork*        pWork,
@@ -4816,25 +4816,25 @@ void cvkReadJsonOpticalFlowSessionCreatePrivateDataInfoNV(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonOutOfBandQueueTypeInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPartitionedAccelerationStructureFlagsNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPartitionedAccelerationStructureInstancesInputNV(cvkJsonWork*        pWork,
@@ -4842,9 +4842,9 @@ void cvkReadJsonPartitionedAccelerationStructureInstancesInputNV(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPartitionedAccelerationStructureUpdateInstanceDataNV(cvkJsonWork*        pWork,
@@ -4852,9 +4852,9 @@ void cvkReadJsonPartitionedAccelerationStructureUpdateInstanceDataNV(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPartitionedAccelerationStructureWriteInstanceDataNV(cvkJsonWork*        pWork,
@@ -4862,9 +4862,9 @@ void cvkReadJsonPartitionedAccelerationStructureWriteInstanceDataNV(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPartitionedAccelerationStructureWritePartitionTranslationDataNV(cvkJsonWork*        pWork,
@@ -4872,65 +4872,65 @@ void cvkReadJsonPartitionedAccelerationStructureWritePartitionTranslationDataNV(
                                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPastPresentationTiming(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPastPresentationTimingGOOGLE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPastPresentationTimingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPastPresentationTimingProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerTileBeginInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerTileEndInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerfHintInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceConfigurationAcquireInfoINTEL(cvkJsonWork*        pWork,
@@ -4938,129 +4938,129 @@ void cvkReadJsonPerformanceConfigurationAcquireInfoINTEL(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceCounterARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceCounterDescriptionARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceCounterDescription(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceCounter(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceCounterResult(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceMarkerInfoINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceOverrideInfoINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceQuerySubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceStreamMarkerInfoINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceValueDataINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPerformanceValueINTEL(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevice16BitStorageFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevice4444FormatsFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevice8BitStorageFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceASTCDecodeFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceAccelerationStructureFeatures(cvkJsonWork*        pWork,
@@ -5068,9 +5068,9 @@ void cvkReadJsonPhysicalDeviceAccelerationStructureFeatures(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceAccelerationStructureProperties(cvkJsonWork*        pWork,
@@ -5078,9 +5078,9 @@ void cvkReadJsonPhysicalDeviceAccelerationStructureProperties(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceAddressBindingReportFeatures(cvkJsonWork*        pWork,
@@ -5088,25 +5088,25 @@ void cvkReadJsonPhysicalDeviceAddressBindingReportFeatures(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceAmigoProfilingFeaturesSEC(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceAntiLagFeaturesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeatures(cvkJsonWork*        pWork,
@@ -5114,9 +5114,9 @@ void cvkReadJsonPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeatures(cvkJson
                                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceAttachmentFeedbackLoopLayoutFeatures(cvkJsonWork*        pWork,
@@ -5124,9 +5124,9 @@ void cvkReadJsonPhysicalDeviceAttachmentFeedbackLoopLayoutFeatures(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceBlendOperationAdvancedFeatures(cvkJsonWork*        pWork,
@@ -5134,9 +5134,9 @@ void cvkReadJsonPhysicalDeviceBlendOperationAdvancedFeatures(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceBlendOperationAdvancedProperties(cvkJsonWork*        pWork,
@@ -5144,9 +5144,9 @@ void cvkReadJsonPhysicalDeviceBlendOperationAdvancedProperties(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceBorderColorSwizzleFeatures(cvkJsonWork*        pWork,
@@ -5154,9 +5154,9 @@ void cvkReadJsonPhysicalDeviceBorderColorSwizzleFeatures(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceBufferDeviceAddressAllocationAlignmentFeaturesVALVE(cvkJsonWork*        pWork,
@@ -5164,9 +5164,9 @@ void cvkReadJsonPhysicalDeviceBufferDeviceAddressAllocationAlignmentFeaturesVALV
                                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceBufferDeviceAddressAllocationAlignmentPropertiesVALVE(cvkJsonWork*        pWork,
@@ -5174,9 +5174,9 @@ void cvkReadJsonPhysicalDeviceBufferDeviceAddressAllocationAlignmentPropertiesVA
                                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceBufferDeviceAddressFeatures(cvkJsonWork*        pWork,
@@ -5184,9 +5184,9 @@ void cvkReadJsonPhysicalDeviceBufferDeviceAddressFeatures(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceBufferDeviceAddressFeaturesEXT(cvkJsonWork*        pWork,
@@ -5194,9 +5194,9 @@ void cvkReadJsonPhysicalDeviceBufferDeviceAddressFeaturesEXT(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceClusterAccelerationStructureFeaturesNV(cvkJsonWork*        pWork,
@@ -5204,9 +5204,9 @@ void cvkReadJsonPhysicalDeviceClusterAccelerationStructureFeaturesNV(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceClusterAccelerationStructurePropertiesNV(cvkJsonWork*        pWork,
@@ -5214,9 +5214,9 @@ void cvkReadJsonPhysicalDeviceClusterAccelerationStructurePropertiesNV(cvkJsonWo
                                                                        void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceClusterCullingShaderFeaturesHUAWEI(cvkJsonWork*        pWork,
@@ -5224,9 +5224,9 @@ void cvkReadJsonPhysicalDeviceClusterCullingShaderFeaturesHUAWEI(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceClusterCullingShaderPropertiesHUAWEI(cvkJsonWork*        pWork,
@@ -5234,9 +5234,9 @@ void cvkReadJsonPhysicalDeviceClusterCullingShaderPropertiesHUAWEI(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceClusterCullingShaderVrsFeaturesHUAWEI(cvkJsonWork*        pWork,
@@ -5244,25 +5244,25 @@ void cvkReadJsonPhysicalDeviceClusterCullingShaderVrsFeaturesHUAWEI(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCoherentMemoryFeaturesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceColorWriteEnableFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCommandBufferInheritanceFeaturesNV(cvkJsonWork*        pWork,
@@ -5270,9 +5270,9 @@ void cvkReadJsonPhysicalDeviceCommandBufferInheritanceFeaturesNV(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceComputeOccupancyPriorityFeaturesNV(cvkJsonWork*        pWork,
@@ -5280,9 +5280,9 @@ void cvkReadJsonPhysicalDeviceComputeOccupancyPriorityFeaturesNV(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceComputeShaderDerivativesFeatures(cvkJsonWork*        pWork,
@@ -5290,9 +5290,9 @@ void cvkReadJsonPhysicalDeviceComputeShaderDerivativesFeatures(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceComputeShaderDerivativesProperties(cvkJsonWork*        pWork,
@@ -5300,9 +5300,9 @@ void cvkReadJsonPhysicalDeviceComputeShaderDerivativesProperties(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceConditionalRenderingFeatures(cvkJsonWork*        pWork,
@@ -5310,9 +5310,9 @@ void cvkReadJsonPhysicalDeviceConditionalRenderingFeatures(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceConservativeRasterizationProperties(cvkJsonWork*        pWork,
@@ -5320,9 +5320,9 @@ void cvkReadJsonPhysicalDeviceConservativeRasterizationProperties(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrix2FeaturesNV(cvkJsonWork*        pWork,
@@ -5330,9 +5330,9 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrix2FeaturesNV(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrix2PropertiesNV(cvkJsonWork*        pWork,
@@ -5340,9 +5340,9 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrix2PropertiesNV(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixConversionFeaturesQCOM(cvkJsonWork*        pWork,
@@ -5350,9 +5350,9 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrixConversionFeaturesQCOM(cvkJsonWor
                                                                       void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV(cvkJsonWork*        pWork,
@@ -5360,17 +5360,17 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV(cvkJsonWor
                                                                       void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixFeaturesNV(cvkJsonWork*        pWork,
@@ -5378,17 +5378,17 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrixFeaturesNV(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixMaintenance1Features(cvkJsonWork*        pWork,
@@ -5396,9 +5396,9 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrixMaintenance1Features(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixProperties(cvkJsonWork*        pWork,
@@ -5406,9 +5406,9 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrixProperties(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeMatrixPropertiesNV(cvkJsonWork*        pWork,
@@ -5416,9 +5416,9 @@ void cvkReadJsonPhysicalDeviceCooperativeMatrixPropertiesNV(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeVectorFeaturesNV(cvkJsonWork*        pWork,
@@ -5426,9 +5426,9 @@ void cvkReadJsonPhysicalDeviceCooperativeVectorFeaturesNV(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCooperativeVectorPropertiesNV(cvkJsonWork*        pWork,
@@ -5436,9 +5436,9 @@ void cvkReadJsonPhysicalDeviceCooperativeVectorPropertiesNV(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCopyMemoryIndirectFeatures(cvkJsonWork*        pWork,
@@ -5446,9 +5446,9 @@ void cvkReadJsonPhysicalDeviceCopyMemoryIndirectFeatures(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCopyMemoryIndirectFeaturesNV(cvkJsonWork*        pWork,
@@ -5456,9 +5456,9 @@ void cvkReadJsonPhysicalDeviceCopyMemoryIndirectFeaturesNV(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCopyMemoryIndirectProperties(cvkJsonWork*        pWork,
@@ -5466,9 +5466,9 @@ void cvkReadJsonPhysicalDeviceCopyMemoryIndirectProperties(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCornerSampledImageFeaturesNV(cvkJsonWork*        pWork,
@@ -5476,9 +5476,9 @@ void cvkReadJsonPhysicalDeviceCornerSampledImageFeaturesNV(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCoverageReductionModeFeaturesNV(cvkJsonWork*        pWork,
@@ -5486,25 +5486,25 @@ void cvkReadJsonPhysicalDeviceCoverageReductionModeFeaturesNV(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCubicClampFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCubicWeightsFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCudaKernelLaunchFeaturesNV(cvkJsonWork*        pWork,
@@ -5512,9 +5512,9 @@ void cvkReadJsonPhysicalDeviceCudaKernelLaunchFeaturesNV(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCudaKernelLaunchPropertiesNV(cvkJsonWork*        pWork,
@@ -5522,17 +5522,17 @@ void cvkReadJsonPhysicalDeviceCudaKernelLaunchPropertiesNV(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCustomBorderColorFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCustomBorderColorProperties(cvkJsonWork*        pWork,
@@ -5540,25 +5540,25 @@ void cvkReadJsonPhysicalDeviceCustomBorderColorProperties(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceCustomResolveFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDataGraphFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDataGraphModelFeaturesQCOM(cvkJsonWork*        pWork,
@@ -5566,9 +5566,9 @@ void cvkReadJsonPhysicalDeviceDataGraphModelFeaturesQCOM(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDataGraphNeuralAcceleratorStatisticsFeaturesARM(cvkJsonWork*        pWork,
@@ -5576,9 +5576,9 @@ void cvkReadJsonPhysicalDeviceDataGraphNeuralAcceleratorStatisticsFeaturesARM(cv
                                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDataGraphOperationSupportARM(cvkJsonWork*        pWork,
@@ -5586,9 +5586,9 @@ void cvkReadJsonPhysicalDeviceDataGraphOperationSupportARM(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDataGraphOpticalFlowFeaturesARM(cvkJsonWork*        pWork,
@@ -5596,9 +5596,9 @@ void cvkReadJsonPhysicalDeviceDataGraphOpticalFlowFeaturesARM(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDataGraphProcessingEngineARM(cvkJsonWork*        pWork,
@@ -5606,9 +5606,9 @@ void cvkReadJsonPhysicalDeviceDataGraphProcessingEngineARM(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV(cvkJsonWork*        pWork,
@@ -5616,9 +5616,9 @@ void cvkReadJsonPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV(cvkJson
                                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDenseGeometryFormatFeaturesAMDX(cvkJsonWork*        pWork,
@@ -5626,49 +5626,49 @@ void cvkReadJsonPhysicalDeviceDenseGeometryFormatFeaturesAMDX(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDepthBiasControlFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDepthClampControlFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDepthClampZeroOneFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDepthClipControlFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDepthClipEnableFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDepthStencilResolveProperties(cvkJsonWork*        pWork,
@@ -5676,9 +5676,9 @@ void cvkReadJsonPhysicalDeviceDepthStencilResolveProperties(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorBufferDensityMapProperties(cvkJsonWork*        pWork,
@@ -5686,17 +5686,17 @@ void cvkReadJsonPhysicalDeviceDescriptorBufferDensityMapProperties(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorBufferFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorBufferProperties(cvkJsonWork*        pWork,
@@ -5704,9 +5704,9 @@ void cvkReadJsonPhysicalDeviceDescriptorBufferProperties(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorBufferTensorFeaturesARM(cvkJsonWork*        pWork,
@@ -5714,9 +5714,9 @@ void cvkReadJsonPhysicalDeviceDescriptorBufferTensorFeaturesARM(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorBufferTensorPropertiesARM(cvkJsonWork*        pWork,
@@ -5724,25 +5724,25 @@ void cvkReadJsonPhysicalDeviceDescriptorBufferTensorPropertiesARM(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorHeapFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorHeapProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorHeapTensorPropertiesARM(cvkJsonWork*        pWork,
@@ -5750,9 +5750,9 @@ void cvkReadJsonPhysicalDeviceDescriptorHeapTensorPropertiesARM(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorIndexingFeatures(cvkJsonWork*        pWork,
@@ -5760,9 +5760,9 @@ void cvkReadJsonPhysicalDeviceDescriptorIndexingFeatures(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorIndexingProperties(cvkJsonWork*        pWork,
@@ -5770,9 +5770,9 @@ void cvkReadJsonPhysicalDeviceDescriptorIndexingProperties(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorPoolOverallocationFeaturesNV(cvkJsonWork*        pWork,
@@ -5780,9 +5780,9 @@ void cvkReadJsonPhysicalDeviceDescriptorPoolOverallocationFeaturesNV(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDescriptorSetHostMappingFeaturesVALVE(cvkJsonWork*        pWork,
@@ -5790,9 +5790,9 @@ void cvkReadJsonPhysicalDeviceDescriptorSetHostMappingFeaturesVALVE(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDeviceAddressCommandsFeatures(cvkJsonWork*        pWork,
@@ -5800,9 +5800,9 @@ void cvkReadJsonPhysicalDeviceDeviceAddressCommandsFeatures(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsComputeFeaturesNV(cvkJsonWork*        pWork,
@@ -5810,9 +5810,9 @@ void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsComputeFeaturesNV(cvkJsonWo
                                                                        void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsFeatures(cvkJsonWork*        pWork,
@@ -5820,9 +5820,9 @@ void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsFeatures(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsFeaturesNV(cvkJsonWork*        pWork,
@@ -5830,9 +5830,9 @@ void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsFeaturesNV(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsProperties(cvkJsonWork*        pWork,
@@ -5840,9 +5840,9 @@ void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsProperties(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsPropertiesNV(cvkJsonWork*        pWork,
@@ -5850,9 +5850,9 @@ void cvkReadJsonPhysicalDeviceDeviceGeneratedCommandsPropertiesNV(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDeviceMemoryReportFeatures(cvkJsonWork*        pWork,
@@ -5860,9 +5860,9 @@ void cvkReadJsonPhysicalDeviceDeviceMemoryReportFeatures(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDiagnosticsConfigFeaturesNV(cvkJsonWork*        pWork,
@@ -5870,9 +5870,9 @@ void cvkReadJsonPhysicalDeviceDiagnosticsConfigFeaturesNV(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDiscardRectangleProperties(cvkJsonWork*        pWork,
@@ -5880,9 +5880,9 @@ void cvkReadJsonPhysicalDeviceDiscardRectangleProperties(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDisplacementMicromapFeaturesNV(cvkJsonWork*        pWork,
@@ -5890,9 +5890,9 @@ void cvkReadJsonPhysicalDeviceDisplacementMicromapFeaturesNV(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDisplacementMicromapPropertiesNV(cvkJsonWork*        pWork,
@@ -5900,33 +5900,33 @@ void cvkReadJsonPhysicalDeviceDisplacementMicromapPropertiesNV(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDriverProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDrmProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDynamicRenderingFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDynamicRenderingLocalReadFeatures(cvkJsonWork*        pWork,
@@ -5934,9 +5934,9 @@ void cvkReadJsonPhysicalDeviceDynamicRenderingLocalReadFeatures(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceDynamicRenderingUnusedAttachmentsFeatures(cvkJsonWork*        pWork,
@@ -5944,9 +5944,9 @@ void cvkReadJsonPhysicalDeviceDynamicRenderingUnusedAttachmentsFeatures(cvkJsonW
                                                                         void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceElapsedTimerQueryFeaturesQCOM(cvkJsonWork*        pWork,
@@ -5954,9 +5954,9 @@ void cvkReadJsonPhysicalDeviceElapsedTimerQueryFeaturesQCOM(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExclusiveScissorFeaturesNV(cvkJsonWork*        pWork,
@@ -5964,9 +5964,9 @@ void cvkReadJsonPhysicalDeviceExclusiveScissorFeaturesNV(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExtendedDynamicState2Features(cvkJsonWork*        pWork,
@@ -5974,9 +5974,9 @@ void cvkReadJsonPhysicalDeviceExtendedDynamicState2Features(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExtendedDynamicState3Features(cvkJsonWork*        pWork,
@@ -5984,9 +5984,9 @@ void cvkReadJsonPhysicalDeviceExtendedDynamicState3Features(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExtendedDynamicState3Properties(cvkJsonWork*        pWork,
@@ -5994,9 +5994,9 @@ void cvkReadJsonPhysicalDeviceExtendedDynamicState3Properties(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExtendedDynamicStateFeatures(cvkJsonWork*        pWork,
@@ -6004,17 +6004,17 @@ void cvkReadJsonPhysicalDeviceExtendedDynamicStateFeatures(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExtendedFlagsFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExtendedSparseAddressSpaceFeaturesNV(cvkJsonWork*        pWork,
@@ -6022,9 +6022,9 @@ void cvkReadJsonPhysicalDeviceExtendedSparseAddressSpaceFeaturesNV(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExtendedSparseAddressSpacePropertiesNV(cvkJsonWork*        pWork,
@@ -6032,17 +6032,17 @@ void cvkReadJsonPhysicalDeviceExtendedSparseAddressSpacePropertiesNV(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalComputeQueuePropertiesNV(cvkJsonWork*        pWork,
@@ -6050,17 +6050,17 @@ void cvkReadJsonPhysicalDeviceExternalComputeQueuePropertiesNV(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalFenceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID(cvkJsonWork*        pWork,
@@ -6068,9 +6068,9 @@ void cvkReadJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(cvkJsonWork*        pWork,
@@ -6078,17 +6078,17 @@ void cvkReadJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalImageFormatInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalMemoryHostProperties(cvkJsonWork*        pWork,
@@ -6096,9 +6096,9 @@ void cvkReadJsonPhysicalDeviceExternalMemoryHostProperties(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalMemoryRDMAFeaturesNV(cvkJsonWork*        pWork,
@@ -6106,9 +6106,9 @@ void cvkReadJsonPhysicalDeviceExternalMemoryRDMAFeaturesNV(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(cvkJsonWork*        pWork,
@@ -6116,81 +6116,81 @@ void cvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalSemaphoreInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceExternalTensorInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFaultFeaturesEXT(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFaultFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFaultProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFeatures2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFloatControlsProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFormatPackFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMap2Features(cvkJsonWork*        pWork,
@@ -6198,9 +6198,9 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMap2Features(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMap2Properties(cvkJsonWork*        pWork,
@@ -6208,9 +6208,9 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMap2Properties(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMapFeatures(cvkJsonWork*        pWork,
@@ -6218,9 +6218,9 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMapFeatures(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMapLayeredFeaturesVALVE(cvkJsonWork*        pWork,
@@ -6228,9 +6228,9 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMapLayeredFeaturesVALVE(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMapLayeredPropertiesVALVE(cvkJsonWork*        pWork,
@@ -6238,9 +6238,9 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMapLayeredPropertiesVALVE(cvkJsonWo
                                                                        void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMapOffsetFeatures(cvkJsonWork*        pWork,
@@ -6248,9 +6248,9 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMapOffsetFeatures(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMapOffsetProperties(cvkJsonWork*        pWork,
@@ -6258,9 +6258,9 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMapOffsetProperties(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentDensityMapProperties(cvkJsonWork*        pWork,
@@ -6268,9 +6268,9 @@ void cvkReadJsonPhysicalDeviceFragmentDensityMapProperties(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShaderBarycentricFeatures(cvkJsonWork*        pWork,
@@ -6278,9 +6278,9 @@ void cvkReadJsonPhysicalDeviceFragmentShaderBarycentricFeatures(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShaderBarycentricProperties(cvkJsonWork*        pWork,
@@ -6288,9 +6288,9 @@ void cvkReadJsonPhysicalDeviceFragmentShaderBarycentricProperties(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShaderInterlockFeatures(cvkJsonWork*        pWork,
@@ -6298,9 +6298,9 @@ void cvkReadJsonPhysicalDeviceFragmentShaderInterlockFeatures(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShadingRateEnumsFeaturesNV(cvkJsonWork*        pWork,
@@ -6308,9 +6308,9 @@ void cvkReadJsonPhysicalDeviceFragmentShadingRateEnumsFeaturesNV(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShadingRateEnumsPropertiesNV(cvkJsonWork*        pWork,
@@ -6318,9 +6318,9 @@ void cvkReadJsonPhysicalDeviceFragmentShadingRateEnumsPropertiesNV(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShadingRateFeatures(cvkJsonWork*        pWork,
@@ -6328,17 +6328,17 @@ void cvkReadJsonPhysicalDeviceFragmentShadingRateFeatures(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShadingRate(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFragmentShadingRateProperties(cvkJsonWork*        pWork,
@@ -6346,17 +6346,17 @@ void cvkReadJsonPhysicalDeviceFragmentShadingRateProperties(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceFrameBoundaryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceGlobalPriorityQueryFeatures(cvkJsonWork*        pWork,
@@ -6364,33 +6364,33 @@ void cvkReadJsonPhysicalDeviceGlobalPriorityQueryFeatures(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceGpaFeaturesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceGpaProperties2AMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceGpaPropertiesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceGraphicsPipelineLibraryFeatures(cvkJsonWork*        pWork,
@@ -6398,9 +6398,9 @@ void cvkReadJsonPhysicalDeviceGraphicsPipelineLibraryFeatures(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceGraphicsPipelineLibraryProperties(cvkJsonWork*        pWork,
@@ -6408,65 +6408,65 @@ void cvkReadJsonPhysicalDeviceGraphicsPipelineLibraryProperties(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceGroupProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceHdrVividFeaturesHUAWEI(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceHostImageCopyFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceHostImageCopyProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceHostQueryResetFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceIDProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImage2DViewOf3DFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageAlignmentControlFeaturesMESA(cvkJsonWork*        pWork,
@@ -6474,9 +6474,9 @@ void cvkReadJsonPhysicalDeviceImageAlignmentControlFeaturesMESA(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageAlignmentControlPropertiesMESA(cvkJsonWork*        pWork,
@@ -6484,9 +6484,9 @@ void cvkReadJsonPhysicalDeviceImageAlignmentControlPropertiesMESA(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageCompressionControlFeatures(cvkJsonWork*        pWork,
@@ -6494,9 +6494,9 @@ void cvkReadJsonPhysicalDeviceImageCompressionControlFeatures(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageCompressionControlSwapchainFeatures(cvkJsonWork*        pWork,
@@ -6504,9 +6504,9 @@ void cvkReadJsonPhysicalDeviceImageCompressionControlSwapchainFeatures(cvkJsonWo
                                                                        void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageDrmFormatModifierInfo(cvkJsonWork*        pWork,
@@ -6514,17 +6514,17 @@ void cvkReadJsonPhysicalDeviceImageDrmFormatModifierInfo(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageFormatInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageProcessing2FeaturesQCOM(cvkJsonWork*        pWork,
@@ -6532,9 +6532,9 @@ void cvkReadJsonPhysicalDeviceImageProcessing2FeaturesQCOM(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageProcessing2PropertiesQCOM(cvkJsonWork*        pWork,
@@ -6542,9 +6542,9 @@ void cvkReadJsonPhysicalDeviceImageProcessing2PropertiesQCOM(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageProcessing3FeaturesQCOM(cvkJsonWork*        pWork,
@@ -6552,9 +6552,9 @@ void cvkReadJsonPhysicalDeviceImageProcessing3FeaturesQCOM(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageProcessingFeaturesQCOM(cvkJsonWork*        pWork,
@@ -6562,9 +6562,9 @@ void cvkReadJsonPhysicalDeviceImageProcessingFeaturesQCOM(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageProcessingPropertiesQCOM(cvkJsonWork*        pWork,
@@ -6572,17 +6572,17 @@ void cvkReadJsonPhysicalDeviceImageProcessingPropertiesQCOM(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageRobustnessFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageSlicedViewOf3DFeatures(cvkJsonWork*        pWork,
@@ -6590,9 +6590,9 @@ void cvkReadJsonPhysicalDeviceImageSlicedViewOf3DFeatures(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageTilingControlFeatures(cvkJsonWork*        pWork,
@@ -6600,25 +6600,25 @@ void cvkReadJsonPhysicalDeviceImageTilingControlFeatures(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageViewImageFormatInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImageViewMinLodFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceImagelessFramebufferFeatures(cvkJsonWork*        pWork,
@@ -6626,17 +6626,17 @@ void cvkReadJsonPhysicalDeviceImagelessFramebufferFeatures(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceIndexTypeUint8Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceInheritedViewportScissorFeaturesNV(cvkJsonWork*        pWork,
@@ -6644,9 +6644,9 @@ void cvkReadJsonPhysicalDeviceInheritedViewportScissorFeaturesNV(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceInlineUniformBlockFeatures(cvkJsonWork*        pWork,
@@ -6654,9 +6654,9 @@ void cvkReadJsonPhysicalDeviceInlineUniformBlockFeatures(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceInlineUniformBlockProperties(cvkJsonWork*        pWork,
@@ -6664,9 +6664,9 @@ void cvkReadJsonPhysicalDeviceInlineUniformBlockProperties(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceInternallySynchronizedQueuesFeatures(cvkJsonWork*        pWork,
@@ -6674,9 +6674,9 @@ void cvkReadJsonPhysicalDeviceInternallySynchronizedQueuesFeatures(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceInvocationMaskFeaturesHUAWEI(cvkJsonWork*        pWork,
@@ -6684,25 +6684,25 @@ void cvkReadJsonPhysicalDeviceInvocationMaskFeaturesHUAWEI(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLayeredApiProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLayeredApiPropertiesList(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLayeredApiVulkanProperties(cvkJsonWork*        pWork,
@@ -6710,9 +6710,9 @@ void cvkReadJsonPhysicalDeviceLayeredApiVulkanProperties(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLayeredDriverPropertiesMSFT(cvkJsonWork*        pWork,
@@ -6720,17 +6720,17 @@ void cvkReadJsonPhysicalDeviceLayeredDriverPropertiesMSFT(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLegacyDitheringFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLegacyVertexAttributesFeatures(cvkJsonWork*        pWork,
@@ -6738,9 +6738,9 @@ void cvkReadJsonPhysicalDeviceLegacyVertexAttributesFeatures(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLegacyVertexAttributesProperties(cvkJsonWork*        pWork,
@@ -6748,25 +6748,25 @@ void cvkReadJsonPhysicalDeviceLegacyVertexAttributesProperties(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLimits(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLineRasterizationFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLineRasterizationProperties(cvkJsonWork*        pWork,
@@ -6774,9 +6774,9 @@ void cvkReadJsonPhysicalDeviceLineRasterizationProperties(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceLinearColorAttachmentFeaturesNV(cvkJsonWork*        pWork,
@@ -6784,153 +6784,153 @@ void cvkReadJsonPhysicalDeviceLinearColorAttachmentFeaturesNV(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance10Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance10Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance11Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance3Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance4Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance4Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance5Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance5Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance6Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance6Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance7Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance7Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance8Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance9Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMaintenance9Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMapMemoryPlacedFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMapMemoryPlacedProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMemoryBudgetProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMemoryDecompressionFeatures(cvkJsonWork*        pWork,
@@ -6938,9 +6938,9 @@ void cvkReadJsonPhysicalDeviceMemoryDecompressionFeatures(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMemoryDecompressionProperties(cvkJsonWork*        pWork,
@@ -6948,81 +6948,81 @@ void cvkReadJsonPhysicalDeviceMemoryDecompressionProperties(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMemoryPriorityFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMemoryProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMemoryProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMeshShaderFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMeshShaderFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMeshShaderProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMeshShaderPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultiDrawFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultiDrawProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultisampledRenderToSingleSampledFeatures(cvkJsonWork*        pWork,
@@ -7030,9 +7030,9 @@ void cvkReadJsonPhysicalDeviceMultisampledRenderToSingleSampledFeatures(cvkJsonW
                                                                         void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultisampledRenderToSwapchainFeatures(cvkJsonWork*        pWork,
@@ -7040,17 +7040,17 @@ void cvkReadJsonPhysicalDeviceMultisampledRenderToSwapchainFeatures(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultiviewFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX(cvkJsonWork*        pWork,
@@ -7058,9 +7058,9 @@ void cvkReadJsonPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX(cvkJsonWor
                                                                       void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM(cvkJsonWork*        pWork,
@@ -7068,9 +7068,9 @@ void cvkReadJsonPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM(cvkJsonWor
                                                                       void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultiviewPerViewViewportsFeaturesQCOM(cvkJsonWork*        pWork,
@@ -7078,17 +7078,17 @@ void cvkReadJsonPhysicalDeviceMultiviewPerViewViewportsFeaturesQCOM(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMultiviewProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceMutableDescriptorTypeFeatures(cvkJsonWork*        pWork,
@@ -7096,9 +7096,9 @@ void cvkReadJsonPhysicalDeviceMutableDescriptorTypeFeatures(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceNestedCommandBufferFeatures(cvkJsonWork*        pWork,
@@ -7106,9 +7106,9 @@ void cvkReadJsonPhysicalDeviceNestedCommandBufferFeatures(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceNestedCommandBufferProperties(cvkJsonWork*        pWork,
@@ -7116,9 +7116,9 @@ void cvkReadJsonPhysicalDeviceNestedCommandBufferProperties(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceNonSeamlessCubeMapFeatures(cvkJsonWork*        pWork,
@@ -7126,9 +7126,9 @@ void cvkReadJsonPhysicalDeviceNonSeamlessCubeMapFeatures(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceOpacityMicromapFeaturesEXT(cvkJsonWork*        pWork,
@@ -7136,17 +7136,17 @@ void cvkReadJsonPhysicalDeviceOpacityMicromapFeaturesEXT(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceOpacityMicromapFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceOpacityMicromapPropertiesEXT(cvkJsonWork*        pWork,
@@ -7154,41 +7154,41 @@ void cvkReadJsonPhysicalDeviceOpacityMicromapPropertiesEXT(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceOpacityMicromapProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceOpticalFlowFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceOpticalFlowPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePCIBusInfoProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePageableDeviceLocalMemoryFeatures(cvkJsonWork*        pWork,
@@ -7196,9 +7196,9 @@ void cvkReadJsonPhysicalDevicePageableDeviceLocalMemoryFeatures(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePartitionedAccelerationStructureFeaturesNV(cvkJsonWork*        pWork,
@@ -7206,9 +7206,9 @@ void cvkReadJsonPhysicalDevicePartitionedAccelerationStructureFeaturesNV(cvkJson
                                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePartitionedAccelerationStructurePropertiesNV(cvkJsonWork*        pWork,
@@ -7216,9 +7216,9 @@ void cvkReadJsonPhysicalDevicePartitionedAccelerationStructurePropertiesNV(cvkJs
                                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePerStageDescriptorSetFeaturesNV(cvkJsonWork*        pWork,
@@ -7226,9 +7226,9 @@ void cvkReadJsonPhysicalDevicePerStageDescriptorSetFeaturesNV(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePerformanceCountersByRegionFeaturesARM(cvkJsonWork*        pWork,
@@ -7236,9 +7236,9 @@ void cvkReadJsonPhysicalDevicePerformanceCountersByRegionFeaturesARM(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePerformanceCountersByRegionPropertiesARM(cvkJsonWork*        pWork,
@@ -7246,17 +7246,17 @@ void cvkReadJsonPhysicalDevicePerformanceCountersByRegionPropertiesARM(cvkJsonWo
                                                                        void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePerformanceQueryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePerformanceQueryProperties(cvkJsonWork*        pWork,
@@ -7264,25 +7264,25 @@ void cvkReadJsonPhysicalDevicePerformanceQueryProperties(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineBinaryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineBinaryProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineCacheIncrementalModeFeaturesSEC(cvkJsonWork*        pWork,
@@ -7290,9 +7290,9 @@ void cvkReadJsonPhysicalDevicePipelineCacheIncrementalModeFeaturesSEC(cvkJsonWor
                                                                       void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineCreationCacheControlFeatures(cvkJsonWork*        pWork,
@@ -7300,9 +7300,9 @@ void cvkReadJsonPhysicalDevicePipelineCreationCacheControlFeatures(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineExecutablePropertiesFeatures(cvkJsonWork*        pWork,
@@ -7310,9 +7310,9 @@ void cvkReadJsonPhysicalDevicePipelineExecutablePropertiesFeatures(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineLibraryGroupHandlesFeatures(cvkJsonWork*        pWork,
@@ -7320,9 +7320,9 @@ void cvkReadJsonPhysicalDevicePipelineLibraryGroupHandlesFeatures(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineOpacityMicromapFeaturesARM(cvkJsonWork*        pWork,
@@ -7330,9 +7330,9 @@ void cvkReadJsonPhysicalDevicePipelineOpacityMicromapFeaturesARM(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelinePropertiesFeatures(cvkJsonWork*        pWork,
@@ -7340,9 +7340,9 @@ void cvkReadJsonPhysicalDevicePipelinePropertiesFeatures(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineProtectedAccessFeatures(cvkJsonWork*        pWork,
@@ -7350,9 +7350,9 @@ void cvkReadJsonPhysicalDevicePipelineProtectedAccessFeatures(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineRobustnessFeatures(cvkJsonWork*        pWork,
@@ -7360,9 +7360,9 @@ void cvkReadJsonPhysicalDevicePipelineRobustnessFeatures(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePipelineRobustnessProperties(cvkJsonWork*        pWork,
@@ -7370,25 +7370,25 @@ void cvkReadJsonPhysicalDevicePipelineRobustnessProperties(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePointClippingProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePortabilitySubsetFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePortabilitySubsetProperties(cvkJsonWork*        pWork,
@@ -7396,41 +7396,41 @@ void cvkReadJsonPhysicalDevicePortabilitySubsetProperties(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentBarrierFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentId2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentIdFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentMeteringFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentModeFifoLatestReadyFeatures(cvkJsonWork*        pWork,
@@ -7438,33 +7438,33 @@ void cvkReadJsonPhysicalDevicePresentModeFifoLatestReadyFeatures(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentTimingFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentWait2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePresentWaitFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePrimitiveRestartIndexFeatures(cvkJsonWork*        pWork,
@@ -7472,9 +7472,9 @@ void cvkReadJsonPhysicalDevicePrimitiveRestartIndexFeatures(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePrimitiveTopologyListRestartFeatures(cvkJsonWork*        pWork,
@@ -7482,9 +7482,9 @@ void cvkReadJsonPhysicalDevicePrimitiveTopologyListRestartFeatures(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePrimitivesGeneratedQueryFeatures(cvkJsonWork*        pWork,
@@ -7492,9 +7492,9 @@ void cvkReadJsonPhysicalDevicePrimitivesGeneratedQueryFeatures(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePrivateDataBaseHandleFeaturesNV(cvkJsonWork*        pWork,
@@ -7502,65 +7502,65 @@ void cvkReadJsonPhysicalDevicePrivateDataBaseHandleFeaturesNV(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePrivateDataFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceProtectedMemoryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceProtectedMemoryProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceProvokingVertexFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceProvokingVertexProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePushConstantBankFeaturesNV(cvkJsonWork*        pWork,
@@ -7568,9 +7568,9 @@ void cvkReadJsonPhysicalDevicePushConstantBankFeaturesNV(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePushConstantBankPropertiesNV(cvkJsonWork*        pWork,
@@ -7578,17 +7578,17 @@ void cvkReadJsonPhysicalDevicePushConstantBankPropertiesNV(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDevicePushDescriptorProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM(cvkJsonWork*        pWork,
@@ -7596,17 +7596,17 @@ void cvkReadJsonPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM(cvkJso
                                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceQueuePerfHintFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceQueuePerfHintPropertiesQCOM(cvkJsonWork*        pWork,
@@ -7614,17 +7614,17 @@ void cvkReadJsonPhysicalDeviceQueuePerfHintPropertiesQCOM(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRGBA10X6FormatsFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRasterizationOrderAttachmentAccessFeatures(cvkJsonWork*        pWork,
@@ -7632,25 +7632,25 @@ void cvkReadJsonPhysicalDeviceRasterizationOrderAttachmentAccessFeatures(cvkJson
                                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRawAccessChainsFeaturesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayQueryFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderFeatures(cvkJsonWork*        pWork,
@@ -7658,9 +7658,9 @@ void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderFeatures(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderFeaturesNV(cvkJsonWork*        pWork,
@@ -7668,9 +7668,9 @@ void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderFeaturesNV(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderProperties(cvkJsonWork*        pWork,
@@ -7678,9 +7678,9 @@ void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderProperties(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderPropertiesNV(cvkJsonWork*        pWork,
@@ -7688,9 +7688,9 @@ void cvkReadJsonPhysicalDeviceRayTracingInvocationReorderPropertiesNV(cvkJsonWor
                                                                       void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingLinearSweptSpheresFeaturesNV(cvkJsonWork*        pWork,
@@ -7698,9 +7698,9 @@ void cvkReadJsonPhysicalDeviceRayTracingLinearSweptSpheresFeaturesNV(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingMaintenance1Features(cvkJsonWork*        pWork,
@@ -7708,9 +7708,9 @@ void cvkReadJsonPhysicalDeviceRayTracingMaintenance1Features(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingMotionBlurFeaturesNV(cvkJsonWork*        pWork,
@@ -7718,9 +7718,9 @@ void cvkReadJsonPhysicalDeviceRayTracingMotionBlurFeaturesNV(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingPipelineFeatures(cvkJsonWork*        pWork,
@@ -7728,9 +7728,9 @@ void cvkReadJsonPhysicalDeviceRayTracingPipelineFeatures(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingPipelineProperties(cvkJsonWork*        pWork,
@@ -7738,9 +7738,9 @@ void cvkReadJsonPhysicalDeviceRayTracingPipelineProperties(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingPositionFetchFeatures(cvkJsonWork*        pWork,
@@ -7748,17 +7748,17 @@ void cvkReadJsonPhysicalDeviceRayTracingPositionFetchFeatures(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRayTracingValidationFeaturesNV(cvkJsonWork*        pWork,
@@ -7766,9 +7766,9 @@ void cvkReadJsonPhysicalDeviceRayTracingValidationFeaturesNV(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRelaxedLineRasterizationFeaturesIMG(cvkJsonWork*        pWork,
@@ -7776,9 +7776,9 @@ void cvkReadJsonPhysicalDeviceRelaxedLineRasterizationFeaturesIMG(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRenderPassStripedFeaturesARM(cvkJsonWork*        pWork,
@@ -7786,9 +7786,9 @@ void cvkReadJsonPhysicalDeviceRenderPassStripedFeaturesARM(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRenderPassStripedPropertiesARM(cvkJsonWork*        pWork,
@@ -7796,9 +7796,9 @@ void cvkReadJsonPhysicalDeviceRenderPassStripedPropertiesARM(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRepresentativeFragmentTestFeaturesNV(cvkJsonWork*        pWork,
@@ -7806,33 +7806,33 @@ void cvkReadJsonPhysicalDeviceRepresentativeFragmentTestFeaturesNV(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRobustness2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceRobustness2Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSampleLocationsProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSamplerFilterMinmaxProperties(cvkJsonWork*        pWork,
@@ -7840,9 +7840,9 @@ void cvkReadJsonPhysicalDeviceSamplerFilterMinmaxProperties(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSamplerYcbcrConversionFeatures(cvkJsonWork*        pWork,
@@ -7850,17 +7850,17 @@ void cvkReadJsonPhysicalDeviceSamplerYcbcrConversionFeatures(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceScalarBlockLayoutFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSchedulingControlsDispatchParametersPropertiesARM(cvkJsonWork*        pWork,
@@ -7868,9 +7868,9 @@ void cvkReadJsonPhysicalDeviceSchedulingControlsDispatchParametersPropertiesARM(
                                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSchedulingControlsFeaturesARM(cvkJsonWork*        pWork,
@@ -7878,9 +7878,9 @@ void cvkReadJsonPhysicalDeviceSchedulingControlsFeaturesARM(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSchedulingControlsPropertiesARM(cvkJsonWork*        pWork,
@@ -7888,9 +7888,9 @@ void cvkReadJsonPhysicalDeviceSchedulingControlsPropertiesARM(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSeparateDepthStencilLayoutsFeatures(cvkJsonWork*        pWork,
@@ -7898,9 +7898,9 @@ void cvkReadJsonPhysicalDeviceSeparateDepthStencilLayoutsFeatures(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShader64BitIndexingFeatures(cvkJsonWork*        pWork,
@@ -7908,25 +7908,25 @@ void cvkReadJsonPhysicalDeviceShader64BitIndexingFeatures(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderAbortFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderAbortProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV(cvkJsonWork*        pWork,
@@ -7934,9 +7934,9 @@ void cvkReadJsonPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderAtomicFloat2Features(cvkJsonWork*        pWork,
@@ -7944,41 +7944,41 @@ void cvkReadJsonPhysicalDeviceShaderAtomicFloat2Features(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderAtomicFloatFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderAtomicInt64Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderBfloat16Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderClockFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderConstantDataFeatures(cvkJsonWork*        pWork,
@@ -7986,9 +7986,9 @@ void cvkReadJsonPhysicalDeviceShaderConstantDataFeatures(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderCoreBuiltinsFeaturesARM(cvkJsonWork*        pWork,
@@ -7996,9 +7996,9 @@ void cvkReadJsonPhysicalDeviceShaderCoreBuiltinsFeaturesARM(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderCoreBuiltinsPropertiesARM(cvkJsonWork*        pWork,
@@ -8006,33 +8006,33 @@ void cvkReadJsonPhysicalDeviceShaderCoreBuiltinsPropertiesARM(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderCoreProperties2AMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderCorePropertiesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderCorePropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderDemoteToHelperInvocationFeatures(cvkJsonWork*        pWork,
@@ -8040,9 +8040,9 @@ void cvkReadJsonPhysicalDeviceShaderDemoteToHelperInvocationFeatures(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderDrawParametersFeatures(cvkJsonWork*        pWork,
@@ -8050,9 +8050,9 @@ void cvkReadJsonPhysicalDeviceShaderDrawParametersFeatures(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesAMD(cvkJsonWork*        pWork,
@@ -8060,17 +8060,17 @@ void cvkReadJsonPhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesAMD(cvkJson
                                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderEnqueueFeaturesAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderEnqueuePropertiesAMDX(cvkJsonWork*        pWork,
@@ -8078,9 +8078,9 @@ void cvkReadJsonPhysicalDeviceShaderEnqueuePropertiesAMDX(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderExpectAssumeFeatures(cvkJsonWork*        pWork,
@@ -8088,25 +8088,25 @@ void cvkReadJsonPhysicalDeviceShaderExpectAssumeFeatures(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderFloat16Int8Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderFloat8Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderFloatControls2Features(cvkJsonWork*        pWork,
@@ -8114,17 +8114,17 @@ void cvkReadJsonPhysicalDeviceShaderFloatControls2Features(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderFmaFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderImageAtomicInt64Features(cvkJsonWork*        pWork,
@@ -8132,9 +8132,9 @@ void cvkReadJsonPhysicalDeviceShaderImageAtomicInt64Features(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderImageFootprintFeaturesNV(cvkJsonWork*        pWork,
@@ -8142,9 +8142,9 @@ void cvkReadJsonPhysicalDeviceShaderImageFootprintFeaturesNV(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderInstrumentationFeaturesARM(cvkJsonWork*        pWork,
@@ -8152,9 +8152,9 @@ void cvkReadJsonPhysicalDeviceShaderInstrumentationFeaturesARM(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderInstrumentationPropertiesARM(cvkJsonWork*        pWork,
@@ -8162,9 +8162,9 @@ void cvkReadJsonPhysicalDeviceShaderInstrumentationPropertiesARM(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderIntegerDotProductFeatures(cvkJsonWork*        pWork,
@@ -8172,9 +8172,9 @@ void cvkReadJsonPhysicalDeviceShaderIntegerDotProductFeatures(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderIntegerDotProductProperties(cvkJsonWork*        pWork,
@@ -8182,9 +8182,9 @@ void cvkReadJsonPhysicalDeviceShaderIntegerDotProductProperties(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL(cvkJsonWork*        pWork,
@@ -8192,17 +8192,17 @@ void cvkReadJsonPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderLongVectorFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderLongVectorProperties(cvkJsonWork*        pWork,
@@ -8210,9 +8210,9 @@ void cvkReadJsonPhysicalDeviceShaderLongVectorProperties(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderMaximalReconvergenceFeatures(cvkJsonWork*        pWork,
@@ -8220,9 +8220,9 @@ void cvkReadJsonPhysicalDeviceShaderMaximalReconvergenceFeatures(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE(cvkJsonWork*        pWork,
@@ -8230,9 +8230,9 @@ void cvkReadJsonPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE(cvkJsonWor
                                                                       void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderModuleIdentifierFeatures(cvkJsonWork*        pWork,
@@ -8240,9 +8240,9 @@ void cvkReadJsonPhysicalDeviceShaderModuleIdentifierFeatures(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderModuleIdentifierProperties(cvkJsonWork*        pWork,
@@ -8250,9 +8250,9 @@ void cvkReadJsonPhysicalDeviceShaderModuleIdentifierProperties(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderMultipleWaitQueuesFeaturesQCOM(cvkJsonWork*        pWork,
@@ -8260,9 +8260,9 @@ void cvkReadJsonPhysicalDeviceShaderMultipleWaitQueuesFeaturesQCOM(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderMultipleWaitQueuesPropertiesQCOM(cvkJsonWork*        pWork,
@@ -8270,9 +8270,9 @@ void cvkReadJsonPhysicalDeviceShaderMultipleWaitQueuesPropertiesQCOM(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderOCPMicroscalingTypesFeatures(cvkJsonWork*        pWork,
@@ -8280,33 +8280,33 @@ void cvkReadJsonPhysicalDeviceShaderOCPMicroscalingTypesFeatures(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderObjectFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderObjectProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderQuadControlFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderRelaxedExtendedInstructionFeatures(cvkJsonWork*        pWork,
@@ -8314,9 +8314,9 @@ void cvkReadJsonPhysicalDeviceShaderRelaxedExtendedInstructionFeatures(cvkJsonWo
                                                                        void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderReplicatedCompositesFeatures(cvkJsonWork*        pWork,
@@ -8324,9 +8324,9 @@ void cvkReadJsonPhysicalDeviceShaderReplicatedCompositesFeatures(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSMBuiltinsFeaturesNV(cvkJsonWork*        pWork,
@@ -8334,9 +8334,9 @@ void cvkReadJsonPhysicalDeviceShaderSMBuiltinsFeaturesNV(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSMBuiltinsPropertiesNV(cvkJsonWork*        pWork,
@@ -8344,9 +8344,9 @@ void cvkReadJsonPhysicalDeviceShaderSMBuiltinsPropertiesNV(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSplitBarrierFeatures(cvkJsonWork*        pWork,
@@ -8354,9 +8354,9 @@ void cvkReadJsonPhysicalDeviceShaderSplitBarrierFeatures(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSplitBarrierProperties(cvkJsonWork*        pWork,
@@ -8364,9 +8364,9 @@ void cvkReadJsonPhysicalDeviceShaderSplitBarrierProperties(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSubgroupExtendedTypesFeatures(cvkJsonWork*        pWork,
@@ -8374,9 +8374,9 @@ void cvkReadJsonPhysicalDeviceShaderSubgroupExtendedTypesFeatures(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSubgroupPartitionedFeatures(cvkJsonWork*        pWork,
@@ -8384,9 +8384,9 @@ void cvkReadJsonPhysicalDeviceShaderSubgroupPartitionedFeatures(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSubgroupRotateFeatures(cvkJsonWork*        pWork,
@@ -8394,9 +8394,9 @@ void cvkReadJsonPhysicalDeviceShaderSubgroupRotateFeatures(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderSubgroupUniformControlFlowFeatures(cvkJsonWork*        pWork,
@@ -8404,9 +8404,9 @@ void cvkReadJsonPhysicalDeviceShaderSubgroupUniformControlFlowFeatures(cvkJsonWo
                                                                        void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderTerminateInvocationFeatures(cvkJsonWork*        pWork,
@@ -8414,25 +8414,25 @@ void cvkReadJsonPhysicalDeviceShaderTerminateInvocationFeatures(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderTileImageFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderTileImageProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderUniformBufferUnsizedArrayFeatures(cvkJsonWork*        pWork,
@@ -8440,9 +8440,9 @@ void cvkReadJsonPhysicalDeviceShaderUniformBufferUnsizedArrayFeatures(cvkJsonWor
                                                                       void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShaderUntypedPointersFeatures(cvkJsonWork*        pWork,
@@ -8450,9 +8450,9 @@ void cvkReadJsonPhysicalDeviceShaderUntypedPointersFeatures(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShadingRateImageFeaturesNV(cvkJsonWork*        pWork,
@@ -8460,9 +8460,9 @@ void cvkReadJsonPhysicalDeviceShadingRateImageFeaturesNV(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceShadingRateImagePropertiesNV(cvkJsonWork*        pWork,
@@ -8470,33 +8470,33 @@ void cvkReadJsonPhysicalDeviceShadingRateImagePropertiesNV(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSparseImageFormatInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSparseProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSubgroupProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSubgroupSizeControlFeatures(cvkJsonWork*        pWork,
@@ -8504,9 +8504,9 @@ void cvkReadJsonPhysicalDeviceSubgroupSizeControlFeatures(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSubgroupSizeControlProperties(cvkJsonWork*        pWork,
@@ -8514,9 +8514,9 @@ void cvkReadJsonPhysicalDeviceSubgroupSizeControlProperties(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSubpassMergeFeedbackFeatures(cvkJsonWork*        pWork,
@@ -8524,9 +8524,9 @@ void cvkReadJsonPhysicalDeviceSubpassMergeFeedbackFeatures(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSubpassShadingFeaturesHUAWEI(cvkJsonWork*        pWork,
@@ -8534,9 +8534,9 @@ void cvkReadJsonPhysicalDeviceSubpassShadingFeaturesHUAWEI(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSubpassShadingPropertiesHUAWEI(cvkJsonWork*        pWork,
@@ -8544,17 +8544,17 @@ void cvkReadJsonPhysicalDeviceSubpassShadingPropertiesHUAWEI(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSurfaceInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSwapchainMaintenance1Features(cvkJsonWork*        pWork,
@@ -8562,33 +8562,33 @@ void cvkReadJsonPhysicalDeviceSwapchainMaintenance1Features(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceSynchronization2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTensorFeaturesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTensorPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTexelBufferAlignmentFeatures(cvkJsonWork*        pWork,
@@ -8596,9 +8596,9 @@ void cvkReadJsonPhysicalDeviceTexelBufferAlignmentFeatures(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTexelBufferAlignmentProperties(cvkJsonWork*        pWork,
@@ -8606,9 +8606,9 @@ void cvkReadJsonPhysicalDeviceTexelBufferAlignmentProperties(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTextureCompressionASTC3DFeatures(cvkJsonWork*        pWork,
@@ -8616,9 +8616,9 @@ void cvkReadJsonPhysicalDeviceTextureCompressionASTC3DFeatures(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTextureCompressionASTCHDRFeatures(cvkJsonWork*        pWork,
@@ -8626,17 +8626,17 @@ void cvkReadJsonPhysicalDeviceTextureCompressionASTCHDRFeatures(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceThrottleHintFeaturesSEC(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTileMemoryHeapFeaturesQCOM(cvkJsonWork*        pWork,
@@ -8644,9 +8644,9 @@ void cvkReadJsonPhysicalDeviceTileMemoryHeapFeaturesQCOM(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTileMemoryHeapPropertiesQCOM(cvkJsonWork*        pWork,
@@ -8654,9 +8654,9 @@ void cvkReadJsonPhysicalDeviceTileMemoryHeapPropertiesQCOM(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTilePropertiesFeaturesQCOM(cvkJsonWork*        pWork,
@@ -8664,33 +8664,33 @@ void cvkReadJsonPhysicalDeviceTilePropertiesFeaturesQCOM(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTileShadingFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTileShadingPropertiesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTimelineSemaphoreFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTimelineSemaphoreProperties(cvkJsonWork*        pWork,
@@ -8698,25 +8698,25 @@ void cvkReadJsonPhysicalDeviceTimelineSemaphoreProperties(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceToolProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTransformFeedbackFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceTransformFeedbackProperties(cvkJsonWork*        pWork,
@@ -8724,9 +8724,9 @@ void cvkReadJsonPhysicalDeviceTransformFeedbackProperties(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceUnifiedImageLayoutsFeatures(cvkJsonWork*        pWork,
@@ -8734,9 +8734,9 @@ void cvkReadJsonPhysicalDeviceUnifiedImageLayoutsFeatures(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceUniformBufferStandardLayoutFeatures(cvkJsonWork*        pWork,
@@ -8744,17 +8744,17 @@ void cvkReadJsonPhysicalDeviceUniformBufferStandardLayoutFeatures(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVariablePointersFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVertexAttributeDivisorFeatures(cvkJsonWork*        pWork,
@@ -8762,9 +8762,9 @@ void cvkReadJsonPhysicalDeviceVertexAttributeDivisorFeatures(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVertexAttributeDivisorProperties(cvkJsonWork*        pWork,
@@ -8772,9 +8772,9 @@ void cvkReadJsonPhysicalDeviceVertexAttributeDivisorProperties(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVertexAttributeDivisorPropertiesEXT(cvkJsonWork*        pWork,
@@ -8782,9 +8782,9 @@ void cvkReadJsonPhysicalDeviceVertexAttributeDivisorPropertiesEXT(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVertexAttributeRobustnessFeatures(cvkJsonWork*        pWork,
@@ -8792,9 +8792,9 @@ void cvkReadJsonPhysicalDeviceVertexAttributeRobustnessFeatures(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVertexInputDynamicStateFeatures(cvkJsonWork*        pWork,
@@ -8802,25 +8802,25 @@ void cvkReadJsonPhysicalDeviceVertexInputDynamicStateFeatures(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoDecodeVP9Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoEncodeAV1Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoEncodeFeedback2Features(cvkJsonWork*        pWork,
@@ -8828,9 +8828,9 @@ void cvkReadJsonPhysicalDeviceVideoEncodeFeedback2Features(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoEncodeIntraRefreshFeatures(cvkJsonWork*        pWork,
@@ -8838,9 +8838,9 @@ void cvkReadJsonPhysicalDeviceVideoEncodeIntraRefreshFeatures(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoEncodeQualityLevelInfo(cvkJsonWork*        pWork,
@@ -8848,9 +8848,9 @@ void cvkReadJsonPhysicalDeviceVideoEncodeQualityLevelInfo(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoEncodeQuantizationMapFeatures(cvkJsonWork*        pWork,
@@ -8858,9 +8858,9 @@ void cvkReadJsonPhysicalDeviceVideoEncodeQuantizationMapFeatures(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoEncodeRgbConversionFeaturesVALVE(cvkJsonWork*        pWork,
@@ -8868,105 +8868,105 @@ void cvkReadJsonPhysicalDeviceVideoEncodeRgbConversionFeaturesVALVE(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoFormatInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoMaintenance1Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVideoMaintenance2Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan11Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan11Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan12Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan12Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan13Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan13Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan14Features(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkan14Properties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceVulkanMemoryModelFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceWorkgroupMemoryExplicitLayoutFeatures(cvkJsonWork*        pWork,
@@ -8974,9 +8974,9 @@ void cvkReadJsonPhysicalDeviceWorkgroupMemoryExplicitLayoutFeatures(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceYcbcr2Plane444FormatsFeatures(cvkJsonWork*        pWork,
@@ -8984,25 +8984,25 @@ void cvkReadJsonPhysicalDeviceYcbcr2Plane444FormatsFeatures(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceYcbcrDegammaFeaturesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceYcbcrImageArraysFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceZeroInitializeDeviceMemoryFeatures(cvkJsonWork*        pWork,
@@ -9010,9 +9010,9 @@ void cvkReadJsonPhysicalDeviceZeroInitializeDeviceMemoryFeatures(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures(cvkJsonWork*        pWork,
@@ -9020,89 +9020,89 @@ void cvkReadJsonPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineBinaryCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineBinaryDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineBinaryData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineBinaryHandlesInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineBinaryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineBinaryKey(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineBinaryKeysAndData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCacheCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCacheHeaderVersionDataGraphQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCacheHeaderVersionOne(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineColorBlendAdvancedStateCreateInfo(cvkJsonWork*        pWork,
@@ -9110,41 +9110,41 @@ void cvkReadJsonPipelineColorBlendAdvancedStateCreateInfo(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineColorBlendAttachmentState(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineColorBlendStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineColorWriteCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCompilerControlCreateInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCoverageModulationStateCreateInfoNV(cvkJsonWork*        pWork,
@@ -9152,9 +9152,9 @@ void cvkReadJsonPipelineCoverageModulationStateCreateInfoNV(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCoverageReductionStateCreateInfoNV(cvkJsonWork*        pWork,
@@ -9162,9 +9162,9 @@ void cvkReadJsonPipelineCoverageReductionStateCreateInfoNV(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCoverageToColorStateCreateInfoNV(cvkJsonWork*        pWork,
@@ -9172,73 +9172,73 @@ void cvkReadJsonPipelineCoverageToColorStateCreateInfoNV(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCreateFlags2CreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCreationFeedback(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineCreationFeedbackCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineDepthStencilStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineDiscardRectangleStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineDynamicStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineExecutableInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineExecutableInternalRepresentation(cvkJsonWork*        pWork,
@@ -9246,33 +9246,33 @@ void cvkReadJsonPipelineExecutableInternalRepresentation(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineExecutableProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineExecutableStatistic(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineExecutableStatisticValue(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineFragmentDensityMapLayeredCreateInfoVALVE(cvkJsonWork*        pWork,
@@ -9280,9 +9280,9 @@ void cvkReadJsonPipelineFragmentDensityMapLayeredCreateInfoVALVE(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineFragmentShadingRateEnumStateCreateInfoNV(cvkJsonWork*        pWork,
@@ -9290,9 +9290,9 @@ void cvkReadJsonPipelineFragmentShadingRateEnumStateCreateInfoNV(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineFragmentShadingRateStateCreateInfo(cvkJsonWork*        pWork,
@@ -9300,65 +9300,65 @@ void cvkReadJsonPipelineFragmentShadingRateStateCreateInfo(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineIndirectDeviceAddressInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineInputAssemblyStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineLayoutCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineLibraryCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineMultisampleStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelinePropertiesIdentifier(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRasterizationConservativeStateCreateInfo(cvkJsonWork*        pWork,
@@ -9366,9 +9366,9 @@ void cvkReadJsonPipelineRasterizationConservativeStateCreateInfo(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRasterizationDepthClipStateCreateInfo(cvkJsonWork*        pWork,
@@ -9376,9 +9376,9 @@ void cvkReadJsonPipelineRasterizationDepthClipStateCreateInfo(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRasterizationLineStateCreateInfo(cvkJsonWork*        pWork,
@@ -9386,9 +9386,9 @@ void cvkReadJsonPipelineRasterizationLineStateCreateInfo(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRasterizationProvokingVertexStateCreateInfo(cvkJsonWork*        pWork,
@@ -9396,17 +9396,17 @@ void cvkReadJsonPipelineRasterizationProvokingVertexStateCreateInfo(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRasterizationStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRasterizationStateRasterizationOrderAMD(cvkJsonWork*        pWork,
@@ -9414,9 +9414,9 @@ void cvkReadJsonPipelineRasterizationStateRasterizationOrderAMD(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRasterizationStateStreamCreateInfo(cvkJsonWork*        pWork,
@@ -9424,17 +9424,17 @@ void cvkReadJsonPipelineRasterizationStateStreamCreateInfo(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRenderingCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRepresentativeFragmentTestStateCreateInfoNV(cvkJsonWork*        pWork,
@@ -9442,33 +9442,33 @@ void cvkReadJsonPipelineRepresentativeFragmentTestStateCreateInfoNV(cvkJsonWork*
                                                                     void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineRobustnessCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineSampleLocationsStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineShaderStageCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineShaderStageModuleIdentifierCreateInfo(cvkJsonWork*        pWork,
@@ -9476,17 +9476,17 @@ void cvkReadJsonPipelineShaderStageModuleIdentifierCreateInfo(cvkJsonWork*      
                                                               void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineShaderStageNodeCreateInfoAMDX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineShaderStageRequiredSubgroupSizeCreateInfo(cvkJsonWork*        pWork,
@@ -9494,9 +9494,9 @@ void cvkReadJsonPipelineShaderStageRequiredSubgroupSizeCreateInfo(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineTessellationDomainOriginStateCreateInfo(cvkJsonWork*        pWork,
@@ -9504,17 +9504,17 @@ void cvkReadJsonPipelineTessellationDomainOriginStateCreateInfo(cvkJsonWork*    
                                                                 void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineTessellationStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineVertexInputDivisorStateCreateInfo(cvkJsonWork*        pWork,
@@ -9522,17 +9522,17 @@ void cvkReadJsonPipelineVertexInputDivisorStateCreateInfo(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineVertexInputStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportCoarseSampleOrderStateCreateInfoNV(cvkJsonWork*        pWork,
@@ -9540,9 +9540,9 @@ void cvkReadJsonPipelineViewportCoarseSampleOrderStateCreateInfoNV(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportDepthClampControlCreateInfo(cvkJsonWork*        pWork,
@@ -9550,9 +9550,9 @@ void cvkReadJsonPipelineViewportDepthClampControlCreateInfo(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportDepthClipControlCreateInfo(cvkJsonWork*        pWork,
@@ -9560,9 +9560,9 @@ void cvkReadJsonPipelineViewportDepthClipControlCreateInfo(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportExclusiveScissorStateCreateInfoNV(cvkJsonWork*        pWork,
@@ -9570,9 +9570,9 @@ void cvkReadJsonPipelineViewportExclusiveScissorStateCreateInfoNV(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportShadingRateImageStateCreateInfoNV(cvkJsonWork*        pWork,
@@ -9580,17 +9580,17 @@ void cvkReadJsonPipelineViewportShadingRateImageStateCreateInfoNV(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportStateCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportSwizzleStateCreateInfoNV(cvkJsonWork*        pWork,
@@ -9598,9 +9598,9 @@ void cvkReadJsonPipelineViewportSwizzleStateCreateInfoNV(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPipelineViewportWScalingStateCreateInfoNV(cvkJsonWork*        pWork,
@@ -9608,201 +9608,201 @@ void cvkReadJsonPipelineViewportWScalingStateCreateInfoNV(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPresentFrameTokenGGP(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPresentId2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPresentId(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPresentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPresentRegion(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPresentRegions(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPresentStageTime(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPresentTimeGOOGLE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPresentTimesInfoGOOGLE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPresentTimingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPresentTimingSurfaceCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPresentTimingsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPresentWait2Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPrivateDataSlotCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonProtectedSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPushConstantBankInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPushConstantRange(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPushConstantsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPushDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPushDescriptorSetInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonPushDescriptorSetWithTemplateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueryLowLatencySupportNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueryPoolCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueryPoolPerformanceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueryPoolPerformanceQueryCreateInfoINTEL(cvkJsonWork*        pWork,
@@ -9810,17 +9810,17 @@ void cvkReadJsonQueryPoolPerformanceQueryCreateInfoINTEL(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueryPoolVideoEncodeFeedbackCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueryPoolVideoEncodePerPartitionFeedbackCreateInfo(cvkJsonWork*        pWork,
@@ -9828,25 +9828,25 @@ void cvkReadJsonQueryPoolVideoEncodePerPartitionFeedbackCreateInfo(cvkJsonWork* 
                                                                    void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyCheckpointProperties2NV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyCheckpointPropertiesNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyDataGraphOpticalFlowPropertiesARM(cvkJsonWork*        pWork,
@@ -9854,9 +9854,9 @@ void cvkReadJsonQueueFamilyDataGraphOpticalFlowPropertiesARM(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyDataGraphProcessingEnginePropertiesARM(cvkJsonWork*        pWork,
@@ -9864,33 +9864,33 @@ void cvkReadJsonQueueFamilyDataGraphProcessingEnginePropertiesARM(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyDataGraphPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyDataGraphTOSAPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyGlobalPriorityProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyOptimalImageTransferGranularityProperties(cvkJsonWork*        pWork,
@@ -9898,49 +9898,49 @@ void cvkReadJsonQueueFamilyOptimalImageTransferGranularityProperties(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyOwnershipTransferProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyQueryResultStatusProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonQueueFamilyVideoProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRayTracingPipelineClusterAccelerationStructureCreateInfoNV(cvkJsonWork*        pWork,
@@ -9948,153 +9948,153 @@ void cvkReadJsonRayTracingPipelineClusterAccelerationStructureCreateInfoNV(cvkJs
                                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRayTracingPipelineCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRayTracingPipelineCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRayTracingPipelineInterfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRayTracingShaderGroupCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRayTracingShaderGroupCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRect2D(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRectLayer(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRefreshCycleDurationGOOGLE(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonReleaseCapturedPipelineDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonReleaseSwapchainImagesInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassAttachmentBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassCreateInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassCreationControl(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassCreationFeedbackCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassCreationFeedbackInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassFragmentDensityMapCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassFragmentDensityMapOffsetEndInfo(cvkJsonWork*        pWork,
@@ -10102,9 +10102,9 @@ void cvkReadJsonRenderPassFragmentDensityMapOffsetEndInfo(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassInputAttachmentAspectCreateInfo(cvkJsonWork*        pWork,
@@ -10112,17 +10112,17 @@ void cvkReadJsonRenderPassInputAttachmentAspectCreateInfo(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassMultiviewCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassPerformanceCountersByRegionBeginInfoARM(cvkJsonWork*        pWork,
@@ -10130,113 +10130,113 @@ void cvkReadJsonRenderPassPerformanceCountersByRegionBeginInfoARM(cvkJsonWork*  
                                                                   void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassSampleLocationsBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassStripeBeginInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassStripeInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassStripeSubmitInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassSubpassFeedbackCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassSubpassFeedbackInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassTileShadingCreateInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderPassTransformBeginInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderingAreaInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderingAttachmentFlagsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderingAttachmentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderingAttachmentLocationInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderingEndInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderingFragmentDensityMapAttachmentInfo(cvkJsonWork*        pWork,
@@ -10244,9 +10244,9 @@ void cvkReadJsonRenderingFragmentDensityMapAttachmentInfo(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderingFragmentShadingRateAttachmentInfo(cvkJsonWork*        pWork,
@@ -10254,89 +10254,89 @@ void cvkReadJsonRenderingFragmentShadingRateAttachmentInfo(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonRenderingInputAttachmentIndexInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonResolveImageInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonResolveImageModeInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonResourceDescriptorData(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonResourceDescriptorInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSRTDataNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSampleLocation(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSampleLocationsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSamplerBlockMatchWindowCreateInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSamplerBorderColorComponentMappingCreateInfo(cvkJsonWork*        pWork,
@@ -10344,65 +10344,65 @@ void cvkReadJsonSamplerBorderColorComponentMappingCreateInfo(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSamplerCaptureDescriptorDataInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSamplerCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSamplerCubicWeightsCreateInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSamplerCustomBorderColorCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSamplerCustomBorderColorIndexCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSamplerReductionModeCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSamplerYcbcrConversionCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSamplerYcbcrConversionImageFormatProperties(cvkJsonWork*        pWork,
@@ -10410,17 +10410,17 @@ void cvkReadJsonSamplerYcbcrConversionImageFormatProperties(cvkJsonWork*        
                                                             void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSamplerYcbcrConversionInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM(cvkJsonWork*        pWork,
@@ -10428,137 +10428,137 @@ void cvkReadJsonSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM(cvkJsonWork*   
                                                                  void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonScreenBufferFormatPropertiesQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonScreenBufferPropertiesQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonScreenSurfaceCreateInfoQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreGetFdInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreGetZirconHandleInfoFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreSignalInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreTypeCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSemaphoreWaitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSetDescriptorBufferOffsetsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSetLatencyMarkerInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSetPresentConfigNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSetStateFlagsIndirectCommandNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonShaderCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonShaderDescriptorSetAndBindingMappingInfo(cvkJsonWork*        pWork,
@@ -10566,17 +10566,17 @@ void cvkReadJsonShaderDescriptorSetAndBindingMappingInfo(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonShaderInstrumentationCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonShaderInstrumentationMetricDataHeaderARM(cvkJsonWork*        pWork,
@@ -10584,9 +10584,9 @@ void cvkReadJsonShaderInstrumentationMetricDataHeaderARM(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonShaderInstrumentationMetricDescriptionARM(cvkJsonWork*        pWork,
@@ -10594,873 +10594,873 @@ void cvkReadJsonShaderInstrumentationMetricDescriptionARM(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonShaderModuleCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonShaderModuleIdentifier(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonShaderModuleValidationCacheCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonShaderResourceUsageAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonShaderStatisticsInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonShadingRatePaletteNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSharedPresentSurfaceCapabilities2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSharedPresentSurfaceCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSparseBufferMemoryBindInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSparseImageFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSparseImageFormatProperties2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSparseImageMemoryBind(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSparseImageMemoryBindInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSparseImageMemoryRequirements(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSparseImageMemoryRequirements2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSparseImageOpaqueMemoryBindInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSparseMemoryBind(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSpecializationInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSpecializationMapEntry(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonStencilOpState(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonStreamDescriptorSurfaceCreateInfoGGP(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonStridedDeviceAddressNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonStridedDeviceAddressRange(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonStridedDeviceAddressRegion(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubmitInfo2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubpassBeginInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubpassDependency(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubpassDependency2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubpassDescription(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubpassDescription2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubpassDescriptionDepthStencilResolve(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubpassEndInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubpassResolvePerformanceQuery(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubpassSampleLocations(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubpassShadingPipelineCreateInfoHUAWEI(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubresourceHostMemcpySize(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubresourceLayout(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubresourceLayout2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSubsampledImageFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCapabilities2EXT(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCapabilities2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCapabilitiesFullScreenExclusive(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCapabilitiesPresentBarrierNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCapabilitiesPresentId2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCapabilitiesPresentWait2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceCreateInfoOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceFormat2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceFormat(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceFullScreenExclusiveInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceFullScreenExclusiveWin32Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfacePresentModeCompatibility(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfacePresentMode(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfacePresentScalingCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSurfaceProtectedCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainCalibratedTimestampInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainCounterCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainDisplayNativeHdrCreateInfoAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainFlagsSurfaceCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainLatencyCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainPresentBarrierCreateInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainPresentFenceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainPresentModeInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainPresentModesCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainPresentScalingCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainTimeDomainProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSwapchainTimingProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonSysmemColorSpaceFUCHSIA(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTensorCaptureDescriptorDataInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTensorCopyARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTensorCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTensorDependencyInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTensorDescriptionARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTensorExplicitTilingFormatPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTensorFormatPropertiesARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTensorMemoryBarrierARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTensorMemoryRequirementsInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTensorRollingBackingCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTensorViewCaptureDescriptorDataInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTensorViewCreateInfoARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTexelBufferDescriptorInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTextureLODGatherFormatPropertiesAMD(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonThrottleHintSubmitInfoSEC(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTileMemoryBindInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTileMemoryRequirementsQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTileMemorySizeInfoQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTilePropertiesQCOM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTimelineSemaphoreSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTraceRaysIndirectCommand2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTraceRaysIndirectCommand(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonTransformMatrix(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonUbmSurfaceCreateInfoSEC(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonValidationCacheCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonValidationFeatures(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonValidationFlags(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVertexInputAttributeDescription(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVertexInputAttributeDescription2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVertexInputBindingDescription(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVertexInputBindingDescription2(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVertexInputBindingDivisorDescription(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonViSurfaceCreateInfoNN(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoBeginCodingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoCodingControlInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeAV1Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeAV1DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeAV1InlineSessionParametersInfo(cvkJsonWork*        pWork,
@@ -11468,25 +11468,25 @@ void cvkReadJsonVideoDecodeAV1InlineSessionParametersInfo(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeAV1PictureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeAV1ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeAV1SessionParametersCreateInfo(cvkJsonWork*        pWork,
@@ -11494,33 +11494,33 @@ void cvkReadJsonVideoDecodeAV1SessionParametersCreateInfo(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH264Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH264DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH264InlineSessionParametersInfo(cvkJsonWork*        pWork,
@@ -11528,33 +11528,33 @@ void cvkReadJsonVideoDecodeH264InlineSessionParametersInfo(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH264PictureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH264ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH264SessionParametersAddInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH264SessionParametersCreateInfo(cvkJsonWork*        pWork,
@@ -11562,25 +11562,25 @@ void cvkReadJsonVideoDecodeH264SessionParametersCreateInfo(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH265Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH265DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH265InlineSessionParametersInfo(cvkJsonWork*        pWork,
@@ -11588,33 +11588,33 @@ void cvkReadJsonVideoDecodeH265InlineSessionParametersInfo(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH265PictureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH265ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH265SessionParametersAddInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeH265SessionParametersCreateInfo(cvkJsonWork*        pWork,
@@ -11622,113 +11622,113 @@ void cvkReadJsonVideoDecodeH265SessionParametersCreateInfo(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeUsageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeVP9Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeVP9PictureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoDecodeVP9ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1FrameSize(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1GopRemainingFrameInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1PictureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1QIndex(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1QualityLevelProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1QuantizationMapCapabilities(cvkJsonWork*        pWork,
@@ -11736,33 +11736,33 @@ void cvkReadJsonVideoEncodeAV1QuantizationMapCapabilities(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1RateControlInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1RateControlLayerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1SessionCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeAV1SessionParametersCreateInfo(cvkJsonWork*        pWork,
@@ -11770,97 +11770,97 @@ void cvkReadJsonVideoEncodeAV1SessionParametersCreateInfo(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeFeedback2Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264FrameSize(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264GopRemainingFrameInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264NaluSliceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264PictureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264Qp(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264QualityLevelProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264QuantizationMapCapabilities(cvkJsonWork*        pWork,
@@ -11868,41 +11868,41 @@ void cvkReadJsonVideoEncodeH264QuantizationMapCapabilities(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264RateControlInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264RateControlLayerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264SessionCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264SessionParametersAddInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264SessionParametersCreateInfo(cvkJsonWork*        pWork,
@@ -11910,9 +11910,9 @@ void cvkReadJsonVideoEncodeH264SessionParametersCreateInfo(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264SessionParametersFeedbackInfo(cvkJsonWork*        pWork,
@@ -11920,89 +11920,89 @@ void cvkReadJsonVideoEncodeH264SessionParametersFeedbackInfo(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH264SessionParametersGetInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265Capabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265DpbSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265FrameSize(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265GopRemainingFrameInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265NaluSliceSegmentInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265PictureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265ProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265Qp(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265QualityLevelProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265QuantizationMapCapabilities(cvkJsonWork*        pWork,
@@ -12010,41 +12010,41 @@ void cvkReadJsonVideoEncodeH265QuantizationMapCapabilities(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265RateControlInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265RateControlLayerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265SessionCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265SessionParametersAddInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265SessionParametersCreateInfo(cvkJsonWork*        pWork,
@@ -12052,9 +12052,9 @@ void cvkReadJsonVideoEncodeH265SessionParametersCreateInfo(cvkJsonWork*        p
                                                            void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265SessionParametersFeedbackInfo(cvkJsonWork*        pWork,
@@ -12062,41 +12062,41 @@ void cvkReadJsonVideoEncodeH265SessionParametersFeedbackInfo(cvkJsonWork*       
                                                              void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeH265SessionParametersGetInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeIntraRefreshCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeIntraRefreshInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeProfileRgbConversionInfoVALVE(cvkJsonWork*        pWork,
@@ -12104,41 +12104,41 @@ void cvkReadJsonVideoEncodeProfileRgbConversionInfoVALVE(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeQualityLevelInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeQualityLevelProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeQuantizationMapCapabilities(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeQuantizationMapInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeQuantizationMapSessionParametersCreateInfo(cvkJsonWork*        pWork,
@@ -12146,25 +12146,25 @@ void cvkReadJsonVideoEncodeQuantizationMapSessionParametersCreateInfo(cvkJsonWor
                                                                       void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeRateControlInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeRateControlLayerInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeRgbConversionCapabilitiesVALVE(cvkJsonWork*        pWork,
@@ -12172,9 +12172,9 @@ void cvkReadJsonVideoEncodeRgbConversionCapabilitiesVALVE(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeSessionIntraRefreshCreateInfo(cvkJsonWork*        pWork,
@@ -12182,9 +12182,9 @@ void cvkReadJsonVideoEncodeSessionIntraRefreshCreateInfo(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeSessionParametersFeedbackInfo(cvkJsonWork*        pWork,
@@ -12192,17 +12192,17 @@ void cvkReadJsonVideoEncodeSessionParametersFeedbackInfo(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeSessionParametersGetInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeSessionRgbConversionCreateInfoVALVE(cvkJsonWork*        pWork,
@@ -12210,33 +12210,33 @@ void cvkReadJsonVideoEncodeSessionRgbConversionCreateInfoVALVE(cvkJsonWork*     
                                                                void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEncodeUsageInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoEndCodingInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoFormatAV1QuantizationMapProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoFormatH265QuantizationMapProperties(cvkJsonWork*        pWork,
@@ -12244,177 +12244,177 @@ void cvkReadJsonVideoFormatH265QuantizationMapProperties(cvkJsonWork*        pWo
                                                          void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoFormatProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoFormatQuantizationMapProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoInlineQueryInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoPictureResourceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoProfileInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoProfileListInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoReferenceIntraRefreshInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoReferenceSlotInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoSessionCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoSessionMemoryRequirements(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoSessionParametersCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonVideoSessionParametersUpdateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonViewport(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonViewportSwizzleNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonViewportWScalingNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonWaylandSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonWin32KeyedMutexAcquireReleaseInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonWin32KeyedMutexAcquireReleaseInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonWin32SurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonWriteDescriptorSet(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonWriteDescriptorSetAccelerationStructure(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonWriteDescriptorSetAccelerationStructureNV(cvkJsonWork*        pWork,
@@ -12422,17 +12422,17 @@ void cvkReadJsonWriteDescriptorSetAccelerationStructureNV(cvkJsonWork*        pW
                                                           void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonWriteDescriptorSetInlineUniformBlock(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonWriteDescriptorSetPartitionedAccelerationStructureNV(cvkJsonWork*        pWork,
@@ -12440,49 +12440,49 @@ void cvkReadJsonWriteDescriptorSetPartitionedAccelerationStructureNV(cvkJsonWork
                                                                      void*               pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonWriteDescriptorSetTensorARM(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonWriteIndirectExecutionSetPipeline(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonWriteIndirectExecutionSetShader(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonXYColor(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonXcbSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
- * \param[in,out] pWork Bounded parse workspace.
- * \param[in] pObject JSON object to read.
- * \param[out] pOutput Storage for the typed Vulkan structure.
+ * \param[in,out] pWork    Bounded parse workspace.
+ * \param[in]     pObject  JSON object to read.
+ * \param[out]    pOutput  Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
 void cvkReadJsonXlibSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput);

@@ -80,7 +80,7 @@ The core header is `<prefix>/<prefix>.h`; consumers never add a profile subdirec
   These remain external headers; the owned implementation remains fully analyzed.
 
 - Tier 3 protocols are folded into the platform pairs from `scripts/protocols/` (section 8b).
-- `doc_comments` controls emitted Doxygen blocks (section 9); the shared policy disables them.
+- `doc_comments` controls emitted Doxygen blocks (section 9); the shared policy enables them.
 
 Python bindings are generated separately by `scripts/generate_python.py` from the
 emitted C headers with libclang. CMake's optional `CVK_BUILD_PYTHON` target emits
@@ -657,7 +657,7 @@ themselves. Three pieces:
 
 ## 9. Documentation phrasing (derived)
 
-`doc_comments` is a boolean policy option (default true, currently false in
+`doc_comments` is a boolean policy option (default true, currently true in
 `cvk.policy.json`, inherited by Vulkan SC). When false, generated declarations and
 definitions omit Doxygen blocks, including copied protocol documentation. Ordinary
 implementation comments and generated-file banners remain. When true, the rules below apply.

@@ -2941,6 +2941,17 @@ def brand(text: str, prefix: str) -> str:
     return text
 
 
+def align_param_docs(text: str) -> str:
+    """Column-align each run of Doxygen \\param lines: direction tags, names, then descriptions.
+    Generated, hand-written and protocol blocks all pass through here on the way out."""
+    def align(run: re.Match) -> str:
+        rows = re.findall(r"(?m)^ \* (\\param\[[^\]]*\]) +(\S+) +(.*)$", run.group(0))
+        tag = max(len(t) for t, _, _ in rows)
+        name = max(len(n) for _, n, _ in rows)
+        return "".join(f" * {t.ljust(tag)} {n.ljust(name)}  {d}\n" for t, n, d in rows)
+    return re.sub(r"(?m)(?:^ \* \\param\[[^\]]*\] +\S+ +.*\n)+", align, text)
+
+
 def write_generated_file(path: str, text: str) -> None:
     """Preserve unchanged outputs and atomically replace changed generated files."""
     data = text.encode("utf-8")
@@ -3046,7 +3057,7 @@ def publish_generated(g: Generator, temporary_directory: str, output_directory: 
         target = os.path.join(output_directory, relative)
         os.makedirs(os.path.dirname(target), exist_ok=True)
         with open(path, encoding="utf-8") as stream:
-            write_generated_file(target, stream.read())
+            write_generated_file(target, align_param_docs(stream.read()))
     t0 = sum(1 for n in g.names.values() if n.startswith("vk") and "+" not in n)
     builders = sum(1 for n in g.names if n.startswith("cvkInit"))
     conv = sum(1 for n in g.names.values() if "+" in n)

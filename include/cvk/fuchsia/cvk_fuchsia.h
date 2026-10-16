@@ -12,9 +12,9 @@
  * \brief Initializes a VkBufferCollectionBufferCreateInfoFUCHSIA.
  *
  * \param[out] pInfo       Receives the initialized VkBufferCollectionBufferCreateInfoFUCHSIA
- * \param[in] pNext       Optional extension chain attached to VkBufferCollectionBufferCreateInfoFUCHSIA, or NULL
- * \param[in] collection  VkBufferCollectionBufferCreateInfoFUCHSIA::collection
- * \param[in] index       VkBufferCollectionBufferCreateInfoFUCHSIA::index
+ * \param[in]  pNext       Optional extension chain attached to VkBufferCollectionBufferCreateInfoFUCHSIA, or NULL
+ * \param[in]  collection  VkBufferCollectionBufferCreateInfoFUCHSIA::collection
+ * \param[in]  index       VkBufferCollectionBufferCreateInfoFUCHSIA::index
  *
  * \retval None No value is returned.
  */
@@ -23,12 +23,12 @@ void cvkInitBufferCollectionBufferCreateInfoFUCHSIA(VkBufferCollectionBufferCrea
  * \brief Initializes a VkBufferCollectionConstraintsInfoFUCHSIA.
  *
  * \param[out] pInfo                            Receives the initialized VkBufferCollectionConstraintsInfoFUCHSIA
- * \param[in] pNext                            Optional extension chain attached to VkBufferCollectionConstraintsInfoFUCHSIA, or NULL
- * \param[in] minBufferCount                   VkBufferCollectionConstraintsInfoFUCHSIA::minBufferCount
- * \param[in] maxBufferCount                   VkBufferCollectionConstraintsInfoFUCHSIA::maxBufferCount
- * \param[in] minBufferCountForCamping         VkBufferCollectionConstraintsInfoFUCHSIA::minBufferCountForCamping
- * \param[in] minBufferCountForDedicatedSlack  VkBufferCollectionConstraintsInfoFUCHSIA::minBufferCountForDedicatedSlack
- * \param[in] minBufferCountForSharedSlack     VkBufferCollectionConstraintsInfoFUCHSIA::minBufferCountForSharedSlack
+ * \param[in]  pNext                            Optional extension chain attached to VkBufferCollectionConstraintsInfoFUCHSIA, or NULL
+ * \param[in]  minBufferCount                   VkBufferCollectionConstraintsInfoFUCHSIA::minBufferCount
+ * \param[in]  maxBufferCount                   VkBufferCollectionConstraintsInfoFUCHSIA::maxBufferCount
+ * \param[in]  minBufferCountForCamping         VkBufferCollectionConstraintsInfoFUCHSIA::minBufferCountForCamping
+ * \param[in]  minBufferCountForDedicatedSlack  VkBufferCollectionConstraintsInfoFUCHSIA::minBufferCountForDedicatedSlack
+ * \param[in]  minBufferCountForSharedSlack     VkBufferCollectionConstraintsInfoFUCHSIA::minBufferCountForSharedSlack
  *
  * \retval None No value is returned.
  */
@@ -37,8 +37,8 @@ void cvkInitBufferCollectionConstraintsInfoFUCHSIA(VkBufferCollectionConstraints
  * \brief Initializes a VkBufferCollectionCreateInfoFUCHSIA.
  *
  * \param[out] pInfo            Receives the initialized VkBufferCollectionCreateInfoFUCHSIA
- * \param[in] pNext            Optional extension chain attached to VkBufferCollectionCreateInfoFUCHSIA, or NULL
- * \param[in] collectionToken  VkBufferCollectionCreateInfoFUCHSIA::collectionToken
+ * \param[in]  pNext            Optional extension chain attached to VkBufferCollectionCreateInfoFUCHSIA, or NULL
+ * \param[in]  collectionToken  VkBufferCollectionCreateInfoFUCHSIA::collectionToken
  *
  * \retval None No value is returned.
  */
@@ -47,9 +47,9 @@ void cvkInitBufferCollectionCreateInfoFUCHSIA(VkBufferCollectionCreateInfoFUCHSI
  * \brief Initializes a VkBufferCollectionImageCreateInfoFUCHSIA.
  *
  * \param[out] pInfo       Receives the initialized VkBufferCollectionImageCreateInfoFUCHSIA
- * \param[in] pNext       Optional extension chain attached to VkBufferCollectionImageCreateInfoFUCHSIA, or NULL
- * \param[in] collection  VkBufferCollectionImageCreateInfoFUCHSIA::collection
- * \param[in] index       VkBufferCollectionImageCreateInfoFUCHSIA::index
+ * \param[in]  pNext       Optional extension chain attached to VkBufferCollectionImageCreateInfoFUCHSIA, or NULL
+ * \param[in]  collection  VkBufferCollectionImageCreateInfoFUCHSIA::collection
+ * \param[in]  index       VkBufferCollectionImageCreateInfoFUCHSIA::index
  *
  * \retval None No value is returned.
  */
@@ -58,7 +58,7 @@ void cvkInitBufferCollectionImageCreateInfoFUCHSIA(VkBufferCollectionImageCreate
  * \brief Initializes a VkBufferCollectionPropertiesFUCHSIA.
  *
  * \param[out] pInfo  Receives the initialized VkBufferCollectionPropertiesFUCHSIA
- * \param[in] pNext  Optional extension chain attached to VkBufferCollectionPropertiesFUCHSIA, or NULL
+ * \param[in]  pNext  Optional extension chain attached to VkBufferCollectionPropertiesFUCHSIA, or NULL
  *
  * \retval None No value is returned.
  */
@@ -67,10 +67,10 @@ void cvkInitBufferCollectionPropertiesFUCHSIA(VkBufferCollectionPropertiesFUCHSI
  * \brief Initializes a VkBufferConstraintsInfoFUCHSIA.
  *
  * \param[out] pInfo                        Receives the initialized VkBufferConstraintsInfoFUCHSIA
- * \param[in] pNext                        Optional extension chain attached to VkBufferConstraintsInfoFUCHSIA, or NULL
- * \param[in] createInfo                   VkBufferConstraintsInfoFUCHSIA::createInfo
- * \param[in] requiredFormatFeatures       VkBufferConstraintsInfoFUCHSIA::requiredFormatFeatures
- * \param[in] bufferCollectionConstraints  VkBufferConstraintsInfoFUCHSIA::bufferCollectionConstraints
+ * \param[in]  pNext                        Optional extension chain attached to VkBufferConstraintsInfoFUCHSIA, or NULL
+ * \param[in]  createInfo                   VkBufferConstraintsInfoFUCHSIA::createInfo
+ * \param[in]  requiredFormatFeatures       VkBufferConstraintsInfoFUCHSIA::requiredFormatFeatures
+ * \param[in]  bufferCollectionConstraints  VkBufferConstraintsInfoFUCHSIA::bufferCollectionConstraints
  *
  * \retval None No value is returned.
  */
@@ -79,11 +79,11 @@ void cvkInitBufferConstraintsInfoFUCHSIA(VkBufferConstraintsInfoFUCHSIA* pInfo, 
  * \brief Initializes a VkImageConstraintsInfoFUCHSIA.
  *
  * \param[out] pInfo                        Receives the initialized VkImageConstraintsInfoFUCHSIA
- * \param[in] pNext                        Optional extension chain attached to VkImageConstraintsInfoFUCHSIA, or NULL
- * \param[in] formatConstraintsCount       VkImageConstraintsInfoFUCHSIA::formatConstraintsCount
- * \param[in] pFormatConstraints           VkImageConstraintsInfoFUCHSIA::pFormatConstraints
- * \param[in] bufferCollectionConstraints  VkImageConstraintsInfoFUCHSIA::bufferCollectionConstraints
- * \param[in] flags                        VkImageConstraintsInfoFUCHSIA::flags
+ * \param[in]  pNext                        Optional extension chain attached to VkImageConstraintsInfoFUCHSIA, or NULL
+ * \param[in]  formatConstraintsCount       VkImageConstraintsInfoFUCHSIA::formatConstraintsCount
+ * \param[in]  pFormatConstraints           VkImageConstraintsInfoFUCHSIA::pFormatConstraints
+ * \param[in]  bufferCollectionConstraints  VkImageConstraintsInfoFUCHSIA::bufferCollectionConstraints
+ * \param[in]  flags                        VkImageConstraintsInfoFUCHSIA::flags
  *
  * \retval None No value is returned.
  */
@@ -92,13 +92,13 @@ void cvkInitImageConstraintsInfoFUCHSIA(VkImageConstraintsInfoFUCHSIA* pInfo, co
  * \brief Initializes a VkImageFormatConstraintsInfoFUCHSIA.
  *
  * \param[out] pInfo                   Receives the initialized VkImageFormatConstraintsInfoFUCHSIA
- * \param[in] pNext                   Optional extension chain attached to VkImageFormatConstraintsInfoFUCHSIA, or NULL
- * \param[in] imageCreateInfo         VkImageFormatConstraintsInfoFUCHSIA::imageCreateInfo
- * \param[in] requiredFormatFeatures  VkImageFormatConstraintsInfoFUCHSIA::requiredFormatFeatures
- * \param[in] flags                   VkImageFormatConstraintsInfoFUCHSIA::flags
- * \param[in] sysmemPixelFormat       VkImageFormatConstraintsInfoFUCHSIA::sysmemPixelFormat
- * \param[in] colorSpaceCount         VkImageFormatConstraintsInfoFUCHSIA::colorSpaceCount
- * \param[in] pColorSpaces            VkImageFormatConstraintsInfoFUCHSIA::pColorSpaces
+ * \param[in]  pNext                   Optional extension chain attached to VkImageFormatConstraintsInfoFUCHSIA, or NULL
+ * \param[in]  imageCreateInfo         VkImageFormatConstraintsInfoFUCHSIA::imageCreateInfo
+ * \param[in]  requiredFormatFeatures  VkImageFormatConstraintsInfoFUCHSIA::requiredFormatFeatures
+ * \param[in]  flags                   VkImageFormatConstraintsInfoFUCHSIA::flags
+ * \param[in]  sysmemPixelFormat       VkImageFormatConstraintsInfoFUCHSIA::sysmemPixelFormat
+ * \param[in]  colorSpaceCount         VkImageFormatConstraintsInfoFUCHSIA::colorSpaceCount
+ * \param[in]  pColorSpaces            VkImageFormatConstraintsInfoFUCHSIA::pColorSpaces
  *
  * \retval None No value is returned.
  */
@@ -107,9 +107,9 @@ void cvkInitImageFormatConstraintsInfoFUCHSIA(VkImageFormatConstraintsInfoFUCHSI
  * \brief Initializes a VkImagePipeSurfaceCreateInfoFUCHSIA.
  *
  * \param[out] pInfo            Receives the initialized VkImagePipeSurfaceCreateInfoFUCHSIA
- * \param[in] pNext            Optional extension chain attached to VkImagePipeSurfaceCreateInfoFUCHSIA, or NULL
- * \param[in] flags            VkImagePipeSurfaceCreateInfoFUCHSIA::flags
- * \param[in] imagePipeHandle  VkImagePipeSurfaceCreateInfoFUCHSIA::imagePipeHandle
+ * \param[in]  pNext            Optional extension chain attached to VkImagePipeSurfaceCreateInfoFUCHSIA, or NULL
+ * \param[in]  flags            VkImagePipeSurfaceCreateInfoFUCHSIA::flags
+ * \param[in]  imagePipeHandle  VkImagePipeSurfaceCreateInfoFUCHSIA::imagePipeHandle
  *
  * \retval None No value is returned.
  */
@@ -118,9 +118,9 @@ void cvkInitImagePipeSurfaceCreateInfoFUCHSIA(VkImagePipeSurfaceCreateInfoFUCHSI
  * \brief Initializes a VkImportMemoryBufferCollectionFUCHSIA.
  *
  * \param[out] pInfo       Receives the initialized VkImportMemoryBufferCollectionFUCHSIA
- * \param[in] pNext       Optional extension chain attached to VkImportMemoryBufferCollectionFUCHSIA, or NULL
- * \param[in] collection  VkImportMemoryBufferCollectionFUCHSIA::collection
- * \param[in] index       VkImportMemoryBufferCollectionFUCHSIA::index
+ * \param[in]  pNext       Optional extension chain attached to VkImportMemoryBufferCollectionFUCHSIA, or NULL
+ * \param[in]  collection  VkImportMemoryBufferCollectionFUCHSIA::collection
+ * \param[in]  index       VkImportMemoryBufferCollectionFUCHSIA::index
  *
  * \retval None No value is returned.
  */
@@ -129,9 +129,9 @@ void cvkInitImportMemoryBufferCollectionFUCHSIA(VkImportMemoryBufferCollectionFU
  * \brief Initializes a VkImportMemoryZirconHandleInfoFUCHSIA.
  *
  * \param[out] pInfo       Receives the initialized VkImportMemoryZirconHandleInfoFUCHSIA
- * \param[in] pNext       Optional extension chain attached to VkImportMemoryZirconHandleInfoFUCHSIA, or NULL
- * \param[in] handleType  VkImportMemoryZirconHandleInfoFUCHSIA::handleType
- * \param[in] handle      VkImportMemoryZirconHandleInfoFUCHSIA::handle
+ * \param[in]  pNext       Optional extension chain attached to VkImportMemoryZirconHandleInfoFUCHSIA, or NULL
+ * \param[in]  handleType  VkImportMemoryZirconHandleInfoFUCHSIA::handleType
+ * \param[in]  handle      VkImportMemoryZirconHandleInfoFUCHSIA::handle
  *
  * \retval None No value is returned.
  */
@@ -140,11 +140,11 @@ void cvkInitImportMemoryZirconHandleInfoFUCHSIA(VkImportMemoryZirconHandleInfoFU
  * \brief Initializes a VkImportSemaphoreZirconHandleInfoFUCHSIA.
  *
  * \param[out] pInfo         Receives the initialized VkImportSemaphoreZirconHandleInfoFUCHSIA
- * \param[in] pNext         Optional extension chain attached to VkImportSemaphoreZirconHandleInfoFUCHSIA, or NULL
- * \param[in] semaphore     VkImportSemaphoreZirconHandleInfoFUCHSIA::semaphore
- * \param[in] flags         VkImportSemaphoreZirconHandleInfoFUCHSIA::flags
- * \param[in] handleType    VkImportSemaphoreZirconHandleInfoFUCHSIA::handleType
- * \param[in] zirconHandle  VkImportSemaphoreZirconHandleInfoFUCHSIA::zirconHandle
+ * \param[in]  pNext         Optional extension chain attached to VkImportSemaphoreZirconHandleInfoFUCHSIA, or NULL
+ * \param[in]  semaphore     VkImportSemaphoreZirconHandleInfoFUCHSIA::semaphore
+ * \param[in]  flags         VkImportSemaphoreZirconHandleInfoFUCHSIA::flags
+ * \param[in]  handleType    VkImportSemaphoreZirconHandleInfoFUCHSIA::handleType
+ * \param[in]  zirconHandle  VkImportSemaphoreZirconHandleInfoFUCHSIA::zirconHandle
  *
  * \retval None No value is returned.
  */
@@ -153,9 +153,9 @@ void cvkInitImportSemaphoreZirconHandleInfoFUCHSIA(VkImportSemaphoreZirconHandle
  * \brief Initializes a VkMemoryGetZirconHandleInfoFUCHSIA.
  *
  * \param[out] pInfo       Receives the initialized VkMemoryGetZirconHandleInfoFUCHSIA
- * \param[in] pNext       Optional extension chain attached to VkMemoryGetZirconHandleInfoFUCHSIA, or NULL
- * \param[in] memory      VkMemoryGetZirconHandleInfoFUCHSIA::memory
- * \param[in] handleType  VkMemoryGetZirconHandleInfoFUCHSIA::handleType
+ * \param[in]  pNext       Optional extension chain attached to VkMemoryGetZirconHandleInfoFUCHSIA, or NULL
+ * \param[in]  memory      VkMemoryGetZirconHandleInfoFUCHSIA::memory
+ * \param[in]  handleType  VkMemoryGetZirconHandleInfoFUCHSIA::handleType
  *
  * \retval None No value is returned.
  */
@@ -164,7 +164,7 @@ void cvkInitMemoryGetZirconHandleInfoFUCHSIA(VkMemoryGetZirconHandleInfoFUCHSIA*
  * \brief Initializes a VkMemoryZirconHandlePropertiesFUCHSIA.
  *
  * \param[out] pInfo  Receives the initialized VkMemoryZirconHandlePropertiesFUCHSIA
- * \param[in] pNext  Optional extension chain attached to VkMemoryZirconHandlePropertiesFUCHSIA, or NULL
+ * \param[in]  pNext  Optional extension chain attached to VkMemoryZirconHandlePropertiesFUCHSIA, or NULL
  *
  * \retval None No value is returned.
  */
@@ -173,9 +173,9 @@ void cvkInitMemoryZirconHandlePropertiesFUCHSIA(VkMemoryZirconHandlePropertiesFU
  * \brief Initializes a VkSemaphoreGetZirconHandleInfoFUCHSIA.
  *
  * \param[out] pInfo       Receives the initialized VkSemaphoreGetZirconHandleInfoFUCHSIA
- * \param[in] pNext       Optional extension chain attached to VkSemaphoreGetZirconHandleInfoFUCHSIA, or NULL
- * \param[in] semaphore   VkSemaphoreGetZirconHandleInfoFUCHSIA::semaphore
- * \param[in] handleType  VkSemaphoreGetZirconHandleInfoFUCHSIA::handleType
+ * \param[in]  pNext       Optional extension chain attached to VkSemaphoreGetZirconHandleInfoFUCHSIA, or NULL
+ * \param[in]  semaphore   VkSemaphoreGetZirconHandleInfoFUCHSIA::semaphore
+ * \param[in]  handleType  VkSemaphoreGetZirconHandleInfoFUCHSIA::handleType
  *
  * \retval None No value is returned.
  */
@@ -184,8 +184,8 @@ void cvkInitSemaphoreGetZirconHandleInfoFUCHSIA(VkSemaphoreGetZirconHandleInfoFU
  * \brief Initializes a VkSysmemColorSpaceFUCHSIA.
  *
  * \param[out] pInfo       Receives the initialized VkSysmemColorSpaceFUCHSIA
- * \param[in] pNext       Optional extension chain attached to VkSysmemColorSpaceFUCHSIA, or NULL
- * \param[in] colorSpace  VkSysmemColorSpaceFUCHSIA::colorSpace
+ * \param[in]  pNext       Optional extension chain attached to VkSysmemColorSpaceFUCHSIA, or NULL
+ * \param[in]  colorSpace  VkSysmemColorSpaceFUCHSIA::colorSpace
  *
  * \retval None No value is returned.
  */
@@ -196,10 +196,10 @@ void cvkInitSysmemColorSpaceFUCHSIA(VkSysmemColorSpaceFUCHSIA* pInfo, const void
  * \par Details:
  *  Wraps vkCreateBufferCollectionFUCHSIA. Aborts on any error result.
  *
- * \param[in] device           VkDevice value
- * \param[in] pNext            Optional extension chain attached to VkBufferCollectionCreateInfoFUCHSIA, or NULL
- * \param[in] collectionToken  VkBufferCollectionCreateInfoFUCHSIA::collectionToken
- * \param[in] pAllocator       Optional allocation callbacks, or NULL
+ * \param[in]  device           VkDevice value
+ * \param[in]  pNext            Optional extension chain attached to VkBufferCollectionCreateInfoFUCHSIA, or NULL
+ * \param[in]  collectionToken  VkBufferCollectionCreateInfoFUCHSIA::collectionToken
+ * \param[in]  pAllocator       Optional allocation callbacks, or NULL
  * \param[out] pCollection      Receives the created VkBufferCollectionFUCHSIA
  *
  * \retval None No value is returned.
@@ -211,11 +211,11 @@ void cvkCreateBufferCollectionFUCHSIA(VkDevice device, const void* pNext, zx_han
  * \par Details:
  *  Wraps vkCreateImagePipeSurfaceFUCHSIA. Aborts on any error result.
  *
- * \param[in] instance         VkInstance value
- * \param[in] pNext            Optional extension chain attached to VkImagePipeSurfaceCreateInfoFUCHSIA, or NULL
- * \param[in] flags            VkImagePipeSurfaceCreateInfoFUCHSIA::flags
- * \param[in] imagePipeHandle  VkImagePipeSurfaceCreateInfoFUCHSIA::imagePipeHandle
- * \param[in] pAllocator       Optional allocation callbacks, or NULL
+ * \param[in]  instance         VkInstance value
+ * \param[in]  pNext            Optional extension chain attached to VkImagePipeSurfaceCreateInfoFUCHSIA, or NULL
+ * \param[in]  flags            VkImagePipeSurfaceCreateInfoFUCHSIA::flags
+ * \param[in]  imagePipeHandle  VkImagePipeSurfaceCreateInfoFUCHSIA::imagePipeHandle
+ * \param[in]  pAllocator       Optional allocation callbacks, or NULL
  * \param[out] pSurface         Receives the created VkSurfaceKHR
  *
  * \retval None No value is returned.
@@ -240,9 +240,9 @@ void cvkDestroyBufferCollectionFUCHSIA(VkDevice device, VkBufferCollectionFUCHSI
  * \par Details:
  *  Wraps vkGetBufferCollectionPropertiesFUCHSIA. Aborts on any error result.
  *
- * \param[in] device       VkDevice value
- * \param[in] collection   VkBufferCollectionFUCHSIA value
- * \param[in] pNext        Optional output extension chain attached to VkBufferCollectionPropertiesFUCHSIA, or NULL
+ * \param[in]  device       VkDevice value
+ * \param[in]  collection   VkBufferCollectionFUCHSIA value
+ * \param[in]  pNext        Optional output extension chain attached to VkBufferCollectionPropertiesFUCHSIA, or NULL
  * \param[out] pProperties  Receives the VkBufferCollectionPropertiesFUCHSIA
  *
  * \retval None No value is returned.
@@ -254,10 +254,10 @@ void cvkGetBufferCollectionPropertiesFUCHSIA(VkDevice device, VkBufferCollection
  * \par Details:
  *  Wraps vkGetMemoryZirconHandleFUCHSIA. Aborts on any error result.
  *
- * \param[in] device         VkDevice value
- * \param[in] pNext          Optional extension chain attached to VkMemoryGetZirconHandleInfoFUCHSIA, or NULL
- * \param[in] memory         VkMemoryGetZirconHandleInfoFUCHSIA::memory
- * \param[in] handleType     VkMemoryGetZirconHandleInfoFUCHSIA::handleType
+ * \param[in]  device         VkDevice value
+ * \param[in]  pNext          Optional extension chain attached to VkMemoryGetZirconHandleInfoFUCHSIA, or NULL
+ * \param[in]  memory         VkMemoryGetZirconHandleInfoFUCHSIA::memory
+ * \param[in]  handleType     VkMemoryGetZirconHandleInfoFUCHSIA::handleType
  * \param[out] pZirconHandle  Receives the zx_handle_t
  *
  * \retval None No value is returned.
@@ -269,10 +269,10 @@ void cvkGetMemoryZirconHandleFUCHSIA(VkDevice device, const void* pNext, VkDevic
  * \par Details:
  *  Wraps vkGetMemoryZirconHandlePropertiesFUCHSIA. Aborts on any error result.
  *
- * \param[in] device                         VkDevice value
- * \param[in] handleType                     VkExternalMemoryHandleTypeFlagBits value
- * \param[in] zirconHandle                   zx_handle_t value
- * \param[in] pNext                          Optional output extension chain attached to VkMemoryZirconHandlePropertiesFUCHSIA, or NULL
+ * \param[in]  device                         VkDevice value
+ * \param[in]  handleType                     VkExternalMemoryHandleTypeFlagBits value
+ * \param[in]  zirconHandle                   zx_handle_t value
+ * \param[in]  pNext                          Optional output extension chain attached to VkMemoryZirconHandlePropertiesFUCHSIA, or NULL
  * \param[out] pMemoryZirconHandleProperties  Receives the VkMemoryZirconHandlePropertiesFUCHSIA
  *
  * \retval None No value is returned.
@@ -284,10 +284,10 @@ void cvkGetMemoryZirconHandlePropertiesFUCHSIA(VkDevice device, VkExternalMemory
  * \par Details:
  *  Wraps vkGetSemaphoreZirconHandleFUCHSIA. Aborts on any error result.
  *
- * \param[in] device         VkDevice value
- * \param[in] pNext          Optional extension chain attached to VkSemaphoreGetZirconHandleInfoFUCHSIA, or NULL
- * \param[in] semaphore      VkSemaphoreGetZirconHandleInfoFUCHSIA::semaphore
- * \param[in] handleType     VkSemaphoreGetZirconHandleInfoFUCHSIA::handleType
+ * \param[in]  device         VkDevice value
+ * \param[in]  pNext          Optional extension chain attached to VkSemaphoreGetZirconHandleInfoFUCHSIA, or NULL
+ * \param[in]  semaphore      VkSemaphoreGetZirconHandleInfoFUCHSIA::semaphore
+ * \param[in]  handleType     VkSemaphoreGetZirconHandleInfoFUCHSIA::handleType
  * \param[out] pZirconHandle  Receives the zx_handle_t
  *
  * \retval None No value is returned.
@@ -355,13 +355,13 @@ void cvkDestroyBufferCollectionSafeFUCHSIA(VkDevice device, VkBufferCollectionFU
 /**
  * \brief Allocates memory with VkImportMemoryBufferCollectionFUCHSIA chained.
  *
- * \param[in] device           See cvkAllocateMemory
- * \param[in] pNext            See cvkAllocateMemory
- * \param[in] collection       VkImportMemoryBufferCollectionFUCHSIA::collection
- * \param[in] index            VkImportMemoryBufferCollectionFUCHSIA::index
- * \param[in] allocationSize   See cvkAllocateMemory
- * \param[in] memoryTypeIndex  See cvkAllocateMemory
- * \param[in] pAllocator       See cvkAllocateMemory
+ * \param[in]  device           See cvkAllocateMemory
+ * \param[in]  pNext            See cvkAllocateMemory
+ * \param[in]  collection       VkImportMemoryBufferCollectionFUCHSIA::collection
+ * \param[in]  index            VkImportMemoryBufferCollectionFUCHSIA::index
+ * \param[in]  allocationSize   See cvkAllocateMemory
+ * \param[in]  memoryTypeIndex  See cvkAllocateMemory
+ * \param[in]  pAllocator       See cvkAllocateMemory
  * \param[out] pMemory          See cvkAllocateMemory
  *
  * \retval None No value is returned.
@@ -370,13 +370,13 @@ void cvkAllocateImportMemoryBufferCollectionFUCHSIA(VkDevice device, const void*
 /**
  * \brief Allocates memory with VkImportMemoryZirconHandleInfoFUCHSIA chained.
  *
- * \param[in] device           See cvkAllocateMemory
- * \param[in] pNext            See cvkAllocateMemory
- * \param[in] handleType       VkImportMemoryZirconHandleInfoFUCHSIA::handleType
- * \param[in] handle           VkImportMemoryZirconHandleInfoFUCHSIA::handle
- * \param[in] allocationSize   See cvkAllocateMemory
- * \param[in] memoryTypeIndex  See cvkAllocateMemory
- * \param[in] pAllocator       See cvkAllocateMemory
+ * \param[in]  device           See cvkAllocateMemory
+ * \param[in]  pNext            See cvkAllocateMemory
+ * \param[in]  handleType       VkImportMemoryZirconHandleInfoFUCHSIA::handleType
+ * \param[in]  handle           VkImportMemoryZirconHandleInfoFUCHSIA::handle
+ * \param[in]  allocationSize   See cvkAllocateMemory
+ * \param[in]  memoryTypeIndex  See cvkAllocateMemory
+ * \param[in]  pAllocator       See cvkAllocateMemory
  * \param[out] pMemory          See cvkAllocateMemory
  *
  * \retval None No value is returned.
@@ -385,17 +385,17 @@ void cvkAllocateImportMemoryZirconHandleFUCHSIA(VkDevice device, const void* pNe
 /**
  * \brief Creates a buffer with VkBufferCollectionBufferCreateInfoFUCHSIA chained.
  *
- * \param[in] device                 See cvkCreateBuffer
- * \param[in] pNext                  See cvkCreateBuffer
- * \param[in] collection             VkBufferCollectionBufferCreateInfoFUCHSIA::collection
- * \param[in] index                  VkBufferCollectionBufferCreateInfoFUCHSIA::index
- * \param[in] flags                  See cvkCreateBuffer
- * \param[in] size                   See cvkCreateBuffer
- * \param[in] usage                  See cvkCreateBuffer
- * \param[in] sharingMode            See cvkCreateBuffer
- * \param[in] queueFamilyIndexCount  See cvkCreateBuffer
- * \param[in] pQueueFamilyIndices    See cvkCreateBuffer
- * \param[in] pAllocator             See cvkCreateBuffer
+ * \param[in]  device                 See cvkCreateBuffer
+ * \param[in]  pNext                  See cvkCreateBuffer
+ * \param[in]  collection             VkBufferCollectionBufferCreateInfoFUCHSIA::collection
+ * \param[in]  index                  VkBufferCollectionBufferCreateInfoFUCHSIA::index
+ * \param[in]  flags                  See cvkCreateBuffer
+ * \param[in]  size                   See cvkCreateBuffer
+ * \param[in]  usage                  See cvkCreateBuffer
+ * \param[in]  sharingMode            See cvkCreateBuffer
+ * \param[in]  queueFamilyIndexCount  See cvkCreateBuffer
+ * \param[in]  pQueueFamilyIndices    See cvkCreateBuffer
+ * \param[in]  pAllocator             See cvkCreateBuffer
  * \param[out] pBuffer                See cvkCreateBuffer
  *
  * \retval None No value is returned.
@@ -404,24 +404,24 @@ void cvkCreateBufferWithBufferCollectionInfoFUCHSIA(VkDevice device, const void*
 /**
  * \brief Creates a image with VkBufferCollectionImageCreateInfoFUCHSIA chained.
  *
- * \param[in] device                 See cvkCreateImage
- * \param[in] pNext                  See cvkCreateImage
- * \param[in] collection             VkBufferCollectionImageCreateInfoFUCHSIA::collection
- * \param[in] index                  VkBufferCollectionImageCreateInfoFUCHSIA::index
- * \param[in] flags                  See cvkCreateImage
- * \param[in] imageType              See cvkCreateImage
- * \param[in] format                 See cvkCreateImage
- * \param[in] extent                 See cvkCreateImage
- * \param[in] mipLevels              See cvkCreateImage
- * \param[in] arrayLayers            See cvkCreateImage
- * \param[in] samples                See cvkCreateImage
- * \param[in] tiling                 See cvkCreateImage
- * \param[in] usage                  See cvkCreateImage
- * \param[in] sharingMode            See cvkCreateImage
- * \param[in] queueFamilyIndexCount  See cvkCreateImage
- * \param[in] pQueueFamilyIndices    See cvkCreateImage
- * \param[in] initialLayout          See cvkCreateImage
- * \param[in] pAllocator             See cvkCreateImage
+ * \param[in]  device                 See cvkCreateImage
+ * \param[in]  pNext                  See cvkCreateImage
+ * \param[in]  collection             VkBufferCollectionImageCreateInfoFUCHSIA::collection
+ * \param[in]  index                  VkBufferCollectionImageCreateInfoFUCHSIA::index
+ * \param[in]  flags                  See cvkCreateImage
+ * \param[in]  imageType              See cvkCreateImage
+ * \param[in]  format                 See cvkCreateImage
+ * \param[in]  extent                 See cvkCreateImage
+ * \param[in]  mipLevels              See cvkCreateImage
+ * \param[in]  arrayLayers            See cvkCreateImage
+ * \param[in]  samples                See cvkCreateImage
+ * \param[in]  tiling                 See cvkCreateImage
+ * \param[in]  usage                  See cvkCreateImage
+ * \param[in]  sharingMode            See cvkCreateImage
+ * \param[in]  queueFamilyIndexCount  See cvkCreateImage
+ * \param[in]  pQueueFamilyIndices    See cvkCreateImage
+ * \param[in]  initialLayout          See cvkCreateImage
+ * \param[in]  pAllocator             See cvkCreateImage
  * \param[out] pImage                 See cvkCreateImage
  *
  * \retval None No value is returned.

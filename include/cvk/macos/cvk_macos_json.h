@@ -18,8 +18,8 @@ VkMacOSSurfaceCreateFlagsMVK cvkParseJsonMacOSSurfaceCreateFlagsMVK(const cvkJso
 /**
  * \brief Parses a VkMacOSSurfaceCreateInfoMVK from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMacOSSurfaceCreateInfoMVK
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMacOSSurfaceCreateInfoMVK
  * \param[out] pInfo     Receives the parsed VkMacOSSurfaceCreateInfoMVK, zeroed first
  *
  * \retval None No value is returned.

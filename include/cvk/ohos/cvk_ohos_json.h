@@ -18,8 +18,8 @@ VkSurfaceCreateFlagsOHOS cvkParseJsonSurfaceCreateFlagsOHOS(const cvkJsonValue* 
 /**
  * \brief Parses a VkExternalFormatOHOS from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExternalFormatOHOS
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExternalFormatOHOS
  * \param[out] pInfo     Receives the parsed VkExternalFormatOHOS, zeroed first
  *
  * \retval None No value is returned.
@@ -28,8 +28,8 @@ void cvkParseJsonExternalFormatOHOS(const cvkJsonContext* pContext, const cvkJso
 /**
  * \brief Parses a VkImportNativeBufferInfoOHOS from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImportNativeBufferInfoOHOS
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImportNativeBufferInfoOHOS
  * \param[out] pInfo     Receives the parsed VkImportNativeBufferInfoOHOS, zeroed first
  *
  * \retval None No value is returned.
@@ -38,8 +38,8 @@ void cvkParseJsonImportNativeBufferInfoOHOS(const cvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkMemoryGetNativeBufferInfoOHOS from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryGetNativeBufferInfoOHOS
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryGetNativeBufferInfoOHOS
  * \param[out] pInfo     Receives the parsed VkMemoryGetNativeBufferInfoOHOS, zeroed first
  *
  * \retval None No value is returned.
@@ -48,8 +48,8 @@ void cvkParseJsonMemoryGetNativeBufferInfoOHOS(const cvkJsonContext* pContext, c
 /**
  * \brief Parses a VkNativeBufferFormatPropertiesOHOS from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkNativeBufferFormatPropertiesOHOS
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkNativeBufferFormatPropertiesOHOS
  * \param[out] pInfo     Receives the parsed VkNativeBufferFormatPropertiesOHOS, zeroed first
  *
  * \retval None No value is returned.
@@ -58,8 +58,8 @@ void cvkParseJsonNativeBufferFormatPropertiesOHOS(const cvkJsonContext* pContext
 /**
  * \brief Parses a VkNativeBufferPropertiesOHOS from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkNativeBufferPropertiesOHOS
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkNativeBufferPropertiesOHOS
  * \param[out] pInfo     Receives the parsed VkNativeBufferPropertiesOHOS, zeroed first
  *
  * \retval None No value is returned.
@@ -68,8 +68,8 @@ void cvkParseJsonNativeBufferPropertiesOHOS(const cvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkNativeBufferUsageOHOS from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkNativeBufferUsageOHOS
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkNativeBufferUsageOHOS
  * \param[out] pInfo     Receives the parsed VkNativeBufferUsageOHOS, zeroed first
  *
  * \retval None No value is returned.
@@ -78,8 +78,8 @@ void cvkParseJsonNativeBufferUsageOHOS(const cvkJsonContext* pContext, const cvk
 /**
  * \brief Parses a VkSurfaceCreateInfoOHOS from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSurfaceCreateInfoOHOS
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSurfaceCreateInfoOHOS
  * \param[out] pInfo     Receives the parsed VkSurfaceCreateInfoOHOS, zeroed first
  *
  * \retval None No value is returned.

@@ -15,9 +15,9 @@
  * \par Details:
  *  Wraps vkAcquireXlibDisplayEXT. Aborts on any error result.
  *
- * \param[in] physicalDevice  VkPhysicalDevice value
+ * \param[in]  physicalDevice  VkPhysicalDevice value
  * \param[out] dpy             Receives the Display
- * \param[in] display         VkDisplayKHR value
+ * \param[in]  display         VkDisplayKHR value
  *
  * \retval None No value is returned.
  */
@@ -28,9 +28,9 @@ void cvkAcquireXlibDisplay(VkPhysicalDevice physicalDevice, Display* dpy, VkDisp
  * \par Details:
  *  Wraps vkGetRandROutputDisplayEXT. Aborts on any error result.
  *
- * \param[in] physicalDevice  VkPhysicalDevice value
+ * \param[in]  physicalDevice  VkPhysicalDevice value
  * \param[out] dpy             Receives the Display
- * \param[in] rrOutput        RROutput value
+ * \param[in]  rrOutput        RROutput value
  * \param[out] pDisplay        Receives the created VkDisplayKHR
  *
  * \retval None No value is returned.

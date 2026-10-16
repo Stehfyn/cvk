@@ -19,8 +19,8 @@ VkXlibSurfaceCreateFlagsKHR cvkParseJsonXlibSurfaceCreateFlags(const cvkJsonValu
 /**
  * \brief Parses a VkXlibSurfaceCreateInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkXlibSurfaceCreateInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkXlibSurfaceCreateInfoKHR
  * \param[out] pInfo     Receives the parsed VkXlibSurfaceCreateInfoKHR, zeroed first
  *
  * \retval None No value is returned.

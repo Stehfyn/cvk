@@ -11,14 +11,14 @@
  * \brief Initializes a VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX.
  *
  * \param[out] pInfo              Receives the initialized VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX
- * \param[in] pNext              Optional extension chain attached to VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX, or NULL
- * \param[in] compressedData     VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX::compressedData
- * \param[in] dataSize           VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX::dataSize
- * \param[in] numTriangles       VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX::numTriangles
- * \param[in] numVertices        VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX::numVertices
- * \param[in] maxPrimitiveIndex  VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX::maxPrimitiveIndex
- * \param[in] maxGeometryIndex   VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX::maxGeometryIndex
- * \param[in] format             VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX::format
+ * \param[in]  pNext              Optional extension chain attached to VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX, or NULL
+ * \param[in]  compressedData     VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX::compressedData
+ * \param[in]  dataSize           VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX::dataSize
+ * \param[in]  numTriangles       VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX::numTriangles
+ * \param[in]  numVertices        VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX::numVertices
+ * \param[in]  maxPrimitiveIndex  VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX::maxPrimitiveIndex
+ * \param[in]  maxGeometryIndex   VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX::maxGeometryIndex
+ * \param[in]  format             VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX::format
  *
  * \retval None No value is returned.
  */
@@ -27,23 +27,23 @@ void cvkInitAccelerationStructureDenseGeometryFormatTrianglesDataAMDX(VkAccelera
  * \brief Initializes a VkAccelerationStructureTrianglesDisplacementMicromapNV.
  *
  * \param[out] pInfo                                  Receives the initialized VkAccelerationStructureTrianglesDisplacementMicromapNV
- * \param[in] pNext                                  Optional extension chain attached to VkAccelerationStructureTrianglesDisplacementMicromapNV, or NULL
- * \param[in] displacementBiasAndScaleFormat         VkAccelerationStructureTrianglesDisplacementMicromapNV::displacementBiasAndScaleFormat
- * \param[in] displacementVectorFormat               VkAccelerationStructureTrianglesDisplacementMicromapNV::displacementVectorFormat
- * \param[in] displacementBiasAndScaleBuffer         VkAccelerationStructureTrianglesDisplacementMicromapNV::displacementBiasAndScaleBuffer
- * \param[in] displacementBiasAndScaleStride         VkAccelerationStructureTrianglesDisplacementMicromapNV::displacementBiasAndScaleStride
- * \param[in] displacementVectorBuffer               VkAccelerationStructureTrianglesDisplacementMicromapNV::displacementVectorBuffer
- * \param[in] displacementVectorStride               VkAccelerationStructureTrianglesDisplacementMicromapNV::displacementVectorStride
- * \param[in] displacedMicromapPrimitiveFlags        VkAccelerationStructureTrianglesDisplacementMicromapNV::displacedMicromapPrimitiveFlags
- * \param[in] displacedMicromapPrimitiveFlagsStride  VkAccelerationStructureTrianglesDisplacementMicromapNV::displacedMicromapPrimitiveFlagsStride
- * \param[in] indexType                              VkAccelerationStructureTrianglesDisplacementMicromapNV::indexType
- * \param[in] indexBuffer                            VkAccelerationStructureTrianglesDisplacementMicromapNV::indexBuffer
- * \param[in] indexStride                            VkAccelerationStructureTrianglesDisplacementMicromapNV::indexStride
- * \param[in] baseTriangle                           VkAccelerationStructureTrianglesDisplacementMicromapNV::baseTriangle
- * \param[in] usageCountsCount                       VkAccelerationStructureTrianglesDisplacementMicromapNV::usageCountsCount
- * \param[in] pUsageCounts                           VkAccelerationStructureTrianglesDisplacementMicromapNV::pUsageCounts
- * \param[in] ppUsageCounts                          VkAccelerationStructureTrianglesDisplacementMicromapNV::ppUsageCounts
- * \param[in] micromap                               VkAccelerationStructureTrianglesDisplacementMicromapNV::micromap
+ * \param[in]  pNext                                  Optional extension chain attached to VkAccelerationStructureTrianglesDisplacementMicromapNV, or NULL
+ * \param[in]  displacementBiasAndScaleFormat         VkAccelerationStructureTrianglesDisplacementMicromapNV::displacementBiasAndScaleFormat
+ * \param[in]  displacementVectorFormat               VkAccelerationStructureTrianglesDisplacementMicromapNV::displacementVectorFormat
+ * \param[in]  displacementBiasAndScaleBuffer         VkAccelerationStructureTrianglesDisplacementMicromapNV::displacementBiasAndScaleBuffer
+ * \param[in]  displacementBiasAndScaleStride         VkAccelerationStructureTrianglesDisplacementMicromapNV::displacementBiasAndScaleStride
+ * \param[in]  displacementVectorBuffer               VkAccelerationStructureTrianglesDisplacementMicromapNV::displacementVectorBuffer
+ * \param[in]  displacementVectorStride               VkAccelerationStructureTrianglesDisplacementMicromapNV::displacementVectorStride
+ * \param[in]  displacedMicromapPrimitiveFlags        VkAccelerationStructureTrianglesDisplacementMicromapNV::displacedMicromapPrimitiveFlags
+ * \param[in]  displacedMicromapPrimitiveFlagsStride  VkAccelerationStructureTrianglesDisplacementMicromapNV::displacedMicromapPrimitiveFlagsStride
+ * \param[in]  indexType                              VkAccelerationStructureTrianglesDisplacementMicromapNV::indexType
+ * \param[in]  indexBuffer                            VkAccelerationStructureTrianglesDisplacementMicromapNV::indexBuffer
+ * \param[in]  indexStride                            VkAccelerationStructureTrianglesDisplacementMicromapNV::indexStride
+ * \param[in]  baseTriangle                           VkAccelerationStructureTrianglesDisplacementMicromapNV::baseTriangle
+ * \param[in]  usageCountsCount                       VkAccelerationStructureTrianglesDisplacementMicromapNV::usageCountsCount
+ * \param[in]  pUsageCounts                           VkAccelerationStructureTrianglesDisplacementMicromapNV::pUsageCounts
+ * \param[in]  ppUsageCounts                          VkAccelerationStructureTrianglesDisplacementMicromapNV::ppUsageCounts
+ * \param[in]  micromap                               VkAccelerationStructureTrianglesDisplacementMicromapNV::micromap
  *
  * \retval None No value is returned.
  */
@@ -52,9 +52,9 @@ void cvkInitAccelerationStructureTrianglesDisplacementMicromapNV(VkAccelerationS
  * \brief Initializes a VkCudaFunctionCreateInfoNV.
  *
  * \param[out] pInfo   Receives the initialized VkCudaFunctionCreateInfoNV
- * \param[in] pNext   Optional extension chain attached to VkCudaFunctionCreateInfoNV, or NULL
- * \param[in] module  VkCudaFunctionCreateInfoNV::module
- * \param[in] pName   VkCudaFunctionCreateInfoNV::pName
+ * \param[in]  pNext   Optional extension chain attached to VkCudaFunctionCreateInfoNV, or NULL
+ * \param[in]  module  VkCudaFunctionCreateInfoNV::module
+ * \param[in]  pName   VkCudaFunctionCreateInfoNV::pName
  *
  * \retval None No value is returned.
  */
@@ -63,19 +63,19 @@ void cvkInitCudaFunctionCreateInfoNV(VkCudaFunctionCreateInfoNV* pInfo, const vo
  * \brief Initializes a VkCudaLaunchInfoNV.
  *
  * \param[out] pInfo           Receives the initialized VkCudaLaunchInfoNV
- * \param[in] pNext           Optional extension chain attached to VkCudaLaunchInfoNV, or NULL
- * \param[in] function        VkCudaLaunchInfoNV::function
- * \param[in] gridDimX        VkCudaLaunchInfoNV::gridDimX
- * \param[in] gridDimY        VkCudaLaunchInfoNV::gridDimY
- * \param[in] gridDimZ        VkCudaLaunchInfoNV::gridDimZ
- * \param[in] blockDimX       VkCudaLaunchInfoNV::blockDimX
- * \param[in] blockDimY       VkCudaLaunchInfoNV::blockDimY
- * \param[in] blockDimZ       VkCudaLaunchInfoNV::blockDimZ
- * \param[in] sharedMemBytes  VkCudaLaunchInfoNV::sharedMemBytes
- * \param[in] paramCount      VkCudaLaunchInfoNV::paramCount
- * \param[in] pParams         VkCudaLaunchInfoNV::pParams
- * \param[in] extraCount      VkCudaLaunchInfoNV::extraCount
- * \param[in] pExtras         VkCudaLaunchInfoNV::pExtras
+ * \param[in]  pNext           Optional extension chain attached to VkCudaLaunchInfoNV, or NULL
+ * \param[in]  function        VkCudaLaunchInfoNV::function
+ * \param[in]  gridDimX        VkCudaLaunchInfoNV::gridDimX
+ * \param[in]  gridDimY        VkCudaLaunchInfoNV::gridDimY
+ * \param[in]  gridDimZ        VkCudaLaunchInfoNV::gridDimZ
+ * \param[in]  blockDimX       VkCudaLaunchInfoNV::blockDimX
+ * \param[in]  blockDimY       VkCudaLaunchInfoNV::blockDimY
+ * \param[in]  blockDimZ       VkCudaLaunchInfoNV::blockDimZ
+ * \param[in]  sharedMemBytes  VkCudaLaunchInfoNV::sharedMemBytes
+ * \param[in]  paramCount      VkCudaLaunchInfoNV::paramCount
+ * \param[in]  pParams         VkCudaLaunchInfoNV::pParams
+ * \param[in]  extraCount      VkCudaLaunchInfoNV::extraCount
+ * \param[in]  pExtras         VkCudaLaunchInfoNV::pExtras
  *
  * \retval None No value is returned.
  */
@@ -84,9 +84,9 @@ void cvkInitCudaLaunchInfoNV(VkCudaLaunchInfoNV* pInfo, const void* pNext, VkCud
  * \brief Initializes a VkCudaModuleCreateInfoNV.
  *
  * \param[out] pInfo     Receives the initialized VkCudaModuleCreateInfoNV
- * \param[in] pNext     Optional extension chain attached to VkCudaModuleCreateInfoNV, or NULL
- * \param[in] dataSize  VkCudaModuleCreateInfoNV::dataSize
- * \param[in] pData     VkCudaModuleCreateInfoNV::pData
+ * \param[in]  pNext     Optional extension chain attached to VkCudaModuleCreateInfoNV, or NULL
+ * \param[in]  dataSize  VkCudaModuleCreateInfoNV::dataSize
+ * \param[in]  pData     VkCudaModuleCreateInfoNV::pData
  *
  * \retval None No value is returned.
  */
@@ -95,9 +95,9 @@ void cvkInitCudaModuleCreateInfoNV(VkCudaModuleCreateInfoNV* pInfo, const void* 
  * \brief Initializes a VkDispatchGraphCountInfoAMDX.
  *
  * \param[out] pInfo   Receives the initialized VkDispatchGraphCountInfoAMDX
- * \param[in] count   VkDispatchGraphCountInfoAMDX::count
- * \param[in] infos   VkDispatchGraphCountInfoAMDX::infos
- * \param[in] stride  VkDispatchGraphCountInfoAMDX::stride
+ * \param[in]  count   VkDispatchGraphCountInfoAMDX::count
+ * \param[in]  infos   VkDispatchGraphCountInfoAMDX::infos
+ * \param[in]  stride  VkDispatchGraphCountInfoAMDX::stride
  *
  * \retval None No value is returned.
  */
@@ -106,10 +106,10 @@ void cvkInitDispatchGraphCountInfoAMDX(VkDispatchGraphCountInfoAMDX* pInfo, uint
  * \brief Initializes a VkDispatchGraphInfoAMDX.
  *
  * \param[out] pInfo          Receives the initialized VkDispatchGraphInfoAMDX
- * \param[in] nodeIndex      VkDispatchGraphInfoAMDX::nodeIndex
- * \param[in] payloadCount   VkDispatchGraphInfoAMDX::payloadCount
- * \param[in] payloads       VkDispatchGraphInfoAMDX::payloads
- * \param[in] payloadStride  VkDispatchGraphInfoAMDX::payloadStride
+ * \param[in]  nodeIndex      VkDispatchGraphInfoAMDX::nodeIndex
+ * \param[in]  payloadCount   VkDispatchGraphInfoAMDX::payloadCount
+ * \param[in]  payloads       VkDispatchGraphInfoAMDX::payloads
+ * \param[in]  payloadStride  VkDispatchGraphInfoAMDX::payloadStride
  *
  * \retval None No value is returned.
  */
@@ -118,14 +118,14 @@ void cvkInitDispatchGraphInfoAMDX(VkDispatchGraphInfoAMDX* pInfo, uint32_t nodeI
  * \brief Initializes a VkExecutionGraphPipelineCreateInfoAMDX.
  *
  * \param[out] pInfo               Receives the initialized VkExecutionGraphPipelineCreateInfoAMDX
- * \param[in] pNext               Optional extension chain attached to VkExecutionGraphPipelineCreateInfoAMDX, or NULL
- * \param[in] flags               VkExecutionGraphPipelineCreateInfoAMDX::flags
- * \param[in] stageCount          VkExecutionGraphPipelineCreateInfoAMDX::stageCount
- * \param[in] pStages             VkExecutionGraphPipelineCreateInfoAMDX::pStages
- * \param[in] pLibraryInfo        VkExecutionGraphPipelineCreateInfoAMDX::pLibraryInfo
- * \param[in] layout              VkExecutionGraphPipelineCreateInfoAMDX::layout
- * \param[in] basePipelineHandle  VkExecutionGraphPipelineCreateInfoAMDX::basePipelineHandle
- * \param[in] basePipelineIndex   VkExecutionGraphPipelineCreateInfoAMDX::basePipelineIndex
+ * \param[in]  pNext               Optional extension chain attached to VkExecutionGraphPipelineCreateInfoAMDX, or NULL
+ * \param[in]  flags               VkExecutionGraphPipelineCreateInfoAMDX::flags
+ * \param[in]  stageCount          VkExecutionGraphPipelineCreateInfoAMDX::stageCount
+ * \param[in]  pStages             VkExecutionGraphPipelineCreateInfoAMDX::pStages
+ * \param[in]  pLibraryInfo        VkExecutionGraphPipelineCreateInfoAMDX::pLibraryInfo
+ * \param[in]  layout              VkExecutionGraphPipelineCreateInfoAMDX::layout
+ * \param[in]  basePipelineHandle  VkExecutionGraphPipelineCreateInfoAMDX::basePipelineHandle
+ * \param[in]  basePipelineIndex   VkExecutionGraphPipelineCreateInfoAMDX::basePipelineIndex
  *
  * \retval None No value is returned.
  */
@@ -134,10 +134,10 @@ void cvkInitExecutionGraphPipelineCreateInfoAMDX(VkExecutionGraphPipelineCreateI
  * \brief Initializes a VkExecutionGraphPipelineScratchSizeAMDX.
  *
  * \param[out] pInfo            Receives the initialized VkExecutionGraphPipelineScratchSizeAMDX
- * \param[in] pNext            Optional extension chain attached to VkExecutionGraphPipelineScratchSizeAMDX, or NULL
- * \param[in] minSize          VkExecutionGraphPipelineScratchSizeAMDX::minSize
- * \param[in] maxSize          VkExecutionGraphPipelineScratchSizeAMDX::maxSize
- * \param[in] sizeGranularity  VkExecutionGraphPipelineScratchSizeAMDX::sizeGranularity
+ * \param[in]  pNext            Optional extension chain attached to VkExecutionGraphPipelineScratchSizeAMDX, or NULL
+ * \param[in]  minSize          VkExecutionGraphPipelineScratchSizeAMDX::minSize
+ * \param[in]  maxSize          VkExecutionGraphPipelineScratchSizeAMDX::maxSize
+ * \param[in]  sizeGranularity  VkExecutionGraphPipelineScratchSizeAMDX::sizeGranularity
  *
  * \retval None No value is returned.
  */
@@ -146,8 +146,8 @@ void cvkInitExecutionGraphPipelineScratchSizeAMDX(VkExecutionGraphPipelineScratc
  * \brief Initializes a VkPhysicalDeviceCudaKernelLaunchFeaturesNV.
  *
  * \param[out] pInfo                     Receives the initialized VkPhysicalDeviceCudaKernelLaunchFeaturesNV
- * \param[in] pNext                     Optional extension chain attached to VkPhysicalDeviceCudaKernelLaunchFeaturesNV, or NULL
- * \param[in] cudaKernelLaunchFeatures  VkPhysicalDeviceCudaKernelLaunchFeaturesNV::cudaKernelLaunchFeatures
+ * \param[in]  pNext                     Optional extension chain attached to VkPhysicalDeviceCudaKernelLaunchFeaturesNV, or NULL
+ * \param[in]  cudaKernelLaunchFeatures  VkPhysicalDeviceCudaKernelLaunchFeaturesNV::cudaKernelLaunchFeatures
  *
  * \retval None No value is returned.
  */
@@ -156,7 +156,7 @@ void cvkInitPhysicalDeviceCudaKernelLaunchFeaturesNV(VkPhysicalDeviceCudaKernelL
  * \brief Initializes a VkPhysicalDeviceCudaKernelLaunchPropertiesNV.
  *
  * \param[out] pInfo  Receives the initialized VkPhysicalDeviceCudaKernelLaunchPropertiesNV
- * \param[in] pNext  Optional extension chain attached to VkPhysicalDeviceCudaKernelLaunchPropertiesNV, or NULL
+ * \param[in]  pNext  Optional extension chain attached to VkPhysicalDeviceCudaKernelLaunchPropertiesNV, or NULL
  *
  * \retval None No value is returned.
  */
@@ -165,8 +165,8 @@ void cvkInitPhysicalDeviceCudaKernelLaunchPropertiesNV(VkPhysicalDeviceCudaKerne
  * \brief Initializes a VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX.
  *
  * \param[out] pInfo                Receives the initialized VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX
- * \param[in] pNext                Optional extension chain attached to VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX, or NULL
- * \param[in] denseGeometryFormat  VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX::denseGeometryFormat
+ * \param[in]  pNext                Optional extension chain attached to VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX, or NULL
+ * \param[in]  denseGeometryFormat  VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX::denseGeometryFormat
  *
  * \retval None No value is returned.
  */
@@ -175,8 +175,8 @@ void cvkInitPhysicalDeviceDenseGeometryFormatFeaturesAMDX(VkPhysicalDeviceDenseG
  * \brief Initializes a VkPhysicalDeviceDisplacementMicromapFeaturesNV.
  *
  * \param[out] pInfo                 Receives the initialized VkPhysicalDeviceDisplacementMicromapFeaturesNV
- * \param[in] pNext                 Optional extension chain attached to VkPhysicalDeviceDisplacementMicromapFeaturesNV, or NULL
- * \param[in] displacementMicromap  VkPhysicalDeviceDisplacementMicromapFeaturesNV::displacementMicromap
+ * \param[in]  pNext                 Optional extension chain attached to VkPhysicalDeviceDisplacementMicromapFeaturesNV, or NULL
+ * \param[in]  displacementMicromap  VkPhysicalDeviceDisplacementMicromapFeaturesNV::displacementMicromap
  *
  * \retval None No value is returned.
  */
@@ -185,7 +185,7 @@ void cvkInitPhysicalDeviceDisplacementMicromapFeaturesNV(VkPhysicalDeviceDisplac
  * \brief Initializes a VkPhysicalDeviceDisplacementMicromapPropertiesNV.
  *
  * \param[out] pInfo  Receives the initialized VkPhysicalDeviceDisplacementMicromapPropertiesNV
- * \param[in] pNext  Optional extension chain attached to VkPhysicalDeviceDisplacementMicromapPropertiesNV, or NULL
+ * \param[in]  pNext  Optional extension chain attached to VkPhysicalDeviceDisplacementMicromapPropertiesNV, or NULL
  *
  * \retval None No value is returned.
  */
@@ -194,22 +194,22 @@ void cvkInitPhysicalDeviceDisplacementMicromapPropertiesNV(VkPhysicalDeviceDispl
  * \brief Initializes a VkPhysicalDevicePortabilitySubsetFeaturesKHR.
  *
  * \param[out] pInfo                                   Receives the initialized VkPhysicalDevicePortabilitySubsetFeaturesKHR
- * \param[in] pNext                                   Optional extension chain attached to VkPhysicalDevicePortabilitySubsetFeaturesKHR, or NULL
- * \param[in] constantAlphaColorBlendFactors          VkPhysicalDevicePortabilitySubsetFeaturesKHR::constantAlphaColorBlendFactors
- * \param[in] events                                  VkPhysicalDevicePortabilitySubsetFeaturesKHR::events
- * \param[in] imageViewFormatReinterpretation         VkPhysicalDevicePortabilitySubsetFeaturesKHR::imageViewFormatReinterpretation
- * \param[in] imageViewFormatSwizzle                  VkPhysicalDevicePortabilitySubsetFeaturesKHR::imageViewFormatSwizzle
- * \param[in] imageView2DOn3DImage                    VkPhysicalDevicePortabilitySubsetFeaturesKHR::imageView2DOn3DImage
- * \param[in] multisampleArrayImage                   VkPhysicalDevicePortabilitySubsetFeaturesKHR::multisampleArrayImage
- * \param[in] mutableComparisonSamplers               VkPhysicalDevicePortabilitySubsetFeaturesKHR::mutableComparisonSamplers
- * \param[in] pointPolygons                           VkPhysicalDevicePortabilitySubsetFeaturesKHR::pointPolygons
- * \param[in] samplerMipLodBias                       VkPhysicalDevicePortabilitySubsetFeaturesKHR::samplerMipLodBias
- * \param[in] separateStencilMaskRef                  VkPhysicalDevicePortabilitySubsetFeaturesKHR::separateStencilMaskRef
- * \param[in] shaderSampleRateInterpolationFunctions  VkPhysicalDevicePortabilitySubsetFeaturesKHR::shaderSampleRateInterpolationFunctions
- * \param[in] tessellationIsolines                    VkPhysicalDevicePortabilitySubsetFeaturesKHR::tessellationIsolines
- * \param[in] tessellationPointMode                   VkPhysicalDevicePortabilitySubsetFeaturesKHR::tessellationPointMode
- * \param[in] triangleFans                            VkPhysicalDevicePortabilitySubsetFeaturesKHR::triangleFans
- * \param[in] vertexAttributeAccessBeyondStride       VkPhysicalDevicePortabilitySubsetFeaturesKHR::vertexAttributeAccessBeyondStride
+ * \param[in]  pNext                                   Optional extension chain attached to VkPhysicalDevicePortabilitySubsetFeaturesKHR, or NULL
+ * \param[in]  constantAlphaColorBlendFactors          VkPhysicalDevicePortabilitySubsetFeaturesKHR::constantAlphaColorBlendFactors
+ * \param[in]  events                                  VkPhysicalDevicePortabilitySubsetFeaturesKHR::events
+ * \param[in]  imageViewFormatReinterpretation         VkPhysicalDevicePortabilitySubsetFeaturesKHR::imageViewFormatReinterpretation
+ * \param[in]  imageViewFormatSwizzle                  VkPhysicalDevicePortabilitySubsetFeaturesKHR::imageViewFormatSwizzle
+ * \param[in]  imageView2DOn3DImage                    VkPhysicalDevicePortabilitySubsetFeaturesKHR::imageView2DOn3DImage
+ * \param[in]  multisampleArrayImage                   VkPhysicalDevicePortabilitySubsetFeaturesKHR::multisampleArrayImage
+ * \param[in]  mutableComparisonSamplers               VkPhysicalDevicePortabilitySubsetFeaturesKHR::mutableComparisonSamplers
+ * \param[in]  pointPolygons                           VkPhysicalDevicePortabilitySubsetFeaturesKHR::pointPolygons
+ * \param[in]  samplerMipLodBias                       VkPhysicalDevicePortabilitySubsetFeaturesKHR::samplerMipLodBias
+ * \param[in]  separateStencilMaskRef                  VkPhysicalDevicePortabilitySubsetFeaturesKHR::separateStencilMaskRef
+ * \param[in]  shaderSampleRateInterpolationFunctions  VkPhysicalDevicePortabilitySubsetFeaturesKHR::shaderSampleRateInterpolationFunctions
+ * \param[in]  tessellationIsolines                    VkPhysicalDevicePortabilitySubsetFeaturesKHR::tessellationIsolines
+ * \param[in]  tessellationPointMode                   VkPhysicalDevicePortabilitySubsetFeaturesKHR::tessellationPointMode
+ * \param[in]  triangleFans                            VkPhysicalDevicePortabilitySubsetFeaturesKHR::triangleFans
+ * \param[in]  vertexAttributeAccessBeyondStride       VkPhysicalDevicePortabilitySubsetFeaturesKHR::vertexAttributeAccessBeyondStride
  *
  * \retval None No value is returned.
  */
@@ -218,7 +218,7 @@ void cvkInitPhysicalDevicePortabilitySubsetFeatures(VkPhysicalDevicePortabilityS
  * \brief Initializes a VkPhysicalDevicePortabilitySubsetPropertiesKHR.
  *
  * \param[out] pInfo  Receives the initialized VkPhysicalDevicePortabilitySubsetPropertiesKHR
- * \param[in] pNext  Optional extension chain attached to VkPhysicalDevicePortabilitySubsetPropertiesKHR, or NULL
+ * \param[in]  pNext  Optional extension chain attached to VkPhysicalDevicePortabilitySubsetPropertiesKHR, or NULL
  *
  * \retval None No value is returned.
  */
@@ -227,9 +227,9 @@ void cvkInitPhysicalDevicePortabilitySubsetProperties(VkPhysicalDevicePortabilit
  * \brief Initializes a VkPhysicalDeviceShaderEnqueueFeaturesAMDX.
  *
  * \param[out] pInfo              Receives the initialized VkPhysicalDeviceShaderEnqueueFeaturesAMDX
- * \param[in] pNext              Optional extension chain attached to VkPhysicalDeviceShaderEnqueueFeaturesAMDX, or NULL
- * \param[in] shaderEnqueue      VkPhysicalDeviceShaderEnqueueFeaturesAMDX::shaderEnqueue
- * \param[in] shaderMeshEnqueue  VkPhysicalDeviceShaderEnqueueFeaturesAMDX::shaderMeshEnqueue
+ * \param[in]  pNext              Optional extension chain attached to VkPhysicalDeviceShaderEnqueueFeaturesAMDX, or NULL
+ * \param[in]  shaderEnqueue      VkPhysicalDeviceShaderEnqueueFeaturesAMDX::shaderEnqueue
+ * \param[in]  shaderMeshEnqueue  VkPhysicalDeviceShaderEnqueueFeaturesAMDX::shaderMeshEnqueue
  *
  * \retval None No value is returned.
  */
@@ -238,7 +238,7 @@ void cvkInitPhysicalDeviceShaderEnqueueFeaturesAMDX(VkPhysicalDeviceShaderEnqueu
  * \brief Initializes a VkPhysicalDeviceShaderEnqueuePropertiesAMDX.
  *
  * \param[out] pInfo  Receives the initialized VkPhysicalDeviceShaderEnqueuePropertiesAMDX
- * \param[in] pNext  Optional extension chain attached to VkPhysicalDeviceShaderEnqueuePropertiesAMDX, or NULL
+ * \param[in]  pNext  Optional extension chain attached to VkPhysicalDeviceShaderEnqueuePropertiesAMDX, or NULL
  *
  * \retval None No value is returned.
  */
@@ -247,9 +247,9 @@ void cvkInitPhysicalDeviceShaderEnqueuePropertiesAMDX(VkPhysicalDeviceShaderEnqu
  * \brief Initializes a VkPipelineShaderStageNodeCreateInfoAMDX.
  *
  * \param[out] pInfo  Receives the initialized VkPipelineShaderStageNodeCreateInfoAMDX
- * \param[in] pNext  Optional extension chain attached to VkPipelineShaderStageNodeCreateInfoAMDX, or NULL
- * \param[in] pName  VkPipelineShaderStageNodeCreateInfoAMDX::pName
- * \param[in] index  VkPipelineShaderStageNodeCreateInfoAMDX::index
+ * \param[in]  pNext  Optional extension chain attached to VkPipelineShaderStageNodeCreateInfoAMDX, or NULL
+ * \param[in]  pName  VkPipelineShaderStageNodeCreateInfoAMDX::pName
+ * \param[in]  index  VkPipelineShaderStageNodeCreateInfoAMDX::index
  *
  * \retval None No value is returned.
  */
@@ -258,7 +258,7 @@ void cvkInitPipelineShaderStageNodeCreateInfoAMDX(VkPipelineShaderStageNodeCreat
  * \brief Initializes a VkDeviceOrHostAddressConstAMDX holding its deviceAddress member.
  *
  * \param[out] pInfo          Receives the initialized VkDeviceOrHostAddressConstAMDX
- * \param[in] deviceAddress  VkDeviceOrHostAddressConstAMDX::deviceAddress
+ * \param[in]  deviceAddress  VkDeviceOrHostAddressConstAMDX::deviceAddress
  *
  * \retval None No value is returned.
  */
@@ -267,7 +267,7 @@ void cvkInitDeviceOrHostAddressConstDeviceAddressAMDX(VkDeviceOrHostAddressConst
  * \brief Initializes a VkDeviceOrHostAddressConstAMDX holding its hostAddress member.
  *
  * \param[out] pInfo        Receives the initialized VkDeviceOrHostAddressConstAMDX
- * \param[in] hostAddress  VkDeviceOrHostAddressConstAMDX::hostAddress
+ * \param[in]  hostAddress  VkDeviceOrHostAddressConstAMDX::hostAddress
  *
  * \retval None No value is returned.
  */
@@ -358,11 +358,11 @@ void cvkCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPip
  * \par Details:
  *  Wraps vkCreateCudaFunctionNV. Aborts on any error result.
  *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkCudaFunctionCreateInfoNV, or NULL
- * \param[in] module      VkCudaFunctionCreateInfoNV::module
- * \param[in] pName       VkCudaFunctionCreateInfoNV::pName
- * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[in]  device      VkDevice value
+ * \param[in]  pNext       Optional extension chain attached to VkCudaFunctionCreateInfoNV, or NULL
+ * \param[in]  module      VkCudaFunctionCreateInfoNV::module
+ * \param[in]  pName       VkCudaFunctionCreateInfoNV::pName
+ * \param[in]  pAllocator  Optional allocation callbacks, or NULL
  * \param[out] pFunction   Receives the created VkCudaFunctionNV
  *
  * \retval None No value is returned.
@@ -374,11 +374,11 @@ void cvkCreateCudaFunctionNV(VkDevice device, const void* pNext, VkCudaModuleNV 
  * \par Details:
  *  Wraps vkCreateCudaModuleNV. Aborts on any error result.
  *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkCudaModuleCreateInfoNV, or NULL
- * \param[in] dataSize    VkCudaModuleCreateInfoNV::dataSize
- * \param[in] pData       VkCudaModuleCreateInfoNV::pData
- * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[in]  device      VkDevice value
+ * \param[in]  pNext       Optional extension chain attached to VkCudaModuleCreateInfoNV, or NULL
+ * \param[in]  dataSize    VkCudaModuleCreateInfoNV::dataSize
+ * \param[in]  pData       VkCudaModuleCreateInfoNV::pData
+ * \param[in]  pAllocator  Optional allocation callbacks, or NULL
  * \param[out] pModule     Receives the created VkCudaModuleNV
  *
  * \retval None No value is returned.
@@ -390,11 +390,11 @@ void cvkCreateCudaModuleNV(VkDevice device, const void* pNext, size_t dataSize, 
  * \par Details:
  *  Wraps vkCreateExecutionGraphPipelinesAMDX. Aborts on any error result.
  *
- * \param[in] device           VkDevice value
- * \param[in] pipelineCache    VkPipelineCache value
- * \param[in] createInfoCount  uint32_t value
- * \param[in] pCreateInfos     Array of createInfoCount entries
- * \param[in] pAllocator       Optional allocation callbacks, or NULL
+ * \param[in]  device           VkDevice value
+ * \param[in]  pipelineCache    VkPipelineCache value
+ * \param[in]  createInfoCount  uint32_t value
+ * \param[in]  pCreateInfos     Array of createInfoCount entries
+ * \param[in]  pAllocator       Optional allocation callbacks, or NULL
  * \param[out] pPipelines       Receives the VkPipeline
  *
  * \return VK_SUCCESS or one of: VK_PIPELINE_COMPILE_REQUIRED_EXT. Error results abort.
@@ -432,8 +432,8 @@ void cvkDestroyCudaModuleNV(VkDevice device, VkCudaModuleNV module, const VkAllo
  * \par Details:
  *  Wraps vkGetCudaModuleCacheNV. Aborts on any error result.
  *
- * \param[in] device      VkDevice value
- * \param[in] module      VkCudaModuleNV value
+ * \param[in]  device      VkDevice value
+ * \param[in]  module      VkCudaModuleNV value
  * \param[out] pCacheSize  Receives the size_t
  * \param[out] pCacheData  Receives the void
  *
@@ -446,11 +446,11 @@ VkResult cvkGetCudaModuleCacheNV(VkDevice device, VkCudaModuleNV module, size_t*
  * \par Details:
  *  Wraps vkGetExecutionGraphPipelineNodeIndexAMDX. Aborts on any error result.
  *
- * \param[in] device          VkDevice value
- * \param[in] executionGraph  VkPipeline value
- * \param[in] pNext           Optional extension chain attached to VkPipelineShaderStageNodeCreateInfoAMDX, or NULL
- * \param[in] pName           VkPipelineShaderStageNodeCreateInfoAMDX::pName
- * \param[in] index           VkPipelineShaderStageNodeCreateInfoAMDX::index
+ * \param[in]  device          VkDevice value
+ * \param[in]  executionGraph  VkPipeline value
+ * \param[in]  pNext           Optional extension chain attached to VkPipelineShaderStageNodeCreateInfoAMDX, or NULL
+ * \param[in]  pName           VkPipelineShaderStageNodeCreateInfoAMDX::pName
+ * \param[in]  index           VkPipelineShaderStageNodeCreateInfoAMDX::index
  * \param[out] pNodeIndex      Receives the uint32_t
  *
  * \retval None No value is returned.
@@ -462,9 +462,9 @@ void cvkGetExecutionGraphPipelineNodeIndexAMDX(VkDevice device, VkPipeline execu
  * \par Details:
  *  Wraps vkGetExecutionGraphPipelineScratchSizeAMDX. Aborts on any error result.
  *
- * \param[in] device          VkDevice value
- * \param[in] executionGraph  VkPipeline value
- * \param[in] pNext           Optional output extension chain attached to VkExecutionGraphPipelineScratchSizeAMDX, or NULL
+ * \param[in]  device          VkDevice value
+ * \param[in]  executionGraph  VkPipeline value
+ * \param[in]  pNext           Optional output extension chain attached to VkExecutionGraphPipelineScratchSizeAMDX, or NULL
  * \param[out] pSizeInfo       Receives the VkExecutionGraphPipelineScratchSizeAMDX
  *
  * \retval None No value is returned.
@@ -493,17 +493,17 @@ void cvkDestroyCudaModuleSafeNV(VkDevice device, VkCudaModuleNV module, const Vk
 /**
  * \brief Creates a execution graph pipelines for one element.
  *
- * \param[in] device              VkDevice value
- * \param[in] pipelineCache       VkPipelineCache value
- * \param[in] pNext               Optional extension chain attached to VkExecutionGraphPipelineCreateInfoAMDX, or NULL
- * \param[in] flags               VkExecutionGraphPipelineCreateInfoAMDX::flags
- * \param[in] stageCount          VkExecutionGraphPipelineCreateInfoAMDX::stageCount
- * \param[in] pStages             VkExecutionGraphPipelineCreateInfoAMDX::pStages
- * \param[in] pLibraryInfo        VkExecutionGraphPipelineCreateInfoAMDX::pLibraryInfo
- * \param[in] layout              VkExecutionGraphPipelineCreateInfoAMDX::layout
- * \param[in] basePipelineHandle  VkExecutionGraphPipelineCreateInfoAMDX::basePipelineHandle
- * \param[in] basePipelineIndex   VkExecutionGraphPipelineCreateInfoAMDX::basePipelineIndex
- * \param[in] pAllocator          Optional allocation callbacks, or NULL
+ * \param[in]  device              VkDevice value
+ * \param[in]  pipelineCache       VkPipelineCache value
+ * \param[in]  pNext               Optional extension chain attached to VkExecutionGraphPipelineCreateInfoAMDX, or NULL
+ * \param[in]  flags               VkExecutionGraphPipelineCreateInfoAMDX::flags
+ * \param[in]  stageCount          VkExecutionGraphPipelineCreateInfoAMDX::stageCount
+ * \param[in]  pStages             VkExecutionGraphPipelineCreateInfoAMDX::pStages
+ * \param[in]  pLibraryInfo        VkExecutionGraphPipelineCreateInfoAMDX::pLibraryInfo
+ * \param[in]  layout              VkExecutionGraphPipelineCreateInfoAMDX::layout
+ * \param[in]  basePipelineHandle  VkExecutionGraphPipelineCreateInfoAMDX::basePipelineHandle
+ * \param[in]  basePipelineIndex   VkExecutionGraphPipelineCreateInfoAMDX::basePipelineIndex
+ * \param[in]  pAllocator          Optional allocation callbacks, or NULL
  * \param[out] pPipeline           Receives the created VkPipeline
  *
  * \return VK_SUCCESS or one of: . Error results abort.
@@ -512,18 +512,18 @@ VkResult cvkCreateExecutionGraphPipelineInfoAMDX(VkDevice device, VkPipelineCach
 /**
  * \brief Creates a execution graph pipelines with VkPipelineCompilerControlCreateInfoAMD chained.
  *
- * \param[in] device                See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] pipelineCache         See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] pNext                 See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] compilerControlFlags  VkPipelineCompilerControlCreateInfoAMD::compilerControlFlags
- * \param[in] flags                 See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] stageCount            See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] pStages               See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] pLibraryInfo          See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] layout                See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] basePipelineHandle    See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] basePipelineIndex     See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] pAllocator            See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  device                See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  pipelineCache         See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  pNext                 See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  compilerControlFlags  VkPipelineCompilerControlCreateInfoAMD::compilerControlFlags
+ * \param[in]  flags                 See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  stageCount            See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  pStages               See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  pLibraryInfo          See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  layout                See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  basePipelineHandle    See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  basePipelineIndex     See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  pAllocator            See cvkCreateExecutionGraphPipelineInfoAMDX
  * \param[out] pPipeline             See cvkCreateExecutionGraphPipelineInfoAMDX
  *
  * \return VK_SUCCESS or one of: . Error results abort.
@@ -532,20 +532,20 @@ VkResult cvkCreateExecutionGraphPipelineInfoWithCompilerControlInfoAMDXAMD(VkDev
 /**
  * \brief Creates a execution graph pipelines with VkPipelineCreationFeedbackCreateInfo chained.
  *
- * \param[in] device                              See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] pipelineCache                       See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] pNext                               See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  device                              See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  pipelineCache                       See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  pNext                               See cvkCreateExecutionGraphPipelineInfoAMDX
  * \param[out] pPipelineCreationFeedback           VkPipelineCreationFeedbackCreateInfo::pPipelineCreationFeedback
- * \param[in] pipelineStageCreationFeedbackCount  VkPipelineCreationFeedbackCreateInfo::pipelineStageCreationFeedbackCount
+ * \param[in]  pipelineStageCreationFeedbackCount  VkPipelineCreationFeedbackCreateInfo::pipelineStageCreationFeedbackCount
  * \param[out] pPipelineStageCreationFeedbacks     VkPipelineCreationFeedbackCreateInfo::pPipelineStageCreationFeedbacks
- * \param[in] flags                               See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] stageCount                          See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] pStages                             See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] pLibraryInfo                        See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] layout                              See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] basePipelineHandle                  See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] basePipelineIndex                   See cvkCreateExecutionGraphPipelineInfoAMDX
- * \param[in] pAllocator                          See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  flags                               See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  stageCount                          See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  pStages                             See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  pLibraryInfo                        See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  layout                              See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  basePipelineHandle                  See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  basePipelineIndex                   See cvkCreateExecutionGraphPipelineInfoAMDX
+ * \param[in]  pAllocator                          See cvkCreateExecutionGraphPipelineInfoAMDX
  * \param[out] pPipeline                           See cvkCreateExecutionGraphPipelineInfoAMDX
  *
  * \return VK_SUCCESS or one of: . Error results abort.
@@ -554,8 +554,8 @@ VkResult cvkCreateExecutionGraphPipelineInfoWithCreationFeedbackInfoAMDX(VkDevic
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceCudaKernelLaunchFeaturesNV chained to the output.
  *
- * \param[in] physicalDevice                             VkPhysicalDevice value
- * \param[in] pNext                                      Optional output extension chain attached to VkPhysicalDeviceCudaKernelLaunchFeaturesNV, or NULL
+ * \param[in]  physicalDevice                             VkPhysicalDevice value
+ * \param[in]  pNext                                      Optional output extension chain attached to VkPhysicalDeviceCudaKernelLaunchFeaturesNV, or NULL
  * \param[out] pPhysicalDeviceCudaKernelLaunchFeaturesNV  Receives the VkPhysicalDeviceCudaKernelLaunchFeaturesNV
  *
  * \retval None No value is returned.
@@ -564,8 +564,8 @@ void cvkGetPhysicalDeviceCudaKernelLaunchFeaturesNV(VkPhysicalDevice physicalDev
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX chained to the output.
  *
- * \param[in] physicalDevice                                  VkPhysicalDevice value
- * \param[in] pNext                                           Optional output extension chain attached to VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX, or NULL
+ * \param[in]  physicalDevice                                  VkPhysicalDevice value
+ * \param[in]  pNext                                           Optional output extension chain attached to VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX, or NULL
  * \param[out] pPhysicalDeviceDenseGeometryFormatFeaturesAMDX  Receives the VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX
  *
  * \retval None No value is returned.
@@ -574,8 +574,8 @@ void cvkGetPhysicalDeviceDenseGeometryFormatFeaturesAMDX(VkPhysicalDevice physic
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceDisplacementMicromapFeaturesNV chained to the output.
  *
- * \param[in] physicalDevice                                 VkPhysicalDevice value
- * \param[in] pNext                                          Optional output extension chain attached to VkPhysicalDeviceDisplacementMicromapFeaturesNV, or NULL
+ * \param[in]  physicalDevice                                 VkPhysicalDevice value
+ * \param[in]  pNext                                          Optional output extension chain attached to VkPhysicalDeviceDisplacementMicromapFeaturesNV, or NULL
  * \param[out] pPhysicalDeviceDisplacementMicromapFeaturesNV  Receives the VkPhysicalDeviceDisplacementMicromapFeaturesNV
  *
  * \retval None No value is returned.
@@ -584,8 +584,8 @@ void cvkGetPhysicalDeviceDisplacementMicromapFeaturesNV(VkPhysicalDevice physica
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDevicePortabilitySubsetFeaturesKHR chained to the output.
  *
- * \param[in] physicalDevice                            VkPhysicalDevice value
- * \param[in] pNext                                     Optional output extension chain attached to VkPhysicalDevicePortabilitySubsetFeaturesKHR, or NULL
+ * \param[in]  physicalDevice                            VkPhysicalDevice value
+ * \param[in]  pNext                                     Optional output extension chain attached to VkPhysicalDevicePortabilitySubsetFeaturesKHR, or NULL
  * \param[out] pPhysicalDevicePortabilitySubsetFeatures  Receives the VkPhysicalDevicePortabilitySubsetFeaturesKHR
  *
  * \retval None No value is returned.
@@ -594,8 +594,8 @@ void cvkGetPhysicalDevicePortabilitySubsetFeatures(VkPhysicalDevice physicalDevi
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderEnqueueFeaturesAMDX chained to the output.
  *
- * \param[in] physicalDevice                            VkPhysicalDevice value
- * \param[in] pNext                                     Optional output extension chain attached to VkPhysicalDeviceShaderEnqueueFeaturesAMDX, or NULL
+ * \param[in]  physicalDevice                            VkPhysicalDevice value
+ * \param[in]  pNext                                     Optional output extension chain attached to VkPhysicalDeviceShaderEnqueueFeaturesAMDX, or NULL
  * \param[out] pPhysicalDeviceShaderEnqueueFeaturesAMDX  Receives the VkPhysicalDeviceShaderEnqueueFeaturesAMDX
  *
  * \retval None No value is returned.
@@ -604,8 +604,8 @@ void cvkGetPhysicalDeviceShaderEnqueueFeaturesAMDX(VkPhysicalDevice physicalDevi
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceCudaKernelLaunchPropertiesNV chained to the output.
  *
- * \param[in] physicalDevice                               VkPhysicalDevice value
- * \param[in] pNext                                        Optional output extension chain attached to VkPhysicalDeviceCudaKernelLaunchPropertiesNV, or NULL
+ * \param[in]  physicalDevice                               VkPhysicalDevice value
+ * \param[in]  pNext                                        Optional output extension chain attached to VkPhysicalDeviceCudaKernelLaunchPropertiesNV, or NULL
  * \param[out] pPhysicalDeviceCudaKernelLaunchPropertiesNV  Receives the VkPhysicalDeviceCudaKernelLaunchPropertiesNV
  *
  * \retval None No value is returned.
@@ -614,8 +614,8 @@ void cvkGetPhysicalDeviceCudaKernelLaunchPropertiesNV(VkPhysicalDevice physicalD
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceDisplacementMicromapPropertiesNV chained to the output.
  *
- * \param[in] physicalDevice                                   VkPhysicalDevice value
- * \param[in] pNext                                            Optional output extension chain attached to VkPhysicalDeviceDisplacementMicromapPropertiesNV, or NULL
+ * \param[in]  physicalDevice                                   VkPhysicalDevice value
+ * \param[in]  pNext                                            Optional output extension chain attached to VkPhysicalDeviceDisplacementMicromapPropertiesNV, or NULL
  * \param[out] pPhysicalDeviceDisplacementMicromapPropertiesNV  Receives the VkPhysicalDeviceDisplacementMicromapPropertiesNV
  *
  * \retval None No value is returned.
@@ -624,8 +624,8 @@ void cvkGetPhysicalDeviceDisplacementMicromapPropertiesNV(VkPhysicalDevice physi
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDevicePortabilitySubsetPropertiesKHR chained to the output.
  *
- * \param[in] physicalDevice                              VkPhysicalDevice value
- * \param[in] pNext                                       Optional output extension chain attached to VkPhysicalDevicePortabilitySubsetPropertiesKHR, or NULL
+ * \param[in]  physicalDevice                              VkPhysicalDevice value
+ * \param[in]  pNext                                       Optional output extension chain attached to VkPhysicalDevicePortabilitySubsetPropertiesKHR, or NULL
  * \param[out] pPhysicalDevicePortabilitySubsetProperties  Receives the VkPhysicalDevicePortabilitySubsetPropertiesKHR
  *
  * \retval None No value is returned.
@@ -634,8 +634,8 @@ void cvkGetPhysicalDevicePortabilitySubsetProperties(VkPhysicalDevice physicalDe
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceShaderEnqueuePropertiesAMDX chained to the output.
  *
- * \param[in] physicalDevice                              VkPhysicalDevice value
- * \param[in] pNext                                       Optional output extension chain attached to VkPhysicalDeviceShaderEnqueuePropertiesAMDX, or NULL
+ * \param[in]  physicalDevice                              VkPhysicalDevice value
+ * \param[in]  pNext                                       Optional output extension chain attached to VkPhysicalDeviceShaderEnqueuePropertiesAMDX, or NULL
  * \param[out] pPhysicalDeviceShaderEnqueuePropertiesAMDX  Receives the VkPhysicalDeviceShaderEnqueuePropertiesAMDX
  *
  * \retval None No value is returned.

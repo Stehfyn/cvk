@@ -12,10 +12,10 @@
 
 /**
  * \brief Reads up to the declared native array capacity.
- * \param[in] pContext Parsing document and arena.
- * \param[in] pValue JSON array, or NULL.
- * \param[out] pOutput Native element storage, already zeroed.
- * \param[in] capacity Native element count.
+ * \param[in]  pContext  Parsing document and arena.
+ * \param[in]  pValue    JSON array, or NULL.
+ * \param[out] pOutput   Native element storage, already zeroed.
+ * \param[in]  capacity  Native element count.
  * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkReadJsonUint32FixedArray(const cvkJsonContext* pContext,

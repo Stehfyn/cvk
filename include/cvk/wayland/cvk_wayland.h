@@ -12,10 +12,10 @@
  * \brief Initializes a VkWaylandSurfaceCreateInfoKHR.
  *
  * \param[out] pInfo    Receives the initialized VkWaylandSurfaceCreateInfoKHR
- * \param[in] pNext    Optional extension chain attached to VkWaylandSurfaceCreateInfoKHR, or NULL
- * \param[in] flags    VkWaylandSurfaceCreateInfoKHR::flags
- * \param[in] display  VkWaylandSurfaceCreateInfoKHR::display
- * \param[in] surface  VkWaylandSurfaceCreateInfoKHR::surface
+ * \param[in]  pNext    Optional extension chain attached to VkWaylandSurfaceCreateInfoKHR, or NULL
+ * \param[in]  flags    VkWaylandSurfaceCreateInfoKHR::flags
+ * \param[in]  display  VkWaylandSurfaceCreateInfoKHR::display
+ * \param[in]  surface  VkWaylandSurfaceCreateInfoKHR::surface
  *
  * \retval None No value is returned.
  */
@@ -26,12 +26,12 @@ void cvkInitWaylandSurfaceCreateInfo(VkWaylandSurfaceCreateInfoKHR* pInfo, const
  * \par Details:
  *  Wraps vkCreateWaylandSurfaceKHR. Aborts on any error result.
  *
- * \param[in] instance    VkInstance value
- * \param[in] pNext       Optional extension chain attached to VkWaylandSurfaceCreateInfoKHR, or NULL
- * \param[in] flags       VkWaylandSurfaceCreateInfoKHR::flags
- * \param[in] display     VkWaylandSurfaceCreateInfoKHR::display
- * \param[in] surface     VkWaylandSurfaceCreateInfoKHR::surface
- * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[in]  instance    VkInstance value
+ * \param[in]  pNext       Optional extension chain attached to VkWaylandSurfaceCreateInfoKHR, or NULL
+ * \param[in]  flags       VkWaylandSurfaceCreateInfoKHR::flags
+ * \param[in]  display     VkWaylandSurfaceCreateInfoKHR::display
+ * \param[in]  surface     VkWaylandSurfaceCreateInfoKHR::surface
+ * \param[in]  pAllocator  Optional allocation callbacks, or NULL
  * \param[out] pSurface    Receives the created VkSurfaceKHR
  *
  * \retval None No value is returned.
@@ -43,8 +43,8 @@ void cvkCreateWaylandSurface(VkInstance instance, const void* pNext, VkWaylandSu
  * \par Details:
  *  Wraps vkGetPhysicalDeviceWaylandPresentationSupportKHR.
  *
- * \param[in] physicalDevice    VkPhysicalDevice value
- * \param[in] queueFamilyIndex  uint32_t value
+ * \param[in]  physicalDevice    VkPhysicalDevice value
+ * \param[in]  queueFamilyIndex  uint32_t value
  * \param[out] display           Receives the wl_display
  *
  * \return The VkBool32 returned by the command.

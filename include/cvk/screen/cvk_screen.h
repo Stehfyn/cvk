@@ -12,8 +12,8 @@
  * \brief Initializes a VkExternalFormatQNX.
  *
  * \param[out] pInfo           Receives the initialized VkExternalFormatQNX
- * \param[in] pNext           Optional extension chain attached to VkExternalFormatQNX, or NULL
- * \param[in] externalFormat  VkExternalFormatQNX::externalFormat
+ * \param[in]  pNext           Optional extension chain attached to VkExternalFormatQNX, or NULL
+ * \param[in]  externalFormat  VkExternalFormatQNX::externalFormat
  *
  * \retval None No value is returned.
  */
@@ -22,8 +22,8 @@ void cvkInitExternalFormatQNX(VkExternalFormatQNX* pInfo, void* pNext, uint64_t 
  * \brief Initializes a VkImportScreenBufferInfoQNX.
  *
  * \param[out] pInfo   Receives the initialized VkImportScreenBufferInfoQNX
- * \param[in] pNext   Optional extension chain attached to VkImportScreenBufferInfoQNX, or NULL
- * \param[in] buffer  VkImportScreenBufferInfoQNX::buffer
+ * \param[in]  pNext   Optional extension chain attached to VkImportScreenBufferInfoQNX, or NULL
+ * \param[in]  buffer  VkImportScreenBufferInfoQNX::buffer
  *
  * \retval None No value is returned.
  */
@@ -32,8 +32,8 @@ void cvkInitImportScreenBufferInfoQNX(VkImportScreenBufferInfoQNX* pInfo, const 
  * \brief Initializes a VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX.
  *
  * \param[out] pInfo               Receives the initialized VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX
- * \param[in] pNext               Optional extension chain attached to VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX, or NULL
- * \param[in] screenBufferImport  VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX::screenBufferImport
+ * \param[in]  pNext               Optional extension chain attached to VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX, or NULL
+ * \param[in]  screenBufferImport  VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX::screenBufferImport
  *
  * \retval None No value is returned.
  */
@@ -42,7 +42,7 @@ void cvkInitPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(VkPhysicalDevice
  * \brief Initializes a VkScreenBufferFormatPropertiesQNX.
  *
  * \param[out] pInfo  Receives the initialized VkScreenBufferFormatPropertiesQNX
- * \param[in] pNext  Optional extension chain attached to VkScreenBufferFormatPropertiesQNX, or NULL
+ * \param[in]  pNext  Optional extension chain attached to VkScreenBufferFormatPropertiesQNX, or NULL
  *
  * \retval None No value is returned.
  */
@@ -51,7 +51,7 @@ void cvkInitScreenBufferFormatPropertiesQNX(VkScreenBufferFormatPropertiesQNX* p
  * \brief Initializes a VkScreenBufferPropertiesQNX.
  *
  * \param[out] pInfo  Receives the initialized VkScreenBufferPropertiesQNX
- * \param[in] pNext  Optional extension chain attached to VkScreenBufferPropertiesQNX, or NULL
+ * \param[in]  pNext  Optional extension chain attached to VkScreenBufferPropertiesQNX, or NULL
  *
  * \retval None No value is returned.
  */
@@ -60,10 +60,10 @@ void cvkInitScreenBufferPropertiesQNX(VkScreenBufferPropertiesQNX* pInfo, void* 
  * \brief Initializes a VkScreenSurfaceCreateInfoQNX.
  *
  * \param[out] pInfo    Receives the initialized VkScreenSurfaceCreateInfoQNX
- * \param[in] pNext    Optional extension chain attached to VkScreenSurfaceCreateInfoQNX, or NULL
- * \param[in] flags    VkScreenSurfaceCreateInfoQNX::flags
- * \param[in] context  VkScreenSurfaceCreateInfoQNX::context
- * \param[in] window   VkScreenSurfaceCreateInfoQNX::window
+ * \param[in]  pNext    Optional extension chain attached to VkScreenSurfaceCreateInfoQNX, or NULL
+ * \param[in]  flags    VkScreenSurfaceCreateInfoQNX::flags
+ * \param[in]  context  VkScreenSurfaceCreateInfoQNX::context
+ * \param[in]  window   VkScreenSurfaceCreateInfoQNX::window
  *
  * \retval None No value is returned.
  */
@@ -74,12 +74,12 @@ void cvkInitScreenSurfaceCreateInfoQNX(VkScreenSurfaceCreateInfoQNX* pInfo, cons
  * \par Details:
  *  Wraps vkCreateScreenSurfaceQNX. Aborts on any error result.
  *
- * \param[in] instance    VkInstance value
- * \param[in] pNext       Optional extension chain attached to VkScreenSurfaceCreateInfoQNX, or NULL
- * \param[in] flags       VkScreenSurfaceCreateInfoQNX::flags
- * \param[in] context     VkScreenSurfaceCreateInfoQNX::context
- * \param[in] window      VkScreenSurfaceCreateInfoQNX::window
- * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[in]  instance    VkInstance value
+ * \param[in]  pNext       Optional extension chain attached to VkScreenSurfaceCreateInfoQNX, or NULL
+ * \param[in]  flags       VkScreenSurfaceCreateInfoQNX::flags
+ * \param[in]  context     VkScreenSurfaceCreateInfoQNX::context
+ * \param[in]  window      VkScreenSurfaceCreateInfoQNX::window
+ * \param[in]  pAllocator  Optional allocation callbacks, or NULL
  * \param[out] pSurface    Receives the created VkSurfaceKHR
  *
  * \retval None No value is returned.
@@ -91,8 +91,8 @@ void cvkCreateScreenSurfaceQNX(VkInstance instance, const void* pNext, VkScreenS
  * \par Details:
  *  Wraps vkGetPhysicalDeviceScreenPresentationSupportQNX.
  *
- * \param[in] physicalDevice    VkPhysicalDevice value
- * \param[in] queueFamilyIndex  uint32_t value
+ * \param[in]  physicalDevice    VkPhysicalDevice value
+ * \param[in]  queueFamilyIndex  uint32_t value
  * \param[out] window            Receives the _screen_window
  *
  * \return The VkBool32 returned by the command.
@@ -104,9 +104,9 @@ VkBool32 cvkGetPhysicalDeviceScreenPresentationSupportQNX(VkPhysicalDevice physi
  * \par Details:
  *  Wraps vkGetScreenBufferPropertiesQNX. Aborts on any error result.
  *
- * \param[in] device       VkDevice value
- * \param[in] buffer       _screen_buffer value
- * \param[in] pNext        Optional output extension chain attached to VkScreenBufferPropertiesQNX, or NULL
+ * \param[in]  device       VkDevice value
+ * \param[in]  buffer       _screen_buffer value
+ * \param[in]  pNext        Optional output extension chain attached to VkScreenBufferPropertiesQNX, or NULL
  * \param[out] pProperties  Receives the VkScreenBufferPropertiesQNX
  *
  * \retval None No value is returned.
@@ -115,12 +115,12 @@ void cvkGetScreenBufferPropertiesQNX(VkDevice device, const struct _screen_buffe
 /**
  * \brief Allocates memory with VkImportScreenBufferInfoQNX chained.
  *
- * \param[in] device           See cvkAllocateMemory
- * \param[in] pNext            See cvkAllocateMemory
- * \param[in] buffer           VkImportScreenBufferInfoQNX::buffer
- * \param[in] allocationSize   See cvkAllocateMemory
- * \param[in] memoryTypeIndex  See cvkAllocateMemory
- * \param[in] pAllocator       See cvkAllocateMemory
+ * \param[in]  device           See cvkAllocateMemory
+ * \param[in]  pNext            See cvkAllocateMemory
+ * \param[in]  buffer           VkImportScreenBufferInfoQNX::buffer
+ * \param[in]  allocationSize   See cvkAllocateMemory
+ * \param[in]  memoryTypeIndex  See cvkAllocateMemory
+ * \param[in]  pAllocator       See cvkAllocateMemory
  * \param[out] pMemory          See cvkAllocateMemory
  *
  * \retval None No value is returned.
@@ -129,23 +129,23 @@ void cvkAllocateImportScreenBufferQNX(VkDevice device, const void* pNext, struct
 /**
  * \brief Creates a image with VkExternalFormatQNX chained.
  *
- * \param[in] device                 See cvkCreateImage
+ * \param[in]  device                 See cvkCreateImage
  * \param[out] pNext                  See cvkCreateImage
- * \param[in] externalFormat         VkExternalFormatQNX::externalFormat
- * \param[in] flags                  See cvkCreateImage
- * \param[in] imageType              See cvkCreateImage
- * \param[in] format                 See cvkCreateImage
- * \param[in] extent                 See cvkCreateImage
- * \param[in] mipLevels              See cvkCreateImage
- * \param[in] arrayLayers            See cvkCreateImage
- * \param[in] samples                See cvkCreateImage
- * \param[in] tiling                 See cvkCreateImage
- * \param[in] usage                  See cvkCreateImage
- * \param[in] sharingMode            See cvkCreateImage
- * \param[in] queueFamilyIndexCount  See cvkCreateImage
- * \param[in] pQueueFamilyIndices    See cvkCreateImage
- * \param[in] initialLayout          See cvkCreateImage
- * \param[in] pAllocator             See cvkCreateImage
+ * \param[in]  externalFormat         VkExternalFormatQNX::externalFormat
+ * \param[in]  flags                  See cvkCreateImage
+ * \param[in]  imageType              See cvkCreateImage
+ * \param[in]  format                 See cvkCreateImage
+ * \param[in]  extent                 See cvkCreateImage
+ * \param[in]  mipLevels              See cvkCreateImage
+ * \param[in]  arrayLayers            See cvkCreateImage
+ * \param[in]  samples                See cvkCreateImage
+ * \param[in]  tiling                 See cvkCreateImage
+ * \param[in]  usage                  See cvkCreateImage
+ * \param[in]  sharingMode            See cvkCreateImage
+ * \param[in]  queueFamilyIndexCount  See cvkCreateImage
+ * \param[in]  pQueueFamilyIndices    See cvkCreateImage
+ * \param[in]  initialLayout          See cvkCreateImage
+ * \param[in]  pAllocator             See cvkCreateImage
  * \param[out] pImage                 See cvkCreateImage
  *
  * \retval None No value is returned.
@@ -154,18 +154,18 @@ void cvkCreateImageWithExternalFormatInfoQNX(VkDevice device, void* pNext, uint6
 /**
  * \brief Creates a sampler ycbcr conversion with VkExternalFormatQNX chained.
  *
- * \param[in] device                       See cvkCreateSamplerYcbcrConversion
+ * \param[in]  device                       See cvkCreateSamplerYcbcrConversion
  * \param[out] pNext                        See cvkCreateSamplerYcbcrConversion
- * \param[in] externalFormat               VkExternalFormatQNX::externalFormat
- * \param[in] format                       See cvkCreateSamplerYcbcrConversion
- * \param[in] ycbcrModel                   See cvkCreateSamplerYcbcrConversion
- * \param[in] ycbcrRange                   See cvkCreateSamplerYcbcrConversion
- * \param[in] components                   See cvkCreateSamplerYcbcrConversion
- * \param[in] xChromaOffset                See cvkCreateSamplerYcbcrConversion
- * \param[in] yChromaOffset                See cvkCreateSamplerYcbcrConversion
- * \param[in] chromaFilter                 See cvkCreateSamplerYcbcrConversion
- * \param[in] forceExplicitReconstruction  See cvkCreateSamplerYcbcrConversion
- * \param[in] pAllocator                   See cvkCreateSamplerYcbcrConversion
+ * \param[in]  externalFormat               VkExternalFormatQNX::externalFormat
+ * \param[in]  format                       See cvkCreateSamplerYcbcrConversion
+ * \param[in]  ycbcrModel                   See cvkCreateSamplerYcbcrConversion
+ * \param[in]  ycbcrRange                   See cvkCreateSamplerYcbcrConversion
+ * \param[in]  components                   See cvkCreateSamplerYcbcrConversion
+ * \param[in]  xChromaOffset                See cvkCreateSamplerYcbcrConversion
+ * \param[in]  yChromaOffset                See cvkCreateSamplerYcbcrConversion
+ * \param[in]  chromaFilter                 See cvkCreateSamplerYcbcrConversion
+ * \param[in]  forceExplicitReconstruction  See cvkCreateSamplerYcbcrConversion
+ * \param[in]  pAllocator                   See cvkCreateSamplerYcbcrConversion
  * \param[out] pYcbcrConversion             See cvkCreateSamplerYcbcrConversion
  *
  * \retval None No value is returned.
@@ -174,8 +174,8 @@ void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoQNX(VkDevice device, v
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX chained to the output.
  *
- * \param[in] physicalDevice                                        VkPhysicalDevice value
- * \param[in] pNext                                                 Optional output extension chain attached to VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX, or NULL
+ * \param[in]  physicalDevice                                        VkPhysicalDevice value
+ * \param[in]  pNext                                                 Optional output extension chain attached to VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX, or NULL
  * \param[out] pPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX  Receives the VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX
  *
  * \retval None No value is returned.
@@ -184,9 +184,9 @@ void cvkGetPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(VkPhysicalDevice 
 /**
  * \brief Retrieves screen buffer properties with VkScreenBufferFormatPropertiesQNX chained to the output.
  *
- * \param[in] device                            VkDevice value
- * \param[in] buffer                            _screen_buffer value
- * \param[in] pNext                             Optional output extension chain attached to VkScreenBufferFormatPropertiesQNX, or NULL
+ * \param[in]  device                            VkDevice value
+ * \param[in]  buffer                            _screen_buffer value
+ * \param[in]  pNext                             Optional output extension chain attached to VkScreenBufferFormatPropertiesQNX, or NULL
  * \param[out] pScreenBufferFormatPropertiesQNX  Receives the VkScreenBufferFormatPropertiesQNX
  *
  * \retval None No value is returned.

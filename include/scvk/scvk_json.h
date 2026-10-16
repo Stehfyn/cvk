@@ -1997,8 +1997,8 @@ VkSwapchainCreateFlagsKHR scvkParseJsonSwapchainCreateFlags(const scvkJsonValue*
 /**
  * \brief Parses a VkAcquireNextImageInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkAcquireNextImageInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkAcquireNextImageInfoKHR
  * \param[out] pInfo     Receives the parsed VkAcquireNextImageInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2007,8 +2007,8 @@ void scvkParseJsonAcquireNextImageInfo(const scvkJsonContext* pContext, const sc
 /**
  * \brief Parses a VkAcquireProfilingLockInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkAcquireProfilingLockInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkAcquireProfilingLockInfoKHR
  * \param[out] pInfo     Receives the parsed VkAcquireProfilingLockInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2017,8 +2017,8 @@ void scvkParseJsonAcquireProfilingLockInfo(const scvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkAllocationCallbacks from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkAllocationCallbacks
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkAllocationCallbacks
  * \param[out] pInfo     Receives the parsed VkAllocationCallbacks, zeroed first
  *
  * \retval None No value is returned.
@@ -2027,8 +2027,8 @@ void scvkParseJsonAllocationCallbacks(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkApplicationInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkApplicationInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkApplicationInfo
  * \param[out] pInfo     Receives the parsed VkApplicationInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2037,8 +2037,8 @@ void scvkParseJsonApplicationInfo(const scvkJsonContext* pContext, const scvkJso
 /**
  * \brief Parses a VkApplicationParametersEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkApplicationParametersEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkApplicationParametersEXT
  * \param[out] pInfo     Receives the parsed VkApplicationParametersEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -2047,8 +2047,8 @@ void scvkParseJsonApplicationParameters(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkAttachmentDescription from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkAttachmentDescription
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkAttachmentDescription
  * \param[out] pInfo     Receives the parsed VkAttachmentDescription, zeroed first
  *
  * \retval None No value is returned.
@@ -2057,8 +2057,8 @@ void scvkParseJsonAttachmentDescription(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkAttachmentDescription2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkAttachmentDescription2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkAttachmentDescription2
  * \param[out] pInfo     Receives the parsed VkAttachmentDescription2, zeroed first
  *
  * \retval None No value is returned.
@@ -2067,8 +2067,8 @@ void scvkParseJsonAttachmentDescription2(const scvkJsonContext* pContext, const 
 /**
  * \brief Parses a VkAttachmentDescriptionStencilLayout from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkAttachmentDescriptionStencilLayout
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkAttachmentDescriptionStencilLayout
  * \param[out] pInfo     Receives the parsed VkAttachmentDescriptionStencilLayout, zeroed first
  *
  * \retval None No value is returned.
@@ -2077,8 +2077,8 @@ void scvkParseJsonAttachmentDescriptionStencilLayout(const scvkJsonContext* pCon
 /**
  * \brief Parses a VkAttachmentReference from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkAttachmentReference
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkAttachmentReference
  * \param[out] pInfo     Receives the parsed VkAttachmentReference, zeroed first
  *
  * \retval None No value is returned.
@@ -2087,8 +2087,8 @@ void scvkParseJsonAttachmentReference(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkAttachmentReference2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkAttachmentReference2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkAttachmentReference2
  * \param[out] pInfo     Receives the parsed VkAttachmentReference2, zeroed first
  *
  * \retval None No value is returned.
@@ -2097,8 +2097,8 @@ void scvkParseJsonAttachmentReference2(const scvkJsonContext* pContext, const sc
 /**
  * \brief Parses a VkAttachmentReferenceStencilLayout from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkAttachmentReferenceStencilLayout
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkAttachmentReferenceStencilLayout
  * \param[out] pInfo     Receives the parsed VkAttachmentReferenceStencilLayout, zeroed first
  *
  * \retval None No value is returned.
@@ -2107,8 +2107,8 @@ void scvkParseJsonAttachmentReferenceStencilLayout(const scvkJsonContext* pConte
 /**
  * \brief Parses a VkAttachmentSampleLocationsEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkAttachmentSampleLocationsEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkAttachmentSampleLocationsEXT
  * \param[out] pInfo     Receives the parsed VkAttachmentSampleLocationsEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -2117,8 +2117,8 @@ void scvkParseJsonAttachmentSampleLocations(const scvkJsonContext* pContext, con
 /**
  * \brief Parses a VkBindBufferMemoryDeviceGroupInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBindBufferMemoryDeviceGroupInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBindBufferMemoryDeviceGroupInfo
  * \param[out] pInfo     Receives the parsed VkBindBufferMemoryDeviceGroupInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2127,8 +2127,8 @@ void scvkParseJsonBindBufferMemoryDeviceGroupInfo(const scvkJsonContext* pContex
 /**
  * \brief Parses a VkBindBufferMemoryInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBindBufferMemoryInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBindBufferMemoryInfo
  * \param[out] pInfo     Receives the parsed VkBindBufferMemoryInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2137,8 +2137,8 @@ void scvkParseJsonBindBufferMemoryInfo(const scvkJsonContext* pContext, const sc
 /**
  * \brief Parses a VkBindImageMemoryDeviceGroupInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBindImageMemoryDeviceGroupInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBindImageMemoryDeviceGroupInfo
  * \param[out] pInfo     Receives the parsed VkBindImageMemoryDeviceGroupInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2147,8 +2147,8 @@ void scvkParseJsonBindImageMemoryDeviceGroupInfo(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkBindImageMemoryInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBindImageMemoryInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBindImageMemoryInfo
  * \param[out] pInfo     Receives the parsed VkBindImageMemoryInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2157,8 +2157,8 @@ void scvkParseJsonBindImageMemoryInfo(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkBindImageMemorySwapchainInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBindImageMemorySwapchainInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBindImageMemorySwapchainInfoKHR
  * \param[out] pInfo     Receives the parsed VkBindImageMemorySwapchainInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2167,8 +2167,8 @@ void scvkParseJsonBindImageMemorySwapchainInfo(const scvkJsonContext* pContext, 
 /**
  * \brief Parses a VkBindImagePlaneMemoryInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBindImagePlaneMemoryInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBindImagePlaneMemoryInfo
  * \param[out] pInfo     Receives the parsed VkBindImagePlaneMemoryInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2177,8 +2177,8 @@ void scvkParseJsonBindImagePlaneMemoryInfo(const scvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkBufferCopy from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBufferCopy
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBufferCopy
  * \param[out] pInfo     Receives the parsed VkBufferCopy, zeroed first
  *
  * \retval None No value is returned.
@@ -2187,8 +2187,8 @@ void scvkParseJsonBufferCopy(const scvkJsonContext* pContext, const scvkJsonValu
 /**
  * \brief Parses a VkBufferCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBufferCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBufferCreateInfo
  * \param[out] pInfo     Receives the parsed VkBufferCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2197,8 +2197,8 @@ void scvkParseJsonBufferCreateInfo(const scvkJsonContext* pContext, const scvkJs
 /**
  * \brief Parses a VkBufferDeviceAddressInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBufferDeviceAddressInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBufferDeviceAddressInfo
  * \param[out] pInfo     Receives the parsed VkBufferDeviceAddressInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2207,8 +2207,8 @@ void scvkParseJsonBufferDeviceAddressInfo(const scvkJsonContext* pContext, const
 /**
  * \brief Parses a VkBufferImageCopy from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBufferImageCopy
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBufferImageCopy
  * \param[out] pInfo     Receives the parsed VkBufferImageCopy, zeroed first
  *
  * \retval None No value is returned.
@@ -2217,8 +2217,8 @@ void scvkParseJsonBufferImageCopy(const scvkJsonContext* pContext, const scvkJso
 /**
  * \brief Parses a VkBufferMemoryBarrier from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBufferMemoryBarrier
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBufferMemoryBarrier
  * \param[out] pInfo     Receives the parsed VkBufferMemoryBarrier, zeroed first
  *
  * \retval None No value is returned.
@@ -2227,8 +2227,8 @@ void scvkParseJsonBufferMemoryBarrier(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkBufferMemoryRequirementsInfo2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBufferMemoryRequirementsInfo2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBufferMemoryRequirementsInfo2
  * \param[out] pInfo     Receives the parsed VkBufferMemoryRequirementsInfo2, zeroed first
  *
  * \retval None No value is returned.
@@ -2237,8 +2237,8 @@ void scvkParseJsonBufferMemoryRequirementsInfo2(const scvkJsonContext* pContext,
 /**
  * \brief Parses a VkBufferOpaqueCaptureAddressCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBufferOpaqueCaptureAddressCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBufferOpaqueCaptureAddressCreateInfo
  * \param[out] pInfo     Receives the parsed VkBufferOpaqueCaptureAddressCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2247,8 +2247,8 @@ void scvkParseJsonBufferOpaqueCaptureAddressCreateInfo(const scvkJsonContext* pC
 /**
  * \brief Parses a VkBufferViewCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkBufferViewCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkBufferViewCreateInfo
  * \param[out] pInfo     Receives the parsed VkBufferViewCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2257,8 +2257,8 @@ void scvkParseJsonBufferViewCreateInfo(const scvkJsonContext* pContext, const sc
 /**
  * \brief Parses a VkCalibratedTimestampInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkCalibratedTimestampInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkCalibratedTimestampInfoKHR
  * \param[out] pInfo     Receives the parsed VkCalibratedTimestampInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2267,8 +2267,8 @@ void scvkParseJsonCalibratedTimestampInfo(const scvkJsonContext* pContext, const
 /**
  * \brief Parses a VkClearAttachment from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkClearAttachment
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkClearAttachment
  * \param[out] pInfo     Receives the parsed VkClearAttachment, zeroed first
  *
  * \retval None No value is returned.
@@ -2277,8 +2277,8 @@ void scvkParseJsonClearAttachment(const scvkJsonContext* pContext, const scvkJso
 /**
  * \brief Parses a VkClearColorValue from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkClearColorValue
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkClearColorValue
  * \param[out] pInfo     Receives the parsed VkClearColorValue, zeroed first
  *
  * \retval None No value is returned.
@@ -2287,8 +2287,8 @@ void scvkParseJsonClearColorValue(const scvkJsonContext* pContext, const scvkJso
 /**
  * \brief Parses a VkClearDepthStencilValue from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkClearDepthStencilValue
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkClearDepthStencilValue
  * \param[out] pInfo     Receives the parsed VkClearDepthStencilValue, zeroed first
  *
  * \retval None No value is returned.
@@ -2297,8 +2297,8 @@ void scvkParseJsonClearDepthStencilValue(const scvkJsonContext* pContext, const 
 /**
  * \brief Parses a VkClearRect from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkClearRect
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkClearRect
  * \param[out] pInfo     Receives the parsed VkClearRect, zeroed first
  *
  * \retval None No value is returned.
@@ -2307,8 +2307,8 @@ void scvkParseJsonClearRect(const scvkJsonContext* pContext, const scvkJsonValue
 /**
  * \brief Parses a VkClearValue from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkClearValue
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkClearValue
  * \param[out] pInfo     Receives the parsed VkClearValue, zeroed first
  *
  * \retval None No value is returned.
@@ -2317,8 +2317,8 @@ void scvkParseJsonClearValue(const scvkJsonContext* pContext, const scvkJsonValu
 /**
  * \brief Parses a VkCommandBufferAllocateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkCommandBufferAllocateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkCommandBufferAllocateInfo
  * \param[out] pInfo     Receives the parsed VkCommandBufferAllocateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2327,8 +2327,8 @@ void scvkParseJsonCommandBufferAllocateInfo(const scvkJsonContext* pContext, con
 /**
  * \brief Parses a VkCommandBufferBeginInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkCommandBufferBeginInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkCommandBufferBeginInfo
  * \param[out] pInfo     Receives the parsed VkCommandBufferBeginInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2337,8 +2337,8 @@ void scvkParseJsonCommandBufferBeginInfo(const scvkJsonContext* pContext, const 
 /**
  * \brief Parses a VkCommandBufferInheritanceInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkCommandBufferInheritanceInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkCommandBufferInheritanceInfo
  * \param[out] pInfo     Receives the parsed VkCommandBufferInheritanceInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2347,8 +2347,8 @@ void scvkParseJsonCommandBufferInheritanceInfo(const scvkJsonContext* pContext, 
 /**
  * \brief Parses a VkCommandPoolCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkCommandPoolCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkCommandPoolCreateInfo
  * \param[out] pInfo     Receives the parsed VkCommandPoolCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2357,8 +2357,8 @@ void scvkParseJsonCommandPoolCreateInfo(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkCommandPoolMemoryConsumption from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkCommandPoolMemoryConsumption
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkCommandPoolMemoryConsumption
  * \param[out] pInfo     Receives the parsed VkCommandPoolMemoryConsumption, zeroed first
  *
  * \retval None No value is returned.
@@ -2367,8 +2367,8 @@ void scvkParseJsonCommandPoolMemoryConsumption(const scvkJsonContext* pContext, 
 /**
  * \brief Parses a VkCommandPoolMemoryReservationCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkCommandPoolMemoryReservationCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkCommandPoolMemoryReservationCreateInfo
  * \param[out] pInfo     Receives the parsed VkCommandPoolMemoryReservationCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2377,8 +2377,8 @@ void scvkParseJsonCommandPoolMemoryReservationCreateInfo(const scvkJsonContext* 
 /**
  * \brief Parses a VkComponentMapping from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkComponentMapping
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkComponentMapping
  * \param[out] pInfo     Receives the parsed VkComponentMapping, zeroed first
  *
  * \retval None No value is returned.
@@ -2387,8 +2387,8 @@ void scvkParseJsonComponentMapping(const scvkJsonContext* pContext, const scvkJs
 /**
  * \brief Parses a VkComputePipelineCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkComputePipelineCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkComputePipelineCreateInfo
  * \param[out] pInfo     Receives the parsed VkComputePipelineCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2397,8 +2397,8 @@ void scvkParseJsonComputePipelineCreateInfo(const scvkJsonContext* pContext, con
 /**
  * \brief Parses a VkConformanceVersion from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkConformanceVersion
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkConformanceVersion
  * \param[out] pInfo     Receives the parsed VkConformanceVersion, zeroed first
  *
  * \retval None No value is returned.
@@ -2407,8 +2407,8 @@ void scvkParseJsonConformanceVersion(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkCopyDescriptorSet from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkCopyDescriptorSet
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkCopyDescriptorSet
  * \param[out] pInfo     Receives the parsed VkCopyDescriptorSet, zeroed first
  *
  * \retval None No value is returned.
@@ -2417,8 +2417,8 @@ void scvkParseJsonCopyDescriptorSet(const scvkJsonContext* pContext, const scvkJ
 /**
  * \brief Parses a VkDebugUtilsLabelEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDebugUtilsLabelEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDebugUtilsLabelEXT
  * \param[out] pInfo     Receives the parsed VkDebugUtilsLabelEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -2427,8 +2427,8 @@ void scvkParseJsonDebugUtilsLabel(const scvkJsonContext* pContext, const scvkJso
 /**
  * \brief Parses a VkDebugUtilsMessengerCallbackDataEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDebugUtilsMessengerCallbackDataEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDebugUtilsMessengerCallbackDataEXT
  * \param[out] pInfo     Receives the parsed VkDebugUtilsMessengerCallbackDataEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -2437,8 +2437,8 @@ void scvkParseJsonDebugUtilsMessengerCallbackData(const scvkJsonContext* pContex
 /**
  * \brief Parses a VkDebugUtilsMessengerCreateInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDebugUtilsMessengerCreateInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDebugUtilsMessengerCreateInfoEXT
  * \param[out] pInfo     Receives the parsed VkDebugUtilsMessengerCreateInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -2447,8 +2447,8 @@ void scvkParseJsonDebugUtilsMessengerCreateInfo(const scvkJsonContext* pContext,
 /**
  * \brief Parses a VkDebugUtilsObjectNameInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDebugUtilsObjectNameInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDebugUtilsObjectNameInfoEXT
  * \param[out] pInfo     Receives the parsed VkDebugUtilsObjectNameInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -2457,8 +2457,8 @@ void scvkParseJsonDebugUtilsObjectNameInfo(const scvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkDebugUtilsObjectTagInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDebugUtilsObjectTagInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDebugUtilsObjectTagInfoEXT
  * \param[out] pInfo     Receives the parsed VkDebugUtilsObjectTagInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -2467,8 +2467,8 @@ void scvkParseJsonDebugUtilsObjectTagInfo(const scvkJsonContext* pContext, const
 /**
  * \brief Parses a VkDescriptorBufferInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDescriptorBufferInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDescriptorBufferInfo
  * \param[out] pInfo     Receives the parsed VkDescriptorBufferInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2477,8 +2477,8 @@ void scvkParseJsonDescriptorBufferInfo(const scvkJsonContext* pContext, const sc
 /**
  * \brief Parses a VkDescriptorImageInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDescriptorImageInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDescriptorImageInfo
  * \param[out] pInfo     Receives the parsed VkDescriptorImageInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2487,8 +2487,8 @@ void scvkParseJsonDescriptorImageInfo(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkDescriptorPoolCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDescriptorPoolCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDescriptorPoolCreateInfo
  * \param[out] pInfo     Receives the parsed VkDescriptorPoolCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2497,8 +2497,8 @@ void scvkParseJsonDescriptorPoolCreateInfo(const scvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkDescriptorPoolSize from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDescriptorPoolSize
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDescriptorPoolSize
  * \param[out] pInfo     Receives the parsed VkDescriptorPoolSize, zeroed first
  *
  * \retval None No value is returned.
@@ -2507,8 +2507,8 @@ void scvkParseJsonDescriptorPoolSize(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkDescriptorSetAllocateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDescriptorSetAllocateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDescriptorSetAllocateInfo
  * \param[out] pInfo     Receives the parsed VkDescriptorSetAllocateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2517,8 +2517,8 @@ void scvkParseJsonDescriptorSetAllocateInfo(const scvkJsonContext* pContext, con
 /**
  * \brief Parses a VkDescriptorSetLayoutBinding from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDescriptorSetLayoutBinding
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDescriptorSetLayoutBinding
  * \param[out] pInfo     Receives the parsed VkDescriptorSetLayoutBinding, zeroed first
  *
  * \retval None No value is returned.
@@ -2527,8 +2527,8 @@ void scvkParseJsonDescriptorSetLayoutBinding(const scvkJsonContext* pContext, co
 /**
  * \brief Parses a VkDescriptorSetLayoutBindingFlagsCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDescriptorSetLayoutBindingFlagsCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDescriptorSetLayoutBindingFlagsCreateInfo
  * \param[out] pInfo     Receives the parsed VkDescriptorSetLayoutBindingFlagsCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2537,8 +2537,8 @@ void scvkParseJsonDescriptorSetLayoutBindingFlagsCreateInfo(const scvkJsonContex
 /**
  * \brief Parses a VkDescriptorSetLayoutCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDescriptorSetLayoutCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDescriptorSetLayoutCreateInfo
  * \param[out] pInfo     Receives the parsed VkDescriptorSetLayoutCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2547,8 +2547,8 @@ void scvkParseJsonDescriptorSetLayoutCreateInfo(const scvkJsonContext* pContext,
 /**
  * \brief Parses a VkDescriptorSetLayoutSupport from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDescriptorSetLayoutSupport
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDescriptorSetLayoutSupport
  * \param[out] pInfo     Receives the parsed VkDescriptorSetLayoutSupport, zeroed first
  *
  * \retval None No value is returned.
@@ -2557,8 +2557,8 @@ void scvkParseJsonDescriptorSetLayoutSupport(const scvkJsonContext* pContext, co
 /**
  * \brief Parses a VkDescriptorSetVariableDescriptorCountAllocateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDescriptorSetVariableDescriptorCountAllocateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDescriptorSetVariableDescriptorCountAllocateInfo
  * \param[out] pInfo     Receives the parsed VkDescriptorSetVariableDescriptorCountAllocateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2567,8 +2567,8 @@ void scvkParseJsonDescriptorSetVariableDescriptorCountAllocateInfo(const scvkJso
 /**
  * \brief Parses a VkDescriptorSetVariableDescriptorCountLayoutSupport from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDescriptorSetVariableDescriptorCountLayoutSupport
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDescriptorSetVariableDescriptorCountLayoutSupport
  * \param[out] pInfo     Receives the parsed VkDescriptorSetVariableDescriptorCountLayoutSupport, zeroed first
  *
  * \retval None No value is returned.
@@ -2577,8 +2577,8 @@ void scvkParseJsonDescriptorSetVariableDescriptorCountLayoutSupport(const scvkJs
 /**
  * \brief Parses a VkDeviceCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDeviceCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDeviceCreateInfo
  * \param[out] pInfo     Receives the parsed VkDeviceCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2587,8 +2587,8 @@ void scvkParseJsonDeviceCreateInfo(const scvkJsonContext* pContext, const scvkJs
 /**
  * \brief Parses a VkDeviceEventInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDeviceEventInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDeviceEventInfoEXT
  * \param[out] pInfo     Receives the parsed VkDeviceEventInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -2597,8 +2597,8 @@ void scvkParseJsonDeviceEventInfo(const scvkJsonContext* pContext, const scvkJso
 /**
  * \brief Parses a VkDeviceGroupCommandBufferBeginInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDeviceGroupCommandBufferBeginInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDeviceGroupCommandBufferBeginInfo
  * \param[out] pInfo     Receives the parsed VkDeviceGroupCommandBufferBeginInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2607,8 +2607,8 @@ void scvkParseJsonDeviceGroupCommandBufferBeginInfo(const scvkJsonContext* pCont
 /**
  * \brief Parses a VkDeviceGroupDeviceCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDeviceGroupDeviceCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDeviceGroupDeviceCreateInfo
  * \param[out] pInfo     Receives the parsed VkDeviceGroupDeviceCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2617,8 +2617,8 @@ void scvkParseJsonDeviceGroupDeviceCreateInfo(const scvkJsonContext* pContext, c
 /**
  * \brief Parses a VkDeviceGroupPresentCapabilitiesKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDeviceGroupPresentCapabilitiesKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDeviceGroupPresentCapabilitiesKHR
  * \param[out] pInfo     Receives the parsed VkDeviceGroupPresentCapabilitiesKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2627,8 +2627,8 @@ void scvkParseJsonDeviceGroupPresentCapabilities(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkDeviceGroupPresentInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDeviceGroupPresentInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDeviceGroupPresentInfoKHR
  * \param[out] pInfo     Receives the parsed VkDeviceGroupPresentInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2637,8 +2637,8 @@ void scvkParseJsonDeviceGroupPresentInfo(const scvkJsonContext* pContext, const 
 /**
  * \brief Parses a VkDeviceGroupRenderPassBeginInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDeviceGroupRenderPassBeginInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDeviceGroupRenderPassBeginInfo
  * \param[out] pInfo     Receives the parsed VkDeviceGroupRenderPassBeginInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2647,8 +2647,8 @@ void scvkParseJsonDeviceGroupRenderPassBeginInfo(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkDeviceGroupSubmitInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDeviceGroupSubmitInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDeviceGroupSubmitInfo
  * \param[out] pInfo     Receives the parsed VkDeviceGroupSubmitInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2657,8 +2657,8 @@ void scvkParseJsonDeviceGroupSubmitInfo(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkDeviceGroupSwapchainCreateInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDeviceGroupSwapchainCreateInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDeviceGroupSwapchainCreateInfoKHR
  * \param[out] pInfo     Receives the parsed VkDeviceGroupSwapchainCreateInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2667,8 +2667,8 @@ void scvkParseJsonDeviceGroupSwapchainCreateInfo(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkDeviceMemoryOpaqueCaptureAddressInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDeviceMemoryOpaqueCaptureAddressInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDeviceMemoryOpaqueCaptureAddressInfo
  * \param[out] pInfo     Receives the parsed VkDeviceMemoryOpaqueCaptureAddressInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2677,8 +2677,8 @@ void scvkParseJsonDeviceMemoryOpaqueCaptureAddressInfo(const scvkJsonContext* pC
 /**
  * \brief Parses a VkDeviceObjectReservationCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDeviceObjectReservationCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDeviceObjectReservationCreateInfo
  * \param[out] pInfo     Receives the parsed VkDeviceObjectReservationCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2687,8 +2687,8 @@ void scvkParseJsonDeviceObjectReservationCreateInfo(const scvkJsonContext* pCont
 /**
  * \brief Parses a VkDeviceQueueCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDeviceQueueCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDeviceQueueCreateInfo
  * \param[out] pInfo     Receives the parsed VkDeviceQueueCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2697,8 +2697,8 @@ void scvkParseJsonDeviceQueueCreateInfo(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkDeviceQueueInfo2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDeviceQueueInfo2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDeviceQueueInfo2
  * \param[out] pInfo     Receives the parsed VkDeviceQueueInfo2, zeroed first
  *
  * \retval None No value is returned.
@@ -2707,8 +2707,8 @@ void scvkParseJsonDeviceQueueInfo2(const scvkJsonContext* pContext, const scvkJs
 /**
  * \brief Parses a VkDispatchIndirectCommand from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDispatchIndirectCommand
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDispatchIndirectCommand
  * \param[out] pInfo     Receives the parsed VkDispatchIndirectCommand, zeroed first
  *
  * \retval None No value is returned.
@@ -2717,8 +2717,8 @@ void scvkParseJsonDispatchIndirectCommand(const scvkJsonContext* pContext, const
 /**
  * \brief Parses a VkDisplayEventInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplayEventInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplayEventInfoEXT
  * \param[out] pInfo     Receives the parsed VkDisplayEventInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -2727,8 +2727,8 @@ void scvkParseJsonDisplayEventInfo(const scvkJsonContext* pContext, const scvkJs
 /**
  * \brief Parses a VkDisplayModeCreateInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplayModeCreateInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplayModeCreateInfoKHR
  * \param[out] pInfo     Receives the parsed VkDisplayModeCreateInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2737,8 +2737,8 @@ void scvkParseJsonDisplayModeCreateInfo(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkDisplayModeParametersKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplayModeParametersKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplayModeParametersKHR
  * \param[out] pInfo     Receives the parsed VkDisplayModeParametersKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2747,8 +2747,8 @@ void scvkParseJsonDisplayModeParameters(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkDisplayModeProperties2KHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplayModeProperties2KHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplayModeProperties2KHR
  * \param[out] pInfo     Receives the parsed VkDisplayModeProperties2KHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2757,8 +2757,8 @@ void scvkParseJsonDisplayModeProperties2(const scvkJsonContext* pContext, const 
 /**
  * \brief Parses a VkDisplayModePropertiesKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplayModePropertiesKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplayModePropertiesKHR
  * \param[out] pInfo     Receives the parsed VkDisplayModePropertiesKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2767,8 +2767,8 @@ void scvkParseJsonDisplayModeProperties(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkDisplayPlaneCapabilities2KHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplayPlaneCapabilities2KHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplayPlaneCapabilities2KHR
  * \param[out] pInfo     Receives the parsed VkDisplayPlaneCapabilities2KHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2777,8 +2777,8 @@ void scvkParseJsonDisplayPlaneCapabilities2(const scvkJsonContext* pContext, con
 /**
  * \brief Parses a VkDisplayPlaneCapabilitiesKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplayPlaneCapabilitiesKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplayPlaneCapabilitiesKHR
  * \param[out] pInfo     Receives the parsed VkDisplayPlaneCapabilitiesKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2787,8 +2787,8 @@ void scvkParseJsonDisplayPlaneCapabilities(const scvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkDisplayPlaneInfo2KHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplayPlaneInfo2KHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplayPlaneInfo2KHR
  * \param[out] pInfo     Receives the parsed VkDisplayPlaneInfo2KHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2797,8 +2797,8 @@ void scvkParseJsonDisplayPlaneInfo2(const scvkJsonContext* pContext, const scvkJ
 /**
  * \brief Parses a VkDisplayPlaneProperties2KHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplayPlaneProperties2KHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplayPlaneProperties2KHR
  * \param[out] pInfo     Receives the parsed VkDisplayPlaneProperties2KHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2807,8 +2807,8 @@ void scvkParseJsonDisplayPlaneProperties2(const scvkJsonContext* pContext, const
 /**
  * \brief Parses a VkDisplayPlanePropertiesKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplayPlanePropertiesKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplayPlanePropertiesKHR
  * \param[out] pInfo     Receives the parsed VkDisplayPlanePropertiesKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2817,8 +2817,8 @@ void scvkParseJsonDisplayPlaneProperties(const scvkJsonContext* pContext, const 
 /**
  * \brief Parses a VkDisplayPowerInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplayPowerInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplayPowerInfoEXT
  * \param[out] pInfo     Receives the parsed VkDisplayPowerInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -2827,8 +2827,8 @@ void scvkParseJsonDisplayPowerInfo(const scvkJsonContext* pContext, const scvkJs
 /**
  * \brief Parses a VkDisplayPresentInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplayPresentInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplayPresentInfoKHR
  * \param[out] pInfo     Receives the parsed VkDisplayPresentInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2837,8 +2837,8 @@ void scvkParseJsonDisplayPresentInfo(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkDisplayProperties2KHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplayProperties2KHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplayProperties2KHR
  * \param[out] pInfo     Receives the parsed VkDisplayProperties2KHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2847,8 +2847,8 @@ void scvkParseJsonDisplayProperties2(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkDisplayPropertiesKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplayPropertiesKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplayPropertiesKHR
  * \param[out] pInfo     Receives the parsed VkDisplayPropertiesKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2857,8 +2857,8 @@ void scvkParseJsonDisplayProperties(const scvkJsonContext* pContext, const scvkJ
 /**
  * \brief Parses a VkDisplaySurfaceCreateInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDisplaySurfaceCreateInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDisplaySurfaceCreateInfoKHR
  * \param[out] pInfo     Receives the parsed VkDisplaySurfaceCreateInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -2867,8 +2867,8 @@ void scvkParseJsonDisplaySurfaceCreateInfo(const scvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkDrawIndexedIndirectCommand from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDrawIndexedIndirectCommand
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDrawIndexedIndirectCommand
  * \param[out] pInfo     Receives the parsed VkDrawIndexedIndirectCommand, zeroed first
  *
  * \retval None No value is returned.
@@ -2877,8 +2877,8 @@ void scvkParseJsonDrawIndexedIndirectCommand(const scvkJsonContext* pContext, co
 /**
  * \brief Parses a VkDrawIndirectCommand from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDrawIndirectCommand
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDrawIndirectCommand
  * \param[out] pInfo     Receives the parsed VkDrawIndirectCommand, zeroed first
  *
  * \retval None No value is returned.
@@ -2887,8 +2887,8 @@ void scvkParseJsonDrawIndirectCommand(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkDrmFormatModifierPropertiesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDrmFormatModifierPropertiesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDrmFormatModifierPropertiesEXT
  * \param[out] pInfo     Receives the parsed VkDrmFormatModifierPropertiesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -2897,8 +2897,8 @@ void scvkParseJsonDrmFormatModifierProperties(const scvkJsonContext* pContext, c
 /**
  * \brief Parses a VkDrmFormatModifierPropertiesListEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkDrmFormatModifierPropertiesListEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkDrmFormatModifierPropertiesListEXT
  * \param[out] pInfo     Receives the parsed VkDrmFormatModifierPropertiesListEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -2907,8 +2907,8 @@ void scvkParseJsonDrmFormatModifierPropertiesList(const scvkJsonContext* pContex
 /**
  * \brief Parses a VkEventCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkEventCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkEventCreateInfo
  * \param[out] pInfo     Receives the parsed VkEventCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2917,8 +2917,8 @@ void scvkParseJsonEventCreateInfo(const scvkJsonContext* pContext, const scvkJso
 /**
  * \brief Parses a VkExportFenceCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExportFenceCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExportFenceCreateInfo
  * \param[out] pInfo     Receives the parsed VkExportFenceCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2927,8 +2927,8 @@ void scvkParseJsonExportFenceCreateInfo(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkExportMemoryAllocateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExportMemoryAllocateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExportMemoryAllocateInfo
  * \param[out] pInfo     Receives the parsed VkExportMemoryAllocateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2937,8 +2937,8 @@ void scvkParseJsonExportMemoryAllocateInfo(const scvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkExportSemaphoreCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExportSemaphoreCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExportSemaphoreCreateInfo
  * \param[out] pInfo     Receives the parsed VkExportSemaphoreCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -2947,8 +2947,8 @@ void scvkParseJsonExportSemaphoreCreateInfo(const scvkJsonContext* pContext, con
 /**
  * \brief Parses a VkExtensionProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExtensionProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExtensionProperties
  * \param[out] pInfo     Receives the parsed VkExtensionProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -2957,8 +2957,8 @@ void scvkParseJsonExtensionProperties(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkExtent2D from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExtent2D
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExtent2D
  * \param[out] pInfo     Receives the parsed VkExtent2D, zeroed first
  *
  * \retval None No value is returned.
@@ -2967,8 +2967,8 @@ void scvkParseJsonExtent2D(const scvkJsonContext* pContext, const scvkJsonValue*
 /**
  * \brief Parses a VkExtent3D from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExtent3D
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExtent3D
  * \param[out] pInfo     Receives the parsed VkExtent3D, zeroed first
  *
  * \retval None No value is returned.
@@ -2977,8 +2977,8 @@ void scvkParseJsonExtent3D(const scvkJsonContext* pContext, const scvkJsonValue*
 /**
  * \brief Parses a VkExternalBufferProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExternalBufferProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExternalBufferProperties
  * \param[out] pInfo     Receives the parsed VkExternalBufferProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -2987,8 +2987,8 @@ void scvkParseJsonExternalBufferProperties(const scvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkExternalFenceProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExternalFenceProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExternalFenceProperties
  * \param[out] pInfo     Receives the parsed VkExternalFenceProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -2997,8 +2997,8 @@ void scvkParseJsonExternalFenceProperties(const scvkJsonContext* pContext, const
 /**
  * \brief Parses a VkExternalImageFormatProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExternalImageFormatProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExternalImageFormatProperties
  * \param[out] pInfo     Receives the parsed VkExternalImageFormatProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -3007,8 +3007,8 @@ void scvkParseJsonExternalImageFormatProperties(const scvkJsonContext* pContext,
 /**
  * \brief Parses a VkExternalMemoryBufferCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExternalMemoryBufferCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExternalMemoryBufferCreateInfo
  * \param[out] pInfo     Receives the parsed VkExternalMemoryBufferCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3017,8 +3017,8 @@ void scvkParseJsonExternalMemoryBufferCreateInfo(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkExternalMemoryImageCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExternalMemoryImageCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExternalMemoryImageCreateInfo
  * \param[out] pInfo     Receives the parsed VkExternalMemoryImageCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3027,8 +3027,8 @@ void scvkParseJsonExternalMemoryImageCreateInfo(const scvkJsonContext* pContext,
 /**
  * \brief Parses a VkExternalMemoryProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExternalMemoryProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExternalMemoryProperties
  * \param[out] pInfo     Receives the parsed VkExternalMemoryProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -3037,8 +3037,8 @@ void scvkParseJsonExternalMemoryProperties(const scvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkExternalSemaphoreProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExternalSemaphoreProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExternalSemaphoreProperties
  * \param[out] pInfo     Receives the parsed VkExternalSemaphoreProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -3047,8 +3047,8 @@ void scvkParseJsonExternalSemaphoreProperties(const scvkJsonContext* pContext, c
 /**
  * \brief Parses a VkFaultCallbackInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkFaultCallbackInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkFaultCallbackInfo
  * \param[out] pInfo     Receives the parsed VkFaultCallbackInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3057,8 +3057,8 @@ void scvkParseJsonFaultCallbackInfo(const scvkJsonContext* pContext, const scvkJ
 /**
  * \brief Parses a VkFaultData from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkFaultData
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkFaultData
  * \param[out] pInfo     Receives the parsed VkFaultData, zeroed first
  *
  * \retval None No value is returned.
@@ -3067,8 +3067,8 @@ void scvkParseJsonFaultData(const scvkJsonContext* pContext, const scvkJsonValue
 /**
  * \brief Parses a VkFenceCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkFenceCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkFenceCreateInfo
  * \param[out] pInfo     Receives the parsed VkFenceCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3077,8 +3077,8 @@ void scvkParseJsonFenceCreateInfo(const scvkJsonContext* pContext, const scvkJso
 /**
  * \brief Parses a VkFenceGetFdInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkFenceGetFdInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkFenceGetFdInfoKHR
  * \param[out] pInfo     Receives the parsed VkFenceGetFdInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -3087,8 +3087,8 @@ void scvkParseJsonFenceGetFdInfo(const scvkJsonContext* pContext, const scvkJson
 /**
  * \brief Parses a VkFilterCubicImageViewImageFormatPropertiesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkFilterCubicImageViewImageFormatPropertiesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkFilterCubicImageViewImageFormatPropertiesEXT
  * \param[out] pInfo     Receives the parsed VkFilterCubicImageViewImageFormatPropertiesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3097,8 +3097,8 @@ void scvkParseJsonFilterCubicImageViewImageFormatProperties(const scvkJsonContex
 /**
  * \brief Parses a VkFormatProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkFormatProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkFormatProperties
  * \param[out] pInfo     Receives the parsed VkFormatProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -3107,8 +3107,8 @@ void scvkParseJsonFormatProperties(const scvkJsonContext* pContext, const scvkJs
 /**
  * \brief Parses a VkFormatProperties2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkFormatProperties2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkFormatProperties2
  * \param[out] pInfo     Receives the parsed VkFormatProperties2, zeroed first
  *
  * \retval None No value is returned.
@@ -3117,8 +3117,8 @@ void scvkParseJsonFormatProperties2(const scvkJsonContext* pContext, const scvkJ
 /**
  * \brief Parses a VkFragmentShadingRateAttachmentInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkFragmentShadingRateAttachmentInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkFragmentShadingRateAttachmentInfoKHR
  * \param[out] pInfo     Receives the parsed VkFragmentShadingRateAttachmentInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -3127,8 +3127,8 @@ void scvkParseJsonFragmentShadingRateAttachmentInfo(const scvkJsonContext* pCont
 /**
  * \brief Parses a VkFramebufferAttachmentImageInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkFramebufferAttachmentImageInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkFramebufferAttachmentImageInfo
  * \param[out] pInfo     Receives the parsed VkFramebufferAttachmentImageInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3137,8 +3137,8 @@ void scvkParseJsonFramebufferAttachmentImageInfo(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkFramebufferAttachmentsCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkFramebufferAttachmentsCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkFramebufferAttachmentsCreateInfo
  * \param[out] pInfo     Receives the parsed VkFramebufferAttachmentsCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3147,8 +3147,8 @@ void scvkParseJsonFramebufferAttachmentsCreateInfo(const scvkJsonContext* pConte
 /**
  * \brief Parses a VkFramebufferCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkFramebufferCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkFramebufferCreateInfo
  * \param[out] pInfo     Receives the parsed VkFramebufferCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3157,8 +3157,8 @@ void scvkParseJsonFramebufferCreateInfo(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkGraphicsPipelineCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkGraphicsPipelineCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkGraphicsPipelineCreateInfo
  * \param[out] pInfo     Receives the parsed VkGraphicsPipelineCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3167,8 +3167,8 @@ void scvkParseJsonGraphicsPipelineCreateInfo(const scvkJsonContext* pContext, co
 /**
  * \brief Parses a VkHdrMetadataEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkHdrMetadataEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkHdrMetadataEXT
  * \param[out] pInfo     Receives the parsed VkHdrMetadataEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3177,8 +3177,8 @@ void scvkParseJsonHdrMetadata(const scvkJsonContext* pContext, const scvkJsonVal
 /**
  * \brief Parses a VkHeadlessSurfaceCreateInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkHeadlessSurfaceCreateInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkHeadlessSurfaceCreateInfoEXT
  * \param[out] pInfo     Receives the parsed VkHeadlessSurfaceCreateInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3187,8 +3187,8 @@ void scvkParseJsonHeadlessSurfaceCreateInfo(const scvkJsonContext* pContext, con
 /**
  * \brief Parses a VkImageBlit from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageBlit
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageBlit
  * \param[out] pInfo     Receives the parsed VkImageBlit, zeroed first
  *
  * \retval None No value is returned.
@@ -3197,8 +3197,8 @@ void scvkParseJsonImageBlit(const scvkJsonContext* pContext, const scvkJsonValue
 /**
  * \brief Parses a VkImageCopy from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageCopy
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageCopy
  * \param[out] pInfo     Receives the parsed VkImageCopy, zeroed first
  *
  * \retval None No value is returned.
@@ -3207,8 +3207,8 @@ void scvkParseJsonImageCopy(const scvkJsonContext* pContext, const scvkJsonValue
 /**
  * \brief Parses a VkImageCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageCreateInfo
  * \param[out] pInfo     Receives the parsed VkImageCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3217,8 +3217,8 @@ void scvkParseJsonImageCreateInfo(const scvkJsonContext* pContext, const scvkJso
 /**
  * \brief Parses a VkImageDrmFormatModifierExplicitCreateInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageDrmFormatModifierExplicitCreateInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageDrmFormatModifierExplicitCreateInfoEXT
  * \param[out] pInfo     Receives the parsed VkImageDrmFormatModifierExplicitCreateInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3227,8 +3227,8 @@ void scvkParseJsonImageDrmFormatModifierExplicitCreateInfo(const scvkJsonContext
 /**
  * \brief Parses a VkImageDrmFormatModifierListCreateInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageDrmFormatModifierListCreateInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageDrmFormatModifierListCreateInfoEXT
  * \param[out] pInfo     Receives the parsed VkImageDrmFormatModifierListCreateInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3237,8 +3237,8 @@ void scvkParseJsonImageDrmFormatModifierListCreateInfo(const scvkJsonContext* pC
 /**
  * \brief Parses a VkImageDrmFormatModifierPropertiesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageDrmFormatModifierPropertiesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageDrmFormatModifierPropertiesEXT
  * \param[out] pInfo     Receives the parsed VkImageDrmFormatModifierPropertiesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3247,8 +3247,8 @@ void scvkParseJsonImageDrmFormatModifierProperties(const scvkJsonContext* pConte
 /**
  * \brief Parses a VkImageFormatListCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageFormatListCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageFormatListCreateInfo
  * \param[out] pInfo     Receives the parsed VkImageFormatListCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3257,8 +3257,8 @@ void scvkParseJsonImageFormatListCreateInfo(const scvkJsonContext* pContext, con
 /**
  * \brief Parses a VkImageFormatProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageFormatProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageFormatProperties
  * \param[out] pInfo     Receives the parsed VkImageFormatProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -3267,8 +3267,8 @@ void scvkParseJsonImageFormatProperties(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkImageFormatProperties2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageFormatProperties2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageFormatProperties2
  * \param[out] pInfo     Receives the parsed VkImageFormatProperties2, zeroed first
  *
  * \retval None No value is returned.
@@ -3277,8 +3277,8 @@ void scvkParseJsonImageFormatProperties2(const scvkJsonContext* pContext, const 
 /**
  * \brief Parses a VkImageMemoryBarrier from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageMemoryBarrier
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageMemoryBarrier
  * \param[out] pInfo     Receives the parsed VkImageMemoryBarrier, zeroed first
  *
  * \retval None No value is returned.
@@ -3287,8 +3287,8 @@ void scvkParseJsonImageMemoryBarrier(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkImageMemoryRequirementsInfo2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageMemoryRequirementsInfo2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageMemoryRequirementsInfo2
  * \param[out] pInfo     Receives the parsed VkImageMemoryRequirementsInfo2, zeroed first
  *
  * \retval None No value is returned.
@@ -3297,8 +3297,8 @@ void scvkParseJsonImageMemoryRequirementsInfo2(const scvkJsonContext* pContext, 
 /**
  * \brief Parses a VkImagePlaneMemoryRequirementsInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImagePlaneMemoryRequirementsInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImagePlaneMemoryRequirementsInfo
  * \param[out] pInfo     Receives the parsed VkImagePlaneMemoryRequirementsInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3307,8 +3307,8 @@ void scvkParseJsonImagePlaneMemoryRequirementsInfo(const scvkJsonContext* pConte
 /**
  * \brief Parses a VkImageResolve from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageResolve
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageResolve
  * \param[out] pInfo     Receives the parsed VkImageResolve, zeroed first
  *
  * \retval None No value is returned.
@@ -3317,8 +3317,8 @@ void scvkParseJsonImageResolve(const scvkJsonContext* pContext, const scvkJsonVa
 /**
  * \brief Parses a VkImageStencilUsageCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageStencilUsageCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageStencilUsageCreateInfo
  * \param[out] pInfo     Receives the parsed VkImageStencilUsageCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3327,8 +3327,8 @@ void scvkParseJsonImageStencilUsageCreateInfo(const scvkJsonContext* pContext, c
 /**
  * \brief Parses a VkImageSubresource from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageSubresource
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageSubresource
  * \param[out] pInfo     Receives the parsed VkImageSubresource, zeroed first
  *
  * \retval None No value is returned.
@@ -3337,8 +3337,8 @@ void scvkParseJsonImageSubresource(const scvkJsonContext* pContext, const scvkJs
 /**
  * \brief Parses a VkImageSubresourceLayers from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageSubresourceLayers
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageSubresourceLayers
  * \param[out] pInfo     Receives the parsed VkImageSubresourceLayers, zeroed first
  *
  * \retval None No value is returned.
@@ -3347,8 +3347,8 @@ void scvkParseJsonImageSubresourceLayers(const scvkJsonContext* pContext, const 
 /**
  * \brief Parses a VkImageSubresourceRange from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageSubresourceRange
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageSubresourceRange
  * \param[out] pInfo     Receives the parsed VkImageSubresourceRange, zeroed first
  *
  * \retval None No value is returned.
@@ -3357,8 +3357,8 @@ void scvkParseJsonImageSubresourceRange(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkImageSwapchainCreateInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageSwapchainCreateInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageSwapchainCreateInfoKHR
  * \param[out] pInfo     Receives the parsed VkImageSwapchainCreateInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -3367,8 +3367,8 @@ void scvkParseJsonImageSwapchainCreateInfo(const scvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkImageViewASTCDecodeModeEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageViewASTCDecodeModeEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageViewASTCDecodeModeEXT
  * \param[out] pInfo     Receives the parsed VkImageViewASTCDecodeModeEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3377,8 +3377,8 @@ void scvkParseJsonImageViewASTCDecodeMode(const scvkJsonContext* pContext, const
 /**
  * \brief Parses a VkImageViewCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageViewCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageViewCreateInfo
  * \param[out] pInfo     Receives the parsed VkImageViewCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3387,8 +3387,8 @@ void scvkParseJsonImageViewCreateInfo(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkImageViewUsageCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImageViewUsageCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImageViewUsageCreateInfo
  * \param[out] pInfo     Receives the parsed VkImageViewUsageCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3397,8 +3397,8 @@ void scvkParseJsonImageViewUsageCreateInfo(const scvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkImportFenceFdInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImportFenceFdInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImportFenceFdInfoKHR
  * \param[out] pInfo     Receives the parsed VkImportFenceFdInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -3407,8 +3407,8 @@ void scvkParseJsonImportFenceFdInfo(const scvkJsonContext* pContext, const scvkJ
 /**
  * \brief Parses a VkImportMemoryFdInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImportMemoryFdInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImportMemoryFdInfoKHR
  * \param[out] pInfo     Receives the parsed VkImportMemoryFdInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -3417,8 +3417,8 @@ void scvkParseJsonImportMemoryFdInfo(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkImportMemoryHostPointerInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImportMemoryHostPointerInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImportMemoryHostPointerInfoEXT
  * \param[out] pInfo     Receives the parsed VkImportMemoryHostPointerInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3427,8 +3427,8 @@ void scvkParseJsonImportMemoryHostPointerInfo(const scvkJsonContext* pContext, c
 /**
  * \brief Parses a VkImportSemaphoreFdInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImportSemaphoreFdInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImportSemaphoreFdInfoKHR
  * \param[out] pInfo     Receives the parsed VkImportSemaphoreFdInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -3437,8 +3437,8 @@ void scvkParseJsonImportSemaphoreFdInfo(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkInputAttachmentAspectReference from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkInputAttachmentAspectReference
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkInputAttachmentAspectReference
  * \param[out] pInfo     Receives the parsed VkInputAttachmentAspectReference, zeroed first
  *
  * \retval None No value is returned.
@@ -3447,8 +3447,8 @@ void scvkParseJsonInputAttachmentAspectReference(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkInstanceCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkInstanceCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkInstanceCreateInfo
  * \param[out] pInfo     Receives the parsed VkInstanceCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3457,8 +3457,8 @@ void scvkParseJsonInstanceCreateInfo(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkLayerProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkLayerProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkLayerProperties
  * \param[out] pInfo     Receives the parsed VkLayerProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -3467,8 +3467,8 @@ void scvkParseJsonLayerProperties(const scvkJsonContext* pContext, const scvkJso
 /**
  * \brief Parses a VkLayerSettingEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkLayerSettingEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkLayerSettingEXT
  * \param[out] pInfo     Receives the parsed VkLayerSettingEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3477,8 +3477,8 @@ void scvkParseJsonLayerSetting(const scvkJsonContext* pContext, const scvkJsonVa
 /**
  * \brief Parses a VkLayerSettingsCreateInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkLayerSettingsCreateInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkLayerSettingsCreateInfoEXT
  * \param[out] pInfo     Receives the parsed VkLayerSettingsCreateInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3487,8 +3487,8 @@ void scvkParseJsonLayerSettingsCreateInfo(const scvkJsonContext* pContext, const
 /**
  * \brief Parses a VkMappedMemoryRange from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMappedMemoryRange
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMappedMemoryRange
  * \param[out] pInfo     Receives the parsed VkMappedMemoryRange, zeroed first
  *
  * \retval None No value is returned.
@@ -3497,8 +3497,8 @@ void scvkParseJsonMappedMemoryRange(const scvkJsonContext* pContext, const scvkJ
 /**
  * \brief Parses a VkMemoryAllocateFlagsInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryAllocateFlagsInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryAllocateFlagsInfo
  * \param[out] pInfo     Receives the parsed VkMemoryAllocateFlagsInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3507,8 +3507,8 @@ void scvkParseJsonMemoryAllocateFlagsInfo(const scvkJsonContext* pContext, const
 /**
  * \brief Parses a VkMemoryAllocateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryAllocateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryAllocateInfo
  * \param[out] pInfo     Receives the parsed VkMemoryAllocateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3517,8 +3517,8 @@ void scvkParseJsonMemoryAllocateInfo(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkMemoryBarrier from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryBarrier
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryBarrier
  * \param[out] pInfo     Receives the parsed VkMemoryBarrier, zeroed first
  *
  * \retval None No value is returned.
@@ -3527,8 +3527,8 @@ void scvkParseJsonMemoryBarrier(const scvkJsonContext* pContext, const scvkJsonV
 /**
  * \brief Parses a VkMemoryDedicatedAllocateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryDedicatedAllocateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryDedicatedAllocateInfo
  * \param[out] pInfo     Receives the parsed VkMemoryDedicatedAllocateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3537,8 +3537,8 @@ void scvkParseJsonMemoryDedicatedAllocateInfo(const scvkJsonContext* pContext, c
 /**
  * \brief Parses a VkMemoryDedicatedRequirements from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryDedicatedRequirements
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryDedicatedRequirements
  * \param[out] pInfo     Receives the parsed VkMemoryDedicatedRequirements, zeroed first
  *
  * \retval None No value is returned.
@@ -3547,8 +3547,8 @@ void scvkParseJsonMemoryDedicatedRequirements(const scvkJsonContext* pContext, c
 /**
  * \brief Parses a VkMemoryFdPropertiesKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryFdPropertiesKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryFdPropertiesKHR
  * \param[out] pInfo     Receives the parsed VkMemoryFdPropertiesKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -3557,8 +3557,8 @@ void scvkParseJsonMemoryFdProperties(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkMemoryGetFdInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryGetFdInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryGetFdInfoKHR
  * \param[out] pInfo     Receives the parsed VkMemoryGetFdInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -3567,8 +3567,8 @@ void scvkParseJsonMemoryGetFdInfo(const scvkJsonContext* pContext, const scvkJso
 /**
  * \brief Parses a VkMemoryHeap from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryHeap
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryHeap
  * \param[out] pInfo     Receives the parsed VkMemoryHeap, zeroed first
  *
  * \retval None No value is returned.
@@ -3577,8 +3577,8 @@ void scvkParseJsonMemoryHeap(const scvkJsonContext* pContext, const scvkJsonValu
 /**
  * \brief Parses a VkMemoryHostPointerPropertiesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryHostPointerPropertiesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryHostPointerPropertiesEXT
  * \param[out] pInfo     Receives the parsed VkMemoryHostPointerPropertiesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3587,8 +3587,8 @@ void scvkParseJsonMemoryHostPointerProperties(const scvkJsonContext* pContext, c
 /**
  * \brief Parses a VkMemoryOpaqueCaptureAddressAllocateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryOpaqueCaptureAddressAllocateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryOpaqueCaptureAddressAllocateInfo
  * \param[out] pInfo     Receives the parsed VkMemoryOpaqueCaptureAddressAllocateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3597,8 +3597,8 @@ void scvkParseJsonMemoryOpaqueCaptureAddressAllocateInfo(const scvkJsonContext* 
 /**
  * \brief Parses a VkMemoryRequirements from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryRequirements
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryRequirements
  * \param[out] pInfo     Receives the parsed VkMemoryRequirements, zeroed first
  *
  * \retval None No value is returned.
@@ -3607,8 +3607,8 @@ void scvkParseJsonMemoryRequirements(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkMemoryRequirements2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryRequirements2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryRequirements2
  * \param[out] pInfo     Receives the parsed VkMemoryRequirements2, zeroed first
  *
  * \retval None No value is returned.
@@ -3617,8 +3617,8 @@ void scvkParseJsonMemoryRequirements2(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkMemoryType from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryType
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryType
  * \param[out] pInfo     Receives the parsed VkMemoryType, zeroed first
  *
  * \retval None No value is returned.
@@ -3627,8 +3627,8 @@ void scvkParseJsonMemoryType(const scvkJsonContext* pContext, const scvkJsonValu
 /**
  * \brief Parses a VkMultisamplePropertiesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMultisamplePropertiesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMultisamplePropertiesEXT
  * \param[out] pInfo     Receives the parsed VkMultisamplePropertiesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3637,8 +3637,8 @@ void scvkParseJsonMultisampleProperties(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkOffset2D from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkOffset2D
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkOffset2D
  * \param[out] pInfo     Receives the parsed VkOffset2D, zeroed first
  *
  * \retval None No value is returned.
@@ -3647,8 +3647,8 @@ void scvkParseJsonOffset2D(const scvkJsonContext* pContext, const scvkJsonValue*
 /**
  * \brief Parses a VkOffset3D from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkOffset3D
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkOffset3D
  * \param[out] pInfo     Receives the parsed VkOffset3D, zeroed first
  *
  * \retval None No value is returned.
@@ -3657,8 +3657,8 @@ void scvkParseJsonOffset3D(const scvkJsonContext* pContext, const scvkJsonValue*
 /**
  * \brief Parses a VkPerformanceCounterDescriptionKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPerformanceCounterDescriptionKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPerformanceCounterDescriptionKHR
  * \param[out] pInfo     Receives the parsed VkPerformanceCounterDescriptionKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -3667,8 +3667,8 @@ void scvkParseJsonPerformanceCounterDescription(const scvkJsonContext* pContext,
 /**
  * \brief Parses a VkPerformanceCounterKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPerformanceCounterKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPerformanceCounterKHR
  * \param[out] pInfo     Receives the parsed VkPerformanceCounterKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -3677,8 +3677,8 @@ void scvkParseJsonPerformanceCounter(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkPerformanceCounterResultKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPerformanceCounterResultKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPerformanceCounterResultKHR
  * \param[out] pInfo     Receives the parsed VkPerformanceCounterResultKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -3687,8 +3687,8 @@ void scvkParseJsonPerformanceCounterResult(const scvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkPerformanceQueryReservationInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPerformanceQueryReservationInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPerformanceQueryReservationInfoKHR
  * \param[out] pInfo     Receives the parsed VkPerformanceQueryReservationInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -3697,8 +3697,8 @@ void scvkParseJsonPerformanceQueryReservationInfo(const scvkJsonContext* pContex
 /**
  * \brief Parses a VkPerformanceQuerySubmitInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPerformanceQuerySubmitInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPerformanceQuerySubmitInfoKHR
  * \param[out] pInfo     Receives the parsed VkPerformanceQuerySubmitInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -3707,8 +3707,8 @@ void scvkParseJsonPerformanceQuerySubmitInfo(const scvkJsonContext* pContext, co
 /**
  * \brief Parses a VkPhysicalDevice16BitStorageFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDevice16BitStorageFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDevice16BitStorageFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDevice16BitStorageFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -3717,8 +3717,8 @@ void scvkParseJsonPhysicalDevice16BitStorageFeatures(const scvkJsonContext* pCon
 /**
  * \brief Parses a VkPhysicalDevice4444FormatsFeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDevice4444FormatsFeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDevice4444FormatsFeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDevice4444FormatsFeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3727,8 +3727,8 @@ void scvkParseJsonPhysicalDevice4444FormatsFeatures(const scvkJsonContext* pCont
 /**
  * \brief Parses a VkPhysicalDevice8BitStorageFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDevice8BitStorageFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDevice8BitStorageFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDevice8BitStorageFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -3737,8 +3737,8 @@ void scvkParseJsonPhysicalDevice8BitStorageFeatures(const scvkJsonContext* pCont
 /**
  * \brief Parses a VkPhysicalDeviceASTCDecodeFeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceASTCDecodeFeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceASTCDecodeFeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceASTCDecodeFeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3747,8 +3747,8 @@ void scvkParseJsonPhysicalDeviceASTCDecodeFeatures(const scvkJsonContext* pConte
 /**
  * \brief Parses a VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3757,8 +3757,8 @@ void scvkParseJsonPhysicalDeviceBlendOperationAdvancedFeatures(const scvkJsonCon
 /**
  * \brief Parses a VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3767,8 +3767,8 @@ void scvkParseJsonPhysicalDeviceBlendOperationAdvancedProperties(const scvkJsonC
 /**
  * \brief Parses a VkPhysicalDeviceBufferDeviceAddressFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceBufferDeviceAddressFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceBufferDeviceAddressFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceBufferDeviceAddressFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -3777,8 +3777,8 @@ void scvkParseJsonPhysicalDeviceBufferDeviceAddressFeatures(const scvkJsonContex
 /**
  * \brief Parses a VkPhysicalDeviceColorWriteEnableFeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceColorWriteEnableFeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceColorWriteEnableFeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceColorWriteEnableFeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3787,8 +3787,8 @@ void scvkParseJsonPhysicalDeviceColorWriteEnableFeatures(const scvkJsonContext* 
 /**
  * \brief Parses a VkPhysicalDeviceConservativeRasterizationPropertiesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceConservativeRasterizationPropertiesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceConservativeRasterizationPropertiesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceConservativeRasterizationPropertiesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3797,8 +3797,8 @@ void scvkParseJsonPhysicalDeviceConservativeRasterizationProperties(const scvkJs
 /**
  * \brief Parses a VkPhysicalDeviceCustomBorderColorFeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceCustomBorderColorFeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceCustomBorderColorFeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceCustomBorderColorFeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3807,8 +3807,8 @@ void scvkParseJsonPhysicalDeviceCustomBorderColorFeatures(const scvkJsonContext*
 /**
  * \brief Parses a VkPhysicalDeviceCustomBorderColorPropertiesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceCustomBorderColorPropertiesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceCustomBorderColorPropertiesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceCustomBorderColorPropertiesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3817,8 +3817,8 @@ void scvkParseJsonPhysicalDeviceCustomBorderColorProperties(const scvkJsonContex
 /**
  * \brief Parses a VkPhysicalDeviceDepthClipEnableFeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceDepthClipEnableFeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceDepthClipEnableFeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceDepthClipEnableFeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3827,8 +3827,8 @@ void scvkParseJsonPhysicalDeviceDepthClipEnableFeatures(const scvkJsonContext* p
 /**
  * \brief Parses a VkPhysicalDeviceDepthStencilResolveProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceDepthStencilResolveProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceDepthStencilResolveProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceDepthStencilResolveProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -3837,8 +3837,8 @@ void scvkParseJsonPhysicalDeviceDepthStencilResolveProperties(const scvkJsonCont
 /**
  * \brief Parses a VkPhysicalDeviceDescriptorIndexingFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceDescriptorIndexingFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceDescriptorIndexingFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceDescriptorIndexingFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -3847,8 +3847,8 @@ void scvkParseJsonPhysicalDeviceDescriptorIndexingFeatures(const scvkJsonContext
 /**
  * \brief Parses a VkPhysicalDeviceDescriptorIndexingProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceDescriptorIndexingProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceDescriptorIndexingProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceDescriptorIndexingProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -3857,8 +3857,8 @@ void scvkParseJsonPhysicalDeviceDescriptorIndexingProperties(const scvkJsonConte
 /**
  * \brief Parses a VkPhysicalDeviceDiscardRectanglePropertiesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceDiscardRectanglePropertiesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceDiscardRectanglePropertiesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceDiscardRectanglePropertiesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3867,8 +3867,8 @@ void scvkParseJsonPhysicalDeviceDiscardRectangleProperties(const scvkJsonContext
 /**
  * \brief Parses a VkPhysicalDeviceDriverProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceDriverProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceDriverProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceDriverProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -3877,8 +3877,8 @@ void scvkParseJsonPhysicalDeviceDriverProperties(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkPhysicalDeviceExtendedDynamicState2FeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceExtendedDynamicState2FeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceExtendedDynamicState2FeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceExtendedDynamicState2FeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3887,8 +3887,8 @@ void scvkParseJsonPhysicalDeviceExtendedDynamicState2Features(const scvkJsonCont
 /**
  * \brief Parses a VkPhysicalDeviceExtendedDynamicStateFeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceExtendedDynamicStateFeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceExtendedDynamicStateFeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceExtendedDynamicStateFeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3897,8 +3897,8 @@ void scvkParseJsonPhysicalDeviceExtendedDynamicStateFeatures(const scvkJsonConte
 /**
  * \brief Parses a VkPhysicalDeviceExternalBufferInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceExternalBufferInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceExternalBufferInfo
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceExternalBufferInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3907,8 +3907,8 @@ void scvkParseJsonPhysicalDeviceExternalBufferInfo(const scvkJsonContext* pConte
 /**
  * \brief Parses a VkPhysicalDeviceExternalFenceInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceExternalFenceInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceExternalFenceInfo
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceExternalFenceInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3917,8 +3917,8 @@ void scvkParseJsonPhysicalDeviceExternalFenceInfo(const scvkJsonContext* pContex
 /**
  * \brief Parses a VkPhysicalDeviceExternalImageFormatInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceExternalImageFormatInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceExternalImageFormatInfo
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceExternalImageFormatInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3927,8 +3927,8 @@ void scvkParseJsonPhysicalDeviceExternalImageFormatInfo(const scvkJsonContext* p
 /**
  * \brief Parses a VkPhysicalDeviceExternalMemoryHostPropertiesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceExternalMemoryHostPropertiesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceExternalMemoryHostPropertiesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceExternalMemoryHostPropertiesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3937,8 +3937,8 @@ void scvkParseJsonPhysicalDeviceExternalMemoryHostProperties(const scvkJsonConte
 /**
  * \brief Parses a VkPhysicalDeviceExternalSemaphoreInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceExternalSemaphoreInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceExternalSemaphoreInfo
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceExternalSemaphoreInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -3947,8 +3947,8 @@ void scvkParseJsonPhysicalDeviceExternalSemaphoreInfo(const scvkJsonContext* pCo
 /**
  * \brief Parses a VkPhysicalDeviceFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -3957,8 +3957,8 @@ void scvkParseJsonPhysicalDeviceFeatures(const scvkJsonContext* pContext, const 
 /**
  * \brief Parses a VkPhysicalDeviceFeatures2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceFeatures2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceFeatures2
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceFeatures2, zeroed first
  *
  * \retval None No value is returned.
@@ -3967,8 +3967,8 @@ void scvkParseJsonPhysicalDeviceFeatures2(const scvkJsonContext* pContext, const
 /**
  * \brief Parses a VkPhysicalDeviceFloatControlsProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceFloatControlsProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceFloatControlsProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceFloatControlsProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -3977,8 +3977,8 @@ void scvkParseJsonPhysicalDeviceFloatControlsProperties(const scvkJsonContext* p
 /**
  * \brief Parses a VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -3987,8 +3987,8 @@ void scvkParseJsonPhysicalDeviceFragmentShaderInterlockFeatures(const scvkJsonCo
 /**
  * \brief Parses a VkPhysicalDeviceFragmentShadingRateFeaturesKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceFragmentShadingRateFeaturesKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceFragmentShadingRateFeaturesKHR
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceFragmentShadingRateFeaturesKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -3997,8 +3997,8 @@ void scvkParseJsonPhysicalDeviceFragmentShadingRateFeatures(const scvkJsonContex
 /**
  * \brief Parses a VkPhysicalDeviceFragmentShadingRateKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceFragmentShadingRateKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceFragmentShadingRateKHR
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceFragmentShadingRateKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -4007,8 +4007,8 @@ void scvkParseJsonPhysicalDeviceFragmentShadingRate(const scvkJsonContext* pCont
 /**
  * \brief Parses a VkPhysicalDeviceFragmentShadingRatePropertiesKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceFragmentShadingRatePropertiesKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceFragmentShadingRatePropertiesKHR
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceFragmentShadingRatePropertiesKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -4017,8 +4017,8 @@ void scvkParseJsonPhysicalDeviceFragmentShadingRateProperties(const scvkJsonCont
 /**
  * \brief Parses a VkPhysicalDeviceGroupProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceGroupProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceGroupProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceGroupProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -4027,8 +4027,8 @@ void scvkParseJsonPhysicalDeviceGroupProperties(const scvkJsonContext* pContext,
 /**
  * \brief Parses a VkPhysicalDeviceHostQueryResetFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceHostQueryResetFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceHostQueryResetFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceHostQueryResetFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -4037,8 +4037,8 @@ void scvkParseJsonPhysicalDeviceHostQueryResetFeatures(const scvkJsonContext* pC
 /**
  * \brief Parses a VkPhysicalDeviceIDProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceIDProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceIDProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceIDProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -4047,8 +4047,8 @@ void scvkParseJsonPhysicalDeviceIDProperties(const scvkJsonContext* pContext, co
 /**
  * \brief Parses a VkPhysicalDeviceImageDrmFormatModifierInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceImageDrmFormatModifierInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceImageDrmFormatModifierInfoEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceImageDrmFormatModifierInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4057,8 +4057,8 @@ void scvkParseJsonPhysicalDeviceImageDrmFormatModifierInfo(const scvkJsonContext
 /**
  * \brief Parses a VkPhysicalDeviceImageFormatInfo2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceImageFormatInfo2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceImageFormatInfo2
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceImageFormatInfo2, zeroed first
  *
  * \retval None No value is returned.
@@ -4067,8 +4067,8 @@ void scvkParseJsonPhysicalDeviceImageFormatInfo2(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkPhysicalDeviceImageViewImageFormatInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceImageViewImageFormatInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceImageViewImageFormatInfoEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceImageViewImageFormatInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4077,8 +4077,8 @@ void scvkParseJsonPhysicalDeviceImageViewImageFormatInfo(const scvkJsonContext* 
 /**
  * \brief Parses a VkPhysicalDeviceImagelessFramebufferFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceImagelessFramebufferFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceImagelessFramebufferFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceImagelessFramebufferFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -4087,8 +4087,8 @@ void scvkParseJsonPhysicalDeviceImagelessFramebufferFeatures(const scvkJsonConte
 /**
  * \brief Parses a VkPhysicalDeviceLimits from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceLimits
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceLimits
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceLimits, zeroed first
  *
  * \retval None No value is returned.
@@ -4097,8 +4097,8 @@ void scvkParseJsonPhysicalDeviceLimits(const scvkJsonContext* pContext, const sc
 /**
  * \brief Parses a VkPhysicalDeviceMaintenance3Properties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceMaintenance3Properties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceMaintenance3Properties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceMaintenance3Properties, zeroed first
  *
  * \retval None No value is returned.
@@ -4107,8 +4107,8 @@ void scvkParseJsonPhysicalDeviceMaintenance3Properties(const scvkJsonContext* pC
 /**
  * \brief Parses a VkPhysicalDeviceMemoryBudgetPropertiesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceMemoryBudgetPropertiesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceMemoryBudgetPropertiesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceMemoryBudgetPropertiesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4117,8 +4117,8 @@ void scvkParseJsonPhysicalDeviceMemoryBudgetProperties(const scvkJsonContext* pC
 /**
  * \brief Parses a VkPhysicalDeviceMemoryProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceMemoryProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceMemoryProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceMemoryProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -4127,8 +4127,8 @@ void scvkParseJsonPhysicalDeviceMemoryProperties(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkPhysicalDeviceMemoryProperties2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceMemoryProperties2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceMemoryProperties2
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceMemoryProperties2, zeroed first
  *
  * \retval None No value is returned.
@@ -4137,8 +4137,8 @@ void scvkParseJsonPhysicalDeviceMemoryProperties2(const scvkJsonContext* pContex
 /**
  * \brief Parses a VkPhysicalDeviceMultiviewFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceMultiviewFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceMultiviewFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceMultiviewFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -4147,8 +4147,8 @@ void scvkParseJsonPhysicalDeviceMultiviewFeatures(const scvkJsonContext* pContex
 /**
  * \brief Parses a VkPhysicalDeviceMultiviewProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceMultiviewProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceMultiviewProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceMultiviewProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -4157,8 +4157,8 @@ void scvkParseJsonPhysicalDeviceMultiviewProperties(const scvkJsonContext* pCont
 /**
  * \brief Parses a VkPhysicalDevicePCIBusInfoPropertiesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDevicePCIBusInfoPropertiesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDevicePCIBusInfoPropertiesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDevicePCIBusInfoPropertiesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4167,8 +4167,8 @@ void scvkParseJsonPhysicalDevicePCIBusInfoProperties(const scvkJsonContext* pCon
 /**
  * \brief Parses a VkPhysicalDevicePerformanceQueryFeaturesKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDevicePerformanceQueryFeaturesKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDevicePerformanceQueryFeaturesKHR
  * \param[out] pInfo     Receives the parsed VkPhysicalDevicePerformanceQueryFeaturesKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -4177,8 +4177,8 @@ void scvkParseJsonPhysicalDevicePerformanceQueryFeatures(const scvkJsonContext* 
 /**
  * \brief Parses a VkPhysicalDevicePerformanceQueryPropertiesKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDevicePerformanceQueryPropertiesKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDevicePerformanceQueryPropertiesKHR
  * \param[out] pInfo     Receives the parsed VkPhysicalDevicePerformanceQueryPropertiesKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -4187,8 +4187,8 @@ void scvkParseJsonPhysicalDevicePerformanceQueryProperties(const scvkJsonContext
 /**
  * \brief Parses a VkPhysicalDevicePointClippingProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDevicePointClippingProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDevicePointClippingProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDevicePointClippingProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -4197,8 +4197,8 @@ void scvkParseJsonPhysicalDevicePointClippingProperties(const scvkJsonContext* p
 /**
  * \brief Parses a VkPhysicalDeviceProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -4207,8 +4207,8 @@ void scvkParseJsonPhysicalDeviceProperties(const scvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkPhysicalDeviceProperties2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceProperties2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceProperties2
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceProperties2, zeroed first
  *
  * \retval None No value is returned.
@@ -4217,8 +4217,8 @@ void scvkParseJsonPhysicalDeviceProperties2(const scvkJsonContext* pContext, con
 /**
  * \brief Parses a VkPhysicalDeviceProtectedMemoryFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceProtectedMemoryFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceProtectedMemoryFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceProtectedMemoryFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -4227,8 +4227,8 @@ void scvkParseJsonPhysicalDeviceProtectedMemoryFeatures(const scvkJsonContext* p
 /**
  * \brief Parses a VkPhysicalDeviceProtectedMemoryProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceProtectedMemoryProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceProtectedMemoryProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceProtectedMemoryProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -4237,8 +4237,8 @@ void scvkParseJsonPhysicalDeviceProtectedMemoryProperties(const scvkJsonContext*
 /**
  * \brief Parses a VkPhysicalDeviceSampleLocationsPropertiesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceSampleLocationsPropertiesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceSampleLocationsPropertiesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceSampleLocationsPropertiesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4247,8 +4247,8 @@ void scvkParseJsonPhysicalDeviceSampleLocationsProperties(const scvkJsonContext*
 /**
  * \brief Parses a VkPhysicalDeviceSamplerFilterMinmaxProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceSamplerFilterMinmaxProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceSamplerFilterMinmaxProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceSamplerFilterMinmaxProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -4257,8 +4257,8 @@ void scvkParseJsonPhysicalDeviceSamplerFilterMinmaxProperties(const scvkJsonCont
 /**
  * \brief Parses a VkPhysicalDeviceSamplerYcbcrConversionFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceSamplerYcbcrConversionFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceSamplerYcbcrConversionFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceSamplerYcbcrConversionFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -4267,8 +4267,8 @@ void scvkParseJsonPhysicalDeviceSamplerYcbcrConversionFeatures(const scvkJsonCon
 /**
  * \brief Parses a VkPhysicalDeviceScalarBlockLayoutFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceScalarBlockLayoutFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceScalarBlockLayoutFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceScalarBlockLayoutFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -4277,8 +4277,8 @@ void scvkParseJsonPhysicalDeviceScalarBlockLayoutFeatures(const scvkJsonContext*
 /**
  * \brief Parses a VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -4287,8 +4287,8 @@ void scvkParseJsonPhysicalDeviceSeparateDepthStencilLayoutsFeatures(const scvkJs
 /**
  * \brief Parses a VkPhysicalDeviceShaderAtomicFloatFeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceShaderAtomicFloatFeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceShaderAtomicFloatFeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceShaderAtomicFloatFeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4297,8 +4297,8 @@ void scvkParseJsonPhysicalDeviceShaderAtomicFloatFeatures(const scvkJsonContext*
 /**
  * \brief Parses a VkPhysicalDeviceShaderAtomicInt64Features from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceShaderAtomicInt64Features
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceShaderAtomicInt64Features
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceShaderAtomicInt64Features, zeroed first
  *
  * \retval None No value is returned.
@@ -4307,8 +4307,8 @@ void scvkParseJsonPhysicalDeviceShaderAtomicInt64Features(const scvkJsonContext*
 /**
  * \brief Parses a VkPhysicalDeviceShaderClockFeaturesKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceShaderClockFeaturesKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceShaderClockFeaturesKHR
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceShaderClockFeaturesKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -4317,8 +4317,8 @@ void scvkParseJsonPhysicalDeviceShaderClockFeatures(const scvkJsonContext* pCont
 /**
  * \brief Parses a VkPhysicalDeviceShaderDrawParametersFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceShaderDrawParametersFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceShaderDrawParametersFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceShaderDrawParametersFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -4327,8 +4327,8 @@ void scvkParseJsonPhysicalDeviceShaderDrawParametersFeatures(const scvkJsonConte
 /**
  * \brief Parses a VkPhysicalDeviceShaderFloat16Int8Features from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceShaderFloat16Int8Features
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceShaderFloat16Int8Features
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceShaderFloat16Int8Features, zeroed first
  *
  * \retval None No value is returned.
@@ -4337,8 +4337,8 @@ void scvkParseJsonPhysicalDeviceShaderFloat16Int8Features(const scvkJsonContext*
 /**
  * \brief Parses a VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4347,8 +4347,8 @@ void scvkParseJsonPhysicalDeviceShaderImageAtomicInt64Features(const scvkJsonCon
 /**
  * \brief Parses a VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -4357,8 +4357,8 @@ void scvkParseJsonPhysicalDeviceShaderSubgroupExtendedTypesFeatures(const scvkJs
 /**
  * \brief Parses a VkPhysicalDeviceSparseProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceSparseProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceSparseProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceSparseProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -4367,8 +4367,8 @@ void scvkParseJsonPhysicalDeviceSparseProperties(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkPhysicalDeviceSubgroupProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceSubgroupProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceSubgroupProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceSubgroupProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -4377,8 +4377,8 @@ void scvkParseJsonPhysicalDeviceSubgroupProperties(const scvkJsonContext* pConte
 /**
  * \brief Parses a VkPhysicalDeviceSurfaceInfo2KHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceSurfaceInfo2KHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceSurfaceInfo2KHR
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceSurfaceInfo2KHR, zeroed first
  *
  * \retval None No value is returned.
@@ -4387,8 +4387,8 @@ void scvkParseJsonPhysicalDeviceSurfaceInfo2(const scvkJsonContext* pContext, co
 /**
  * \brief Parses a VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4397,8 +4397,8 @@ void scvkParseJsonPhysicalDeviceTexelBufferAlignmentFeatures(const scvkJsonConte
 /**
  * \brief Parses a VkPhysicalDeviceTimelineSemaphoreFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceTimelineSemaphoreFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceTimelineSemaphoreFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceTimelineSemaphoreFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -4407,8 +4407,8 @@ void scvkParseJsonPhysicalDeviceTimelineSemaphoreFeatures(const scvkJsonContext*
 /**
  * \brief Parses a VkPhysicalDeviceTimelineSemaphoreProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceTimelineSemaphoreProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceTimelineSemaphoreProperties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceTimelineSemaphoreProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -4417,8 +4417,8 @@ void scvkParseJsonPhysicalDeviceTimelineSemaphoreProperties(const scvkJsonContex
 /**
  * \brief Parses a VkPhysicalDeviceUniformBufferStandardLayoutFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceUniformBufferStandardLayoutFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceUniformBufferStandardLayoutFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceUniformBufferStandardLayoutFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -4427,8 +4427,8 @@ void scvkParseJsonPhysicalDeviceUniformBufferStandardLayoutFeatures(const scvkJs
 /**
  * \brief Parses a VkPhysicalDeviceVariablePointersFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceVariablePointersFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceVariablePointersFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceVariablePointersFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -4437,8 +4437,8 @@ void scvkParseJsonPhysicalDeviceVariablePointersFeatures(const scvkJsonContext* 
 /**
  * \brief Parses a VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4447,8 +4447,8 @@ void scvkParseJsonPhysicalDeviceVertexInputDynamicStateFeatures(const scvkJsonCo
 /**
  * \brief Parses a VkPhysicalDeviceVulkan11Features from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceVulkan11Features
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceVulkan11Features
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceVulkan11Features, zeroed first
  *
  * \retval None No value is returned.
@@ -4457,8 +4457,8 @@ void scvkParseJsonPhysicalDeviceVulkan11Features(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkPhysicalDeviceVulkan11Properties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceVulkan11Properties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceVulkan11Properties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceVulkan11Properties, zeroed first
  *
  * \retval None No value is returned.
@@ -4467,8 +4467,8 @@ void scvkParseJsonPhysicalDeviceVulkan11Properties(const scvkJsonContext* pConte
 /**
  * \brief Parses a VkPhysicalDeviceVulkan12Features from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceVulkan12Features
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceVulkan12Features
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceVulkan12Features, zeroed first
  *
  * \retval None No value is returned.
@@ -4477,8 +4477,8 @@ void scvkParseJsonPhysicalDeviceVulkan12Features(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkPhysicalDeviceVulkan12Properties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceVulkan12Properties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceVulkan12Properties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceVulkan12Properties, zeroed first
  *
  * \retval None No value is returned.
@@ -4487,8 +4487,8 @@ void scvkParseJsonPhysicalDeviceVulkan12Properties(const scvkJsonContext* pConte
 /**
  * \brief Parses a VkPhysicalDeviceVulkanMemoryModelFeatures from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceVulkanMemoryModelFeatures
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceVulkanMemoryModelFeatures
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceVulkanMemoryModelFeatures, zeroed first
  *
  * \retval None No value is returned.
@@ -4497,8 +4497,8 @@ void scvkParseJsonPhysicalDeviceVulkanMemoryModelFeatures(const scvkJsonContext*
 /**
  * \brief Parses a VkPhysicalDeviceVulkanSC10Features from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceVulkanSC10Features
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceVulkanSC10Features
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceVulkanSC10Features, zeroed first
  *
  * \retval None No value is returned.
@@ -4507,8 +4507,8 @@ void scvkParseJsonPhysicalDeviceVulkanSC10Features(const scvkJsonContext* pConte
 /**
  * \brief Parses a VkPhysicalDeviceVulkanSC10Properties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceVulkanSC10Properties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceVulkanSC10Properties
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceVulkanSC10Properties, zeroed first
  *
  * \retval None No value is returned.
@@ -4517,8 +4517,8 @@ void scvkParseJsonPhysicalDeviceVulkanSC10Properties(const scvkJsonContext* pCon
 /**
  * \brief Parses a VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4527,8 +4527,8 @@ void scvkParseJsonPhysicalDeviceYcbcr2Plane444FormatsFeatures(const scvkJsonCont
 /**
  * \brief Parses a VkPhysicalDeviceYcbcrImageArraysFeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPhysicalDeviceYcbcrImageArraysFeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPhysicalDeviceYcbcrImageArraysFeaturesEXT
  * \param[out] pInfo     Receives the parsed VkPhysicalDeviceYcbcrImageArraysFeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4537,8 +4537,8 @@ void scvkParseJsonPhysicalDeviceYcbcrImageArraysFeatures(const scvkJsonContext* 
 /**
  * \brief Parses a VkPipelineCacheCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineCacheCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineCacheCreateInfo
  * \param[out] pInfo     Receives the parsed VkPipelineCacheCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4547,8 +4547,8 @@ void scvkParseJsonPipelineCacheCreateInfo(const scvkJsonContext* pContext, const
 /**
  * \brief Parses a VkPipelineCacheHeaderVersionOne from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineCacheHeaderVersionOne
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineCacheHeaderVersionOne
  * \param[out] pInfo     Receives the parsed VkPipelineCacheHeaderVersionOne, zeroed first
  *
  * \retval None No value is returned.
@@ -4557,8 +4557,8 @@ void scvkParseJsonPipelineCacheHeaderVersionOne(const scvkJsonContext* pContext,
 /**
  * \brief Parses a VkPipelineCacheHeaderVersionSafetyCriticalOne from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineCacheHeaderVersionSafetyCriticalOne
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineCacheHeaderVersionSafetyCriticalOne
  * \param[out] pInfo     Receives the parsed VkPipelineCacheHeaderVersionSafetyCriticalOne, zeroed first
  *
  * \retval None No value is returned.
@@ -4567,8 +4567,8 @@ void scvkParseJsonPipelineCacheHeaderVersionSafetyCriticalOne(const scvkJsonCont
 /**
  * \brief Parses a VkPipelineCacheSafetyCriticalIndexEntry from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineCacheSafetyCriticalIndexEntry
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineCacheSafetyCriticalIndexEntry
  * \param[out] pInfo     Receives the parsed VkPipelineCacheSafetyCriticalIndexEntry, zeroed first
  *
  * \retval None No value is returned.
@@ -4577,8 +4577,8 @@ void scvkParseJsonPipelineCacheSafetyCriticalIndexEntry(const scvkJsonContext* p
 /**
  * \brief Parses a VkPipelineCacheStageValidationIndexEntry from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineCacheStageValidationIndexEntry
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineCacheStageValidationIndexEntry
  * \param[out] pInfo     Receives the parsed VkPipelineCacheStageValidationIndexEntry, zeroed first
  *
  * \retval None No value is returned.
@@ -4587,8 +4587,8 @@ void scvkParseJsonPipelineCacheStageValidationIndexEntry(const scvkJsonContext* 
 /**
  * \brief Parses a VkPipelineColorBlendAdvancedStateCreateInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineColorBlendAdvancedStateCreateInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineColorBlendAdvancedStateCreateInfoEXT
  * \param[out] pInfo     Receives the parsed VkPipelineColorBlendAdvancedStateCreateInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4597,8 +4597,8 @@ void scvkParseJsonPipelineColorBlendAdvancedStateCreateInfo(const scvkJsonContex
 /**
  * \brief Parses a VkPipelineColorBlendAttachmentState from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineColorBlendAttachmentState
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineColorBlendAttachmentState
  * \param[out] pInfo     Receives the parsed VkPipelineColorBlendAttachmentState, zeroed first
  *
  * \retval None No value is returned.
@@ -4607,8 +4607,8 @@ void scvkParseJsonPipelineColorBlendAttachmentState(const scvkJsonContext* pCont
 /**
  * \brief Parses a VkPipelineColorBlendStateCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineColorBlendStateCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineColorBlendStateCreateInfo
  * \param[out] pInfo     Receives the parsed VkPipelineColorBlendStateCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4617,8 +4617,8 @@ void scvkParseJsonPipelineColorBlendStateCreateInfo(const scvkJsonContext* pCont
 /**
  * \brief Parses a VkPipelineColorWriteCreateInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineColorWriteCreateInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineColorWriteCreateInfoEXT
  * \param[out] pInfo     Receives the parsed VkPipelineColorWriteCreateInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4627,8 +4627,8 @@ void scvkParseJsonPipelineColorWriteCreateInfo(const scvkJsonContext* pContext, 
 /**
  * \brief Parses a VkPipelineDepthStencilStateCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineDepthStencilStateCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineDepthStencilStateCreateInfo
  * \param[out] pInfo     Receives the parsed VkPipelineDepthStencilStateCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4637,8 +4637,8 @@ void scvkParseJsonPipelineDepthStencilStateCreateInfo(const scvkJsonContext* pCo
 /**
  * \brief Parses a VkPipelineDiscardRectangleStateCreateInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineDiscardRectangleStateCreateInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineDiscardRectangleStateCreateInfoEXT
  * \param[out] pInfo     Receives the parsed VkPipelineDiscardRectangleStateCreateInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4647,8 +4647,8 @@ void scvkParseJsonPipelineDiscardRectangleStateCreateInfo(const scvkJsonContext*
 /**
  * \brief Parses a VkPipelineDynamicStateCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineDynamicStateCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineDynamicStateCreateInfo
  * \param[out] pInfo     Receives the parsed VkPipelineDynamicStateCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4657,8 +4657,8 @@ void scvkParseJsonPipelineDynamicStateCreateInfo(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkPipelineFragmentShadingRateStateCreateInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineFragmentShadingRateStateCreateInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineFragmentShadingRateStateCreateInfoKHR
  * \param[out] pInfo     Receives the parsed VkPipelineFragmentShadingRateStateCreateInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -4667,8 +4667,8 @@ void scvkParseJsonPipelineFragmentShadingRateStateCreateInfo(const scvkJsonConte
 /**
  * \brief Parses a VkPipelineInputAssemblyStateCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineInputAssemblyStateCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineInputAssemblyStateCreateInfo
  * \param[out] pInfo     Receives the parsed VkPipelineInputAssemblyStateCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4677,8 +4677,8 @@ void scvkParseJsonPipelineInputAssemblyStateCreateInfo(const scvkJsonContext* pC
 /**
  * \brief Parses a VkPipelineLayoutCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineLayoutCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineLayoutCreateInfo
  * \param[out] pInfo     Receives the parsed VkPipelineLayoutCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4687,8 +4687,8 @@ void scvkParseJsonPipelineLayoutCreateInfo(const scvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkPipelineMultisampleStateCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineMultisampleStateCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineMultisampleStateCreateInfo
  * \param[out] pInfo     Receives the parsed VkPipelineMultisampleStateCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4697,8 +4697,8 @@ void scvkParseJsonPipelineMultisampleStateCreateInfo(const scvkJsonContext* pCon
 /**
  * \brief Parses a VkPipelineOfflineCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineOfflineCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineOfflineCreateInfo
  * \param[out] pInfo     Receives the parsed VkPipelineOfflineCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4707,8 +4707,8 @@ void scvkParseJsonPipelineOfflineCreateInfo(const scvkJsonContext* pContext, con
 /**
  * \brief Parses a VkPipelinePoolSize from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelinePoolSize
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelinePoolSize
  * \param[out] pInfo     Receives the parsed VkPipelinePoolSize, zeroed first
  *
  * \retval None No value is returned.
@@ -4717,8 +4717,8 @@ void scvkParseJsonPipelinePoolSize(const scvkJsonContext* pContext, const scvkJs
 /**
  * \brief Parses a VkPipelineRasterizationConservativeStateCreateInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineRasterizationConservativeStateCreateInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineRasterizationConservativeStateCreateInfoEXT
  * \param[out] pInfo     Receives the parsed VkPipelineRasterizationConservativeStateCreateInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4727,8 +4727,8 @@ void scvkParseJsonPipelineRasterizationConservativeStateCreateInfo(const scvkJso
 /**
  * \brief Parses a VkPipelineRasterizationDepthClipStateCreateInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineRasterizationDepthClipStateCreateInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineRasterizationDepthClipStateCreateInfoEXT
  * \param[out] pInfo     Receives the parsed VkPipelineRasterizationDepthClipStateCreateInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4737,8 +4737,8 @@ void scvkParseJsonPipelineRasterizationDepthClipStateCreateInfo(const scvkJsonCo
 /**
  * \brief Parses a VkPipelineRasterizationStateCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineRasterizationStateCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineRasterizationStateCreateInfo
  * \param[out] pInfo     Receives the parsed VkPipelineRasterizationStateCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4747,8 +4747,8 @@ void scvkParseJsonPipelineRasterizationStateCreateInfo(const scvkJsonContext* pC
 /**
  * \brief Parses a VkPipelineSampleLocationsStateCreateInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineSampleLocationsStateCreateInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineSampleLocationsStateCreateInfoEXT
  * \param[out] pInfo     Receives the parsed VkPipelineSampleLocationsStateCreateInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -4757,8 +4757,8 @@ void scvkParseJsonPipelineSampleLocationsStateCreateInfo(const scvkJsonContext* 
 /**
  * \brief Parses a VkPipelineShaderStageCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineShaderStageCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineShaderStageCreateInfo
  * \param[out] pInfo     Receives the parsed VkPipelineShaderStageCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4767,8 +4767,8 @@ void scvkParseJsonPipelineShaderStageCreateInfo(const scvkJsonContext* pContext,
 /**
  * \brief Parses a VkPipelineTessellationDomainOriginStateCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineTessellationDomainOriginStateCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineTessellationDomainOriginStateCreateInfo
  * \param[out] pInfo     Receives the parsed VkPipelineTessellationDomainOriginStateCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4777,8 +4777,8 @@ void scvkParseJsonPipelineTessellationDomainOriginStateCreateInfo(const scvkJson
 /**
  * \brief Parses a VkPipelineTessellationStateCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineTessellationStateCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineTessellationStateCreateInfo
  * \param[out] pInfo     Receives the parsed VkPipelineTessellationStateCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4787,8 +4787,8 @@ void scvkParseJsonPipelineTessellationStateCreateInfo(const scvkJsonContext* pCo
 /**
  * \brief Parses a VkPipelineVertexInputStateCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineVertexInputStateCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineVertexInputStateCreateInfo
  * \param[out] pInfo     Receives the parsed VkPipelineVertexInputStateCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4797,8 +4797,8 @@ void scvkParseJsonPipelineVertexInputStateCreateInfo(const scvkJsonContext* pCon
 /**
  * \brief Parses a VkPipelineViewportStateCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPipelineViewportStateCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPipelineViewportStateCreateInfo
  * \param[out] pInfo     Receives the parsed VkPipelineViewportStateCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4807,8 +4807,8 @@ void scvkParseJsonPipelineViewportStateCreateInfo(const scvkJsonContext* pContex
 /**
  * \brief Parses a VkPresentInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPresentInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPresentInfoKHR
  * \param[out] pInfo     Receives the parsed VkPresentInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -4817,8 +4817,8 @@ void scvkParseJsonPresentInfo(const scvkJsonContext* pContext, const scvkJsonVal
 /**
  * \brief Parses a VkPresentRegionKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPresentRegionKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPresentRegionKHR
  * \param[out] pInfo     Receives the parsed VkPresentRegionKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -4827,8 +4827,8 @@ void scvkParseJsonPresentRegion(const scvkJsonContext* pContext, const scvkJsonV
 /**
  * \brief Parses a VkPresentRegionsKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPresentRegionsKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPresentRegionsKHR
  * \param[out] pInfo     Receives the parsed VkPresentRegionsKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -4837,8 +4837,8 @@ void scvkParseJsonPresentRegions(const scvkJsonContext* pContext, const scvkJson
 /**
  * \brief Parses a VkProtectedSubmitInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkProtectedSubmitInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkProtectedSubmitInfo
  * \param[out] pInfo     Receives the parsed VkProtectedSubmitInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4847,8 +4847,8 @@ void scvkParseJsonProtectedSubmitInfo(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkPushConstantRange from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkPushConstantRange
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkPushConstantRange
  * \param[out] pInfo     Receives the parsed VkPushConstantRange, zeroed first
  *
  * \retval None No value is returned.
@@ -4857,8 +4857,8 @@ void scvkParseJsonPushConstantRange(const scvkJsonContext* pContext, const scvkJ
 /**
  * \brief Parses a VkQueryPoolCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkQueryPoolCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkQueryPoolCreateInfo
  * \param[out] pInfo     Receives the parsed VkQueryPoolCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4867,8 +4867,8 @@ void scvkParseJsonQueryPoolCreateInfo(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkQueryPoolPerformanceCreateInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkQueryPoolPerformanceCreateInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkQueryPoolPerformanceCreateInfoKHR
  * \param[out] pInfo     Receives the parsed VkQueryPoolPerformanceCreateInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -4877,8 +4877,8 @@ void scvkParseJsonQueryPoolPerformanceCreateInfo(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkQueueFamilyProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkQueueFamilyProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkQueueFamilyProperties
  * \param[out] pInfo     Receives the parsed VkQueueFamilyProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -4887,8 +4887,8 @@ void scvkParseJsonQueueFamilyProperties(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkQueueFamilyProperties2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkQueueFamilyProperties2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkQueueFamilyProperties2
  * \param[out] pInfo     Receives the parsed VkQueueFamilyProperties2, zeroed first
  *
  * \retval None No value is returned.
@@ -4897,8 +4897,8 @@ void scvkParseJsonQueueFamilyProperties2(const scvkJsonContext* pContext, const 
 /**
  * \brief Parses a VkRect2D from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkRect2D
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkRect2D
  * \param[out] pInfo     Receives the parsed VkRect2D, zeroed first
  *
  * \retval None No value is returned.
@@ -4907,8 +4907,8 @@ void scvkParseJsonRect2D(const scvkJsonContext* pContext, const scvkJsonValue* p
 /**
  * \brief Parses a VkRectLayerKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkRectLayerKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkRectLayerKHR
  * \param[out] pInfo     Receives the parsed VkRectLayerKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -4917,8 +4917,8 @@ void scvkParseJsonRectLayer(const scvkJsonContext* pContext, const scvkJsonValue
 /**
  * \brief Parses a VkRefreshObjectKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkRefreshObjectKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkRefreshObjectKHR
  * \param[out] pInfo     Receives the parsed VkRefreshObjectKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -4927,8 +4927,8 @@ void scvkParseJsonRefreshObject(const scvkJsonContext* pContext, const scvkJsonV
 /**
  * \brief Parses a VkRefreshObjectListKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkRefreshObjectListKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkRefreshObjectListKHR
  * \param[out] pInfo     Receives the parsed VkRefreshObjectListKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -4937,8 +4937,8 @@ void scvkParseJsonRefreshObjectList(const scvkJsonContext* pContext, const scvkJ
 /**
  * \brief Parses a VkRenderPassAttachmentBeginInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkRenderPassAttachmentBeginInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkRenderPassAttachmentBeginInfo
  * \param[out] pInfo     Receives the parsed VkRenderPassAttachmentBeginInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4947,8 +4947,8 @@ void scvkParseJsonRenderPassAttachmentBeginInfo(const scvkJsonContext* pContext,
 /**
  * \brief Parses a VkRenderPassBeginInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkRenderPassBeginInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkRenderPassBeginInfo
  * \param[out] pInfo     Receives the parsed VkRenderPassBeginInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4957,8 +4957,8 @@ void scvkParseJsonRenderPassBeginInfo(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkRenderPassCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkRenderPassCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkRenderPassCreateInfo
  * \param[out] pInfo     Receives the parsed VkRenderPassCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4967,8 +4967,8 @@ void scvkParseJsonRenderPassCreateInfo(const scvkJsonContext* pContext, const sc
 /**
  * \brief Parses a VkRenderPassCreateInfo2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkRenderPassCreateInfo2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkRenderPassCreateInfo2
  * \param[out] pInfo     Receives the parsed VkRenderPassCreateInfo2, zeroed first
  *
  * \retval None No value is returned.
@@ -4977,8 +4977,8 @@ void scvkParseJsonRenderPassCreateInfo2(const scvkJsonContext* pContext, const s
 /**
  * \brief Parses a VkRenderPassInputAttachmentAspectCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkRenderPassInputAttachmentAspectCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkRenderPassInputAttachmentAspectCreateInfo
  * \param[out] pInfo     Receives the parsed VkRenderPassInputAttachmentAspectCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4987,8 +4987,8 @@ void scvkParseJsonRenderPassInputAttachmentAspectCreateInfo(const scvkJsonContex
 /**
  * \brief Parses a VkRenderPassMultiviewCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkRenderPassMultiviewCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkRenderPassMultiviewCreateInfo
  * \param[out] pInfo     Receives the parsed VkRenderPassMultiviewCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -4997,8 +4997,8 @@ void scvkParseJsonRenderPassMultiviewCreateInfo(const scvkJsonContext* pContext,
 /**
  * \brief Parses a VkRenderPassSampleLocationsBeginInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkRenderPassSampleLocationsBeginInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkRenderPassSampleLocationsBeginInfoEXT
  * \param[out] pInfo     Receives the parsed VkRenderPassSampleLocationsBeginInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -5007,8 +5007,8 @@ void scvkParseJsonRenderPassSampleLocationsBeginInfo(const scvkJsonContext* pCon
 /**
  * \brief Parses a VkSampleLocationEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSampleLocationEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSampleLocationEXT
  * \param[out] pInfo     Receives the parsed VkSampleLocationEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -5017,8 +5017,8 @@ void scvkParseJsonSampleLocation(const scvkJsonContext* pContext, const scvkJson
 /**
  * \brief Parses a VkSampleLocationsInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSampleLocationsInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSampleLocationsInfoEXT
  * \param[out] pInfo     Receives the parsed VkSampleLocationsInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -5027,8 +5027,8 @@ void scvkParseJsonSampleLocationsInfo(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkSamplerCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSamplerCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSamplerCreateInfo
  * \param[out] pInfo     Receives the parsed VkSamplerCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -5037,8 +5037,8 @@ void scvkParseJsonSamplerCreateInfo(const scvkJsonContext* pContext, const scvkJ
 /**
  * \brief Parses a VkSamplerCustomBorderColorCreateInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSamplerCustomBorderColorCreateInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSamplerCustomBorderColorCreateInfoEXT
  * \param[out] pInfo     Receives the parsed VkSamplerCustomBorderColorCreateInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -5047,8 +5047,8 @@ void scvkParseJsonSamplerCustomBorderColorCreateInfo(const scvkJsonContext* pCon
 /**
  * \brief Parses a VkSamplerReductionModeCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSamplerReductionModeCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSamplerReductionModeCreateInfo
  * \param[out] pInfo     Receives the parsed VkSamplerReductionModeCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -5057,8 +5057,8 @@ void scvkParseJsonSamplerReductionModeCreateInfo(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkSamplerYcbcrConversionCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSamplerYcbcrConversionCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSamplerYcbcrConversionCreateInfo
  * \param[out] pInfo     Receives the parsed VkSamplerYcbcrConversionCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -5067,8 +5067,8 @@ void scvkParseJsonSamplerYcbcrConversionCreateInfo(const scvkJsonContext* pConte
 /**
  * \brief Parses a VkSamplerYcbcrConversionImageFormatProperties from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSamplerYcbcrConversionImageFormatProperties
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSamplerYcbcrConversionImageFormatProperties
  * \param[out] pInfo     Receives the parsed VkSamplerYcbcrConversionImageFormatProperties, zeroed first
  *
  * \retval None No value is returned.
@@ -5077,8 +5077,8 @@ void scvkParseJsonSamplerYcbcrConversionImageFormatProperties(const scvkJsonCont
 /**
  * \brief Parses a VkSamplerYcbcrConversionInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSamplerYcbcrConversionInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSamplerYcbcrConversionInfo
  * \param[out] pInfo     Receives the parsed VkSamplerYcbcrConversionInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -5087,8 +5087,8 @@ void scvkParseJsonSamplerYcbcrConversionInfo(const scvkJsonContext* pContext, co
 /**
  * \brief Parses a VkSemaphoreCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSemaphoreCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSemaphoreCreateInfo
  * \param[out] pInfo     Receives the parsed VkSemaphoreCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -5097,8 +5097,8 @@ void scvkParseJsonSemaphoreCreateInfo(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkSemaphoreGetFdInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSemaphoreGetFdInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSemaphoreGetFdInfoKHR
  * \param[out] pInfo     Receives the parsed VkSemaphoreGetFdInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -5107,8 +5107,8 @@ void scvkParseJsonSemaphoreGetFdInfo(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkSemaphoreSignalInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSemaphoreSignalInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSemaphoreSignalInfo
  * \param[out] pInfo     Receives the parsed VkSemaphoreSignalInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -5117,8 +5117,8 @@ void scvkParseJsonSemaphoreSignalInfo(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkSemaphoreTypeCreateInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSemaphoreTypeCreateInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSemaphoreTypeCreateInfo
  * \param[out] pInfo     Receives the parsed VkSemaphoreTypeCreateInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -5127,8 +5127,8 @@ void scvkParseJsonSemaphoreTypeCreateInfo(const scvkJsonContext* pContext, const
 /**
  * \brief Parses a VkSemaphoreWaitInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSemaphoreWaitInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSemaphoreWaitInfo
  * \param[out] pInfo     Receives the parsed VkSemaphoreWaitInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -5137,8 +5137,8 @@ void scvkParseJsonSemaphoreWaitInfo(const scvkJsonContext* pContext, const scvkJ
 /**
  * \brief Parses a VkSharedPresentSurfaceCapabilitiesKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSharedPresentSurfaceCapabilitiesKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSharedPresentSurfaceCapabilitiesKHR
  * \param[out] pInfo     Receives the parsed VkSharedPresentSurfaceCapabilitiesKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -5147,8 +5147,8 @@ void scvkParseJsonSharedPresentSurfaceCapabilities(const scvkJsonContext* pConte
 /**
  * \brief Parses a VkSpecializationInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSpecializationInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSpecializationInfo
  * \param[out] pInfo     Receives the parsed VkSpecializationInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -5157,8 +5157,8 @@ void scvkParseJsonSpecializationInfo(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkSpecializationMapEntry from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSpecializationMapEntry
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSpecializationMapEntry
  * \param[out] pInfo     Receives the parsed VkSpecializationMapEntry, zeroed first
  *
  * \retval None No value is returned.
@@ -5167,8 +5167,8 @@ void scvkParseJsonSpecializationMapEntry(const scvkJsonContext* pContext, const 
 /**
  * \brief Parses a VkStencilOpState from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkStencilOpState
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkStencilOpState
  * \param[out] pInfo     Receives the parsed VkStencilOpState, zeroed first
  *
  * \retval None No value is returned.
@@ -5177,8 +5177,8 @@ void scvkParseJsonStencilOpState(const scvkJsonContext* pContext, const scvkJson
 /**
  * \brief Parses a VkSubmitInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSubmitInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSubmitInfo
  * \param[out] pInfo     Receives the parsed VkSubmitInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -5187,8 +5187,8 @@ void scvkParseJsonSubmitInfo(const scvkJsonContext* pContext, const scvkJsonValu
 /**
  * \brief Parses a VkSubpassBeginInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSubpassBeginInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSubpassBeginInfo
  * \param[out] pInfo     Receives the parsed VkSubpassBeginInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -5197,8 +5197,8 @@ void scvkParseJsonSubpassBeginInfo(const scvkJsonContext* pContext, const scvkJs
 /**
  * \brief Parses a VkSubpassDependency from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSubpassDependency
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSubpassDependency
  * \param[out] pInfo     Receives the parsed VkSubpassDependency, zeroed first
  *
  * \retval None No value is returned.
@@ -5207,8 +5207,8 @@ void scvkParseJsonSubpassDependency(const scvkJsonContext* pContext, const scvkJ
 /**
  * \brief Parses a VkSubpassDependency2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSubpassDependency2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSubpassDependency2
  * \param[out] pInfo     Receives the parsed VkSubpassDependency2, zeroed first
  *
  * \retval None No value is returned.
@@ -5217,8 +5217,8 @@ void scvkParseJsonSubpassDependency2(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkSubpassDescription from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSubpassDescription
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSubpassDescription
  * \param[out] pInfo     Receives the parsed VkSubpassDescription, zeroed first
  *
  * \retval None No value is returned.
@@ -5227,8 +5227,8 @@ void scvkParseJsonSubpassDescription(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkSubpassDescription2 from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSubpassDescription2
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSubpassDescription2
  * \param[out] pInfo     Receives the parsed VkSubpassDescription2, zeroed first
  *
  * \retval None No value is returned.
@@ -5237,8 +5237,8 @@ void scvkParseJsonSubpassDescription2(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkSubpassDescriptionDepthStencilResolve from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSubpassDescriptionDepthStencilResolve
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSubpassDescriptionDepthStencilResolve
  * \param[out] pInfo     Receives the parsed VkSubpassDescriptionDepthStencilResolve, zeroed first
  *
  * \retval None No value is returned.
@@ -5247,8 +5247,8 @@ void scvkParseJsonSubpassDescriptionDepthStencilResolve(const scvkJsonContext* p
 /**
  * \brief Parses a VkSubpassEndInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSubpassEndInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSubpassEndInfo
  * \param[out] pInfo     Receives the parsed VkSubpassEndInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -5257,8 +5257,8 @@ void scvkParseJsonSubpassEndInfo(const scvkJsonContext* pContext, const scvkJson
 /**
  * \brief Parses a VkSubpassSampleLocationsEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSubpassSampleLocationsEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSubpassSampleLocationsEXT
  * \param[out] pInfo     Receives the parsed VkSubpassSampleLocationsEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -5267,8 +5267,8 @@ void scvkParseJsonSubpassSampleLocations(const scvkJsonContext* pContext, const 
 /**
  * \brief Parses a VkSubresourceLayout from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSubresourceLayout
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSubresourceLayout
  * \param[out] pInfo     Receives the parsed VkSubresourceLayout, zeroed first
  *
  * \retval None No value is returned.
@@ -5277,8 +5277,8 @@ void scvkParseJsonSubresourceLayout(const scvkJsonContext* pContext, const scvkJ
 /**
  * \brief Parses a VkSurfaceCapabilities2EXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSurfaceCapabilities2EXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSurfaceCapabilities2EXT
  * \param[out] pInfo     Receives the parsed VkSurfaceCapabilities2EXT, zeroed first
  *
  * \retval None No value is returned.
@@ -5287,8 +5287,8 @@ void scvkParseJsonSurfaceCapabilities2EXT(const scvkJsonContext* pContext, const
 /**
  * \brief Parses a VkSurfaceCapabilities2KHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSurfaceCapabilities2KHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSurfaceCapabilities2KHR
  * \param[out] pInfo     Receives the parsed VkSurfaceCapabilities2KHR, zeroed first
  *
  * \retval None No value is returned.
@@ -5297,8 +5297,8 @@ void scvkParseJsonSurfaceCapabilities2(const scvkJsonContext* pContext, const sc
 /**
  * \brief Parses a VkSurfaceCapabilitiesKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSurfaceCapabilitiesKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSurfaceCapabilitiesKHR
  * \param[out] pInfo     Receives the parsed VkSurfaceCapabilitiesKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -5307,8 +5307,8 @@ void scvkParseJsonSurfaceCapabilities(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkSurfaceFormat2KHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSurfaceFormat2KHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSurfaceFormat2KHR
  * \param[out] pInfo     Receives the parsed VkSurfaceFormat2KHR, zeroed first
  *
  * \retval None No value is returned.
@@ -5317,8 +5317,8 @@ void scvkParseJsonSurfaceFormat2(const scvkJsonContext* pContext, const scvkJson
 /**
  * \brief Parses a VkSurfaceFormatKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSurfaceFormatKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSurfaceFormatKHR
  * \param[out] pInfo     Receives the parsed VkSurfaceFormatKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -5327,8 +5327,8 @@ void scvkParseJsonSurfaceFormat(const scvkJsonContext* pContext, const scvkJsonV
 /**
  * \brief Parses a VkSwapchainCounterCreateInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSwapchainCounterCreateInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSwapchainCounterCreateInfoEXT
  * \param[out] pInfo     Receives the parsed VkSwapchainCounterCreateInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -5337,8 +5337,8 @@ void scvkParseJsonSwapchainCounterCreateInfo(const scvkJsonContext* pContext, co
 /**
  * \brief Parses a VkSwapchainCreateInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSwapchainCreateInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSwapchainCreateInfoKHR
  * \param[out] pInfo     Receives the parsed VkSwapchainCreateInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -5347,8 +5347,8 @@ void scvkParseJsonSwapchainCreateInfo(const scvkJsonContext* pContext, const scv
 /**
  * \brief Parses a VkTimelineSemaphoreSubmitInfo from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkTimelineSemaphoreSubmitInfo
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkTimelineSemaphoreSubmitInfo
  * \param[out] pInfo     Receives the parsed VkTimelineSemaphoreSubmitInfo, zeroed first
  *
  * \retval None No value is returned.
@@ -5357,8 +5357,8 @@ void scvkParseJsonTimelineSemaphoreSubmitInfo(const scvkJsonContext* pContext, c
 /**
  * \brief Parses a VkValidationFeaturesEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkValidationFeaturesEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkValidationFeaturesEXT
  * \param[out] pInfo     Receives the parsed VkValidationFeaturesEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -5367,8 +5367,8 @@ void scvkParseJsonValidationFeatures(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkVertexInputAttributeDescription from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkVertexInputAttributeDescription
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkVertexInputAttributeDescription
  * \param[out] pInfo     Receives the parsed VkVertexInputAttributeDescription, zeroed first
  *
  * \retval None No value is returned.
@@ -5377,8 +5377,8 @@ void scvkParseJsonVertexInputAttributeDescription(const scvkJsonContext* pContex
 /**
  * \brief Parses a VkVertexInputAttributeDescription2EXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkVertexInputAttributeDescription2EXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkVertexInputAttributeDescription2EXT
  * \param[out] pInfo     Receives the parsed VkVertexInputAttributeDescription2EXT, zeroed first
  *
  * \retval None No value is returned.
@@ -5387,8 +5387,8 @@ void scvkParseJsonVertexInputAttributeDescription2(const scvkJsonContext* pConte
 /**
  * \brief Parses a VkVertexInputBindingDescription from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkVertexInputBindingDescription
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkVertexInputBindingDescription
  * \param[out] pInfo     Receives the parsed VkVertexInputBindingDescription, zeroed first
  *
  * \retval None No value is returned.
@@ -5397,8 +5397,8 @@ void scvkParseJsonVertexInputBindingDescription(const scvkJsonContext* pContext,
 /**
  * \brief Parses a VkVertexInputBindingDescription2EXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkVertexInputBindingDescription2EXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkVertexInputBindingDescription2EXT
  * \param[out] pInfo     Receives the parsed VkVertexInputBindingDescription2EXT, zeroed first
  *
  * \retval None No value is returned.
@@ -5407,8 +5407,8 @@ void scvkParseJsonVertexInputBindingDescription2(const scvkJsonContext* pContext
 /**
  * \brief Parses a VkViewport from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkViewport
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkViewport
  * \param[out] pInfo     Receives the parsed VkViewport, zeroed first
  *
  * \retval None No value is returned.
@@ -5417,8 +5417,8 @@ void scvkParseJsonViewport(const scvkJsonContext* pContext, const scvkJsonValue*
 /**
  * \brief Parses a VkWriteDescriptorSet from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkWriteDescriptorSet
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkWriteDescriptorSet
  * \param[out] pInfo     Receives the parsed VkWriteDescriptorSet, zeroed first
  *
  * \retval None No value is returned.
@@ -5427,8 +5427,8 @@ void scvkParseJsonWriteDescriptorSet(const scvkJsonContext* pContext, const scvk
 /**
  * \brief Parses a VkXYColorEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkXYColorEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkXYColorEXT
  * \param[out] pInfo     Receives the parsed VkXYColorEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -5458,7 +5458,7 @@ void* scvkParseJsonStructureChain(const scvkJsonContext* pContext, const scvkJso
  *  Open containers temporarily store their parent and last-child indices in their
  *  links. Closing a container restores the public first-child and sibling links.
  *  Neither depth-dependent stack storage nor allocation is required.
- * \param[in,out] pReader Reader state and caller-owned values.
+ * \param[in,out] pReader  Reader state and caller-owned values.
  * \retval Other The parsed root index.
  */
 uint32_t scvkParseJsonValue(scvkJsonReader* pReader);
@@ -5476,9 +5476,9 @@ uint32_t scvkParseJsonDocument(const char* pText, size_t length, scvkJsonValue* 
 /**
  * \brief Returns the member of an object by name, or NULL when absent.
  *
- * \param[in]  pDocument  The document the object belongs to
- * \param[in]  pObject    The object, or NULL
- * \param[in]  pKey       Member name
+ * \param[in] pDocument  The document the object belongs to
+ * \param[in] pObject    The object, or NULL
+ * \param[in] pKey       Member name
  *
  * \retval The member value, or NULL
  */
@@ -5486,9 +5486,9 @@ const scvkJsonValue* scvkGetJsonMember(const scvkJsonDocument* pDocument, const 
 /**
  * \brief Returns the element of an array by index, or NULL when out of range.
  *
- * \param[in]  pDocument  The document the array belongs to
- * \param[in]  pArray     The array, or NULL
- * \param[in]  index      Element index
+ * \param[in] pDocument  The document the array belongs to
+ * \param[in] pArray     The array, or NULL
+ * \param[in] index      Element index
  *
  * \retval The element, or NULL
  */
@@ -5496,8 +5496,8 @@ const scvkJsonValue* scvkGetJsonElement(const scvkJsonDocument* pDocument, const
 /**
  * \brief Reports whether a value is a string equal to a C string.
  *
- * \param[in]  pValue   The value, or NULL
- * \param[in]  pString  The string to compare with
+ * \param[in] pValue   The value, or NULL
+ * \param[in] pString  The string to compare with
  *
  * \retval VK_TRUE when equal
  */
@@ -5505,7 +5505,7 @@ VkBool32 scvkJsonStringEquals(const scvkJsonValue* pValue, const char* pString);
 /**
  * \brief Reports whether a value stands for no value: absent, null, or the string "NULL" the pipeline JSON uses for null pointers.
  *
- * \param[in]  pValue  The value, or NULL
+ * \param[in] pValue  The value, or NULL
  *
  * \retval VK_TRUE when there is no value
  */
@@ -5513,21 +5513,21 @@ VkBool32 scvkIsJsonNull(const scvkJsonValue* pValue);
 /**
  * \brief Parses a decimal, octal, or hexadecimal unsigned integer, saturating on overflow.
  *
- * \param[in]  pText  Null-terminated integer text
+ * \param[in] pText  Null-terminated integer text
  *
  * \retval The integer
  */
 uint64_t scvkParseUint64Text(const char* pText);
 /**
  * \brief Reads a number as an unsigned 64-bit integer; a string holding a number is accepted.
- * \param[in] pValue The value, or NULL for zero
+ * \param[in] pValue  The value, or NULL for zero
  * \return The integer
  */
 uint64_t scvkGetJsonUint64(const scvkJsonValue* pValue);
 /**
  * \brief Reads a number as a signed 64-bit integer; a string holding a number is accepted.
  *
- * \param[in]  pValue  The value, or NULL for zero
+ * \param[in] pValue  The value, or NULL for zero
  *
  * \retval The integer
  */
@@ -5539,7 +5539,7 @@ int64_t scvkGetJsonInt64(const scvkJsonValue* pValue);
 /**
  * \brief Reads a number as a double.
  *
- * \param[in]  pValue  The value, or NULL for zero
+ * \param[in] pValue  The value, or NULL for zero
  *
  * \retval The number
  */
@@ -5547,7 +5547,7 @@ double scvkGetJsonDouble(const scvkJsonValue* pValue);
 /**
  * \brief Reads a VkBool32: true, false, "VK_TRUE", "VK_FALSE", or a number.
  *
- * \param[in]  pValue  The value, or NULL for VK_FALSE
+ * \param[in] pValue  The value, or NULL for VK_FALSE
  *
  * \retval The boolean
  */
@@ -5567,9 +5567,9 @@ VkBool32 scvkLookupJsonName(const scvkJsonName* pTable, uint32_t tableCount, con
 /**
  * \brief Reads an enumerant: a name from the table, or a number.
  *
- * \param[in]  pValue      The value; an unknown name is fatal
- * \param[in]  pTable      Name table of the enumeration
- * \param[in]  tableCount  Number of entries
+ * \param[in] pValue      The value; an unknown name is fatal
+ * \param[in] pTable      Name table of the enumeration
+ * \param[in] tableCount  Number of entries
  *
  * \retval The enumerant's value
  */
@@ -5577,9 +5577,9 @@ uint64_t scvkParseJsonEnumerant(const scvkJsonValue* pValue, const scvkJsonName*
 /**
  * \brief Reads a flag set: a number, "0", or bit names joined with "|".
  *
- * \param[in]  pValue      The value; an unknown bit name is fatal
- * \param[in]  pTable      Name table of the flag bits
- * \param[in]  tableCount  Number of entries
+ * \param[in] pValue      The value; an unknown bit name is fatal
+ * \param[in] pTable      Name table of the flag bits
+ * \param[in] tableCount  Number of entries
  *
  * \retval The flags
  */
@@ -5597,7 +5597,7 @@ uint64_t scvkParseJsonFlags(const scvkJsonValue* pValue, const scvkJsonName* pTa
 void* scvkAllocateArena(scvkArena* pArena, size_t size, size_t alignment);
 /**
  * \brief Frees callback-backed arena blocks and resets the arena.
- * \param[in,out] pArena Arena to release.
+ * \param[in,out] pArena  Arena to release.
  * \retval None No value is returned.
  */
 void scvkFreeArena(scvkArena* pArena);
@@ -5613,8 +5613,8 @@ char* scvkCopyJsonString(scvkArena* pArena, const scvkJsonValue* pValue);
 /**
  * \brief Returns the JSON object ID recorded for a native handle field.
  *
- * \param[in] pReferences First reference, or NULL for an empty list.
- * \param[in] pHandle Address of the native handle field.
+ * \param[in] pReferences  First reference, or NULL for an empty list.
+ * \param[in] pHandle      Address of the native handle field.
  *
  * \retval 0 No reference was recorded.
  * \retval Other The JSON object ID.
@@ -5628,11 +5628,11 @@ uint64_t scvkGetJsonHandleId(const scvkJsonHandleReference* pReferences, const v
  *  that exact native type and leaves it unchanged on failure. Deferred resolution
  *  requires a caller-owned reference-list head. Records use the caller's arena.
  *
- * \param[in] pContext Parsing context and optional native resolver.
- * \param[in] pHandleType Vulkan handle type name.
- * \param[in] pValue JSON object ID, or null for the null handle.
- * \param[in] handleByteCount Byte extent of the native handle type.
- * \param[in,out] pHandle Native handle object, initially VK_NULL_HANDLE.
+ * \param[in]     pContext         Parsing context and optional native resolver.
+ * \param[in]     pHandleType      Vulkan handle type name.
+ * \param[in]     pValue           JSON object ID, or null for the null handle.
+ * \param[in]     handleByteCount  Byte extent of the native handle type.
+ * \param[in,out] pHandle          Native handle object, initially VK_NULL_HANDLE.
  *
  * \retval VK_TRUE The ID was null or resolved to a native handle.
  * \retval VK_FALSE The reference remains unresolved and its handle stays null.
@@ -5670,19 +5670,19 @@ void scvkParsePipelineJson(const scvkJsonContext* pContext, scvkPipelineJson* pP
 /**
  * \brief Returns the handle recorded for an id in an id and handle table, or 0.
  *
- * \param[in]  count     Number of entries
- * \param[in]  pIds      The ids
- * \param[in]  pHandles  The handles, as integers, one per id
- * \param[in]  id        The id to find
+ * \param[in] count     Number of entries
+ * \param[in] pIds      The ids
+ * \param[in] pHandles  The handles, as integers, one per id
+ * \param[in] id        The id to find
  *
  * \retval The handle as an integer, or 0
  */
 uint64_t scvkGetPipelineJsonHandle(uint32_t count, const uint64_t* pIds, const uint64_t* pHandles, uint64_t id);
 /**
  * \brief Finds an object ID in a pipeline object's ID table.
- * \param[in] count Number of entries.
- * \param[in] pIds Object IDs.
- * \param[in] id Requested ID.
+ * \param[in] count  Number of entries.
+ * \param[in] pIds   Object IDs.
+ * \param[in] id     Requested ID.
  * \retval VK_INVALID No matching ID.
  * \retval Other The matching index into a typed handle table.
  */

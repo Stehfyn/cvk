@@ -18,8 +18,8 @@ VkIOSSurfaceCreateFlagsMVK cvkParseJsonIOSSurfaceCreateFlagsMVK(const cvkJsonVal
 /**
  * \brief Parses a VkIOSSurfaceCreateInfoMVK from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkIOSSurfaceCreateInfoMVK
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkIOSSurfaceCreateInfoMVK
  * \param[out] pInfo     Receives the parsed VkIOSSurfaceCreateInfoMVK, zeroed first
  *
  * \retval None No value is returned.

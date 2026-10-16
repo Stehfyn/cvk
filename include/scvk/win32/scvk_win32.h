@@ -26,8 +26,8 @@ void scvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR dis
  * \par Details:
  *  Wraps vkGetWinrtDisplayNV. Aborts on any error result.
  *
- * \param[in] physicalDevice    VkPhysicalDevice value
- * \param[in] deviceRelativeId  uint32_t value
+ * \param[in]  physicalDevice    VkPhysicalDevice value
+ * \param[in]  deviceRelativeId  uint32_t value
  * \param[out] pDisplay          Receives the created VkDisplayKHR
  *
  * \retval None No value is returned.

@@ -27,8 +27,8 @@ VkWin32SurfaceCreateFlagsKHR cvkParseJsonWin32SurfaceCreateFlags(const cvkJsonVa
 /**
  * \brief Parses a VkD3D12FenceSubmitInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkD3D12FenceSubmitInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkD3D12FenceSubmitInfoKHR
  * \param[out] pInfo     Receives the parsed VkD3D12FenceSubmitInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -37,8 +37,8 @@ void cvkParseJsonD3D12FenceSubmitInfo(const cvkJsonContext* pContext, const cvkJ
 /**
  * \brief Parses a VkExportFenceWin32HandleInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExportFenceWin32HandleInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExportFenceWin32HandleInfoKHR
  * \param[out] pInfo     Receives the parsed VkExportFenceWin32HandleInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -47,8 +47,8 @@ void cvkParseJsonExportFenceWin32HandleInfo(const cvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkExportMemoryWin32HandleInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExportMemoryWin32HandleInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExportMemoryWin32HandleInfoKHR
  * \param[out] pInfo     Receives the parsed VkExportMemoryWin32HandleInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -57,8 +57,8 @@ void cvkParseJsonExportMemoryWin32HandleInfo(const cvkJsonContext* pContext, con
 /**
  * \brief Parses a VkExportMemoryWin32HandleInfoNV from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExportMemoryWin32HandleInfoNV
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExportMemoryWin32HandleInfoNV
  * \param[out] pInfo     Receives the parsed VkExportMemoryWin32HandleInfoNV, zeroed first
  *
  * \retval None No value is returned.
@@ -67,8 +67,8 @@ void cvkParseJsonExportMemoryWin32HandleInfoNV(const cvkJsonContext* pContext, c
 /**
  * \brief Parses a VkExportSemaphoreWin32HandleInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkExportSemaphoreWin32HandleInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkExportSemaphoreWin32HandleInfoKHR
  * \param[out] pInfo     Receives the parsed VkExportSemaphoreWin32HandleInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -77,8 +77,8 @@ void cvkParseJsonExportSemaphoreWin32HandleInfo(const cvkJsonContext* pContext, 
 /**
  * \brief Parses a VkFenceGetWin32HandleInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkFenceGetWin32HandleInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkFenceGetWin32HandleInfoKHR
  * \param[out] pInfo     Receives the parsed VkFenceGetWin32HandleInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -87,8 +87,8 @@ void cvkParseJsonFenceGetWin32HandleInfo(const cvkJsonContext* pContext, const c
 /**
  * \brief Parses a VkImportFenceWin32HandleInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImportFenceWin32HandleInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImportFenceWin32HandleInfoKHR
  * \param[out] pInfo     Receives the parsed VkImportFenceWin32HandleInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -97,8 +97,8 @@ void cvkParseJsonImportFenceWin32HandleInfo(const cvkJsonContext* pContext, cons
 /**
  * \brief Parses a VkImportMemoryWin32HandleInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImportMemoryWin32HandleInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImportMemoryWin32HandleInfoKHR
  * \param[out] pInfo     Receives the parsed VkImportMemoryWin32HandleInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -107,8 +107,8 @@ void cvkParseJsonImportMemoryWin32HandleInfo(const cvkJsonContext* pContext, con
 /**
  * \brief Parses a VkImportMemoryWin32HandleInfoNV from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImportMemoryWin32HandleInfoNV
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImportMemoryWin32HandleInfoNV
  * \param[out] pInfo     Receives the parsed VkImportMemoryWin32HandleInfoNV, zeroed first
  *
  * \retval None No value is returned.
@@ -117,8 +117,8 @@ void cvkParseJsonImportMemoryWin32HandleInfoNV(const cvkJsonContext* pContext, c
 /**
  * \brief Parses a VkImportSemaphoreWin32HandleInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkImportSemaphoreWin32HandleInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkImportSemaphoreWin32HandleInfoKHR
  * \param[out] pInfo     Receives the parsed VkImportSemaphoreWin32HandleInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -127,8 +127,8 @@ void cvkParseJsonImportSemaphoreWin32HandleInfo(const cvkJsonContext* pContext, 
 /**
  * \brief Parses a VkMemoryGetWin32HandleInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryGetWin32HandleInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryGetWin32HandleInfoKHR
  * \param[out] pInfo     Receives the parsed VkMemoryGetWin32HandleInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -137,8 +137,8 @@ void cvkParseJsonMemoryGetWin32HandleInfo(const cvkJsonContext* pContext, const 
 /**
  * \brief Parses a VkMemoryWin32HandlePropertiesKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkMemoryWin32HandlePropertiesKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkMemoryWin32HandlePropertiesKHR
  * \param[out] pInfo     Receives the parsed VkMemoryWin32HandlePropertiesKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -147,8 +147,8 @@ void cvkParseJsonMemoryWin32HandleProperties(const cvkJsonContext* pContext, con
 /**
  * \brief Parses a VkSemaphoreGetWin32HandleInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSemaphoreGetWin32HandleInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSemaphoreGetWin32HandleInfoKHR
  * \param[out] pInfo     Receives the parsed VkSemaphoreGetWin32HandleInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -157,8 +157,8 @@ void cvkParseJsonSemaphoreGetWin32HandleInfo(const cvkJsonContext* pContext, con
 /**
  * \brief Parses a VkSurfaceCapabilitiesFullScreenExclusiveEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSurfaceCapabilitiesFullScreenExclusiveEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSurfaceCapabilitiesFullScreenExclusiveEXT
  * \param[out] pInfo     Receives the parsed VkSurfaceCapabilitiesFullScreenExclusiveEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -167,8 +167,8 @@ void cvkParseJsonSurfaceCapabilitiesFullScreenExclusive(const cvkJsonContext* pC
 /**
  * \brief Parses a VkSurfaceFullScreenExclusiveInfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSurfaceFullScreenExclusiveInfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSurfaceFullScreenExclusiveInfoEXT
  * \param[out] pInfo     Receives the parsed VkSurfaceFullScreenExclusiveInfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -177,8 +177,8 @@ void cvkParseJsonSurfaceFullScreenExclusiveInfo(const cvkJsonContext* pContext, 
 /**
  * \brief Parses a VkSurfaceFullScreenExclusiveWin32InfoEXT from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkSurfaceFullScreenExclusiveWin32InfoEXT
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkSurfaceFullScreenExclusiveWin32InfoEXT
  * \param[out] pInfo     Receives the parsed VkSurfaceFullScreenExclusiveWin32InfoEXT, zeroed first
  *
  * \retval None No value is returned.
@@ -187,8 +187,8 @@ void cvkParseJsonSurfaceFullScreenExclusiveWin32Info(const cvkJsonContext* pCont
 /**
  * \brief Parses a VkWin32KeyedMutexAcquireReleaseInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkWin32KeyedMutexAcquireReleaseInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkWin32KeyedMutexAcquireReleaseInfoKHR
  * \param[out] pInfo     Receives the parsed VkWin32KeyedMutexAcquireReleaseInfoKHR, zeroed first
  *
  * \retval None No value is returned.
@@ -197,8 +197,8 @@ void cvkParseJsonWin32KeyedMutexAcquireReleaseInfo(const cvkJsonContext* pContex
 /**
  * \brief Parses a VkWin32KeyedMutexAcquireReleaseInfoNV from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkWin32KeyedMutexAcquireReleaseInfoNV
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkWin32KeyedMutexAcquireReleaseInfoNV
  * \param[out] pInfo     Receives the parsed VkWin32KeyedMutexAcquireReleaseInfoNV, zeroed first
  *
  * \retval None No value is returned.
@@ -207,8 +207,8 @@ void cvkParseJsonWin32KeyedMutexAcquireReleaseInfoNV(const cvkJsonContext* pCont
 /**
  * \brief Parses a VkWin32SurfaceCreateInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkWin32SurfaceCreateInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkWin32SurfaceCreateInfoKHR
  * \param[out] pInfo     Receives the parsed VkWin32SurfaceCreateInfoKHR, zeroed first
  *
  * \retval None No value is returned.

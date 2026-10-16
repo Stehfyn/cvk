@@ -223,7 +223,7 @@ and property flags locally, while tier-0 wrappers make the Vulkan calls.
   followed by `pAllocator`, then out-params last. Multi-struct setups interleave in
   creation order (image args, then memory args).
 - **Optional Doxygen comments**: `doc_comments` in the shared policy controls API
-  documentation blocks. It is currently `false` for both cvk and scvk.
+  documentation blocks. It is currently `true` for both cvk and scvk.
 
 ## 4. Why the shape is generatable
 
@@ -344,12 +344,12 @@ its application links the SC implementation. Standard Volk is used only by `cvk`
 Generation options live in `cvk.policy.json`, independently of CMake:
 
 ```json
-"doc_comments": false,
+"doc_comments": true,
 "single_line_prototypes": true,
 "designated_initializers": true
 ```
 
-These settings omit API doc comments and put each function prototype on exactly one
+These settings emit API doc comments and put each function prototype on exactly one
 line, even when it exceeds clang-format's column limit. Generated declaration sections
 carry clang-format off/on directives so standalone formatting also preserves the policy.
 Function definitions keep their

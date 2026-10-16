@@ -12,8 +12,8 @@
  * \brief Initializes a VkPresentFrameTokenGGP.
  *
  * \param[out] pInfo       Receives the initialized VkPresentFrameTokenGGP
- * \param[in] pNext       Optional extension chain attached to VkPresentFrameTokenGGP, or NULL
- * \param[in] frameToken  VkPresentFrameTokenGGP::frameToken
+ * \param[in]  pNext       Optional extension chain attached to VkPresentFrameTokenGGP, or NULL
+ * \param[in]  frameToken  VkPresentFrameTokenGGP::frameToken
  *
  * \retval None No value is returned.
  */
@@ -22,9 +22,9 @@ void cvkInitPresentFrameTokenGGP(VkPresentFrameTokenGGP* pInfo, const void* pNex
  * \brief Initializes a VkStreamDescriptorSurfaceCreateInfoGGP.
  *
  * \param[out] pInfo             Receives the initialized VkStreamDescriptorSurfaceCreateInfoGGP
- * \param[in] pNext             Optional extension chain attached to VkStreamDescriptorSurfaceCreateInfoGGP, or NULL
- * \param[in] flags             VkStreamDescriptorSurfaceCreateInfoGGP::flags
- * \param[in] streamDescriptor  VkStreamDescriptorSurfaceCreateInfoGGP::streamDescriptor
+ * \param[in]  pNext             Optional extension chain attached to VkStreamDescriptorSurfaceCreateInfoGGP, or NULL
+ * \param[in]  flags             VkStreamDescriptorSurfaceCreateInfoGGP::flags
+ * \param[in]  streamDescriptor  VkStreamDescriptorSurfaceCreateInfoGGP::streamDescriptor
  *
  * \retval None No value is returned.
  */
@@ -35,11 +35,11 @@ void cvkInitStreamDescriptorSurfaceCreateInfoGGP(VkStreamDescriptorSurfaceCreate
  * \par Details:
  *  Wraps vkCreateStreamDescriptorSurfaceGGP. Aborts on any error result.
  *
- * \param[in] instance          VkInstance value
- * \param[in] pNext             Optional extension chain attached to VkStreamDescriptorSurfaceCreateInfoGGP, or NULL
- * \param[in] flags             VkStreamDescriptorSurfaceCreateInfoGGP::flags
- * \param[in] streamDescriptor  VkStreamDescriptorSurfaceCreateInfoGGP::streamDescriptor
- * \param[in] pAllocator        Optional allocation callbacks, or NULL
+ * \param[in]  instance          VkInstance value
+ * \param[in]  pNext             Optional extension chain attached to VkStreamDescriptorSurfaceCreateInfoGGP, or NULL
+ * \param[in]  flags             VkStreamDescriptorSurfaceCreateInfoGGP::flags
+ * \param[in]  streamDescriptor  VkStreamDescriptorSurfaceCreateInfoGGP::streamDescriptor
+ * \param[in]  pAllocator        Optional allocation callbacks, or NULL
  * \param[out] pSurface          Receives the created VkSurfaceKHR
  *
  * \retval None No value is returned.
@@ -48,14 +48,14 @@ void cvkCreateStreamDescriptorSurfaceGGP(VkInstance instance, const void* pNext,
 /**
  * \brief Queues present with VkPresentFrameTokenGGP chained.
  *
- * \param[in] queue               See cvkQueuePresent
- * \param[in] pNext               See cvkQueuePresent
- * \param[in] frameToken          VkPresentFrameTokenGGP::frameToken
- * \param[in] waitSemaphoreCount  See cvkQueuePresent
- * \param[in] pWaitSemaphores     See cvkQueuePresent
- * \param[in] swapchainCount      See cvkQueuePresent
- * \param[in] pSwapchains         See cvkQueuePresent
- * \param[in] pImageIndices       See cvkQueuePresent
+ * \param[in]  queue               See cvkQueuePresent
+ * \param[in]  pNext               See cvkQueuePresent
+ * \param[in]  frameToken          VkPresentFrameTokenGGP::frameToken
+ * \param[in]  waitSemaphoreCount  See cvkQueuePresent
+ * \param[in]  pWaitSemaphores     See cvkQueuePresent
+ * \param[in]  swapchainCount      See cvkQueuePresent
+ * \param[in]  pSwapchains         See cvkQueuePresent
+ * \param[in]  pImageIndices       See cvkQueuePresent
  * \param[out] pResults            See cvkQueuePresent
  *
  * \return VK_SUCCESS or one of: . Error results abort.

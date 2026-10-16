@@ -12,10 +12,10 @@
  * \brief Initializes a VkXlibSurfaceCreateInfoKHR.
  *
  * \param[out] pInfo   Receives the initialized VkXlibSurfaceCreateInfoKHR
- * \param[in] pNext   Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
- * \param[in] flags   VkXlibSurfaceCreateInfoKHR::flags
- * \param[in] dpy     VkXlibSurfaceCreateInfoKHR::dpy
- * \param[in] window  VkXlibSurfaceCreateInfoKHR::window
+ * \param[in]  pNext   Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
+ * \param[in]  flags   VkXlibSurfaceCreateInfoKHR::flags
+ * \param[in]  dpy     VkXlibSurfaceCreateInfoKHR::dpy
+ * \param[in]  window  VkXlibSurfaceCreateInfoKHR::window
  *
  * \retval None No value is returned.
  */
@@ -26,12 +26,12 @@ void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void*
  * \par Details:
  *  Wraps vkCreateXlibSurfaceKHR. Aborts on any error result.
  *
- * \param[in] instance    VkInstance value
- * \param[in] pNext       Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
- * \param[in] flags       VkXlibSurfaceCreateInfoKHR::flags
- * \param[in] dpy         VkXlibSurfaceCreateInfoKHR::dpy
- * \param[in] window      VkXlibSurfaceCreateInfoKHR::window
- * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[in]  instance    VkInstance value
+ * \param[in]  pNext       Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
+ * \param[in]  flags       VkXlibSurfaceCreateInfoKHR::flags
+ * \param[in]  dpy         VkXlibSurfaceCreateInfoKHR::dpy
+ * \param[in]  window      VkXlibSurfaceCreateInfoKHR::window
+ * \param[in]  pAllocator  Optional allocation callbacks, or NULL
  * \param[out] pSurface    Receives the created VkSurfaceKHR
  *
  * \retval None No value is returned.
@@ -43,10 +43,10 @@ void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceC
  * \par Details:
  *  Wraps vkGetPhysicalDeviceXlibPresentationSupportKHR.
  *
- * \param[in] physicalDevice    VkPhysicalDevice value
- * \param[in] queueFamilyIndex  uint32_t value
+ * \param[in]  physicalDevice    VkPhysicalDevice value
+ * \param[in]  queueFamilyIndex  uint32_t value
  * \param[out] dpy               Receives the Display
- * \param[in] visualID          VisualID value
+ * \param[in]  visualID          VisualID value
  *
  * \return The VkBool32 returned by the command.
  */

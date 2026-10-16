@@ -18,8 +18,8 @@ VkUbmSurfaceCreateFlagsSEC cvkParseJsonUbmSurfaceCreateFlagsSEC(const cvkJsonVal
 /**
  * \brief Parses a VkUbmSurfaceCreateInfoSEC from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkUbmSurfaceCreateInfoSEC
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkUbmSurfaceCreateInfoSEC
  * \param[out] pInfo     Receives the parsed VkUbmSurfaceCreateInfoSEC, zeroed first
  *
  * \retval None No value is returned.

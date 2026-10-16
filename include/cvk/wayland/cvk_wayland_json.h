@@ -19,8 +19,8 @@ VkWaylandSurfaceCreateFlagsKHR cvkParseJsonWaylandSurfaceCreateFlags(const cvkJs
 /**
  * \brief Parses a VkWaylandSurfaceCreateInfoKHR from a JSON object; members absent or NULL stay zero.
  *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkWaylandSurfaceCreateInfoKHR
+ * \param[in]  pContext  Parsing context: document, arena, handle resolver
+ * \param[in]  pObject   The JSON object of the VkWaylandSurfaceCreateInfoKHR
  * \param[out] pInfo     Receives the parsed VkWaylandSurfaceCreateInfoKHR, zeroed first
  *
  * \retval None No value is returned.

@@ -56,8 +56,8 @@ typedef char char_t; ///< Character in a terminated execution-character-set stri
 /**
  * \brief Formats a signed source line in caller-owned storage.
  *
- * \param[out] pDigits   Storage for SCVK_DIAGNOSTIC_CAPACITY characters.
- * \param[in]  line      Source line to format.
+ * \param[out] pDigits  Storage for SCVK_DIAGNOSTIC_CAPACITY characters.
+ * \param[in]  line     Source line to format.
  *
  * \retval    char_t*    Start of the terminated decimal string inside pDigits.
  */

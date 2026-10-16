@@ -11,9 +11,9 @@
  * \brief Initializes a VkIOSSurfaceCreateInfoMVK.
  *
  * \param[out] pInfo  Receives the initialized VkIOSSurfaceCreateInfoMVK
- * \param[in] pNext  Optional extension chain attached to VkIOSSurfaceCreateInfoMVK, or NULL
- * \param[in] flags  VkIOSSurfaceCreateInfoMVK::flags
- * \param[in] pView  VkIOSSurfaceCreateInfoMVK::pView
+ * \param[in]  pNext  Optional extension chain attached to VkIOSSurfaceCreateInfoMVK, or NULL
+ * \param[in]  flags  VkIOSSurfaceCreateInfoMVK::flags
+ * \param[in]  pView  VkIOSSurfaceCreateInfoMVK::pView
  *
  * \retval None No value is returned.
  */
@@ -24,11 +24,11 @@ void cvkInitIOSSurfaceCreateInfoMVK(VkIOSSurfaceCreateInfoMVK* pInfo, const void
  * \par Details:
  *  Wraps vkCreateIOSSurfaceMVK. Aborts on any error result.
  *
- * \param[in] instance    VkInstance value
- * \param[in] pNext       Optional extension chain attached to VkIOSSurfaceCreateInfoMVK, or NULL
- * \param[in] flags       VkIOSSurfaceCreateInfoMVK::flags
- * \param[in] pView       VkIOSSurfaceCreateInfoMVK::pView
- * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[in]  instance    VkInstance value
+ * \param[in]  pNext       Optional extension chain attached to VkIOSSurfaceCreateInfoMVK, or NULL
+ * \param[in]  flags       VkIOSSurfaceCreateInfoMVK::flags
+ * \param[in]  pView       VkIOSSurfaceCreateInfoMVK::pView
+ * \param[in]  pAllocator  Optional allocation callbacks, or NULL
  * \param[out] pSurface    Receives the created VkSurfaceKHR
  *
  * \retval None No value is returned.

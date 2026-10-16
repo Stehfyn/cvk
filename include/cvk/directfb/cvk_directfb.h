@@ -12,10 +12,10 @@
  * \brief Initializes a VkDirectFBSurfaceCreateInfoEXT.
  *
  * \param[out] pInfo    Receives the initialized VkDirectFBSurfaceCreateInfoEXT
- * \param[in] pNext    Optional extension chain attached to VkDirectFBSurfaceCreateInfoEXT, or NULL
- * \param[in] flags    VkDirectFBSurfaceCreateInfoEXT::flags
- * \param[in] dfb      VkDirectFBSurfaceCreateInfoEXT::dfb
- * \param[in] surface  VkDirectFBSurfaceCreateInfoEXT::surface
+ * \param[in]  pNext    Optional extension chain attached to VkDirectFBSurfaceCreateInfoEXT, or NULL
+ * \param[in]  flags    VkDirectFBSurfaceCreateInfoEXT::flags
+ * \param[in]  dfb      VkDirectFBSurfaceCreateInfoEXT::dfb
+ * \param[in]  surface  VkDirectFBSurfaceCreateInfoEXT::surface
  *
  * \retval None No value is returned.
  */
@@ -26,12 +26,12 @@ void cvkInitDirectFBSurfaceCreateInfo(VkDirectFBSurfaceCreateInfoEXT* pInfo, con
  * \par Details:
  *  Wraps vkCreateDirectFBSurfaceEXT. Aborts on any error result.
  *
- * \param[in] instance    VkInstance value
- * \param[in] pNext       Optional extension chain attached to VkDirectFBSurfaceCreateInfoEXT, or NULL
- * \param[in] flags       VkDirectFBSurfaceCreateInfoEXT::flags
- * \param[in] dfb         VkDirectFBSurfaceCreateInfoEXT::dfb
- * \param[in] surface     VkDirectFBSurfaceCreateInfoEXT::surface
- * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[in]  instance    VkInstance value
+ * \param[in]  pNext       Optional extension chain attached to VkDirectFBSurfaceCreateInfoEXT, or NULL
+ * \param[in]  flags       VkDirectFBSurfaceCreateInfoEXT::flags
+ * \param[in]  dfb         VkDirectFBSurfaceCreateInfoEXT::dfb
+ * \param[in]  surface     VkDirectFBSurfaceCreateInfoEXT::surface
+ * \param[in]  pAllocator  Optional allocation callbacks, or NULL
  * \param[out] pSurface    Receives the created VkSurfaceKHR
  *
  * \retval None No value is returned.
@@ -43,8 +43,8 @@ void cvkCreateDirectFBSurface(VkInstance instance, const void* pNext, VkDirectFB
  * \par Details:
  *  Wraps vkGetPhysicalDeviceDirectFBPresentationSupportEXT.
  *
- * \param[in] physicalDevice    VkPhysicalDevice value
- * \param[in] queueFamilyIndex  uint32_t value
+ * \param[in]  physicalDevice    VkPhysicalDevice value
+ * \param[in]  queueFamilyIndex  uint32_t value
  * \param[out] dfb               Receives the IDirectFB
  *
  * \return The VkBool32 returned by the command.

@@ -52,54 +52,54 @@ typedef struct cvkBicubicScalingConstants
 static CVK_FORCE_INLINE VkBool32 cvkIsJsonTextSpace(char value);
 /**
  * \brief Advances over JSON whitespace.
- * \param[in,out] pReader Input cursor and bounds.
+ * \param[in,out] pReader  Input cursor and bounds.
  * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkSkipJsonSpace(cvkJsonReader* pReader);
 /**
  * \brief Consumes at least one decimal digit.
- * \param[in,out] pReader Input cursor and bounds.
+ * \param[in,out] pReader  Input cursor and bounds.
  * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkReadJsonDigits(cvkJsonReader* pReader);
 /**
  * \brief Consumes a JSON number according to its integer, fraction and exponent grammar.
- * \param[in,out] pReader Input cursor and bounds.
+ * \param[in,out] pReader  Input cursor and bounds.
  * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkReadJsonNumber(cvkJsonReader* pReader);
 /**
  * \brief Reads a quoted span while preserving its escape spelling.
- * \param[in,out] pReader Input cursor at the opening quote.
- * \param[out] pLength Receives the length excluding quotes.
+ * \param[in,out] pReader  Input cursor at the opening quote.
+ * \param[out]    pLength  Receives the length excluding quotes.
  * \retval Other The start of the quoted content.
  */
 static CVK_FORCE_INLINE const char* cvkReadJsonQuoted(cvkJsonReader* pReader, uint32_t* pLength);
 /**
  * \brief Consumes a literal and records its kind.
- * \param[in,out] pReader Input cursor and bounds.
- * \param[out] pValue Value receiving the literal kind.
+ * \param[in,out] pReader  Input cursor and bounds.
+ * \param[out]    pValue   Value receiving the literal kind.
  * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkReadJsonLiteral(cvkJsonReader* pReader, cvkJsonValue* pValue);
 /**
  * \brief Appends one token; containers are opened without descending into them.
- * \param[in,out] pReader Input and caller-owned value storage.
+ * \param[in,out] pReader  Input and caller-owned value storage.
  * \retval Other The new value index.
  */
 static CVK_FORCE_INLINE uint32_t cvkReadJsonToken(cvkJsonReader* pReader);
 /**
  * \brief Appends a child and its object key, linking it to the active container.
- * \param[in,out] pReader Input and caller-owned value storage.
- * \param[in] parent Active container index.
+ * \param[in,out] pReader  Input and caller-owned value storage.
+ * \param[in]     parent   Active container index.
  * \retval Other The new child index.
  */
 static CVK_FORCE_INLINE uint32_t cvkReadJsonChild(cvkJsonReader* pReader, uint32_t parent);
 /**
  * \brief Consumes a container separator and checks whether the next token closes it.
- * \param[in,out] pReader Input cursor and bounds.
- * \param[in] close Closing delimiter for the active container.
- * \param[in] has_children Whether a preceding value requires a separator.
+ * \param[in,out] pReader       Input cursor and bounds.
+ * \param[in]     close         Closing delimiter for the active container.
+ * \param[in]     has_children  Whether a preceding value requires a separator.
  * \retval VK_TRUE A closing delimiter is next.
  * \retval VK_FALSE Another child starts at the cursor.
  */
@@ -115,9 +115,9 @@ static CVK_FORCE_INLINE double cvkScaleJsonDouble(double value, int32_t exponent
 static CVK_FORCE_INLINE void cvkGrowArena(cvkArena* pArena, size_t size, size_t alignment);
 /**
  * \brief Reads the pipeline state and its render-pass version.
- * \param[in] pContext Parsing context.
- * \param[in] root Document root.
- * \param[out] pPipeline Parsed pipeline and render pass.
+ * \param[in]  pContext   Parsing context.
+ * \param[in]  root       Document root.
+ * \param[out] pPipeline  Parsed pipeline and render pass.
  * \retval Other The graphics or compute state object.
  */
 static CVK_FORCE_INLINE const cvkJsonValue* cvkReadPipelineJsonState(const cvkJsonContext* pContext,
@@ -125,10 +125,10 @@ static CVK_FORCE_INLINE const cvkJsonValue* cvkReadPipelineJsonState(const cvkJs
                                                                      cvkPipelineJson*      pPipeline);
 /**
  * \brief Copies descriptor bindings and resolves immutable sampler references.
- * \param[in] pPipeline Parsed description and retained object IDs.
- * \param[in] pObjects Previously created native samplers.
- * \param[in] pInfo Descriptor set layout description.
- * \param[in,out] pArena Caller-owned output storage.
+ * \param[in]     pPipeline  Parsed description and retained object IDs.
+ * \param[in]     pObjects   Previously created native samplers.
+ * \param[in]     pInfo      Descriptor set layout description.
+ * \param[in,out] pArena     Caller-owned output storage.
  * \retval Other Resolved bindings, or NULL for an empty layout.
  */
 static CVK_FORCE_INLINE VkDescriptorSetLayoutBinding* cvkResolvePipelineJsonBindings(
@@ -138,11 +138,11 @@ static CVK_FORCE_INLINE VkDescriptorSetLayoutBinding* cvkResolvePipelineJsonBind
     cvkArena*                              pArena);
 /**
  * \brief Copies one shader stage and resolves its retained module ID.
- * \param[in] pPipeline Parsed description and retained object IDs.
- * \param[in] resolveExternal Optional resolver for external native handles.
- * \param[in,out] pUser Resolver state.
- * \param[in] pSource Stage with its parse-time address intact.
- * \param[out] pStage Resolved stage copy.
+ * \param[in]     pPipeline        Parsed description and retained object IDs.
+ * \param[in]     resolveExternal  Optional resolver for external native handles.
+ * \param[in,out] pUser            Resolver state.
+ * \param[in]     pSource          Stage with its parse-time address intact.
+ * \param[out]    pStage           Resolved stage copy.
  * \retval None No value is returned.
  */
 static CVK_FORCE_INLINE void cvkResolvePipelineJsonShader(const cvkPipelineJson*                 pPipeline,
