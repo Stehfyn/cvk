@@ -14,7 +14,10 @@
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonDeviceSemaphoreSciSyncPoolReservationCreateInfoNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonDeviceSemaphoreSciSyncPoolReservationCreateInfoNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*                               pContext;
     VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV* pInfo;
@@ -32,7 +35,7 @@ void scvkReadJsonDeviceSemaphoreSciSyncPoolReservationCreateInfoNV(scvkJsonWork*
     {
         pInfo->pNext = scvkScheduleJsonStructureChain(pWork, value);
     }
-    value                                   = scvkGetJsonMember(&pContext->document, pObject, "semaphoreSciSyncPoolRequestCount");
+    value = scvkGetJsonMember(&pContext->document, pObject, "semaphoreSciSyncPoolRequestCount");
 
     pInfo->semaphoreSciSyncPoolRequestCount = (uint32_t)scvkParseJsonUint64(value);
 }
@@ -41,7 +44,10 @@ void scvkReadJsonDeviceSemaphoreSciSyncPoolReservationCreateInfoNV(scvkJsonWork*
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonExportFenceSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonExportFenceSciSyncInfoNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*      pContext;
     VkExportFenceSciSyncInfoNV* pInfo;
@@ -65,7 +71,10 @@ void scvkReadJsonExportFenceSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonVal
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonExportMemorySciBufInfoNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonExportMemorySciBufInfoNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*      pContext;
     VkExportMemorySciBufInfoNV* pInfo;
@@ -89,7 +98,10 @@ void scvkReadJsonExportMemorySciBufInfoNV(scvkJsonWork* pWork, const scvkJsonVal
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonExportSemaphoreSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonExportSemaphoreSciSyncInfoNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*          pContext;
     VkExportSemaphoreSciSyncInfoNV* pInfo;
@@ -113,7 +125,10 @@ void scvkReadJsonExportSemaphoreSciSyncInfoNV(scvkJsonWork* pWork, const scvkJso
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonFenceGetSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonFenceGetSciSyncInfoNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*   pContext;
     VkFenceGetSciSyncInfoNV* pInfo;
@@ -149,7 +164,10 @@ void scvkReadJsonFenceGetSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonValue*
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonImportFenceSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonImportFenceSciSyncInfoNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*      pContext;
     VkImportFenceSciSyncInfoNV* pInfo;
@@ -185,7 +203,10 @@ void scvkReadJsonImportFenceSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonVal
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonImportMemorySciBufInfoNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonImportMemorySciBufInfoNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*      pContext;
     VkImportMemorySciBufInfoNV* pInfo;
@@ -214,7 +235,10 @@ void scvkReadJsonImportMemorySciBufInfoNV(scvkJsonWork* pWork, const scvkJsonVal
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonImportSemaphoreSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonImportSemaphoreSciSyncInfoNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*          pContext;
     VkImportSemaphoreSciSyncInfoNV* pInfo;
@@ -250,7 +274,10 @@ void scvkReadJsonImportSemaphoreSciSyncInfoNV(scvkJsonWork* pWork, const scvkJso
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonMemoryGetSciBufInfoNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonMemoryGetSciBufInfoNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*   pContext;
     VkMemoryGetSciBufInfoNV* pInfo;
@@ -286,7 +313,10 @@ void scvkReadJsonMemoryGetSciBufInfoNV(scvkJsonWork* pWork, const scvkJsonValue*
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonMemorySciBufPropertiesNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonMemorySciBufPropertiesNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*      pContext;
     VkMemorySciBufPropertiesNV* pInfo;
@@ -313,7 +343,10 @@ void scvkReadJsonMemorySciBufPropertiesNV(scvkJsonWork* pWork, const scvkJsonVal
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonPhysicalDeviceExternalMemorySciBufFeaturesNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonPhysicalDeviceExternalMemorySciBufFeaturesNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*                          pContext;
     VkPhysicalDeviceExternalMemorySciBufFeaturesNV* pInfo;
@@ -344,7 +377,10 @@ void scvkReadJsonPhysicalDeviceExternalMemorySciBufFeaturesNV(scvkJsonWork* pWor
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonPhysicalDeviceExternalSciSync2FeaturesNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonPhysicalDeviceExternalSciSync2FeaturesNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*                      pContext;
     VkPhysicalDeviceExternalSciSync2FeaturesNV* pInfo;
@@ -383,7 +419,10 @@ void scvkReadJsonPhysicalDeviceExternalSciSync2FeaturesNV(scvkJsonWork* pWork, c
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonPhysicalDeviceExternalSciSyncFeaturesNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonPhysicalDeviceExternalSciSyncFeaturesNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*                     pContext;
     VkPhysicalDeviceExternalSciSyncFeaturesNV* pInfo;
@@ -422,7 +461,10 @@ void scvkReadJsonPhysicalDeviceExternalSciSyncFeaturesNV(scvkJsonWork* pWork, co
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonSciSyncAttributesInfoNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonSciSyncAttributesInfoNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*     pContext;
     VkSciSyncAttributesInfoNV* pInfo;
@@ -456,7 +498,10 @@ void scvkReadJsonSciSyncAttributesInfoNV(scvkJsonWork* pWork, const scvkJsonValu
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonSemaphoreGetSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonSemaphoreGetSciSyncInfoNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*       pContext;
     VkSemaphoreGetSciSyncInfoNV* pInfo;
@@ -492,7 +537,10 @@ void scvkReadJsonSemaphoreGetSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonVa
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonSemaphoreSciSyncCreateInfoNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonSemaphoreSciSyncCreateInfoNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*          pContext;
     VkSemaphoreSciSyncCreateInfoNV* pInfo;
@@ -515,7 +563,11 @@ void scvkReadJsonSemaphoreSciSyncCreateInfoNV(scvkJsonWork* pWork, const scvkJso
     {
         pInfo->semaphorePool = VK_NULL_HANDLE;
 
-        (void)scvkResolveJsonHandle(pContext, "VkSemaphoreSciSyncPoolNV", value, sizeof(VkSemaphoreSciSyncPoolNV), (void*)&pInfo->semaphorePool);
+        (void)scvkResolveJsonHandle(pContext,
+                                    "VkSemaphoreSciSyncPoolNV",
+                                    value,
+                                    sizeof(VkSemaphoreSciSyncPoolNV),
+                                    (void*)&pInfo->semaphorePool);
     }
 }
 /*************************************************************************************************/
@@ -523,7 +575,10 @@ void scvkReadJsonSemaphoreSciSyncCreateInfoNV(scvkJsonWork* pWork, const scvkJso
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonSemaphoreSciSyncPoolCreateInfoNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonSemaphoreSciSyncPoolCreateInfoNV(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*              pContext;
     VkSemaphoreSciSyncPoolCreateInfoNV* pInfo;
@@ -542,41 +597,48 @@ void scvkReadJsonSemaphoreSciSyncPoolCreateInfoNV(scvkJsonWork* pWork, const scv
         pInfo->pNext = scvkScheduleJsonStructureChain(pWork, value);
     }
 }
-extern SCVK_FORCE_INLINE VkSciSyncClientTypeNV scvkParseJsonSciSyncClientTypeNV(const scvkJsonValue* pValue)
+extern SCVK_FORCE_INLINE VkSciSyncClientTypeNV scvkParseJsonSciSyncClientTypeNV(
+    const scvkJsonValue* pValue)
 {
     uint64_t enumerant;
     VkBool32 found;
 
-    static const scvkJsonName table[] = {{"VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_NV", (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_NV},
-                                         {"VK_SCI_SYNC_CLIENT_TYPE_WAITER_NV", (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_WAITER_NV},
-                                         {"VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_WAITER_NV", (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_WAITER_NV}};
+    static const scvkJsonName table[] = {
+        {"VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_NV", (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_NV},
+        {"VK_SCI_SYNC_CLIENT_TYPE_WAITER_NV", (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_WAITER_NV},
+        {"VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_WAITER_NV", (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_WAITER_NV}};
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_NV) || (enumerant == (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_WAITER_NV) ||
+    found = (enumerant == (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_NV) ||
+            (enumerant == (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_WAITER_NV) ||
             (enumerant == (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_WAITER_NV);
     SCVK_ASSERT(found);
 
     return (VkSciSyncClientTypeNV)enumerant;
 }
-extern SCVK_FORCE_INLINE VkSciSyncPrimitiveTypeNV scvkParseJsonSciSyncPrimitiveTypeNV(const scvkJsonValue* pValue)
+extern SCVK_FORCE_INLINE VkSciSyncPrimitiveTypeNV scvkParseJsonSciSyncPrimitiveTypeNV(
+    const scvkJsonValue* pValue)
 {
     uint64_t enumerant;
     VkBool32 found;
 
-    static const scvkJsonName table[] = {{"VK_SCI_SYNC_PRIMITIVE_TYPE_FENCE_NV", (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_FENCE_NV},
-                                         {"VK_SCI_SYNC_PRIMITIVE_TYPE_SEMAPHORE_NV", (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_SEMAPHORE_NV}};
+    static const scvkJsonName table[] = {
+        {"VK_SCI_SYNC_PRIMITIVE_TYPE_FENCE_NV", (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_FENCE_NV},
+        {"VK_SCI_SYNC_PRIMITIVE_TYPE_SEMAPHORE_NV", (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_SEMAPHORE_NV}};
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_FENCE_NV) || (enumerant == (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_SEMAPHORE_NV);
+    found = (enumerant == (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_FENCE_NV) ||
+            (enumerant == (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_SEMAPHORE_NV);
     SCVK_ASSERT(found);
 
     return (VkSciSyncPrimitiveTypeNV)enumerant;
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonDeviceSemaphoreSciSyncPoolReservationCreateInfoNV(const scvkJsonContext*                               pContext,
-                                                                                             const scvkJsonValue*                                 pObject,
-                                                                                             VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonDeviceSemaphoreSciSyncPoolReservationCreateInfoNV(
+    const scvkJsonContext*                               pContext,
+    const scvkJsonValue*                                 pObject,
+    VkDeviceSemaphoreSciSyncPoolReservationCreateInfoNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -584,7 +646,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonDeviceSemaphoreSciSyncPoolReservation
     scvkAppendJsonWork(&work, scvkReadJsonDeviceSemaphoreSciSyncPoolReservationCreateInfoNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonExportFenceSciSyncInfoNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkExportFenceSciSyncInfoNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonExportFenceSciSyncInfoNV(
+    const scvkJsonContext*      pContext,
+    const scvkJsonValue*        pObject,
+    VkExportFenceSciSyncInfoNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -592,7 +657,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonExportFenceSciSyncInfoNV(const scvkJs
     scvkAppendJsonWork(&work, scvkReadJsonExportFenceSciSyncInfoNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonExportMemorySciBufInfoNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkExportMemorySciBufInfoNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonExportMemorySciBufInfoNV(
+    const scvkJsonContext*      pContext,
+    const scvkJsonValue*        pObject,
+    VkExportMemorySciBufInfoNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -600,7 +668,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonExportMemorySciBufInfoNV(const scvkJs
     scvkAppendJsonWork(&work, scvkReadJsonExportMemorySciBufInfoNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonExportSemaphoreSciSyncInfoNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkExportSemaphoreSciSyncInfoNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonExportSemaphoreSciSyncInfoNV(
+    const scvkJsonContext*          pContext,
+    const scvkJsonValue*            pObject,
+    VkExportSemaphoreSciSyncInfoNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -608,7 +679,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonExportSemaphoreSciSyncInfoNV(const sc
     scvkAppendJsonWork(&work, scvkReadJsonExportSemaphoreSciSyncInfoNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonFenceGetSciSyncInfoNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkFenceGetSciSyncInfoNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonFenceGetSciSyncInfoNV(
+    const scvkJsonContext*   pContext,
+    const scvkJsonValue*     pObject,
+    VkFenceGetSciSyncInfoNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -616,7 +690,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonFenceGetSciSyncInfoNV(const scvkJsonC
     scvkAppendJsonWork(&work, scvkReadJsonFenceGetSciSyncInfoNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonImportFenceSciSyncInfoNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkImportFenceSciSyncInfoNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonImportFenceSciSyncInfoNV(
+    const scvkJsonContext*      pContext,
+    const scvkJsonValue*        pObject,
+    VkImportFenceSciSyncInfoNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -624,7 +701,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonImportFenceSciSyncInfoNV(const scvkJs
     scvkAppendJsonWork(&work, scvkReadJsonImportFenceSciSyncInfoNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonImportMemorySciBufInfoNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkImportMemorySciBufInfoNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonImportMemorySciBufInfoNV(
+    const scvkJsonContext*      pContext,
+    const scvkJsonValue*        pObject,
+    VkImportMemorySciBufInfoNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -632,7 +712,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonImportMemorySciBufInfoNV(const scvkJs
     scvkAppendJsonWork(&work, scvkReadJsonImportMemorySciBufInfoNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonImportSemaphoreSciSyncInfoNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkImportSemaphoreSciSyncInfoNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonImportSemaphoreSciSyncInfoNV(
+    const scvkJsonContext*          pContext,
+    const scvkJsonValue*            pObject,
+    VkImportSemaphoreSciSyncInfoNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -640,7 +723,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonImportSemaphoreSciSyncInfoNV(const sc
     scvkAppendJsonWork(&work, scvkReadJsonImportSemaphoreSciSyncInfoNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonMemoryGetSciBufInfoNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkMemoryGetSciBufInfoNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonMemoryGetSciBufInfoNV(
+    const scvkJsonContext*   pContext,
+    const scvkJsonValue*     pObject,
+    VkMemoryGetSciBufInfoNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -648,7 +734,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonMemoryGetSciBufInfoNV(const scvkJsonC
     scvkAppendJsonWork(&work, scvkReadJsonMemoryGetSciBufInfoNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonMemorySciBufPropertiesNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkMemorySciBufPropertiesNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonMemorySciBufPropertiesNV(
+    const scvkJsonContext*      pContext,
+    const scvkJsonValue*        pObject,
+    VkMemorySciBufPropertiesNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -656,9 +745,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonMemorySciBufPropertiesNV(const scvkJs
     scvkAppendJsonWork(&work, scvkReadJsonMemorySciBufPropertiesNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonPhysicalDeviceExternalMemorySciBufFeaturesNV(const scvkJsonContext*                          pContext,
-                                                                                        const scvkJsonValue*                            pObject,
-                                                                                        VkPhysicalDeviceExternalMemorySciBufFeaturesNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonPhysicalDeviceExternalMemorySciBufFeaturesNV(
+    const scvkJsonContext*                          pContext,
+    const scvkJsonValue*                            pObject,
+    VkPhysicalDeviceExternalMemorySciBufFeaturesNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -666,7 +756,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonPhysicalDeviceExternalMemorySciBufFea
     scvkAppendJsonWork(&work, scvkReadJsonPhysicalDeviceExternalMemorySciBufFeaturesNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonPhysicalDeviceExternalSciSync2FeaturesNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkPhysicalDeviceExternalSciSync2FeaturesNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonPhysicalDeviceExternalSciSync2FeaturesNV(
+    const scvkJsonContext*                      pContext,
+    const scvkJsonValue*                        pObject,
+    VkPhysicalDeviceExternalSciSync2FeaturesNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -674,7 +767,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonPhysicalDeviceExternalSciSync2Feature
     scvkAppendJsonWork(&work, scvkReadJsonPhysicalDeviceExternalSciSync2FeaturesNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonPhysicalDeviceExternalSciSyncFeaturesNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkPhysicalDeviceExternalSciSyncFeaturesNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonPhysicalDeviceExternalSciSyncFeaturesNV(
+    const scvkJsonContext*                     pContext,
+    const scvkJsonValue*                       pObject,
+    VkPhysicalDeviceExternalSciSyncFeaturesNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -682,7 +778,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonPhysicalDeviceExternalSciSyncFeatures
     scvkAppendJsonWork(&work, scvkReadJsonPhysicalDeviceExternalSciSyncFeaturesNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonSciSyncAttributesInfoNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkSciSyncAttributesInfoNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonSciSyncAttributesInfoNV(
+    const scvkJsonContext*     pContext,
+    const scvkJsonValue*       pObject,
+    VkSciSyncAttributesInfoNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -690,7 +789,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonSciSyncAttributesInfoNV(const scvkJso
     scvkAppendJsonWork(&work, scvkReadJsonSciSyncAttributesInfoNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonSemaphoreGetSciSyncInfoNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkSemaphoreGetSciSyncInfoNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonSemaphoreGetSciSyncInfoNV(
+    const scvkJsonContext*       pContext,
+    const scvkJsonValue*         pObject,
+    VkSemaphoreGetSciSyncInfoNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -698,7 +800,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonSemaphoreGetSciSyncInfoNV(const scvkJ
     scvkAppendJsonWork(&work, scvkReadJsonSemaphoreGetSciSyncInfoNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonSemaphoreSciSyncCreateInfoNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkSemaphoreSciSyncCreateInfoNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonSemaphoreSciSyncCreateInfoNV(
+    const scvkJsonContext*          pContext,
+    const scvkJsonValue*            pObject,
+    VkSemaphoreSciSyncCreateInfoNV* pInfo)
 {
     scvkJsonWork work;
 
@@ -706,7 +811,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonSemaphoreSciSyncCreateInfoNV(const sc
     scvkAppendJsonWork(&work, scvkReadJsonSemaphoreSciSyncCreateInfoNV, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonSemaphoreSciSyncPoolCreateInfoNV(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkSemaphoreSciSyncPoolCreateInfoNV* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonSemaphoreSciSyncPoolCreateInfoNV(
+    const scvkJsonContext*              pContext,
+    const scvkJsonValue*                pObject,
+    VkSemaphoreSciSyncPoolCreateInfoNV* pInfo)
 {
     scvkJsonWork work;
 

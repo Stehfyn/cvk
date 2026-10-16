@@ -9,7 +9,32 @@
 #include <vulkan/vulkan_xlib_xrandr.h>
 
 /* clang-format off */
+/**
+ * \brief Acquires xlib display.
+ *
+ * \par Details:
+ *  Wraps vkAcquireXlibDisplayEXT. Aborts on any error result.
+ *
+ * \param[in] physicalDevice  VkPhysicalDevice value
+ * \param[out] dpy             Receives the Display
+ * \param[in] display         VkDisplayKHR value
+ *
+ * \retval None No value is returned.
+ */
 void cvkAcquireXlibDisplay(VkPhysicalDevice physicalDevice, Display* dpy, VkDisplayKHR display);
+/**
+ * \brief Retrieves rand r output display.
+ *
+ * \par Details:
+ *  Wraps vkGetRandROutputDisplayEXT. Aborts on any error result.
+ *
+ * \param[in] physicalDevice  VkPhysicalDevice value
+ * \param[out] dpy             Receives the Display
+ * \param[in] rrOutput        RROutput value
+ * \param[out] pDisplay        Receives the created VkDisplayKHR
+ *
+ * \retval None No value is returned.
+ */
 void cvkGetRandROutputDisplay(VkPhysicalDevice physicalDevice, Display* dpy, RROutput rrOutput, VkDisplayKHR* pDisplay);
 /* clang-format on */
 

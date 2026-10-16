@@ -8,8 +8,48 @@
 #include <vulkan/vulkan_xcb.h>
 
 /* clang-format off */
+/**
+ * \brief Initializes a VkXcbSurfaceCreateInfoKHR.
+ *
+ * \param[out] pInfo       Receives the initialized VkXcbSurfaceCreateInfoKHR
+ * \param[in] pNext       Optional extension chain attached to VkXcbSurfaceCreateInfoKHR, or NULL
+ * \param[in] flags       VkXcbSurfaceCreateInfoKHR::flags
+ * \param[in] connection  VkXcbSurfaceCreateInfoKHR::connection
+ * \param[in] window      VkXcbSurfaceCreateInfoKHR::window
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitXcbSurfaceCreateInfo(VkXcbSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXcbSurfaceCreateFlagsKHR flags, xcb_connection_t* connection, xcb_window_t window);
+/**
+ * \brief Creates a xcb surface.
+ *
+ * \par Details:
+ *  Wraps vkCreateXcbSurfaceKHR. Aborts on any error result.
+ *
+ * \param[in] instance    VkInstance value
+ * \param[in] pNext       Optional extension chain attached to VkXcbSurfaceCreateInfoKHR, or NULL
+ * \param[in] flags       VkXcbSurfaceCreateInfoKHR::flags
+ * \param[in] connection  VkXcbSurfaceCreateInfoKHR::connection
+ * \param[in] window      VkXcbSurfaceCreateInfoKHR::window
+ * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[out] pSurface    Receives the created VkSurfaceKHR
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateXcbSurface(VkInstance instance, const void* pNext, VkXcbSurfaceCreateFlagsKHR flags, xcb_connection_t* connection, xcb_window_t window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+/**
+ * \brief Retrieves physical device xcb presentation support.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceXcbPresentationSupportKHR.
+ *
+ * \param[in] physicalDevice    VkPhysicalDevice value
+ * \param[in] queueFamilyIndex  uint32_t value
+ * \param[out] connection        Receives the xcb_connection_t
+ * \param[in] visual_id         xcb_visualid_t value
+ *
+ * \return The VkBool32 returned by the command.
+ */
 VkBool32 cvkGetPhysicalDeviceXcbPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, xcb_connection_t* connection, xcb_visualid_t visual_id);
 /* clang-format on */
 

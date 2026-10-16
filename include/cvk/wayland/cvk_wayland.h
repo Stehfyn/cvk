@@ -8,8 +8,47 @@
 #include <vulkan/vulkan_wayland.h>
 
 /* clang-format off */
+/**
+ * \brief Initializes a VkWaylandSurfaceCreateInfoKHR.
+ *
+ * \param[out] pInfo    Receives the initialized VkWaylandSurfaceCreateInfoKHR
+ * \param[in] pNext    Optional extension chain attached to VkWaylandSurfaceCreateInfoKHR, or NULL
+ * \param[in] flags    VkWaylandSurfaceCreateInfoKHR::flags
+ * \param[in] display  VkWaylandSurfaceCreateInfoKHR::display
+ * \param[in] surface  VkWaylandSurfaceCreateInfoKHR::surface
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitWaylandSurfaceCreateInfo(VkWaylandSurfaceCreateInfoKHR* pInfo, const void* pNext, VkWaylandSurfaceCreateFlagsKHR flags, struct wl_display* display, struct wl_surface* surface);
+/**
+ * \brief Creates a wayland surface.
+ *
+ * \par Details:
+ *  Wraps vkCreateWaylandSurfaceKHR. Aborts on any error result.
+ *
+ * \param[in] instance    VkInstance value
+ * \param[in] pNext       Optional extension chain attached to VkWaylandSurfaceCreateInfoKHR, or NULL
+ * \param[in] flags       VkWaylandSurfaceCreateInfoKHR::flags
+ * \param[in] display     VkWaylandSurfaceCreateInfoKHR::display
+ * \param[in] surface     VkWaylandSurfaceCreateInfoKHR::surface
+ * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[out] pSurface    Receives the created VkSurfaceKHR
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateWaylandSurface(VkInstance instance, const void* pNext, VkWaylandSurfaceCreateFlagsKHR flags, struct wl_display* display, struct wl_surface* surface, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+/**
+ * \brief Retrieves physical device wayland presentation support.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceWaylandPresentationSupportKHR.
+ *
+ * \param[in] physicalDevice    VkPhysicalDevice value
+ * \param[in] queueFamilyIndex  uint32_t value
+ * \param[out] display           Receives the wl_display
+ *
+ * \return The VkBool32 returned by the command.
+ */
 VkBool32 cvkGetPhysicalDeviceWaylandPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, struct wl_display* display);
 /* clang-format on */
 

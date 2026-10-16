@@ -7,44 +7,518 @@
 #include <vulkan/vulkan_metal.h>
 
 /* clang-format off */
+/**
+ * \brief Initializes a VkExportMetalBufferInfoEXT.
+ *
+ * \param[out] pInfo      Receives the initialized VkExportMetalBufferInfoEXT
+ * \param[in] pNext      Optional extension chain attached to VkExportMetalBufferInfoEXT, or NULL
+ * \param[in] memory     VkExportMetalBufferInfoEXT::memory
+ * \param[in] mtlBuffer  VkExportMetalBufferInfoEXT::mtlBuffer
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitExportMetalBufferInfo(VkExportMetalBufferInfoEXT* pInfo, const void* pNext, VkDeviceMemory memory, MTLBuffer_id mtlBuffer);
+/**
+ * \brief Initializes a VkExportMetalCommandQueueInfoEXT.
+ *
+ * \param[out] pInfo            Receives the initialized VkExportMetalCommandQueueInfoEXT
+ * \param[in] pNext            Optional extension chain attached to VkExportMetalCommandQueueInfoEXT, or NULL
+ * \param[in] queue            VkExportMetalCommandQueueInfoEXT::queue
+ * \param[in] mtlCommandQueue  VkExportMetalCommandQueueInfoEXT::mtlCommandQueue
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitExportMetalCommandQueueInfo(VkExportMetalCommandQueueInfoEXT* pInfo, const void* pNext, VkQueue queue, MTLCommandQueue_id mtlCommandQueue);
+/**
+ * \brief Initializes a VkExportMetalDeviceInfoEXT.
+ *
+ * \param[out] pInfo      Receives the initialized VkExportMetalDeviceInfoEXT
+ * \param[in] pNext      Optional extension chain attached to VkExportMetalDeviceInfoEXT, or NULL
+ * \param[in] mtlDevice  VkExportMetalDeviceInfoEXT::mtlDevice
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitExportMetalDeviceInfo(VkExportMetalDeviceInfoEXT* pInfo, const void* pNext, MTLDevice_id mtlDevice);
+/**
+ * \brief Initializes a VkExportMetalIOSurfaceInfoEXT.
+ *
+ * \param[out] pInfo      Receives the initialized VkExportMetalIOSurfaceInfoEXT
+ * \param[in] pNext      Optional extension chain attached to VkExportMetalIOSurfaceInfoEXT, or NULL
+ * \param[in] image      VkExportMetalIOSurfaceInfoEXT::image
+ * \param[in] ioSurface  VkExportMetalIOSurfaceInfoEXT::ioSurface
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitExportMetalIOSurfaceInfo(VkExportMetalIOSurfaceInfoEXT* pInfo, const void* pNext, VkImage image, IOSurfaceRef ioSurface);
+/**
+ * \brief Initializes a VkExportMetalObjectCreateInfoEXT.
+ *
+ * \param[out] pInfo             Receives the initialized VkExportMetalObjectCreateInfoEXT
+ * \param[in] pNext             Optional extension chain attached to VkExportMetalObjectCreateInfoEXT, or NULL
+ * \param[in] exportObjectType  VkExportMetalObjectCreateInfoEXT::exportObjectType
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitExportMetalObjectCreateInfo(VkExportMetalObjectCreateInfoEXT* pInfo, const void* pNext, VkExportMetalObjectTypeFlagBitsEXT exportObjectType);
+/**
+ * \brief Initializes a VkExportMetalObjectsInfoEXT.
+ *
+ * \param[out] pInfo  Receives the initialized VkExportMetalObjectsInfoEXT
+ * \param[in] pNext  Optional extension chain attached to VkExportMetalObjectsInfoEXT, or NULL
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitExportMetalObjectsInfo(VkExportMetalObjectsInfoEXT* pInfo, const void* pNext);
+/**
+ * \brief Initializes a VkExportMetalSharedEventInfoEXT.
+ *
+ * \param[out] pInfo           Receives the initialized VkExportMetalSharedEventInfoEXT
+ * \param[in] pNext           Optional extension chain attached to VkExportMetalSharedEventInfoEXT, or NULL
+ * \param[in] semaphore       VkExportMetalSharedEventInfoEXT::semaphore
+ * \param[in] event           VkExportMetalSharedEventInfoEXT::event
+ * \param[in] mtlSharedEvent  VkExportMetalSharedEventInfoEXT::mtlSharedEvent
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitExportMetalSharedEventInfo(VkExportMetalSharedEventInfoEXT* pInfo, const void* pNext, VkSemaphore semaphore, VkEvent event, MTLSharedEvent_id mtlSharedEvent);
+/**
+ * \brief Initializes a VkExportMetalTextureInfoEXT.
+ *
+ * \param[out] pInfo       Receives the initialized VkExportMetalTextureInfoEXT
+ * \param[in] pNext       Optional extension chain attached to VkExportMetalTextureInfoEXT, or NULL
+ * \param[in] image       VkExportMetalTextureInfoEXT::image
+ * \param[in] imageView   VkExportMetalTextureInfoEXT::imageView
+ * \param[in] bufferView  VkExportMetalTextureInfoEXT::bufferView
+ * \param[in] plane       VkExportMetalTextureInfoEXT::plane
+ * \param[in] mtlTexture  VkExportMetalTextureInfoEXT::mtlTexture
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitExportMetalTextureInfo(VkExportMetalTextureInfoEXT* pInfo, const void* pNext, VkImage image, VkImageView imageView, VkBufferView bufferView, VkImageAspectFlagBits plane, MTLTexture_id mtlTexture);
+/**
+ * \brief Initializes a VkImportMemoryMetalHandleInfoEXT.
+ *
+ * \param[out] pInfo       Receives the initialized VkImportMemoryMetalHandleInfoEXT
+ * \param[in] pNext       Optional extension chain attached to VkImportMemoryMetalHandleInfoEXT, or NULL
+ * \param[in] handleType  VkImportMemoryMetalHandleInfoEXT::handleType
+ * \param[in] handle      VkImportMemoryMetalHandleInfoEXT::handle
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitImportMemoryMetalHandleInfo(VkImportMemoryMetalHandleInfoEXT* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlagBits handleType, void* handle);
+/**
+ * \brief Initializes a VkImportMetalBufferInfoEXT.
+ *
+ * \param[out] pInfo      Receives the initialized VkImportMetalBufferInfoEXT
+ * \param[in] pNext      Optional extension chain attached to VkImportMetalBufferInfoEXT, or NULL
+ * \param[in] mtlBuffer  VkImportMetalBufferInfoEXT::mtlBuffer
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitImportMetalBufferInfo(VkImportMetalBufferInfoEXT* pInfo, const void* pNext, MTLBuffer_id mtlBuffer);
+/**
+ * \brief Initializes a VkImportMetalIOSurfaceInfoEXT.
+ *
+ * \param[out] pInfo      Receives the initialized VkImportMetalIOSurfaceInfoEXT
+ * \param[in] pNext      Optional extension chain attached to VkImportMetalIOSurfaceInfoEXT, or NULL
+ * \param[in] ioSurface  VkImportMetalIOSurfaceInfoEXT::ioSurface
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitImportMetalIOSurfaceInfo(VkImportMetalIOSurfaceInfoEXT* pInfo, const void* pNext, IOSurfaceRef ioSurface);
+/**
+ * \brief Initializes a VkImportMetalSharedEventInfoEXT.
+ *
+ * \param[out] pInfo           Receives the initialized VkImportMetalSharedEventInfoEXT
+ * \param[in] pNext           Optional extension chain attached to VkImportMetalSharedEventInfoEXT, or NULL
+ * \param[in] mtlSharedEvent  VkImportMetalSharedEventInfoEXT::mtlSharedEvent
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitImportMetalSharedEventInfo(VkImportMetalSharedEventInfoEXT* pInfo, const void* pNext, MTLSharedEvent_id mtlSharedEvent);
+/**
+ * \brief Initializes a VkImportMetalTextureInfoEXT.
+ *
+ * \param[out] pInfo       Receives the initialized VkImportMetalTextureInfoEXT
+ * \param[in] pNext       Optional extension chain attached to VkImportMetalTextureInfoEXT, or NULL
+ * \param[in] plane       VkImportMetalTextureInfoEXT::plane
+ * \param[in] mtlTexture  VkImportMetalTextureInfoEXT::mtlTexture
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitImportMetalTextureInfo(VkImportMetalTextureInfoEXT* pInfo, const void* pNext, VkImageAspectFlagBits plane, MTLTexture_id mtlTexture);
+/**
+ * \brief Initializes a VkMemoryGetMetalHandleInfoEXT.
+ *
+ * \param[out] pInfo       Receives the initialized VkMemoryGetMetalHandleInfoEXT
+ * \param[in] pNext       Optional extension chain attached to VkMemoryGetMetalHandleInfoEXT, or NULL
+ * \param[in] memory      VkMemoryGetMetalHandleInfoEXT::memory
+ * \param[in] handleType  VkMemoryGetMetalHandleInfoEXT::handleType
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitMemoryGetMetalHandleInfo(VkMemoryGetMetalHandleInfoEXT* pInfo, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType);
+/**
+ * \brief Initializes a VkMemoryMetalHandlePropertiesEXT.
+ *
+ * \param[out] pInfo  Receives the initialized VkMemoryMetalHandlePropertiesEXT
+ * \param[in] pNext  Optional extension chain attached to VkMemoryMetalHandlePropertiesEXT, or NULL
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitMemoryMetalHandleProperties(VkMemoryMetalHandlePropertiesEXT* pInfo, void* pNext);
+/**
+ * \brief Initializes a VkMetalSurfaceCreateInfoEXT.
+ *
+ * \param[out] pInfo   Receives the initialized VkMetalSurfaceCreateInfoEXT
+ * \param[in] pNext   Optional extension chain attached to VkMetalSurfaceCreateInfoEXT, or NULL
+ * \param[in] flags   VkMetalSurfaceCreateInfoEXT::flags
+ * \param[in] pLayer  VkMetalSurfaceCreateInfoEXT::pLayer
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitMetalSurfaceCreateInfo(VkMetalSurfaceCreateInfoEXT* pInfo, const void* pNext, VkMetalSurfaceCreateFlagsEXT flags, const CAMetalLayer* pLayer);
+/**
+ * \brief Creates a metal surface.
+ *
+ * \par Details:
+ *  Wraps vkCreateMetalSurfaceEXT. Aborts on any error result.
+ *
+ * \param[in] instance    VkInstance value
+ * \param[in] pNext       Optional extension chain attached to VkMetalSurfaceCreateInfoEXT, or NULL
+ * \param[in] flags       VkMetalSurfaceCreateInfoEXT::flags
+ * \param[in] pLayer      VkMetalSurfaceCreateInfoEXT::pLayer
+ * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[out] pSurface    Receives the created VkSurfaceKHR
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateMetalSurface(VkInstance instance, const void* pNext, VkMetalSurfaceCreateFlagsEXT flags, const CAMetalLayer* pLayer, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+/**
+ * \brief Calls vkExportMetalObjectsEXT.
+ *
+ * \par Details:
+ *  Wraps vkExportMetalObjectsEXT.
+ *
+ * \param[in] device             VkDevice value
+ * \param[in] pNext              Optional output extension chain attached to VkExportMetalObjectsInfoEXT, or NULL
+ * \param[out] pMetalObjectsInfo  Receives the VkExportMetalObjectsInfoEXT
+ *
+ * \retval None No value is returned.
+ */
 void cvkExportMetalObjects(VkDevice device, void* pNext, VkExportMetalObjectsInfoEXT* pMetalObjectsInfo);
+/**
+ * \brief Retrieves memory metal handle.
+ *
+ * \par Details:
+ *  Wraps vkGetMemoryMetalHandleEXT. Aborts on any error result.
+ *
+ * \param[in] device      VkDevice value
+ * \param[in] pNext       Optional extension chain attached to VkMemoryGetMetalHandleInfoEXT, or NULL
+ * \param[in] memory      VkMemoryGetMetalHandleInfoEXT::memory
+ * \param[in] handleType  VkMemoryGetMetalHandleInfoEXT::handleType
+ * \param[out] pHandle     Receives the void
+ *
+ * \retval None No value is returned.
+ */
 void cvkGetMemoryMetalHandle(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, void** pHandle);
+/**
+ * \brief Retrieves memory metal handle properties.
+ *
+ * \par Details:
+ *  Wraps vkGetMemoryMetalHandlePropertiesEXT. Aborts on any error result.
+ *
+ * \param[in] device                        VkDevice value
+ * \param[in] handleType                    VkExternalMemoryHandleTypeFlagBits value
+ * \param[in] pHandle                       void value
+ * \param[in] pNext                         Optional output extension chain attached to VkMemoryMetalHandlePropertiesEXT, or NULL
+ * \param[out] pMemoryMetalHandleProperties  Receives the VkMemoryMetalHandlePropertiesEXT
+ *
+ * \retval None No value is returned.
+ */
 void cvkGetMemoryMetalHandleProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, const void* pHandle, void* pNext, VkMemoryMetalHandlePropertiesEXT* pMemoryMetalHandleProperties);
+/**
+ * \brief Allocates memory with VkExportMetalObjectCreateInfoEXT chained.
+ *
+ * \param[in] device            See cvkAllocateMemory
+ * \param[in] pNext             See cvkAllocateMemory
+ * \param[in] exportObjectType  VkExportMetalObjectCreateInfoEXT::exportObjectType
+ * \param[in] allocationSize    See cvkAllocateMemory
+ * \param[in] memoryTypeIndex   See cvkAllocateMemory
+ * \param[in] pAllocator        See cvkAllocateMemory
+ * \param[out] pMemory           See cvkAllocateMemory
+ *
+ * \retval None No value is returned.
+ */
 void cvkAllocateExportMetalObject(VkDevice device, const void* pNext, VkExportMetalObjectTypeFlagBitsEXT exportObjectType, VkDeviceSize allocationSize, uint32_t memoryTypeIndex, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory);
+/**
+ * \brief Allocates memory with VkImportMemoryMetalHandleInfoEXT chained.
+ *
+ * \param[in] device           See cvkAllocateMemory
+ * \param[in] pNext            See cvkAllocateMemory
+ * \param[in] handleType       VkImportMemoryMetalHandleInfoEXT::handleType
+ * \param[in] handle           VkImportMemoryMetalHandleInfoEXT::handle
+ * \param[in] allocationSize   See cvkAllocateMemory
+ * \param[in] memoryTypeIndex  See cvkAllocateMemory
+ * \param[in] pAllocator       See cvkAllocateMemory
+ * \param[out] pMemory          See cvkAllocateMemory
+ *
+ * \retval None No value is returned.
+ */
 void cvkAllocateImportMemoryMetalHandle(VkDevice device, const void* pNext, VkExternalMemoryHandleTypeFlagBits handleType, void* handle, VkDeviceSize allocationSize, uint32_t memoryTypeIndex, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory);
+/**
+ * \brief Allocates memory with VkImportMetalBufferInfoEXT chained.
+ *
+ * \param[in] device           See cvkAllocateMemory
+ * \param[in] pNext            See cvkAllocateMemory
+ * \param[in] mtlBuffer        VkImportMetalBufferInfoEXT::mtlBuffer
+ * \param[in] allocationSize   See cvkAllocateMemory
+ * \param[in] memoryTypeIndex  See cvkAllocateMemory
+ * \param[in] pAllocator       See cvkAllocateMemory
+ * \param[out] pMemory          See cvkAllocateMemory
+ *
+ * \retval None No value is returned.
+ */
 void cvkAllocateImportMetalBuffer(VkDevice device, const void* pNext, MTLBuffer_id mtlBuffer, VkDeviceSize allocationSize, uint32_t memoryTypeIndex, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory);
+/**
+ * \brief Creates a buffer view with VkExportMetalObjectCreateInfoEXT chained.
+ *
+ * \param[in] device            See cvkCreateBufferView
+ * \param[in] pNext             See cvkCreateBufferView
+ * \param[in] exportObjectType  VkExportMetalObjectCreateInfoEXT::exportObjectType
+ * \param[in] flags             See cvkCreateBufferView
+ * \param[in] buffer            See cvkCreateBufferView
+ * \param[in] format            See cvkCreateBufferView
+ * \param[in] offset            See cvkCreateBufferView
+ * \param[in] range             See cvkCreateBufferView
+ * \param[in] pAllocator        See cvkCreateBufferView
+ * \param[out] pView             See cvkCreateBufferView
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateBufferViewWithExportMetalObjectInfo(VkDevice device, const void* pNext, VkExportMetalObjectTypeFlagBitsEXT exportObjectType, VkBufferViewCreateFlags flags, VkBuffer buffer, VkFormat format, VkDeviceSize offset, VkDeviceSize range, const VkAllocationCallbacks* pAllocator, VkBufferView* pView);
+/**
+ * \brief Creates a event with VkExportMetalObjectCreateInfoEXT chained.
+ *
+ * \param[in] device            See cvkCreateEvent
+ * \param[in] pNext             See cvkCreateEvent
+ * \param[in] exportObjectType  VkExportMetalObjectCreateInfoEXT::exportObjectType
+ * \param[in] flags             See cvkCreateEvent
+ * \param[in] pAllocator        See cvkCreateEvent
+ * \param[out] pEvent            See cvkCreateEvent
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateEventWithExportMetalObjectInfo(VkDevice device, const void* pNext, VkExportMetalObjectTypeFlagBitsEXT exportObjectType, VkEventCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkEvent* pEvent);
+/**
+ * \brief Creates a event with VkImportMetalSharedEventInfoEXT chained.
+ *
+ * \param[in] device          See cvkCreateEvent
+ * \param[in] pNext           See cvkCreateEvent
+ * \param[in] mtlSharedEvent  VkImportMetalSharedEventInfoEXT::mtlSharedEvent
+ * \param[in] flags           See cvkCreateEvent
+ * \param[in] pAllocator      See cvkCreateEvent
+ * \param[out] pEvent          See cvkCreateEvent
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateEventWithImportMetalSharedEventInfo(VkDevice device, const void* pNext, MTLSharedEvent_id mtlSharedEvent, VkEventCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkEvent* pEvent);
+/**
+ * \brief Creates a image with VkExportMetalObjectCreateInfoEXT chained.
+ *
+ * \param[in] device                 See cvkCreateImage
+ * \param[in] pNext                  See cvkCreateImage
+ * \param[in] exportObjectType       VkExportMetalObjectCreateInfoEXT::exportObjectType
+ * \param[in] flags                  See cvkCreateImage
+ * \param[in] imageType              See cvkCreateImage
+ * \param[in] format                 See cvkCreateImage
+ * \param[in] extent                 See cvkCreateImage
+ * \param[in] mipLevels              See cvkCreateImage
+ * \param[in] arrayLayers            See cvkCreateImage
+ * \param[in] samples                See cvkCreateImage
+ * \param[in] tiling                 See cvkCreateImage
+ * \param[in] usage                  See cvkCreateImage
+ * \param[in] sharingMode            See cvkCreateImage
+ * \param[in] queueFamilyIndexCount  See cvkCreateImage
+ * \param[in] pQueueFamilyIndices    See cvkCreateImage
+ * \param[in] initialLayout          See cvkCreateImage
+ * \param[in] pAllocator             See cvkCreateImage
+ * \param[out] pImage                 See cvkCreateImage
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateImageWithExportMetalObjectInfo(VkDevice device, const void* pNext, VkExportMetalObjectTypeFlagBitsEXT exportObjectType, VkImageCreateFlags flags, VkImageType imageType, VkFormat format, VkExtent3D extent, uint32_t mipLevels, uint32_t arrayLayers, VkSampleCountFlagBits samples, VkImageTiling tiling, VkImageUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices, VkImageLayout initialLayout, const VkAllocationCallbacks* pAllocator, VkImage* pImage);
+/**
+ * \brief Creates a image with VkImportMetalIOSurfaceInfoEXT chained.
+ *
+ * \param[in] device                 See cvkCreateImage
+ * \param[in] pNext                  See cvkCreateImage
+ * \param[in] ioSurface              VkImportMetalIOSurfaceInfoEXT::ioSurface
+ * \param[in] flags                  See cvkCreateImage
+ * \param[in] imageType              See cvkCreateImage
+ * \param[in] format                 See cvkCreateImage
+ * \param[in] extent                 See cvkCreateImage
+ * \param[in] mipLevels              See cvkCreateImage
+ * \param[in] arrayLayers            See cvkCreateImage
+ * \param[in] samples                See cvkCreateImage
+ * \param[in] tiling                 See cvkCreateImage
+ * \param[in] usage                  See cvkCreateImage
+ * \param[in] sharingMode            See cvkCreateImage
+ * \param[in] queueFamilyIndexCount  See cvkCreateImage
+ * \param[in] pQueueFamilyIndices    See cvkCreateImage
+ * \param[in] initialLayout          See cvkCreateImage
+ * \param[in] pAllocator             See cvkCreateImage
+ * \param[out] pImage                 See cvkCreateImage
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateImportMetalIOSurface(VkDevice device, const void* pNext, IOSurfaceRef ioSurface, VkImageCreateFlags flags, VkImageType imageType, VkFormat format, VkExtent3D extent, uint32_t mipLevels, uint32_t arrayLayers, VkSampleCountFlagBits samples, VkImageTiling tiling, VkImageUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices, VkImageLayout initialLayout, const VkAllocationCallbacks* pAllocator, VkImage* pImage);
+/**
+ * \brief Creates a image with VkImportMetalTextureInfoEXT chained.
+ *
+ * \param[in] device                 See cvkCreateImage
+ * \param[in] pNext                  See cvkCreateImage
+ * \param[in] plane                  VkImportMetalTextureInfoEXT::plane
+ * \param[in] mtlTexture             VkImportMetalTextureInfoEXT::mtlTexture
+ * \param[in] flags                  See cvkCreateImage
+ * \param[in] imageType              See cvkCreateImage
+ * \param[in] format                 See cvkCreateImage
+ * \param[in] extent                 See cvkCreateImage
+ * \param[in] mipLevels              See cvkCreateImage
+ * \param[in] arrayLayers            See cvkCreateImage
+ * \param[in] samples                See cvkCreateImage
+ * \param[in] tiling                 See cvkCreateImage
+ * \param[in] usage                  See cvkCreateImage
+ * \param[in] sharingMode            See cvkCreateImage
+ * \param[in] queueFamilyIndexCount  See cvkCreateImage
+ * \param[in] pQueueFamilyIndices    See cvkCreateImage
+ * \param[in] initialLayout          See cvkCreateImage
+ * \param[in] pAllocator             See cvkCreateImage
+ * \param[out] pImage                 See cvkCreateImage
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateImportMetalTexture(VkDevice device, const void* pNext, VkImageAspectFlagBits plane, MTLTexture_id mtlTexture, VkImageCreateFlags flags, VkImageType imageType, VkFormat format, VkExtent3D extent, uint32_t mipLevels, uint32_t arrayLayers, VkSampleCountFlagBits samples, VkImageTiling tiling, VkImageUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices, VkImageLayout initialLayout, const VkAllocationCallbacks* pAllocator, VkImage* pImage);
+/**
+ * \brief Creates a image view with VkExportMetalObjectCreateInfoEXT chained.
+ *
+ * \param[in] device            See cvkCreateImageView
+ * \param[in] pNext             See cvkCreateImageView
+ * \param[in] exportObjectType  VkExportMetalObjectCreateInfoEXT::exportObjectType
+ * \param[in] flags             See cvkCreateImageView
+ * \param[in] image             See cvkCreateImageView
+ * \param[in] viewType          See cvkCreateImageView
+ * \param[in] format            See cvkCreateImageView
+ * \param[in] components        See cvkCreateImageView
+ * \param[in] subresourceRange  See cvkCreateImageView
+ * \param[in] pAllocator        See cvkCreateImageView
+ * \param[out] pView             See cvkCreateImageView
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateImageViewWithExportMetalObjectInfo(VkDevice device, const void* pNext, VkExportMetalObjectTypeFlagBitsEXT exportObjectType, VkImageViewCreateFlags flags, VkImage image, VkImageViewType viewType, VkFormat format, VkComponentMapping components, VkImageSubresourceRange subresourceRange, const VkAllocationCallbacks* pAllocator, VkImageView* pView);
+/**
+ * \brief Creates a instance with VkExportMetalObjectCreateInfoEXT chained.
+ *
+ * \param[in] pNext                    See cvkCreateInstance
+ * \param[in] exportObjectType         VkExportMetalObjectCreateInfoEXT::exportObjectType
+ * \param[in] flags                    See cvkCreateInstance
+ * \param[in] pApplicationInfo         See cvkCreateInstance
+ * \param[in] enabledLayerCount        See cvkCreateInstance
+ * \param[in] ppEnabledLayerNames      See cvkCreateInstance
+ * \param[in] enabledExtensionCount    See cvkCreateInstance
+ * \param[in] ppEnabledExtensionNames  See cvkCreateInstance
+ * \param[in] pAllocator               See cvkCreateInstance
+ * \param[out] pInstance                See cvkCreateInstance
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateInstanceWithExportMetalObjectInfo(const void* pNext, VkExportMetalObjectTypeFlagBitsEXT exportObjectType, VkInstanceCreateFlags flags, const VkApplicationInfo* pApplicationInfo, uint32_t enabledLayerCount, const char* const* ppEnabledLayerNames, uint32_t enabledExtensionCount, const char* const* ppEnabledExtensionNames, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
+/**
+ * \brief Creates a semaphore with VkExportMetalObjectCreateInfoEXT chained.
+ *
+ * \param[in] device            See cvkCreateSemaphore
+ * \param[in] pNext             See cvkCreateSemaphore
+ * \param[in] exportObjectType  VkExportMetalObjectCreateInfoEXT::exportObjectType
+ * \param[in] flags             See cvkCreateSemaphore
+ * \param[in] pAllocator        See cvkCreateSemaphore
+ * \param[out] pSemaphore        See cvkCreateSemaphore
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateSemaphoreWithExportMetalObjectInfo(VkDevice device, const void* pNext, VkExportMetalObjectTypeFlagBitsEXT exportObjectType, VkSemaphoreCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore);
+/**
+ * \brief Creates a semaphore with VkImportMetalSharedEventInfoEXT chained.
+ *
+ * \param[in] device          See cvkCreateSemaphore
+ * \param[in] pNext           See cvkCreateSemaphore
+ * \param[in] mtlSharedEvent  VkImportMetalSharedEventInfoEXT::mtlSharedEvent
+ * \param[in] flags           See cvkCreateSemaphore
+ * \param[in] pAllocator      See cvkCreateSemaphore
+ * \param[out] pSemaphore      See cvkCreateSemaphore
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateSemaphoreWithImportMetalSharedEventInfo(VkDevice device, const void* pNext, MTLSharedEvent_id mtlSharedEvent, VkSemaphoreCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore);
+/**
+ * \brief Calls vkExportMetalObjectsEXT with VkExportMetalBufferInfoEXT chained to the output.
+ *
+ * \param[in] device                  VkDevice value
+ * \param[in] pNext                   Optional output extension chain attached to VkExportMetalBufferInfoEXT, or NULL
+ * \param[out] pExportMetalBufferInfo  Receives the VkExportMetalBufferInfoEXT
+ *
+ * \retval None No value is returned.
+ */
 void cvkExportMetalObjectsWithBufferInfo(VkDevice device, void* pNext, VkExportMetalBufferInfoEXT* pExportMetalBufferInfo);
+/**
+ * \brief Calls vkExportMetalObjectsEXT with VkExportMetalCommandQueueInfoEXT chained to the output.
+ *
+ * \param[in] device                        VkDevice value
+ * \param[in] pNext                         Optional output extension chain attached to VkExportMetalCommandQueueInfoEXT, or NULL
+ * \param[out] pExportMetalCommandQueueInfo  Receives the VkExportMetalCommandQueueInfoEXT
+ *
+ * \retval None No value is returned.
+ */
 void cvkExportMetalObjectsWithCommandQueueInfo(VkDevice device, void* pNext, VkExportMetalCommandQueueInfoEXT* pExportMetalCommandQueueInfo);
+/**
+ * \brief Calls vkExportMetalObjectsEXT with VkExportMetalDeviceInfoEXT chained to the output.
+ *
+ * \param[in] device                  VkDevice value
+ * \param[in] pNext                   Optional output extension chain attached to VkExportMetalDeviceInfoEXT, or NULL
+ * \param[out] pExportMetalDeviceInfo  Receives the VkExportMetalDeviceInfoEXT
+ *
+ * \retval None No value is returned.
+ */
 void cvkExportMetalObjectsWithDeviceInfo(VkDevice device, void* pNext, VkExportMetalDeviceInfoEXT* pExportMetalDeviceInfo);
+/**
+ * \brief Calls vkExportMetalObjectsEXT with VkExportMetalIOSurfaceInfoEXT chained to the output.
+ *
+ * \param[in] device                     VkDevice value
+ * \param[in] pNext                      Optional output extension chain attached to VkExportMetalIOSurfaceInfoEXT, or NULL
+ * \param[out] pExportMetalIOSurfaceInfo  Receives the VkExportMetalIOSurfaceInfoEXT
+ *
+ * \retval None No value is returned.
+ */
 void cvkExportMetalObjectsWithIOSurfaceInfo(VkDevice device, void* pNext, VkExportMetalIOSurfaceInfoEXT* pExportMetalIOSurfaceInfo);
+/**
+ * \brief Calls vkExportMetalObjectsEXT with VkExportMetalSharedEventInfoEXT chained to the output.
+ *
+ * \param[in] device                       VkDevice value
+ * \param[in] pNext                        Optional output extension chain attached to VkExportMetalSharedEventInfoEXT, or NULL
+ * \param[out] pExportMetalSharedEventInfo  Receives the VkExportMetalSharedEventInfoEXT
+ *
+ * \retval None No value is returned.
+ */
 void cvkExportMetalObjectsWithSharedEventInfo(VkDevice device, void* pNext, VkExportMetalSharedEventInfoEXT* pExportMetalSharedEventInfo);
+/**
+ * \brief Calls vkExportMetalObjectsEXT with VkExportMetalTextureInfoEXT chained to the output.
+ *
+ * \param[in] device                   VkDevice value
+ * \param[in] pNext                    Optional output extension chain attached to VkExportMetalTextureInfoEXT, or NULL
+ * \param[out] pExportMetalTextureInfo  Receives the VkExportMetalTextureInfoEXT
+ *
+ * \retval None No value is returned.
+ */
 void cvkExportMetalObjectsWithTextureInfo(VkDevice device, void* pNext, VkExportMetalTextureInfoEXT* pExportMetalTextureInfo);
 /* clang-format on */
 

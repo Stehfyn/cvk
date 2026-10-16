@@ -8,7 +8,30 @@
 #include <vulkan/vulkan_win32.h>
 
 /* clang-format off */
+/**
+ * \brief Acquires winrt display.
+ *
+ * \par Details:
+ *  Wraps vkAcquireWinrtDisplayNV. Aborts on any error result.
+ *
+ * \param[in] physicalDevice  VkPhysicalDevice value
+ * \param[in] display         VkDisplayKHR value
+ *
+ * \retval None No value is returned.
+ */
 void scvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display);
+/**
+ * \brief Retrieves winrt display.
+ *
+ * \par Details:
+ *  Wraps vkGetWinrtDisplayNV. Aborts on any error result.
+ *
+ * \param[in] physicalDevice    VkPhysicalDevice value
+ * \param[in] deviceRelativeId  uint32_t value
+ * \param[out] pDisplay          Receives the created VkDisplayKHR
+ *
+ * \retval None No value is returned.
+ */
 void scvkGetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay);
 
 

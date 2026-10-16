@@ -12,15 +12,16 @@
 #include <vulkan/vulkan_beta.h>
 #include <vulkan/vulkan_core.h>
 
-extern CVK_FORCE_INLINE void cvkInitAccelerationStructureDenseGeometryFormatTrianglesDataAMDX(VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX* pInfo,
-                                                                                              const void*                                                  pNext,
-                                                                                              VkDeviceOrHostAddressConstKHR                                compressedData,
-                                                                                              VkDeviceSize                                                 dataSize,
-                                                                                              uint32_t                                                     numTriangles,
-                                                                                              uint32_t                                                     numVertices,
-                                                                                              uint32_t                                                     maxPrimitiveIndex,
-                                                                                              uint32_t                                                     maxGeometryIndex,
-                                                                                              VkCompressedTriangleFormatAMDX                               format)
+extern CVK_FORCE_INLINE void cvkInitAccelerationStructureDenseGeometryFormatTrianglesDataAMDX(
+    VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX* pInfo,
+    const void*                                                  pNext,
+    VkDeviceOrHostAddressConstKHR                                compressedData,
+    VkDeviceSize                                                 dataSize,
+    uint32_t                                                     numTriangles,
+    uint32_t                                                     numVertices,
+    uint32_t                                                     maxPrimitiveIndex,
+    uint32_t                                                     maxGeometryIndex,
+    VkCompressedTriangleFormatAMDX                               format)
 {
     (*pInfo) = (VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX)
     {
@@ -35,24 +36,25 @@ extern CVK_FORCE_INLINE void cvkInitAccelerationStructureDenseGeometryFormatTria
         .format            = format
     };
 }
-extern CVK_FORCE_INLINE void cvkInitAccelerationStructureTrianglesDisplacementMicromapNV(VkAccelerationStructureTrianglesDisplacementMicromapNV* pInfo,
-                                                                                         void*                                                   pNext,
-                                                                                         VkFormat                                                displacementBiasAndScaleFormat,
-                                                                                         VkFormat                                                displacementVectorFormat,
-                                                                                         VkDeviceOrHostAddressConstKHR                           displacementBiasAndScaleBuffer,
-                                                                                         VkDeviceSize                                            displacementBiasAndScaleStride,
-                                                                                         VkDeviceOrHostAddressConstKHR                           displacementVectorBuffer,
-                                                                                         VkDeviceSize                                            displacementVectorStride,
-                                                                                         VkDeviceOrHostAddressConstKHR                           displacedMicromapPrimitiveFlags,
-                                                                                         VkDeviceSize                                            displacedMicromapPrimitiveFlagsStride,
-                                                                                         VkIndexType                                             indexType,
-                                                                                         VkDeviceOrHostAddressConstKHR                           indexBuffer,
-                                                                                         VkDeviceSize                                            indexStride,
-                                                                                         uint32_t                                                baseTriangle,
-                                                                                         uint32_t                                                usageCountsCount,
-                                                                                         const VkMicromapUsageEXT*                               pUsageCounts,
-                                                                                         const VkMicromapUsageEXT* const*                        ppUsageCounts,
-                                                                                         VkMicromapEXT                                           micromap)
+extern CVK_FORCE_INLINE void cvkInitAccelerationStructureTrianglesDisplacementMicromapNV(
+    VkAccelerationStructureTrianglesDisplacementMicromapNV* pInfo,
+    void*                                                   pNext,
+    VkFormat                                                displacementBiasAndScaleFormat,
+    VkFormat                                                displacementVectorFormat,
+    VkDeviceOrHostAddressConstKHR                           displacementBiasAndScaleBuffer,
+    VkDeviceSize                                            displacementBiasAndScaleStride,
+    VkDeviceOrHostAddressConstKHR                           displacementVectorBuffer,
+    VkDeviceSize                                            displacementVectorStride,
+    VkDeviceOrHostAddressConstKHR                           displacedMicromapPrimitiveFlags,
+    VkDeviceSize                                            displacedMicromapPrimitiveFlagsStride,
+    VkIndexType                                             indexType,
+    VkDeviceOrHostAddressConstKHR                           indexBuffer,
+    VkDeviceSize                                            indexStride,
+    uint32_t                                                baseTriangle,
+    uint32_t                                                usageCountsCount,
+    const VkMicromapUsageEXT*                               pUsageCounts,
+    const VkMicromapUsageEXT* const*                        ppUsageCounts,
+    VkMicromapEXT                                           micromap)
 {
     (*pInfo) = (VkAccelerationStructureTrianglesDisplacementMicromapNV)
     {
@@ -76,7 +78,11 @@ extern CVK_FORCE_INLINE void cvkInitAccelerationStructureTrianglesDisplacementMi
         .micromap                              = micromap
     };
 }
-extern CVK_FORCE_INLINE void cvkInitCudaFunctionCreateInfoNV(VkCudaFunctionCreateInfoNV* pInfo, const void* pNext, VkCudaModuleNV module, const char* pName)
+extern CVK_FORCE_INLINE void cvkInitCudaFunctionCreateInfoNV(
+    VkCudaFunctionCreateInfoNV* pInfo,
+    const void*                 pNext,
+    VkCudaModuleNV              module,
+    const char*                 pName)
 {
     (*pInfo) = (VkCudaFunctionCreateInfoNV)
     {
@@ -86,20 +92,21 @@ extern CVK_FORCE_INLINE void cvkInitCudaFunctionCreateInfoNV(VkCudaFunctionCreat
         .pName  = pName
     };
 }
-extern CVK_FORCE_INLINE void cvkInitCudaLaunchInfoNV(VkCudaLaunchInfoNV* pInfo,
-                                                     const void*         pNext,
-                                                     VkCudaFunctionNV    function,
-                                                     uint32_t            gridDimX,
-                                                     uint32_t            gridDimY,
-                                                     uint32_t            gridDimZ,
-                                                     uint32_t            blockDimX,
-                                                     uint32_t            blockDimY,
-                                                     uint32_t            blockDimZ,
-                                                     uint32_t            sharedMemBytes,
-                                                     size_t              paramCount,
-                                                     const void* const*  pParams,
-                                                     size_t              extraCount,
-                                                     const void* const*  pExtras)
+extern CVK_FORCE_INLINE void cvkInitCudaLaunchInfoNV(
+    VkCudaLaunchInfoNV* pInfo,
+    const void*         pNext,
+    VkCudaFunctionNV    function,
+    uint32_t            gridDimX,
+    uint32_t            gridDimY,
+    uint32_t            gridDimZ,
+    uint32_t            blockDimX,
+    uint32_t            blockDimY,
+    uint32_t            blockDimZ,
+    uint32_t            sharedMemBytes,
+    size_t              paramCount,
+    const void* const*  pParams,
+    size_t              extraCount,
+    const void* const*  pExtras)
 {
     (*pInfo) = (VkCudaLaunchInfoNV)
     {
@@ -119,7 +126,11 @@ extern CVK_FORCE_INLINE void cvkInitCudaLaunchInfoNV(VkCudaLaunchInfoNV* pInfo,
         .pExtras        = pExtras
     };
 }
-extern CVK_FORCE_INLINE void cvkInitCudaModuleCreateInfoNV(VkCudaModuleCreateInfoNV* pInfo, const void* pNext, size_t dataSize, const void* pData)
+extern CVK_FORCE_INLINE void cvkInitCudaModuleCreateInfoNV(
+    VkCudaModuleCreateInfoNV* pInfo,
+    const void*               pNext,
+    size_t                    dataSize,
+    const void*               pData)
 {
     (*pInfo) = (VkCudaModuleCreateInfoNV)
     {
@@ -129,7 +140,11 @@ extern CVK_FORCE_INLINE void cvkInitCudaModuleCreateInfoNV(VkCudaModuleCreateInf
         .pData    = pData
     };
 }
-extern CVK_FORCE_INLINE void cvkInitDispatchGraphCountInfoAMDX(VkDispatchGraphCountInfoAMDX* pInfo, uint32_t count, VkDeviceOrHostAddressConstAMDX infos, uint64_t stride)
+extern CVK_FORCE_INLINE void cvkInitDispatchGraphCountInfoAMDX(
+    VkDispatchGraphCountInfoAMDX*  pInfo,
+    uint32_t                       count,
+    VkDeviceOrHostAddressConstAMDX infos,
+    uint64_t                       stride)
 {
     (*pInfo) = (VkDispatchGraphCountInfoAMDX)
     {
@@ -138,7 +153,12 @@ extern CVK_FORCE_INLINE void cvkInitDispatchGraphCountInfoAMDX(VkDispatchGraphCo
         .stride = stride
     };
 }
-extern CVK_FORCE_INLINE void cvkInitDispatchGraphInfoAMDX(VkDispatchGraphInfoAMDX* pInfo, uint32_t nodeIndex, uint32_t payloadCount, VkDeviceOrHostAddressConstAMDX payloads, uint64_t payloadStride)
+extern CVK_FORCE_INLINE void cvkInitDispatchGraphInfoAMDX(
+    VkDispatchGraphInfoAMDX*       pInfo,
+    uint32_t                       nodeIndex,
+    uint32_t                       payloadCount,
+    VkDeviceOrHostAddressConstAMDX payloads,
+    uint64_t                       payloadStride)
 {
     (*pInfo) = (VkDispatchGraphInfoAMDX)
     {
@@ -148,15 +168,16 @@ extern CVK_FORCE_INLINE void cvkInitDispatchGraphInfoAMDX(VkDispatchGraphInfoAMD
         .payloadStride = payloadStride
     };
 }
-extern CVK_FORCE_INLINE void cvkInitExecutionGraphPipelineCreateInfoAMDX(VkExecutionGraphPipelineCreateInfoAMDX* pInfo,
-                                                                         const void*                             pNext,
-                                                                         VkPipelineCreateFlags                   flags,
-                                                                         uint32_t                                stageCount,
-                                                                         const VkPipelineShaderStageCreateInfo*  pStages,
-                                                                         const VkPipelineLibraryCreateInfoKHR*   pLibraryInfo,
-                                                                         VkPipelineLayout                        layout,
-                                                                         VkPipeline                              basePipelineHandle,
-                                                                         int32_t                                 basePipelineIndex)
+extern CVK_FORCE_INLINE void cvkInitExecutionGraphPipelineCreateInfoAMDX(
+    VkExecutionGraphPipelineCreateInfoAMDX* pInfo,
+    const void*                             pNext,
+    VkPipelineCreateFlags                   flags,
+    uint32_t                                stageCount,
+    const VkPipelineShaderStageCreateInfo*  pStages,
+    const VkPipelineLibraryCreateInfoKHR*   pLibraryInfo,
+    VkPipelineLayout                        layout,
+    VkPipeline                              basePipelineHandle,
+    int32_t                                 basePipelineIndex)
 {
     (*pInfo) = (VkExecutionGraphPipelineCreateInfoAMDX)
     {
@@ -171,11 +192,12 @@ extern CVK_FORCE_INLINE void cvkInitExecutionGraphPipelineCreateInfoAMDX(VkExecu
         .basePipelineIndex  = basePipelineIndex
     };
 }
-extern CVK_FORCE_INLINE void cvkInitExecutionGraphPipelineScratchSizeAMDX(VkExecutionGraphPipelineScratchSizeAMDX* pInfo,
-                                                                          void*                                    pNext,
-                                                                          VkDeviceSize                             minSize,
-                                                                          VkDeviceSize                             maxSize,
-                                                                          VkDeviceSize                             sizeGranularity)
+extern CVK_FORCE_INLINE void cvkInitExecutionGraphPipelineScratchSizeAMDX(
+    VkExecutionGraphPipelineScratchSizeAMDX* pInfo,
+    void*                                    pNext,
+    VkDeviceSize                             minSize,
+    VkDeviceSize                             maxSize,
+    VkDeviceSize                             sizeGranularity)
 {
     (*pInfo) = (VkExecutionGraphPipelineScratchSizeAMDX)
     {
@@ -186,7 +208,10 @@ extern CVK_FORCE_INLINE void cvkInitExecutionGraphPipelineScratchSizeAMDX(VkExec
         .sizeGranularity = sizeGranularity
     };
 }
-extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceCudaKernelLaunchFeaturesNV(VkPhysicalDeviceCudaKernelLaunchFeaturesNV* pInfo, void* pNext, VkBool32 cudaKernelLaunchFeatures)
+extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceCudaKernelLaunchFeaturesNV(
+    VkPhysicalDeviceCudaKernelLaunchFeaturesNV* pInfo,
+    void*                                       pNext,
+    VkBool32                                    cudaKernelLaunchFeatures)
 {
     (*pInfo) = (VkPhysicalDeviceCudaKernelLaunchFeaturesNV)
     {
@@ -195,12 +220,17 @@ extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceCudaKernelLaunchFeaturesNV(VkP
         .cudaKernelLaunchFeatures = cudaKernelLaunchFeatures
     };
 }
-extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceCudaKernelLaunchPropertiesNV(VkPhysicalDeviceCudaKernelLaunchPropertiesNV* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceCudaKernelLaunchPropertiesNV(
+    VkPhysicalDeviceCudaKernelLaunchPropertiesNV* pInfo,
+    void*                                         pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAUNCH_PROPERTIES_NV;
     pInfo->pNext = pNext;
 }
-extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceDenseGeometryFormatFeaturesAMDX(VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX* pInfo, void* pNext, VkBool32 denseGeometryFormat)
+extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceDenseGeometryFormatFeaturesAMDX(
+    VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX* pInfo,
+    void*                                            pNext,
+    VkBool32                                         denseGeometryFormat)
 {
     (*pInfo) = (VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX)
     {
@@ -209,7 +239,10 @@ extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceDenseGeometryFormatFeaturesAMD
         .denseGeometryFormat = denseGeometryFormat
     };
 }
-extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceDisplacementMicromapFeaturesNV(VkPhysicalDeviceDisplacementMicromapFeaturesNV* pInfo, void* pNext, VkBool32 displacementMicromap)
+extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceDisplacementMicromapFeaturesNV(
+    VkPhysicalDeviceDisplacementMicromapFeaturesNV* pInfo,
+    void*                                           pNext,
+    VkBool32                                        displacementMicromap)
 {
     (*pInfo) = (VkPhysicalDeviceDisplacementMicromapFeaturesNV)
     {
@@ -218,28 +251,31 @@ extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceDisplacementMicromapFeaturesNV
         .displacementMicromap = displacementMicromap
     };
 }
-extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceDisplacementMicromapPropertiesNV(VkPhysicalDeviceDisplacementMicromapPropertiesNV* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceDisplacementMicromapPropertiesNV(
+    VkPhysicalDeviceDisplacementMicromapPropertiesNV* pInfo,
+    void*                                             pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISPLACEMENT_MICROMAP_PROPERTIES_NV;
     pInfo->pNext = pNext;
 }
-extern CVK_FORCE_INLINE void cvkInitPhysicalDevicePortabilitySubsetFeatures(VkPhysicalDevicePortabilitySubsetFeaturesKHR* pInfo,
-                                                                            void*                                         pNext,
-                                                                            VkBool32                                      constantAlphaColorBlendFactors,
-                                                                            VkBool32                                      events,
-                                                                            VkBool32                                      imageViewFormatReinterpretation,
-                                                                            VkBool32                                      imageViewFormatSwizzle,
-                                                                            VkBool32                                      imageView2DOn3DImage,
-                                                                            VkBool32                                      multisampleArrayImage,
-                                                                            VkBool32                                      mutableComparisonSamplers,
-                                                                            VkBool32                                      pointPolygons,
-                                                                            VkBool32                                      samplerMipLodBias,
-                                                                            VkBool32                                      separateStencilMaskRef,
-                                                                            VkBool32                                      shaderSampleRateInterpolationFunctions,
-                                                                            VkBool32                                      tessellationIsolines,
-                                                                            VkBool32                                      tessellationPointMode,
-                                                                            VkBool32                                      triangleFans,
-                                                                            VkBool32                                      vertexAttributeAccessBeyondStride)
+extern CVK_FORCE_INLINE void cvkInitPhysicalDevicePortabilitySubsetFeatures(
+    VkPhysicalDevicePortabilitySubsetFeaturesKHR* pInfo,
+    void*                                         pNext,
+    VkBool32                                      constantAlphaColorBlendFactors,
+    VkBool32                                      events,
+    VkBool32                                      imageViewFormatReinterpretation,
+    VkBool32                                      imageViewFormatSwizzle,
+    VkBool32                                      imageView2DOn3DImage,
+    VkBool32                                      multisampleArrayImage,
+    VkBool32                                      mutableComparisonSamplers,
+    VkBool32                                      pointPolygons,
+    VkBool32                                      samplerMipLodBias,
+    VkBool32                                      separateStencilMaskRef,
+    VkBool32                                      shaderSampleRateInterpolationFunctions,
+    VkBool32                                      tessellationIsolines,
+    VkBool32                                      tessellationPointMode,
+    VkBool32                                      triangleFans,
+    VkBool32                                      vertexAttributeAccessBeyondStride)
 {
     (*pInfo) = (VkPhysicalDevicePortabilitySubsetFeaturesKHR)
     {
@@ -262,12 +298,18 @@ extern CVK_FORCE_INLINE void cvkInitPhysicalDevicePortabilitySubsetFeatures(VkPh
         .vertexAttributeAccessBeyondStride      = vertexAttributeAccessBeyondStride
     };
 }
-extern CVK_FORCE_INLINE void cvkInitPhysicalDevicePortabilitySubsetProperties(VkPhysicalDevicePortabilitySubsetPropertiesKHR* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitPhysicalDevicePortabilitySubsetProperties(
+    VkPhysicalDevicePortabilitySubsetPropertiesKHR* pInfo,
+    void*                                           pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_KHR;
     pInfo->pNext = pNext;
 }
-extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceShaderEnqueueFeaturesAMDX(VkPhysicalDeviceShaderEnqueueFeaturesAMDX* pInfo, void* pNext, VkBool32 shaderEnqueue, VkBool32 shaderMeshEnqueue)
+extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceShaderEnqueueFeaturesAMDX(
+    VkPhysicalDeviceShaderEnqueueFeaturesAMDX* pInfo,
+    void*                                      pNext,
+    VkBool32                                   shaderEnqueue,
+    VkBool32                                   shaderMeshEnqueue)
 {
     (*pInfo) = (VkPhysicalDeviceShaderEnqueueFeaturesAMDX)
     {
@@ -277,12 +319,18 @@ extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceShaderEnqueueFeaturesAMDX(VkPh
         .shaderMeshEnqueue = shaderMeshEnqueue
     };
 }
-extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceShaderEnqueuePropertiesAMDX(VkPhysicalDeviceShaderEnqueuePropertiesAMDX* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceShaderEnqueuePropertiesAMDX(
+    VkPhysicalDeviceShaderEnqueuePropertiesAMDX* pInfo,
+    void*                                        pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_PROPERTIES_AMDX;
     pInfo->pNext = pNext;
 }
-extern CVK_FORCE_INLINE void cvkInitPipelineShaderStageNodeCreateInfoAMDX(VkPipelineShaderStageNodeCreateInfoAMDX* pInfo, const void* pNext, const char* pName, uint32_t index)
+extern CVK_FORCE_INLINE void cvkInitPipelineShaderStageNodeCreateInfoAMDX(
+    VkPipelineShaderStageNodeCreateInfoAMDX* pInfo,
+    const void*                              pNext,
+    const char*                              pName,
+    uint32_t                                 index)
 {
     (*pInfo) = (VkPipelineShaderStageNodeCreateInfoAMDX)
     {
@@ -292,34 +340,39 @@ extern CVK_FORCE_INLINE void cvkInitPipelineShaderStageNodeCreateInfoAMDX(VkPipe
         .index = index
     };
 }
-extern CVK_FORCE_INLINE void cvkInitDeviceOrHostAddressConstDeviceAddressAMDX(VkDeviceOrHostAddressConstAMDX* pInfo, VkDeviceAddress deviceAddress)
+extern CVK_FORCE_INLINE void cvkInitDeviceOrHostAddressConstDeviceAddressAMDX(
+    VkDeviceOrHostAddressConstAMDX* pInfo,
+    VkDeviceAddress                 deviceAddress)
 {
     (*pInfo) = (VkDeviceOrHostAddressConstAMDX)
     {
         .deviceAddress = deviceAddress
     };
 }
-extern CVK_FORCE_INLINE void cvkInitDeviceOrHostAddressConstHostAddressAMDX(VkDeviceOrHostAddressConstAMDX* pInfo, const void* hostAddress)
+extern CVK_FORCE_INLINE void cvkInitDeviceOrHostAddressConstHostAddressAMDX(
+    VkDeviceOrHostAddressConstAMDX* pInfo,
+    const void*                     hostAddress)
 {
     (*pInfo) = (VkDeviceOrHostAddressConstAMDX)
     {
         .hostAddress = hostAddress
     };
 }
-extern CVK_FORCE_INLINE void cvkCmdCudaLaunchKernelNV(VkCommandBuffer    commandBuffer,
-                                                      const void*        pNext,
-                                                      VkCudaFunctionNV   function,
-                                                      uint32_t           gridDimX,
-                                                      uint32_t           gridDimY,
-                                                      uint32_t           gridDimZ,
-                                                      uint32_t           blockDimX,
-                                                      uint32_t           blockDimY,
-                                                      uint32_t           blockDimZ,
-                                                      uint32_t           sharedMemBytes,
-                                                      size_t             paramCount,
-                                                      const void* const* pParams,
-                                                      size_t             extraCount,
-                                                      const void* const* pExtras)
+extern CVK_FORCE_INLINE void cvkCmdCudaLaunchKernelNV(
+    VkCommandBuffer    commandBuffer,
+    const void*        pNext,
+    VkCudaFunctionNV   function,
+    uint32_t           gridDimX,
+    uint32_t           gridDimY,
+    uint32_t           gridDimZ,
+    uint32_t           blockDimX,
+    uint32_t           blockDimY,
+    uint32_t           blockDimZ,
+    uint32_t           sharedMemBytes,
+    size_t             paramCount,
+    const void* const* pParams,
+    size_t             extraCount,
+    const void* const* pExtras)
 {
     VkCudaLaunchInfoNV launch_info =
     {
@@ -341,23 +394,45 @@ extern CVK_FORCE_INLINE void cvkCmdCudaLaunchKernelNV(VkCommandBuffer    command
 
     vkCmdCudaLaunchKernelNV(commandBuffer, &launch_info);
 }
-extern CVK_FORCE_INLINE void cvkCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize, const VkDispatchGraphCountInfoAMDX* pCountInfo)
+extern CVK_FORCE_INLINE void cvkCmdDispatchGraphAMDX(
+    VkCommandBuffer                     commandBuffer,
+    VkDeviceAddress                     scratch,
+    VkDeviceSize                        scratchSize,
+    const VkDispatchGraphCountInfoAMDX* pCountInfo)
 {
     vkCmdDispatchGraphAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
-extern CVK_FORCE_INLINE void cvkCmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize, const VkDispatchGraphCountInfoAMDX* pCountInfo)
+extern CVK_FORCE_INLINE void cvkCmdDispatchGraphIndirectAMDX(
+    VkCommandBuffer                     commandBuffer,
+    VkDeviceAddress                     scratch,
+    VkDeviceSize                        scratchSize,
+    const VkDispatchGraphCountInfoAMDX* pCountInfo)
 {
     vkCmdDispatchGraphIndirectAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
-extern CVK_FORCE_INLINE void cvkCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize, VkDeviceAddress countInfo)
+extern CVK_FORCE_INLINE void cvkCmdDispatchGraphIndirectCountAMDX(
+    VkCommandBuffer commandBuffer,
+    VkDeviceAddress scratch,
+    VkDeviceSize    scratchSize,
+    VkDeviceAddress countInfo)
 {
     vkCmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, scratchSize, countInfo);
 }
-extern CVK_FORCE_INLINE void cvkCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph, VkDeviceAddress scratch, VkDeviceSize scratchSize)
+extern CVK_FORCE_INLINE void cvkCmdInitializeGraphScratchMemoryAMDX(
+    VkCommandBuffer commandBuffer,
+    VkPipeline      executionGraph,
+    VkDeviceAddress scratch,
+    VkDeviceSize    scratchSize)
 {
     vkCmdInitializeGraphScratchMemoryAMDX(commandBuffer, executionGraph, scratch, scratchSize);
 }
-extern CVK_FORCE_INLINE void cvkCreateCudaFunctionNV(VkDevice device, const void* pNext, VkCudaModuleNV module, const char* pName, const VkAllocationCallbacks* pAllocator, VkCudaFunctionNV* pFunction)
+extern CVK_FORCE_INLINE void cvkCreateCudaFunctionNV(
+    VkDevice                     device,
+    const void*                  pNext,
+    VkCudaModuleNV               module,
+    const char*                  pName,
+    const VkAllocationCallbacks* pAllocator,
+    VkCudaFunctionNV*            pFunction)
 {
     VkCudaFunctionCreateInfoNV create_info =
     {
@@ -370,7 +445,13 @@ extern CVK_FORCE_INLINE void cvkCreateCudaFunctionNV(VkDevice device, const void
     CVK_CHECK(vkCreateCudaFunctionNV(device, &create_info, pAllocator, pFunction));
     CVK_ASSERT(VK_NULL_HANDLE != (*pFunction));
 }
-extern CVK_FORCE_INLINE void cvkCreateCudaModuleNV(VkDevice device, const void* pNext, size_t dataSize, const void* pData, const VkAllocationCallbacks* pAllocator, VkCudaModuleNV* pModule)
+extern CVK_FORCE_INLINE void cvkCreateCudaModuleNV(
+    VkDevice                     device,
+    const void*                  pNext,
+    size_t                       dataSize,
+    const void*                  pData,
+    const VkAllocationCallbacks* pAllocator,
+    VkCudaModuleNV*              pModule)
 {
     VkCudaModuleCreateInfoNV create_info =
     {
@@ -383,29 +464,45 @@ extern CVK_FORCE_INLINE void cvkCreateCudaModuleNV(VkDevice device, const void* 
     CVK_CHECK(vkCreateCudaModuleNV(device, &create_info, pAllocator, pModule));
     CVK_ASSERT(VK_NULL_HANDLE != (*pModule));
 }
-extern CVK_FORCE_INLINE VkResult cvkCreateExecutionGraphPipelinesAMDX(VkDevice                                      device,
-                                                                      VkPipelineCache                               pipelineCache,
-                                                                      uint32_t                                      createInfoCount,
-                                                                      const VkExecutionGraphPipelineCreateInfoAMDX* pCreateInfos,
-                                                                      const VkAllocationCallbacks*                  pAllocator,
-                                                                      VkPipeline*                                   pPipelines)
+extern CVK_FORCE_INLINE VkResult cvkCreateExecutionGraphPipelinesAMDX(
+    VkDevice                                      device,
+    VkPipelineCache                               pipelineCache,
+    uint32_t                                      createInfoCount,
+    const VkExecutionGraphPipelineCreateInfoAMDX* pCreateInfos,
+    const VkAllocationCallbacks*                  pAllocator,
+    VkPipeline*                                   pPipelines)
 {
     VkResult result;
 
-    result = vkCreateExecutionGraphPipelinesAMDX(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
+    result = vkCreateExecutionGraphPipelinesAMDX(device,
+                                                 pipelineCache,
+                                                 createInfoCount,
+                                                 pCreateInfos,
+                                                 pAllocator,
+                                                 pPipelines);
     CVK_ASSERT((VK_SUCCESS == result) || (VK_PIPELINE_COMPILE_REQUIRED_EXT == result));
 
     return result;
 }
-extern CVK_FORCE_INLINE void cvkDestroyCudaFunctionNV(VkDevice device, VkCudaFunctionNV function, const VkAllocationCallbacks* pAllocator)
+extern CVK_FORCE_INLINE void cvkDestroyCudaFunctionNV(
+    VkDevice                     device,
+    VkCudaFunctionNV             function,
+    const VkAllocationCallbacks* pAllocator)
 {
     vkDestroyCudaFunctionNV(device, function, pAllocator);
 }
-extern CVK_FORCE_INLINE void cvkDestroyCudaModuleNV(VkDevice device, VkCudaModuleNV module, const VkAllocationCallbacks* pAllocator)
+extern CVK_FORCE_INLINE void cvkDestroyCudaModuleNV(
+    VkDevice                     device,
+    VkCudaModuleNV               module,
+    const VkAllocationCallbacks* pAllocator)
 {
     vkDestroyCudaModuleNV(device, module, pAllocator);
 }
-extern CVK_FORCE_INLINE VkResult cvkGetCudaModuleCacheNV(VkDevice device, VkCudaModuleNV module, size_t* pCacheSize, void* pCacheData)
+extern CVK_FORCE_INLINE VkResult cvkGetCudaModuleCacheNV(
+    VkDevice       device,
+    VkCudaModuleNV module,
+    size_t*        pCacheSize,
+    void*          pCacheData)
 {
     VkResult result;
 
@@ -414,7 +511,13 @@ extern CVK_FORCE_INLINE VkResult cvkGetCudaModuleCacheNV(VkDevice device, VkCuda
 
     return result;
 }
-extern CVK_FORCE_INLINE void cvkGetExecutionGraphPipelineNodeIndexAMDX(VkDevice device, VkPipeline executionGraph, const void* pNext, const char* pName, uint32_t index, uint32_t* pNodeIndex)
+extern CVK_FORCE_INLINE void cvkGetExecutionGraphPipelineNodeIndexAMDX(
+    VkDevice    device,
+    VkPipeline  executionGraph,
+    const void* pNext,
+    const char* pName,
+    uint32_t    index,
+    uint32_t*   pNodeIndex)
 {
     VkPipelineShaderStageNodeCreateInfoAMDX node_info =
     {
@@ -426,7 +529,11 @@ extern CVK_FORCE_INLINE void cvkGetExecutionGraphPipelineNodeIndexAMDX(VkDevice 
 
     CVK_CHECK(vkGetExecutionGraphPipelineNodeIndexAMDX(device, executionGraph, &node_info, pNodeIndex));
 }
-extern CVK_FORCE_INLINE void cvkGetExecutionGraphPipelineScratchSizeAMDX(VkDevice device, VkPipeline executionGraph, void* pNext, VkExecutionGraphPipelineScratchSizeAMDX* pSizeInfo)
+extern CVK_FORCE_INLINE void cvkGetExecutionGraphPipelineScratchSizeAMDX(
+    VkDevice                                 device,
+    VkPipeline                               executionGraph,
+    void*                                    pNext,
+    VkExecutionGraphPipelineScratchSizeAMDX* pSizeInfo)
 {
     VkExecutionGraphPipelineScratchSizeAMDX size_info =
     {
@@ -438,32 +545,39 @@ extern CVK_FORCE_INLINE void cvkGetExecutionGraphPipelineScratchSizeAMDX(VkDevic
 
     (*pSizeInfo) = size_info;
 }
-extern CVK_FORCE_INLINE void cvkDestroyCudaFunctionSafeNV(VkDevice device, VkCudaFunctionNV function, const VkAllocationCallbacks* pAllocator)
+extern CVK_FORCE_INLINE void cvkDestroyCudaFunctionSafeNV(
+    VkDevice                     device,
+    VkCudaFunctionNV             function,
+    const VkAllocationCallbacks* pAllocator)
 {
     if (VK_NULL_HANDLE != function)
     {
         cvkDestroyCudaFunctionNV(device, function, pAllocator);
     }
 }
-extern CVK_FORCE_INLINE void cvkDestroyCudaModuleSafeNV(VkDevice device, VkCudaModuleNV module, const VkAllocationCallbacks* pAllocator)
+extern CVK_FORCE_INLINE void cvkDestroyCudaModuleSafeNV(
+    VkDevice                     device,
+    VkCudaModuleNV               module,
+    const VkAllocationCallbacks* pAllocator)
 {
     if (VK_NULL_HANDLE != module)
     {
         cvkDestroyCudaModuleNV(device, module, pAllocator);
     }
 }
-extern CVK_FORCE_INLINE VkResult cvkCreateExecutionGraphPipelineInfoAMDX(VkDevice                               device,
-                                                                         VkPipelineCache                        pipelineCache,
-                                                                         const void*                            pNext,
-                                                                         VkPipelineCreateFlags                  flags,
-                                                                         uint32_t                               stageCount,
-                                                                         const VkPipelineShaderStageCreateInfo* pStages,
-                                                                         const VkPipelineLibraryCreateInfoKHR*  pLibraryInfo,
-                                                                         VkPipelineLayout                       layout,
-                                                                         VkPipeline                             basePipelineHandle,
-                                                                         int32_t                                basePipelineIndex,
-                                                                         const VkAllocationCallbacks*           pAllocator,
-                                                                         VkPipeline*                            pPipeline)
+extern CVK_FORCE_INLINE VkResult cvkCreateExecutionGraphPipelineInfoAMDX(
+    VkDevice                               device,
+    VkPipelineCache                        pipelineCache,
+    const void*                            pNext,
+    VkPipelineCreateFlags                  flags,
+    uint32_t                               stageCount,
+    const VkPipelineShaderStageCreateInfo* pStages,
+    const VkPipelineLibraryCreateInfoKHR*  pLibraryInfo,
+    VkPipelineLayout                       layout,
+    VkPipeline                             basePipelineHandle,
+    int32_t                                basePipelineIndex,
+    const VkAllocationCallbacks*           pAllocator,
+    VkPipeline*                            pPipeline)
 {
     VkExecutionGraphPipelineCreateInfoAMDX create_info =
     {
@@ -480,19 +594,20 @@ extern CVK_FORCE_INLINE VkResult cvkCreateExecutionGraphPipelineInfoAMDX(VkDevic
 
     return cvkCreateExecutionGraphPipelinesAMDX(device, pipelineCache, 1, &create_info, pAllocator, pPipeline);
 }
-extern CVK_FORCE_INLINE VkResult cvkCreateExecutionGraphPipelineInfoWithCompilerControlInfoAMDXAMD(VkDevice                               device,
-                                                                                                   VkPipelineCache                        pipelineCache,
-                                                                                                   const void*                            pNext,
-                                                                                                   VkPipelineCompilerControlFlagsAMD      compilerControlFlags,
-                                                                                                   VkPipelineCreateFlags                  flags,
-                                                                                                   uint32_t                               stageCount,
-                                                                                                   const VkPipelineShaderStageCreateInfo* pStages,
-                                                                                                   const VkPipelineLibraryCreateInfoKHR*  pLibraryInfo,
-                                                                                                   VkPipelineLayout                       layout,
-                                                                                                   VkPipeline                             basePipelineHandle,
-                                                                                                   int32_t                                basePipelineIndex,
-                                                                                                   const VkAllocationCallbacks*           pAllocator,
-                                                                                                   VkPipeline*                            pPipeline)
+extern CVK_FORCE_INLINE VkResult cvkCreateExecutionGraphPipelineInfoWithCompilerControlInfoAMDXAMD(
+    VkDevice                               device,
+    VkPipelineCache                        pipelineCache,
+    const void*                            pNext,
+    VkPipelineCompilerControlFlagsAMD      compilerControlFlags,
+    VkPipelineCreateFlags                  flags,
+    uint32_t                               stageCount,
+    const VkPipelineShaderStageCreateInfo* pStages,
+    const VkPipelineLibraryCreateInfoKHR*  pLibraryInfo,
+    VkPipelineLayout                       layout,
+    VkPipeline                             basePipelineHandle,
+    int32_t                                basePipelineIndex,
+    const VkAllocationCallbacks*           pAllocator,
+    VkPipeline*                            pPipeline)
 {
     VkPipelineCompilerControlCreateInfoAMD create_info =
     {
@@ -501,23 +616,35 @@ extern CVK_FORCE_INLINE VkResult cvkCreateExecutionGraphPipelineInfoWithCompiler
         .compilerControlFlags = compilerControlFlags
     };
 
-    return cvkCreateExecutionGraphPipelineInfoAMDX(device, pipelineCache, &create_info, flags, stageCount, pStages, pLibraryInfo, layout, basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
+    return cvkCreateExecutionGraphPipelineInfoAMDX(device,
+                                                   pipelineCache,
+                                                   &create_info,
+                                                   flags,
+                                                   stageCount,
+                                                   pStages,
+                                                   pLibraryInfo,
+                                                   layout,
+                                                   basePipelineHandle,
+                                                   basePipelineIndex,
+                                                   pAllocator,
+                                                   pPipeline);
 }
-extern CVK_FORCE_INLINE VkResult cvkCreateExecutionGraphPipelineInfoWithCreationFeedbackInfoAMDX(VkDevice                               device,
-                                                                                                 VkPipelineCache                        pipelineCache,
-                                                                                                 const void*                            pNext,
-                                                                                                 VkPipelineCreationFeedback*            pPipelineCreationFeedback,
-                                                                                                 uint32_t                               pipelineStageCreationFeedbackCount,
-                                                                                                 VkPipelineCreationFeedback*            pPipelineStageCreationFeedbacks,
-                                                                                                 VkPipelineCreateFlags                  flags,
-                                                                                                 uint32_t                               stageCount,
-                                                                                                 const VkPipelineShaderStageCreateInfo* pStages,
-                                                                                                 const VkPipelineLibraryCreateInfoKHR*  pLibraryInfo,
-                                                                                                 VkPipelineLayout                       layout,
-                                                                                                 VkPipeline                             basePipelineHandle,
-                                                                                                 int32_t                                basePipelineIndex,
-                                                                                                 const VkAllocationCallbacks*           pAllocator,
-                                                                                                 VkPipeline*                            pPipeline)
+extern CVK_FORCE_INLINE VkResult cvkCreateExecutionGraphPipelineInfoWithCreationFeedbackInfoAMDX(
+    VkDevice                               device,
+    VkPipelineCache                        pipelineCache,
+    const void*                            pNext,
+    VkPipelineCreationFeedback*            pPipelineCreationFeedback,
+    uint32_t                               pipelineStageCreationFeedbackCount,
+    VkPipelineCreationFeedback*            pPipelineStageCreationFeedbacks,
+    VkPipelineCreateFlags                  flags,
+    uint32_t                               stageCount,
+    const VkPipelineShaderStageCreateInfo* pStages,
+    const VkPipelineLibraryCreateInfoKHR*  pLibraryInfo,
+    VkPipelineLayout                       layout,
+    VkPipeline                             basePipelineHandle,
+    int32_t                                basePipelineIndex,
+    const VkAllocationCallbacks*           pAllocator,
+    VkPipeline*                            pPipeline)
 {
     VkPipelineCreationFeedbackCreateInfo create_info =
     {
@@ -528,11 +655,23 @@ extern CVK_FORCE_INLINE VkResult cvkCreateExecutionGraphPipelineInfoWithCreation
         .pPipelineStageCreationFeedbacks    = pPipelineStageCreationFeedbacks
     };
 
-    return cvkCreateExecutionGraphPipelineInfoAMDX(device, pipelineCache, &create_info, flags, stageCount, pStages, pLibraryInfo, layout, basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
+    return cvkCreateExecutionGraphPipelineInfoAMDX(device,
+                                                   pipelineCache,
+                                                   &create_info,
+                                                   flags,
+                                                   stageCount,
+                                                   pStages,
+                                                   pLibraryInfo,
+                                                   layout,
+                                                   basePipelineHandle,
+                                                   basePipelineIndex,
+                                                   pAllocator,
+                                                   pPipeline);
 }
-extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceCudaKernelLaunchFeaturesNV(VkPhysicalDevice                            physicalDevice,
-                                                                            void*                                       pNext,
-                                                                            VkPhysicalDeviceCudaKernelLaunchFeaturesNV* pPhysicalDeviceCudaKernelLaunchFeaturesNV)
+extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceCudaKernelLaunchFeaturesNV(
+    VkPhysicalDevice                            physicalDevice,
+    void*                                       pNext,
+    VkPhysicalDeviceCudaKernelLaunchFeaturesNV* pPhysicalDeviceCudaKernelLaunchFeaturesNV)
 {
     VkPhysicalDeviceFeatures2                  features;
     VkPhysicalDeviceCudaKernelLaunchFeaturesNV ext_features =
@@ -545,9 +684,10 @@ extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceCudaKernelLaunchFeaturesNV(VkPh
 
     (*pPhysicalDeviceCudaKernelLaunchFeaturesNV) = ext_features;
 }
-extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceDenseGeometryFormatFeaturesAMDX(VkPhysicalDevice                                 physicalDevice,
-                                                                                 void*                                            pNext,
-                                                                                 VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX* pPhysicalDeviceDenseGeometryFormatFeaturesAMDX)
+extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceDenseGeometryFormatFeaturesAMDX(
+    VkPhysicalDevice                                 physicalDevice,
+    void*                                            pNext,
+    VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX* pPhysicalDeviceDenseGeometryFormatFeaturesAMDX)
 {
     VkPhysicalDeviceFeatures2                       features;
     VkPhysicalDeviceDenseGeometryFormatFeaturesAMDX ext_features =
@@ -560,9 +700,10 @@ extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceDenseGeometryFormatFeaturesAMDX
 
     (*pPhysicalDeviceDenseGeometryFormatFeaturesAMDX) = ext_features;
 }
-extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceDisplacementMicromapFeaturesNV(VkPhysicalDevice                                physicalDevice,
-                                                                                void*                                           pNext,
-                                                                                VkPhysicalDeviceDisplacementMicromapFeaturesNV* pPhysicalDeviceDisplacementMicromapFeaturesNV)
+extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceDisplacementMicromapFeaturesNV(
+    VkPhysicalDevice                                physicalDevice,
+    void*                                           pNext,
+    VkPhysicalDeviceDisplacementMicromapFeaturesNV* pPhysicalDeviceDisplacementMicromapFeaturesNV)
 {
     VkPhysicalDeviceFeatures2                      features;
     VkPhysicalDeviceDisplacementMicromapFeaturesNV ext_features =
@@ -575,9 +716,10 @@ extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceDisplacementMicromapFeaturesNV(
 
     (*pPhysicalDeviceDisplacementMicromapFeaturesNV) = ext_features;
 }
-extern CVK_FORCE_INLINE void cvkGetPhysicalDevicePortabilitySubsetFeatures(VkPhysicalDevice                              physicalDevice,
-                                                                           void*                                         pNext,
-                                                                           VkPhysicalDevicePortabilitySubsetFeaturesKHR* pPhysicalDevicePortabilitySubsetFeatures)
+extern CVK_FORCE_INLINE void cvkGetPhysicalDevicePortabilitySubsetFeatures(
+    VkPhysicalDevice                              physicalDevice,
+    void*                                         pNext,
+    VkPhysicalDevicePortabilitySubsetFeaturesKHR* pPhysicalDevicePortabilitySubsetFeatures)
 {
     VkPhysicalDeviceFeatures2                    features;
     VkPhysicalDevicePortabilitySubsetFeaturesKHR ext_features =
@@ -590,9 +732,10 @@ extern CVK_FORCE_INLINE void cvkGetPhysicalDevicePortabilitySubsetFeatures(VkPhy
 
     (*pPhysicalDevicePortabilitySubsetFeatures) = ext_features;
 }
-extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceShaderEnqueueFeaturesAMDX(VkPhysicalDevice                           physicalDevice,
-                                                                           void*                                      pNext,
-                                                                           VkPhysicalDeviceShaderEnqueueFeaturesAMDX* pPhysicalDeviceShaderEnqueueFeaturesAMDX)
+extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceShaderEnqueueFeaturesAMDX(
+    VkPhysicalDevice                           physicalDevice,
+    void*                                      pNext,
+    VkPhysicalDeviceShaderEnqueueFeaturesAMDX* pPhysicalDeviceShaderEnqueueFeaturesAMDX)
 {
     VkPhysicalDeviceFeatures2                 features;
     VkPhysicalDeviceShaderEnqueueFeaturesAMDX ext_features =
@@ -605,9 +748,10 @@ extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceShaderEnqueueFeaturesAMDX(VkPhy
 
     (*pPhysicalDeviceShaderEnqueueFeaturesAMDX) = ext_features;
 }
-extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceCudaKernelLaunchPropertiesNV(VkPhysicalDevice                              physicalDevice,
-                                                                              void*                                         pNext,
-                                                                              VkPhysicalDeviceCudaKernelLaunchPropertiesNV* pPhysicalDeviceCudaKernelLaunchPropertiesNV)
+extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceCudaKernelLaunchPropertiesNV(
+    VkPhysicalDevice                              physicalDevice,
+    void*                                         pNext,
+    VkPhysicalDeviceCudaKernelLaunchPropertiesNV* pPhysicalDeviceCudaKernelLaunchPropertiesNV)
 {
     VkPhysicalDeviceProperties2                  properties;
     VkPhysicalDeviceCudaKernelLaunchPropertiesNV ext_properties;
@@ -621,9 +765,10 @@ extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceCudaKernelLaunchPropertiesNV(Vk
 
     (*pPhysicalDeviceCudaKernelLaunchPropertiesNV) = ext_properties;
 }
-extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceDisplacementMicromapPropertiesNV(VkPhysicalDevice                                  physicalDevice,
-                                                                                  void*                                             pNext,
-                                                                                  VkPhysicalDeviceDisplacementMicromapPropertiesNV* pPhysicalDeviceDisplacementMicromapPropertiesNV)
+extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceDisplacementMicromapPropertiesNV(
+    VkPhysicalDevice                                  physicalDevice,
+    void*                                             pNext,
+    VkPhysicalDeviceDisplacementMicromapPropertiesNV* pPhysicalDeviceDisplacementMicromapPropertiesNV)
 {
     VkPhysicalDeviceProperties2                      properties;
     VkPhysicalDeviceDisplacementMicromapPropertiesNV ext_properties;
@@ -637,9 +782,10 @@ extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceDisplacementMicromapPropertiesN
 
     (*pPhysicalDeviceDisplacementMicromapPropertiesNV) = ext_properties;
 }
-extern CVK_FORCE_INLINE void cvkGetPhysicalDevicePortabilitySubsetProperties(VkPhysicalDevice                                physicalDevice,
-                                                                             void*                                           pNext,
-                                                                             VkPhysicalDevicePortabilitySubsetPropertiesKHR* pPhysicalDevicePortabilitySubsetProperties)
+extern CVK_FORCE_INLINE void cvkGetPhysicalDevicePortabilitySubsetProperties(
+    VkPhysicalDevice                                physicalDevice,
+    void*                                           pNext,
+    VkPhysicalDevicePortabilitySubsetPropertiesKHR* pPhysicalDevicePortabilitySubsetProperties)
 {
     VkPhysicalDeviceProperties2                    properties;
     VkPhysicalDevicePortabilitySubsetPropertiesKHR ext_properties;
@@ -653,9 +799,10 @@ extern CVK_FORCE_INLINE void cvkGetPhysicalDevicePortabilitySubsetProperties(VkP
 
     (*pPhysicalDevicePortabilitySubsetProperties) = ext_properties;
 }
-extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceShaderEnqueuePropertiesAMDX(VkPhysicalDevice                             physicalDevice,
-                                                                             void*                                        pNext,
-                                                                             VkPhysicalDeviceShaderEnqueuePropertiesAMDX* pPhysicalDeviceShaderEnqueuePropertiesAMDX)
+extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceShaderEnqueuePropertiesAMDX(
+    VkPhysicalDevice                             physicalDevice,
+    void*                                        pNext,
+    VkPhysicalDeviceShaderEnqueuePropertiesAMDX* pPhysicalDeviceShaderEnqueuePropertiesAMDX)
 {
     VkPhysicalDeviceProperties2                 properties;
     VkPhysicalDeviceShaderEnqueuePropertiesAMDX ext_properties;

@@ -7,7 +7,32 @@
 #include <vulkan/vulkan_vi.h>
 
 /* clang-format off */
+/**
+ * \brief Initializes a VkViSurfaceCreateInfoNN.
+ *
+ * \param[out] pInfo   Receives the initialized VkViSurfaceCreateInfoNN
+ * \param[in] pNext   Optional extension chain attached to VkViSurfaceCreateInfoNN, or NULL
+ * \param[in] flags   VkViSurfaceCreateInfoNN::flags
+ * \param[in] window  VkViSurfaceCreateInfoNN::window
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitViSurfaceCreateInfoNN(VkViSurfaceCreateInfoNN* pInfo, const void* pNext, VkViSurfaceCreateFlagsNN flags, void* window);
+/**
+ * \brief Creates a vi surface.
+ *
+ * \par Details:
+ *  Wraps vkCreateViSurfaceNN. Aborts on any error result.
+ *
+ * \param[in] instance    VkInstance value
+ * \param[in] pNext       Optional extension chain attached to VkViSurfaceCreateInfoNN, or NULL
+ * \param[in] flags       VkViSurfaceCreateInfoNN::flags
+ * \param[in] window      VkViSurfaceCreateInfoNN::window
+ * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[out] pSurface    Receives the created VkSurfaceKHR
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateViSurfaceNN(VkInstance instance, const void* pNext, VkViSurfaceCreateFlagsNN flags, void* window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 /* clang-format on */
 

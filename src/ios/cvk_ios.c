@@ -9,7 +9,11 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_ios.h>
 
-extern CVK_FORCE_INLINE void cvkInitIOSSurfaceCreateInfoMVK(VkIOSSurfaceCreateInfoMVK* pInfo, const void* pNext, VkIOSSurfaceCreateFlagsMVK flags, const void* pView)
+extern CVK_FORCE_INLINE void cvkInitIOSSurfaceCreateInfoMVK(
+    VkIOSSurfaceCreateInfoMVK* pInfo,
+    const void*                pNext,
+    VkIOSSurfaceCreateFlagsMVK flags,
+    const void*                pView)
 {
     (*pInfo) = (VkIOSSurfaceCreateInfoMVK)
     {
@@ -19,12 +23,13 @@ extern CVK_FORCE_INLINE void cvkInitIOSSurfaceCreateInfoMVK(VkIOSSurfaceCreateIn
         .pView = pView
     };
 }
-extern CVK_FORCE_INLINE void cvkCreateIOSSurfaceMVK(VkInstance                   instance,
-                                                    const void*                  pNext,
-                                                    VkIOSSurfaceCreateFlagsMVK   flags,
-                                                    const void*                  pView,
-                                                    const VkAllocationCallbacks* pAllocator,
-                                                    VkSurfaceKHR*                pSurface)
+extern CVK_FORCE_INLINE void cvkCreateIOSSurfaceMVK(
+    VkInstance                   instance,
+    const void*                  pNext,
+    VkIOSSurfaceCreateFlagsMVK   flags,
+    const void*                  pView,
+    const VkAllocationCallbacks* pAllocator,
+    VkSurfaceKHR*                pSurface)
 {
     VkIOSSurfaceCreateInfoMVK create_info =
     {

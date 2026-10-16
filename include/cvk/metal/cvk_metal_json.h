@@ -7,24 +7,189 @@
 #include <vulkan/vulkan_metal.h>
 
 /* clang-format off */
+/**
+ * \brief Parses a VkExportMetalObjectTypeFlagBitsEXT from JSON.
+ *
+ * \param[in] pValue  The value: an enumerant name or a number, or NULL
+ *
+ * \return The VkExportMetalObjectTypeFlagBitsEXT returned by the command.
+ */
 VkExportMetalObjectTypeFlagBitsEXT cvkParseJsonExportMetalObjectTypeFlagBits(const cvkJsonValue* pValue);
+/**
+ * \brief Parses a VkExportMetalObjectTypeFlagsEXT from JSON.
+ *
+ * \param[in] pValue  The value: bit names joined by |, a number, or NULL
+ *
+ * \return The VkExportMetalObjectTypeFlagsEXT returned by the command.
+ */
 VkExportMetalObjectTypeFlagsEXT cvkParseJsonExportMetalObjectTypeFlags(const cvkJsonValue* pValue);
+/**
+ * \brief Parses a VkMetalSurfaceCreateFlagsEXT from JSON.
+ *
+ * \param[in] pValue  The value: bit names joined by |, a number, or NULL
+ *
+ * \return The VkMetalSurfaceCreateFlagsEXT returned by the command.
+ */
 VkMetalSurfaceCreateFlagsEXT cvkParseJsonMetalSurfaceCreateFlags(const cvkJsonValue* pValue);
+/**
+ * \brief Parses a VkExportMetalBufferInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkExportMetalBufferInfoEXT
+ * \param[out] pInfo     Receives the parsed VkExportMetalBufferInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonExportMetalBufferInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalBufferInfoEXT* pInfo);
+/**
+ * \brief Parses a VkExportMetalCommandQueueInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkExportMetalCommandQueueInfoEXT
+ * \param[out] pInfo     Receives the parsed VkExportMetalCommandQueueInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonExportMetalCommandQueueInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalCommandQueueInfoEXT* pInfo);
+/**
+ * \brief Parses a VkExportMetalDeviceInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkExportMetalDeviceInfoEXT
+ * \param[out] pInfo     Receives the parsed VkExportMetalDeviceInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonExportMetalDeviceInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalDeviceInfoEXT* pInfo);
+/**
+ * \brief Parses a VkExportMetalIOSurfaceInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkExportMetalIOSurfaceInfoEXT
+ * \param[out] pInfo     Receives the parsed VkExportMetalIOSurfaceInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonExportMetalIOSurfaceInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalIOSurfaceInfoEXT* pInfo);
+/**
+ * \brief Parses a VkExportMetalObjectCreateInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkExportMetalObjectCreateInfoEXT
+ * \param[out] pInfo     Receives the parsed VkExportMetalObjectCreateInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonExportMetalObjectCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalObjectCreateInfoEXT* pInfo);
+/**
+ * \brief Parses a VkExportMetalObjectsInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkExportMetalObjectsInfoEXT
+ * \param[out] pInfo     Receives the parsed VkExportMetalObjectsInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonExportMetalObjectsInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalObjectsInfoEXT* pInfo);
+/**
+ * \brief Parses a VkExportMetalSharedEventInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkExportMetalSharedEventInfoEXT
+ * \param[out] pInfo     Receives the parsed VkExportMetalSharedEventInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonExportMetalSharedEventInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalSharedEventInfoEXT* pInfo);
+/**
+ * \brief Parses a VkExportMetalTextureInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkExportMetalTextureInfoEXT
+ * \param[out] pInfo     Receives the parsed VkExportMetalTextureInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonExportMetalTextureInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalTextureInfoEXT* pInfo);
+/**
+ * \brief Parses a VkImportMemoryMetalHandleInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkImportMemoryMetalHandleInfoEXT
+ * \param[out] pInfo     Receives the parsed VkImportMemoryMetalHandleInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonImportMemoryMetalHandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportMemoryMetalHandleInfoEXT* pInfo);
+/**
+ * \brief Parses a VkImportMetalBufferInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkImportMetalBufferInfoEXT
+ * \param[out] pInfo     Receives the parsed VkImportMetalBufferInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonImportMetalBufferInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportMetalBufferInfoEXT* pInfo);
+/**
+ * \brief Parses a VkImportMetalIOSurfaceInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkImportMetalIOSurfaceInfoEXT
+ * \param[out] pInfo     Receives the parsed VkImportMetalIOSurfaceInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonImportMetalIOSurfaceInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportMetalIOSurfaceInfoEXT* pInfo);
+/**
+ * \brief Parses a VkImportMetalSharedEventInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkImportMetalSharedEventInfoEXT
+ * \param[out] pInfo     Receives the parsed VkImportMetalSharedEventInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonImportMetalSharedEventInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportMetalSharedEventInfoEXT* pInfo);
+/**
+ * \brief Parses a VkImportMetalTextureInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkImportMetalTextureInfoEXT
+ * \param[out] pInfo     Receives the parsed VkImportMetalTextureInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonImportMetalTextureInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportMetalTextureInfoEXT* pInfo);
+/**
+ * \brief Parses a VkMemoryGetMetalHandleInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkMemoryGetMetalHandleInfoEXT
+ * \param[out] pInfo     Receives the parsed VkMemoryGetMetalHandleInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonMemoryGetMetalHandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMemoryGetMetalHandleInfoEXT* pInfo);
+/**
+ * \brief Parses a VkMemoryMetalHandlePropertiesEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkMemoryMetalHandlePropertiesEXT
+ * \param[out] pInfo     Receives the parsed VkMemoryMetalHandlePropertiesEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonMemoryMetalHandleProperties(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMemoryMetalHandlePropertiesEXT* pInfo);
+/**
+ * \brief Parses a VkMetalSurfaceCreateInfoEXT from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkMetalSurfaceCreateInfoEXT
+ * \param[out] pInfo     Receives the parsed VkMetalSurfaceCreateInfoEXT, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonMetalSurfaceCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMetalSurfaceCreateInfoEXT* pInfo);
 /* clang-format on */
 

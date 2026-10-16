@@ -8,7 +8,23 @@
 #include <vulkan/vulkan_xlib.h>
 
 /* clang-format off */
+/**
+ * \brief Parses a VkXlibSurfaceCreateFlagsKHR from JSON.
+ *
+ * \param[in] pValue  The value: bit names joined by |, a number, or NULL
+ *
+ * \return The VkXlibSurfaceCreateFlagsKHR returned by the command.
+ */
 VkXlibSurfaceCreateFlagsKHR cvkParseJsonXlibSurfaceCreateFlags(const cvkJsonValue* pValue);
+/**
+ * \brief Parses a VkXlibSurfaceCreateInfoKHR from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkXlibSurfaceCreateInfoKHR
+ * \param[out] pInfo     Receives the parsed VkXlibSurfaceCreateInfoKHR, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonXlibSurfaceCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkXlibSurfaceCreateInfoKHR* pInfo);
 /* clang-format on */
 

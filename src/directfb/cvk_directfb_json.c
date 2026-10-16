@@ -12,7 +12,10 @@
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonDirectFBSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonDirectFBSurfaceCreateInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*           pContext;
     VkDirectFBSurfaceCreateInfoEXT* pInfo;
@@ -34,11 +37,15 @@ void cvkReadJsonDirectFBSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue
 
     pInfo->flags = cvkParseJsonDirectFBSurfaceCreateFlags(value);
 }
-extern CVK_FORCE_INLINE VkDirectFBSurfaceCreateFlagsEXT cvkParseJsonDirectFBSurfaceCreateFlags(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkDirectFBSurfaceCreateFlagsEXT cvkParseJsonDirectFBSurfaceCreateFlags(
+    const cvkJsonValue* pValue)
 {
     return (VkDirectFBSurfaceCreateFlagsEXT)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonDirectFBSurfaceCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkDirectFBSurfaceCreateInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonDirectFBSurfaceCreateInfo(
+    const cvkJsonContext*           pContext,
+    const cvkJsonValue*             pObject,
+    VkDirectFBSurfaceCreateInfoEXT* pInfo)
 {
     cvkJsonWork work;
 

@@ -10,11 +10,12 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_wayland.h>
 
-extern CVK_FORCE_INLINE void cvkInitWaylandSurfaceCreateInfo(VkWaylandSurfaceCreateInfoKHR* pInfo,
-                                                             const void*                    pNext,
-                                                             VkWaylandSurfaceCreateFlagsKHR flags,
-                                                             struct wl_display*             display,
-                                                             struct wl_surface*             surface)
+extern CVK_FORCE_INLINE void cvkInitWaylandSurfaceCreateInfo(
+    VkWaylandSurfaceCreateInfoKHR* pInfo,
+    const void*                    pNext,
+    VkWaylandSurfaceCreateFlagsKHR flags,
+    struct wl_display*             display,
+    struct wl_surface*             surface)
 {
     (*pInfo) = (VkWaylandSurfaceCreateInfoKHR)
     {
@@ -25,13 +26,14 @@ extern CVK_FORCE_INLINE void cvkInitWaylandSurfaceCreateInfo(VkWaylandSurfaceCre
         .surface = surface
     };
 }
-extern CVK_FORCE_INLINE void cvkCreateWaylandSurface(VkInstance                     instance,
-                                                     const void*                    pNext,
-                                                     VkWaylandSurfaceCreateFlagsKHR flags,
-                                                     struct wl_display*             display,
-                                                     struct wl_surface*             surface,
-                                                     const VkAllocationCallbacks*   pAllocator,
-                                                     VkSurfaceKHR*                  pSurface)
+extern CVK_FORCE_INLINE void cvkCreateWaylandSurface(
+    VkInstance                     instance,
+    const void*                    pNext,
+    VkWaylandSurfaceCreateFlagsKHR flags,
+    struct wl_display*             display,
+    struct wl_surface*             surface,
+    const VkAllocationCallbacks*   pAllocator,
+    VkSurfaceKHR*                  pSurface)
 {
     VkWaylandSurfaceCreateInfoKHR create_info =
     {
@@ -45,7 +47,10 @@ extern CVK_FORCE_INLINE void cvkCreateWaylandSurface(VkInstance                 
     CVK_CHECK(vkCreateWaylandSurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
-extern CVK_FORCE_INLINE VkBool32 cvkGetPhysicalDeviceWaylandPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, struct wl_display* display)
+extern CVK_FORCE_INLINE VkBool32 cvkGetPhysicalDeviceWaylandPresentationSupport(
+    VkPhysicalDevice   physicalDevice,
+    uint32_t           queueFamilyIndex,
+    struct wl_display* display)
 {
     return vkGetPhysicalDeviceWaylandPresentationSupportKHR(physicalDevice, queueFamilyIndex, display);
 }

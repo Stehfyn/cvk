@@ -8,8 +8,33 @@
 #include <vulkan/vulkan_ggp.h>
 
 /* clang-format off */
+/**
+ * \brief Parses a VkStreamDescriptorSurfaceCreateFlagsGGP from JSON.
+ *
+ * \param[in] pValue  The value: bit names joined by |, a number, or NULL
+ *
+ * \return The VkStreamDescriptorSurfaceCreateFlagsGGP returned by the command.
+ */
 VkStreamDescriptorSurfaceCreateFlagsGGP cvkParseJsonStreamDescriptorSurfaceCreateFlagsGGP(const cvkJsonValue* pValue);
+/**
+ * \brief Parses a VkPresentFrameTokenGGP from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkPresentFrameTokenGGP
+ * \param[out] pInfo     Receives the parsed VkPresentFrameTokenGGP, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonPresentFrameTokenGGP(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkPresentFrameTokenGGP* pInfo);
+/**
+ * \brief Parses a VkStreamDescriptorSurfaceCreateInfoGGP from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkStreamDescriptorSurfaceCreateInfoGGP
+ * \param[out] pInfo     Receives the parsed VkStreamDescriptorSurfaceCreateInfoGGP, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonStreamDescriptorSurfaceCreateInfoGGP(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkStreamDescriptorSurfaceCreateInfoGGP* pInfo);
 /* clang-format on */
 

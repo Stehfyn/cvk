@@ -11,7 +11,11 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_metal.h>
 
-extern CVK_FORCE_INLINE void cvkInitExportMetalBufferInfo(VkExportMetalBufferInfoEXT* pInfo, const void* pNext, VkDeviceMemory memory, MTLBuffer_id mtlBuffer)
+extern CVK_FORCE_INLINE void cvkInitExportMetalBufferInfo(
+    VkExportMetalBufferInfoEXT* pInfo,
+    const void*                 pNext,
+    VkDeviceMemory              memory,
+    MTLBuffer_id                mtlBuffer)
 {
     (*pInfo) = (VkExportMetalBufferInfoEXT)
     {
@@ -21,7 +25,11 @@ extern CVK_FORCE_INLINE void cvkInitExportMetalBufferInfo(VkExportMetalBufferInf
         .mtlBuffer = mtlBuffer
     };
 }
-extern CVK_FORCE_INLINE void cvkInitExportMetalCommandQueueInfo(VkExportMetalCommandQueueInfoEXT* pInfo, const void* pNext, VkQueue queue, MTLCommandQueue_id mtlCommandQueue)
+extern CVK_FORCE_INLINE void cvkInitExportMetalCommandQueueInfo(
+    VkExportMetalCommandQueueInfoEXT* pInfo,
+    const void*                       pNext,
+    VkQueue                           queue,
+    MTLCommandQueue_id                mtlCommandQueue)
 {
     (*pInfo) = (VkExportMetalCommandQueueInfoEXT)
     {
@@ -31,7 +39,10 @@ extern CVK_FORCE_INLINE void cvkInitExportMetalCommandQueueInfo(VkExportMetalCom
         .mtlCommandQueue = mtlCommandQueue
     };
 }
-extern CVK_FORCE_INLINE void cvkInitExportMetalDeviceInfo(VkExportMetalDeviceInfoEXT* pInfo, const void* pNext, MTLDevice_id mtlDevice)
+extern CVK_FORCE_INLINE void cvkInitExportMetalDeviceInfo(
+    VkExportMetalDeviceInfoEXT* pInfo,
+    const void*                 pNext,
+    MTLDevice_id                mtlDevice)
 {
     (*pInfo) = (VkExportMetalDeviceInfoEXT)
     {
@@ -40,7 +51,11 @@ extern CVK_FORCE_INLINE void cvkInitExportMetalDeviceInfo(VkExportMetalDeviceInf
         .mtlDevice = mtlDevice
     };
 }
-extern CVK_FORCE_INLINE void cvkInitExportMetalIOSurfaceInfo(VkExportMetalIOSurfaceInfoEXT* pInfo, const void* pNext, VkImage image, IOSurfaceRef ioSurface)
+extern CVK_FORCE_INLINE void cvkInitExportMetalIOSurfaceInfo(
+    VkExportMetalIOSurfaceInfoEXT* pInfo,
+    const void*                    pNext,
+    VkImage                        image,
+    IOSurfaceRef                   ioSurface)
 {
     (*pInfo) = (VkExportMetalIOSurfaceInfoEXT)
     {
@@ -50,7 +65,10 @@ extern CVK_FORCE_INLINE void cvkInitExportMetalIOSurfaceInfo(VkExportMetalIOSurf
         .ioSurface = ioSurface
     };
 }
-extern CVK_FORCE_INLINE void cvkInitExportMetalObjectCreateInfo(VkExportMetalObjectCreateInfoEXT* pInfo, const void* pNext, VkExportMetalObjectTypeFlagBitsEXT exportObjectType)
+extern CVK_FORCE_INLINE void cvkInitExportMetalObjectCreateInfo(
+    VkExportMetalObjectCreateInfoEXT*  pInfo,
+    const void*                        pNext,
+    VkExportMetalObjectTypeFlagBitsEXT exportObjectType)
 {
     (*pInfo) = (VkExportMetalObjectCreateInfoEXT)
     {
@@ -59,7 +77,9 @@ extern CVK_FORCE_INLINE void cvkInitExportMetalObjectCreateInfo(VkExportMetalObj
         .exportObjectType = exportObjectType
     };
 }
-extern CVK_FORCE_INLINE void cvkInitExportMetalObjectsInfo(VkExportMetalObjectsInfoEXT* pInfo, const void* pNext)
+extern CVK_FORCE_INLINE void cvkInitExportMetalObjectsInfo(
+    VkExportMetalObjectsInfoEXT* pInfo,
+    const void*                  pNext)
 {
     (*pInfo) = (VkExportMetalObjectsInfoEXT)
     {
@@ -67,7 +87,12 @@ extern CVK_FORCE_INLINE void cvkInitExportMetalObjectsInfo(VkExportMetalObjectsI
         .pNext = pNext
     };
 }
-extern CVK_FORCE_INLINE void cvkInitExportMetalSharedEventInfo(VkExportMetalSharedEventInfoEXT* pInfo, const void* pNext, VkSemaphore semaphore, VkEvent event, MTLSharedEvent_id mtlSharedEvent)
+extern CVK_FORCE_INLINE void cvkInitExportMetalSharedEventInfo(
+    VkExportMetalSharedEventInfoEXT* pInfo,
+    const void*                      pNext,
+    VkSemaphore                      semaphore,
+    VkEvent                          event,
+    MTLSharedEvent_id                mtlSharedEvent)
 {
     (*pInfo) = (VkExportMetalSharedEventInfoEXT)
     {
@@ -78,13 +103,14 @@ extern CVK_FORCE_INLINE void cvkInitExportMetalSharedEventInfo(VkExportMetalShar
         .mtlSharedEvent = mtlSharedEvent
     };
 }
-extern CVK_FORCE_INLINE void cvkInitExportMetalTextureInfo(VkExportMetalTextureInfoEXT* pInfo,
-                                                           const void*                  pNext,
-                                                           VkImage                      image,
-                                                           VkImageView                  imageView,
-                                                           VkBufferView                 bufferView,
-                                                           VkImageAspectFlagBits        plane,
-                                                           MTLTexture_id                mtlTexture)
+extern CVK_FORCE_INLINE void cvkInitExportMetalTextureInfo(
+    VkExportMetalTextureInfoEXT* pInfo,
+    const void*                  pNext,
+    VkImage                      image,
+    VkImageView                  imageView,
+    VkBufferView                 bufferView,
+    VkImageAspectFlagBits        plane,
+    MTLTexture_id                mtlTexture)
 {
     (*pInfo) = (VkExportMetalTextureInfoEXT)
     {
@@ -97,7 +123,11 @@ extern CVK_FORCE_INLINE void cvkInitExportMetalTextureInfo(VkExportMetalTextureI
         .mtlTexture = mtlTexture
     };
 }
-extern CVK_FORCE_INLINE void cvkInitImportMemoryMetalHandleInfo(VkImportMemoryMetalHandleInfoEXT* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlagBits handleType, void* handle)
+extern CVK_FORCE_INLINE void cvkInitImportMemoryMetalHandleInfo(
+    VkImportMemoryMetalHandleInfoEXT*  pInfo,
+    const void*                        pNext,
+    VkExternalMemoryHandleTypeFlagBits handleType,
+    void*                              handle)
 {
     (*pInfo) = (VkImportMemoryMetalHandleInfoEXT)
     {
@@ -107,7 +137,10 @@ extern CVK_FORCE_INLINE void cvkInitImportMemoryMetalHandleInfo(VkImportMemoryMe
         .handle     = handle
     };
 }
-extern CVK_FORCE_INLINE void cvkInitImportMetalBufferInfo(VkImportMetalBufferInfoEXT* pInfo, const void* pNext, MTLBuffer_id mtlBuffer)
+extern CVK_FORCE_INLINE void cvkInitImportMetalBufferInfo(
+    VkImportMetalBufferInfoEXT* pInfo,
+    const void*                 pNext,
+    MTLBuffer_id                mtlBuffer)
 {
     (*pInfo) = (VkImportMetalBufferInfoEXT)
     {
@@ -116,7 +149,10 @@ extern CVK_FORCE_INLINE void cvkInitImportMetalBufferInfo(VkImportMetalBufferInf
         .mtlBuffer = mtlBuffer
     };
 }
-extern CVK_FORCE_INLINE void cvkInitImportMetalIOSurfaceInfo(VkImportMetalIOSurfaceInfoEXT* pInfo, const void* pNext, IOSurfaceRef ioSurface)
+extern CVK_FORCE_INLINE void cvkInitImportMetalIOSurfaceInfo(
+    VkImportMetalIOSurfaceInfoEXT* pInfo,
+    const void*                    pNext,
+    IOSurfaceRef                   ioSurface)
 {
     (*pInfo) = (VkImportMetalIOSurfaceInfoEXT)
     {
@@ -125,7 +161,10 @@ extern CVK_FORCE_INLINE void cvkInitImportMetalIOSurfaceInfo(VkImportMetalIOSurf
         .ioSurface = ioSurface
     };
 }
-extern CVK_FORCE_INLINE void cvkInitImportMetalSharedEventInfo(VkImportMetalSharedEventInfoEXT* pInfo, const void* pNext, MTLSharedEvent_id mtlSharedEvent)
+extern CVK_FORCE_INLINE void cvkInitImportMetalSharedEventInfo(
+    VkImportMetalSharedEventInfoEXT* pInfo,
+    const void*                      pNext,
+    MTLSharedEvent_id                mtlSharedEvent)
 {
     (*pInfo) = (VkImportMetalSharedEventInfoEXT)
     {
@@ -134,7 +173,11 @@ extern CVK_FORCE_INLINE void cvkInitImportMetalSharedEventInfo(VkImportMetalShar
         .mtlSharedEvent = mtlSharedEvent
     };
 }
-extern CVK_FORCE_INLINE void cvkInitImportMetalTextureInfo(VkImportMetalTextureInfoEXT* pInfo, const void* pNext, VkImageAspectFlagBits plane, MTLTexture_id mtlTexture)
+extern CVK_FORCE_INLINE void cvkInitImportMetalTextureInfo(
+    VkImportMetalTextureInfoEXT* pInfo,
+    const void*                  pNext,
+    VkImageAspectFlagBits        plane,
+    MTLTexture_id                mtlTexture)
 {
     (*pInfo) = (VkImportMetalTextureInfoEXT)
     {
@@ -144,7 +187,11 @@ extern CVK_FORCE_INLINE void cvkInitImportMetalTextureInfo(VkImportMetalTextureI
         .mtlTexture = mtlTexture
     };
 }
-extern CVK_FORCE_INLINE void cvkInitMemoryGetMetalHandleInfo(VkMemoryGetMetalHandleInfoEXT* pInfo, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType)
+extern CVK_FORCE_INLINE void cvkInitMemoryGetMetalHandleInfo(
+    VkMemoryGetMetalHandleInfoEXT*     pInfo,
+    const void*                        pNext,
+    VkDeviceMemory                     memory,
+    VkExternalMemoryHandleTypeFlagBits handleType)
 {
     (*pInfo) = (VkMemoryGetMetalHandleInfoEXT)
     {
@@ -154,12 +201,18 @@ extern CVK_FORCE_INLINE void cvkInitMemoryGetMetalHandleInfo(VkMemoryGetMetalHan
         .handleType = handleType
     };
 }
-extern CVK_FORCE_INLINE void cvkInitMemoryMetalHandleProperties(VkMemoryMetalHandlePropertiesEXT* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitMemoryMetalHandleProperties(
+    VkMemoryMetalHandlePropertiesEXT* pInfo,
+    void*                             pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_METAL_HANDLE_PROPERTIES_EXT;
     pInfo->pNext = pNext;
 }
-extern CVK_FORCE_INLINE void cvkInitMetalSurfaceCreateInfo(VkMetalSurfaceCreateInfoEXT* pInfo, const void* pNext, VkMetalSurfaceCreateFlagsEXT flags, const CAMetalLayer* pLayer)
+extern CVK_FORCE_INLINE void cvkInitMetalSurfaceCreateInfo(
+    VkMetalSurfaceCreateInfoEXT* pInfo,
+    const void*                  pNext,
+    VkMetalSurfaceCreateFlagsEXT flags,
+    const CAMetalLayer*          pLayer)
 {
     (*pInfo) = (VkMetalSurfaceCreateInfoEXT)
     {
@@ -169,12 +222,13 @@ extern CVK_FORCE_INLINE void cvkInitMetalSurfaceCreateInfo(VkMetalSurfaceCreateI
         .pLayer = pLayer
     };
 }
-extern CVK_FORCE_INLINE void cvkCreateMetalSurface(VkInstance                   instance,
-                                                   const void*                  pNext,
-                                                   VkMetalSurfaceCreateFlagsEXT flags,
-                                                   const CAMetalLayer*          pLayer,
-                                                   const VkAllocationCallbacks* pAllocator,
-                                                   VkSurfaceKHR*                pSurface)
+extern CVK_FORCE_INLINE void cvkCreateMetalSurface(
+    VkInstance                   instance,
+    const void*                  pNext,
+    VkMetalSurfaceCreateFlagsEXT flags,
+    const CAMetalLayer*          pLayer,
+    const VkAllocationCallbacks* pAllocator,
+    VkSurfaceKHR*                pSurface)
 {
     VkMetalSurfaceCreateInfoEXT create_info =
     {
@@ -187,7 +241,10 @@ extern CVK_FORCE_INLINE void cvkCreateMetalSurface(VkInstance                   
     CVK_CHECK(vkCreateMetalSurfaceEXT(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
-extern CVK_FORCE_INLINE void cvkExportMetalObjects(VkDevice device, void* pNext, VkExportMetalObjectsInfoEXT* pMetalObjectsInfo)
+extern CVK_FORCE_INLINE void cvkExportMetalObjects(
+    VkDevice                     device,
+    void*                        pNext,
+    VkExportMetalObjectsInfoEXT* pMetalObjectsInfo)
 {
     VkExportMetalObjectsInfoEXT metal_objects_info =
     {
@@ -199,7 +256,12 @@ extern CVK_FORCE_INLINE void cvkExportMetalObjects(VkDevice device, void* pNext,
 
     (*pMetalObjectsInfo) = metal_objects_info;
 }
-extern CVK_FORCE_INLINE void cvkGetMemoryMetalHandle(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, void** pHandle)
+extern CVK_FORCE_INLINE void cvkGetMemoryMetalHandle(
+    VkDevice                           device,
+    const void*                        pNext,
+    VkDeviceMemory                     memory,
+    VkExternalMemoryHandleTypeFlagBits handleType,
+    void**                             pHandle)
 {
     VkMemoryGetMetalHandleInfoEXT get_metal_handle_info =
     {
@@ -211,11 +273,12 @@ extern CVK_FORCE_INLINE void cvkGetMemoryMetalHandle(VkDevice device, const void
 
     CVK_CHECK(vkGetMemoryMetalHandleEXT(device, &get_metal_handle_info, pHandle));
 }
-extern CVK_FORCE_INLINE void cvkGetMemoryMetalHandleProperties(VkDevice                           device,
-                                                               VkExternalMemoryHandleTypeFlagBits handleType,
-                                                               const void*                        pHandle,
-                                                               void*                              pNext,
-                                                               VkMemoryMetalHandlePropertiesEXT*  pMemoryMetalHandleProperties)
+extern CVK_FORCE_INLINE void cvkGetMemoryMetalHandleProperties(
+    VkDevice                           device,
+    VkExternalMemoryHandleTypeFlagBits handleType,
+    const void*                        pHandle,
+    void*                              pNext,
+    VkMemoryMetalHandlePropertiesEXT*  pMemoryMetalHandleProperties)
 {
     VkMemoryMetalHandlePropertiesEXT memory_metal_handle_properties;
 
@@ -228,13 +291,14 @@ extern CVK_FORCE_INLINE void cvkGetMemoryMetalHandleProperties(VkDevice         
 
     (*pMemoryMetalHandleProperties) = memory_metal_handle_properties;
 }
-extern CVK_FORCE_INLINE void cvkAllocateExportMetalObject(VkDevice                           device,
-                                                          const void*                        pNext,
-                                                          VkExportMetalObjectTypeFlagBitsEXT exportObjectType,
-                                                          VkDeviceSize                       allocationSize,
-                                                          uint32_t                           memoryTypeIndex,
-                                                          const VkAllocationCallbacks*       pAllocator,
-                                                          VkDeviceMemory*                    pMemory)
+extern CVK_FORCE_INLINE void cvkAllocateExportMetalObject(
+    VkDevice                           device,
+    const void*                        pNext,
+    VkExportMetalObjectTypeFlagBitsEXT exportObjectType,
+    VkDeviceSize                       allocationSize,
+    uint32_t                           memoryTypeIndex,
+    const VkAllocationCallbacks*       pAllocator,
+    VkDeviceMemory*                    pMemory)
 {
     VkExportMetalObjectCreateInfoEXT create_info =
     {
@@ -245,14 +309,15 @@ extern CVK_FORCE_INLINE void cvkAllocateExportMetalObject(VkDevice              
 
     cvkAllocateMemory(device, &create_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-extern CVK_FORCE_INLINE void cvkAllocateImportMemoryMetalHandle(VkDevice                           device,
-                                                                const void*                        pNext,
-                                                                VkExternalMemoryHandleTypeFlagBits handleType,
-                                                                void*                              handle,
-                                                                VkDeviceSize                       allocationSize,
-                                                                uint32_t                           memoryTypeIndex,
-                                                                const VkAllocationCallbacks*       pAllocator,
-                                                                VkDeviceMemory*                    pMemory)
+extern CVK_FORCE_INLINE void cvkAllocateImportMemoryMetalHandle(
+    VkDevice                           device,
+    const void*                        pNext,
+    VkExternalMemoryHandleTypeFlagBits handleType,
+    void*                              handle,
+    VkDeviceSize                       allocationSize,
+    uint32_t                           memoryTypeIndex,
+    const VkAllocationCallbacks*       pAllocator,
+    VkDeviceMemory*                    pMemory)
 {
     VkImportMemoryMetalHandleInfoEXT handle_info =
     {
@@ -264,13 +329,14 @@ extern CVK_FORCE_INLINE void cvkAllocateImportMemoryMetalHandle(VkDevice        
 
     cvkAllocateMemory(device, &handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-extern CVK_FORCE_INLINE void cvkAllocateImportMetalBuffer(VkDevice                     device,
-                                                          const void*                  pNext,
-                                                          MTLBuffer_id                 mtlBuffer,
-                                                          VkDeviceSize                 allocationSize,
-                                                          uint32_t                     memoryTypeIndex,
-                                                          const VkAllocationCallbacks* pAllocator,
-                                                          VkDeviceMemory*              pMemory)
+extern CVK_FORCE_INLINE void cvkAllocateImportMetalBuffer(
+    VkDevice                     device,
+    const void*                  pNext,
+    MTLBuffer_id                 mtlBuffer,
+    VkDeviceSize                 allocationSize,
+    uint32_t                     memoryTypeIndex,
+    const VkAllocationCallbacks* pAllocator,
+    VkDeviceMemory*              pMemory)
 {
     VkImportMetalBufferInfoEXT buffer_info =
     {
@@ -281,16 +347,17 @@ extern CVK_FORCE_INLINE void cvkAllocateImportMetalBuffer(VkDevice              
 
     cvkAllocateMemory(device, &buffer_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-extern CVK_FORCE_INLINE void cvkCreateBufferViewWithExportMetalObjectInfo(VkDevice                           device,
-                                                                          const void*                        pNext,
-                                                                          VkExportMetalObjectTypeFlagBitsEXT exportObjectType,
-                                                                          VkBufferViewCreateFlags            flags,
-                                                                          VkBuffer                           buffer,
-                                                                          VkFormat                           format,
-                                                                          VkDeviceSize                       offset,
-                                                                          VkDeviceSize                       range,
-                                                                          const VkAllocationCallbacks*       pAllocator,
-                                                                          VkBufferView*                      pView)
+extern CVK_FORCE_INLINE void cvkCreateBufferViewWithExportMetalObjectInfo(
+    VkDevice                           device,
+    const void*                        pNext,
+    VkExportMetalObjectTypeFlagBitsEXT exportObjectType,
+    VkBufferViewCreateFlags            flags,
+    VkBuffer                           buffer,
+    VkFormat                           format,
+    VkDeviceSize                       offset,
+    VkDeviceSize                       range,
+    const VkAllocationCallbacks*       pAllocator,
+    VkBufferView*                      pView)
 {
     VkExportMetalObjectCreateInfoEXT create_info =
     {
@@ -301,12 +368,13 @@ extern CVK_FORCE_INLINE void cvkCreateBufferViewWithExportMetalObjectInfo(VkDevi
 
     cvkCreateBufferView(device, &create_info, flags, buffer, format, offset, range, pAllocator, pView);
 }
-extern CVK_FORCE_INLINE void cvkCreateEventWithExportMetalObjectInfo(VkDevice                           device,
-                                                                     const void*                        pNext,
-                                                                     VkExportMetalObjectTypeFlagBitsEXT exportObjectType,
-                                                                     VkEventCreateFlags                 flags,
-                                                                     const VkAllocationCallbacks*       pAllocator,
-                                                                     VkEvent*                           pEvent)
+extern CVK_FORCE_INLINE void cvkCreateEventWithExportMetalObjectInfo(
+    VkDevice                           device,
+    const void*                        pNext,
+    VkExportMetalObjectTypeFlagBitsEXT exportObjectType,
+    VkEventCreateFlags                 flags,
+    const VkAllocationCallbacks*       pAllocator,
+    VkEvent*                           pEvent)
 {
     VkExportMetalObjectCreateInfoEXT create_info =
     {
@@ -317,12 +385,13 @@ extern CVK_FORCE_INLINE void cvkCreateEventWithExportMetalObjectInfo(VkDevice   
 
     cvkCreateEvent(device, &create_info, flags, pAllocator, pEvent);
 }
-extern CVK_FORCE_INLINE void cvkCreateEventWithImportMetalSharedEventInfo(VkDevice                     device,
-                                                                          const void*                  pNext,
-                                                                          MTLSharedEvent_id            mtlSharedEvent,
-                                                                          VkEventCreateFlags           flags,
-                                                                          const VkAllocationCallbacks* pAllocator,
-                                                                          VkEvent*                     pEvent)
+extern CVK_FORCE_INLINE void cvkCreateEventWithImportMetalSharedEventInfo(
+    VkDevice                     device,
+    const void*                  pNext,
+    MTLSharedEvent_id            mtlSharedEvent,
+    VkEventCreateFlags           flags,
+    const VkAllocationCallbacks* pAllocator,
+    VkEvent*                     pEvent)
 {
     VkImportMetalSharedEventInfoEXT event_info =
     {
@@ -333,24 +402,25 @@ extern CVK_FORCE_INLINE void cvkCreateEventWithImportMetalSharedEventInfo(VkDevi
 
     cvkCreateEvent(device, &event_info, flags, pAllocator, pEvent);
 }
-extern CVK_FORCE_INLINE void cvkCreateImageWithExportMetalObjectInfo(VkDevice                           device,
-                                                                     const void*                        pNext,
-                                                                     VkExportMetalObjectTypeFlagBitsEXT exportObjectType,
-                                                                     VkImageCreateFlags                 flags,
-                                                                     VkImageType                        imageType,
-                                                                     VkFormat                           format,
-                                                                     VkExtent3D                         extent,
-                                                                     uint32_t                           mipLevels,
-                                                                     uint32_t                           arrayLayers,
-                                                                     VkSampleCountFlagBits              samples,
-                                                                     VkImageTiling                      tiling,
-                                                                     VkImageUsageFlags                  usage,
-                                                                     VkSharingMode                      sharingMode,
-                                                                     uint32_t                           queueFamilyIndexCount,
-                                                                     const uint32_t*                    pQueueFamilyIndices,
-                                                                     VkImageLayout                      initialLayout,
-                                                                     const VkAllocationCallbacks*       pAllocator,
-                                                                     VkImage*                           pImage)
+extern CVK_FORCE_INLINE void cvkCreateImageWithExportMetalObjectInfo(
+    VkDevice                           device,
+    const void*                        pNext,
+    VkExportMetalObjectTypeFlagBitsEXT exportObjectType,
+    VkImageCreateFlags                 flags,
+    VkImageType                        imageType,
+    VkFormat                           format,
+    VkExtent3D                         extent,
+    uint32_t                           mipLevels,
+    uint32_t                           arrayLayers,
+    VkSampleCountFlagBits              samples,
+    VkImageTiling                      tiling,
+    VkImageUsageFlags                  usage,
+    VkSharingMode                      sharingMode,
+    uint32_t                           queueFamilyIndexCount,
+    const uint32_t*                    pQueueFamilyIndices,
+    VkImageLayout                      initialLayout,
+    const VkAllocationCallbacks*       pAllocator,
+    VkImage*                           pImage)
 {
     VkExportMetalObjectCreateInfoEXT create_info =
     {
@@ -377,24 +447,25 @@ extern CVK_FORCE_INLINE void cvkCreateImageWithExportMetalObjectInfo(VkDevice   
                    pAllocator,
                    pImage);
 }
-extern CVK_FORCE_INLINE void cvkCreateImportMetalIOSurface(VkDevice                     device,
-                                                           const void*                  pNext,
-                                                           IOSurfaceRef                 ioSurface,
-                                                           VkImageCreateFlags           flags,
-                                                           VkImageType                  imageType,
-                                                           VkFormat                     format,
-                                                           VkExtent3D                   extent,
-                                                           uint32_t                     mipLevels,
-                                                           uint32_t                     arrayLayers,
-                                                           VkSampleCountFlagBits        samples,
-                                                           VkImageTiling                tiling,
-                                                           VkImageUsageFlags            usage,
-                                                           VkSharingMode                sharingMode,
-                                                           uint32_t                     queueFamilyIndexCount,
-                                                           const uint32_t*              pQueueFamilyIndices,
-                                                           VkImageLayout                initialLayout,
-                                                           const VkAllocationCallbacks* pAllocator,
-                                                           VkImage*                     pImage)
+extern CVK_FORCE_INLINE void cvkCreateImportMetalIOSurface(
+    VkDevice                     device,
+    const void*                  pNext,
+    IOSurfaceRef                 ioSurface,
+    VkImageCreateFlags           flags,
+    VkImageType                  imageType,
+    VkFormat                     format,
+    VkExtent3D                   extent,
+    uint32_t                     mipLevels,
+    uint32_t                     arrayLayers,
+    VkSampleCountFlagBits        samples,
+    VkImageTiling                tiling,
+    VkImageUsageFlags            usage,
+    VkSharingMode                sharingMode,
+    uint32_t                     queueFamilyIndexCount,
+    const uint32_t*              pQueueFamilyIndices,
+    VkImageLayout                initialLayout,
+    const VkAllocationCallbacks* pAllocator,
+    VkImage*                     pImage)
 {
     VkImportMetalIOSurfaceInfoEXT surface_info =
     {
@@ -421,25 +492,26 @@ extern CVK_FORCE_INLINE void cvkCreateImportMetalIOSurface(VkDevice             
                    pAllocator,
                    pImage);
 }
-extern CVK_FORCE_INLINE void cvkCreateImportMetalTexture(VkDevice                     device,
-                                                         const void*                  pNext,
-                                                         VkImageAspectFlagBits        plane,
-                                                         MTLTexture_id                mtlTexture,
-                                                         VkImageCreateFlags           flags,
-                                                         VkImageType                  imageType,
-                                                         VkFormat                     format,
-                                                         VkExtent3D                   extent,
-                                                         uint32_t                     mipLevels,
-                                                         uint32_t                     arrayLayers,
-                                                         VkSampleCountFlagBits        samples,
-                                                         VkImageTiling                tiling,
-                                                         VkImageUsageFlags            usage,
-                                                         VkSharingMode                sharingMode,
-                                                         uint32_t                     queueFamilyIndexCount,
-                                                         const uint32_t*              pQueueFamilyIndices,
-                                                         VkImageLayout                initialLayout,
-                                                         const VkAllocationCallbacks* pAllocator,
-                                                         VkImage*                     pImage)
+extern CVK_FORCE_INLINE void cvkCreateImportMetalTexture(
+    VkDevice                     device,
+    const void*                  pNext,
+    VkImageAspectFlagBits        plane,
+    MTLTexture_id                mtlTexture,
+    VkImageCreateFlags           flags,
+    VkImageType                  imageType,
+    VkFormat                     format,
+    VkExtent3D                   extent,
+    uint32_t                     mipLevels,
+    uint32_t                     arrayLayers,
+    VkSampleCountFlagBits        samples,
+    VkImageTiling                tiling,
+    VkImageUsageFlags            usage,
+    VkSharingMode                sharingMode,
+    uint32_t                     queueFamilyIndexCount,
+    const uint32_t*              pQueueFamilyIndices,
+    VkImageLayout                initialLayout,
+    const VkAllocationCallbacks* pAllocator,
+    VkImage*                     pImage)
 {
     VkImportMetalTextureInfoEXT texture_info =
     {
@@ -467,17 +539,18 @@ extern CVK_FORCE_INLINE void cvkCreateImportMetalTexture(VkDevice               
                    pAllocator,
                    pImage);
 }
-extern CVK_FORCE_INLINE void cvkCreateImageViewWithExportMetalObjectInfo(VkDevice                           device,
-                                                                         const void*                        pNext,
-                                                                         VkExportMetalObjectTypeFlagBitsEXT exportObjectType,
-                                                                         VkImageViewCreateFlags             flags,
-                                                                         VkImage                            image,
-                                                                         VkImageViewType                    viewType,
-                                                                         VkFormat                           format,
-                                                                         VkComponentMapping                 components,
-                                                                         VkImageSubresourceRange            subresourceRange,
-                                                                         const VkAllocationCallbacks*       pAllocator,
-                                                                         VkImageView*                       pView)
+extern CVK_FORCE_INLINE void cvkCreateImageViewWithExportMetalObjectInfo(
+    VkDevice                           device,
+    const void*                        pNext,
+    VkExportMetalObjectTypeFlagBitsEXT exportObjectType,
+    VkImageViewCreateFlags             flags,
+    VkImage                            image,
+    VkImageViewType                    viewType,
+    VkFormat                           format,
+    VkComponentMapping                 components,
+    VkImageSubresourceRange            subresourceRange,
+    const VkAllocationCallbacks*       pAllocator,
+    VkImageView*                       pView)
 {
     VkExportMetalObjectCreateInfoEXT create_info =
     {
@@ -486,18 +559,28 @@ extern CVK_FORCE_INLINE void cvkCreateImageViewWithExportMetalObjectInfo(VkDevic
         .exportObjectType = exportObjectType
     };
 
-    cvkCreateImageView(device, &create_info, flags, image, viewType, format, components, subresourceRange, pAllocator, pView);
+    cvkCreateImageView(device,
+                       &create_info,
+                       flags,
+                       image,
+                       viewType,
+                       format,
+                       components,
+                       subresourceRange,
+                       pAllocator,
+                       pView);
 }
-extern CVK_FORCE_INLINE void cvkCreateInstanceWithExportMetalObjectInfo(const void*                        pNext,
-                                                                        VkExportMetalObjectTypeFlagBitsEXT exportObjectType,
-                                                                        VkInstanceCreateFlags              flags,
-                                                                        const VkApplicationInfo*           pApplicationInfo,
-                                                                        uint32_t                           enabledLayerCount,
-                                                                        const char* const*                 ppEnabledLayerNames,
-                                                                        uint32_t                           enabledExtensionCount,
-                                                                        const char* const*                 ppEnabledExtensionNames,
-                                                                        const VkAllocationCallbacks*       pAllocator,
-                                                                        VkInstance*                        pInstance)
+extern CVK_FORCE_INLINE void cvkCreateInstanceWithExportMetalObjectInfo(
+    const void*                        pNext,
+    VkExportMetalObjectTypeFlagBitsEXT exportObjectType,
+    VkInstanceCreateFlags              flags,
+    const VkApplicationInfo*           pApplicationInfo,
+    uint32_t                           enabledLayerCount,
+    const char* const*                 ppEnabledLayerNames,
+    uint32_t                           enabledExtensionCount,
+    const char* const*                 ppEnabledExtensionNames,
+    const VkAllocationCallbacks*       pAllocator,
+    VkInstance*                        pInstance)
 {
     VkExportMetalObjectCreateInfoEXT create_info =
     {
@@ -506,14 +589,23 @@ extern CVK_FORCE_INLINE void cvkCreateInstanceWithExportMetalObjectInfo(const vo
         .exportObjectType = exportObjectType
     };
 
-    cvkCreateInstance(&create_info, flags, pApplicationInfo, enabledLayerCount, ppEnabledLayerNames, enabledExtensionCount, ppEnabledExtensionNames, pAllocator, pInstance);
+    cvkCreateInstance(&create_info,
+                      flags,
+                      pApplicationInfo,
+                      enabledLayerCount,
+                      ppEnabledLayerNames,
+                      enabledExtensionCount,
+                      ppEnabledExtensionNames,
+                      pAllocator,
+                      pInstance);
 }
-extern CVK_FORCE_INLINE void cvkCreateSemaphoreWithExportMetalObjectInfo(VkDevice                           device,
-                                                                         const void*                        pNext,
-                                                                         VkExportMetalObjectTypeFlagBitsEXT exportObjectType,
-                                                                         VkSemaphoreCreateFlags             flags,
-                                                                         const VkAllocationCallbacks*       pAllocator,
-                                                                         VkSemaphore*                       pSemaphore)
+extern CVK_FORCE_INLINE void cvkCreateSemaphoreWithExportMetalObjectInfo(
+    VkDevice                           device,
+    const void*                        pNext,
+    VkExportMetalObjectTypeFlagBitsEXT exportObjectType,
+    VkSemaphoreCreateFlags             flags,
+    const VkAllocationCallbacks*       pAllocator,
+    VkSemaphore*                       pSemaphore)
 {
     VkExportMetalObjectCreateInfoEXT create_info =
     {
@@ -524,12 +616,13 @@ extern CVK_FORCE_INLINE void cvkCreateSemaphoreWithExportMetalObjectInfo(VkDevic
 
     cvkCreateSemaphore(device, &create_info, flags, pAllocator, pSemaphore);
 }
-extern CVK_FORCE_INLINE void cvkCreateSemaphoreWithImportMetalSharedEventInfo(VkDevice                     device,
-                                                                              const void*                  pNext,
-                                                                              MTLSharedEvent_id            mtlSharedEvent,
-                                                                              VkSemaphoreCreateFlags       flags,
-                                                                              const VkAllocationCallbacks* pAllocator,
-                                                                              VkSemaphore*                 pSemaphore)
+extern CVK_FORCE_INLINE void cvkCreateSemaphoreWithImportMetalSharedEventInfo(
+    VkDevice                     device,
+    const void*                  pNext,
+    MTLSharedEvent_id            mtlSharedEvent,
+    VkSemaphoreCreateFlags       flags,
+    const VkAllocationCallbacks* pAllocator,
+    VkSemaphore*                 pSemaphore)
 {
     VkImportMetalSharedEventInfoEXT event_info =
     {
@@ -540,7 +633,10 @@ extern CVK_FORCE_INLINE void cvkCreateSemaphoreWithImportMetalSharedEventInfo(Vk
 
     cvkCreateSemaphore(device, &event_info, flags, pAllocator, pSemaphore);
 }
-extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithBufferInfo(VkDevice device, void* pNext, VkExportMetalBufferInfoEXT* pExportMetalBufferInfo)
+extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithBufferInfo(
+    VkDevice                    device,
+    void*                       pNext,
+    VkExportMetalBufferInfoEXT* pExportMetalBufferInfo)
 {
     VkExportMetalObjectsInfoEXT metal_objects_info;
     VkExportMetalBufferInfoEXT buffer_info =
@@ -553,7 +649,10 @@ extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithBufferInfo(VkDevice device
 
     (*pExportMetalBufferInfo) = buffer_info;
 }
-extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithCommandQueueInfo(VkDevice device, void* pNext, VkExportMetalCommandQueueInfoEXT* pExportMetalCommandQueueInfo)
+extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithCommandQueueInfo(
+    VkDevice                          device,
+    void*                             pNext,
+    VkExportMetalCommandQueueInfoEXT* pExportMetalCommandQueueInfo)
 {
     VkExportMetalObjectsInfoEXT      metal_objects_info;
     VkExportMetalCommandQueueInfoEXT queue_info =
@@ -566,7 +665,10 @@ extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithCommandQueueInfo(VkDevice 
 
     (*pExportMetalCommandQueueInfo) = queue_info;
 }
-extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithDeviceInfo(VkDevice device, void* pNext, VkExportMetalDeviceInfoEXT* pExportMetalDeviceInfo)
+extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithDeviceInfo(
+    VkDevice                    device,
+    void*                       pNext,
+    VkExportMetalDeviceInfoEXT* pExportMetalDeviceInfo)
 {
     VkExportMetalObjectsInfoEXT metal_objects_info;
     VkExportMetalDeviceInfoEXT device_info =
@@ -579,7 +681,10 @@ extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithDeviceInfo(VkDevice device
 
     (*pExportMetalDeviceInfo) = device_info;
 }
-extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithIOSurfaceInfo(VkDevice device, void* pNext, VkExportMetalIOSurfaceInfoEXT* pExportMetalIOSurfaceInfo)
+extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithIOSurfaceInfo(
+    VkDevice                       device,
+    void*                          pNext,
+    VkExportMetalIOSurfaceInfoEXT* pExportMetalIOSurfaceInfo)
 {
     VkExportMetalObjectsInfoEXT   metal_objects_info;
     VkExportMetalIOSurfaceInfoEXT surface_info =
@@ -592,7 +697,10 @@ extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithIOSurfaceInfo(VkDevice dev
 
     (*pExportMetalIOSurfaceInfo) = surface_info;
 }
-extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithSharedEventInfo(VkDevice device, void* pNext, VkExportMetalSharedEventInfoEXT* pExportMetalSharedEventInfo)
+extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithSharedEventInfo(
+    VkDevice                         device,
+    void*                            pNext,
+    VkExportMetalSharedEventInfoEXT* pExportMetalSharedEventInfo)
 {
     VkExportMetalObjectsInfoEXT     metal_objects_info;
     VkExportMetalSharedEventInfoEXT event_info =
@@ -605,7 +713,10 @@ extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithSharedEventInfo(VkDevice d
 
     (*pExportMetalSharedEventInfo) = event_info;
 }
-extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithTextureInfo(VkDevice device, void* pNext, VkExportMetalTextureInfoEXT* pExportMetalTextureInfo)
+extern CVK_FORCE_INLINE void cvkExportMetalObjectsWithTextureInfo(
+    VkDevice                     device,
+    void*                        pNext,
+    VkExportMetalTextureInfoEXT* pExportMetalTextureInfo)
 {
     VkExportMetalObjectsInfoEXT metal_objects_info;
     VkExportMetalTextureInfoEXT texture_info =

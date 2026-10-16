@@ -10,11 +10,12 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_directfb.h>
 
-extern CVK_FORCE_INLINE void cvkInitDirectFBSurfaceCreateInfo(VkDirectFBSurfaceCreateInfoEXT* pInfo,
-                                                              const void*                     pNext,
-                                                              VkDirectFBSurfaceCreateFlagsEXT flags,
-                                                              IDirectFB*                      dfb,
-                                                              IDirectFBSurface*               surface)
+extern CVK_FORCE_INLINE void cvkInitDirectFBSurfaceCreateInfo(
+    VkDirectFBSurfaceCreateInfoEXT* pInfo,
+    const void*                     pNext,
+    VkDirectFBSurfaceCreateFlagsEXT flags,
+    IDirectFB*                      dfb,
+    IDirectFBSurface*               surface)
 {
     (*pInfo) = (VkDirectFBSurfaceCreateInfoEXT)
     {
@@ -25,13 +26,14 @@ extern CVK_FORCE_INLINE void cvkInitDirectFBSurfaceCreateInfo(VkDirectFBSurfaceC
         .surface = surface
     };
 }
-extern CVK_FORCE_INLINE void cvkCreateDirectFBSurface(VkInstance                      instance,
-                                                      const void*                     pNext,
-                                                      VkDirectFBSurfaceCreateFlagsEXT flags,
-                                                      IDirectFB*                      dfb,
-                                                      IDirectFBSurface*               surface,
-                                                      const VkAllocationCallbacks*    pAllocator,
-                                                      VkSurfaceKHR*                   pSurface)
+extern CVK_FORCE_INLINE void cvkCreateDirectFBSurface(
+    VkInstance                      instance,
+    const void*                     pNext,
+    VkDirectFBSurfaceCreateFlagsEXT flags,
+    IDirectFB*                      dfb,
+    IDirectFBSurface*               surface,
+    const VkAllocationCallbacks*    pAllocator,
+    VkSurfaceKHR*                   pSurface)
 {
     VkDirectFBSurfaceCreateInfoEXT create_info =
     {
@@ -45,7 +47,10 @@ extern CVK_FORCE_INLINE void cvkCreateDirectFBSurface(VkInstance                
     CVK_CHECK(vkCreateDirectFBSurfaceEXT(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
-extern CVK_FORCE_INLINE VkBool32 cvkGetPhysicalDeviceDirectFBPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, IDirectFB* dfb)
+extern CVK_FORCE_INLINE VkBool32 cvkGetPhysicalDeviceDirectFBPresentationSupport(
+    VkPhysicalDevice physicalDevice,
+    uint32_t         queueFamilyIndex,
+    IDirectFB*       dfb)
 {
     return vkGetPhysicalDeviceDirectFBPresentationSupportEXT(physicalDevice, queueFamilyIndex, dfb);
 }

@@ -367,7 +367,9 @@ void scvkReadJsonCommandPoolMemoryConsumption(scvkJsonWork* pWork, const scvkJso
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonCommandPoolMemoryReservationCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonCommandPoolMemoryReservationCreateInfo(scvkJsonWork*        pWork,
+                                                        const scvkJsonValue* pObject,
+                                                        void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -495,7 +497,9 @@ void scvkReadJsonDescriptorSetLayoutBinding(scvkJsonWork* pWork, const scvkJsonV
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonDescriptorSetLayoutBindingFlagsCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonDescriptorSetLayoutBindingFlagsCreateInfo(scvkJsonWork*        pWork,
+                                                           const scvkJsonValue* pObject,
+                                                           void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -519,7 +523,9 @@ void scvkReadJsonDescriptorSetLayoutSupport(scvkJsonWork* pWork, const scvkJsonV
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonDescriptorSetVariableDescriptorCountAllocateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonDescriptorSetVariableDescriptorCountAllocateInfo(scvkJsonWork*        pWork,
+                                                                  const scvkJsonValue* pObject,
+                                                                  void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -527,7 +533,9 @@ void scvkReadJsonDescriptorSetVariableDescriptorCountAllocateInfo(scvkJsonWork* 
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonDescriptorSetVariableDescriptorCountLayoutSupport(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonDescriptorSetVariableDescriptorCountLayoutSupport(scvkJsonWork*        pWork,
+                                                                   const scvkJsonValue* pObject,
+                                                                   void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -639,7 +647,9 @@ void scvkReadJsonDeviceQueueInfo2(scvkJsonWork* pWork, const scvkJsonValue* pObj
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonDeviceSemaphoreSciSyncPoolReservationCreateInfoNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonDeviceSemaphoreSciSyncPoolReservationCreateInfoNV(scvkJsonWork*        pWork,
+                                                                   const scvkJsonValue* pObject,
+                                                                   void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -991,7 +1001,9 @@ void scvkReadJsonFenceGetSciSyncInfoNV(scvkJsonWork* pWork, const scvkJsonValue*
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonFilterCubicImageViewImageFormatProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonFilterCubicImageViewImageFormatProperties(scvkJsonWork*        pWork,
+                                                           const scvkJsonValue* pObject,
+                                                           void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1095,7 +1107,9 @@ void scvkReadJsonImageCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObje
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonImageDrmFormatModifierExplicitCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonImageDrmFormatModifierExplicitCreateInfo(scvkJsonWork*        pWork,
+                                                          const scvkJsonValue* pObject,
+                                                          void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1431,7 +1445,9 @@ void scvkReadJsonMemoryHostPointerProperties(scvkJsonWork* pWork, const scvkJson
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonMemoryOpaqueCaptureAddressAllocateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonMemoryOpaqueCaptureAddressAllocateInfo(scvkJsonWork*        pWork,
+                                                        const scvkJsonValue* pObject,
+                                                        void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1567,7 +1583,9 @@ void scvkReadJsonPhysicalDeviceASTCDecodeFeatures(scvkJsonWork* pWork, const scv
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceBlendOperationAdvancedFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceBlendOperationAdvancedFeatures(scvkJsonWork*        pWork,
+                                                              const scvkJsonValue* pObject,
+                                                              void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1575,7 +1593,9 @@ void scvkReadJsonPhysicalDeviceBlendOperationAdvancedFeatures(scvkJsonWork* pWor
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceBlendOperationAdvancedProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceBlendOperationAdvancedProperties(scvkJsonWork*        pWork,
+                                                                const scvkJsonValue* pObject,
+                                                                void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1583,7 +1603,9 @@ void scvkReadJsonPhysicalDeviceBlendOperationAdvancedProperties(scvkJsonWork* pW
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceBufferDeviceAddressFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceBufferDeviceAddressFeatures(scvkJsonWork*        pWork,
+                                                           const scvkJsonValue* pObject,
+                                                           void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1591,7 +1613,9 @@ void scvkReadJsonPhysicalDeviceBufferDeviceAddressFeatures(scvkJsonWork* pWork, 
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceColorWriteEnableFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceColorWriteEnableFeatures(scvkJsonWork*        pWork,
+                                                        const scvkJsonValue* pObject,
+                                                        void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1599,7 +1623,9 @@ void scvkReadJsonPhysicalDeviceColorWriteEnableFeatures(scvkJsonWork* pWork, con
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceConservativeRasterizationProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceConservativeRasterizationProperties(scvkJsonWork*        pWork,
+                                                                   const scvkJsonValue* pObject,
+                                                                   void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1607,7 +1633,9 @@ void scvkReadJsonPhysicalDeviceConservativeRasterizationProperties(scvkJsonWork*
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceCustomBorderColorFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceCustomBorderColorFeatures(scvkJsonWork*        pWork,
+                                                         const scvkJsonValue* pObject,
+                                                         void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1615,7 +1643,9 @@ void scvkReadJsonPhysicalDeviceCustomBorderColorFeatures(scvkJsonWork* pWork, co
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceCustomBorderColorProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceCustomBorderColorProperties(scvkJsonWork*        pWork,
+                                                           const scvkJsonValue* pObject,
+                                                           void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1623,7 +1653,9 @@ void scvkReadJsonPhysicalDeviceCustomBorderColorProperties(scvkJsonWork* pWork, 
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceDepthClipEnableFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceDepthClipEnableFeatures(scvkJsonWork*        pWork,
+                                                       const scvkJsonValue* pObject,
+                                                       void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1631,7 +1663,9 @@ void scvkReadJsonPhysicalDeviceDepthClipEnableFeatures(scvkJsonWork* pWork, cons
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceDepthStencilResolveProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceDepthStencilResolveProperties(scvkJsonWork*        pWork,
+                                                             const scvkJsonValue* pObject,
+                                                             void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1639,7 +1673,9 @@ void scvkReadJsonPhysicalDeviceDepthStencilResolveProperties(scvkJsonWork* pWork
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceDescriptorIndexingFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceDescriptorIndexingFeatures(scvkJsonWork*        pWork,
+                                                          const scvkJsonValue* pObject,
+                                                          void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1647,7 +1683,9 @@ void scvkReadJsonPhysicalDeviceDescriptorIndexingFeatures(scvkJsonWork* pWork, c
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceDescriptorIndexingProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceDescriptorIndexingProperties(scvkJsonWork*        pWork,
+                                                            const scvkJsonValue* pObject,
+                                                            void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1655,7 +1693,9 @@ void scvkReadJsonPhysicalDeviceDescriptorIndexingProperties(scvkJsonWork* pWork,
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceDiscardRectangleProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceDiscardRectangleProperties(scvkJsonWork*        pWork,
+                                                          const scvkJsonValue* pObject,
+                                                          void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1671,7 +1711,9 @@ void scvkReadJsonPhysicalDeviceDriverProperties(scvkJsonWork* pWork, const scvkJ
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceExtendedDynamicState2Features(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceExtendedDynamicState2Features(scvkJsonWork*        pWork,
+                                                             const scvkJsonValue* pObject,
+                                                             void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1679,7 +1721,9 @@ void scvkReadJsonPhysicalDeviceExtendedDynamicState2Features(scvkJsonWork* pWork
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceExtendedDynamicStateFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceExtendedDynamicStateFeatures(scvkJsonWork*        pWork,
+                                                            const scvkJsonValue* pObject,
+                                                            void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1703,7 +1747,9 @@ void scvkReadJsonPhysicalDeviceExternalFenceInfo(scvkJsonWork* pWork, const scvk
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceExternalImageFormatInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceExternalImageFormatInfo(scvkJsonWork*        pWork,
+                                                       const scvkJsonValue* pObject,
+                                                       void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1711,7 +1757,9 @@ void scvkReadJsonPhysicalDeviceExternalImageFormatInfo(scvkJsonWork* pWork, cons
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceExternalMemoryHostProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceExternalMemoryHostProperties(scvkJsonWork*        pWork,
+                                                            const scvkJsonValue* pObject,
+                                                            void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1719,7 +1767,9 @@ void scvkReadJsonPhysicalDeviceExternalMemoryHostProperties(scvkJsonWork* pWork,
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceExternalMemorySciBufFeaturesNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceExternalMemorySciBufFeaturesNV(scvkJsonWork*        pWork,
+                                                              const scvkJsonValue* pObject,
+                                                              void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1727,7 +1777,9 @@ void scvkReadJsonPhysicalDeviceExternalMemorySciBufFeaturesNV(scvkJsonWork* pWor
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(scvkJsonWork*        pWork,
+                                                                     const scvkJsonValue* pObject,
+                                                                     void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1735,7 +1787,9 @@ void scvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(scvkJsonWor
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceExternalSciSync2FeaturesNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceExternalSciSync2FeaturesNV(scvkJsonWork*        pWork,
+                                                          const scvkJsonValue* pObject,
+                                                          void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1743,7 +1797,9 @@ void scvkReadJsonPhysicalDeviceExternalSciSync2FeaturesNV(scvkJsonWork* pWork, c
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceExternalSciSyncFeaturesNV(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceExternalSciSyncFeaturesNV(scvkJsonWork*        pWork,
+                                                         const scvkJsonValue* pObject,
+                                                         void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1775,7 +1831,9 @@ void scvkReadJsonPhysicalDeviceFeatures2(scvkJsonWork* pWork, const scvkJsonValu
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceFloatControlsProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceFloatControlsProperties(scvkJsonWork*        pWork,
+                                                       const scvkJsonValue* pObject,
+                                                       void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1783,7 +1841,9 @@ void scvkReadJsonPhysicalDeviceFloatControlsProperties(scvkJsonWork* pWork, cons
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceFragmentShaderInterlockFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceFragmentShaderInterlockFeatures(scvkJsonWork*        pWork,
+                                                               const scvkJsonValue* pObject,
+                                                               void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1791,7 +1851,9 @@ void scvkReadJsonPhysicalDeviceFragmentShaderInterlockFeatures(scvkJsonWork* pWo
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceFragmentShadingRateFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceFragmentShadingRateFeatures(scvkJsonWork*        pWork,
+                                                           const scvkJsonValue* pObject,
+                                                           void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1807,7 +1869,9 @@ void scvkReadJsonPhysicalDeviceFragmentShadingRate(scvkJsonWork* pWork, const sc
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceFragmentShadingRateProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceFragmentShadingRateProperties(scvkJsonWork*        pWork,
+                                                             const scvkJsonValue* pObject,
+                                                             void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1839,7 +1903,9 @@ void scvkReadJsonPhysicalDeviceIDProperties(scvkJsonWork* pWork, const scvkJsonV
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceImageDrmFormatModifierInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceImageDrmFormatModifierInfo(scvkJsonWork*        pWork,
+                                                          const scvkJsonValue* pObject,
+                                                          void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1855,7 +1921,9 @@ void scvkReadJsonPhysicalDeviceImageFormatInfo2(scvkJsonWork* pWork, const scvkJ
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceImageViewImageFormatInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceImageViewImageFormatInfo(scvkJsonWork*        pWork,
+                                                        const scvkJsonValue* pObject,
+                                                        void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1863,7 +1931,9 @@ void scvkReadJsonPhysicalDeviceImageViewImageFormatInfo(scvkJsonWork* pWork, con
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceImagelessFramebufferFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceImagelessFramebufferFeatures(scvkJsonWork*        pWork,
+                                                            const scvkJsonValue* pObject,
+                                                            void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1935,7 +2005,9 @@ void scvkReadJsonPhysicalDevicePCIBusInfoProperties(scvkJsonWork* pWork, const s
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDevicePerformanceQueryFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDevicePerformanceQueryFeatures(scvkJsonWork*        pWork,
+                                                        const scvkJsonValue* pObject,
+                                                        void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1943,7 +2015,9 @@ void scvkReadJsonPhysicalDevicePerformanceQueryFeatures(scvkJsonWork* pWork, con
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDevicePerformanceQueryProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDevicePerformanceQueryProperties(scvkJsonWork*        pWork,
+                                                          const scvkJsonValue* pObject,
+                                                          void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1951,7 +2025,9 @@ void scvkReadJsonPhysicalDevicePerformanceQueryProperties(scvkJsonWork* pWork, c
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDevicePointClippingProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDevicePointClippingProperties(scvkJsonWork*        pWork,
+                                                       const scvkJsonValue* pObject,
+                                                       void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1975,7 +2051,9 @@ void scvkReadJsonPhysicalDeviceProperties2(scvkJsonWork* pWork, const scvkJsonVa
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceProtectedMemoryFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceProtectedMemoryFeatures(scvkJsonWork*        pWork,
+                                                       const scvkJsonValue* pObject,
+                                                       void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1983,7 +2061,9 @@ void scvkReadJsonPhysicalDeviceProtectedMemoryFeatures(scvkJsonWork* pWork, cons
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceProtectedMemoryProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceProtectedMemoryProperties(scvkJsonWork*        pWork,
+                                                         const scvkJsonValue* pObject,
+                                                         void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1991,7 +2071,9 @@ void scvkReadJsonPhysicalDeviceProtectedMemoryProperties(scvkJsonWork* pWork, co
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceSampleLocationsProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceSampleLocationsProperties(scvkJsonWork*        pWork,
+                                                         const scvkJsonValue* pObject,
+                                                         void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -1999,7 +2081,9 @@ void scvkReadJsonPhysicalDeviceSampleLocationsProperties(scvkJsonWork* pWork, co
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceSamplerFilterMinmaxProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceSamplerFilterMinmaxProperties(scvkJsonWork*        pWork,
+                                                             const scvkJsonValue* pObject,
+                                                             void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2007,7 +2091,9 @@ void scvkReadJsonPhysicalDeviceSamplerFilterMinmaxProperties(scvkJsonWork* pWork
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceSamplerYcbcrConversionFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceSamplerYcbcrConversionFeatures(scvkJsonWork*        pWork,
+                                                              const scvkJsonValue* pObject,
+                                                              void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2015,7 +2101,9 @@ void scvkReadJsonPhysicalDeviceSamplerYcbcrConversionFeatures(scvkJsonWork* pWor
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceScalarBlockLayoutFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceScalarBlockLayoutFeatures(scvkJsonWork*        pWork,
+                                                         const scvkJsonValue* pObject,
+                                                         void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2023,7 +2111,9 @@ void scvkReadJsonPhysicalDeviceScalarBlockLayoutFeatures(scvkJsonWork* pWork, co
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceSeparateDepthStencilLayoutsFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceSeparateDepthStencilLayoutsFeatures(scvkJsonWork*        pWork,
+                                                                   const scvkJsonValue* pObject,
+                                                                   void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2031,7 +2121,9 @@ void scvkReadJsonPhysicalDeviceSeparateDepthStencilLayoutsFeatures(scvkJsonWork*
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceShaderAtomicFloatFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceShaderAtomicFloatFeatures(scvkJsonWork*        pWork,
+                                                         const scvkJsonValue* pObject,
+                                                         void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2039,7 +2131,9 @@ void scvkReadJsonPhysicalDeviceShaderAtomicFloatFeatures(scvkJsonWork* pWork, co
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceShaderAtomicInt64Features(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceShaderAtomicInt64Features(scvkJsonWork*        pWork,
+                                                         const scvkJsonValue* pObject,
+                                                         void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2055,7 +2149,9 @@ void scvkReadJsonPhysicalDeviceShaderClockFeatures(scvkJsonWork* pWork, const sc
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceShaderDrawParametersFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceShaderDrawParametersFeatures(scvkJsonWork*        pWork,
+                                                            const scvkJsonValue* pObject,
+                                                            void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2063,7 +2159,9 @@ void scvkReadJsonPhysicalDeviceShaderDrawParametersFeatures(scvkJsonWork* pWork,
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceShaderFloat16Int8Features(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceShaderFloat16Int8Features(scvkJsonWork*        pWork,
+                                                         const scvkJsonValue* pObject,
+                                                         void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2071,7 +2169,9 @@ void scvkReadJsonPhysicalDeviceShaderFloat16Int8Features(scvkJsonWork* pWork, co
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceShaderImageAtomicInt64Features(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceShaderImageAtomicInt64Features(scvkJsonWork*        pWork,
+                                                              const scvkJsonValue* pObject,
+                                                              void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2079,7 +2179,9 @@ void scvkReadJsonPhysicalDeviceShaderImageAtomicInt64Features(scvkJsonWork* pWor
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceShaderSubgroupExtendedTypesFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceShaderSubgroupExtendedTypesFeatures(scvkJsonWork*        pWork,
+                                                                   const scvkJsonValue* pObject,
+                                                                   void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2111,7 +2213,9 @@ void scvkReadJsonPhysicalDeviceSurfaceInfo2(scvkJsonWork* pWork, const scvkJsonV
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceTexelBufferAlignmentFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceTexelBufferAlignmentFeatures(scvkJsonWork*        pWork,
+                                                            const scvkJsonValue* pObject,
+                                                            void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2119,7 +2223,9 @@ void scvkReadJsonPhysicalDeviceTexelBufferAlignmentFeatures(scvkJsonWork* pWork,
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceTimelineSemaphoreFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceTimelineSemaphoreFeatures(scvkJsonWork*        pWork,
+                                                         const scvkJsonValue* pObject,
+                                                         void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2127,7 +2233,9 @@ void scvkReadJsonPhysicalDeviceTimelineSemaphoreFeatures(scvkJsonWork* pWork, co
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceTimelineSemaphoreProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceTimelineSemaphoreProperties(scvkJsonWork*        pWork,
+                                                           const scvkJsonValue* pObject,
+                                                           void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2135,7 +2243,9 @@ void scvkReadJsonPhysicalDeviceTimelineSemaphoreProperties(scvkJsonWork* pWork, 
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceUniformBufferStandardLayoutFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceUniformBufferStandardLayoutFeatures(scvkJsonWork*        pWork,
+                                                                   const scvkJsonValue* pObject,
+                                                                   void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2143,7 +2253,9 @@ void scvkReadJsonPhysicalDeviceUniformBufferStandardLayoutFeatures(scvkJsonWork*
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceVariablePointersFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceVariablePointersFeatures(scvkJsonWork*        pWork,
+                                                        const scvkJsonValue* pObject,
+                                                        void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2151,7 +2263,9 @@ void scvkReadJsonPhysicalDeviceVariablePointersFeatures(scvkJsonWork* pWork, con
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceVertexInputDynamicStateFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceVertexInputDynamicStateFeatures(scvkJsonWork*        pWork,
+                                                               const scvkJsonValue* pObject,
+                                                               void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2191,7 +2305,9 @@ void scvkReadJsonPhysicalDeviceVulkan12Properties(scvkJsonWork* pWork, const scv
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceVulkanMemoryModelFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceVulkanMemoryModelFeatures(scvkJsonWork*        pWork,
+                                                         const scvkJsonValue* pObject,
+                                                         void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2215,7 +2331,9 @@ void scvkReadJsonPhysicalDeviceVulkanSC10Properties(scvkJsonWork* pWork, const s
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceYcbcr2Plane444FormatsFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceYcbcr2Plane444FormatsFeatures(scvkJsonWork*        pWork,
+                                                             const scvkJsonValue* pObject,
+                                                             void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2223,7 +2341,9 @@ void scvkReadJsonPhysicalDeviceYcbcr2Plane444FormatsFeatures(scvkJsonWork* pWork
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPhysicalDeviceYcbcrImageArraysFeatures(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPhysicalDeviceYcbcrImageArraysFeatures(scvkJsonWork*        pWork,
+                                                        const scvkJsonValue* pObject,
+                                                        void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2247,7 +2367,9 @@ void scvkReadJsonPipelineCacheHeaderVersionOne(scvkJsonWork* pWork, const scvkJs
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPipelineCacheHeaderVersionSafetyCriticalOne(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPipelineCacheHeaderVersionSafetyCriticalOne(scvkJsonWork*        pWork,
+                                                             const scvkJsonValue* pObject,
+                                                             void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2255,7 +2377,9 @@ void scvkReadJsonPipelineCacheHeaderVersionSafetyCriticalOne(scvkJsonWork* pWork
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPipelineCacheSafetyCriticalIndexEntry(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPipelineCacheSafetyCriticalIndexEntry(scvkJsonWork*        pWork,
+                                                       const scvkJsonValue* pObject,
+                                                       void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2263,7 +2387,9 @@ void scvkReadJsonPipelineCacheSafetyCriticalIndexEntry(scvkJsonWork* pWork, cons
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPipelineCacheStageValidationIndexEntry(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPipelineCacheStageValidationIndexEntry(scvkJsonWork*        pWork,
+                                                        const scvkJsonValue* pObject,
+                                                        void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2271,7 +2397,9 @@ void scvkReadJsonPipelineCacheStageValidationIndexEntry(scvkJsonWork* pWork, con
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPipelineColorBlendAdvancedStateCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPipelineColorBlendAdvancedStateCreateInfo(scvkJsonWork*        pWork,
+                                                           const scvkJsonValue* pObject,
+                                                           void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2311,7 +2439,9 @@ void scvkReadJsonPipelineDepthStencilStateCreateInfo(scvkJsonWork* pWork, const 
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPipelineDiscardRectangleStateCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPipelineDiscardRectangleStateCreateInfo(scvkJsonWork*        pWork,
+                                                         const scvkJsonValue* pObject,
+                                                         void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2327,7 +2457,9 @@ void scvkReadJsonPipelineDynamicStateCreateInfo(scvkJsonWork* pWork, const scvkJ
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPipelineFragmentShadingRateStateCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPipelineFragmentShadingRateStateCreateInfo(scvkJsonWork*        pWork,
+                                                            const scvkJsonValue* pObject,
+                                                            void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2375,7 +2507,9 @@ void scvkReadJsonPipelinePoolSize(scvkJsonWork* pWork, const scvkJsonValue* pObj
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPipelineRasterizationConservativeStateCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPipelineRasterizationConservativeStateCreateInfo(scvkJsonWork*        pWork,
+                                                                  const scvkJsonValue* pObject,
+                                                                  void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2383,7 +2517,9 @@ void scvkReadJsonPipelineRasterizationConservativeStateCreateInfo(scvkJsonWork* 
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPipelineRasterizationDepthClipStateCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPipelineRasterizationDepthClipStateCreateInfo(scvkJsonWork*        pWork,
+                                                               const scvkJsonValue* pObject,
+                                                               void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2399,7 +2535,9 @@ void scvkReadJsonPipelineRasterizationStateCreateInfo(scvkJsonWork* pWork, const
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPipelineSampleLocationsStateCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPipelineSampleLocationsStateCreateInfo(scvkJsonWork*        pWork,
+                                                        const scvkJsonValue* pObject,
+                                                        void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2415,7 +2553,9 @@ void scvkReadJsonPipelineShaderStageCreateInfo(scvkJsonWork* pWork, const scvkJs
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonPipelineTessellationDomainOriginStateCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonPipelineTessellationDomainOriginStateCreateInfo(scvkJsonWork*        pWork,
+                                                                 const scvkJsonValue* pObject,
+                                                                 void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2583,7 +2723,9 @@ void scvkReadJsonRenderPassCreateInfo2(scvkJsonWork* pWork, const scvkJsonValue*
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonRenderPassInputAttachmentAspectCreateInfo(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonRenderPassInputAttachmentAspectCreateInfo(scvkJsonWork*        pWork,
+                                                           const scvkJsonValue* pObject,
+                                                           void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2655,7 +2797,9 @@ void scvkReadJsonSamplerYcbcrConversionCreateInfo(scvkJsonWork* pWork, const scv
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonSamplerYcbcrConversionImageFormatProperties(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonSamplerYcbcrConversionImageFormatProperties(scvkJsonWork*        pWork,
+                                                             const scvkJsonValue* pObject,
+                                                             void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.
@@ -2839,7 +2983,9 @@ void scvkReadJsonSubpassDescription2(scvkJsonWork* pWork, const scvkJsonValue* p
  * \param[out] pOutput Storage for the typed Vulkan structure.
  * \retval None No value is returned.
  */
-void scvkReadJsonSubpassDescriptionDepthStencilResolve(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput);
+void scvkReadJsonSubpassDescriptionDepthStencilResolve(scvkJsonWork*        pWork,
+                                                       const scvkJsonValue* pObject,
+                                                       void*                pOutput);
 /**
  * \brief Reads one structure and appends its nested objects to the work stack.
  * \param[in,out] pWork Bounded parse workspace.

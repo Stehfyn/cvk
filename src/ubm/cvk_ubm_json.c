@@ -12,7 +12,10 @@
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonUbmSurfaceCreateInfoSEC(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonUbmSurfaceCreateInfoSEC(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*      pContext;
     VkUbmSurfaceCreateInfoSEC* pInfo;
@@ -34,11 +37,15 @@ void cvkReadJsonUbmSurfaceCreateInfoSEC(cvkJsonWork* pWork, const cvkJsonValue* 
 
     pInfo->flags = cvkParseJsonUbmSurfaceCreateFlagsSEC(value);
 }
-extern CVK_FORCE_INLINE VkUbmSurfaceCreateFlagsSEC cvkParseJsonUbmSurfaceCreateFlagsSEC(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkUbmSurfaceCreateFlagsSEC cvkParseJsonUbmSurfaceCreateFlagsSEC(
+    const cvkJsonValue* pValue)
 {
     return (VkUbmSurfaceCreateFlagsSEC)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonUbmSurfaceCreateInfoSEC(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkUbmSurfaceCreateInfoSEC* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonUbmSurfaceCreateInfoSEC(
+    const cvkJsonContext*      pContext,
+    const cvkJsonValue*        pObject,
+    VkUbmSurfaceCreateInfoSEC* pInfo)
 {
     cvkJsonWork work;
 

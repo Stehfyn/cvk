@@ -13,11 +13,16 @@
 #include <windef.h>
 #include <winnt.h>
 
-extern SCVK_FORCE_INLINE void scvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display)
+extern SCVK_FORCE_INLINE void scvkAcquireWinrtDisplayNV(
+    VkPhysicalDevice physicalDevice,
+    VkDisplayKHR     display)
 {
     SCVK_CHECK(vkAcquireWinrtDisplayNV(physicalDevice, display));
 }
-extern SCVK_FORCE_INLINE void scvkGetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay)
+extern SCVK_FORCE_INLINE void scvkGetWinrtDisplayNV(
+    VkPhysicalDevice physicalDevice,
+    uint32_t         deviceRelativeId,
+    VkDisplayKHR*    pDisplay)
 {
     SCVK_CHECK(vkGetWinrtDisplayNV(physicalDevice, deviceRelativeId, pDisplay));
     SCVK_ASSERT(VK_NULL_HANDLE != (*pDisplay));
@@ -27,7 +32,11 @@ typedef struct scvkWin32AllocationHeader
     void*  pBase;
     size_t size;
 } scvkWin32AllocationHeader;
-static SCVK_FORCE_INLINE void* VKAPI_CALL scvkWin32Allocate(void* pUserData, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
+static SCVK_FORCE_INLINE void* VKAPI_CALL scvkWin32Allocate(
+    void*                   pUserData,
+    size_t                  size,
+    size_t                  alignment,
+    VkSystemAllocationScope allocationScope)
 {
     scvkWin32AllocationHeader* pHeader;
     void*                      pBase;
@@ -61,7 +70,9 @@ static SCVK_FORCE_INLINE void* VKAPI_CALL scvkWin32Allocate(void* pUserData, siz
 
     return pMemory;
 }
-static SCVK_FORCE_INLINE void VKAPI_CALL scvkWin32Free(void* pUserData, void* pMemory)
+static SCVK_FORCE_INLINE void VKAPI_CALL scvkWin32Free(
+    void* pUserData,
+    void* pMemory)
 {
     scvkWin32AllocationHeader* pHeader;
     BOOL                       released;
@@ -75,7 +86,12 @@ static SCVK_FORCE_INLINE void VKAPI_CALL scvkWin32Free(void* pUserData, void* pM
         SCVK_ASSERT(released);
     }
 }
-static SCVK_FORCE_INLINE void* VKAPI_CALL scvkWin32Reallocate(void* pUserData, void* pOriginal, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
+static SCVK_FORCE_INLINE void* VKAPI_CALL scvkWin32Reallocate(
+    void*                   pUserData,
+    void*                   pOriginal,
+    size_t                  size,
+    size_t                  alignment,
+    VkSystemAllocationScope allocationScope)
 {
     scvkWin32AllocationHeader* pHeader;
     void*                      pMemory;
@@ -108,7 +124,8 @@ static SCVK_FORCE_INLINE void* VKAPI_CALL scvkWin32Reallocate(void* pUserData, v
 
     return pMemory;
 }
-extern SCVK_FORCE_INLINE void scvkInitWin32AllocationCallbacks(VkAllocationCallbacks* pCallbacks)
+extern SCVK_FORCE_INLINE void scvkInitWin32AllocationCallbacks(
+    VkAllocationCallbacks* pCallbacks)
 {
     SCVK_ASSERT(NULL != pCallbacks);
 

@@ -12,7 +12,10 @@
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonPresentFrameTokenGGP(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonPresentFrameTokenGGP(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*   pContext;
     VkPresentFrameTokenGGP* pInfo;
@@ -36,7 +39,10 @@ void cvkReadJsonPresentFrameTokenGGP(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonStreamDescriptorSurfaceCreateInfoGGP(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonStreamDescriptorSurfaceCreateInfoGGP(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                   pContext;
     VkStreamDescriptorSurfaceCreateInfoGGP* pInfo;
@@ -58,11 +64,15 @@ void cvkReadJsonStreamDescriptorSurfaceCreateInfoGGP(cvkJsonWork* pWork, const c
 
     pInfo->flags = cvkParseJsonStreamDescriptorSurfaceCreateFlagsGGP(value);
 }
-extern CVK_FORCE_INLINE VkStreamDescriptorSurfaceCreateFlagsGGP cvkParseJsonStreamDescriptorSurfaceCreateFlagsGGP(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkStreamDescriptorSurfaceCreateFlagsGGP cvkParseJsonStreamDescriptorSurfaceCreateFlagsGGP(
+    const cvkJsonValue* pValue)
 {
     return (VkStreamDescriptorSurfaceCreateFlagsGGP)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPresentFrameTokenGGP(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkPresentFrameTokenGGP* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonPresentFrameTokenGGP(
+    const cvkJsonContext*   pContext,
+    const cvkJsonValue*     pObject,
+    VkPresentFrameTokenGGP* pInfo)
 {
     cvkJsonWork work;
 
@@ -70,7 +80,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonPresentFrameTokenGGP(const cvkJsonConte
     cvkAppendJsonWork(&work, cvkReadJsonPresentFrameTokenGGP, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonStreamDescriptorSurfaceCreateInfoGGP(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkStreamDescriptorSurfaceCreateInfoGGP* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonStreamDescriptorSurfaceCreateInfoGGP(
+    const cvkJsonContext*                   pContext,
+    const cvkJsonValue*                     pObject,
+    VkStreamDescriptorSurfaceCreateInfoGGP* pInfo)
 {
     cvkJsonWork work;
 

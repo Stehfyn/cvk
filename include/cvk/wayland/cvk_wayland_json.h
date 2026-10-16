@@ -8,7 +8,23 @@
 #include <vulkan/vulkan_wayland.h>
 
 /* clang-format off */
+/**
+ * \brief Parses a VkWaylandSurfaceCreateFlagsKHR from JSON.
+ *
+ * \param[in] pValue  The value: bit names joined by |, a number, or NULL
+ *
+ * \return The VkWaylandSurfaceCreateFlagsKHR returned by the command.
+ */
 VkWaylandSurfaceCreateFlagsKHR cvkParseJsonWaylandSurfaceCreateFlags(const cvkJsonValue* pValue);
+/**
+ * \brief Parses a VkWaylandSurfaceCreateInfoKHR from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkWaylandSurfaceCreateInfoKHR
+ * \param[out] pInfo     Receives the parsed VkWaylandSurfaceCreateInfoKHR, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonWaylandSurfaceCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkWaylandSurfaceCreateInfoKHR* pInfo);
 /* clang-format on */
 

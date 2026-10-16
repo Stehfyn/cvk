@@ -12,7 +12,10 @@
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonWaylandSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonWaylandSurfaceCreateInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*          pContext;
     VkWaylandSurfaceCreateInfoKHR* pInfo;
@@ -34,11 +37,15 @@ void cvkReadJsonWaylandSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue*
 
     pInfo->flags = cvkParseJsonWaylandSurfaceCreateFlags(value);
 }
-extern CVK_FORCE_INLINE VkWaylandSurfaceCreateFlagsKHR cvkParseJsonWaylandSurfaceCreateFlags(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkWaylandSurfaceCreateFlagsKHR cvkParseJsonWaylandSurfaceCreateFlags(
+    const cvkJsonValue* pValue)
 {
     return (VkWaylandSurfaceCreateFlagsKHR)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonWaylandSurfaceCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkWaylandSurfaceCreateInfoKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonWaylandSurfaceCreateInfo(
+    const cvkJsonContext*          pContext,
+    const cvkJsonValue*            pObject,
+    VkWaylandSurfaceCreateInfoKHR* pInfo)
 {
     cvkJsonWork work;
 

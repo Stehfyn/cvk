@@ -7,8 +7,47 @@
 #include <vulkan/vulkan_ubm.h>
 
 /* clang-format off */
+/**
+ * \brief Initializes a VkUbmSurfaceCreateInfoSEC.
+ *
+ * \param[out] pInfo    Receives the initialized VkUbmSurfaceCreateInfoSEC
+ * \param[in] pNext    Optional extension chain attached to VkUbmSurfaceCreateInfoSEC, or NULL
+ * \param[in] flags    VkUbmSurfaceCreateInfoSEC::flags
+ * \param[in] device   VkUbmSurfaceCreateInfoSEC::device
+ * \param[in] surface  VkUbmSurfaceCreateInfoSEC::surface
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitUbmSurfaceCreateInfoSEC(VkUbmSurfaceCreateInfoSEC* pInfo, const void* pNext, VkUbmSurfaceCreateFlagsSEC flags, struct ubm_device* device, struct ubm_surface* surface);
+/**
+ * \brief Creates a ubm surface.
+ *
+ * \par Details:
+ *  Wraps vkCreateUbmSurfaceSEC. Aborts on any error result.
+ *
+ * \param[in] instance    VkInstance value
+ * \param[in] pNext       Optional extension chain attached to VkUbmSurfaceCreateInfoSEC, or NULL
+ * \param[in] flags       VkUbmSurfaceCreateInfoSEC::flags
+ * \param[in] device      VkUbmSurfaceCreateInfoSEC::device
+ * \param[in] surface     VkUbmSurfaceCreateInfoSEC::surface
+ * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[out] pSurface    Receives the created VkSurfaceKHR
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateUbmSurfaceSEC(VkInstance instance, const void* pNext, VkUbmSurfaceCreateFlagsSEC flags, struct ubm_device* device, struct ubm_surface* surface, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+/**
+ * \brief Retrieves physical device ubm presentation support.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceUbmPresentationSupportSEC.
+ *
+ * \param[in] physicalDevice    VkPhysicalDevice value
+ * \param[in] queueFamilyIndex  uint32_t value
+ * \param[out] device            Receives the ubm_device
+ *
+ * \return The VkBool32 returned by the command.
+ */
 VkBool32 cvkGetPhysicalDeviceUbmPresentationSupportSEC(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, struct ubm_device* device);
 /* clang-format on */
 

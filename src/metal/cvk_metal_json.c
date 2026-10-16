@@ -14,7 +14,10 @@
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExportMetalBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExportMetalBufferInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*       pContext;
     VkExportMetalBufferInfoEXT* pInfo;
@@ -45,7 +48,10 @@ void cvkReadJsonExportMetalBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExportMetalCommandQueueInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExportMetalCommandQueueInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*             pContext;
     VkExportMetalCommandQueueInfoEXT* pInfo;
@@ -76,7 +82,10 @@ void cvkReadJsonExportMetalCommandQueueInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExportMetalDeviceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExportMetalDeviceInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*       pContext;
     VkExportMetalDeviceInfoEXT* pInfo;
@@ -100,7 +109,10 @@ void cvkReadJsonExportMetalDeviceInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExportMetalIOSurfaceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExportMetalIOSurfaceInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*          pContext;
     VkExportMetalIOSurfaceInfoEXT* pInfo;
@@ -131,7 +143,10 @@ void cvkReadJsonExportMetalIOSurfaceInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExportMetalObjectCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExportMetalObjectCreateInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*             pContext;
     VkExportMetalObjectCreateInfoEXT* pInfo;
@@ -160,7 +175,10 @@ void cvkReadJsonExportMetalObjectCreateInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExportMetalObjectsInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExportMetalObjectsInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*        pContext;
     VkExportMetalObjectsInfoEXT* pInfo;
@@ -184,7 +202,10 @@ void cvkReadJsonExportMetalObjectsInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExportMetalSharedEventInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExportMetalSharedEventInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*            pContext;
     VkExportMetalSharedEventInfoEXT* pInfo;
@@ -222,7 +243,10 @@ void cvkReadJsonExportMetalSharedEventInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExportMetalTextureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExportMetalTextureInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*        pContext;
     VkExportMetalTextureInfoEXT* pInfo;
@@ -272,7 +296,10 @@ void cvkReadJsonExportMetalTextureInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonImportMemoryMetalHandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonImportMemoryMetalHandleInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*             pContext;
     VkImportMemoryMetalHandleInfoEXT* pInfo;
@@ -301,7 +328,10 @@ void cvkReadJsonImportMemoryMetalHandleInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonImportMetalBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonImportMetalBufferInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*       pContext;
     VkImportMetalBufferInfoEXT* pInfo;
@@ -325,7 +355,10 @@ void cvkReadJsonImportMetalBufferInfo(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonImportMetalIOSurfaceInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonImportMetalIOSurfaceInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*          pContext;
     VkImportMetalIOSurfaceInfoEXT* pInfo;
@@ -349,7 +382,10 @@ void cvkReadJsonImportMetalIOSurfaceInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonImportMetalSharedEventInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonImportMetalSharedEventInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*            pContext;
     VkImportMetalSharedEventInfoEXT* pInfo;
@@ -373,7 +409,10 @@ void cvkReadJsonImportMetalSharedEventInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonImportMetalTextureInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonImportMetalTextureInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*        pContext;
     VkImportMetalTextureInfoEXT* pInfo;
@@ -402,7 +441,10 @@ void cvkReadJsonImportMetalTextureInfo(cvkJsonWork* pWork, const cvkJsonValue* p
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonMemoryGetMetalHandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonMemoryGetMetalHandleInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*          pContext;
     VkMemoryGetMetalHandleInfoEXT* pInfo;
@@ -438,7 +480,10 @@ void cvkReadJsonMemoryGetMetalHandleInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonMemoryMetalHandleProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonMemoryMetalHandleProperties(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*             pContext;
     VkMemoryMetalHandlePropertiesEXT* pInfo;
@@ -465,7 +510,10 @@ void cvkReadJsonMemoryMetalHandleProperties(cvkJsonWork* pWork, const cvkJsonVal
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonMetalSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonMetalSurfaceCreateInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*        pContext;
     VkMetalSurfaceCreateInfoEXT* pInfo;
@@ -487,43 +535,64 @@ void cvkReadJsonMetalSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* p
 
     pInfo->flags = cvkParseJsonMetalSurfaceCreateFlags(value);
 }
-extern CVK_FORCE_INLINE VkExportMetalObjectTypeFlagBitsEXT cvkParseJsonExportMetalObjectTypeFlagBits(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkExportMetalObjectTypeFlagBitsEXT cvkParseJsonExportMetalObjectTypeFlagBits(
+    const cvkJsonValue* pValue)
 {
     uint64_t enumerant;
     VkBool32 found;
 
-    static const cvkJsonName table[] = {{"VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT}};
+    static const cvkJsonName table[] = {{"VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT",
+                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT",
+                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT",
+                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT",
+                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT",
+                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT",
+                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT}};
 
     enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT) || (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT) ||
-            (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT) || (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT) ||
-            (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT) || (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT);
+    found = (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT);
     CVK_ASSERT(found);
 
     return (VkExportMetalObjectTypeFlagBitsEXT)enumerant;
 }
-extern CVK_FORCE_INLINE VkExportMetalObjectTypeFlagsEXT cvkParseJsonExportMetalObjectTypeFlags(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkExportMetalObjectTypeFlagsEXT cvkParseJsonExportMetalObjectTypeFlags(
+    const cvkJsonValue* pValue)
 {
-    static const cvkJsonName table[] = {{"VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT},
-                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT", (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT}};
+    static const cvkJsonName table[] = {{"VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT",
+                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT",
+                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT",
+                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT",
+                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT",
+                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT},
+                                        {"VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT",
+                                         (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT}};
 
     return (VkExportMetalObjectTypeFlagsEXT)cvkParseJsonFlags(pValue, table, VK_COUNT_OF(table));
 }
-extern CVK_FORCE_INLINE VkMetalSurfaceCreateFlagsEXT cvkParseJsonMetalSurfaceCreateFlags(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkMetalSurfaceCreateFlagsEXT cvkParseJsonMetalSurfaceCreateFlags(
+    const cvkJsonValue* pValue)
 {
     return (VkMetalSurfaceCreateFlagsEXT)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalBufferInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalBufferInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExportMetalBufferInfo(
+    const cvkJsonContext*       pContext,
+    const cvkJsonValue*         pObject,
+    VkExportMetalBufferInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -531,7 +600,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalBufferInfo(const cvkJsonCont
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalBufferInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalCommandQueueInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalCommandQueueInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExportMetalCommandQueueInfo(
+    const cvkJsonContext*             pContext,
+    const cvkJsonValue*               pObject,
+    VkExportMetalCommandQueueInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -539,7 +611,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalCommandQueueInfo(const cvkJs
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalCommandQueueInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalDeviceInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalDeviceInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExportMetalDeviceInfo(
+    const cvkJsonContext*       pContext,
+    const cvkJsonValue*         pObject,
+    VkExportMetalDeviceInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -547,7 +622,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalDeviceInfo(const cvkJsonCont
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalDeviceInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalIOSurfaceInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalIOSurfaceInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExportMetalIOSurfaceInfo(
+    const cvkJsonContext*          pContext,
+    const cvkJsonValue*            pObject,
+    VkExportMetalIOSurfaceInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -555,7 +633,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalIOSurfaceInfo(const cvkJsonC
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalIOSurfaceInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalObjectCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalObjectCreateInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExportMetalObjectCreateInfo(
+    const cvkJsonContext*             pContext,
+    const cvkJsonValue*               pObject,
+    VkExportMetalObjectCreateInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -563,7 +644,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalObjectCreateInfo(const cvkJs
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalObjectCreateInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalObjectsInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalObjectsInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExportMetalObjectsInfo(
+    const cvkJsonContext*        pContext,
+    const cvkJsonValue*          pObject,
+    VkExportMetalObjectsInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -571,7 +655,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalObjectsInfo(const cvkJsonCon
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalObjectsInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalSharedEventInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalSharedEventInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExportMetalSharedEventInfo(
+    const cvkJsonContext*            pContext,
+    const cvkJsonValue*              pObject,
+    VkExportMetalSharedEventInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -579,7 +666,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalSharedEventInfo(const cvkJso
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalSharedEventInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMetalTextureInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMetalTextureInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExportMetalTextureInfo(
+    const cvkJsonContext*        pContext,
+    const cvkJsonValue*          pObject,
+    VkExportMetalTextureInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -587,7 +677,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMetalTextureInfo(const cvkJsonCon
     cvkAppendJsonWork(&work, cvkReadJsonExportMetalTextureInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryMetalHandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportMemoryMetalHandleInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryMetalHandleInfo(
+    const cvkJsonContext*             pContext,
+    const cvkJsonValue*               pObject,
+    VkImportMemoryMetalHandleInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -595,7 +688,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryMetalHandleInfo(const cvkJs
     cvkAppendJsonWork(&work, cvkReadJsonImportMemoryMetalHandleInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportMetalBufferInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportMetalBufferInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonImportMetalBufferInfo(
+    const cvkJsonContext*       pContext,
+    const cvkJsonValue*         pObject,
+    VkImportMetalBufferInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -603,7 +699,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportMetalBufferInfo(const cvkJsonCont
     cvkAppendJsonWork(&work, cvkReadJsonImportMetalBufferInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportMetalIOSurfaceInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportMetalIOSurfaceInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonImportMetalIOSurfaceInfo(
+    const cvkJsonContext*          pContext,
+    const cvkJsonValue*            pObject,
+    VkImportMetalIOSurfaceInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -611,7 +710,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportMetalIOSurfaceInfo(const cvkJsonC
     cvkAppendJsonWork(&work, cvkReadJsonImportMetalIOSurfaceInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportMetalSharedEventInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportMetalSharedEventInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonImportMetalSharedEventInfo(
+    const cvkJsonContext*            pContext,
+    const cvkJsonValue*              pObject,
+    VkImportMetalSharedEventInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -619,7 +721,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportMetalSharedEventInfo(const cvkJso
     cvkAppendJsonWork(&work, cvkReadJsonImportMetalSharedEventInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportMetalTextureInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportMetalTextureInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonImportMetalTextureInfo(
+    const cvkJsonContext*        pContext,
+    const cvkJsonValue*          pObject,
+    VkImportMetalTextureInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -627,7 +732,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportMetalTextureInfo(const cvkJsonCon
     cvkAppendJsonWork(&work, cvkReadJsonImportMetalTextureInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetMetalHandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMemoryGetMetalHandleInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetMetalHandleInfo(
+    const cvkJsonContext*          pContext,
+    const cvkJsonValue*            pObject,
+    VkMemoryGetMetalHandleInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -635,7 +743,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetMetalHandleInfo(const cvkJsonC
     cvkAppendJsonWork(&work, cvkReadJsonMemoryGetMetalHandleInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMemoryMetalHandleProperties(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMemoryMetalHandlePropertiesEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonMemoryMetalHandleProperties(
+    const cvkJsonContext*             pContext,
+    const cvkJsonValue*               pObject,
+    VkMemoryMetalHandlePropertiesEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -643,7 +754,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonMemoryMetalHandleProperties(const cvkJs
     cvkAppendJsonWork(&work, cvkReadJsonMemoryMetalHandleProperties, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMetalSurfaceCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMetalSurfaceCreateInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonMetalSurfaceCreateInfo(
+    const cvkJsonContext*        pContext,
+    const cvkJsonValue*          pObject,
+    VkMetalSurfaceCreateInfoEXT* pInfo)
 {
     cvkJsonWork work;
 

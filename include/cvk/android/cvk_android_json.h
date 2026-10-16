@@ -7,17 +7,123 @@
 #include <vulkan/vulkan_android.h>
 
 /* clang-format off */
+/**
+ * \brief Parses a VkAndroidSurfaceCreateFlagsKHR from JSON.
+ *
+ * \param[in] pValue  The value: bit names joined by |, a number, or NULL
+ *
+ * \return The VkAndroidSurfaceCreateFlagsKHR returned by the command.
+ */
 VkAndroidSurfaceCreateFlagsKHR cvkParseJsonAndroidSurfaceCreateFlags(const cvkJsonValue* pValue);
+/**
+ * \brief Parses a VkAndroidHardwareBufferFormatProperties2ANDROID from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkAndroidHardwareBufferFormatProperties2ANDROID
+ * \param[out] pInfo     Receives the parsed VkAndroidHardwareBufferFormatProperties2ANDROID, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonAndroidHardwareBufferFormatProperties2ANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkAndroidHardwareBufferFormatProperties2ANDROID* pInfo);
+/**
+ * \brief Parses a VkAndroidHardwareBufferFormatPropertiesANDROID from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkAndroidHardwareBufferFormatPropertiesANDROID
+ * \param[out] pInfo     Receives the parsed VkAndroidHardwareBufferFormatPropertiesANDROID, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonAndroidHardwareBufferFormatPropertiesANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkAndroidHardwareBufferFormatPropertiesANDROID* pInfo);
+/**
+ * \brief Parses a VkAndroidHardwareBufferFormatResolvePropertiesANDROID from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkAndroidHardwareBufferFormatResolvePropertiesANDROID
+ * \param[out] pInfo     Receives the parsed VkAndroidHardwareBufferFormatResolvePropertiesANDROID, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonAndroidHardwareBufferFormatResolvePropertiesANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkAndroidHardwareBufferFormatResolvePropertiesANDROID* pInfo);
+/**
+ * \brief Parses a VkAndroidHardwareBufferPropertiesANDROID from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkAndroidHardwareBufferPropertiesANDROID
+ * \param[out] pInfo     Receives the parsed VkAndroidHardwareBufferPropertiesANDROID, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonAndroidHardwareBufferPropertiesANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkAndroidHardwareBufferPropertiesANDROID* pInfo);
+/**
+ * \brief Parses a VkAndroidHardwareBufferUsageANDROID from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkAndroidHardwareBufferUsageANDROID
+ * \param[out] pInfo     Receives the parsed VkAndroidHardwareBufferUsageANDROID, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonAndroidHardwareBufferUsageANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkAndroidHardwareBufferUsageANDROID* pInfo);
+/**
+ * \brief Parses a VkAndroidSurfaceCreateInfoKHR from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkAndroidSurfaceCreateInfoKHR
+ * \param[out] pInfo     Receives the parsed VkAndroidSurfaceCreateInfoKHR, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonAndroidSurfaceCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkAndroidSurfaceCreateInfoKHR* pInfo);
+/**
+ * \brief Parses a VkExternalFormatANDROID from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkExternalFormatANDROID
+ * \param[out] pInfo     Receives the parsed VkExternalFormatANDROID, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonExternalFormatANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExternalFormatANDROID* pInfo);
+/**
+ * \brief Parses a VkImportAndroidHardwareBufferInfoANDROID from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkImportAndroidHardwareBufferInfoANDROID
+ * \param[out] pInfo     Receives the parsed VkImportAndroidHardwareBufferInfoANDROID, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonImportAndroidHardwareBufferInfoANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportAndroidHardwareBufferInfoANDROID* pInfo);
+/**
+ * \brief Parses a VkMemoryGetAndroidHardwareBufferInfoANDROID from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkMemoryGetAndroidHardwareBufferInfoANDROID
+ * \param[out] pInfo     Receives the parsed VkMemoryGetAndroidHardwareBufferInfoANDROID, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonMemoryGetAndroidHardwareBufferInfoANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMemoryGetAndroidHardwareBufferInfoANDROID* pInfo);
+/**
+ * \brief Parses a VkPhysicalDeviceExternalFormatResolveFeaturesANDROID from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkPhysicalDeviceExternalFormatResolveFeaturesANDROID
+ * \param[out] pInfo     Receives the parsed VkPhysicalDeviceExternalFormatResolveFeaturesANDROID, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* pInfo);
+/**
+ * \brief Parses a VkPhysicalDeviceExternalFormatResolvePropertiesANDROID from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkPhysicalDeviceExternalFormatResolvePropertiesANDROID
+ * \param[out] pInfo     Receives the parsed VkPhysicalDeviceExternalFormatResolvePropertiesANDROID, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* pInfo);
 /* clang-format on */
 

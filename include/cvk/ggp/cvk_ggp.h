@@ -8,9 +8,58 @@
 #include <vulkan/vulkan_ggp.h>
 
 /* clang-format off */
+/**
+ * \brief Initializes a VkPresentFrameTokenGGP.
+ *
+ * \param[out] pInfo       Receives the initialized VkPresentFrameTokenGGP
+ * \param[in] pNext       Optional extension chain attached to VkPresentFrameTokenGGP, or NULL
+ * \param[in] frameToken  VkPresentFrameTokenGGP::frameToken
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitPresentFrameTokenGGP(VkPresentFrameTokenGGP* pInfo, const void* pNext, GgpFrameToken frameToken);
+/**
+ * \brief Initializes a VkStreamDescriptorSurfaceCreateInfoGGP.
+ *
+ * \param[out] pInfo             Receives the initialized VkStreamDescriptorSurfaceCreateInfoGGP
+ * \param[in] pNext             Optional extension chain attached to VkStreamDescriptorSurfaceCreateInfoGGP, or NULL
+ * \param[in] flags             VkStreamDescriptorSurfaceCreateInfoGGP::flags
+ * \param[in] streamDescriptor  VkStreamDescriptorSurfaceCreateInfoGGP::streamDescriptor
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitStreamDescriptorSurfaceCreateInfoGGP(VkStreamDescriptorSurfaceCreateInfoGGP* pInfo, const void* pNext, VkStreamDescriptorSurfaceCreateFlagsGGP flags, GgpStreamDescriptor streamDescriptor);
+/**
+ * \brief Creates a stream descriptor surface.
+ *
+ * \par Details:
+ *  Wraps vkCreateStreamDescriptorSurfaceGGP. Aborts on any error result.
+ *
+ * \param[in] instance          VkInstance value
+ * \param[in] pNext             Optional extension chain attached to VkStreamDescriptorSurfaceCreateInfoGGP, or NULL
+ * \param[in] flags             VkStreamDescriptorSurfaceCreateInfoGGP::flags
+ * \param[in] streamDescriptor  VkStreamDescriptorSurfaceCreateInfoGGP::streamDescriptor
+ * \param[in] pAllocator        Optional allocation callbacks, or NULL
+ * \param[out] pSurface          Receives the created VkSurfaceKHR
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateStreamDescriptorSurfaceGGP(VkInstance instance, const void* pNext, VkStreamDescriptorSurfaceCreateFlagsGGP flags, GgpStreamDescriptor streamDescriptor, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+/**
+ * \brief Queues present with VkPresentFrameTokenGGP chained.
+ *
+ * \param[in] queue               See cvkQueuePresent
+ * \param[in] pNext               See cvkQueuePresent
+ * \param[in] frameToken          VkPresentFrameTokenGGP::frameToken
+ * \param[in] waitSemaphoreCount  See cvkQueuePresent
+ * \param[in] pWaitSemaphores     See cvkQueuePresent
+ * \param[in] swapchainCount      See cvkQueuePresent
+ * \param[in] pSwapchains         See cvkQueuePresent
+ * \param[in] pImageIndices       See cvkQueuePresent
+ * \param[out] pResults            See cvkQueuePresent
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
 VkResult cvkQueuePresentWithFrameTokenInfoGGP(VkQueue queue, const void* pNext, GgpFrameToken frameToken, uint32_t waitSemaphoreCount, const VkSemaphore* pWaitSemaphores, uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, const uint32_t* pImageIndices, VkResult* pResults);
 /* clang-format on */
 

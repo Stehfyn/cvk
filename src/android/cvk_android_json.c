@@ -13,7 +13,10 @@
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonAndroidHardwareBufferFormatProperties2ANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonAndroidHardwareBufferFormatProperties2ANDROID(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                            pContext;
     VkAndroidHardwareBufferFormatProperties2ANDROID* pInfo;
@@ -75,7 +78,10 @@ void cvkReadJsonAndroidHardwareBufferFormatProperties2ANDROID(cvkJsonWork* pWork
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonAndroidHardwareBufferFormatPropertiesANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonAndroidHardwareBufferFormatPropertiesANDROID(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                           pContext;
     VkAndroidHardwareBufferFormatPropertiesANDROID* pInfo;
@@ -137,7 +143,10 @@ void cvkReadJsonAndroidHardwareBufferFormatPropertiesANDROID(cvkJsonWork* pWork,
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonAndroidHardwareBufferFormatResolvePropertiesANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonAndroidHardwareBufferFormatResolvePropertiesANDROID(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                                  pContext;
     VkAndroidHardwareBufferFormatResolvePropertiesANDROID* pInfo;
@@ -166,7 +175,10 @@ void cvkReadJsonAndroidHardwareBufferFormatResolvePropertiesANDROID(cvkJsonWork*
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonAndroidHardwareBufferPropertiesANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonAndroidHardwareBufferPropertiesANDROID(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                     pContext;
     VkAndroidHardwareBufferPropertiesANDROID* pInfo;
@@ -197,7 +209,10 @@ void cvkReadJsonAndroidHardwareBufferPropertiesANDROID(cvkJsonWork* pWork, const
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonAndroidHardwareBufferUsageANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonAndroidHardwareBufferUsageANDROID(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                pContext;
     VkAndroidHardwareBufferUsageANDROID* pInfo;
@@ -224,7 +239,10 @@ void cvkReadJsonAndroidHardwareBufferUsageANDROID(cvkJsonWork* pWork, const cvkJ
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonAndroidSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonAndroidSurfaceCreateInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*          pContext;
     VkAndroidSurfaceCreateInfoKHR* pInfo;
@@ -251,7 +269,10 @@ void cvkReadJsonAndroidSurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExternalFormatANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExternalFormatANDROID(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*    pContext;
     VkExternalFormatANDROID* pInfo;
@@ -278,7 +299,10 @@ void cvkReadJsonExternalFormatANDROID(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonImportAndroidHardwareBufferInfoANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonImportAndroidHardwareBufferInfoANDROID(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                     pContext;
     VkImportAndroidHardwareBufferInfoANDROID* pInfo;
@@ -302,7 +326,10 @@ void cvkReadJsonImportAndroidHardwareBufferInfoANDROID(cvkJsonWork* pWork, const
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonMemoryGetAndroidHardwareBufferInfoANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonMemoryGetAndroidHardwareBufferInfoANDROID(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                        pContext;
     VkMemoryGetAndroidHardwareBufferInfoANDROID* pInfo;
@@ -333,7 +360,10 @@ void cvkReadJsonMemoryGetAndroidHardwareBufferInfoANDROID(cvkJsonWork* pWork, co
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                                 pContext;
     VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* pInfo;
@@ -360,7 +390,10 @@ void cvkReadJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID(cvkJsonWork* 
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                                   pContext;
     VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* pInfo;
@@ -378,11 +411,11 @@ void cvkReadJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(cvkJsonWork
     {
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
-    value                                               = cvkGetJsonMember(&pContext->document, pObject, "nullColorAttachmentWithExternalFormatResolve");
+    value = cvkGetJsonMember(&pContext->document, pObject, "nullColorAttachmentWithExternalFormatResolve");
 
     pInfo->nullColorAttachmentWithExternalFormatResolve = cvkGetJsonBool32(value);
 
-    value                                               = cvkGetJsonMember(&pContext->document, pObject, "externalFormatResolveChromaOffsetX");
+    value = cvkGetJsonMember(&pContext->document, pObject, "externalFormatResolveChromaOffsetX");
     if (!cvkIsJsonNull(value))
     {
         pInfo->externalFormatResolveChromaOffsetX = cvkParseJsonChromaLocation(value);
@@ -393,13 +426,15 @@ void cvkReadJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(cvkJsonWork
         pInfo->externalFormatResolveChromaOffsetY = cvkParseJsonChromaLocation(value);
     }
 }
-extern CVK_FORCE_INLINE VkAndroidSurfaceCreateFlagsKHR cvkParseJsonAndroidSurfaceCreateFlags(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkAndroidSurfaceCreateFlagsKHR cvkParseJsonAndroidSurfaceCreateFlags(
+    const cvkJsonValue* pValue)
 {
     return (VkAndroidSurfaceCreateFlagsKHR)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatProperties2ANDROID(const cvkJsonContext*                            pContext,
-                                                                                       const cvkJsonValue*                              pObject,
-                                                                                       VkAndroidHardwareBufferFormatProperties2ANDROID* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatProperties2ANDROID(
+    const cvkJsonContext*                            pContext,
+    const cvkJsonValue*                              pObject,
+    VkAndroidHardwareBufferFormatProperties2ANDROID* pInfo)
 {
     cvkJsonWork work;
 
@@ -407,9 +442,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatProperties2A
     cvkAppendJsonWork(&work, cvkReadJsonAndroidHardwareBufferFormatProperties2ANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatPropertiesANDROID(const cvkJsonContext*                           pContext,
-                                                                                      const cvkJsonValue*                             pObject,
-                                                                                      VkAndroidHardwareBufferFormatPropertiesANDROID* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatPropertiesANDROID(
+    const cvkJsonContext*                           pContext,
+    const cvkJsonValue*                             pObject,
+    VkAndroidHardwareBufferFormatPropertiesANDROID* pInfo)
 {
     cvkJsonWork work;
 
@@ -417,9 +453,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatPropertiesAN
     cvkAppendJsonWork(&work, cvkReadJsonAndroidHardwareBufferFormatPropertiesANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatResolvePropertiesANDROID(const cvkJsonContext*                                  pContext,
-                                                                                             const cvkJsonValue*                                    pObject,
-                                                                                             VkAndroidHardwareBufferFormatResolvePropertiesANDROID* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatResolvePropertiesANDROID(
+    const cvkJsonContext*                                  pContext,
+    const cvkJsonValue*                                    pObject,
+    VkAndroidHardwareBufferFormatResolvePropertiesANDROID* pInfo)
 {
     cvkJsonWork work;
 
@@ -427,7 +464,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferFormatResolvePrope
     cvkAppendJsonWork(&work, cvkReadJsonAndroidHardwareBufferFormatResolvePropertiesANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferPropertiesANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkAndroidHardwareBufferPropertiesANDROID* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferPropertiesANDROID(
+    const cvkJsonContext*                     pContext,
+    const cvkJsonValue*                       pObject,
+    VkAndroidHardwareBufferPropertiesANDROID* pInfo)
 {
     cvkJsonWork work;
 
@@ -435,7 +475,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferPropertiesANDROID(
     cvkAppendJsonWork(&work, cvkReadJsonAndroidHardwareBufferPropertiesANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferUsageANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkAndroidHardwareBufferUsageANDROID* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferUsageANDROID(
+    const cvkJsonContext*                pContext,
+    const cvkJsonValue*                  pObject,
+    VkAndroidHardwareBufferUsageANDROID* pInfo)
 {
     cvkJsonWork work;
 
@@ -443,7 +486,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonAndroidHardwareBufferUsageANDROID(const
     cvkAppendJsonWork(&work, cvkReadJsonAndroidHardwareBufferUsageANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonAndroidSurfaceCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkAndroidSurfaceCreateInfoKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonAndroidSurfaceCreateInfo(
+    const cvkJsonContext*          pContext,
+    const cvkJsonValue*            pObject,
+    VkAndroidSurfaceCreateInfoKHR* pInfo)
 {
     cvkJsonWork work;
 
@@ -451,7 +497,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonAndroidSurfaceCreateInfo(const cvkJsonC
     cvkAppendJsonWork(&work, cvkReadJsonAndroidSurfaceCreateInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExternalFormatANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExternalFormatANDROID* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExternalFormatANDROID(
+    const cvkJsonContext*    pContext,
+    const cvkJsonValue*      pObject,
+    VkExternalFormatANDROID* pInfo)
 {
     cvkJsonWork work;
 
@@ -459,7 +508,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExternalFormatANDROID(const cvkJsonCont
     cvkAppendJsonWork(&work, cvkReadJsonExternalFormatANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportAndroidHardwareBufferInfoANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportAndroidHardwareBufferInfoANDROID* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonImportAndroidHardwareBufferInfoANDROID(
+    const cvkJsonContext*                     pContext,
+    const cvkJsonValue*                       pObject,
+    VkImportAndroidHardwareBufferInfoANDROID* pInfo)
 {
     cvkJsonWork work;
 
@@ -467,7 +519,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportAndroidHardwareBufferInfoANDROID(
     cvkAppendJsonWork(&work, cvkReadJsonImportAndroidHardwareBufferInfoANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetAndroidHardwareBufferInfoANDROID(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMemoryGetAndroidHardwareBufferInfoANDROID* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetAndroidHardwareBufferInfoANDROID(
+    const cvkJsonContext*                        pContext,
+    const cvkJsonValue*                          pObject,
+    VkMemoryGetAndroidHardwareBufferInfoANDROID* pInfo)
 {
     cvkJsonWork work;
 
@@ -475,9 +530,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetAndroidHardwareBufferInfoANDRO
     cvkAppendJsonWork(&work, cvkReadJsonMemoryGetAndroidHardwareBufferInfoANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID(const cvkJsonContext*                                 pContext,
-                                                                                            const cvkJsonValue*                                   pObject,
-                                                                                            VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID(
+    const cvkJsonContext*                                 pContext,
+    const cvkJsonValue*                                   pObject,
+    VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* pInfo)
 {
     cvkJsonWork work;
 
@@ -485,9 +541,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceExternalFormatResolveFeat
     cvkAppendJsonWork(&work, cvkReadJsonPhysicalDeviceExternalFormatResolveFeaturesANDROID, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(const cvkJsonContext*                                   pContext,
-                                                                                              const cvkJsonValue*                                     pObject,
-                                                                                              VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceExternalFormatResolvePropertiesANDROID(
+    const cvkJsonContext*                                   pContext,
+    const cvkJsonValue*                                     pObject,
+    VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* pInfo)
 {
     cvkJsonWork work;
 

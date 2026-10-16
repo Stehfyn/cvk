@@ -13,7 +13,10 @@
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExternalFormatOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExternalFormatOHOS(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext* pContext;
     VkExternalFormatOHOS* pInfo;
@@ -40,7 +43,10 @@ void cvkReadJsonExternalFormatOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObje
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonImportNativeBufferInfoOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonImportNativeBufferInfoOHOS(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*         pContext;
     VkImportNativeBufferInfoOHOS* pInfo;
@@ -64,7 +70,10 @@ void cvkReadJsonImportNativeBufferInfoOHOS(cvkJsonWork* pWork, const cvkJsonValu
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonMemoryGetNativeBufferInfoOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonMemoryGetNativeBufferInfoOHOS(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*            pContext;
     VkMemoryGetNativeBufferInfoOHOS* pInfo;
@@ -95,7 +104,10 @@ void cvkReadJsonMemoryGetNativeBufferInfoOHOS(cvkJsonWork* pWork, const cvkJsonV
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonNativeBufferFormatPropertiesOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonNativeBufferFormatPropertiesOHOS(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*               pContext;
     VkNativeBufferFormatPropertiesOHOS* pInfo;
@@ -157,7 +169,10 @@ void cvkReadJsonNativeBufferFormatPropertiesOHOS(cvkJsonWork* pWork, const cvkJs
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonNativeBufferPropertiesOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonNativeBufferPropertiesOHOS(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*         pContext;
     VkNativeBufferPropertiesOHOS* pInfo;
@@ -188,7 +203,10 @@ void cvkReadJsonNativeBufferPropertiesOHOS(cvkJsonWork* pWork, const cvkJsonValu
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonNativeBufferUsageOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonNativeBufferUsageOHOS(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*    pContext;
     VkNativeBufferUsageOHOS* pInfo;
@@ -215,7 +233,10 @@ void cvkReadJsonNativeBufferUsageOHOS(cvkJsonWork* pWork, const cvkJsonValue* pO
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonSurfaceCreateInfoOHOS(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonSurfaceCreateInfoOHOS(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*    pContext;
     VkSurfaceCreateInfoOHOS* pInfo;
@@ -237,11 +258,15 @@ void cvkReadJsonSurfaceCreateInfoOHOS(cvkJsonWork* pWork, const cvkJsonValue* pO
 
     pInfo->flags = cvkParseJsonSurfaceCreateFlagsOHOS(value);
 }
-extern CVK_FORCE_INLINE VkSurfaceCreateFlagsOHOS cvkParseJsonSurfaceCreateFlagsOHOS(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkSurfaceCreateFlagsOHOS cvkParseJsonSurfaceCreateFlagsOHOS(
+    const cvkJsonValue* pValue)
 {
     return (VkSurfaceCreateFlagsOHOS)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExternalFormatOHOS(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExternalFormatOHOS* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExternalFormatOHOS(
+    const cvkJsonContext* pContext,
+    const cvkJsonValue*   pObject,
+    VkExternalFormatOHOS* pInfo)
 {
     cvkJsonWork work;
 
@@ -249,7 +274,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExternalFormatOHOS(const cvkJsonContext
     cvkAppendJsonWork(&work, cvkReadJsonExternalFormatOHOS, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportNativeBufferInfoOHOS(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportNativeBufferInfoOHOS* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonImportNativeBufferInfoOHOS(
+    const cvkJsonContext*         pContext,
+    const cvkJsonValue*           pObject,
+    VkImportNativeBufferInfoOHOS* pInfo)
 {
     cvkJsonWork work;
 
@@ -257,7 +285,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportNativeBufferInfoOHOS(const cvkJso
     cvkAppendJsonWork(&work, cvkReadJsonImportNativeBufferInfoOHOS, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetNativeBufferInfoOHOS(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMemoryGetNativeBufferInfoOHOS* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetNativeBufferInfoOHOS(
+    const cvkJsonContext*            pContext,
+    const cvkJsonValue*              pObject,
+    VkMemoryGetNativeBufferInfoOHOS* pInfo)
 {
     cvkJsonWork work;
 
@@ -265,7 +296,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetNativeBufferInfoOHOS(const cvk
     cvkAppendJsonWork(&work, cvkReadJsonMemoryGetNativeBufferInfoOHOS, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonNativeBufferFormatPropertiesOHOS(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkNativeBufferFormatPropertiesOHOS* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonNativeBufferFormatPropertiesOHOS(
+    const cvkJsonContext*               pContext,
+    const cvkJsonValue*                 pObject,
+    VkNativeBufferFormatPropertiesOHOS* pInfo)
 {
     cvkJsonWork work;
 
@@ -273,7 +307,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonNativeBufferFormatPropertiesOHOS(const 
     cvkAppendJsonWork(&work, cvkReadJsonNativeBufferFormatPropertiesOHOS, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonNativeBufferPropertiesOHOS(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkNativeBufferPropertiesOHOS* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonNativeBufferPropertiesOHOS(
+    const cvkJsonContext*         pContext,
+    const cvkJsonValue*           pObject,
+    VkNativeBufferPropertiesOHOS* pInfo)
 {
     cvkJsonWork work;
 
@@ -281,7 +318,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonNativeBufferPropertiesOHOS(const cvkJso
     cvkAppendJsonWork(&work, cvkReadJsonNativeBufferPropertiesOHOS, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonNativeBufferUsageOHOS(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkNativeBufferUsageOHOS* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonNativeBufferUsageOHOS(
+    const cvkJsonContext*    pContext,
+    const cvkJsonValue*      pObject,
+    VkNativeBufferUsageOHOS* pInfo)
 {
     cvkJsonWork work;
 
@@ -289,7 +329,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonNativeBufferUsageOHOS(const cvkJsonCont
     cvkAppendJsonWork(&work, cvkReadJsonNativeBufferUsageOHOS, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonSurfaceCreateInfoOHOS(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkSurfaceCreateInfoOHOS* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonSurfaceCreateInfoOHOS(
+    const cvkJsonContext*    pContext,
+    const cvkJsonValue*      pObject,
+    VkSurfaceCreateInfoOHOS* pInfo)
 {
     cvkJsonWork work;
 

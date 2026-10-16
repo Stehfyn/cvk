@@ -7,7 +7,10 @@
 #include <vulkan/vulkan_sc_core.h>
 #include <vulkan/vulkan_screen.h>
 
-extern SCVK_FORCE_INLINE void scvkInitExternalFormatQNX(VkExternalFormatQNX* pInfo, void* pNext, uint64_t externalFormat)
+extern SCVK_FORCE_INLINE void scvkInitExternalFormatQNX(
+    VkExternalFormatQNX* pInfo,
+    void*                pNext,
+    uint64_t             externalFormat)
 {
     (*pInfo) = (VkExternalFormatQNX)
     {
@@ -16,7 +19,10 @@ extern SCVK_FORCE_INLINE void scvkInitExternalFormatQNX(VkExternalFormatQNX* pIn
         .externalFormat = externalFormat
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitImportScreenBufferInfoQNX(VkImportScreenBufferInfoQNX* pInfo, const void* pNext, struct _screen_buffer* buffer)
+extern SCVK_FORCE_INLINE void scvkInitImportScreenBufferInfoQNX(
+    VkImportScreenBufferInfoQNX* pInfo,
+    const void*                  pNext,
+    struct _screen_buffer*       buffer)
 {
     (*pInfo) = (VkImportScreenBufferInfoQNX)
     {
@@ -25,7 +31,10 @@ extern SCVK_FORCE_INLINE void scvkInitImportScreenBufferInfoQNX(VkImportScreenBu
         .buffer = buffer
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pInfo, void* pNext, VkBool32 screenBufferImport)
+extern SCVK_FORCE_INLINE void scvkInitPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
+    VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pInfo,
+    void*                                                  pNext,
+    VkBool32                                               screenBufferImport)
 {
     (*pInfo) = (VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX)
     {
@@ -34,17 +43,25 @@ extern SCVK_FORCE_INLINE void scvkInitPhysicalDeviceExternalMemoryScreenBufferFe
         .screenBufferImport = screenBufferImport
     };
 }
-extern SCVK_FORCE_INLINE void scvkInitScreenBufferFormatPropertiesQNX(VkScreenBufferFormatPropertiesQNX* pInfo, void* pNext)
+extern SCVK_FORCE_INLINE void scvkInitScreenBufferFormatPropertiesQNX(
+    VkScreenBufferFormatPropertiesQNX* pInfo,
+    void*                              pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_FORMAT_PROPERTIES_QNX;
     pInfo->pNext = pNext;
 }
-extern SCVK_FORCE_INLINE void scvkInitScreenBufferPropertiesQNX(VkScreenBufferPropertiesQNX* pInfo, void* pNext)
+extern SCVK_FORCE_INLINE void scvkInitScreenBufferPropertiesQNX(
+    VkScreenBufferPropertiesQNX* pInfo,
+    void*                        pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_SCREEN_BUFFER_PROPERTIES_QNX;
     pInfo->pNext = pNext;
 }
-extern SCVK_FORCE_INLINE void scvkGetScreenBufferPropertiesQNX(VkDevice device, const struct _screen_buffer* buffer, void* pNext, VkScreenBufferPropertiesQNX* pProperties)
+extern SCVK_FORCE_INLINE void scvkGetScreenBufferPropertiesQNX(
+    VkDevice                     device,
+    const struct _screen_buffer* buffer,
+    void*                        pNext,
+    VkScreenBufferPropertiesQNX* pProperties)
 {
     VkScreenBufferPropertiesQNX properties;
 
@@ -57,13 +74,14 @@ extern SCVK_FORCE_INLINE void scvkGetScreenBufferPropertiesQNX(VkDevice device, 
 
     (*pProperties) = properties;
 }
-extern SCVK_FORCE_INLINE void scvkAllocateImportScreenBufferQNX(VkDevice                     device,
-                                                                const void*                  pNext,
-                                                                struct _screen_buffer*       buffer,
-                                                                VkDeviceSize                 allocationSize,
-                                                                uint32_t                     memoryTypeIndex,
-                                                                const VkAllocationCallbacks* pAllocator,
-                                                                VkDeviceMemory*              pMemory)
+extern SCVK_FORCE_INLINE void scvkAllocateImportScreenBufferQNX(
+    VkDevice                     device,
+    const void*                  pNext,
+    struct _screen_buffer*       buffer,
+    VkDeviceSize                 allocationSize,
+    uint32_t                     memoryTypeIndex,
+    const VkAllocationCallbacks* pAllocator,
+    VkDeviceMemory*              pMemory)
 {
     VkImportScreenBufferInfoQNX buffer_info =
     {
@@ -74,24 +92,25 @@ extern SCVK_FORCE_INLINE void scvkAllocateImportScreenBufferQNX(VkDevice        
 
     scvkAllocateMemory(device, &buffer_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-extern SCVK_FORCE_INLINE void scvkCreateImageWithExternalFormatInfoQNX(VkDevice                     device,
-                                                                       void*                        pNext,
-                                                                       uint64_t                     externalFormat,
-                                                                       VkImageCreateFlags           flags,
-                                                                       VkImageType                  imageType,
-                                                                       VkFormat                     format,
-                                                                       VkExtent3D                   extent,
-                                                                       uint32_t                     mipLevels,
-                                                                       uint32_t                     arrayLayers,
-                                                                       VkSampleCountFlagBits        samples,
-                                                                       VkImageTiling                tiling,
-                                                                       VkImageUsageFlags            usage,
-                                                                       VkSharingMode                sharingMode,
-                                                                       uint32_t                     queueFamilyIndexCount,
-                                                                       const uint32_t*              pQueueFamilyIndices,
-                                                                       VkImageLayout                initialLayout,
-                                                                       const VkAllocationCallbacks* pAllocator,
-                                                                       VkImage*                     pImage)
+extern SCVK_FORCE_INLINE void scvkCreateImageWithExternalFormatInfoQNX(
+    VkDevice                     device,
+    void*                        pNext,
+    uint64_t                     externalFormat,
+    VkImageCreateFlags           flags,
+    VkImageType                  imageType,
+    VkFormat                     format,
+    VkExtent3D                   extent,
+    uint32_t                     mipLevels,
+    uint32_t                     arrayLayers,
+    VkSampleCountFlagBits        samples,
+    VkImageTiling                tiling,
+    VkImageUsageFlags            usage,
+    VkSharingMode                sharingMode,
+    uint32_t                     queueFamilyIndexCount,
+    const uint32_t*              pQueueFamilyIndices,
+    VkImageLayout                initialLayout,
+    const VkAllocationCallbacks* pAllocator,
+    VkImage*                     pImage)
 {
     VkExternalFormatQNX external_format =
     {
@@ -118,19 +137,20 @@ extern SCVK_FORCE_INLINE void scvkCreateImageWithExternalFormatInfoQNX(VkDevice 
                     pAllocator,
                     pImage);
 }
-extern SCVK_FORCE_INLINE void scvkCreateSamplerYcbcrConversionWithExternalFormatInfoQNX(VkDevice                      device,
-                                                                                        void*                         pNext,
-                                                                                        uint64_t                      externalFormat,
-                                                                                        VkFormat                      format,
-                                                                                        VkSamplerYcbcrModelConversion ycbcrModel,
-                                                                                        VkSamplerYcbcrRange           ycbcrRange,
-                                                                                        VkComponentMapping            components,
-                                                                                        VkChromaLocation              xChromaOffset,
-                                                                                        VkChromaLocation              yChromaOffset,
-                                                                                        VkFilter                      chromaFilter,
-                                                                                        VkBool32                      forceExplicitReconstruction,
-                                                                                        const VkAllocationCallbacks*  pAllocator,
-                                                                                        VkSamplerYcbcrConversion*     pYcbcrConversion)
+extern SCVK_FORCE_INLINE void scvkCreateSamplerYcbcrConversionWithExternalFormatInfoQNX(
+    VkDevice                      device,
+    void*                         pNext,
+    uint64_t                      externalFormat,
+    VkFormat                      format,
+    VkSamplerYcbcrModelConversion ycbcrModel,
+    VkSamplerYcbcrRange           ycbcrRange,
+    VkComponentMapping            components,
+    VkChromaLocation              xChromaOffset,
+    VkChromaLocation              yChromaOffset,
+    VkFilter                      chromaFilter,
+    VkBool32                      forceExplicitReconstruction,
+    const VkAllocationCallbacks*  pAllocator,
+    VkSamplerYcbcrConversion*     pYcbcrConversion)
 {
     VkExternalFormatQNX external_format =
     {
@@ -152,9 +172,10 @@ extern SCVK_FORCE_INLINE void scvkCreateSamplerYcbcrConversionWithExternalFormat
                                      pAllocator,
                                      pYcbcrConversion);
 }
-extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(VkPhysicalDevice                                       physicalDevice,
-                                                                                         void*                                                  pNext,
-                                                                                         VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX)
+extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
+    VkPhysicalDevice                                       physicalDevice,
+    void*                                                  pNext,
+    VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX)
 {
     VkPhysicalDeviceFeatures2                             features;
     VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX ext_features =
@@ -167,10 +188,11 @@ extern SCVK_FORCE_INLINE void scvkGetPhysicalDeviceExternalMemoryScreenBufferFea
 
     (*pPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX) = ext_features;
 }
-extern SCVK_FORCE_INLINE void scvkGetScreenBufferFormatPropertiesQNX(VkDevice                           device,
-                                                                     const struct _screen_buffer*       buffer,
-                                                                     void*                              pNext,
-                                                                     VkScreenBufferFormatPropertiesQNX* pScreenBufferFormatPropertiesQNX)
+extern SCVK_FORCE_INLINE void scvkGetScreenBufferFormatPropertiesQNX(
+    VkDevice                           device,
+    const struct _screen_buffer*       buffer,
+    void*                              pNext,
+    VkScreenBufferFormatPropertiesQNX* pScreenBufferFormatPropertiesQNX)
 {
     VkScreenBufferPropertiesQNX       properties;
     VkScreenBufferFormatPropertiesQNX ext_properties;

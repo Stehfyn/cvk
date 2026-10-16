@@ -12,7 +12,10 @@
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonMacOSSurfaceCreateInfoMVK(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonMacOSSurfaceCreateInfoMVK(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*        pContext;
     VkMacOSSurfaceCreateInfoMVK* pInfo;
@@ -34,11 +37,15 @@ void cvkReadJsonMacOSSurfaceCreateInfoMVK(cvkJsonWork* pWork, const cvkJsonValue
 
     pInfo->flags = cvkParseJsonMacOSSurfaceCreateFlagsMVK(value);
 }
-extern CVK_FORCE_INLINE VkMacOSSurfaceCreateFlagsMVK cvkParseJsonMacOSSurfaceCreateFlagsMVK(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkMacOSSurfaceCreateFlagsMVK cvkParseJsonMacOSSurfaceCreateFlagsMVK(
+    const cvkJsonValue* pValue)
 {
     return (VkMacOSSurfaceCreateFlagsMVK)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMacOSSurfaceCreateInfoMVK(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMacOSSurfaceCreateInfoMVK* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonMacOSSurfaceCreateInfoMVK(
+    const cvkJsonContext*        pContext,
+    const cvkJsonValue*          pObject,
+    VkMacOSSurfaceCreateInfoMVK* pInfo)
 {
     cvkJsonWork work;
 

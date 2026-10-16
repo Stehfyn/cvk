@@ -8,8 +8,47 @@
 #include <vulkan/vulkan_directfb.h>
 
 /* clang-format off */
+/**
+ * \brief Initializes a VkDirectFBSurfaceCreateInfoEXT.
+ *
+ * \param[out] pInfo    Receives the initialized VkDirectFBSurfaceCreateInfoEXT
+ * \param[in] pNext    Optional extension chain attached to VkDirectFBSurfaceCreateInfoEXT, or NULL
+ * \param[in] flags    VkDirectFBSurfaceCreateInfoEXT::flags
+ * \param[in] dfb      VkDirectFBSurfaceCreateInfoEXT::dfb
+ * \param[in] surface  VkDirectFBSurfaceCreateInfoEXT::surface
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitDirectFBSurfaceCreateInfo(VkDirectFBSurfaceCreateInfoEXT* pInfo, const void* pNext, VkDirectFBSurfaceCreateFlagsEXT flags, IDirectFB* dfb, IDirectFBSurface* surface);
+/**
+ * \brief Creates a direct fb surface.
+ *
+ * \par Details:
+ *  Wraps vkCreateDirectFBSurfaceEXT. Aborts on any error result.
+ *
+ * \param[in] instance    VkInstance value
+ * \param[in] pNext       Optional extension chain attached to VkDirectFBSurfaceCreateInfoEXT, or NULL
+ * \param[in] flags       VkDirectFBSurfaceCreateInfoEXT::flags
+ * \param[in] dfb         VkDirectFBSurfaceCreateInfoEXT::dfb
+ * \param[in] surface     VkDirectFBSurfaceCreateInfoEXT::surface
+ * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[out] pSurface    Receives the created VkSurfaceKHR
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateDirectFBSurface(VkInstance instance, const void* pNext, VkDirectFBSurfaceCreateFlagsEXT flags, IDirectFB* dfb, IDirectFBSurface* surface, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+/**
+ * \brief Retrieves physical device direct fb presentation support.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceDirectFBPresentationSupportEXT.
+ *
+ * \param[in] physicalDevice    VkPhysicalDevice value
+ * \param[in] queueFamilyIndex  uint32_t value
+ * \param[out] dfb               Receives the IDirectFB
+ *
+ * \return The VkBool32 returned by the command.
+ */
 VkBool32 cvkGetPhysicalDeviceDirectFBPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, IDirectFB* dfb);
 /* clang-format on */
 

@@ -10,7 +10,12 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_xcb.h>
 
-extern CVK_FORCE_INLINE void cvkInitXcbSurfaceCreateInfo(VkXcbSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXcbSurfaceCreateFlagsKHR flags, xcb_connection_t* connection, xcb_window_t window)
+extern CVK_FORCE_INLINE void cvkInitXcbSurfaceCreateInfo(
+    VkXcbSurfaceCreateInfoKHR* pInfo,
+    const void*                pNext,
+    VkXcbSurfaceCreateFlagsKHR flags,
+    xcb_connection_t*          connection,
+    xcb_window_t               window)
 {
     (*pInfo) = (VkXcbSurfaceCreateInfoKHR)
     {
@@ -21,13 +26,14 @@ extern CVK_FORCE_INLINE void cvkInitXcbSurfaceCreateInfo(VkXcbSurfaceCreateInfoK
         .window     = window
     };
 }
-extern CVK_FORCE_INLINE void cvkCreateXcbSurface(VkInstance                   instance,
-                                                 const void*                  pNext,
-                                                 VkXcbSurfaceCreateFlagsKHR   flags,
-                                                 xcb_connection_t*            connection,
-                                                 xcb_window_t                 window,
-                                                 const VkAllocationCallbacks* pAllocator,
-                                                 VkSurfaceKHR*                pSurface)
+extern CVK_FORCE_INLINE void cvkCreateXcbSurface(
+    VkInstance                   instance,
+    const void*                  pNext,
+    VkXcbSurfaceCreateFlagsKHR   flags,
+    xcb_connection_t*            connection,
+    xcb_window_t                 window,
+    const VkAllocationCallbacks* pAllocator,
+    VkSurfaceKHR*                pSurface)
 {
     VkXcbSurfaceCreateInfoKHR create_info =
     {
@@ -41,7 +47,11 @@ extern CVK_FORCE_INLINE void cvkCreateXcbSurface(VkInstance                   in
     CVK_CHECK(vkCreateXcbSurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
-extern CVK_FORCE_INLINE VkBool32 cvkGetPhysicalDeviceXcbPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, xcb_connection_t* connection, xcb_visualid_t visual_id)
+extern CVK_FORCE_INLINE VkBool32 cvkGetPhysicalDeviceXcbPresentationSupport(
+    VkPhysicalDevice  physicalDevice,
+    uint32_t          queueFamilyIndex,
+    xcb_connection_t* connection,
+    xcb_visualid_t    visual_id)
 {
     return vkGetPhysicalDeviceXcbPresentationSupportKHR(physicalDevice, queueFamilyIndex, connection, visual_id);
 }

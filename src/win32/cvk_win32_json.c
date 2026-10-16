@@ -24,7 +24,9 @@ static CVK_FORCE_INLINE uint64_t* cvkReadJsonUint64Array(const cvkJsonContext* p
  * \par Details:
  *  The element count is checked before computing the allocation extent.
  */
-static CVK_FORCE_INLINE uint64_t* cvkReadJsonUint64Array(const cvkJsonContext* pContext, const cvkJsonValue* pValue)
+static CVK_FORCE_INLINE uint64_t* cvkReadJsonUint64Array(
+    const cvkJsonContext* pContext,
+    const cvkJsonValue*   pValue)
 {
     uint64_t*           storage;
     uint64_t*           slot;
@@ -78,14 +80,17 @@ static CVK_FORCE_INLINE uint64_t* cvkReadJsonUint64Array(const cvkJsonContext* p
  * \retval NULL The value is not an array or the array is empty.
  * \retval Other The typed array in the caller's arena.
  */
-static CVK_FORCE_INLINE VkDeviceMemory* cvkReadJsonDeviceMemoryArray(const cvkJsonContext* pContext, const cvkJsonValue* pValue);
+static CVK_FORCE_INLINE VkDeviceMemory* cvkReadJsonDeviceMemoryArray(const cvkJsonContext* pContext,
+                                                                     const cvkJsonValue*   pValue);
 
 /*************************************************************************************************/
 /**
  * \par Details:
  *  The element count is checked before computing the allocation extent.
  */
-static CVK_FORCE_INLINE VkDeviceMemory* cvkReadJsonDeviceMemoryArray(const cvkJsonContext* pContext, const cvkJsonValue* pValue)
+static CVK_FORCE_INLINE VkDeviceMemory* cvkReadJsonDeviceMemoryArray(
+    const cvkJsonContext* pContext,
+    const cvkJsonValue*   pValue)
 {
     VkDeviceMemory*     storage;
     VkDeviceMemory*     slot;
@@ -147,7 +152,9 @@ static CVK_FORCE_INLINE uint32_t* cvkReadJsonUint32Array(const cvkJsonContext* p
  * \par Details:
  *  The element count is checked before computing the allocation extent.
  */
-static CVK_FORCE_INLINE uint32_t* cvkReadJsonUint32Array(const cvkJsonContext* pContext, const cvkJsonValue* pValue)
+static CVK_FORCE_INLINE uint32_t* cvkReadJsonUint32Array(
+    const cvkJsonContext* pContext,
+    const cvkJsonValue*   pValue)
 {
     uint32_t*           storage;
     uint32_t*           slot;
@@ -199,7 +206,10 @@ static CVK_FORCE_INLINE uint32_t* cvkReadJsonUint32Array(const cvkJsonContext* p
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonD3D12FenceSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonD3D12FenceSubmitInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*      pContext;
     VkD3D12FenceSubmitInfoKHR* pInfo;
@@ -241,7 +251,10 @@ void cvkReadJsonD3D12FenceSubmitInfo(cvkJsonWork* pWork, const cvkJsonValue* pOb
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExportFenceWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExportFenceWin32HandleInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*            pContext;
     VkExportFenceWin32HandleInfoKHR* pInfo;
@@ -265,7 +278,10 @@ void cvkReadJsonExportFenceWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExportMemoryWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExportMemoryWin32HandleInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*             pContext;
     VkExportMemoryWin32HandleInfoKHR* pInfo;
@@ -289,7 +305,10 @@ void cvkReadJsonExportMemoryWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExportMemoryWin32HandleInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExportMemoryWin32HandleInfoNV(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*            pContext;
     VkExportMemoryWin32HandleInfoNV* pInfo;
@@ -313,7 +332,10 @@ void cvkReadJsonExportMemoryWin32HandleInfoNV(cvkJsonWork* pWork, const cvkJsonV
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExportSemaphoreWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExportSemaphoreWin32HandleInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                pContext;
     VkExportSemaphoreWin32HandleInfoKHR* pInfo;
@@ -337,7 +359,10 @@ void cvkReadJsonExportSemaphoreWin32HandleInfo(cvkJsonWork* pWork, const cvkJson
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonFenceGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonFenceGetWin32HandleInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*         pContext;
     VkFenceGetWin32HandleInfoKHR* pInfo;
@@ -373,7 +398,10 @@ void cvkReadJsonFenceGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* 
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonImportFenceWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonImportFenceWin32HandleInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*            pContext;
     VkImportFenceWin32HandleInfoKHR* pInfo;
@@ -413,7 +441,10 @@ void cvkReadJsonImportFenceWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValu
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonImportMemoryWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonImportMemoryWin32HandleInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*             pContext;
     VkImportMemoryWin32HandleInfoKHR* pInfo;
@@ -442,7 +473,10 @@ void cvkReadJsonImportMemoryWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonImportMemoryWin32HandleInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonImportMemoryWin32HandleInfoNV(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*            pContext;
     VkImportMemoryWin32HandleInfoNV* pInfo;
@@ -469,7 +503,10 @@ void cvkReadJsonImportMemoryWin32HandleInfoNV(cvkJsonWork* pWork, const cvkJsonV
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonImportSemaphoreWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonImportSemaphoreWin32HandleInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                pContext;
     VkImportSemaphoreWin32HandleInfoKHR* pInfo;
@@ -509,7 +546,10 @@ void cvkReadJsonImportSemaphoreWin32HandleInfo(cvkJsonWork* pWork, const cvkJson
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonMemoryGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonMemoryGetWin32HandleInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*          pContext;
     VkMemoryGetWin32HandleInfoKHR* pInfo;
@@ -545,7 +585,10 @@ void cvkReadJsonMemoryGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue*
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonMemoryWin32HandleProperties(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonMemoryWin32HandleProperties(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*             pContext;
     VkMemoryWin32HandlePropertiesKHR* pInfo;
@@ -572,7 +615,10 @@ void cvkReadJsonMemoryWin32HandleProperties(cvkJsonWork* pWork, const cvkJsonVal
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonSemaphoreGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonSemaphoreGetWin32HandleInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*             pContext;
     VkSemaphoreGetWin32HandleInfoKHR* pInfo;
@@ -608,7 +654,10 @@ void cvkReadJsonSemaphoreGetWin32HandleInfo(cvkJsonWork* pWork, const cvkJsonVal
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonSurfaceCapabilitiesFullScreenExclusive(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonSurfaceCapabilitiesFullScreenExclusive(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                        pContext;
     VkSurfaceCapabilitiesFullScreenExclusiveEXT* pInfo;
@@ -626,7 +675,7 @@ void cvkReadJsonSurfaceCapabilitiesFullScreenExclusive(cvkJsonWork* pWork, const
     {
         pInfo->pNext = cvkScheduleJsonStructureChain(pWork, value);
     }
-    value                               = cvkGetJsonMember(&pContext->document, pObject, "fullScreenExclusiveSupported");
+    value = cvkGetJsonMember(&pContext->document, pObject, "fullScreenExclusiveSupported");
 
     pInfo->fullScreenExclusiveSupported = cvkGetJsonBool32(value);
 }
@@ -635,7 +684,10 @@ void cvkReadJsonSurfaceCapabilitiesFullScreenExclusive(cvkJsonWork* pWork, const
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonSurfaceFullScreenExclusiveInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonSurfaceFullScreenExclusiveInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                pContext;
     VkSurfaceFullScreenExclusiveInfoEXT* pInfo;
@@ -664,7 +716,10 @@ void cvkReadJsonSurfaceFullScreenExclusiveInfo(cvkJsonWork* pWork, const cvkJson
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonSurfaceFullScreenExclusiveWin32Info(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonSurfaceFullScreenExclusiveWin32Info(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                     pContext;
     VkSurfaceFullScreenExclusiveWin32InfoEXT* pInfo;
@@ -688,7 +743,10 @@ void cvkReadJsonSurfaceFullScreenExclusiveWin32Info(cvkJsonWork* pWork, const cv
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonWin32KeyedMutexAcquireReleaseInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonWin32KeyedMutexAcquireReleaseInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                   pContext;
     VkWin32KeyedMutexAcquireReleaseInfoKHR* pInfo;
@@ -745,7 +803,10 @@ void cvkReadJsonWin32KeyedMutexAcquireReleaseInfo(cvkJsonWork* pWork, const cvkJ
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonWin32KeyedMutexAcquireReleaseInfoNV(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonWin32KeyedMutexAcquireReleaseInfoNV(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                  pContext;
     VkWin32KeyedMutexAcquireReleaseInfoNV* pInfo;
@@ -802,7 +863,10 @@ void cvkReadJsonWin32KeyedMutexAcquireReleaseInfoNV(cvkJsonWork* pWork, const cv
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonWin32SurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonWin32SurfaceCreateInfo(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*        pContext;
     VkWin32SurfaceCreateInfoKHR* pInfo;
@@ -824,29 +888,38 @@ void cvkReadJsonWin32SurfaceCreateInfo(cvkJsonWork* pWork, const cvkJsonValue* p
 
     pInfo->flags = cvkParseJsonWin32SurfaceCreateFlags(value);
 }
-extern CVK_FORCE_INLINE VkFullScreenExclusiveEXT cvkParseJsonFullScreenExclusive(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkFullScreenExclusiveEXT cvkParseJsonFullScreenExclusive(
+    const cvkJsonValue* pValue)
 {
     uint64_t enumerant;
     VkBool32 found;
 
-    static const cvkJsonName table[] = {{"VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT},
-                                        {"VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT},
-                                        {"VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT},
-                                        {"VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT}};
+    static const cvkJsonName table[] = {
+        {"VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT},
+        {"VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT},
+        {"VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT},
+        {"VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT",
+         (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT}};
 
     enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT) || (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT) ||
-            (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT) || (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT);
+    found = (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT) ||
+            (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT) ||
+            (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT) ||
+            (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT);
     CVK_ASSERT(found);
 
     return (VkFullScreenExclusiveEXT)enumerant;
 }
-extern CVK_FORCE_INLINE VkWin32SurfaceCreateFlagsKHR cvkParseJsonWin32SurfaceCreateFlags(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkWin32SurfaceCreateFlagsKHR cvkParseJsonWin32SurfaceCreateFlags(
+    const cvkJsonValue* pValue)
 {
     return (VkWin32SurfaceCreateFlagsKHR)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonD3D12FenceSubmitInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkD3D12FenceSubmitInfoKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonD3D12FenceSubmitInfo(
+    const cvkJsonContext*      pContext,
+    const cvkJsonValue*        pObject,
+    VkD3D12FenceSubmitInfoKHR* pInfo)
 {
     cvkJsonWork work;
 
@@ -854,7 +927,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonD3D12FenceSubmitInfo(const cvkJsonConte
     cvkAppendJsonWork(&work, cvkReadJsonD3D12FenceSubmitInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportFenceWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportFenceWin32HandleInfoKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExportFenceWin32HandleInfo(
+    const cvkJsonContext*            pContext,
+    const cvkJsonValue*              pObject,
+    VkExportFenceWin32HandleInfoKHR* pInfo)
 {
     cvkJsonWork work;
 
@@ -862,7 +938,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportFenceWin32HandleInfo(const cvkJso
     cvkAppendJsonWork(&work, cvkReadJsonExportFenceWin32HandleInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMemoryWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMemoryWin32HandleInfoKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExportMemoryWin32HandleInfo(
+    const cvkJsonContext*             pContext,
+    const cvkJsonValue*               pObject,
+    VkExportMemoryWin32HandleInfoKHR* pInfo)
 {
     cvkJsonWork work;
 
@@ -870,7 +949,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMemoryWin32HandleInfo(const cvkJs
     cvkAppendJsonWork(&work, cvkReadJsonExportMemoryWin32HandleInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportMemoryWin32HandleInfoNV(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMemoryWin32HandleInfoNV* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExportMemoryWin32HandleInfoNV(
+    const cvkJsonContext*            pContext,
+    const cvkJsonValue*              pObject,
+    VkExportMemoryWin32HandleInfoNV* pInfo)
 {
     cvkJsonWork work;
 
@@ -878,7 +960,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportMemoryWin32HandleInfoNV(const cvk
     cvkAppendJsonWork(&work, cvkReadJsonExportMemoryWin32HandleInfoNV, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExportSemaphoreWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportSemaphoreWin32HandleInfoKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExportSemaphoreWin32HandleInfo(
+    const cvkJsonContext*                pContext,
+    const cvkJsonValue*                  pObject,
+    VkExportSemaphoreWin32HandleInfoKHR* pInfo)
 {
     cvkJsonWork work;
 
@@ -886,7 +971,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExportSemaphoreWin32HandleInfo(const cv
     cvkAppendJsonWork(&work, cvkReadJsonExportSemaphoreWin32HandleInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonFenceGetWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkFenceGetWin32HandleInfoKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonFenceGetWin32HandleInfo(
+    const cvkJsonContext*         pContext,
+    const cvkJsonValue*           pObject,
+    VkFenceGetWin32HandleInfoKHR* pInfo)
 {
     cvkJsonWork work;
 
@@ -894,7 +982,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonFenceGetWin32HandleInfo(const cvkJsonCo
     cvkAppendJsonWork(&work, cvkReadJsonFenceGetWin32HandleInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportFenceWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportFenceWin32HandleInfoKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonImportFenceWin32HandleInfo(
+    const cvkJsonContext*            pContext,
+    const cvkJsonValue*              pObject,
+    VkImportFenceWin32HandleInfoKHR* pInfo)
 {
     cvkJsonWork work;
 
@@ -902,7 +993,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportFenceWin32HandleInfo(const cvkJso
     cvkAppendJsonWork(&work, cvkReadJsonImportFenceWin32HandleInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportMemoryWin32HandleInfoKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryWin32HandleInfo(
+    const cvkJsonContext*             pContext,
+    const cvkJsonValue*               pObject,
+    VkImportMemoryWin32HandleInfoKHR* pInfo)
 {
     cvkJsonWork work;
 
@@ -910,7 +1004,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryWin32HandleInfo(const cvkJs
     cvkAppendJsonWork(&work, cvkReadJsonImportMemoryWin32HandleInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryWin32HandleInfoNV(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportMemoryWin32HandleInfoNV* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryWin32HandleInfoNV(
+    const cvkJsonContext*            pContext,
+    const cvkJsonValue*              pObject,
+    VkImportMemoryWin32HandleInfoNV* pInfo)
 {
     cvkJsonWork work;
 
@@ -918,7 +1015,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportMemoryWin32HandleInfoNV(const cvk
     cvkAppendJsonWork(&work, cvkReadJsonImportMemoryWin32HandleInfoNV, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportSemaphoreWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportSemaphoreWin32HandleInfoKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonImportSemaphoreWin32HandleInfo(
+    const cvkJsonContext*                pContext,
+    const cvkJsonValue*                  pObject,
+    VkImportSemaphoreWin32HandleInfoKHR* pInfo)
 {
     cvkJsonWork work;
 
@@ -926,7 +1026,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportSemaphoreWin32HandleInfo(const cv
     cvkAppendJsonWork(&work, cvkReadJsonImportSemaphoreWin32HandleInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMemoryGetWin32HandleInfoKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetWin32HandleInfo(
+    const cvkJsonContext*          pContext,
+    const cvkJsonValue*            pObject,
+    VkMemoryGetWin32HandleInfoKHR* pInfo)
 {
     cvkJsonWork work;
 
@@ -934,7 +1037,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonMemoryGetWin32HandleInfo(const cvkJsonC
     cvkAppendJsonWork(&work, cvkReadJsonMemoryGetWin32HandleInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonMemoryWin32HandleProperties(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMemoryWin32HandlePropertiesKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonMemoryWin32HandleProperties(
+    const cvkJsonContext*             pContext,
+    const cvkJsonValue*               pObject,
+    VkMemoryWin32HandlePropertiesKHR* pInfo)
 {
     cvkJsonWork work;
 
@@ -942,7 +1048,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonMemoryWin32HandleProperties(const cvkJs
     cvkAppendJsonWork(&work, cvkReadJsonMemoryWin32HandleProperties, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonSemaphoreGetWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkSemaphoreGetWin32HandleInfoKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonSemaphoreGetWin32HandleInfo(
+    const cvkJsonContext*             pContext,
+    const cvkJsonValue*               pObject,
+    VkSemaphoreGetWin32HandleInfoKHR* pInfo)
 {
     cvkJsonWork work;
 
@@ -950,7 +1059,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonSemaphoreGetWin32HandleInfo(const cvkJs
     cvkAppendJsonWork(&work, cvkReadJsonSemaphoreGetWin32HandleInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonSurfaceCapabilitiesFullScreenExclusive(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkSurfaceCapabilitiesFullScreenExclusiveEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonSurfaceCapabilitiesFullScreenExclusive(
+    const cvkJsonContext*                        pContext,
+    const cvkJsonValue*                          pObject,
+    VkSurfaceCapabilitiesFullScreenExclusiveEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -958,7 +1070,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonSurfaceCapabilitiesFullScreenExclusive(
     cvkAppendJsonWork(&work, cvkReadJsonSurfaceCapabilitiesFullScreenExclusive, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonSurfaceFullScreenExclusiveInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkSurfaceFullScreenExclusiveInfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonSurfaceFullScreenExclusiveInfo(
+    const cvkJsonContext*                pContext,
+    const cvkJsonValue*                  pObject,
+    VkSurfaceFullScreenExclusiveInfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -966,7 +1081,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonSurfaceFullScreenExclusiveInfo(const cv
     cvkAppendJsonWork(&work, cvkReadJsonSurfaceFullScreenExclusiveInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonSurfaceFullScreenExclusiveWin32Info(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkSurfaceFullScreenExclusiveWin32InfoEXT* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonSurfaceFullScreenExclusiveWin32Info(
+    const cvkJsonContext*                     pContext,
+    const cvkJsonValue*                       pObject,
+    VkSurfaceFullScreenExclusiveWin32InfoEXT* pInfo)
 {
     cvkJsonWork work;
 
@@ -974,7 +1092,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonSurfaceFullScreenExclusiveWin32Info(con
     cvkAppendJsonWork(&work, cvkReadJsonSurfaceFullScreenExclusiveWin32Info, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonWin32KeyedMutexAcquireReleaseInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkWin32KeyedMutexAcquireReleaseInfoKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonWin32KeyedMutexAcquireReleaseInfo(
+    const cvkJsonContext*                   pContext,
+    const cvkJsonValue*                     pObject,
+    VkWin32KeyedMutexAcquireReleaseInfoKHR* pInfo)
 {
     cvkJsonWork work;
 
@@ -982,7 +1103,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonWin32KeyedMutexAcquireReleaseInfo(const
     cvkAppendJsonWork(&work, cvkReadJsonWin32KeyedMutexAcquireReleaseInfo, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonWin32KeyedMutexAcquireReleaseInfoNV(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkWin32KeyedMutexAcquireReleaseInfoNV* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonWin32KeyedMutexAcquireReleaseInfoNV(
+    const cvkJsonContext*                  pContext,
+    const cvkJsonValue*                    pObject,
+    VkWin32KeyedMutexAcquireReleaseInfoNV* pInfo)
 {
     cvkJsonWork work;
 
@@ -990,7 +1114,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonWin32KeyedMutexAcquireReleaseInfoNV(con
     cvkAppendJsonWork(&work, cvkReadJsonWin32KeyedMutexAcquireReleaseInfoNV, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonWin32SurfaceCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkWin32SurfaceCreateInfoKHR* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonWin32SurfaceCreateInfo(
+    const cvkJsonContext*        pContext,
+    const cvkJsonValue*          pObject,
+    VkWin32SurfaceCreateInfoKHR* pInfo)
 {
     cvkJsonWork work;
 

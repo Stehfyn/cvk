@@ -13,7 +13,10 @@
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonExternalFormatQNX(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonExternalFormatQNX(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext* pContext;
     VkExternalFormatQNX*   pInfo;
@@ -40,7 +43,10 @@ void scvkReadJsonExternalFormatQNX(scvkJsonWork* pWork, const scvkJsonValue* pOb
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonImportScreenBufferInfoQNX(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonImportScreenBufferInfoQNX(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*       pContext;
     VkImportScreenBufferInfoQNX* pInfo;
@@ -64,7 +70,10 @@ void scvkReadJsonImportScreenBufferInfoQNX(scvkJsonWork* pWork, const scvkJsonVa
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*                                 pContext;
     VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pInfo;
@@ -91,7 +100,10 @@ void scvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(scvkJsonWor
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonScreenBufferFormatPropertiesQNX(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonScreenBufferFormatPropertiesQNX(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*             pContext;
     VkScreenBufferFormatPropertiesQNX* pInfo;
@@ -157,7 +169,10 @@ void scvkReadJsonScreenBufferFormatPropertiesQNX(scvkJsonWork* pWork, const scvk
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void scvkReadJsonScreenBufferPropertiesQNX(scvkJsonWork* pWork, const scvkJsonValue* pObject, void* pOutput)
+void scvkReadJsonScreenBufferPropertiesQNX(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject,
+    void*                pOutput)
 {
     const scvkJsonContext*       pContext;
     VkScreenBufferPropertiesQNX* pInfo;
@@ -183,7 +198,10 @@ void scvkReadJsonScreenBufferPropertiesQNX(scvkJsonWork* pWork, const scvkJsonVa
 
     pInfo->memoryTypeBits = (uint32_t)scvkParseJsonUint64(value);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonExternalFormatQNX(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkExternalFormatQNX* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonExternalFormatQNX(
+    const scvkJsonContext* pContext,
+    const scvkJsonValue*   pObject,
+    VkExternalFormatQNX*   pInfo)
 {
     scvkJsonWork work;
 
@@ -191,7 +209,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonExternalFormatQNX(const scvkJsonConte
     scvkAppendJsonWork(&work, scvkReadJsonExternalFormatQNX, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonImportScreenBufferInfoQNX(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkImportScreenBufferInfoQNX* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonImportScreenBufferInfoQNX(
+    const scvkJsonContext*       pContext,
+    const scvkJsonValue*         pObject,
+    VkImportScreenBufferInfoQNX* pInfo)
 {
     scvkJsonWork work;
 
@@ -199,9 +220,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonImportScreenBufferInfoQNX(const scvkJ
     scvkAppendJsonWork(&work, scvkReadJsonImportScreenBufferInfoQNX, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(const scvkJsonContext*                                 pContext,
-                                                                                               const scvkJsonValue*                                   pObject,
-                                                                                               VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
+    const scvkJsonContext*                                 pContext,
+    const scvkJsonValue*                                   pObject,
+    VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pInfo)
 {
     scvkJsonWork work;
 
@@ -209,7 +231,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonPhysicalDeviceExternalMemoryScreenBuf
     scvkAppendJsonWork(&work, scvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonScreenBufferFormatPropertiesQNX(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkScreenBufferFormatPropertiesQNX* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonScreenBufferFormatPropertiesQNX(
+    const scvkJsonContext*             pContext,
+    const scvkJsonValue*               pObject,
+    VkScreenBufferFormatPropertiesQNX* pInfo)
 {
     scvkJsonWork work;
 
@@ -217,7 +242,10 @@ extern SCVK_FORCE_INLINE void scvkParseJsonScreenBufferFormatPropertiesQNX(const
     scvkAppendJsonWork(&work, scvkReadJsonScreenBufferFormatPropertiesQNX, pObject, pInfo);
     scvkRunJsonWork(&work);
 }
-extern SCVK_FORCE_INLINE void scvkParseJsonScreenBufferPropertiesQNX(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkScreenBufferPropertiesQNX* pInfo)
+extern SCVK_FORCE_INLINE void scvkParseJsonScreenBufferPropertiesQNX(
+    const scvkJsonContext*       pContext,
+    const scvkJsonValue*         pObject,
+    VkScreenBufferPropertiesQNX* pInfo)
 {
     scvkJsonWork work;
 

@@ -12,7 +12,10 @@
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonIOSSurfaceCreateInfoMVK(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonIOSSurfaceCreateInfoMVK(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*      pContext;
     VkIOSSurfaceCreateInfoMVK* pInfo;
@@ -34,11 +37,15 @@ void cvkReadJsonIOSSurfaceCreateInfoMVK(cvkJsonWork* pWork, const cvkJsonValue* 
 
     pInfo->flags = cvkParseJsonIOSSurfaceCreateFlagsMVK(value);
 }
-extern CVK_FORCE_INLINE VkIOSSurfaceCreateFlagsMVK cvkParseJsonIOSSurfaceCreateFlagsMVK(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkIOSSurfaceCreateFlagsMVK cvkParseJsonIOSSurfaceCreateFlagsMVK(
+    const cvkJsonValue* pValue)
 {
     return (VkIOSSurfaceCreateFlagsMVK)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonIOSSurfaceCreateInfoMVK(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkIOSSurfaceCreateInfoMVK* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonIOSSurfaceCreateInfoMVK(
+    const cvkJsonContext*      pContext,
+    const cvkJsonValue*        pObject,
+    VkIOSSurfaceCreateInfoMVK* pInfo)
 {
     cvkJsonWork work;
 

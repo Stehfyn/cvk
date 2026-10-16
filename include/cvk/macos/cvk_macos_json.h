@@ -7,7 +7,23 @@
 #include <vulkan/vulkan_macos.h>
 
 /* clang-format off */
+/**
+ * \brief Parses a VkMacOSSurfaceCreateFlagsMVK from JSON.
+ *
+ * \param[in] pValue  The value: bit names joined by |, a number, or NULL
+ *
+ * \return The VkMacOSSurfaceCreateFlagsMVK returned by the command.
+ */
 VkMacOSSurfaceCreateFlagsMVK cvkParseJsonMacOSSurfaceCreateFlagsMVK(const cvkJsonValue* pValue);
+/**
+ * \brief Parses a VkMacOSSurfaceCreateInfoMVK from a JSON object; members absent or NULL stay zero.
+ *
+ * \param[in] pContext  Parsing context: document, arena, handle resolver
+ * \param[in] pObject   The JSON object of the VkMacOSSurfaceCreateInfoMVK
+ * \param[out] pInfo     Receives the parsed VkMacOSSurfaceCreateInfoMVK, zeroed first
+ *
+ * \retval None No value is returned.
+ */
 void cvkParseJsonMacOSSurfaceCreateInfoMVK(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMacOSSurfaceCreateInfoMVK* pInfo);
 /* clang-format on */
 

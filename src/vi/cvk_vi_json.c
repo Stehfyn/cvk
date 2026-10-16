@@ -12,7 +12,10 @@
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonViSurfaceCreateInfoNN(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonViSurfaceCreateInfoNN(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*    pContext;
     VkViSurfaceCreateInfoNN* pInfo;
@@ -34,11 +37,15 @@ void cvkReadJsonViSurfaceCreateInfoNN(cvkJsonWork* pWork, const cvkJsonValue* pO
 
     pInfo->flags = cvkParseJsonViSurfaceCreateFlagsNN(value);
 }
-extern CVK_FORCE_INLINE VkViSurfaceCreateFlagsNN cvkParseJsonViSurfaceCreateFlagsNN(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkViSurfaceCreateFlagsNN cvkParseJsonViSurfaceCreateFlagsNN(
+    const cvkJsonValue* pValue)
 {
     return (VkViSurfaceCreateFlagsNN)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonViSurfaceCreateInfoNN(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkViSurfaceCreateInfoNN* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonViSurfaceCreateInfoNN(
+    const cvkJsonContext*    pContext,
+    const cvkJsonValue*      pObject,
+    VkViSurfaceCreateInfoNN* pInfo)
 {
     cvkJsonWork work;
 

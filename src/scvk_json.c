@@ -73,7 +73,11 @@ static SCVK_FORCE_INLINE uint32_t scvkReadJsonChild(scvkJsonReader* pReader, uin
  * \retval VK_FALSE Another child starts at the cursor.
  */
 static SCVK_FORCE_INLINE VkBool32 scvkReadJsonSeparator(scvkJsonReader* pReader, char close, VkBool32 has_children);
-static SCVK_FORCE_INLINE void scvkAppendJsonDoubleDigit(char digit, VkBool32 fraction, double* pNumber, uint32_t* pSignificant, int32_t* pExponent);
+static SCVK_FORCE_INLINE void scvkAppendJsonDoubleDigit(char      digit,
+                                                        VkBool32  fraction,
+                                                        double*   pNumber,
+                                                        uint32_t* pSignificant,
+                                                        int32_t*  pExponent);
 static SCVK_FORCE_INLINE const char* scvkParseJsonDoubleMantissa(const char* text, double* pNumber, int32_t* pExponent);
 static SCVK_FORCE_INLINE int32_t scvkParseJsonDoubleExponent(const char* text);
 static SCVK_FORCE_INLINE double scvkScaleJsonDouble(double value, int32_t exponent);
@@ -85,7 +89,9 @@ static SCVK_FORCE_INLINE void scvkGrowArena(scvkArena* pArena, size_t size, size
  * \param[out] pPipeline Parsed pipeline and render pass.
  * \retval Other The graphics or compute state object.
  */
-static SCVK_FORCE_INLINE const scvkJsonValue* scvkReadPipelineJsonState(const scvkJsonContext* pContext, const scvkJsonValue* root, scvkPipelineJson* pPipeline);
+static SCVK_FORCE_INLINE const scvkJsonValue* scvkReadPipelineJsonState(const scvkJsonContext* pContext,
+                                                                        const scvkJsonValue*   root,
+                                                                        scvkPipelineJson*      pPipeline);
 /**
  * \brief Copies descriptor bindings and resolves immutable sampler references.
  * \param[in] pPipeline Parsed description and retained object IDs.
@@ -94,10 +100,11 @@ static SCVK_FORCE_INLINE const scvkJsonValue* scvkReadPipelineJsonState(const sc
  * \param[in,out] pArena Caller-owned output storage.
  * \retval Other Resolved bindings, or NULL for an empty layout.
  */
-static SCVK_FORCE_INLINE VkDescriptorSetLayoutBinding* scvkResolvePipelineJsonBindings(const scvkPipelineJson*                pPipeline,
-                                                                                       const scvkPipelineJsonObjects*         pObjects,
-                                                                                       const VkDescriptorSetLayoutCreateInfo* pInfo,
-                                                                                       scvkArena*                             pArena);
+static SCVK_FORCE_INLINE VkDescriptorSetLayoutBinding* scvkResolvePipelineJsonBindings(
+    const scvkPipelineJson*                pPipeline,
+    const scvkPipelineJsonObjects*         pObjects,
+    const VkDescriptorSetLayoutCreateInfo* pInfo,
+    scvkArena*                             pArena);
 /**
  * \brief Copies one shader stage and resolves its retained module ID.
  * \param[in] pPipeline Parsed description and retained object IDs.
@@ -112,23 +119,28 @@ static SCVK_FORCE_INLINE void scvkResolvePipelineJsonShader(const scvkPipelineJs
                                                             void*                                  pUser,
                                                             const VkPipelineShaderStageCreateInfo* pSource,
                                                             VkPipelineShaderStageCreateInfo*       pStage);
-static SCVK_FORCE_INLINE VkRenderPass scvkResolvePipelineJsonRenderPass(const scvkPipelineJson* pPipeline, PFN_scvkResolveJsonHandle resolveExternal, void* pUser);
+static SCVK_FORCE_INLINE VkRenderPass scvkResolvePipelineJsonRenderPass(const scvkPipelineJson*   pPipeline,
+                                                                        PFN_scvkResolveJsonHandle resolveExternal,
+                                                                        void*                     pUser);
 
 /*************************************************************************************************/
 /**
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE VkBool32 scvkIsJsonTextSpace(char value)
+static SCVK_FORCE_INLINE VkBool32 scvkIsJsonTextSpace(
+    char value)
 {
-    return (' ' == value) || ('\t' == value) || ('\n' == value) || ('\r' == value) || ('\v' == value) || ('\f' == value);
+    return (' ' == value) || ('\t' == value) || ('\n' == value) || ('\r' == value) || ('\v' == value) ||
+           ('\f' == value);
 }
 /*************************************************************************************************/
 /**
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE void scvkSkipJsonSpace(scvkJsonReader* pReader)
+static SCVK_FORCE_INLINE void scvkSkipJsonSpace(
+    scvkJsonReader* pReader)
 {
     char     character;
     VkBool32 is_space;
@@ -148,7 +160,8 @@ static SCVK_FORCE_INLINE void scvkSkipJsonSpace(scvkJsonReader* pReader)
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE void scvkReadJsonDigits(scvkJsonReader* pReader)
+static SCVK_FORCE_INLINE void scvkReadJsonDigits(
+    scvkJsonReader* pReader)
 {
     const char* first;
     char        character;
@@ -170,7 +183,8 @@ static SCVK_FORCE_INLINE void scvkReadJsonDigits(scvkJsonReader* pReader)
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE void scvkReadJsonNumber(scvkJsonReader* pReader)
+static SCVK_FORCE_INLINE void scvkReadJsonNumber(
+    scvkJsonReader* pReader)
 {
     char     character;
     VkBool32 has_input;
@@ -219,7 +233,9 @@ static SCVK_FORCE_INLINE void scvkReadJsonNumber(scvkJsonReader* pReader)
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE const char* scvkReadJsonQuoted(scvkJsonReader* pReader, uint32_t* pLength)
+static SCVK_FORCE_INLINE const char* scvkReadJsonQuoted(
+    scvkJsonReader* pReader,
+    uint32_t*       pLength)
 {
     const char* first;
     char        character;
@@ -258,7 +274,9 @@ static SCVK_FORCE_INLINE const char* scvkReadJsonQuoted(scvkJsonReader* pReader,
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE void scvkReadJsonLiteral(scvkJsonReader* pReader, scvkJsonValue* pValue)
+static SCVK_FORCE_INLINE void scvkReadJsonLiteral(
+    scvkJsonReader* pReader,
+    scvkJsonValue*  pValue)
 {
     const char* literal;
     uint32_t    length;
@@ -299,7 +317,8 @@ static SCVK_FORCE_INLINE void scvkReadJsonLiteral(scvkJsonReader* pReader, scvkJ
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE uint32_t scvkReadJsonToken(scvkJsonReader* pReader)
+static SCVK_FORCE_INLINE uint32_t scvkReadJsonToken(
+    scvkJsonReader* pReader)
 {
     scvkJsonValue* value;
     scvkJsonValue  overflow;
@@ -357,7 +376,9 @@ static SCVK_FORCE_INLINE uint32_t scvkReadJsonToken(scvkJsonReader* pReader)
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE uint32_t scvkReadJsonChild(scvkJsonReader* pReader, uint32_t parent)
+static SCVK_FORCE_INLINE uint32_t scvkReadJsonChild(
+    scvkJsonReader* pReader,
+    uint32_t        parent)
 {
     const char* key;
     uint32_t    key_length;
@@ -398,7 +419,10 @@ static SCVK_FORCE_INLINE uint32_t scvkReadJsonChild(scvkJsonReader* pReader, uin
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE VkBool32 scvkReadJsonSeparator(scvkJsonReader* pReader, char close, VkBool32 has_children)
+static SCVK_FORCE_INLINE VkBool32 scvkReadJsonSeparator(
+    scvkJsonReader* pReader,
+    char            close,
+    VkBool32        has_children)
 {
     VkBool32    has_comma;
     VkBool32    is_close;
@@ -427,7 +451,8 @@ static SCVK_FORCE_INLINE VkBool32 scvkReadJsonSeparator(scvkJsonReader* pReader,
 
     return is_close;
 }
-extern SCVK_FORCE_INLINE uint32_t scvkParseJsonValue(scvkJsonReader* pReader)
+extern SCVK_FORCE_INLINE uint32_t scvkParseJsonValue(
+    scvkJsonReader* pReader)
 {
     uint32_t       root;
     uint32_t       active;
@@ -489,7 +514,11 @@ extern SCVK_FORCE_INLINE uint32_t scvkParseJsonValue(scvkJsonReader* pReader)
 
     return root;
 }
-extern SCVK_FORCE_INLINE uint32_t scvkParseJsonDocument(const char* pText, size_t length, scvkJsonValue* pValues, uint32_t valueCapacity)
+extern SCVK_FORCE_INLINE uint32_t scvkParseJsonDocument(
+    const char*    pText,
+    size_t         length,
+    scvkJsonValue* pValues,
+    uint32_t       valueCapacity)
 {
     scvkJsonReader reader;
     uint32_t       root;
@@ -509,7 +538,10 @@ extern SCVK_FORCE_INLINE uint32_t scvkParseJsonDocument(const char* pText, size_
 
     return reader.valueCount;
 }
-extern SCVK_FORCE_INLINE const scvkJsonValue* scvkGetJsonMember(const scvkJsonDocument* pDocument, const scvkJsonValue* pObject, const char* pKey)
+extern SCVK_FORCE_INLINE const scvkJsonValue* scvkGetJsonMember(
+    const scvkJsonDocument* pDocument,
+    const scvkJsonValue*    pObject,
+    const char*             pKey)
 {
     const size_t length = strlen(pKey);
     uint32_t     index;
@@ -530,7 +562,10 @@ extern SCVK_FORCE_INLINE const scvkJsonValue* scvkGetJsonMember(const scvkJsonDo
 
     return NULL;
 }
-extern SCVK_FORCE_INLINE const scvkJsonValue* scvkGetJsonElement(const scvkJsonDocument* pDocument, const scvkJsonValue* pArray, uint32_t index)
+extern SCVK_FORCE_INLINE const scvkJsonValue* scvkGetJsonElement(
+    const scvkJsonDocument* pDocument,
+    const scvkJsonValue*    pArray,
+    uint32_t                index)
 {
     const scvkJsonValue* values;
     scvkJsonKind         kind;
@@ -564,17 +599,25 @@ extern SCVK_FORCE_INLINE const scvkJsonValue* scvkGetJsonElement(const scvkJsonD
 
     return &values[child];
 }
-extern SCVK_FORCE_INLINE VkBool32 scvkJsonStringEquals(const scvkJsonValue* pValue, const char* pString)
+extern SCVK_FORCE_INLINE VkBool32 scvkJsonStringEquals(
+    const scvkJsonValue* pValue,
+    const char*          pString)
 {
     const size_t length = strlen(pString);
 
-    return ((NULL != pValue) && (SCVK_JSON_STRING == pValue->kind) && (pValue->textLength == length) && (0 == memcmp(pValue->pText, pString, length))) ? VK_TRUE : VK_FALSE;
+    return ((NULL != pValue) && (SCVK_JSON_STRING == pValue->kind) && (pValue->textLength == length) &&
+            (0 == memcmp(pValue->pText, pString, length)))
+               ? VK_TRUE
+               : VK_FALSE;
 }
-extern SCVK_FORCE_INLINE VkBool32 scvkIsJsonNull(const scvkJsonValue* pValue)
+extern SCVK_FORCE_INLINE VkBool32 scvkIsJsonNull(
+    const scvkJsonValue* pValue)
 {
-    return ((NULL == pValue) || (SCVK_JSON_NULL == pValue->kind) || scvkJsonStringEquals(pValue, "NULL")) ? VK_TRUE : VK_FALSE;
+    return ((NULL == pValue) || (SCVK_JSON_NULL == pValue->kind) || scvkJsonStringEquals(pValue, "NULL")) ? VK_TRUE
+                                                                                                          : VK_FALSE;
 }
-extern SCVK_FORCE_INLINE uint64_t scvkParseUint64Text(const char* pText)
+extern SCVK_FORCE_INLINE uint64_t scvkParseUint64Text(
+    const char* pText)
 {
     uint64_t value;
     uint32_t base;
@@ -635,11 +678,13 @@ extern SCVK_FORCE_INLINE uint64_t scvkParseUint64Text(const char* pText)
 
     return negative ? (uint64_t)0 - value : value;
 }
-extern SCVK_FORCE_INLINE uint64_t scvkGetJsonUint64(const scvkJsonValue* pValue)
+extern SCVK_FORCE_INLINE uint64_t scvkGetJsonUint64(
+    const scvkJsonValue* pValue)
 {
     char buffer[SCVK_JSON_INTEGER_TEXT_CAPACITY];
 
-    if ((NULL == pValue) || ((SCVK_JSON_NUMBER != pValue->kind) && (SCVK_JSON_STRING != pValue->kind)) || (pValue->textLength >= sizeof(buffer)))
+    if ((NULL == pValue) || ((SCVK_JSON_NUMBER != pValue->kind) && (SCVK_JSON_STRING != pValue->kind)) ||
+        (pValue->textLength >= sizeof(buffer)))
     {
         return 0;
     }
@@ -649,14 +694,16 @@ extern SCVK_FORCE_INLINE uint64_t scvkGetJsonUint64(const scvkJsonValue* pValue)
 
     return scvkParseUint64Text(buffer);
 }
-extern SCVK_FORCE_INLINE int64_t scvkGetJsonInt64(const scvkJsonValue* pValue)
+extern SCVK_FORCE_INLINE int64_t scvkGetJsonInt64(
+    const scvkJsonValue* pValue)
 {
     char        buffer[SCVK_JSON_INTEGER_TEXT_CAPACITY];
     const char* text;
     uint64_t    magnitude;
     VkBool32    negative;
 
-    if ((NULL == pValue) || ((SCVK_JSON_NUMBER != pValue->kind) && (SCVK_JSON_STRING != pValue->kind)) || (pValue->textLength >= sizeof(buffer)))
+    if ((NULL == pValue) || ((SCVK_JSON_NUMBER != pValue->kind) && (SCVK_JSON_STRING != pValue->kind)) ||
+        (pValue->textLength >= sizeof(buffer)))
     {
         return 0;
     }
@@ -690,7 +737,12 @@ extern SCVK_FORCE_INLINE int64_t scvkGetJsonInt64(const scvkJsonValue* pValue)
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE void scvkAppendJsonDoubleDigit(char digit, VkBool32 fraction, double* pNumber, uint32_t* pSignificant, int32_t* pExponent)
+static SCVK_FORCE_INLINE void scvkAppendJsonDoubleDigit(
+    char      digit,
+    VkBool32  fraction,
+    double*   pNumber,
+    uint32_t* pSignificant,
+    int32_t*  pExponent)
 {
     enum
     {
@@ -720,7 +772,10 @@ static SCVK_FORCE_INLINE void scvkAppendJsonDoubleDigit(char digit, VkBool32 fra
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE const char* scvkParseJsonDoubleMantissa(const char* text, double* pNumber, int32_t* pExponent)
+static SCVK_FORCE_INLINE const char* scvkParseJsonDoubleMantissa(
+    const char* text,
+    double*     pNumber,
+    int32_t*    pExponent)
 {
     uint32_t significant = 0;
 
@@ -744,7 +799,8 @@ static SCVK_FORCE_INLINE const char* scvkParseJsonDoubleMantissa(const char* tex
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE int32_t scvkParseJsonDoubleExponent(const char* text)
+static SCVK_FORCE_INLINE int32_t scvkParseJsonDoubleExponent(
+    const char* text)
 {
     int32_t exponent = 0;
     int32_t sign     = 1;
@@ -778,7 +834,9 @@ static SCVK_FORCE_INLINE int32_t scvkParseJsonDoubleExponent(const char* text)
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE double scvkScaleJsonDouble(double value, int32_t exponent)
+static SCVK_FORCE_INLINE double scvkScaleJsonDouble(
+    double  value,
+    int32_t exponent)
 {
     int32_t index;
     enum
@@ -815,7 +873,8 @@ static SCVK_FORCE_INLINE double scvkScaleJsonDouble(double value, int32_t expone
 
     return value;
 }
-extern SCVK_FORCE_INLINE double scvkGetJsonDouble(const scvkJsonValue* pValue)
+extern SCVK_FORCE_INLINE double scvkGetJsonDouble(
+    const scvkJsonValue* pValue)
 {
     char        buffer[SCVK_JSON_REAL_TEXT_CAPACITY];
     const char* text;
@@ -823,7 +882,8 @@ extern SCVK_FORCE_INLINE double scvkGetJsonDouble(const scvkJsonValue* pValue)
     int32_t     exponent;
     VkBool32    negative;
 
-    if ((NULL == pValue) || ((SCVK_JSON_NUMBER != pValue->kind) && (SCVK_JSON_STRING != pValue->kind)) || (pValue->textLength >= sizeof(buffer)))
+    if ((NULL == pValue) || ((SCVK_JSON_NUMBER != pValue->kind) && (SCVK_JSON_STRING != pValue->kind)) ||
+        (pValue->textLength >= sizeof(buffer)))
     {
         return 0.0;
     }
@@ -851,7 +911,8 @@ extern SCVK_FORCE_INLINE double scvkGetJsonDouble(const scvkJsonValue* pValue)
 
     return negative ? -value : value;
 }
-extern SCVK_FORCE_INLINE VkBool32 scvkGetJsonBool32(const scvkJsonValue* pValue)
+extern SCVK_FORCE_INLINE VkBool32 scvkGetJsonBool32(
+    const scvkJsonValue* pValue)
 {
     if (NULL == pValue)
     {
@@ -868,7 +929,12 @@ extern SCVK_FORCE_INLINE VkBool32 scvkGetJsonBool32(const scvkJsonValue* pValue)
 
     return VK_FALSE;
 }
-extern SCVK_FORCE_INLINE VkBool32 scvkLookupJsonName(const scvkJsonName* pTable, uint32_t tableCount, const char* pName, uint32_t nameLength, uint64_t* pValue)
+extern SCVK_FORCE_INLINE VkBool32 scvkLookupJsonName(
+    const scvkJsonName* pTable,
+    uint32_t            tableCount,
+    const char*         pName,
+    uint32_t            nameLength,
+    uint64_t*           pValue)
 {
     uint32_t index;
 
@@ -884,7 +950,10 @@ extern SCVK_FORCE_INLINE VkBool32 scvkLookupJsonName(const scvkJsonName* pTable,
 
     return VK_FALSE;
 }
-extern SCVK_FORCE_INLINE uint64_t scvkParseJsonEnumerant(const scvkJsonValue* pValue, const scvkJsonName* pTable, uint32_t tableCount)
+extern SCVK_FORCE_INLINE uint64_t scvkParseJsonEnumerant(
+    const scvkJsonValue* pValue,
+    const scvkJsonName*  pTable,
+    uint32_t             tableCount)
 {
     uint64_t found;
 
@@ -905,7 +974,10 @@ extern SCVK_FORCE_INLINE uint64_t scvkParseJsonEnumerant(const scvkJsonValue* pV
 
     return (uint64_t)scvkGetJsonInt64(pValue); /* a number written as a string ("0") */
 }
-extern SCVK_FORCE_INLINE uint64_t scvkParseJsonFlags(const scvkJsonValue* pValue, const scvkJsonName* pTable, uint32_t tableCount)
+extern SCVK_FORCE_INLINE uint64_t scvkParseJsonFlags(
+    const scvkJsonValue* pValue,
+    const scvkJsonName*  pTable,
+    uint32_t             tableCount)
 {
     uint64_t    flags = 0;
     const char* cursor;
@@ -972,7 +1044,10 @@ extern SCVK_FORCE_INLINE uint64_t scvkParseJsonFlags(const scvkJsonValue* pValue
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE void scvkGrowArena(scvkArena* pArena, size_t size, size_t alignment)
+static SCVK_FORCE_INLINE void scvkGrowArena(
+    scvkArena* pArena,
+    size_t     size,
+    size_t     alignment)
 {
     size_t                   capacity;
     size_t                   overhead;
@@ -995,7 +1070,8 @@ static SCVK_FORCE_INLINE void scvkGrowArena(scvkArena* pArena, size_t size, size
     validMask      = (size_t)0 - (size_t)((overhead >= alignment) & (allocationSize >= capacity));
     allocationSize = (allocationSize & validMask) | (sizeof(scvkArenaBlock) & ~validMask);
 
-    block = (scvkArenaBlock*)allocate(pUserData, allocationSize, SCVK_JSON_ARENA_ALIGNMENT, VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
+    block = (scvkArenaBlock*)
+        allocate(pUserData, allocationSize, SCVK_JSON_ARENA_ALIGNMENT, VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
     SCVK_ASSERT(0 != validMask);
     SCVK_ASSERT(NULL != block);
 
@@ -1005,7 +1081,10 @@ static SCVK_FORCE_INLINE void scvkGrowArena(scvkArena* pArena, size_t size, size
     pArena->size    = capacity + alignment;
     pArena->used    = 0;
 }
-extern SCVK_FORCE_INLINE void* scvkAllocateArena(scvkArena* pArena, size_t size, size_t alignment)
+extern SCVK_FORCE_INLINE void* scvkAllocateArena(
+    scvkArena* pArena,
+    size_t     size,
+    size_t     alignment)
 {
     size_t   offset;
     size_t   padding;
@@ -1059,7 +1138,8 @@ extern SCVK_FORCE_INLINE void* scvkAllocateArena(scvkArena* pArena, size_t size,
 
     return pArena->pBase + padding;
 }
-extern SCVK_FORCE_INLINE void scvkFreeArena(scvkArena* pArena)
+extern SCVK_FORCE_INLINE void scvkFreeArena(
+    scvkArena* pArena)
 {
     scvkArenaBlock* block;
     scvkArenaBlock* next;
@@ -1081,7 +1161,9 @@ extern SCVK_FORCE_INLINE void scvkFreeArena(scvkArena* pArena)
     pArena->size    = 0;
     pArena->used    = 0;
 }
-extern SCVK_FORCE_INLINE char* scvkCopyJsonString(scvkArena* pArena, const scvkJsonValue* pValue)
+extern SCVK_FORCE_INLINE char* scvkCopyJsonString(
+    scvkArena*           pArena,
+    const scvkJsonValue* pValue)
 {
     char*    out;
     uint32_t index;
@@ -1130,7 +1212,9 @@ extern SCVK_FORCE_INLINE char* scvkCopyJsonString(scvkArena* pArena, const scvkJ
 
     return out;
 }
-extern SCVK_FORCE_INLINE uint64_t scvkGetJsonHandleId(const scvkJsonHandleReference* pReferences, const void* pHandle)
+extern SCVK_FORCE_INLINE uint64_t scvkGetJsonHandleId(
+    const scvkJsonHandleReference* pReferences,
+    const void*                    pHandle)
 {
     uint64_t object_id;
 
@@ -1146,7 +1230,12 @@ extern SCVK_FORCE_INLINE uint64_t scvkGetJsonHandleId(const scvkJsonHandleRefere
 
     return object_id;
 }
-extern SCVK_FORCE_INLINE VkBool32 scvkResolveJsonHandle(const scvkJsonContext* pContext, const char* pHandleType, const scvkJsonValue* pValue, uint32_t handleByteCount, void* pHandle)
+extern SCVK_FORCE_INLINE VkBool32 scvkResolveJsonHandle(
+    const scvkJsonContext* pContext,
+    const char*            pHandleType,
+    const scvkJsonValue*   pValue,
+    uint32_t               handleByteCount,
+    void*                  pHandle)
 {
     scvkJsonHandleReference*  reference;
     uint64_t                  object_id;
@@ -1169,7 +1258,9 @@ extern SCVK_FORCE_INLINE VkBool32 scvkResolveJsonHandle(const scvkJsonContext* p
     {
         if (NULL != pContext->ppHandleReferences)
         {
-            reference = (scvkJsonHandleReference*)scvkAllocateArena(pContext->pArena, sizeof(*reference), SCVK_JSON_ARENA_ALIGNMENT);
+            reference = (scvkJsonHandleReference*)scvkAllocateArena(pContext->pArena,
+                                                                    sizeof(*reference),
+                                                                    SCVK_JSON_ARENA_ALIGNMENT);
 
             reference->pNext              = *pContext->ppHandleReferences;
             reference->pHandleType        = pHandleType;
@@ -1186,7 +1277,12 @@ extern SCVK_FORCE_INLINE VkBool32 scvkResolveJsonHandle(const scvkJsonContext* p
 
     return resolved;
 }
-extern SCVK_FORCE_INLINE uint32_t scvkParsePipelineJsonObjectList(const scvkJsonContext* pContext, const scvkJsonValue* pList, size_t elementSize, uint64_t** ppIds, void** ppElements)
+extern SCVK_FORCE_INLINE uint32_t scvkParsePipelineJsonObjectList(
+    const scvkJsonContext* pContext,
+    const scvkJsonValue*   pList,
+    size_t                 elementSize,
+    uint64_t**             ppIds,
+    void**                 ppElements)
 {
     uint32_t count;
     uint32_t index;
@@ -1202,8 +1298,9 @@ extern SCVK_FORCE_INLINE uint32_t scvkParsePipelineJsonObjectList(const scvkJson
     {
         const scvkJsonValue* entry = scvkGetJsonElement(&pContext->document, pList, index);
 
-        const scvkJsonValue* member = scvkGetJsonElement(&pContext->document, entry, 0); /* the one member: id -> structure */
-        char                 buffer[SCVK_JSON_INTEGER_TEXT_CAPACITY];
+        const scvkJsonValue* member =
+            scvkGetJsonElement(&pContext->document, entry, 0); /* the one member: id -> structure */
+        char buffer[SCVK_JSON_INTEGER_TEXT_CAPACITY];
 
         SCVK_ASSERT((NULL != member) && (member->keyLength < sizeof(buffer)));
 
@@ -1221,7 +1318,10 @@ extern SCVK_FORCE_INLINE uint32_t scvkParsePipelineJsonObjectList(const scvkJson
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE const scvkJsonValue* scvkReadPipelineJsonState(const scvkJsonContext* pContext, const scvkJsonValue* root, scvkPipelineJson* pPipeline)
+static SCVK_FORCE_INLINE const scvkJsonValue* scvkReadPipelineJsonState(
+    const scvkJsonContext* pContext,
+    const scvkJsonValue*   root,
+    scvkPipelineJson*      pPipeline)
 {
     const scvkJsonValue* state;
     const scvkJsonValue* value;
@@ -1255,7 +1355,8 @@ static SCVK_FORCE_INLINE const scvkJsonValue* scvkReadPipelineJsonState(const sc
     value = scvkGetJsonMember(&pContext->document, state, "Renderpass");
     if (!scvkIsJsonNull(value))
     {
-        if (scvkJsonStringEquals(scvkGetJsonMember(&pContext->document, value, "sType"), "VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2"))
+        if (scvkJsonStringEquals(scvkGetJsonMember(&pContext->document, value, "sType"),
+                                 "VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2"))
         {
             pPipeline->renderPassVersion = 2;
 
@@ -1271,7 +1372,9 @@ static SCVK_FORCE_INLINE const scvkJsonValue* scvkReadPipelineJsonState(const sc
 
     return state;
 }
-extern SCVK_FORCE_INLINE void scvkParsePipelineJson(const scvkJsonContext* pContext, scvkPipelineJson* pPipeline)
+extern SCVK_FORCE_INLINE void scvkParsePipelineJson(
+    const scvkJsonContext* pContext,
+    scvkPipelineJson*      pPipeline)
 {
     scvkJsonContext        context;
     const scvkJsonContext* parsing;
@@ -1294,37 +1397,51 @@ extern SCVK_FORCE_INLINE void scvkParsePipelineJson(const scvkJsonContext* pCont
     /* objects by id */
     list = scvkGetJsonMember(&parsing->document, state, "DescriptorSetLayouts");
 
-    pPipeline->descriptorSetLayoutCount = scvkParsePipelineJsonObjectList(parsing, list, sizeof(VkDescriptorSetLayoutCreateInfo), &pPipeline->pDescriptorSetLayoutIds, &elements);
+    pPipeline->descriptorSetLayoutCount = scvkParsePipelineJsonObjectList(parsing,
+                                                                          list,
+                                                                          sizeof(VkDescriptorSetLayoutCreateInfo),
+                                                                          &pPipeline->pDescriptorSetLayoutIds,
+                                                                          &elements);
 
     pPipeline->pDescriptorSetLayoutCreateInfos = (VkDescriptorSetLayoutCreateInfo*)elements;
     for (index = 0; index < pPipeline->descriptorSetLayoutCount; ++index)
     {
-        scvkParseJsonDescriptorSetLayoutCreateInfo(parsing,
-                                                   scvkGetJsonElement(&parsing->document, scvkGetJsonElement(&parsing->document, list, index), 0),
-                                                   &pPipeline->pDescriptorSetLayoutCreateInfos[index]);
+        scvkParseJsonDescriptorSetLayoutCreateInfo(
+            parsing,
+            scvkGetJsonElement(&parsing->document, scvkGetJsonElement(&parsing->document, list, index), 0),
+            &pPipeline->pDescriptorSetLayoutCreateInfos[index]);
     }
     list = scvkGetJsonMember(&parsing->document, state, "Samplers");
     if (NULL == list)
     {
         list = scvkGetJsonMember(&parsing->document, state, "ImmutableSamplers");
     }
-    pPipeline->samplerCount = scvkParsePipelineJsonObjectList(parsing, list, sizeof(VkSamplerCreateInfo), &pPipeline->pSamplerIds, &elements);
+    pPipeline->samplerCount =
+        scvkParsePipelineJsonObjectList(parsing, list, sizeof(VkSamplerCreateInfo), &pPipeline->pSamplerIds, &elements);
 
     pPipeline->pSamplerCreateInfos = (VkSamplerCreateInfo*)elements;
     for (index = 0; index < pPipeline->samplerCount; ++index)
     {
-        scvkParseJsonSamplerCreateInfo(parsing, scvkGetJsonElement(&parsing->document, scvkGetJsonElement(&parsing->document, list, index), 0), &pPipeline->pSamplerCreateInfos[index]);
+        scvkParseJsonSamplerCreateInfo(
+            parsing,
+            scvkGetJsonElement(&parsing->document, scvkGetJsonElement(&parsing->document, list, index), 0),
+            &pPipeline->pSamplerCreateInfos[index]);
     }
     list = scvkGetJsonMember(&parsing->document, state, "YcbcrSamplers");
 
-    pPipeline->samplerYcbcrConversionCount = scvkParsePipelineJsonObjectList(parsing, list, sizeof(VkSamplerYcbcrConversionCreateInfo), &pPipeline->pSamplerYcbcrConversionIds, &elements);
+    pPipeline->samplerYcbcrConversionCount = scvkParsePipelineJsonObjectList(parsing,
+                                                                             list,
+                                                                             sizeof(VkSamplerYcbcrConversionCreateInfo),
+                                                                             &pPipeline->pSamplerYcbcrConversionIds,
+                                                                             &elements);
 
     pPipeline->pSamplerYcbcrConversionCreateInfos = (VkSamplerYcbcrConversionCreateInfo*)elements;
     for (index = 0; index < pPipeline->samplerYcbcrConversionCount; ++index)
     {
-        scvkParseJsonSamplerYcbcrConversionCreateInfo(parsing,
-                                                      scvkGetJsonElement(&parsing->document, scvkGetJsonElement(&parsing->document, list, index), 0),
-                                                      &pPipeline->pSamplerYcbcrConversionCreateInfos[index]);
+        scvkParseJsonSamplerYcbcrConversionCreateInfo(
+            parsing,
+            scvkGetJsonElement(&parsing->document, scvkGetJsonElement(&parsing->document, list, index), 0),
+            &pPipeline->pSamplerYcbcrConversionCreateInfos[index]);
     }
 
     /* the pipeline layout */
@@ -1341,16 +1458,23 @@ extern SCVK_FORCE_INLINE void scvkParsePipelineJson(const scvkJsonContext* pCont
 
     pPipeline->shaderCount = ((NULL != list) && (SCVK_JSON_ARRAY == list->kind)) ? list->childCount : 0;
 
-    pPipeline->pShaderStages = (VkShaderStageFlagBits*)scvkAllocateArena(parsing->pArena, pPipeline->shaderCount * sizeof(VkShaderStageFlagBits), sizeof(VkShaderStageFlagBits));
+    pPipeline->pShaderStages =
+        (VkShaderStageFlagBits*)scvkAllocateArena(parsing->pArena,
+                                                  pPipeline->shaderCount * sizeof(VkShaderStageFlagBits),
+                                                  sizeof(VkShaderStageFlagBits));
 
-    pPipeline->ppShaderFileNames = (const char**)scvkAllocateArena(parsing->pArena, pPipeline->shaderCount * sizeof(const char*), sizeof(const char*));
+    pPipeline->ppShaderFileNames = (const char**)scvkAllocateArena(parsing->pArena,
+                                                                   pPipeline->shaderCount * sizeof(const char*),
+                                                                   sizeof(const char*));
     for (index = 0; index < pPipeline->shaderCount; ++index)
     {
         const scvkJsonValue* shader = scvkGetJsonElement(&parsing->document, list, index);
 
-        pPipeline->pShaderStages[index] = scvkParseJsonShaderStageFlagBits(scvkGetJsonMember(&parsing->document, shader, "stage"));
+        pPipeline->pShaderStages[index] =
+            scvkParseJsonShaderStageFlagBits(scvkGetJsonMember(&parsing->document, shader, "stage"));
 
-        pPipeline->ppShaderFileNames[index] = scvkCopyJsonString(parsing->pArena, scvkGetJsonMember(&parsing->document, shader, "filename"));
+        pPipeline->ppShaderFileNames[index] =
+            scvkCopyJsonString(parsing->pArena, scvkGetJsonMember(&parsing->document, shader, "filename"));
     }
 
     /* document-level: extensions and the pipeline identifier */
@@ -1358,10 +1482,14 @@ extern SCVK_FORCE_INLINE void scvkParsePipelineJson(const scvkJsonContext* pCont
 
     pPipeline->enabledExtensionCount = ((NULL != list) && (SCVK_JSON_ARRAY == list->kind)) ? list->childCount : 0;
 
-    pPipeline->ppEnabledExtensionNames = (const char**)scvkAllocateArena(parsing->pArena, pPipeline->enabledExtensionCount * sizeof(const char*), sizeof(const char*));
+    pPipeline->ppEnabledExtensionNames =
+        (const char**)scvkAllocateArena(parsing->pArena,
+                                        pPipeline->enabledExtensionCount * sizeof(const char*),
+                                        sizeof(const char*));
     for (index = 0; index < pPipeline->enabledExtensionCount; ++index)
     {
-        pPipeline->ppEnabledExtensionNames[index] = scvkCopyJsonString(parsing->pArena, scvkGetJsonElement(&parsing->document, list, index));
+        pPipeline->ppEnabledExtensionNames[index] =
+            scvkCopyJsonString(parsing->pArena, scvkGetJsonElement(&parsing->document, list, index));
     }
     list = scvkGetJsonMember(&parsing->document, root, "PipelineUUID");
     if ((NULL != list) && (SCVK_JSON_ARRAY == list->kind) && (VK_UUID_SIZE == list->childCount))
@@ -1369,11 +1497,16 @@ extern SCVK_FORCE_INLINE void scvkParsePipelineJson(const scvkJsonContext* pCont
         pPipeline->hasPipelineUuid = VK_TRUE;
         for (index = 0; index < VK_UUID_SIZE; ++index)
         {
-            pPipeline->pipelineUuid[index] = (uint8_t)scvkGetJsonUint64(scvkGetJsonElement(&parsing->document, list, index));
+            pPipeline->pipelineUuid[index] =
+                (uint8_t)scvkGetJsonUint64(scvkGetJsonElement(&parsing->document, list, index));
         }
     }
 }
-extern SCVK_FORCE_INLINE uint64_t scvkGetPipelineJsonHandle(uint32_t count, const uint64_t* pIds, const uint64_t* pHandles, uint64_t id)
+extern SCVK_FORCE_INLINE uint64_t scvkGetPipelineJsonHandle(
+    uint32_t        count,
+    const uint64_t* pIds,
+    const uint64_t* pHandles,
+    uint64_t        id)
 {
     uint32_t index;
 
@@ -1387,7 +1520,10 @@ extern SCVK_FORCE_INLINE uint64_t scvkGetPipelineJsonHandle(uint32_t count, cons
 
     return 0;
 }
-extern SCVK_FORCE_INLINE uint32_t scvkGetPipelineJsonHandleIndex(uint32_t count, const uint64_t* pIds, uint64_t id)
+extern SCVK_FORCE_INLINE uint32_t scvkGetPipelineJsonHandleIndex(
+    uint32_t        count,
+    const uint64_t* pIds,
+    uint64_t        id)
 {
     uint32_t index;
     uint32_t found;
@@ -1409,10 +1545,11 @@ extern SCVK_FORCE_INLINE uint32_t scvkGetPipelineJsonHandleIndex(uint32_t count,
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE VkDescriptorSetLayoutBinding* scvkResolvePipelineJsonBindings(const scvkPipelineJson*                pPipeline,
-                                                                                       const scvkPipelineJsonObjects*         pObjects,
-                                                                                       const VkDescriptorSetLayoutCreateInfo* pInfo,
-                                                                                       scvkArena*                             pArena)
+static SCVK_FORCE_INLINE VkDescriptorSetLayoutBinding* scvkResolvePipelineJsonBindings(
+    const scvkPipelineJson*                pPipeline,
+    const scvkPipelineJsonObjects*         pObjects,
+    const VkDescriptorSetLayoutCreateInfo* pInfo,
+    scvkArena*                             pArena)
 {
     VkDescriptorSetLayoutBinding* bindings;
     VkSampler*                    samplers;
@@ -1421,17 +1558,23 @@ static SCVK_FORCE_INLINE VkDescriptorSetLayoutBinding* scvkResolvePipelineJsonBi
     uint32_t                      found;
     uint64_t                      object_id;
 
-    bindings = (VkDescriptorSetLayoutBinding*)scvkAllocateArena(pArena, pInfo->bindingCount * sizeof(*bindings), SCVK_JSON_ARENA_ALIGNMENT);
+    bindings = (VkDescriptorSetLayoutBinding*)scvkAllocateArena(pArena,
+                                                                pInfo->bindingCount * sizeof(*bindings),
+                                                                SCVK_JSON_ARENA_ALIGNMENT);
     for (inner = 0; inner < pInfo->bindingCount; ++inner)
     {
         bindings[inner] = pInfo->pBindings[inner];
         if (NULL != bindings[inner].pImmutableSamplers)
         {
-            samplers = (VkSampler*)scvkAllocateArena(pArena, bindings[inner].descriptorCount * sizeof(VkSampler), SCVK_JSON_ARENA_ALIGNMENT);
+            samplers = (VkSampler*)scvkAllocateArena(pArena,
+                                                     bindings[inner].descriptorCount * sizeof(VkSampler),
+                                                     SCVK_JSON_ARENA_ALIGNMENT);
 
             for (sampler_index = 0; sampler_index < bindings[inner].descriptorCount; ++sampler_index)
             {
-                object_id = scvkGetJsonHandleId(pPipeline->pHandleReferences, (const void*)&pInfo->pBindings[inner].pImmutableSamplers[sampler_index]);
+                object_id =
+                    scvkGetJsonHandleId(pPipeline->pHandleReferences,
+                                        (const void*)&pInfo->pBindings[inner].pImmutableSamplers[sampler_index]);
 
                 found = scvkGetPipelineJsonHandleIndex(pObjects->samplerCount, pObjects->samplerIds, object_id);
 
@@ -1452,11 +1595,12 @@ static SCVK_FORCE_INLINE VkDescriptorSetLayoutBinding* scvkResolvePipelineJsonBi
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE void scvkResolvePipelineJsonShader(const scvkPipelineJson*                pPipeline,
-                                                            PFN_scvkResolveJsonHandle              resolveExternal,
-                                                            void*                                  pUser,
-                                                            const VkPipelineShaderStageCreateInfo* pSource,
-                                                            VkPipelineShaderStageCreateInfo*       pStage)
+static SCVK_FORCE_INLINE void scvkResolvePipelineJsonShader(
+    const scvkPipelineJson*                pPipeline,
+    PFN_scvkResolveJsonHandle              resolveExternal,
+    void*                                  pUser,
+    const VkPipelineShaderStageCreateInfo* pSource,
+    VkPipelineShaderStageCreateInfo*       pStage)
 {
     uint64_t object_id;
     VkBool32 has_reference;
@@ -1480,7 +1624,10 @@ static SCVK_FORCE_INLINE void scvkResolvePipelineJsonShader(const scvkPipelineJs
  * \par Details:
  *  None
  */
-static SCVK_FORCE_INLINE VkRenderPass scvkResolvePipelineJsonRenderPass(const scvkPipelineJson* pPipeline, PFN_scvkResolveJsonHandle resolveExternal, void* pUser)
+static SCVK_FORCE_INLINE VkRenderPass scvkResolvePipelineJsonRenderPass(
+    const scvkPipelineJson*   pPipeline,
+    PFN_scvkResolveJsonHandle resolveExternal,
+    void*                     pUser)
 {
     uint64_t     object_id;
     VkBool32     resolved;
@@ -1490,7 +1637,8 @@ static SCVK_FORCE_INLINE VkRenderPass scvkResolvePipelineJsonRenderPass(const sc
     {
         return VK_NULL_HANDLE;
     }
-    object_id = scvkGetJsonHandleId(pPipeline->pHandleReferences, (const void*)&pPipeline->graphicsPipelineCreateInfo.renderPass);
+    object_id = scvkGetJsonHandleId(pPipeline->pHandleReferences,
+                                    (const void*)&pPipeline->graphicsPipelineCreateInfo.renderPass);
     if (0 == object_id)
     {
         return VK_NULL_HANDLE;
@@ -1501,15 +1649,16 @@ static SCVK_FORCE_INLINE VkRenderPass scvkResolvePipelineJsonRenderPass(const sc
 
     return render_pass;
 }
-extern SCVK_FORCE_INLINE void scvkCreatePipelineJsonObjects(VkDevice                     device,
-                                                            VkPipelineCache              pipelineCache,
-                                                            const scvkPipelineJson*      pPipeline,
-                                                            const void*                  pPipelineNext,
-                                                            PFN_scvkResolveJsonHandle    resolveExternal,
-                                                            void*                        pUser,
-                                                            scvkArena*                   pArena,
-                                                            const VkAllocationCallbacks* pAllocator,
-                                                            scvkPipelineJsonObjects*     pObjects)
+extern SCVK_FORCE_INLINE void scvkCreatePipelineJsonObjects(
+    VkDevice                     device,
+    VkPipelineCache              pipelineCache,
+    const scvkPipelineJson*      pPipeline,
+    const void*                  pPipelineNext,
+    PFN_scvkResolveJsonHandle    resolveExternal,
+    void*                        pUser,
+    scvkArena*                   pArena,
+    const VkAllocationCallbacks* pAllocator,
+    scvkPipelineJsonObjects*     pObjects)
 {
     uint32_t     index;
     uint32_t     inner;
@@ -1585,7 +1734,13 @@ extern SCVK_FORCE_INLINE void scvkCreatePipelineJsonObjects(VkDevice            
 
         pObjects->descriptorSetLayoutIds[index] = pPipeline->pDescriptorSetLayoutIds[index];
 
-        scvkCreateDescriptorSetLayout(device, info->pNext, info->flags, info->bindingCount, bindings, pAllocator, &pObjects->descriptorSetLayouts[index]);
+        scvkCreateDescriptorSetLayout(device,
+                                      info->pNext,
+                                      info->flags,
+                                      info->bindingCount,
+                                      bindings,
+                                      pAllocator,
+                                      &pObjects->descriptorSetLayouts[index]);
     }
 
     /* pipeline layout, set layout ids resolved */
@@ -1593,13 +1748,18 @@ extern SCVK_FORCE_INLINE void scvkCreatePipelineJsonObjects(VkDevice            
     {
         const VkPipelineLayoutCreateInfo* info = &pPipeline->pipelineLayoutCreateInfo;
 
-        VkDescriptorSetLayout* layouts = (VkDescriptorSetLayout*)scvkAllocateArena(pArena, info->setLayoutCount * sizeof(VkDescriptorSetLayout), SCVK_JSON_ARENA_ALIGNMENT);
+        VkDescriptorSetLayout* layouts =
+            (VkDescriptorSetLayout*)scvkAllocateArena(pArena,
+                                                      info->setLayoutCount * sizeof(VkDescriptorSetLayout),
+                                                      SCVK_JSON_ARENA_ALIGNMENT);
 
         for (inner = 0; inner < info->setLayoutCount; ++inner)
         {
             object_id = scvkGetJsonHandleId(pPipeline->pHandleReferences, (const void*)&info->pSetLayouts[inner]);
 
-            found = scvkGetPipelineJsonHandleIndex(pObjects->descriptorSetLayoutCount, pObjects->descriptorSetLayoutIds, object_id);
+            found = scvkGetPipelineJsonHandleIndex(pObjects->descriptorSetLayoutCount,
+                                                   pObjects->descriptorSetLayoutIds,
+                                                   object_id);
 
             layouts[inner] = info->pSetLayouts[inner];
             if (VK_INVALID != found)
@@ -1607,7 +1767,15 @@ extern SCVK_FORCE_INLINE void scvkCreatePipelineJsonObjects(VkDevice            
                 layouts[inner] = pObjects->descriptorSetLayouts[found];
             }
         }
-        scvkCreatePipelineLayout(device, info->pNext, info->flags, info->setLayoutCount, layouts, info->pushConstantRangeCount, info->pPushConstantRanges, pAllocator, &pObjects->pipelineLayout);
+        scvkCreatePipelineLayout(device,
+                                 info->pNext,
+                                 info->flags,
+                                 info->setLayoutCount,
+                                 layouts,
+                                 info->pushConstantRangeCount,
+                                 info->pPushConstantRanges,
+                                 pAllocator,
+                                 &pObjects->pipelineLayout);
     }
 
     /* render pass */
@@ -1651,7 +1819,10 @@ extern SCVK_FORCE_INLINE void scvkCreatePipelineJsonObjects(VkDevice            
     {
         const VkGraphicsPipelineCreateInfo* info = &pPipeline->graphicsPipelineCreateInfo;
 
-        VkPipelineShaderStageCreateInfo* stages = (VkPipelineShaderStageCreateInfo*)scvkAllocateArena(pArena, info->stageCount * sizeof(VkPipelineShaderStageCreateInfo), SCVK_JSON_ARENA_ALIGNMENT);
+        VkPipelineShaderStageCreateInfo* stages = (VkPipelineShaderStageCreateInfo*)scvkAllocateArena(
+            pArena,
+            info->stageCount * sizeof(VkPipelineShaderStageCreateInfo),
+            SCVK_JSON_ARENA_ALIGNMENT);
 
         render_pass = pObjects->renderPass;
         if (VK_NULL_HANDLE == render_pass)
@@ -1704,18 +1875,19 @@ extern SCVK_FORCE_INLINE void scvkCreatePipelineJsonObjects(VkDevice            
                                   &pObjects->pipeline);
     }
 }
-extern SCVK_FORCE_INLINE void scvkCreatePipelineFromJson(VkDevice                     device,
-                                                         VkPipelineCache              pipelineCache,
-                                                         const char*                  pJsonText,
-                                                         size_t                       jsonLength,
-                                                         scvkJsonValue*               pJsonValues,
-                                                         uint32_t                     jsonValueCapacity,
-                                                         scvkArena*                   pArena,
-                                                         PFN_scvkResolveJsonHandle    resolveExternal,
-                                                         void*                        pUser,
-                                                         const VkAllocationCallbacks* pAllocator,
-                                                         scvkPipelineJson*            pPipeline,
-                                                         scvkPipelineJsonObjects*     pObjects)
+extern SCVK_FORCE_INLINE void scvkCreatePipelineFromJson(
+    VkDevice                     device,
+    VkPipelineCache              pipelineCache,
+    const char*                  pJsonText,
+    size_t                       jsonLength,
+    scvkJsonValue*               pJsonValues,
+    uint32_t                     jsonValueCapacity,
+    scvkArena*                   pArena,
+    PFN_scvkResolveJsonHandle    resolveExternal,
+    void*                        pUser,
+    const VkAllocationCallbacks* pAllocator,
+    scvkPipelineJson*            pPipeline,
+    scvkPipelineJsonObjects*     pObjects)
 {
     scvkJsonContext context;
 
@@ -1729,20 +1901,29 @@ extern SCVK_FORCE_INLINE void scvkCreatePipelineFromJson(VkDevice               
     context.ppHandleReferences = NULL;
 
     scvkParsePipelineJson(&context, pPipeline);
-    scvkCreatePipelineJsonObjects(device, pipelineCache, pPipeline, NULL, resolveExternal, pUser, pArena, pAllocator, pObjects);
+    scvkCreatePipelineJsonObjects(device,
+                                  pipelineCache,
+                                  pPipeline,
+                                  NULL,
+                                  resolveExternal,
+                                  pUser,
+                                  pArena,
+                                  pAllocator,
+                                  pObjects);
 }
-extern SCVK_FORCE_INLINE void scvkCreateOfflinePipelineFromJson(VkDevice                     device,
-                                                                VkPipelineCache              pipelineCache,
-                                                                const char*                  pJsonText,
-                                                                size_t                       jsonLength,
-                                                                scvkJsonValue*               pJsonValues,
-                                                                uint32_t                     jsonValueCapacity,
-                                                                scvkArena*                   pArena,
-                                                                VkPipelineMatchControl       matchControl,
-                                                                VkDeviceSize                 poolEntrySize,
-                                                                const VkAllocationCallbacks* pAllocator,
-                                                                scvkPipelineJson*            pPipeline,
-                                                                scvkPipelineJsonObjects*     pObjects)
+extern SCVK_FORCE_INLINE void scvkCreateOfflinePipelineFromJson(
+    VkDevice                     device,
+    VkPipelineCache              pipelineCache,
+    const char*                  pJsonText,
+    size_t                       jsonLength,
+    scvkJsonValue*               pJsonValues,
+    uint32_t                     jsonValueCapacity,
+    scvkArena*                   pArena,
+    VkPipelineMatchControl       matchControl,
+    VkDeviceSize                 poolEntrySize,
+    const VkAllocationCallbacks* pAllocator,
+    scvkPipelineJson*            pPipeline,
+    scvkPipelineJsonObjects*     pObjects)
 {
     scvkJsonContext             context;
     VkPipelineOfflineCreateInfo pipeline_offline_create_info;
@@ -1760,10 +1941,23 @@ extern SCVK_FORCE_INLINE void scvkCreateOfflinePipelineFromJson(VkDevice        
     scvkParsePipelineJson(&context, pPipeline);
     SCVK_ASSERT(pPipeline->hasPipelineUuid);
 
-    file_next = (VK_PIPELINE_BIND_POINT_GRAPHICS == pPipeline->bindPoint) ? pPipeline->graphicsPipelineCreateInfo.pNext : pPipeline->computePipelineCreateInfo.pNext;
+    file_next = (VK_PIPELINE_BIND_POINT_GRAPHICS == pPipeline->bindPoint) ? pPipeline->graphicsPipelineCreateInfo.pNext
+                                                                          : pPipeline->computePipelineCreateInfo.pNext;
 
-    scvkInitPipelineOfflineCreateInfo(&pipeline_offline_create_info, file_next, pPipeline->pipelineUuid, matchControl, poolEntrySize);
-    scvkCreatePipelineJsonObjects(device, pipelineCache, pPipeline, &pipeline_offline_create_info, NULL, NULL, pArena, pAllocator, pObjects);
+    scvkInitPipelineOfflineCreateInfo(&pipeline_offline_create_info,
+                                      file_next,
+                                      pPipeline->pipelineUuid,
+                                      matchControl,
+                                      poolEntrySize);
+    scvkCreatePipelineJsonObjects(device,
+                                  pipelineCache,
+                                  pPipeline,
+                                  &pipeline_offline_create_info,
+                                  NULL,
+                                  NULL,
+                                  pArena,
+                                  pAllocator,
+                                  pObjects);
 }
 /*************************************************************************************************/
 /**
@@ -1772,7 +1966,9 @@ extern SCVK_FORCE_INLINE void scvkCreateOfflinePipelineFromJson(VkDevice        
  *  value therefore bounds the stack without recursion. Callback-backed arenas
  *  allocate the stack through those callbacks; caller-owned arenas use their tail.
  */
-extern SCVK_FORCE_INLINE void scvkInitializeJsonWork(scvkJsonWork* pWork, const scvkJsonContext* pContext)
+extern SCVK_FORCE_INLINE void scvkInitializeJsonWork(
+    scvkJsonWork*          pWork,
+    const scvkJsonContext* pContext)
 {
     uint64_t  scratch_size;
     uint64_t  safeScratchSize;
@@ -1801,7 +1997,10 @@ extern SCVK_FORCE_INLINE void scvkInitializeJsonWork(scvkJsonWork* pWork, const 
     {
         const VkAllocationCallbacks* pAllocator = pContext->pArena->pAllocator;
 
-        pWork->pTasks = (scvkJsonTask*)pAllocator->pfnAllocation(pAllocator->pUserData, scratch_size, SCVK_JSON_ARENA_ALIGNMENT, VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
+        pWork->pTasks = (scvkJsonTask*)pAllocator->pfnAllocation(pAllocator->pUserData,
+                                                                 scratch_size,
+                                                                 SCVK_JSON_ARENA_ALIGNMENT,
+                                                                 VK_SYSTEM_ALLOCATION_SCOPE_COMMAND);
         SCVK_ASSERT(NULL != pWork->pTasks);
 
         pWork->callbackScratch = VK_TRUE;
@@ -1834,7 +2033,11 @@ extern SCVK_FORCE_INLINE void scvkInitializeJsonWork(scvkJsonWork* pWork, const 
  * \par Details:
  *  None
  */
-extern SCVK_FORCE_INLINE void scvkAppendJsonWork(scvkJsonWork* pWork, PFN_scvkReadJsonObject read, const scvkJsonValue* pObject, void* pOutput)
+extern SCVK_FORCE_INLINE void scvkAppendJsonWork(
+    scvkJsonWork*          pWork,
+    PFN_scvkReadJsonObject read,
+    const scvkJsonValue*   pObject,
+    void*                  pOutput)
 {
     scvkJsonTask* task;
 
@@ -1856,7 +2059,8 @@ extern SCVK_FORCE_INLINE void scvkAppendJsonWork(scvkJsonWork* pWork, PFN_scvkRe
  *  Readers may append child objects, but never invoke this drain operation.
  *  The native call stack therefore does not grow with JSON nesting depth.
  */
-extern SCVK_FORCE_INLINE void scvkRunJsonWork(scvkJsonWork* pWork)
+extern SCVK_FORCE_INLINE void scvkRunJsonWork(
+    scvkJsonWork* pWork)
 {
     scvkJsonTask task;
 
@@ -1886,48 +2090,110 @@ extern SCVK_FORCE_INLINE void scvkRunJsonWork(scvkJsonWork* pWork)
  * \par Details:
  *  The dispatch table is derived from the profile's registry structures.
  */
-extern SCVK_FORCE_INLINE void* scvkScheduleJsonStructureChain(scvkJsonWork* pWork, const scvkJsonValue* pObject)
+extern SCVK_FORCE_INLINE void* scvkScheduleJsonStructureChain(
+    scvkJsonWork*        pWork,
+    const scvkJsonValue* pObject)
 {
     static const scvkJsonStructureReader readers[] = {
-        {"VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR", sizeof(VkAcquireNextImageInfoKHR), scvkReadJsonAcquireNextImageInfo},
-        {"VK_STRUCTURE_TYPE_ACQUIRE_PROFILING_LOCK_INFO_KHR", sizeof(VkAcquireProfilingLockInfoKHR), scvkReadJsonAcquireProfilingLockInfo},
+        {"VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR",
+         sizeof(VkAcquireNextImageInfoKHR),
+         scvkReadJsonAcquireNextImageInfo},
+        {"VK_STRUCTURE_TYPE_ACQUIRE_PROFILING_LOCK_INFO_KHR",
+         sizeof(VkAcquireProfilingLockInfoKHR),
+         scvkReadJsonAcquireProfilingLockInfo},
         {"VK_STRUCTURE_TYPE_APPLICATION_INFO", sizeof(VkApplicationInfo), scvkReadJsonApplicationInfo},
-        {"VK_STRUCTURE_TYPE_APPLICATION_PARAMETERS_EXT", sizeof(VkApplicationParametersEXT), scvkReadJsonApplicationParameters},
-        {"VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2", sizeof(VkAttachmentDescription2), scvkReadJsonAttachmentDescription2},
-        {"VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT", sizeof(VkAttachmentDescriptionStencilLayout), scvkReadJsonAttachmentDescriptionStencilLayout},
+        {"VK_STRUCTURE_TYPE_APPLICATION_PARAMETERS_EXT",
+         sizeof(VkApplicationParametersEXT),
+         scvkReadJsonApplicationParameters},
+        {"VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2",
+         sizeof(VkAttachmentDescription2),
+         scvkReadJsonAttachmentDescription2},
+        {"VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT",
+         sizeof(VkAttachmentDescriptionStencilLayout),
+         scvkReadJsonAttachmentDescriptionStencilLayout},
         {"VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2", sizeof(VkAttachmentReference2), scvkReadJsonAttachmentReference2},
-        {"VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_STENCIL_LAYOUT", sizeof(VkAttachmentReferenceStencilLayout), scvkReadJsonAttachmentReferenceStencilLayout},
-        {"VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO", sizeof(VkBindBufferMemoryDeviceGroupInfo), scvkReadJsonBindBufferMemoryDeviceGroupInfo},
+        {"VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_STENCIL_LAYOUT",
+         sizeof(VkAttachmentReferenceStencilLayout),
+         scvkReadJsonAttachmentReferenceStencilLayout},
+        {"VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO",
+         sizeof(VkBindBufferMemoryDeviceGroupInfo),
+         scvkReadJsonBindBufferMemoryDeviceGroupInfo},
         {"VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO", sizeof(VkBindBufferMemoryInfo), scvkReadJsonBindBufferMemoryInfo},
-        {"VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO", sizeof(VkBindImageMemoryDeviceGroupInfo), scvkReadJsonBindImageMemoryDeviceGroupInfo},
+        {"VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO",
+         sizeof(VkBindImageMemoryDeviceGroupInfo),
+         scvkReadJsonBindImageMemoryDeviceGroupInfo},
         {"VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO", sizeof(VkBindImageMemoryInfo), scvkReadJsonBindImageMemoryInfo},
-        {"VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR", sizeof(VkBindImageMemorySwapchainInfoKHR), scvkReadJsonBindImageMemorySwapchainInfo},
-        {"VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO", sizeof(VkBindImagePlaneMemoryInfo), scvkReadJsonBindImagePlaneMemoryInfo},
+        {"VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR",
+         sizeof(VkBindImageMemorySwapchainInfoKHR),
+         scvkReadJsonBindImageMemorySwapchainInfo},
+        {"VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO",
+         sizeof(VkBindImagePlaneMemoryInfo),
+         scvkReadJsonBindImagePlaneMemoryInfo},
         {"VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO", sizeof(VkBufferCreateInfo), scvkReadJsonBufferCreateInfo},
-        {"VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO", sizeof(VkBufferDeviceAddressInfo), scvkReadJsonBufferDeviceAddressInfo},
+        {"VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO",
+         sizeof(VkBufferDeviceAddressInfo),
+         scvkReadJsonBufferDeviceAddressInfo},
         {"VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER", sizeof(VkBufferMemoryBarrier), scvkReadJsonBufferMemoryBarrier},
-        {"VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2", sizeof(VkBufferMemoryRequirementsInfo2), scvkReadJsonBufferMemoryRequirementsInfo2},
-        {"VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO", sizeof(VkBufferOpaqueCaptureAddressCreateInfo), scvkReadJsonBufferOpaqueCaptureAddressCreateInfo},
+        {"VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2",
+         sizeof(VkBufferMemoryRequirementsInfo2),
+         scvkReadJsonBufferMemoryRequirementsInfo2},
+        {"VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO",
+         sizeof(VkBufferOpaqueCaptureAddressCreateInfo),
+         scvkReadJsonBufferOpaqueCaptureAddressCreateInfo},
         {"VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO", sizeof(VkBufferViewCreateInfo), scvkReadJsonBufferViewCreateInfo},
-        {"VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR", sizeof(VkCalibratedTimestampInfoKHR), scvkReadJsonCalibratedTimestampInfo},
-        {"VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO", sizeof(VkCommandBufferAllocateInfo), scvkReadJsonCommandBufferAllocateInfo},
-        {"VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO", sizeof(VkCommandBufferBeginInfo), scvkReadJsonCommandBufferBeginInfo},
-        {"VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO", sizeof(VkCommandBufferInheritanceInfo), scvkReadJsonCommandBufferInheritanceInfo},
-        {"VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO", sizeof(VkCommandPoolCreateInfo), scvkReadJsonCommandPoolCreateInfo},
-        {"VK_STRUCTURE_TYPE_COMMAND_POOL_MEMORY_CONSUMPTION", sizeof(VkCommandPoolMemoryConsumption), scvkReadJsonCommandPoolMemoryConsumption},
-        {"VK_STRUCTURE_TYPE_COMMAND_POOL_MEMORY_RESERVATION_CREATE_INFO", sizeof(VkCommandPoolMemoryReservationCreateInfo), scvkReadJsonCommandPoolMemoryReservationCreateInfo},
-        {"VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO", sizeof(VkComputePipelineCreateInfo), scvkReadJsonComputePipelineCreateInfo},
+        {"VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR",
+         sizeof(VkCalibratedTimestampInfoKHR),
+         scvkReadJsonCalibratedTimestampInfo},
+        {"VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO",
+         sizeof(VkCommandBufferAllocateInfo),
+         scvkReadJsonCommandBufferAllocateInfo},
+        {"VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO",
+         sizeof(VkCommandBufferBeginInfo),
+         scvkReadJsonCommandBufferBeginInfo},
+        {"VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO",
+         sizeof(VkCommandBufferInheritanceInfo),
+         scvkReadJsonCommandBufferInheritanceInfo},
+        {"VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO",
+         sizeof(VkCommandPoolCreateInfo),
+         scvkReadJsonCommandPoolCreateInfo},
+        {"VK_STRUCTURE_TYPE_COMMAND_POOL_MEMORY_CONSUMPTION",
+         sizeof(VkCommandPoolMemoryConsumption),
+         scvkReadJsonCommandPoolMemoryConsumption},
+        {"VK_STRUCTURE_TYPE_COMMAND_POOL_MEMORY_RESERVATION_CREATE_INFO",
+         sizeof(VkCommandPoolMemoryReservationCreateInfo),
+         scvkReadJsonCommandPoolMemoryReservationCreateInfo},
+        {"VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO",
+         sizeof(VkComputePipelineCreateInfo),
+         scvkReadJsonComputePipelineCreateInfo},
         {"VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET", sizeof(VkCopyDescriptorSet), scvkReadJsonCopyDescriptorSet},
         {"VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT", sizeof(VkDebugUtilsLabelEXT), scvkReadJsonDebugUtilsLabel},
-        {"VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT", sizeof(VkDebugUtilsMessengerCallbackDataEXT), scvkReadJsonDebugUtilsMessengerCallbackData},
-        {"VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT", sizeof(VkDebugUtilsMessengerCreateInfoEXT), scvkReadJsonDebugUtilsMessengerCreateInfo},
-        {"VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT", sizeof(VkDebugUtilsObjectNameInfoEXT), scvkReadJsonDebugUtilsObjectNameInfo},
-        {"VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT", sizeof(VkDebugUtilsObjectTagInfoEXT), scvkReadJsonDebugUtilsObjectTagInfo},
-        {"VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO", sizeof(VkDescriptorPoolCreateInfo), scvkReadJsonDescriptorPoolCreateInfo},
-        {"VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO", sizeof(VkDescriptorSetAllocateInfo), scvkReadJsonDescriptorSetAllocateInfo},
-        {"VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO", sizeof(VkDescriptorSetLayoutBindingFlagsCreateInfo), scvkReadJsonDescriptorSetLayoutBindingFlagsCreateInfo},
-        {"VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO", sizeof(VkDescriptorSetLayoutCreateInfo), scvkReadJsonDescriptorSetLayoutCreateInfo},
-        {"VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT", sizeof(VkDescriptorSetLayoutSupport), scvkReadJsonDescriptorSetLayoutSupport},
+        {"VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT",
+         sizeof(VkDebugUtilsMessengerCallbackDataEXT),
+         scvkReadJsonDebugUtilsMessengerCallbackData},
+        {"VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT",
+         sizeof(VkDebugUtilsMessengerCreateInfoEXT),
+         scvkReadJsonDebugUtilsMessengerCreateInfo},
+        {"VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT",
+         sizeof(VkDebugUtilsObjectNameInfoEXT),
+         scvkReadJsonDebugUtilsObjectNameInfo},
+        {"VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT",
+         sizeof(VkDebugUtilsObjectTagInfoEXT),
+         scvkReadJsonDebugUtilsObjectTagInfo},
+        {"VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO",
+         sizeof(VkDescriptorPoolCreateInfo),
+         scvkReadJsonDescriptorPoolCreateInfo},
+        {"VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO",
+         sizeof(VkDescriptorSetAllocateInfo),
+         scvkReadJsonDescriptorSetAllocateInfo},
+        {"VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO",
+         sizeof(VkDescriptorSetLayoutBindingFlagsCreateInfo),
+         scvkReadJsonDescriptorSetLayoutBindingFlagsCreateInfo},
+        {"VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO",
+         sizeof(VkDescriptorSetLayoutCreateInfo),
+         scvkReadJsonDescriptorSetLayoutCreateInfo},
+        {"VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT",
+         sizeof(VkDescriptorSetLayoutSupport),
+         scvkReadJsonDescriptorSetLayoutSupport},
         {"VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO",
          sizeof(VkDescriptorSetVariableDescriptorCountAllocateInfo),
          scvkReadJsonDescriptorSetVariableDescriptorCountAllocateInfo},
@@ -1936,195 +2202,469 @@ extern SCVK_FORCE_INLINE void* scvkScheduleJsonStructureChain(scvkJsonWork* pWor
          scvkReadJsonDescriptorSetVariableDescriptorCountLayoutSupport},
         {"VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO", sizeof(VkDeviceCreateInfo), scvkReadJsonDeviceCreateInfo},
         {"VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT", sizeof(VkDeviceEventInfoEXT), scvkReadJsonDeviceEventInfo},
-        {"VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO", sizeof(VkDeviceGroupCommandBufferBeginInfo), scvkReadJsonDeviceGroupCommandBufferBeginInfo},
-        {"VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO", sizeof(VkDeviceGroupDeviceCreateInfo), scvkReadJsonDeviceGroupDeviceCreateInfo},
-        {"VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR", sizeof(VkDeviceGroupPresentCapabilitiesKHR), scvkReadJsonDeviceGroupPresentCapabilities},
-        {"VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR", sizeof(VkDeviceGroupPresentInfoKHR), scvkReadJsonDeviceGroupPresentInfo},
-        {"VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO", sizeof(VkDeviceGroupRenderPassBeginInfo), scvkReadJsonDeviceGroupRenderPassBeginInfo},
-        {"VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO", sizeof(VkDeviceGroupSubmitInfo), scvkReadJsonDeviceGroupSubmitInfo},
-        {"VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR", sizeof(VkDeviceGroupSwapchainCreateInfoKHR), scvkReadJsonDeviceGroupSwapchainCreateInfo},
-        {"VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO", sizeof(VkDeviceMemoryOpaqueCaptureAddressInfo), scvkReadJsonDeviceMemoryOpaqueCaptureAddressInfo},
-        {"VK_STRUCTURE_TYPE_DEVICE_OBJECT_RESERVATION_CREATE_INFO", sizeof(VkDeviceObjectReservationCreateInfo), scvkReadJsonDeviceObjectReservationCreateInfo},
-        {"VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO", sizeof(VkDeviceQueueCreateInfo), scvkReadJsonDeviceQueueCreateInfo},
+        {"VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO",
+         sizeof(VkDeviceGroupCommandBufferBeginInfo),
+         scvkReadJsonDeviceGroupCommandBufferBeginInfo},
+        {"VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO",
+         sizeof(VkDeviceGroupDeviceCreateInfo),
+         scvkReadJsonDeviceGroupDeviceCreateInfo},
+        {"VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR",
+         sizeof(VkDeviceGroupPresentCapabilitiesKHR),
+         scvkReadJsonDeviceGroupPresentCapabilities},
+        {"VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR",
+         sizeof(VkDeviceGroupPresentInfoKHR),
+         scvkReadJsonDeviceGroupPresentInfo},
+        {"VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO",
+         sizeof(VkDeviceGroupRenderPassBeginInfo),
+         scvkReadJsonDeviceGroupRenderPassBeginInfo},
+        {"VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO",
+         sizeof(VkDeviceGroupSubmitInfo),
+         scvkReadJsonDeviceGroupSubmitInfo},
+        {"VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR",
+         sizeof(VkDeviceGroupSwapchainCreateInfoKHR),
+         scvkReadJsonDeviceGroupSwapchainCreateInfo},
+        {"VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO",
+         sizeof(VkDeviceMemoryOpaqueCaptureAddressInfo),
+         scvkReadJsonDeviceMemoryOpaqueCaptureAddressInfo},
+        {"VK_STRUCTURE_TYPE_DEVICE_OBJECT_RESERVATION_CREATE_INFO",
+         sizeof(VkDeviceObjectReservationCreateInfo),
+         scvkReadJsonDeviceObjectReservationCreateInfo},
+        {"VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO",
+         sizeof(VkDeviceQueueCreateInfo),
+         scvkReadJsonDeviceQueueCreateInfo},
         {"VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2", sizeof(VkDeviceQueueInfo2), scvkReadJsonDeviceQueueInfo2},
         {"VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT", sizeof(VkDisplayEventInfoEXT), scvkReadJsonDisplayEventInfo},
-        {"VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR", sizeof(VkDisplayModeCreateInfoKHR), scvkReadJsonDisplayModeCreateInfo},
-        {"VK_STRUCTURE_TYPE_DISPLAY_MODE_PROPERTIES_2_KHR", sizeof(VkDisplayModeProperties2KHR), scvkReadJsonDisplayModeProperties2},
-        {"VK_STRUCTURE_TYPE_DISPLAY_PLANE_CAPABILITIES_2_KHR", sizeof(VkDisplayPlaneCapabilities2KHR), scvkReadJsonDisplayPlaneCapabilities2},
+        {"VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR",
+         sizeof(VkDisplayModeCreateInfoKHR),
+         scvkReadJsonDisplayModeCreateInfo},
+        {"VK_STRUCTURE_TYPE_DISPLAY_MODE_PROPERTIES_2_KHR",
+         sizeof(VkDisplayModeProperties2KHR),
+         scvkReadJsonDisplayModeProperties2},
+        {"VK_STRUCTURE_TYPE_DISPLAY_PLANE_CAPABILITIES_2_KHR",
+         sizeof(VkDisplayPlaneCapabilities2KHR),
+         scvkReadJsonDisplayPlaneCapabilities2},
         {"VK_STRUCTURE_TYPE_DISPLAY_PLANE_INFO_2_KHR", sizeof(VkDisplayPlaneInfo2KHR), scvkReadJsonDisplayPlaneInfo2},
-        {"VK_STRUCTURE_TYPE_DISPLAY_PLANE_PROPERTIES_2_KHR", sizeof(VkDisplayPlaneProperties2KHR), scvkReadJsonDisplayPlaneProperties2},
+        {"VK_STRUCTURE_TYPE_DISPLAY_PLANE_PROPERTIES_2_KHR",
+         sizeof(VkDisplayPlaneProperties2KHR),
+         scvkReadJsonDisplayPlaneProperties2},
         {"VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT", sizeof(VkDisplayPowerInfoEXT), scvkReadJsonDisplayPowerInfo},
         {"VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR", sizeof(VkDisplayPresentInfoKHR), scvkReadJsonDisplayPresentInfo},
         {"VK_STRUCTURE_TYPE_DISPLAY_PROPERTIES_2_KHR", sizeof(VkDisplayProperties2KHR), scvkReadJsonDisplayProperties2},
-        {"VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR", sizeof(VkDisplaySurfaceCreateInfoKHR), scvkReadJsonDisplaySurfaceCreateInfo},
-        {"VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT", sizeof(VkDrmFormatModifierPropertiesListEXT), scvkReadJsonDrmFormatModifierPropertiesList},
+        {"VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR",
+         sizeof(VkDisplaySurfaceCreateInfoKHR),
+         scvkReadJsonDisplaySurfaceCreateInfo},
+        {"VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT",
+         sizeof(VkDrmFormatModifierPropertiesListEXT),
+         scvkReadJsonDrmFormatModifierPropertiesList},
         {"VK_STRUCTURE_TYPE_EVENT_CREATE_INFO", sizeof(VkEventCreateInfo), scvkReadJsonEventCreateInfo},
-        {"VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO", sizeof(VkExportFenceCreateInfo), scvkReadJsonExportFenceCreateInfo},
-        {"VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO", sizeof(VkExportMemoryAllocateInfo), scvkReadJsonExportMemoryAllocateInfo},
-        {"VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO", sizeof(VkExportSemaphoreCreateInfo), scvkReadJsonExportSemaphoreCreateInfo},
-        {"VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES", sizeof(VkExternalBufferProperties), scvkReadJsonExternalBufferProperties},
-        {"VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES", sizeof(VkExternalFenceProperties), scvkReadJsonExternalFenceProperties},
-        {"VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES", sizeof(VkExternalImageFormatProperties), scvkReadJsonExternalImageFormatProperties},
-        {"VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO", sizeof(VkExternalMemoryBufferCreateInfo), scvkReadJsonExternalMemoryBufferCreateInfo},
-        {"VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO", sizeof(VkExternalMemoryImageCreateInfo), scvkReadJsonExternalMemoryImageCreateInfo},
-        {"VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES", sizeof(VkExternalSemaphoreProperties), scvkReadJsonExternalSemaphoreProperties},
+        {"VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO",
+         sizeof(VkExportFenceCreateInfo),
+         scvkReadJsonExportFenceCreateInfo},
+        {"VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO",
+         sizeof(VkExportMemoryAllocateInfo),
+         scvkReadJsonExportMemoryAllocateInfo},
+        {"VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO",
+         sizeof(VkExportSemaphoreCreateInfo),
+         scvkReadJsonExportSemaphoreCreateInfo},
+        {"VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES",
+         sizeof(VkExternalBufferProperties),
+         scvkReadJsonExternalBufferProperties},
+        {"VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES",
+         sizeof(VkExternalFenceProperties),
+         scvkReadJsonExternalFenceProperties},
+        {"VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES",
+         sizeof(VkExternalImageFormatProperties),
+         scvkReadJsonExternalImageFormatProperties},
+        {"VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO",
+         sizeof(VkExternalMemoryBufferCreateInfo),
+         scvkReadJsonExternalMemoryBufferCreateInfo},
+        {"VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO",
+         sizeof(VkExternalMemoryImageCreateInfo),
+         scvkReadJsonExternalMemoryImageCreateInfo},
+        {"VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES",
+         sizeof(VkExternalSemaphoreProperties),
+         scvkReadJsonExternalSemaphoreProperties},
         {"VK_STRUCTURE_TYPE_FAULT_CALLBACK_INFO", sizeof(VkFaultCallbackInfo), scvkReadJsonFaultCallbackInfo},
         {"VK_STRUCTURE_TYPE_FAULT_DATA", sizeof(VkFaultData), scvkReadJsonFaultData},
         {"VK_STRUCTURE_TYPE_FENCE_CREATE_INFO", sizeof(VkFenceCreateInfo), scvkReadJsonFenceCreateInfo},
         {"VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR", sizeof(VkFenceGetFdInfoKHR), scvkReadJsonFenceGetFdInfo},
-        {"VK_STRUCTURE_TYPE_FILTER_CUBIC_IMAGE_VIEW_IMAGE_FORMAT_PROPERTIES_EXT", sizeof(VkFilterCubicImageViewImageFormatPropertiesEXT), scvkReadJsonFilterCubicImageViewImageFormatProperties},
+        {"VK_STRUCTURE_TYPE_FILTER_CUBIC_IMAGE_VIEW_IMAGE_FORMAT_PROPERTIES_EXT",
+         sizeof(VkFilterCubicImageViewImageFormatPropertiesEXT),
+         scvkReadJsonFilterCubicImageViewImageFormatProperties},
         {"VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2", sizeof(VkFormatProperties2), scvkReadJsonFormatProperties2},
-        {"VK_STRUCTURE_TYPE_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR", sizeof(VkFragmentShadingRateAttachmentInfoKHR), scvkReadJsonFragmentShadingRateAttachmentInfo},
-        {"VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO", sizeof(VkFramebufferAttachmentImageInfo), scvkReadJsonFramebufferAttachmentImageInfo},
-        {"VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO", sizeof(VkFramebufferAttachmentsCreateInfo), scvkReadJsonFramebufferAttachmentsCreateInfo},
-        {"VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO", sizeof(VkFramebufferCreateInfo), scvkReadJsonFramebufferCreateInfo},
-        {"VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO", sizeof(VkGraphicsPipelineCreateInfo), scvkReadJsonGraphicsPipelineCreateInfo},
+        {"VK_STRUCTURE_TYPE_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR",
+         sizeof(VkFragmentShadingRateAttachmentInfoKHR),
+         scvkReadJsonFragmentShadingRateAttachmentInfo},
+        {"VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO",
+         sizeof(VkFramebufferAttachmentImageInfo),
+         scvkReadJsonFramebufferAttachmentImageInfo},
+        {"VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO",
+         sizeof(VkFramebufferAttachmentsCreateInfo),
+         scvkReadJsonFramebufferAttachmentsCreateInfo},
+        {"VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO",
+         sizeof(VkFramebufferCreateInfo),
+         scvkReadJsonFramebufferCreateInfo},
+        {"VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO",
+         sizeof(VkGraphicsPipelineCreateInfo),
+         scvkReadJsonGraphicsPipelineCreateInfo},
         {"VK_STRUCTURE_TYPE_HDR_METADATA_EXT", sizeof(VkHdrMetadataEXT), scvkReadJsonHdrMetadata},
-        {"VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT", sizeof(VkHeadlessSurfaceCreateInfoEXT), scvkReadJsonHeadlessSurfaceCreateInfo},
+        {"VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT",
+         sizeof(VkHeadlessSurfaceCreateInfoEXT),
+         scvkReadJsonHeadlessSurfaceCreateInfo},
         {"VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO", sizeof(VkImageCreateInfo), scvkReadJsonImageCreateInfo},
-        {"VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT", sizeof(VkImageDrmFormatModifierExplicitCreateInfoEXT), scvkReadJsonImageDrmFormatModifierExplicitCreateInfo},
-        {"VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT", sizeof(VkImageDrmFormatModifierListCreateInfoEXT), scvkReadJsonImageDrmFormatModifierListCreateInfo},
-        {"VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT", sizeof(VkImageDrmFormatModifierPropertiesEXT), scvkReadJsonImageDrmFormatModifierProperties},
-        {"VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO", sizeof(VkImageFormatListCreateInfo), scvkReadJsonImageFormatListCreateInfo},
-        {"VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2", sizeof(VkImageFormatProperties2), scvkReadJsonImageFormatProperties2},
+        {"VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT",
+         sizeof(VkImageDrmFormatModifierExplicitCreateInfoEXT),
+         scvkReadJsonImageDrmFormatModifierExplicitCreateInfo},
+        {"VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT",
+         sizeof(VkImageDrmFormatModifierListCreateInfoEXT),
+         scvkReadJsonImageDrmFormatModifierListCreateInfo},
+        {"VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT",
+         sizeof(VkImageDrmFormatModifierPropertiesEXT),
+         scvkReadJsonImageDrmFormatModifierProperties},
+        {"VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO",
+         sizeof(VkImageFormatListCreateInfo),
+         scvkReadJsonImageFormatListCreateInfo},
+        {"VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2",
+         sizeof(VkImageFormatProperties2),
+         scvkReadJsonImageFormatProperties2},
         {"VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER", sizeof(VkImageMemoryBarrier), scvkReadJsonImageMemoryBarrier},
-        {"VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2", sizeof(VkImageMemoryRequirementsInfo2), scvkReadJsonImageMemoryRequirementsInfo2},
-        {"VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO", sizeof(VkImagePlaneMemoryRequirementsInfo), scvkReadJsonImagePlaneMemoryRequirementsInfo},
-        {"VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO", sizeof(VkImageStencilUsageCreateInfo), scvkReadJsonImageStencilUsageCreateInfo},
-        {"VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR", sizeof(VkImageSwapchainCreateInfoKHR), scvkReadJsonImageSwapchainCreateInfo},
-        {"VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT", sizeof(VkImageViewASTCDecodeModeEXT), scvkReadJsonImageViewASTCDecodeMode},
+        {"VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2",
+         sizeof(VkImageMemoryRequirementsInfo2),
+         scvkReadJsonImageMemoryRequirementsInfo2},
+        {"VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO",
+         sizeof(VkImagePlaneMemoryRequirementsInfo),
+         scvkReadJsonImagePlaneMemoryRequirementsInfo},
+        {"VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO",
+         sizeof(VkImageStencilUsageCreateInfo),
+         scvkReadJsonImageStencilUsageCreateInfo},
+        {"VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR",
+         sizeof(VkImageSwapchainCreateInfoKHR),
+         scvkReadJsonImageSwapchainCreateInfo},
+        {"VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT",
+         sizeof(VkImageViewASTCDecodeModeEXT),
+         scvkReadJsonImageViewASTCDecodeMode},
         {"VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO", sizeof(VkImageViewCreateInfo), scvkReadJsonImageViewCreateInfo},
-        {"VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO", sizeof(VkImageViewUsageCreateInfo), scvkReadJsonImageViewUsageCreateInfo},
+        {"VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO",
+         sizeof(VkImageViewUsageCreateInfo),
+         scvkReadJsonImageViewUsageCreateInfo},
         {"VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR", sizeof(VkImportFenceFdInfoKHR), scvkReadJsonImportFenceFdInfo},
-        {"VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR", sizeof(VkImportMemoryFdInfoKHR), scvkReadJsonImportMemoryFdInfo},
-        {"VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT", sizeof(VkImportMemoryHostPointerInfoEXT), scvkReadJsonImportMemoryHostPointerInfo},
-        {"VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR", sizeof(VkImportSemaphoreFdInfoKHR), scvkReadJsonImportSemaphoreFdInfo},
+        {"VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR",
+         sizeof(VkImportMemoryFdInfoKHR),
+         scvkReadJsonImportMemoryFdInfo},
+        {"VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT",
+         sizeof(VkImportMemoryHostPointerInfoEXT),
+         scvkReadJsonImportMemoryHostPointerInfo},
+        {"VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR",
+         sizeof(VkImportSemaphoreFdInfoKHR),
+         scvkReadJsonImportSemaphoreFdInfo},
         {"VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO", sizeof(VkInstanceCreateInfo), scvkReadJsonInstanceCreateInfo},
-        {"VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT", sizeof(VkLayerSettingsCreateInfoEXT), scvkReadJsonLayerSettingsCreateInfo},
+        {"VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT",
+         sizeof(VkLayerSettingsCreateInfoEXT),
+         scvkReadJsonLayerSettingsCreateInfo},
         {"VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE", sizeof(VkMappedMemoryRange), scvkReadJsonMappedMemoryRange},
-        {"VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO", sizeof(VkMemoryAllocateFlagsInfo), scvkReadJsonMemoryAllocateFlagsInfo},
+        {"VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO",
+         sizeof(VkMemoryAllocateFlagsInfo),
+         scvkReadJsonMemoryAllocateFlagsInfo},
         {"VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO", sizeof(VkMemoryAllocateInfo), scvkReadJsonMemoryAllocateInfo},
         {"VK_STRUCTURE_TYPE_MEMORY_BARRIER", sizeof(VkMemoryBarrier), scvkReadJsonMemoryBarrier},
-        {"VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO", sizeof(VkMemoryDedicatedAllocateInfo), scvkReadJsonMemoryDedicatedAllocateInfo},
-        {"VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS", sizeof(VkMemoryDedicatedRequirements), scvkReadJsonMemoryDedicatedRequirements},
+        {"VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO",
+         sizeof(VkMemoryDedicatedAllocateInfo),
+         scvkReadJsonMemoryDedicatedAllocateInfo},
+        {"VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS",
+         sizeof(VkMemoryDedicatedRequirements),
+         scvkReadJsonMemoryDedicatedRequirements},
         {"VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR", sizeof(VkMemoryFdPropertiesKHR), scvkReadJsonMemoryFdProperties},
         {"VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR", sizeof(VkMemoryGetFdInfoKHR), scvkReadJsonMemoryGetFdInfo},
-        {"VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT", sizeof(VkMemoryHostPointerPropertiesEXT), scvkReadJsonMemoryHostPointerProperties},
-        {"VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO", sizeof(VkMemoryOpaqueCaptureAddressAllocateInfo), scvkReadJsonMemoryOpaqueCaptureAddressAllocateInfo},
+        {"VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT",
+         sizeof(VkMemoryHostPointerPropertiesEXT),
+         scvkReadJsonMemoryHostPointerProperties},
+        {"VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO",
+         sizeof(VkMemoryOpaqueCaptureAddressAllocateInfo),
+         scvkReadJsonMemoryOpaqueCaptureAddressAllocateInfo},
         {"VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2", sizeof(VkMemoryRequirements2), scvkReadJsonMemoryRequirements2},
-        {"VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT", sizeof(VkMultisamplePropertiesEXT), scvkReadJsonMultisampleProperties},
-        {"VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_DESCRIPTION_KHR", sizeof(VkPerformanceCounterDescriptionKHR), scvkReadJsonPerformanceCounterDescription},
+        {"VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT",
+         sizeof(VkMultisamplePropertiesEXT),
+         scvkReadJsonMultisampleProperties},
+        {"VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_DESCRIPTION_KHR",
+         sizeof(VkPerformanceCounterDescriptionKHR),
+         scvkReadJsonPerformanceCounterDescription},
         {"VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_KHR", sizeof(VkPerformanceCounterKHR), scvkReadJsonPerformanceCounter},
-        {"VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_RESERVATION_INFO_KHR", sizeof(VkPerformanceQueryReservationInfoKHR), scvkReadJsonPerformanceQueryReservationInfo},
-        {"VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_SUBMIT_INFO_KHR", sizeof(VkPerformanceQuerySubmitInfoKHR), scvkReadJsonPerformanceQuerySubmitInfo},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES", sizeof(VkPhysicalDevice16BitStorageFeatures), scvkReadJsonPhysicalDevice16BitStorageFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_4444_FORMATS_FEATURES_EXT", sizeof(VkPhysicalDevice4444FormatsFeaturesEXT), scvkReadJsonPhysicalDevice4444FormatsFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES", sizeof(VkPhysicalDevice8BitStorageFeatures), scvkReadJsonPhysicalDevice8BitStorageFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT", sizeof(VkPhysicalDeviceASTCDecodeFeaturesEXT), scvkReadJsonPhysicalDeviceASTCDecodeFeatures},
+        {"VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_RESERVATION_INFO_KHR",
+         sizeof(VkPerformanceQueryReservationInfoKHR),
+         scvkReadJsonPerformanceQueryReservationInfo},
+        {"VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_SUBMIT_INFO_KHR",
+         sizeof(VkPerformanceQuerySubmitInfoKHR),
+         scvkReadJsonPerformanceQuerySubmitInfo},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES",
+         sizeof(VkPhysicalDevice16BitStorageFeatures),
+         scvkReadJsonPhysicalDevice16BitStorageFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_4444_FORMATS_FEATURES_EXT",
+         sizeof(VkPhysicalDevice4444FormatsFeaturesEXT),
+         scvkReadJsonPhysicalDevice4444FormatsFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES",
+         sizeof(VkPhysicalDevice8BitStorageFeatures),
+         scvkReadJsonPhysicalDevice8BitStorageFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT",
+         sizeof(VkPhysicalDeviceASTCDecodeFeaturesEXT),
+         scvkReadJsonPhysicalDeviceASTCDecodeFeatures},
         {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT",
          sizeof(VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT),
          scvkReadJsonPhysicalDeviceBlendOperationAdvancedFeatures},
         {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT",
          sizeof(VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT),
          scvkReadJsonPhysicalDeviceBlendOperationAdvancedProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES", sizeof(VkPhysicalDeviceBufferDeviceAddressFeatures), scvkReadJsonPhysicalDeviceBufferDeviceAddressFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COLOR_WRITE_ENABLE_FEATURES_EXT", sizeof(VkPhysicalDeviceColorWriteEnableFeaturesEXT), scvkReadJsonPhysicalDeviceColorWriteEnableFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES",
+         sizeof(VkPhysicalDeviceBufferDeviceAddressFeatures),
+         scvkReadJsonPhysicalDeviceBufferDeviceAddressFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COLOR_WRITE_ENABLE_FEATURES_EXT",
+         sizeof(VkPhysicalDeviceColorWriteEnableFeaturesEXT),
+         scvkReadJsonPhysicalDeviceColorWriteEnableFeatures},
         {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT",
          sizeof(VkPhysicalDeviceConservativeRasterizationPropertiesEXT),
          scvkReadJsonPhysicalDeviceConservativeRasterizationProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT", sizeof(VkPhysicalDeviceCustomBorderColorFeaturesEXT), scvkReadJsonPhysicalDeviceCustomBorderColorFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT", sizeof(VkPhysicalDeviceCustomBorderColorPropertiesEXT), scvkReadJsonPhysicalDeviceCustomBorderColorProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT", sizeof(VkPhysicalDeviceDepthClipEnableFeaturesEXT), scvkReadJsonPhysicalDeviceDepthClipEnableFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES", sizeof(VkPhysicalDeviceDepthStencilResolveProperties), scvkReadJsonPhysicalDeviceDepthStencilResolveProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES", sizeof(VkPhysicalDeviceDescriptorIndexingFeatures), scvkReadJsonPhysicalDeviceDescriptorIndexingFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES", sizeof(VkPhysicalDeviceDescriptorIndexingProperties), scvkReadJsonPhysicalDeviceDescriptorIndexingProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT", sizeof(VkPhysicalDeviceDiscardRectanglePropertiesEXT), scvkReadJsonPhysicalDeviceDiscardRectangleProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES", sizeof(VkPhysicalDeviceDriverProperties), scvkReadJsonPhysicalDeviceDriverProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_2_FEATURES_EXT", sizeof(VkPhysicalDeviceExtendedDynamicState2FeaturesEXT), scvkReadJsonPhysicalDeviceExtendedDynamicState2Features},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT", sizeof(VkPhysicalDeviceExtendedDynamicStateFeaturesEXT), scvkReadJsonPhysicalDeviceExtendedDynamicStateFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO", sizeof(VkPhysicalDeviceExternalBufferInfo), scvkReadJsonPhysicalDeviceExternalBufferInfo},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO", sizeof(VkPhysicalDeviceExternalFenceInfo), scvkReadJsonPhysicalDeviceExternalFenceInfo},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO", sizeof(VkPhysicalDeviceExternalImageFormatInfo), scvkReadJsonPhysicalDeviceExternalImageFormatInfo},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT", sizeof(VkPhysicalDeviceExternalMemoryHostPropertiesEXT), scvkReadJsonPhysicalDeviceExternalMemoryHostProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO", sizeof(VkPhysicalDeviceExternalSemaphoreInfo), scvkReadJsonPhysicalDeviceExternalSemaphoreInfo},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2", sizeof(VkPhysicalDeviceFeatures2), scvkReadJsonPhysicalDeviceFeatures2},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES", sizeof(VkPhysicalDeviceFloatControlsProperties), scvkReadJsonPhysicalDeviceFloatControlsProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT",
+         sizeof(VkPhysicalDeviceCustomBorderColorFeaturesEXT),
+         scvkReadJsonPhysicalDeviceCustomBorderColorFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT",
+         sizeof(VkPhysicalDeviceCustomBorderColorPropertiesEXT),
+         scvkReadJsonPhysicalDeviceCustomBorderColorProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT",
+         sizeof(VkPhysicalDeviceDepthClipEnableFeaturesEXT),
+         scvkReadJsonPhysicalDeviceDepthClipEnableFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES",
+         sizeof(VkPhysicalDeviceDepthStencilResolveProperties),
+         scvkReadJsonPhysicalDeviceDepthStencilResolveProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES",
+         sizeof(VkPhysicalDeviceDescriptorIndexingFeatures),
+         scvkReadJsonPhysicalDeviceDescriptorIndexingFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES",
+         sizeof(VkPhysicalDeviceDescriptorIndexingProperties),
+         scvkReadJsonPhysicalDeviceDescriptorIndexingProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT",
+         sizeof(VkPhysicalDeviceDiscardRectanglePropertiesEXT),
+         scvkReadJsonPhysicalDeviceDiscardRectangleProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES",
+         sizeof(VkPhysicalDeviceDriverProperties),
+         scvkReadJsonPhysicalDeviceDriverProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_2_FEATURES_EXT",
+         sizeof(VkPhysicalDeviceExtendedDynamicState2FeaturesEXT),
+         scvkReadJsonPhysicalDeviceExtendedDynamicState2Features},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT",
+         sizeof(VkPhysicalDeviceExtendedDynamicStateFeaturesEXT),
+         scvkReadJsonPhysicalDeviceExtendedDynamicStateFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO",
+         sizeof(VkPhysicalDeviceExternalBufferInfo),
+         scvkReadJsonPhysicalDeviceExternalBufferInfo},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO",
+         sizeof(VkPhysicalDeviceExternalFenceInfo),
+         scvkReadJsonPhysicalDeviceExternalFenceInfo},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO",
+         sizeof(VkPhysicalDeviceExternalImageFormatInfo),
+         scvkReadJsonPhysicalDeviceExternalImageFormatInfo},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT",
+         sizeof(VkPhysicalDeviceExternalMemoryHostPropertiesEXT),
+         scvkReadJsonPhysicalDeviceExternalMemoryHostProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO",
+         sizeof(VkPhysicalDeviceExternalSemaphoreInfo),
+         scvkReadJsonPhysicalDeviceExternalSemaphoreInfo},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2",
+         sizeof(VkPhysicalDeviceFeatures2),
+         scvkReadJsonPhysicalDeviceFeatures2},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES",
+         sizeof(VkPhysicalDeviceFloatControlsProperties),
+         scvkReadJsonPhysicalDeviceFloatControlsProperties},
         {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT",
          sizeof(VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT),
          scvkReadJsonPhysicalDeviceFragmentShaderInterlockFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR", sizeof(VkPhysicalDeviceFragmentShadingRateFeaturesKHR), scvkReadJsonPhysicalDeviceFragmentShadingRateFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_KHR", sizeof(VkPhysicalDeviceFragmentShadingRateKHR), scvkReadJsonPhysicalDeviceFragmentShadingRate},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR", sizeof(VkPhysicalDeviceFragmentShadingRatePropertiesKHR), scvkReadJsonPhysicalDeviceFragmentShadingRateProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES", sizeof(VkPhysicalDeviceGroupProperties), scvkReadJsonPhysicalDeviceGroupProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES", sizeof(VkPhysicalDeviceHostQueryResetFeatures), scvkReadJsonPhysicalDeviceHostQueryResetFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES", sizeof(VkPhysicalDeviceIDProperties), scvkReadJsonPhysicalDeviceIDProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT", sizeof(VkPhysicalDeviceImageDrmFormatModifierInfoEXT), scvkReadJsonPhysicalDeviceImageDrmFormatModifierInfo},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2", sizeof(VkPhysicalDeviceImageFormatInfo2), scvkReadJsonPhysicalDeviceImageFormatInfo2},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_IMAGE_FORMAT_INFO_EXT", sizeof(VkPhysicalDeviceImageViewImageFormatInfoEXT), scvkReadJsonPhysicalDeviceImageViewImageFormatInfo},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES", sizeof(VkPhysicalDeviceImagelessFramebufferFeatures), scvkReadJsonPhysicalDeviceImagelessFramebufferFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES", sizeof(VkPhysicalDeviceMaintenance3Properties), scvkReadJsonPhysicalDeviceMaintenance3Properties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT", sizeof(VkPhysicalDeviceMemoryBudgetPropertiesEXT), scvkReadJsonPhysicalDeviceMemoryBudgetProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2", sizeof(VkPhysicalDeviceMemoryProperties2), scvkReadJsonPhysicalDeviceMemoryProperties2},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES", sizeof(VkPhysicalDeviceMultiviewFeatures), scvkReadJsonPhysicalDeviceMultiviewFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES", sizeof(VkPhysicalDeviceMultiviewProperties), scvkReadJsonPhysicalDeviceMultiviewProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT", sizeof(VkPhysicalDevicePCIBusInfoPropertiesEXT), scvkReadJsonPhysicalDevicePCIBusInfoProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR", sizeof(VkPhysicalDevicePerformanceQueryFeaturesKHR), scvkReadJsonPhysicalDevicePerformanceQueryFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR", sizeof(VkPhysicalDevicePerformanceQueryPropertiesKHR), scvkReadJsonPhysicalDevicePerformanceQueryProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES", sizeof(VkPhysicalDevicePointClippingProperties), scvkReadJsonPhysicalDevicePointClippingProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2", sizeof(VkPhysicalDeviceProperties2), scvkReadJsonPhysicalDeviceProperties2},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES", sizeof(VkPhysicalDeviceProtectedMemoryFeatures), scvkReadJsonPhysicalDeviceProtectedMemoryFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES", sizeof(VkPhysicalDeviceProtectedMemoryProperties), scvkReadJsonPhysicalDeviceProtectedMemoryProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT", sizeof(VkPhysicalDeviceSampleLocationsPropertiesEXT), scvkReadJsonPhysicalDeviceSampleLocationsProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES", sizeof(VkPhysicalDeviceSamplerFilterMinmaxProperties), scvkReadJsonPhysicalDeviceSamplerFilterMinmaxProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES", sizeof(VkPhysicalDeviceSamplerYcbcrConversionFeatures), scvkReadJsonPhysicalDeviceSamplerYcbcrConversionFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES", sizeof(VkPhysicalDeviceScalarBlockLayoutFeatures), scvkReadJsonPhysicalDeviceScalarBlockLayoutFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR",
+         sizeof(VkPhysicalDeviceFragmentShadingRateFeaturesKHR),
+         scvkReadJsonPhysicalDeviceFragmentShadingRateFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_KHR",
+         sizeof(VkPhysicalDeviceFragmentShadingRateKHR),
+         scvkReadJsonPhysicalDeviceFragmentShadingRate},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR",
+         sizeof(VkPhysicalDeviceFragmentShadingRatePropertiesKHR),
+         scvkReadJsonPhysicalDeviceFragmentShadingRateProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES",
+         sizeof(VkPhysicalDeviceGroupProperties),
+         scvkReadJsonPhysicalDeviceGroupProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES",
+         sizeof(VkPhysicalDeviceHostQueryResetFeatures),
+         scvkReadJsonPhysicalDeviceHostQueryResetFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES",
+         sizeof(VkPhysicalDeviceIDProperties),
+         scvkReadJsonPhysicalDeviceIDProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT",
+         sizeof(VkPhysicalDeviceImageDrmFormatModifierInfoEXT),
+         scvkReadJsonPhysicalDeviceImageDrmFormatModifierInfo},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2",
+         sizeof(VkPhysicalDeviceImageFormatInfo2),
+         scvkReadJsonPhysicalDeviceImageFormatInfo2},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_IMAGE_FORMAT_INFO_EXT",
+         sizeof(VkPhysicalDeviceImageViewImageFormatInfoEXT),
+         scvkReadJsonPhysicalDeviceImageViewImageFormatInfo},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES",
+         sizeof(VkPhysicalDeviceImagelessFramebufferFeatures),
+         scvkReadJsonPhysicalDeviceImagelessFramebufferFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES",
+         sizeof(VkPhysicalDeviceMaintenance3Properties),
+         scvkReadJsonPhysicalDeviceMaintenance3Properties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT",
+         sizeof(VkPhysicalDeviceMemoryBudgetPropertiesEXT),
+         scvkReadJsonPhysicalDeviceMemoryBudgetProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2",
+         sizeof(VkPhysicalDeviceMemoryProperties2),
+         scvkReadJsonPhysicalDeviceMemoryProperties2},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES",
+         sizeof(VkPhysicalDeviceMultiviewFeatures),
+         scvkReadJsonPhysicalDeviceMultiviewFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES",
+         sizeof(VkPhysicalDeviceMultiviewProperties),
+         scvkReadJsonPhysicalDeviceMultiviewProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT",
+         sizeof(VkPhysicalDevicePCIBusInfoPropertiesEXT),
+         scvkReadJsonPhysicalDevicePCIBusInfoProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR",
+         sizeof(VkPhysicalDevicePerformanceQueryFeaturesKHR),
+         scvkReadJsonPhysicalDevicePerformanceQueryFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR",
+         sizeof(VkPhysicalDevicePerformanceQueryPropertiesKHR),
+         scvkReadJsonPhysicalDevicePerformanceQueryProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES",
+         sizeof(VkPhysicalDevicePointClippingProperties),
+         scvkReadJsonPhysicalDevicePointClippingProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2",
+         sizeof(VkPhysicalDeviceProperties2),
+         scvkReadJsonPhysicalDeviceProperties2},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES",
+         sizeof(VkPhysicalDeviceProtectedMemoryFeatures),
+         scvkReadJsonPhysicalDeviceProtectedMemoryFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES",
+         sizeof(VkPhysicalDeviceProtectedMemoryProperties),
+         scvkReadJsonPhysicalDeviceProtectedMemoryProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT",
+         sizeof(VkPhysicalDeviceSampleLocationsPropertiesEXT),
+         scvkReadJsonPhysicalDeviceSampleLocationsProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES",
+         sizeof(VkPhysicalDeviceSamplerFilterMinmaxProperties),
+         scvkReadJsonPhysicalDeviceSamplerFilterMinmaxProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES",
+         sizeof(VkPhysicalDeviceSamplerYcbcrConversionFeatures),
+         scvkReadJsonPhysicalDeviceSamplerYcbcrConversionFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES",
+         sizeof(VkPhysicalDeviceScalarBlockLayoutFeatures),
+         scvkReadJsonPhysicalDeviceScalarBlockLayoutFeatures},
         {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES",
          sizeof(VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures),
          scvkReadJsonPhysicalDeviceSeparateDepthStencilLayoutsFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_FEATURES_EXT", sizeof(VkPhysicalDeviceShaderAtomicFloatFeaturesEXT), scvkReadJsonPhysicalDeviceShaderAtomicFloatFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES", sizeof(VkPhysicalDeviceShaderAtomicInt64Features), scvkReadJsonPhysicalDeviceShaderAtomicInt64Features},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR", sizeof(VkPhysicalDeviceShaderClockFeaturesKHR), scvkReadJsonPhysicalDeviceShaderClockFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES", sizeof(VkPhysicalDeviceShaderDrawParametersFeatures), scvkReadJsonPhysicalDeviceShaderDrawParametersFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES", sizeof(VkPhysicalDeviceShaderFloat16Int8Features), scvkReadJsonPhysicalDeviceShaderFloat16Int8Features},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_FEATURES_EXT",
+         sizeof(VkPhysicalDeviceShaderAtomicFloatFeaturesEXT),
+         scvkReadJsonPhysicalDeviceShaderAtomicFloatFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES",
+         sizeof(VkPhysicalDeviceShaderAtomicInt64Features),
+         scvkReadJsonPhysicalDeviceShaderAtomicInt64Features},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR",
+         sizeof(VkPhysicalDeviceShaderClockFeaturesKHR),
+         scvkReadJsonPhysicalDeviceShaderClockFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES",
+         sizeof(VkPhysicalDeviceShaderDrawParametersFeatures),
+         scvkReadJsonPhysicalDeviceShaderDrawParametersFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES",
+         sizeof(VkPhysicalDeviceShaderFloat16Int8Features),
+         scvkReadJsonPhysicalDeviceShaderFloat16Int8Features},
         {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_ATOMIC_INT64_FEATURES_EXT",
          sizeof(VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT),
          scvkReadJsonPhysicalDeviceShaderImageAtomicInt64Features},
         {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES",
          sizeof(VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures),
          scvkReadJsonPhysicalDeviceShaderSubgroupExtendedTypesFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES", sizeof(VkPhysicalDeviceSubgroupProperties), scvkReadJsonPhysicalDeviceSubgroupProperties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR", sizeof(VkPhysicalDeviceSurfaceInfo2KHR), scvkReadJsonPhysicalDeviceSurfaceInfo2},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT", sizeof(VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT), scvkReadJsonPhysicalDeviceTexelBufferAlignmentFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES", sizeof(VkPhysicalDeviceTimelineSemaphoreFeatures), scvkReadJsonPhysicalDeviceTimelineSemaphoreFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES", sizeof(VkPhysicalDeviceTimelineSemaphoreProperties), scvkReadJsonPhysicalDeviceTimelineSemaphoreProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES",
+         sizeof(VkPhysicalDeviceSubgroupProperties),
+         scvkReadJsonPhysicalDeviceSubgroupProperties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR",
+         sizeof(VkPhysicalDeviceSurfaceInfo2KHR),
+         scvkReadJsonPhysicalDeviceSurfaceInfo2},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT",
+         sizeof(VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT),
+         scvkReadJsonPhysicalDeviceTexelBufferAlignmentFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES",
+         sizeof(VkPhysicalDeviceTimelineSemaphoreFeatures),
+         scvkReadJsonPhysicalDeviceTimelineSemaphoreFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES",
+         sizeof(VkPhysicalDeviceTimelineSemaphoreProperties),
+         scvkReadJsonPhysicalDeviceTimelineSemaphoreProperties},
         {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES",
          sizeof(VkPhysicalDeviceUniformBufferStandardLayoutFeatures),
          scvkReadJsonPhysicalDeviceUniformBufferStandardLayoutFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES", sizeof(VkPhysicalDeviceVariablePointersFeatures), scvkReadJsonPhysicalDeviceVariablePointersFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES",
+         sizeof(VkPhysicalDeviceVariablePointersFeatures),
+         scvkReadJsonPhysicalDeviceVariablePointersFeatures},
         {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_INPUT_DYNAMIC_STATE_FEATURES_EXT",
          sizeof(VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT),
          scvkReadJsonPhysicalDeviceVertexInputDynamicStateFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES", sizeof(VkPhysicalDeviceVulkan11Features), scvkReadJsonPhysicalDeviceVulkan11Features},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES", sizeof(VkPhysicalDeviceVulkan11Properties), scvkReadJsonPhysicalDeviceVulkan11Properties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES", sizeof(VkPhysicalDeviceVulkan12Features), scvkReadJsonPhysicalDeviceVulkan12Features},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES", sizeof(VkPhysicalDeviceVulkan12Properties), scvkReadJsonPhysicalDeviceVulkan12Properties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES", sizeof(VkPhysicalDeviceVulkanMemoryModelFeatures), scvkReadJsonPhysicalDeviceVulkanMemoryModelFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_SC_1_0_FEATURES", sizeof(VkPhysicalDeviceVulkanSC10Features), scvkReadJsonPhysicalDeviceVulkanSC10Features},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_SC_1_0_PROPERTIES", sizeof(VkPhysicalDeviceVulkanSC10Properties), scvkReadJsonPhysicalDeviceVulkanSC10Properties},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_2_PLANE_444_FORMATS_FEATURES_EXT", sizeof(VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT), scvkReadJsonPhysicalDeviceYcbcr2Plane444FormatsFeatures},
-        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT", sizeof(VkPhysicalDeviceYcbcrImageArraysFeaturesEXT), scvkReadJsonPhysicalDeviceYcbcrImageArraysFeatures},
-        {"VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO", sizeof(VkPipelineCacheCreateInfo), scvkReadJsonPipelineCacheCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT", sizeof(VkPipelineColorBlendAdvancedStateCreateInfoEXT), scvkReadJsonPipelineColorBlendAdvancedStateCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO", sizeof(VkPipelineColorBlendStateCreateInfo), scvkReadJsonPipelineColorBlendStateCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_COLOR_WRITE_CREATE_INFO_EXT", sizeof(VkPipelineColorWriteCreateInfoEXT), scvkReadJsonPipelineColorWriteCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO", sizeof(VkPipelineDepthStencilStateCreateInfo), scvkReadJsonPipelineDepthStencilStateCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT", sizeof(VkPipelineDiscardRectangleStateCreateInfoEXT), scvkReadJsonPipelineDiscardRectangleStateCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO", sizeof(VkPipelineDynamicStateCreateInfo), scvkReadJsonPipelineDynamicStateCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR", sizeof(VkPipelineFragmentShadingRateStateCreateInfoKHR), scvkReadJsonPipelineFragmentShadingRateStateCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO", sizeof(VkPipelineInputAssemblyStateCreateInfo), scvkReadJsonPipelineInputAssemblyStateCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO", sizeof(VkPipelineLayoutCreateInfo), scvkReadJsonPipelineLayoutCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO", sizeof(VkPipelineMultisampleStateCreateInfo), scvkReadJsonPipelineMultisampleStateCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_OFFLINE_CREATE_INFO", sizeof(VkPipelineOfflineCreateInfo), scvkReadJsonPipelineOfflineCreateInfo},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES",
+         sizeof(VkPhysicalDeviceVulkan11Features),
+         scvkReadJsonPhysicalDeviceVulkan11Features},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES",
+         sizeof(VkPhysicalDeviceVulkan11Properties),
+         scvkReadJsonPhysicalDeviceVulkan11Properties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES",
+         sizeof(VkPhysicalDeviceVulkan12Features),
+         scvkReadJsonPhysicalDeviceVulkan12Features},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES",
+         sizeof(VkPhysicalDeviceVulkan12Properties),
+         scvkReadJsonPhysicalDeviceVulkan12Properties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES",
+         sizeof(VkPhysicalDeviceVulkanMemoryModelFeatures),
+         scvkReadJsonPhysicalDeviceVulkanMemoryModelFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_SC_1_0_FEATURES",
+         sizeof(VkPhysicalDeviceVulkanSC10Features),
+         scvkReadJsonPhysicalDeviceVulkanSC10Features},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_SC_1_0_PROPERTIES",
+         sizeof(VkPhysicalDeviceVulkanSC10Properties),
+         scvkReadJsonPhysicalDeviceVulkanSC10Properties},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_2_PLANE_444_FORMATS_FEATURES_EXT",
+         sizeof(VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT),
+         scvkReadJsonPhysicalDeviceYcbcr2Plane444FormatsFeatures},
+        {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT",
+         sizeof(VkPhysicalDeviceYcbcrImageArraysFeaturesEXT),
+         scvkReadJsonPhysicalDeviceYcbcrImageArraysFeatures},
+        {"VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO",
+         sizeof(VkPipelineCacheCreateInfo),
+         scvkReadJsonPipelineCacheCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT",
+         sizeof(VkPipelineColorBlendAdvancedStateCreateInfoEXT),
+         scvkReadJsonPipelineColorBlendAdvancedStateCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO",
+         sizeof(VkPipelineColorBlendStateCreateInfo),
+         scvkReadJsonPipelineColorBlendStateCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_COLOR_WRITE_CREATE_INFO_EXT",
+         sizeof(VkPipelineColorWriteCreateInfoEXT),
+         scvkReadJsonPipelineColorWriteCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO",
+         sizeof(VkPipelineDepthStencilStateCreateInfo),
+         scvkReadJsonPipelineDepthStencilStateCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT",
+         sizeof(VkPipelineDiscardRectangleStateCreateInfoEXT),
+         scvkReadJsonPipelineDiscardRectangleStateCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO",
+         sizeof(VkPipelineDynamicStateCreateInfo),
+         scvkReadJsonPipelineDynamicStateCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR",
+         sizeof(VkPipelineFragmentShadingRateStateCreateInfoKHR),
+         scvkReadJsonPipelineFragmentShadingRateStateCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO",
+         sizeof(VkPipelineInputAssemblyStateCreateInfo),
+         scvkReadJsonPipelineInputAssemblyStateCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO",
+         sizeof(VkPipelineLayoutCreateInfo),
+         scvkReadJsonPipelineLayoutCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO",
+         sizeof(VkPipelineMultisampleStateCreateInfo),
+         scvkReadJsonPipelineMultisampleStateCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_OFFLINE_CREATE_INFO",
+         sizeof(VkPipelineOfflineCreateInfo),
+         scvkReadJsonPipelineOfflineCreateInfo},
         {"VK_STRUCTURE_TYPE_PIPELINE_POOL_SIZE", sizeof(VkPipelinePoolSize), scvkReadJsonPipelinePoolSize},
         {"VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT",
          sizeof(VkPipelineRasterizationConservativeStateCreateInfoEXT),
@@ -2132,57 +2672,117 @@ extern SCVK_FORCE_INLINE void* scvkScheduleJsonStructureChain(scvkJsonWork* pWor
         {"VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_DEPTH_CLIP_STATE_CREATE_INFO_EXT",
          sizeof(VkPipelineRasterizationDepthClipStateCreateInfoEXT),
          scvkReadJsonPipelineRasterizationDepthClipStateCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO", sizeof(VkPipelineRasterizationStateCreateInfo), scvkReadJsonPipelineRasterizationStateCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT", sizeof(VkPipelineSampleLocationsStateCreateInfoEXT), scvkReadJsonPipelineSampleLocationsStateCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO", sizeof(VkPipelineShaderStageCreateInfo), scvkReadJsonPipelineShaderStageCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO",
+         sizeof(VkPipelineRasterizationStateCreateInfo),
+         scvkReadJsonPipelineRasterizationStateCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT",
+         sizeof(VkPipelineSampleLocationsStateCreateInfoEXT),
+         scvkReadJsonPipelineSampleLocationsStateCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO",
+         sizeof(VkPipelineShaderStageCreateInfo),
+         scvkReadJsonPipelineShaderStageCreateInfo},
         {"VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO",
          sizeof(VkPipelineTessellationDomainOriginStateCreateInfo),
          scvkReadJsonPipelineTessellationDomainOriginStateCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO", sizeof(VkPipelineTessellationStateCreateInfo), scvkReadJsonPipelineTessellationStateCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO", sizeof(VkPipelineVertexInputStateCreateInfo), scvkReadJsonPipelineVertexInputStateCreateInfo},
-        {"VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO", sizeof(VkPipelineViewportStateCreateInfo), scvkReadJsonPipelineViewportStateCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO",
+         sizeof(VkPipelineTessellationStateCreateInfo),
+         scvkReadJsonPipelineTessellationStateCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO",
+         sizeof(VkPipelineVertexInputStateCreateInfo),
+         scvkReadJsonPipelineVertexInputStateCreateInfo},
+        {"VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO",
+         sizeof(VkPipelineViewportStateCreateInfo),
+         scvkReadJsonPipelineViewportStateCreateInfo},
         {"VK_STRUCTURE_TYPE_PRESENT_INFO_KHR", sizeof(VkPresentInfoKHR), scvkReadJsonPresentInfo},
         {"VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR", sizeof(VkPresentRegionsKHR), scvkReadJsonPresentRegions},
         {"VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO", sizeof(VkProtectedSubmitInfo), scvkReadJsonProtectedSubmitInfo},
         {"VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO", sizeof(VkQueryPoolCreateInfo), scvkReadJsonQueryPoolCreateInfo},
-        {"VK_STRUCTURE_TYPE_QUERY_POOL_PERFORMANCE_CREATE_INFO_KHR", sizeof(VkQueryPoolPerformanceCreateInfoKHR), scvkReadJsonQueryPoolPerformanceCreateInfo},
-        {"VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2", sizeof(VkQueueFamilyProperties2), scvkReadJsonQueueFamilyProperties2},
+        {"VK_STRUCTURE_TYPE_QUERY_POOL_PERFORMANCE_CREATE_INFO_KHR",
+         sizeof(VkQueryPoolPerformanceCreateInfoKHR),
+         scvkReadJsonQueryPoolPerformanceCreateInfo},
+        {"VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2",
+         sizeof(VkQueueFamilyProperties2),
+         scvkReadJsonQueueFamilyProperties2},
         {"VK_STRUCTURE_TYPE_REFRESH_OBJECT_LIST_KHR", sizeof(VkRefreshObjectListKHR), scvkReadJsonRefreshObjectList},
-        {"VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO", sizeof(VkRenderPassAttachmentBeginInfo), scvkReadJsonRenderPassAttachmentBeginInfo},
+        {"VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO",
+         sizeof(VkRenderPassAttachmentBeginInfo),
+         scvkReadJsonRenderPassAttachmentBeginInfo},
         {"VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO", sizeof(VkRenderPassBeginInfo), scvkReadJsonRenderPassBeginInfo},
         {"VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO", sizeof(VkRenderPassCreateInfo), scvkReadJsonRenderPassCreateInfo},
-        {"VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2", sizeof(VkRenderPassCreateInfo2), scvkReadJsonRenderPassCreateInfo2},
-        {"VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO", sizeof(VkRenderPassInputAttachmentAspectCreateInfo), scvkReadJsonRenderPassInputAttachmentAspectCreateInfo},
-        {"VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO", sizeof(VkRenderPassMultiviewCreateInfo), scvkReadJsonRenderPassMultiviewCreateInfo},
-        {"VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT", sizeof(VkRenderPassSampleLocationsBeginInfoEXT), scvkReadJsonRenderPassSampleLocationsBeginInfo},
-        {"VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT", sizeof(VkSampleLocationsInfoEXT), scvkReadJsonSampleLocationsInfo},
+        {"VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2",
+         sizeof(VkRenderPassCreateInfo2),
+         scvkReadJsonRenderPassCreateInfo2},
+        {"VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO",
+         sizeof(VkRenderPassInputAttachmentAspectCreateInfo),
+         scvkReadJsonRenderPassInputAttachmentAspectCreateInfo},
+        {"VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO",
+         sizeof(VkRenderPassMultiviewCreateInfo),
+         scvkReadJsonRenderPassMultiviewCreateInfo},
+        {"VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT",
+         sizeof(VkRenderPassSampleLocationsBeginInfoEXT),
+         scvkReadJsonRenderPassSampleLocationsBeginInfo},
+        {"VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT",
+         sizeof(VkSampleLocationsInfoEXT),
+         scvkReadJsonSampleLocationsInfo},
         {"VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO", sizeof(VkSamplerCreateInfo), scvkReadJsonSamplerCreateInfo},
-        {"VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT", sizeof(VkSamplerCustomBorderColorCreateInfoEXT), scvkReadJsonSamplerCustomBorderColorCreateInfo},
-        {"VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO", sizeof(VkSamplerReductionModeCreateInfo), scvkReadJsonSamplerReductionModeCreateInfo},
-        {"VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO", sizeof(VkSamplerYcbcrConversionCreateInfo), scvkReadJsonSamplerYcbcrConversionCreateInfo},
-        {"VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES", sizeof(VkSamplerYcbcrConversionImageFormatProperties), scvkReadJsonSamplerYcbcrConversionImageFormatProperties},
-        {"VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO", sizeof(VkSamplerYcbcrConversionInfo), scvkReadJsonSamplerYcbcrConversionInfo},
+        {"VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT",
+         sizeof(VkSamplerCustomBorderColorCreateInfoEXT),
+         scvkReadJsonSamplerCustomBorderColorCreateInfo},
+        {"VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO",
+         sizeof(VkSamplerReductionModeCreateInfo),
+         scvkReadJsonSamplerReductionModeCreateInfo},
+        {"VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO",
+         sizeof(VkSamplerYcbcrConversionCreateInfo),
+         scvkReadJsonSamplerYcbcrConversionCreateInfo},
+        {"VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES",
+         sizeof(VkSamplerYcbcrConversionImageFormatProperties),
+         scvkReadJsonSamplerYcbcrConversionImageFormatProperties},
+        {"VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO",
+         sizeof(VkSamplerYcbcrConversionInfo),
+         scvkReadJsonSamplerYcbcrConversionInfo},
         {"VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO", sizeof(VkSemaphoreCreateInfo), scvkReadJsonSemaphoreCreateInfo},
-        {"VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR", sizeof(VkSemaphoreGetFdInfoKHR), scvkReadJsonSemaphoreGetFdInfo},
+        {"VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR",
+         sizeof(VkSemaphoreGetFdInfoKHR),
+         scvkReadJsonSemaphoreGetFdInfo},
         {"VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO", sizeof(VkSemaphoreSignalInfo), scvkReadJsonSemaphoreSignalInfo},
-        {"VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO", sizeof(VkSemaphoreTypeCreateInfo), scvkReadJsonSemaphoreTypeCreateInfo},
+        {"VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO",
+         sizeof(VkSemaphoreTypeCreateInfo),
+         scvkReadJsonSemaphoreTypeCreateInfo},
         {"VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO", sizeof(VkSemaphoreWaitInfo), scvkReadJsonSemaphoreWaitInfo},
-        {"VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR", sizeof(VkSharedPresentSurfaceCapabilitiesKHR), scvkReadJsonSharedPresentSurfaceCapabilities},
+        {"VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR",
+         sizeof(VkSharedPresentSurfaceCapabilitiesKHR),
+         scvkReadJsonSharedPresentSurfaceCapabilities},
         {"VK_STRUCTURE_TYPE_SUBMIT_INFO", sizeof(VkSubmitInfo), scvkReadJsonSubmitInfo},
         {"VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO", sizeof(VkSubpassBeginInfo), scvkReadJsonSubpassBeginInfo},
         {"VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2", sizeof(VkSubpassDependency2), scvkReadJsonSubpassDependency2},
         {"VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2", sizeof(VkSubpassDescription2), scvkReadJsonSubpassDescription2},
-        {"VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE", sizeof(VkSubpassDescriptionDepthStencilResolve), scvkReadJsonSubpassDescriptionDepthStencilResolve},
+        {"VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE",
+         sizeof(VkSubpassDescriptionDepthStencilResolve),
+         scvkReadJsonSubpassDescriptionDepthStencilResolve},
         {"VK_STRUCTURE_TYPE_SUBPASS_END_INFO", sizeof(VkSubpassEndInfo), scvkReadJsonSubpassEndInfo},
-        {"VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT", sizeof(VkSurfaceCapabilities2EXT), scvkReadJsonSurfaceCapabilities2EXT},
-        {"VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR", sizeof(VkSurfaceCapabilities2KHR), scvkReadJsonSurfaceCapabilities2},
+        {"VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT",
+         sizeof(VkSurfaceCapabilities2EXT),
+         scvkReadJsonSurfaceCapabilities2EXT},
+        {"VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR",
+         sizeof(VkSurfaceCapabilities2KHR),
+         scvkReadJsonSurfaceCapabilities2},
         {"VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR", sizeof(VkSurfaceFormat2KHR), scvkReadJsonSurfaceFormat2},
-        {"VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT", sizeof(VkSwapchainCounterCreateInfoEXT), scvkReadJsonSwapchainCounterCreateInfo},
-        {"VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR", sizeof(VkSwapchainCreateInfoKHR), scvkReadJsonSwapchainCreateInfo},
-        {"VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO", sizeof(VkTimelineSemaphoreSubmitInfo), scvkReadJsonTimelineSemaphoreSubmitInfo},
+        {"VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT",
+         sizeof(VkSwapchainCounterCreateInfoEXT),
+         scvkReadJsonSwapchainCounterCreateInfo},
+        {"VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR",
+         sizeof(VkSwapchainCreateInfoKHR),
+         scvkReadJsonSwapchainCreateInfo},
+        {"VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO",
+         sizeof(VkTimelineSemaphoreSubmitInfo),
+         scvkReadJsonTimelineSemaphoreSubmitInfo},
         {"VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT", sizeof(VkValidationFeaturesEXT), scvkReadJsonValidationFeatures},
-        {"VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT", sizeof(VkVertexInputAttributeDescription2EXT), scvkReadJsonVertexInputAttributeDescription2},
-        {"VK_STRUCTURE_TYPE_VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT", sizeof(VkVertexInputBindingDescription2EXT), scvkReadJsonVertexInputBindingDescription2},
+        {"VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT",
+         sizeof(VkVertexInputAttributeDescription2EXT),
+         scvkReadJsonVertexInputAttributeDescription2},
+        {"VK_STRUCTURE_TYPE_VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT",
+         sizeof(VkVertexInputBindingDescription2EXT),
+         scvkReadJsonVertexInputBindingDescription2},
         {"VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET", sizeof(VkWriteDescriptorSet), scvkReadJsonWriteDescriptorSet}};
     const scvkJsonValue* structure_type;
     void*                storage;

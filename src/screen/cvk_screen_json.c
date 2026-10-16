@@ -13,7 +13,10 @@
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonExternalFormatQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonExternalFormatQNX(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext* pContext;
     VkExternalFormatQNX*  pInfo;
@@ -40,7 +43,10 @@ void cvkReadJsonExternalFormatQNX(cvkJsonWork* pWork, const cvkJsonValue* pObjec
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonImportScreenBufferInfoQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonImportScreenBufferInfoQNX(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*        pContext;
     VkImportScreenBufferInfoQNX* pInfo;
@@ -64,7 +70,10 @@ void cvkReadJsonImportScreenBufferInfoQNX(cvkJsonWork* pWork, const cvkJsonValue
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*                                  pContext;
     VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pInfo;
@@ -91,7 +100,10 @@ void cvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(cvkJsonWork*
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonScreenBufferFormatPropertiesQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonScreenBufferFormatPropertiesQNX(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*              pContext;
     VkScreenBufferFormatPropertiesQNX* pInfo;
@@ -157,7 +169,10 @@ void cvkReadJsonScreenBufferFormatPropertiesQNX(cvkJsonWork* pWork, const cvkJso
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonScreenBufferPropertiesQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonScreenBufferPropertiesQNX(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*        pContext;
     VkScreenBufferPropertiesQNX* pInfo;
@@ -188,7 +203,10 @@ void cvkReadJsonScreenBufferPropertiesQNX(cvkJsonWork* pWork, const cvkJsonValue
  * \par Details:
  *  Nested objects are deferred; this function never drains the work stack.
  */
-void cvkReadJsonScreenSurfaceCreateInfoQNX(cvkJsonWork* pWork, const cvkJsonValue* pObject, void* pOutput)
+void cvkReadJsonScreenSurfaceCreateInfoQNX(
+    cvkJsonWork*        pWork,
+    const cvkJsonValue* pObject,
+    void*               pOutput)
 {
     const cvkJsonContext*         pContext;
     VkScreenSurfaceCreateInfoQNX* pInfo;
@@ -210,11 +228,15 @@ void cvkReadJsonScreenSurfaceCreateInfoQNX(cvkJsonWork* pWork, const cvkJsonValu
 
     pInfo->flags = cvkParseJsonScreenSurfaceCreateFlagsQNX(value);
 }
-extern CVK_FORCE_INLINE VkScreenSurfaceCreateFlagsQNX cvkParseJsonScreenSurfaceCreateFlagsQNX(const cvkJsonValue* pValue)
+extern CVK_FORCE_INLINE VkScreenSurfaceCreateFlagsQNX cvkParseJsonScreenSurfaceCreateFlagsQNX(
+    const cvkJsonValue* pValue)
 {
     return (VkScreenSurfaceCreateFlagsQNX)cvkGetJsonUint64(pValue);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonExternalFormatQNX(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExternalFormatQNX* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonExternalFormatQNX(
+    const cvkJsonContext* pContext,
+    const cvkJsonValue*   pObject,
+    VkExternalFormatQNX*  pInfo)
 {
     cvkJsonWork work;
 
@@ -222,7 +244,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonExternalFormatQNX(const cvkJsonContext*
     cvkAppendJsonWork(&work, cvkReadJsonExternalFormatQNX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonImportScreenBufferInfoQNX(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportScreenBufferInfoQNX* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonImportScreenBufferInfoQNX(
+    const cvkJsonContext*        pContext,
+    const cvkJsonValue*          pObject,
+    VkImportScreenBufferInfoQNX* pInfo)
 {
     cvkJsonWork work;
 
@@ -230,9 +255,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonImportScreenBufferInfoQNX(const cvkJson
     cvkAppendJsonWork(&work, cvkReadJsonImportScreenBufferInfoQNX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(const cvkJsonContext*                                  pContext,
-                                                                                             const cvkJsonValue*                                    pObject,
-                                                                                             VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX(
+    const cvkJsonContext*                                  pContext,
+    const cvkJsonValue*                                    pObject,
+    VkPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX* pInfo)
 {
     cvkJsonWork work;
 
@@ -240,7 +266,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonPhysicalDeviceExternalMemoryScreenBuffe
     cvkAppendJsonWork(&work, cvkReadJsonPhysicalDeviceExternalMemoryScreenBufferFeaturesQNX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonScreenBufferFormatPropertiesQNX(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkScreenBufferFormatPropertiesQNX* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonScreenBufferFormatPropertiesQNX(
+    const cvkJsonContext*              pContext,
+    const cvkJsonValue*                pObject,
+    VkScreenBufferFormatPropertiesQNX* pInfo)
 {
     cvkJsonWork work;
 
@@ -248,7 +277,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonScreenBufferFormatPropertiesQNX(const c
     cvkAppendJsonWork(&work, cvkReadJsonScreenBufferFormatPropertiesQNX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonScreenBufferPropertiesQNX(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkScreenBufferPropertiesQNX* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonScreenBufferPropertiesQNX(
+    const cvkJsonContext*        pContext,
+    const cvkJsonValue*          pObject,
+    VkScreenBufferPropertiesQNX* pInfo)
 {
     cvkJsonWork work;
 
@@ -256,7 +288,10 @@ extern CVK_FORCE_INLINE void cvkParseJsonScreenBufferPropertiesQNX(const cvkJson
     cvkAppendJsonWork(&work, cvkReadJsonScreenBufferPropertiesQNX, pObject, pInfo);
     cvkRunJsonWork(&work);
 }
-extern CVK_FORCE_INLINE void cvkParseJsonScreenSurfaceCreateInfoQNX(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkScreenSurfaceCreateInfoQNX* pInfo)
+extern CVK_FORCE_INLINE void cvkParseJsonScreenSurfaceCreateInfoQNX(
+    const cvkJsonContext*         pContext,
+    const cvkJsonValue*           pObject,
+    VkScreenSurfaceCreateInfoQNX* pInfo)
 {
     cvkJsonWork work;
 

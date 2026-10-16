@@ -9,7 +9,11 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_macos.h>
 
-extern CVK_FORCE_INLINE void cvkInitMacOSSurfaceCreateInfoMVK(VkMacOSSurfaceCreateInfoMVK* pInfo, const void* pNext, VkMacOSSurfaceCreateFlagsMVK flags, const void* pView)
+extern CVK_FORCE_INLINE void cvkInitMacOSSurfaceCreateInfoMVK(
+    VkMacOSSurfaceCreateInfoMVK* pInfo,
+    const void*                  pNext,
+    VkMacOSSurfaceCreateFlagsMVK flags,
+    const void*                  pView)
 {
     (*pInfo) = (VkMacOSSurfaceCreateInfoMVK)
     {
@@ -19,12 +23,13 @@ extern CVK_FORCE_INLINE void cvkInitMacOSSurfaceCreateInfoMVK(VkMacOSSurfaceCrea
         .pView = pView
     };
 }
-extern CVK_FORCE_INLINE void cvkCreateMacOSSurfaceMVK(VkInstance                   instance,
-                                                      const void*                  pNext,
-                                                      VkMacOSSurfaceCreateFlagsMVK flags,
-                                                      const void*                  pView,
-                                                      const VkAllocationCallbacks* pAllocator,
-                                                      VkSurfaceKHR*                pSurface)
+extern CVK_FORCE_INLINE void cvkCreateMacOSSurfaceMVK(
+    VkInstance                   instance,
+    const void*                  pNext,
+    VkMacOSSurfaceCreateFlagsMVK flags,
+    const void*                  pView,
+    const VkAllocationCallbacks* pAllocator,
+    VkSurfaceKHR*                pSurface)
 {
     VkMacOSSurfaceCreateInfoMVK create_info =
     {

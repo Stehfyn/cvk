@@ -8,8 +8,48 @@
 #include <vulkan/vulkan_xlib.h>
 
 /* clang-format off */
+/**
+ * \brief Initializes a VkXlibSurfaceCreateInfoKHR.
+ *
+ * \param[out] pInfo   Receives the initialized VkXlibSurfaceCreateInfoKHR
+ * \param[in] pNext   Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
+ * \param[in] flags   VkXlibSurfaceCreateInfoKHR::flags
+ * \param[in] dpy     VkXlibSurfaceCreateInfoKHR::dpy
+ * \param[in] window  VkXlibSurfaceCreateInfoKHR::window
+ *
+ * \retval None No value is returned.
+ */
 void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window);
+/**
+ * \brief Creates a xlib surface.
+ *
+ * \par Details:
+ *  Wraps vkCreateXlibSurfaceKHR. Aborts on any error result.
+ *
+ * \param[in] instance    VkInstance value
+ * \param[in] pNext       Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
+ * \param[in] flags       VkXlibSurfaceCreateInfoKHR::flags
+ * \param[in] dpy         VkXlibSurfaceCreateInfoKHR::dpy
+ * \param[in] window      VkXlibSurfaceCreateInfoKHR::window
+ * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[out] pSurface    Receives the created VkSurfaceKHR
+ *
+ * \retval None No value is returned.
+ */
 void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+/**
+ * \brief Retrieves physical device xlib presentation support.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceXlibPresentationSupportKHR.
+ *
+ * \param[in] physicalDevice    VkPhysicalDevice value
+ * \param[in] queueFamilyIndex  uint32_t value
+ * \param[out] dpy               Receives the Display
+ * \param[in] visualID          VisualID value
+ *
+ * \return The VkBool32 returned by the command.
+ */
 VkBool32 cvkGetPhysicalDeviceXlibPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID);
 /* clang-format on */
 
