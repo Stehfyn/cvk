@@ -854,7 +854,7 @@ uint64_t cvkParseJsonEnumerant(const cvkJsonValue* pValue, const cvkJsonName* pT
 {
     uint64_t found;
 
-    if ((NULL == pValue) || (CVK_JSON_NULL == pValue->kind))
+    if (cvkIsJsonNull(pValue))
     {
         return 0;
     }
@@ -867,7 +867,9 @@ uint64_t cvkParseJsonEnumerant(const cvkJsonValue* pValue, const cvkJsonName* pT
     {
         return found;
     }
-    return (uint64_t)cvkGetJsonInt64(pValue); /* a number written as a string ("0") */
+    /* Not a name in the table: only a number written as a string ("0", "-1") is accepted. */
+    CVK_ASSERT((0 < pValue->textLength) && (('-' == pValue->pText[0]) || (('0' <= pValue->pText[0]) && ('9' >= pValue->pText[0]))));
+    return (uint64_t)cvkGetJsonInt64(pValue);
 }
 
 /**
@@ -885,7 +887,7 @@ uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, const cvkJsonName* pTable
     const char* cursor;
     const char* end;
 
-    if ((NULL == pValue) || (CVK_JSON_NULL == pValue->kind))
+    if (cvkIsJsonNull(pValue))
     {
         return 0;
     }
@@ -928,6 +930,8 @@ uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, const cvkJsonName* pTable
         {
             char buffer[CVK_JSON_INTEGER_TEXT_CAPACITY];
 
+            /* Not a bit name in the table: only a numeric token is accepted. */
+            CVK_ASSERT(('0' <= *token) && ('9' >= *token));
             CVK_ASSERT((size_t)(token_end - token) < sizeof(buffer));
             cvkCopyMemory(buffer, token, (size_t)(token_end - token));
             buffer[token_end - token] = '\0';

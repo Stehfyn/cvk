@@ -999,7 +999,7 @@ VkCompressedTriangleFormatAMDX cvkParseJsonCompressedTriangleFormatAMDX(
 
     enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_COMPRESSED_TRIANGLE_FORMAT_DGF1_AMDX);
+    found = cvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_COMPRESSED_TRIANGLE_FORMAT_DGF1_AMDX);
     CVK_ASSERT(found);
 
     return (VkCompressedTriangleFormatAMDX)enumerant;
@@ -1016,8 +1016,8 @@ VkDisplacementMicromapFormatNV cvkParseJsonDisplacementMicromapFormatNV(
 
     enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_64_TRIANGLES_64_BYTES_NV) || (enumerant == (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_256_TRIANGLES_128_BYTES_NV) ||
-            (enumerant == (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_1024_TRIANGLES_128_BYTES_NV);
+    found = cvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_64_TRIANGLES_64_BYTES_NV) ||
+            (enumerant == (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_256_TRIANGLES_128_BYTES_NV) || (enumerant == (uint64_t)VK_DISPLACEMENT_MICROMAP_FORMAT_1024_TRIANGLES_128_BYTES_NV);
     CVK_ASSERT(found);
 
     return (VkDisplacementMicromapFormatNV)enumerant;

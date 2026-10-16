@@ -229,7 +229,7 @@ VkAccelerationStructureCompatibilityKHR cvkParseJsonAccelerationStructureCompati
 /**
  * \brief Parses a VkAccelerationStructureCreateFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkAccelerationStructureCreateFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkAccelerationStructureCreateFlagBitsKHR   The parsed value.
  */
@@ -319,7 +319,7 @@ VkAcquireProfilingLockFlagBitsKHR cvkParseJsonAcquireProfilingLockFlagBits(const
 /**
  * \brief Parses a VkAddressCommandFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkAddressCommandFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkAddressCommandFlagBitsKHR   The parsed value.
  */
@@ -329,7 +329,7 @@ VkAddressCommandFlagBitsKHR cvkParseJsonAddressCommandFlagBits(const cvkJsonValu
 /**
  * \brief Parses a VkAddressCopyFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkAddressCopyFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkAddressCopyFlagBitsKHR   The parsed value.
  */
@@ -359,7 +359,7 @@ VkAntiLagStageAMD cvkParseJsonAntiLagStageAMD(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkAttachmentDescriptionFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkAttachmentDescriptionFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkAttachmentDescriptionFlagBits   The parsed value.
  */
@@ -439,7 +439,7 @@ VkBorderColor cvkParseJsonBorderColor(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkBufferCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkBufferCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkBufferCreateFlagBits   The parsed value.
  */
@@ -449,7 +449,7 @@ VkBufferCreateFlagBits cvkParseJsonBufferCreateFlagBits(const cvkJsonValue* pVal
 /**
  * \brief Parses a VkBufferUsageFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkBufferUsageFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkBufferUsageFlagBits   The parsed value.
  */
@@ -469,7 +469,7 @@ VkBufferUsageFlagBits2 cvkParseJsonBufferUsageFlagBits2(const cvkJsonValue* pVal
 /**
  * \brief Parses a VkBuildAccelerationStructureFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkBuildAccelerationStructureFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkBuildAccelerationStructureFlagBitsKHR   The parsed value.
  */
@@ -489,7 +489,7 @@ VkBuildAccelerationStructureModeKHR cvkParseJsonBuildAccelerationStructureMode(c
 /**
  * \brief Parses a VkBuildMicromapFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkBuildMicromapFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkBuildMicromapFlagBitsEXT   The parsed value.
  */
@@ -529,7 +529,7 @@ VkClusterAccelerationStructureAddressResolutionFlagBitsNV cvkParseJsonClusterAcc
 /**
  * \brief Parses a VkClusterAccelerationStructureClusterFlagBitsNV from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkClusterAccelerationStructureClusterFlagBitsNV has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkClusterAccelerationStructureClusterFlagBitsNV   The parsed value.
  */
@@ -539,7 +539,7 @@ VkClusterAccelerationStructureClusterFlagBitsNV cvkParseJsonClusterAccelerationS
 /**
  * \brief Parses a VkClusterAccelerationStructureGeometryFlagBitsNV from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkClusterAccelerationStructureGeometryFlagBitsNV has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkClusterAccelerationStructureGeometryFlagBitsNV   The parsed value.
  */
@@ -549,7 +549,7 @@ VkClusterAccelerationStructureGeometryFlagBitsNV cvkParseJsonClusterAcceleration
 /**
  * \brief Parses a VkClusterAccelerationStructureIndexFormatFlagBitsNV from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkClusterAccelerationStructureIndexFormatFlagBitsNV has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkClusterAccelerationStructureIndexFormatFlagBitsNV   The parsed value.
  */
@@ -599,7 +599,7 @@ VkCoarseSampleOrderTypeNV cvkParseJsonCoarseSampleOrderTypeNV(const cvkJsonValue
 /**
  * \brief Parses a VkColorComponentFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkColorComponentFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkColorComponentFlagBits   The parsed value.
  */
@@ -629,7 +629,7 @@ VkCommandBufferLevel cvkParseJsonCommandBufferLevel(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkCommandBufferResetFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkCommandBufferResetFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkCommandBufferResetFlagBits   The parsed value.
  */
@@ -639,7 +639,7 @@ VkCommandBufferResetFlagBits cvkParseJsonCommandBufferResetFlagBits(const cvkJso
 /**
  * \brief Parses a VkCommandBufferUsageFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkCommandBufferUsageFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkCommandBufferUsageFlagBits   The parsed value.
  */
@@ -649,7 +649,7 @@ VkCommandBufferUsageFlagBits cvkParseJsonCommandBufferUsageFlagBits(const cvkJso
 /**
  * \brief Parses a VkCommandPoolCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkCommandPoolCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkCommandPoolCreateFlagBits   The parsed value.
  */
@@ -659,7 +659,7 @@ VkCommandPoolCreateFlagBits cvkParseJsonCommandPoolCreateFlagBits(const cvkJsonV
 /**
  * \brief Parses a VkCommandPoolResetFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkCommandPoolResetFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkCommandPoolResetFlagBits   The parsed value.
  */
@@ -699,7 +699,7 @@ VkComponentTypeKHR cvkParseJsonComponentType(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkCompositeAlphaFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkCompositeAlphaFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkCompositeAlphaFlagBitsKHR   The parsed value.
  */
@@ -709,7 +709,7 @@ VkCompositeAlphaFlagBitsKHR cvkParseJsonCompositeAlphaFlagBits(const cvkJsonValu
 /**
  * \brief Parses a VkConditionalRenderingFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkConditionalRenderingFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkConditionalRenderingFlagBitsEXT   The parsed value.
  */
@@ -729,7 +729,7 @@ VkConservativeRasterizationModeEXT cvkParseJsonConservativeRasterizationMode(con
 /**
  * \brief Parses a VkCooperativeMatrixFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkCooperativeMatrixFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkCooperativeMatrixFlagBitsEXT   The parsed value.
  */
@@ -819,7 +819,7 @@ VkDataGraphModelCacheTypeQCOM cvkParseJsonDataGraphModelCacheTypeQCOM(const cvkJ
 /**
  * \brief Parses a VkDataGraphOpticalFlowCreateFlagBitsARM from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDataGraphOpticalFlowCreateFlagBitsARM has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDataGraphOpticalFlowCreateFlagBitsARM   The parsed value.
  */
@@ -829,7 +829,7 @@ VkDataGraphOpticalFlowCreateFlagBitsARM cvkParseJsonDataGraphOpticalFlowCreateFl
 /**
  * \brief Parses a VkDataGraphOpticalFlowExecuteFlagBitsARM from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDataGraphOpticalFlowExecuteFlagBitsARM has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDataGraphOpticalFlowExecuteFlagBitsARM   The parsed value.
  */
@@ -879,7 +879,7 @@ VkDataGraphPipelineDispatchFlagBitsARM cvkParseJsonDataGraphPipelineDispatchFlag
 /**
  * \brief Parses a VkDataGraphPipelineNodeConnectionTypeARM from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDataGraphPipelineNodeConnectionTypeARM has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDataGraphPipelineNodeConnectionTypeARM   The parsed value.
  */
@@ -889,7 +889,7 @@ VkDataGraphPipelineNodeConnectionTypeARM cvkParseJsonDataGraphPipelineNodeConnec
 /**
  * \brief Parses a VkDataGraphPipelineNodeTypeARM from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDataGraphPipelineNodeTypeARM has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDataGraphPipelineNodeTypeARM   The parsed value.
  */
@@ -949,7 +949,7 @@ VkDataGraphTOSALevelARM cvkParseJsonDataGraphTOSALevelARM(const cvkJsonValue* pV
 /**
  * \brief Parses a VkDataGraphTOSAQualityFlagBitsARM from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDataGraphTOSAQualityFlagBitsARM has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDataGraphTOSAQualityFlagBitsARM   The parsed value.
  */
@@ -959,7 +959,7 @@ VkDataGraphTOSAQualityFlagBitsARM cvkParseJsonDataGraphTOSAQualityFlagBitsARM(co
 /**
  * \brief Parses a VkDebugReportFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDebugReportFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDebugReportFlagBitsEXT   The parsed value.
  */
@@ -979,7 +979,7 @@ VkDebugReportObjectTypeEXT cvkParseJsonDebugReportObjectType(const cvkJsonValue*
 /**
  * \brief Parses a VkDebugUtilsMessageSeverityFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDebugUtilsMessageSeverityFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDebugUtilsMessageSeverityFlagBitsEXT   The parsed value.
  */
@@ -989,7 +989,7 @@ VkDebugUtilsMessageSeverityFlagBitsEXT cvkParseJsonDebugUtilsMessageSeverityFlag
 /**
  * \brief Parses a VkDebugUtilsMessageTypeFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDebugUtilsMessageTypeFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDebugUtilsMessageTypeFlagBitsEXT   The parsed value.
  */
@@ -1009,7 +1009,7 @@ VkDefaultVertexAttributeValueKHR cvkParseJsonDefaultVertexAttributeValue(const c
 /**
  * \brief Parses a VkDependencyFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDependencyFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDependencyFlagBits   The parsed value.
  */
@@ -1039,7 +1039,7 @@ VkDepthClampModeEXT cvkParseJsonDepthClampMode(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkDescriptorBindingFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDescriptorBindingFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDescriptorBindingFlagBits   The parsed value.
  */
@@ -1059,7 +1059,7 @@ VkDescriptorMappingSourceEXT cvkParseJsonDescriptorMappingSource(const cvkJsonVa
 /**
  * \brief Parses a VkDescriptorPoolCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDescriptorPoolCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDescriptorPoolCreateFlagBits   The parsed value.
  */
@@ -1069,7 +1069,7 @@ VkDescriptorPoolCreateFlagBits cvkParseJsonDescriptorPoolCreateFlagBits(const cv
 /**
  * \brief Parses a VkDescriptorSetLayoutCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDescriptorSetLayoutCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDescriptorSetLayoutCreateFlagBits   The parsed value.
  */
@@ -1099,7 +1099,7 @@ VkDescriptorUpdateTemplateType cvkParseJsonDescriptorUpdateTemplateType(const cv
 /**
  * \brief Parses a VkDeviceAddressBindingFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDeviceAddressBindingFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDeviceAddressBindingFlagBitsEXT   The parsed value.
  */
@@ -1119,7 +1119,7 @@ VkDeviceAddressBindingTypeEXT cvkParseJsonDeviceAddressBindingType(const cvkJson
 /**
  * \brief Parses a VkDeviceDiagnosticsConfigFlagBitsNV from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDeviceDiagnosticsConfigFlagBitsNV has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDeviceDiagnosticsConfigFlagBitsNV   The parsed value.
  */
@@ -1149,7 +1149,7 @@ VkDeviceFaultAddressTypeKHR cvkParseJsonDeviceFaultAddressType(const cvkJsonValu
 /**
  * \brief Parses a VkDeviceFaultFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDeviceFaultFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDeviceFaultFlagBitsKHR   The parsed value.
  */
@@ -1159,7 +1159,7 @@ VkDeviceFaultFlagBitsKHR cvkParseJsonDeviceFaultFlagBits(const cvkJsonValue* pVa
 /**
  * \brief Parses a VkDeviceFaultVendorBinaryHeaderVersionKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDeviceFaultVendorBinaryHeaderVersionKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDeviceFaultVendorBinaryHeaderVersionKHR   The parsed value.
  */
@@ -1169,7 +1169,7 @@ VkDeviceFaultVendorBinaryHeaderVersionKHR cvkParseJsonDeviceFaultVendorBinaryHea
 /**
  * \brief Parses a VkDeviceGroupPresentModeFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDeviceGroupPresentModeFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDeviceGroupPresentModeFlagBitsKHR   The parsed value.
  */
@@ -1189,7 +1189,7 @@ VkDeviceMemoryReportEventTypeEXT cvkParseJsonDeviceMemoryReportEventType(const c
 /**
  * \brief Parses a VkDeviceQueueCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDeviceQueueCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDeviceQueueCreateFlagBits   The parsed value.
  */
@@ -1229,7 +1229,7 @@ VkDisplayEventTypeEXT cvkParseJsonDisplayEventType(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkDisplayPlaneAlphaFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDisplayPlaneAlphaFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDisplayPlaneAlphaFlagBitsKHR   The parsed value.
  */
@@ -1259,7 +1259,7 @@ VkDisplaySurfaceStereoTypeNV cvkParseJsonDisplaySurfaceStereoTypeNV(const cvkJso
 /**
  * \brief Parses a VkDriverId from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDriverId has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDriverId   The parsed value.
  */
@@ -1279,7 +1279,7 @@ VkDynamicState cvkParseJsonDynamicState(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkEventCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkEventCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkEventCreateFlagBits   The parsed value.
  */
@@ -1289,7 +1289,7 @@ VkEventCreateFlagBits cvkParseJsonEventCreateFlagBits(const cvkJsonValue* pValue
 /**
  * \brief Parses a VkExternalFenceFeatureFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkExternalFenceFeatureFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkExternalFenceFeatureFlagBits   The parsed value.
  */
@@ -1299,7 +1299,7 @@ VkExternalFenceFeatureFlagBits cvkParseJsonExternalFenceFeatureFlagBits(const cv
 /**
  * \brief Parses a VkExternalFenceHandleTypeFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkExternalFenceHandleTypeFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkExternalFenceHandleTypeFlagBits   The parsed value.
  */
@@ -1309,7 +1309,7 @@ VkExternalFenceHandleTypeFlagBits cvkParseJsonExternalFenceHandleTypeFlagBits(co
 /**
  * \brief Parses a VkExternalMemoryFeatureFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkExternalMemoryFeatureFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkExternalMemoryFeatureFlagBits   The parsed value.
  */
@@ -1319,7 +1319,7 @@ VkExternalMemoryFeatureFlagBits cvkParseJsonExternalMemoryFeatureFlagBits(const 
 /**
  * \brief Parses a VkExternalMemoryFeatureFlagBitsNV from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkExternalMemoryFeatureFlagBitsNV has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkExternalMemoryFeatureFlagBitsNV   The parsed value.
  */
@@ -1329,7 +1329,7 @@ VkExternalMemoryFeatureFlagBitsNV cvkParseJsonExternalMemoryFeatureFlagBitsNV(co
 /**
  * \brief Parses a VkExternalMemoryHandleTypeFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkExternalMemoryHandleTypeFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkExternalMemoryHandleTypeFlagBits   The parsed value.
  */
@@ -1339,7 +1339,7 @@ VkExternalMemoryHandleTypeFlagBits cvkParseJsonExternalMemoryHandleTypeFlagBits(
 /**
  * \brief Parses a VkExternalMemoryHandleTypeFlagBitsNV from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkExternalMemoryHandleTypeFlagBitsNV has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkExternalMemoryHandleTypeFlagBitsNV   The parsed value.
  */
@@ -1349,7 +1349,7 @@ VkExternalMemoryHandleTypeFlagBitsNV cvkParseJsonExternalMemoryHandleTypeFlagBit
 /**
  * \brief Parses a VkExternalSemaphoreFeatureFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkExternalSemaphoreFeatureFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkExternalSemaphoreFeatureFlagBits   The parsed value.
  */
@@ -1359,7 +1359,7 @@ VkExternalSemaphoreFeatureFlagBits cvkParseJsonExternalSemaphoreFeatureFlagBits(
 /**
  * \brief Parses a VkExternalSemaphoreHandleTypeFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkExternalSemaphoreHandleTypeFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkExternalSemaphoreHandleTypeFlagBits   The parsed value.
  */
@@ -1369,7 +1369,7 @@ VkExternalSemaphoreHandleTypeFlagBits cvkParseJsonExternalSemaphoreHandleTypeFla
 /**
  * \brief Parses a VkFenceCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkFenceCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkFenceCreateFlagBits   The parsed value.
  */
@@ -1379,7 +1379,7 @@ VkFenceCreateFlagBits cvkParseJsonFenceCreateFlagBits(const cvkJsonValue* pValue
 /**
  * \brief Parses a VkFenceImportFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkFenceImportFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkFenceImportFlagBits   The parsed value.
  */
@@ -1409,7 +1409,7 @@ VkFormat cvkParseJsonFormat(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkFormatFeatureFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkFormatFeatureFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkFormatFeatureFlagBits   The parsed value.
  */
@@ -1469,7 +1469,7 @@ VkFragmentShadingRateTypeNV cvkParseJsonFragmentShadingRateTypeNV(const cvkJsonV
 /**
  * \brief Parses a VkFrameBoundaryFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkFrameBoundaryFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkFrameBoundaryFlagBitsEXT   The parsed value.
  */
@@ -1479,7 +1479,7 @@ VkFrameBoundaryFlagBitsEXT cvkParseJsonFrameBoundaryFlagBits(const cvkJsonValue*
 /**
  * \brief Parses a VkFramebufferCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkFramebufferCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkFramebufferCreateFlagBits   The parsed value.
  */
@@ -1499,7 +1499,7 @@ VkFrontFace cvkParseJsonFrontFace(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkGeometryFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkGeometryFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkGeometryFlagBitsKHR   The parsed value.
  */
@@ -1509,7 +1509,7 @@ VkGeometryFlagBitsKHR cvkParseJsonGeometryFlagBits(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkGeometryInstanceFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkGeometryInstanceFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkGeometryInstanceFlagBitsKHR   The parsed value.
  */
@@ -1559,7 +1559,7 @@ VkGpaSampleTypeAMD cvkParseJsonGpaSampleTypeAMD(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkGpaSqShaderStageFlagBitsAMD from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkGpaSqShaderStageFlagBitsAMD has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkGpaSqShaderStageFlagBitsAMD   The parsed value.
  */
@@ -1569,7 +1569,7 @@ VkGpaSqShaderStageFlagBitsAMD cvkParseJsonGpaSqShaderStageFlagBitsAMD(const cvkJ
 /**
  * \brief Parses a VkGraphicsPipelineLibraryFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkGraphicsPipelineLibraryFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkGraphicsPipelineLibraryFlagBitsEXT   The parsed value.
  */
@@ -1579,7 +1579,7 @@ VkGraphicsPipelineLibraryFlagBitsEXT cvkParseJsonGraphicsPipelineLibraryFlagBits
 /**
  * \brief Parses a VkHostImageCopyFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkHostImageCopyFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkHostImageCopyFlagBits   The parsed value.
  */
@@ -1619,7 +1619,7 @@ VkImageCompressionFlagBitsEXT cvkParseJsonImageCompressionFlagBits(const cvkJson
 /**
  * \brief Parses a VkImageCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkImageCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkImageCreateFlagBits   The parsed value.
  */
@@ -1679,7 +1679,7 @@ VkImageType cvkParseJsonImageType(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkImageUsageFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkImageUsageFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkImageUsageFlagBits   The parsed value.
  */
@@ -1699,7 +1699,7 @@ VkImageUsageFlagBits2KHR cvkParseJsonImageUsageFlagBits2(const cvkJsonValue* pVa
 /**
  * \brief Parses a VkImageViewCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkImageViewCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkImageViewCreateFlagBits   The parsed value.
  */
@@ -1729,7 +1729,7 @@ VkIndexType cvkParseJsonIndexType(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkIndirectCommandsInputModeFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkIndirectCommandsInputModeFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkIndirectCommandsInputModeFlagBitsEXT   The parsed value.
  */
@@ -1739,7 +1739,7 @@ VkIndirectCommandsInputModeFlagBitsEXT cvkParseJsonIndirectCommandsInputModeFlag
 /**
  * \brief Parses a VkIndirectCommandsLayoutUsageFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkIndirectCommandsLayoutUsageFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkIndirectCommandsLayoutUsageFlagBitsEXT   The parsed value.
  */
@@ -1749,7 +1749,7 @@ VkIndirectCommandsLayoutUsageFlagBitsEXT cvkParseJsonIndirectCommandsLayoutUsage
 /**
  * \brief Parses a VkIndirectCommandsLayoutUsageFlagBitsNV from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkIndirectCommandsLayoutUsageFlagBitsNV has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkIndirectCommandsLayoutUsageFlagBitsNV   The parsed value.
  */
@@ -1789,7 +1789,7 @@ VkIndirectExecutionSetInfoTypeEXT cvkParseJsonIndirectExecutionSetInfoType(const
 /**
  * \brief Parses a VkIndirectStateFlagBitsNV from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkIndirectStateFlagBitsNV has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkIndirectStateFlagBitsNV   The parsed value.
  */
@@ -1799,7 +1799,7 @@ VkIndirectStateFlagBitsNV cvkParseJsonIndirectStateFlagBitsNV(const cvkJsonValue
 /**
  * \brief Parses a VkInstanceCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkInstanceCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkInstanceCreateFlagBits   The parsed value.
  */
@@ -1869,7 +1869,7 @@ VkLogicOp cvkParseJsonLogicOp(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkMemoryAllocateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkMemoryAllocateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkMemoryAllocateFlagBits   The parsed value.
  */
@@ -1889,7 +1889,7 @@ VkMemoryDecompressionMethodFlagBitsEXT cvkParseJsonMemoryDecompressionMethodFlag
 /**
  * \brief Parses a VkMemoryHeapFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkMemoryHeapFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkMemoryHeapFlagBits   The parsed value.
  */
@@ -1899,7 +1899,7 @@ VkMemoryHeapFlagBits cvkParseJsonMemoryHeapFlagBits(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkMemoryMapFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkMemoryMapFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkMemoryMapFlagBits   The parsed value.
  */
@@ -1919,7 +1919,7 @@ VkMemoryOverallocationBehaviorAMD cvkParseJsonMemoryOverallocationBehaviorAMD(co
 /**
  * \brief Parses a VkMemoryPropertyFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkMemoryPropertyFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkMemoryPropertyFlagBits   The parsed value.
  */
@@ -1929,7 +1929,7 @@ VkMemoryPropertyFlagBits cvkParseJsonMemoryPropertyFlagBits(const cvkJsonValue* 
 /**
  * \brief Parses a VkMemoryUnmapFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkMemoryUnmapFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkMemoryUnmapFlagBits   The parsed value.
  */
@@ -1939,7 +1939,7 @@ VkMemoryUnmapFlagBits cvkParseJsonMemoryUnmapFlagBits(const cvkJsonValue* pValue
 /**
  * \brief Parses a VkMicromapCreateFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkMicromapCreateFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkMicromapCreateFlagBitsEXT   The parsed value.
  */
@@ -1979,7 +1979,7 @@ VkObjectType cvkParseJsonObjectType(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkOpacityMicromapFormatKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkOpacityMicromapFormatKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkOpacityMicromapFormatKHR   The parsed value.
  */
@@ -1989,7 +1989,7 @@ VkOpacityMicromapFormatKHR cvkParseJsonOpacityMicromapFormat(const cvkJsonValue*
 /**
  * \brief Parses a VkOpacityMicromapSpecialIndexKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkOpacityMicromapSpecialIndexKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkOpacityMicromapSpecialIndexKHR   The parsed value.
  */
@@ -1999,7 +1999,7 @@ VkOpacityMicromapSpecialIndexKHR cvkParseJsonOpacityMicromapSpecialIndex(const c
 /**
  * \brief Parses a VkOpticalFlowExecuteFlagBitsNV from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkOpticalFlowExecuteFlagBitsNV has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkOpticalFlowExecuteFlagBitsNV   The parsed value.
  */
@@ -2039,7 +2039,7 @@ VkOpticalFlowSessionBindingPointNV cvkParseJsonOpticalFlowSessionBindingPointNV(
 /**
  * \brief Parses a VkOpticalFlowSessionCreateFlagBitsNV from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkOpticalFlowSessionCreateFlagBitsNV has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkOpticalFlowSessionCreateFlagBitsNV   The parsed value.
  */
@@ -2069,7 +2069,7 @@ VkOutOfBandQueueTypeNV cvkParseJsonOutOfBandQueueTypeNV(const cvkJsonValue* pVal
 /**
  * \brief Parses a VkPartitionedAccelerationStructureInstanceFlagBitsNV from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPartitionedAccelerationStructureInstanceFlagBitsNV has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPartitionedAccelerationStructureInstanceFlagBitsNV   The parsed value.
  */
@@ -2089,7 +2089,7 @@ VkPartitionedAccelerationStructureOpTypeNV cvkParseJsonPartitionedAccelerationSt
 /**
  * \brief Parses a VkPastPresentationTimingFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPastPresentationTimingFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPastPresentationTimingFlagBitsEXT   The parsed value.
  */
@@ -2099,7 +2099,7 @@ VkPastPresentationTimingFlagBitsEXT cvkParseJsonPastPresentationTimingFlagBits(c
 /**
  * \brief Parses a VkPeerMemoryFeatureFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPeerMemoryFeatureFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPeerMemoryFeatureFlagBits   The parsed value.
  */
@@ -2129,7 +2129,7 @@ VkPerformanceConfigurationTypeINTEL cvkParseJsonPerformanceConfigurationTypeINTE
 /**
  * \brief Parses a VkPerformanceCounterDescriptionFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPerformanceCounterDescriptionFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPerformanceCounterDescriptionFlagBitsKHR   The parsed value.
  */
@@ -2259,7 +2259,7 @@ VkPipelineBindPoint cvkParseJsonPipelineBindPoint(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkPipelineCacheCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPipelineCacheCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPipelineCacheCreateFlagBits   The parsed value.
  */
@@ -2269,7 +2269,7 @@ VkPipelineCacheCreateFlagBits cvkParseJsonPipelineCacheCreateFlagBits(const cvkJ
 /**
  * \brief Parses a VkPipelineCacheHeaderVersion from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPipelineCacheHeaderVersion has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPipelineCacheHeaderVersion   The parsed value.
  */
@@ -2279,7 +2279,7 @@ VkPipelineCacheHeaderVersion cvkParseJsonPipelineCacheHeaderVersion(const cvkJso
 /**
  * \brief Parses a VkPipelineColorBlendStateCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPipelineColorBlendStateCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPipelineColorBlendStateCreateFlagBits   The parsed value.
  */
@@ -2299,7 +2299,7 @@ VkPipelineCompilerControlFlagBitsAMD cvkParseJsonPipelineCompilerControlFlagBits
 /**
  * \brief Parses a VkPipelineCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPipelineCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPipelineCreateFlagBits   The parsed value.
  */
@@ -2319,7 +2319,7 @@ VkPipelineCreateFlagBits2 cvkParseJsonPipelineCreateFlagBits2(const cvkJsonValue
 /**
  * \brief Parses a VkPipelineCreationFeedbackFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPipelineCreationFeedbackFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPipelineCreationFeedbackFlagBits   The parsed value.
  */
@@ -2329,7 +2329,7 @@ VkPipelineCreationFeedbackFlagBits cvkParseJsonPipelineCreationFeedbackFlagBits(
 /**
  * \brief Parses a VkPipelineDepthStencilStateCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPipelineDepthStencilStateCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPipelineDepthStencilStateCreateFlagBits   The parsed value.
  */
@@ -2349,7 +2349,7 @@ VkPipelineExecutableStatisticFormatKHR cvkParseJsonPipelineExecutableStatisticFo
 /**
  * \brief Parses a VkPipelineLayoutCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPipelineLayoutCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPipelineLayoutCreateFlagBits   The parsed value.
  */
@@ -2379,7 +2379,7 @@ VkPipelineRobustnessImageBehavior cvkParseJsonPipelineRobustnessImageBehavior(co
 /**
  * \brief Parses a VkPipelineShaderStageCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPipelineShaderStageCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPipelineShaderStageCreateFlagBits   The parsed value.
  */
@@ -2429,7 +2429,7 @@ VkPolygonMode cvkParseJsonPolygonMode(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkPresentGravityFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPresentGravityFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPresentGravityFlagBitsKHR   The parsed value.
  */
@@ -2449,7 +2449,7 @@ VkPresentModeKHR cvkParseJsonPresentMode(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkPresentScalingFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPresentScalingFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPresentScalingFlagBitsKHR   The parsed value.
  */
@@ -2459,7 +2459,7 @@ VkPresentScalingFlagBitsKHR cvkParseJsonPresentScalingFlagBits(const cvkJsonValu
 /**
  * \brief Parses a VkPresentStageFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPresentStageFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPresentStageFlagBitsEXT   The parsed value.
  */
@@ -2469,7 +2469,7 @@ VkPresentStageFlagBitsEXT cvkParseJsonPresentStageFlagBits(const cvkJsonValue* p
 /**
  * \brief Parses a VkPresentTimingInfoFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPresentTimingInfoFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPresentTimingInfoFlagBitsEXT   The parsed value.
  */
@@ -2489,7 +2489,7 @@ VkPrimitiveTopology cvkParseJsonPrimitiveTopology(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkPrivateDataSlotCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkPrivateDataSlotCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkPrivateDataSlotCreateFlagBits   The parsed value.
  */
@@ -2509,7 +2509,7 @@ VkProvokingVertexModeEXT cvkParseJsonProvokingVertexMode(const cvkJsonValue* pVa
 /**
  * \brief Parses a VkQueryControlFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkQueryControlFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkQueryControlFlagBits   The parsed value.
  */
@@ -2519,7 +2519,7 @@ VkQueryControlFlagBits cvkParseJsonQueryControlFlagBits(const cvkJsonValue* pVal
 /**
  * \brief Parses a VkQueryPipelineStatisticFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkQueryPipelineStatisticFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkQueryPipelineStatisticFlagBits   The parsed value.
  */
@@ -2529,7 +2529,7 @@ VkQueryPipelineStatisticFlagBits cvkParseJsonQueryPipelineStatisticFlagBits(cons
 /**
  * \brief Parses a VkQueryPoolCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkQueryPoolCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkQueryPoolCreateFlagBits   The parsed value.
  */
@@ -2549,7 +2549,7 @@ VkQueryPoolSamplingModeINTEL cvkParseJsonQueryPoolSamplingModeINTEL(const cvkJso
 /**
  * \brief Parses a VkQueryResultFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkQueryResultFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkQueryResultFlagBits   The parsed value.
  */
@@ -2579,7 +2579,7 @@ VkQueryType cvkParseJsonQueryType(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkQueueFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkQueueFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkQueueFlagBits   The parsed value.
  */
@@ -2589,7 +2589,7 @@ VkQueueFlagBits cvkParseJsonQueueFlagBits(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkQueueGlobalPriority from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkQueueGlobalPriority has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkQueueGlobalPriority   The parsed value.
  */
@@ -2649,7 +2649,7 @@ VkRayTracingShaderGroupTypeKHR cvkParseJsonRayTracingShaderGroupType(const cvkJs
 /**
  * \brief Parses a VkRenderPassCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkRenderPassCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkRenderPassCreateFlagBits   The parsed value.
  */
@@ -2659,7 +2659,7 @@ VkRenderPassCreateFlagBits cvkParseJsonRenderPassCreateFlagBits(const cvkJsonVal
 /**
  * \brief Parses a VkRenderingAttachmentFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkRenderingAttachmentFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkRenderingAttachmentFlagBitsKHR   The parsed value.
  */
@@ -2669,7 +2669,7 @@ VkRenderingAttachmentFlagBitsKHR cvkParseJsonRenderingAttachmentFlagBits(const c
 /**
  * \brief Parses a VkRenderingFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkRenderingFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkRenderingFlagBits   The parsed value.
  */
@@ -2679,7 +2679,7 @@ VkRenderingFlagBits cvkParseJsonRenderingFlagBits(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkResolveImageFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkResolveImageFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkResolveImageFlagBitsKHR   The parsed value.
  */
@@ -2709,7 +2709,7 @@ VkResult cvkParseJsonResult(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkSampleCountFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkSampleCountFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkSampleCountFlagBits   The parsed value.
  */
@@ -2729,7 +2729,7 @@ VkSamplerAddressMode cvkParseJsonSamplerAddressMode(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkSamplerCreateFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkSamplerCreateFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkSamplerCreateFlagBits   The parsed value.
  */
@@ -2779,7 +2779,7 @@ VkSamplerYcbcrRange cvkParseJsonSamplerYcbcrRange(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkScopeKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkScopeKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkScopeKHR   The parsed value.
  */
@@ -2789,7 +2789,7 @@ VkScopeKHR cvkParseJsonScope(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkSemaphoreImportFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkSemaphoreImportFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkSemaphoreImportFlagBits   The parsed value.
  */
@@ -2809,7 +2809,7 @@ VkSemaphoreType cvkParseJsonSemaphoreType(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkSemaphoreWaitFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkSemaphoreWaitFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkSemaphoreWaitFlagBits   The parsed value.
  */
@@ -2839,7 +2839,7 @@ VkShaderCorePropertiesFlagBitsAMD cvkParseJsonShaderCorePropertiesFlagBitsAMD(co
 /**
  * \brief Parses a VkShaderCreateFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkShaderCreateFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkShaderCreateFlagBitsEXT   The parsed value.
  */
@@ -2879,7 +2879,7 @@ VkShaderInfoTypeAMD cvkParseJsonShaderInfoTypeAMD(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkShaderStageFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkShaderStageFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkShaderStageFlagBits   The parsed value.
  */
@@ -2909,7 +2909,7 @@ VkSharingMode cvkParseJsonSharingMode(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkSparseImageFormatFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkSparseImageFormatFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkSparseImageFormatFlagBits   The parsed value.
  */
@@ -2919,7 +2919,7 @@ VkSparseImageFormatFlagBits cvkParseJsonSparseImageFormatFlagBits(const cvkJsonV
 /**
  * \brief Parses a VkSparseMemoryBindFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkSparseMemoryBindFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkSparseMemoryBindFlagBits   The parsed value.
  */
@@ -2929,7 +2929,7 @@ VkSparseMemoryBindFlagBits cvkParseJsonSparseMemoryBindFlagBits(const cvkJsonVal
 /**
  * \brief Parses a VkSpirvResourceTypeFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkSpirvResourceTypeFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkSpirvResourceTypeFlagBitsEXT   The parsed value.
  */
@@ -2939,7 +2939,7 @@ VkSpirvResourceTypeFlagBitsEXT cvkParseJsonSpirvResourceTypeFlagBits(const cvkJs
 /**
  * \brief Parses a VkStencilFaceFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkStencilFaceFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkStencilFaceFlagBits   The parsed value.
  */
@@ -2969,7 +2969,7 @@ VkStructureType cvkParseJsonStructureType(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkSubgroupFeatureFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkSubgroupFeatureFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkSubgroupFeatureFlagBits   The parsed value.
  */
@@ -2979,7 +2979,7 @@ VkSubgroupFeatureFlagBits cvkParseJsonSubgroupFeatureFlagBits(const cvkJsonValue
 /**
  * \brief Parses a VkSubmitFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkSubmitFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkSubmitFlagBits   The parsed value.
  */
@@ -2999,7 +2999,7 @@ VkSubpassContents cvkParseJsonSubpassContents(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkSubpassDescriptionFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkSubpassDescriptionFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkSubpassDescriptionFlagBits   The parsed value.
  */
@@ -3019,7 +3019,7 @@ VkSubpassMergeStatusEXT cvkParseJsonSubpassMergeStatus(const cvkJsonValue* pValu
 /**
  * \brief Parses a VkSurfaceCounterFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkSurfaceCounterFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkSurfaceCounterFlagBitsEXT   The parsed value.
  */
@@ -3029,7 +3029,7 @@ VkSurfaceCounterFlagBitsEXT cvkParseJsonSurfaceCounterFlagBits(const cvkJsonValu
 /**
  * \brief Parses a VkSurfaceTransformFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkSurfaceTransformFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkSurfaceTransformFlagBitsKHR   The parsed value.
  */
@@ -3039,7 +3039,7 @@ VkSurfaceTransformFlagBitsKHR cvkParseJsonSurfaceTransformFlagBits(const cvkJson
 /**
  * \brief Parses a VkSwapchainCreateFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkSwapchainCreateFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkSwapchainCreateFlagBitsKHR   The parsed value.
  */
@@ -3119,7 +3119,7 @@ VkThrottleHintTypeSEC cvkParseJsonThrottleHintTypeSEC(const cvkJsonValue* pValue
 /**
  * \brief Parses a VkTileShadingRenderPassFlagBitsQCOM from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkTileShadingRenderPassFlagBitsQCOM has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkTileShadingRenderPassFlagBitsQCOM   The parsed value.
  */
@@ -3139,7 +3139,7 @@ VkTimeDomainKHR cvkParseJsonTimeDomain(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkToolPurposeFlagBits from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkToolPurposeFlagBits has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkToolPurposeFlagBits   The parsed value.
  */
@@ -3149,7 +3149,7 @@ VkToolPurposeFlagBits cvkParseJsonToolPurposeFlagBits(const cvkJsonValue* pValue
 /**
  * \brief Parses a VkValidationCacheHeaderVersionEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkValidationCacheHeaderVersionEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkValidationCacheHeaderVersionEXT   The parsed value.
  */
@@ -3189,7 +3189,7 @@ VkValidationFeatureEnableEXT cvkParseJsonValidationFeatureEnable(const cvkJsonVa
 /**
  * \brief Parses a VkVendorId from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVendorId has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVendorId   The parsed value.
  */
@@ -3209,7 +3209,7 @@ VkVertexInputRate cvkParseJsonVertexInputRate(const cvkJsonValue* pValue);
 /**
  * \brief Parses a VkVideoCapabilityFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoCapabilityFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoCapabilityFlagBitsKHR   The parsed value.
  */
@@ -3239,7 +3239,7 @@ VkVideoCodecOperationFlagBitsKHR cvkParseJsonVideoCodecOperationFlagBits(const c
 /**
  * \brief Parses a VkVideoCodingControlFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoCodingControlFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoCodingControlFlagBitsKHR   The parsed value.
  */
@@ -3259,7 +3259,7 @@ VkVideoComponentBitDepthFlagBitsKHR cvkParseJsonVideoComponentBitDepthFlagBits(c
 /**
  * \brief Parses a VkVideoDecodeCapabilityFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoDecodeCapabilityFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoDecodeCapabilityFlagBitsKHR   The parsed value.
  */
@@ -3289,7 +3289,7 @@ VkVideoDecodeUsageFlagBitsKHR cvkParseJsonVideoDecodeUsageFlagBits(const cvkJson
 /**
  * \brief Parses a VkVideoEncodeAV1CapabilityFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeAV1CapabilityFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeAV1CapabilityFlagBitsKHR   The parsed value.
  */
@@ -3309,7 +3309,7 @@ VkVideoEncodeAV1PredictionModeKHR cvkParseJsonVideoEncodeAV1PredictionMode(const
 /**
  * \brief Parses a VkVideoEncodeAV1RateControlFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeAV1RateControlFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeAV1RateControlFlagBitsKHR   The parsed value.
  */
@@ -3329,7 +3329,7 @@ VkVideoEncodeAV1RateControlGroupKHR cvkParseJsonVideoEncodeAV1RateControlGroup(c
 /**
  * \brief Parses a VkVideoEncodeAV1StdFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeAV1StdFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeAV1StdFlagBitsKHR   The parsed value.
  */
@@ -3339,7 +3339,7 @@ VkVideoEncodeAV1StdFlagBitsKHR cvkParseJsonVideoEncodeAV1StdFlagBits(const cvkJs
 /**
  * \brief Parses a VkVideoEncodeAV1SuperblockSizeFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeAV1SuperblockSizeFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeAV1SuperblockSizeFlagBitsKHR   The parsed value.
  */
@@ -3349,7 +3349,7 @@ VkVideoEncodeAV1SuperblockSizeFlagBitsKHR cvkParseJsonVideoEncodeAV1SuperblockSi
 /**
  * \brief Parses a VkVideoEncodeCapabilityFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeCapabilityFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeCapabilityFlagBitsKHR   The parsed value.
  */
@@ -3369,7 +3369,7 @@ VkVideoEncodeContentFlagBitsKHR cvkParseJsonVideoEncodeContentFlagBits(const cvk
 /**
  * \brief Parses a VkVideoEncodeFeedbackFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeFeedbackFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeFeedbackFlagBitsKHR   The parsed value.
  */
@@ -3379,7 +3379,7 @@ VkVideoEncodeFeedbackFlagBitsKHR cvkParseJsonVideoEncodeFeedbackFlagBits(const c
 /**
  * \brief Parses a VkVideoEncodeFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeFlagBitsKHR   The parsed value.
  */
@@ -3389,7 +3389,7 @@ VkVideoEncodeFlagBitsKHR cvkParseJsonVideoEncodeFlagBits(const cvkJsonValue* pVa
 /**
  * \brief Parses a VkVideoEncodeH264CapabilityFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeH264CapabilityFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeH264CapabilityFlagBitsKHR   The parsed value.
  */
@@ -3399,7 +3399,7 @@ VkVideoEncodeH264CapabilityFlagBitsKHR cvkParseJsonVideoEncodeH264CapabilityFlag
 /**
  * \brief Parses a VkVideoEncodeH264RateControlFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeH264RateControlFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeH264RateControlFlagBitsKHR   The parsed value.
  */
@@ -3409,7 +3409,7 @@ VkVideoEncodeH264RateControlFlagBitsKHR cvkParseJsonVideoEncodeH264RateControlFl
 /**
  * \brief Parses a VkVideoEncodeH264StdFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeH264StdFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeH264StdFlagBitsKHR   The parsed value.
  */
@@ -3419,7 +3419,7 @@ VkVideoEncodeH264StdFlagBitsKHR cvkParseJsonVideoEncodeH264StdFlagBits(const cvk
 /**
  * \brief Parses a VkVideoEncodeH265CapabilityFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeH265CapabilityFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeH265CapabilityFlagBitsKHR   The parsed value.
  */
@@ -3429,7 +3429,7 @@ VkVideoEncodeH265CapabilityFlagBitsKHR cvkParseJsonVideoEncodeH265CapabilityFlag
 /**
  * \brief Parses a VkVideoEncodeH265CtbSizeFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeH265CtbSizeFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeH265CtbSizeFlagBitsKHR   The parsed value.
  */
@@ -3439,7 +3439,7 @@ VkVideoEncodeH265CtbSizeFlagBitsKHR cvkParseJsonVideoEncodeH265CtbSizeFlagBits(c
 /**
  * \brief Parses a VkVideoEncodeH265RateControlFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeH265RateControlFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeH265RateControlFlagBitsKHR   The parsed value.
  */
@@ -3449,7 +3449,7 @@ VkVideoEncodeH265RateControlFlagBitsKHR cvkParseJsonVideoEncodeH265RateControlFl
 /**
  * \brief Parses a VkVideoEncodeH265StdFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeH265StdFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeH265StdFlagBitsKHR   The parsed value.
  */
@@ -3459,7 +3459,7 @@ VkVideoEncodeH265StdFlagBitsKHR cvkParseJsonVideoEncodeH265StdFlagBits(const cvk
 /**
  * \brief Parses a VkVideoEncodeH265TransformBlockSizeFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeH265TransformBlockSizeFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeH265TransformBlockSizeFlagBitsKHR   The parsed value.
  */
@@ -3479,7 +3479,7 @@ VkVideoEncodeIntraRefreshModeFlagBitsKHR cvkParseJsonVideoEncodeIntraRefreshMode
 /**
  * \brief Parses a VkVideoEncodePerPartitionFeedbackFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodePerPartitionFeedbackFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodePerPartitionFeedbackFlagBitsKHR   The parsed value.
  */
@@ -3499,7 +3499,7 @@ VkVideoEncodeRateControlModeFlagBitsKHR cvkParseJsonVideoEncodeRateControlModeFl
 /**
  * \brief Parses a VkVideoEncodeRgbChromaOffsetFlagBitsVALVE from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeRgbChromaOffsetFlagBitsVALVE has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeRgbChromaOffsetFlagBitsVALVE   The parsed value.
  */
@@ -3509,7 +3509,7 @@ VkVideoEncodeRgbChromaOffsetFlagBitsVALVE cvkParseJsonVideoEncodeRgbChromaOffset
 /**
  * \brief Parses a VkVideoEncodeRgbModelConversionFlagBitsVALVE from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeRgbModelConversionFlagBitsVALVE has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeRgbModelConversionFlagBitsVALVE   The parsed value.
  */
@@ -3519,7 +3519,7 @@ VkVideoEncodeRgbModelConversionFlagBitsVALVE cvkParseJsonVideoEncodeRgbModelConv
 /**
  * \brief Parses a VkVideoEncodeRgbRangeCompressionFlagBitsVALVE from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoEncodeRgbRangeCompressionFlagBitsVALVE has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoEncodeRgbRangeCompressionFlagBitsVALVE   The parsed value.
  */
@@ -3549,7 +3549,7 @@ VkVideoEncodeUsageFlagBitsKHR cvkParseJsonVideoEncodeUsageFlagBits(const cvkJson
 /**
  * \brief Parses a VkVideoSessionCreateFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoSessionCreateFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoSessionCreateFlagBitsKHR   The parsed value.
  */
@@ -3559,7 +3559,7 @@ VkVideoSessionCreateFlagBitsKHR cvkParseJsonVideoSessionCreateFlagBits(const cvk
 /**
  * \brief Parses a VkVideoSessionParametersCreateFlagBitsKHR from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkVideoSessionParametersCreateFlagBitsKHR has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkVideoSessionParametersCreateFlagBitsKHR   The parsed value.
  */

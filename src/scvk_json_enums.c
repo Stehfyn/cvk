@@ -114,14 +114,14 @@ VkAccessFlagBits scvkParseJsonAccessFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_ACCESS_INDIRECT_COMMAND_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_INDEX_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT) ||
-            (enumerant == (uint64_t)VK_ACCESS_UNIFORM_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_INPUT_ATTACHMENT_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_SHADER_READ_BIT) ||
-            (enumerant == (uint64_t)VK_ACCESS_SHADER_WRITE_BIT) || (enumerant == (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT) ||
-            (enumerant == (uint64_t)VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT) ||
-            (enumerant == (uint64_t)VK_ACCESS_TRANSFER_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_TRANSFER_WRITE_BIT) || (enumerant == (uint64_t)VK_ACCESS_HOST_READ_BIT) ||
-            (enumerant == (uint64_t)VK_ACCESS_HOST_WRITE_BIT) || (enumerant == (uint64_t)VK_ACCESS_MEMORY_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_MEMORY_WRITE_BIT) ||
-            (enumerant == (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT) || (enumerant == (uint64_t)VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR) ||
-            (enumerant == (uint64_t)VK_ACCESS_NONE_KHR);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_ACCESS_INDIRECT_COMMAND_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_INDEX_READ_BIT) ||
+            (enumerant == (uint64_t)VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_UNIFORM_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_INPUT_ATTACHMENT_READ_BIT) ||
+            (enumerant == (uint64_t)VK_ACCESS_SHADER_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_SHADER_WRITE_BIT) || (enumerant == (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_READ_BIT) ||
+            (enumerant == (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT) || (enumerant == (uint64_t)VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT) ||
+            (enumerant == (uint64_t)VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT) || (enumerant == (uint64_t)VK_ACCESS_TRANSFER_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_TRANSFER_WRITE_BIT) ||
+            (enumerant == (uint64_t)VK_ACCESS_HOST_READ_BIT) || (enumerant == (uint64_t)VK_ACCESS_HOST_WRITE_BIT) || (enumerant == (uint64_t)VK_ACCESS_MEMORY_READ_BIT) ||
+            (enumerant == (uint64_t)VK_ACCESS_MEMORY_WRITE_BIT) || (enumerant == (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR) || (enumerant == (uint64_t)VK_ACCESS_NONE_KHR);
     SCVK_ASSERT(found);
 
     return (VkAccessFlagBits)enumerant;
@@ -145,7 +145,7 @@ VkAttachmentDescriptionFlagBits scvkParseJsonAttachmentDescriptionFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT);
     SCVK_ASSERT(found);
 
     return (VkAttachmentDescriptionFlagBits)enumerant;
@@ -162,7 +162,8 @@ VkAttachmentLoadOp scvkParseJsonAttachmentLoadOp(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_ATTACHMENT_LOAD_OP_LOAD) || (enumerant == (uint64_t)VK_ATTACHMENT_LOAD_OP_CLEAR) || (enumerant == (uint64_t)VK_ATTACHMENT_LOAD_OP_DONT_CARE);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_ATTACHMENT_LOAD_OP_LOAD) || (enumerant == (uint64_t)VK_ATTACHMENT_LOAD_OP_CLEAR) ||
+            (enumerant == (uint64_t)VK_ATTACHMENT_LOAD_OP_DONT_CARE);
     SCVK_ASSERT(found);
 
     return (VkAttachmentLoadOp)enumerant;
@@ -177,7 +178,7 @@ VkAttachmentStoreOp scvkParseJsonAttachmentStoreOp(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_ATTACHMENT_STORE_OP_STORE) || (enumerant == (uint64_t)VK_ATTACHMENT_STORE_OP_DONT_CARE);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_ATTACHMENT_STORE_OP_STORE) || (enumerant == (uint64_t)VK_ATTACHMENT_STORE_OP_DONT_CARE);
     SCVK_ASSERT(found);
 
     return (VkAttachmentStoreOp)enumerant;
@@ -210,7 +211,7 @@ VkBlendFactor scvkParseJsonBlendFactor(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_BLEND_FACTOR_ZERO) || (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE) || (enumerant == (uint64_t)VK_BLEND_FACTOR_SRC_COLOR) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_BLEND_FACTOR_ZERO) || (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE) || (enumerant == (uint64_t)VK_BLEND_FACTOR_SRC_COLOR) ||
             (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR) || (enumerant == (uint64_t)VK_BLEND_FACTOR_DST_COLOR) || (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR) ||
             (enumerant == (uint64_t)VK_BLEND_FACTOR_SRC_ALPHA) || (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA) || (enumerant == (uint64_t)VK_BLEND_FACTOR_DST_ALPHA) ||
             (enumerant == (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA) || (enumerant == (uint64_t)VK_BLEND_FACTOR_CONSTANT_COLOR) ||
@@ -281,7 +282,7 @@ VkBlendOp scvkParseJsonBlendOp(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_BLEND_OP_ADD) || (enumerant == (uint64_t)VK_BLEND_OP_SUBTRACT) || (enumerant == (uint64_t)VK_BLEND_OP_REVERSE_SUBTRACT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_BLEND_OP_ADD) || (enumerant == (uint64_t)VK_BLEND_OP_SUBTRACT) || (enumerant == (uint64_t)VK_BLEND_OP_REVERSE_SUBTRACT) ||
             (enumerant == (uint64_t)VK_BLEND_OP_MIN) || (enumerant == (uint64_t)VK_BLEND_OP_MAX) || (enumerant == (uint64_t)VK_BLEND_OP_ZERO_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_SRC_EXT) ||
             (enumerant == (uint64_t)VK_BLEND_OP_DST_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_SRC_OVER_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_DST_OVER_EXT) ||
             (enumerant == (uint64_t)VK_BLEND_OP_SRC_IN_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_DST_IN_EXT) || (enumerant == (uint64_t)VK_BLEND_OP_SRC_OUT_EXT) ||
@@ -314,7 +315,8 @@ VkBlendOverlapEXT scvkParseJsonBlendOverlap(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_BLEND_OVERLAP_UNCORRELATED_EXT) || (enumerant == (uint64_t)VK_BLEND_OVERLAP_DISJOINT_EXT) || (enumerant == (uint64_t)VK_BLEND_OVERLAP_CONJOINT_EXT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_BLEND_OVERLAP_UNCORRELATED_EXT) || (enumerant == (uint64_t)VK_BLEND_OVERLAP_DISJOINT_EXT) ||
+            (enumerant == (uint64_t)VK_BLEND_OVERLAP_CONJOINT_EXT);
     SCVK_ASSERT(found);
 
     return (VkBlendOverlapEXT)enumerant;
@@ -336,7 +338,7 @@ VkBorderColor scvkParseJsonBorderColor(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK) || (enumerant == (uint64_t)VK_BORDER_COLOR_INT_TRANSPARENT_BLACK) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK) || (enumerant == (uint64_t)VK_BORDER_COLOR_INT_TRANSPARENT_BLACK) ||
             (enumerant == (uint64_t)VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK) || (enumerant == (uint64_t)VK_BORDER_COLOR_INT_OPAQUE_BLACK) || (enumerant == (uint64_t)VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE) ||
             (enumerant == (uint64_t)VK_BORDER_COLOR_INT_OPAQUE_WHITE) || (enumerant == (uint64_t)VK_BORDER_COLOR_FLOAT_CUSTOM_EXT) || (enumerant == (uint64_t)VK_BORDER_COLOR_INT_CUSTOM_EXT);
     SCVK_ASSERT(found);
@@ -357,7 +359,7 @@ VkBufferCreateFlagBits scvkParseJsonBufferCreateFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_BUFFER_CREATE_SPARSE_BINDING_BIT) || (enumerant == (uint64_t)VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_BUFFER_CREATE_SPARSE_BINDING_BIT) || (enumerant == (uint64_t)VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT) ||
             (enumerant == (uint64_t)VK_BUFFER_CREATE_SPARSE_ALIASED_BIT) || (enumerant == (uint64_t)VK_BUFFER_CREATE_PROTECTED_BIT) ||
             (enumerant == (uint64_t)VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT);
     SCVK_ASSERT(found);
@@ -383,7 +385,7 @@ VkBufferUsageFlagBits scvkParseJsonBufferUsageFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_BUFFER_USAGE_TRANSFER_SRC_BIT) || (enumerant == (uint64_t)VK_BUFFER_USAGE_TRANSFER_DST_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_BUFFER_USAGE_TRANSFER_SRC_BIT) || (enumerant == (uint64_t)VK_BUFFER_USAGE_TRANSFER_DST_BIT) ||
             (enumerant == (uint64_t)VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT) || (enumerant == (uint64_t)VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT) ||
             (enumerant == (uint64_t)VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT) || (enumerant == (uint64_t)VK_BUFFER_USAGE_STORAGE_BUFFER_BIT) || (enumerant == (uint64_t)VK_BUFFER_USAGE_INDEX_BUFFER_BIT) ||
             (enumerant == (uint64_t)VK_BUFFER_USAGE_VERTEX_BUFFER_BIT) || (enumerant == (uint64_t)VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT) ||
@@ -402,7 +404,7 @@ VkChromaLocation scvkParseJsonChromaLocation(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_CHROMA_LOCATION_COSITED_EVEN) || (enumerant == (uint64_t)VK_CHROMA_LOCATION_MIDPOINT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_CHROMA_LOCATION_COSITED_EVEN) || (enumerant == (uint64_t)VK_CHROMA_LOCATION_MIDPOINT);
     SCVK_ASSERT(found);
 
     return (VkChromaLocation)enumerant;
@@ -420,7 +422,7 @@ VkColorComponentFlagBits scvkParseJsonColorComponentFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_COLOR_COMPONENT_R_BIT) || (enumerant == (uint64_t)VK_COLOR_COMPONENT_G_BIT) || (enumerant == (uint64_t)VK_COLOR_COMPONENT_B_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_COLOR_COMPONENT_R_BIT) || (enumerant == (uint64_t)VK_COLOR_COMPONENT_G_BIT) || (enumerant == (uint64_t)VK_COLOR_COMPONENT_B_BIT) ||
             (enumerant == (uint64_t)VK_COLOR_COMPONENT_A_BIT);
     SCVK_ASSERT(found);
 
@@ -450,7 +452,7 @@ VkColorSpaceKHR scvkParseJsonColorSpace(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) || (enumerant == (uint64_t)VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) || (enumerant == (uint64_t)VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT) ||
             (enumerant == (uint64_t)VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT) || (enumerant == (uint64_t)VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT) ||
             (enumerant == (uint64_t)VK_COLOR_SPACE_DCI_P3_NONLINEAR_EXT) || (enumerant == (uint64_t)VK_COLOR_SPACE_BT709_LINEAR_EXT) || (enumerant == (uint64_t)VK_COLOR_SPACE_BT709_NONLINEAR_EXT) ||
             (enumerant == (uint64_t)VK_COLOR_SPACE_BT2020_LINEAR_EXT) || (enumerant == (uint64_t)VK_COLOR_SPACE_HDR10_ST2084_EXT) || (enumerant == (uint64_t)VK_COLOR_SPACE_DOLBYVISION_EXT) ||
@@ -471,7 +473,7 @@ VkCommandBufferLevel scvkParseJsonCommandBufferLevel(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_COMMAND_BUFFER_LEVEL_PRIMARY) || (enumerant == (uint64_t)VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_COMMAND_BUFFER_LEVEL_PRIMARY) || (enumerant == (uint64_t)VK_COMMAND_BUFFER_LEVEL_SECONDARY);
     SCVK_ASSERT(found);
 
     return (VkCommandBufferLevel)enumerant;
@@ -486,7 +488,7 @@ VkCommandBufferResetFlagBits scvkParseJsonCommandBufferResetFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
     SCVK_ASSERT(found);
 
     return (VkCommandBufferResetFlagBits)enumerant;
@@ -503,7 +505,7 @@ VkCommandBufferUsageFlagBits scvkParseJsonCommandBufferUsageFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT) || (enumerant == (uint64_t)VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT) || (enumerant == (uint64_t)VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT) ||
             (enumerant == (uint64_t)VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT);
     SCVK_ASSERT(found);
 
@@ -521,7 +523,7 @@ VkCommandPoolCreateFlagBits scvkParseJsonCommandPoolCreateFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_COMMAND_POOL_CREATE_TRANSIENT_BIT) || (enumerant == (uint64_t)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_COMMAND_POOL_CREATE_TRANSIENT_BIT) || (enumerant == (uint64_t)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT) ||
             (enumerant == (uint64_t)VK_COMMAND_POOL_CREATE_PROTECTED_BIT);
     SCVK_ASSERT(found);
 
@@ -553,7 +555,7 @@ VkCompareOp scvkParseJsonCompareOp(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_COMPARE_OP_NEVER) || (enumerant == (uint64_t)VK_COMPARE_OP_LESS) || (enumerant == (uint64_t)VK_COMPARE_OP_EQUAL) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_COMPARE_OP_NEVER) || (enumerant == (uint64_t)VK_COMPARE_OP_LESS) || (enumerant == (uint64_t)VK_COMPARE_OP_EQUAL) ||
             (enumerant == (uint64_t)VK_COMPARE_OP_LESS_OR_EQUAL) || (enumerant == (uint64_t)VK_COMPARE_OP_GREATER) || (enumerant == (uint64_t)VK_COMPARE_OP_NOT_EQUAL) ||
             (enumerant == (uint64_t)VK_COMPARE_OP_GREATER_OR_EQUAL) || (enumerant == (uint64_t)VK_COMPARE_OP_ALWAYS);
     SCVK_ASSERT(found);
@@ -576,9 +578,9 @@ VkComponentSwizzle scvkParseJsonComponentSwizzle(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_IDENTITY) || (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_ZERO) || (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_ONE) ||
-            (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_R) || (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_G) || (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_B) ||
-            (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_A);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_IDENTITY) || (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_ZERO) ||
+            (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_ONE) || (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_R) || (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_G) ||
+            (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_B) || (enumerant == (uint64_t)VK_COMPONENT_SWIZZLE_A);
     SCVK_ASSERT(found);
 
     return (VkComponentSwizzle)enumerant;
@@ -596,7 +598,7 @@ VkCompositeAlphaFlagBitsKHR scvkParseJsonCompositeAlphaFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR) || (enumerant == (uint64_t)VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR) || (enumerant == (uint64_t)VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR) ||
             (enumerant == (uint64_t)VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR) || (enumerant == (uint64_t)VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR);
     SCVK_ASSERT(found);
 
@@ -614,7 +616,7 @@ VkConservativeRasterizationModeEXT scvkParseJsonConservativeRasterizationMode(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_DISABLED_EXT) || (enumerant == (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_OVERESTIMATE_EXT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_DISABLED_EXT) || (enumerant == (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_OVERESTIMATE_EXT) ||
             (enumerant == (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT);
     SCVK_ASSERT(found);
 
@@ -633,7 +635,7 @@ VkCullModeFlagBits scvkParseJsonCullModeFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_CULL_MODE_NONE) || (enumerant == (uint64_t)VK_CULL_MODE_FRONT_BIT) || (enumerant == (uint64_t)VK_CULL_MODE_BACK_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_CULL_MODE_NONE) || (enumerant == (uint64_t)VK_CULL_MODE_FRONT_BIT) || (enumerant == (uint64_t)VK_CULL_MODE_BACK_BIT) ||
             (enumerant == (uint64_t)VK_CULL_MODE_FRONT_AND_BACK);
     SCVK_ASSERT(found);
 
@@ -652,7 +654,7 @@ VkDebugUtilsMessageSeverityFlagBitsEXT scvkParseJsonDebugUtilsMessageSeverityFla
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) || (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) || (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) ||
             (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) || (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT);
     SCVK_ASSERT(found);
 
@@ -670,7 +672,7 @@ VkDebugUtilsMessageTypeFlagBitsEXT scvkParseJsonDebugUtilsMessageTypeFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT) || (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT) || (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT) ||
             (enumerant == (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT);
     SCVK_ASSERT(found);
 
@@ -688,7 +690,8 @@ VkDependencyFlagBits scvkParseJsonDependencyFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DEPENDENCY_BY_REGION_BIT) || (enumerant == (uint64_t)VK_DEPENDENCY_DEVICE_GROUP_BIT) || (enumerant == (uint64_t)VK_DEPENDENCY_VIEW_LOCAL_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DEPENDENCY_BY_REGION_BIT) || (enumerant == (uint64_t)VK_DEPENDENCY_DEVICE_GROUP_BIT) ||
+            (enumerant == (uint64_t)VK_DEPENDENCY_VIEW_LOCAL_BIT);
     SCVK_ASSERT(found);
 
     return (VkDependencyFlagBits)enumerant;
@@ -706,7 +709,7 @@ VkDescriptorBindingFlagBits scvkParseJsonDescriptorBindingFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT) || (enumerant == (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT) || (enumerant == (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT) ||
             (enumerant == (uint64_t)VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT) || (enumerant == (uint64_t)VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT);
     SCVK_ASSERT(found);
 
@@ -723,7 +726,7 @@ VkDescriptorPoolCreateFlagBits scvkParseJsonDescriptorPoolCreateFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT) || (enumerant == (uint64_t)VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT) || (enumerant == (uint64_t)VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT);
     SCVK_ASSERT(found);
 
     return (VkDescriptorPoolCreateFlagBits)enumerant;
@@ -738,7 +741,7 @@ VkDescriptorSetLayoutCreateFlagBits scvkParseJsonDescriptorSetLayoutCreateFlagBi
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT);
     SCVK_ASSERT(found);
 
     return (VkDescriptorSetLayoutCreateFlagBits)enumerant;
@@ -763,11 +766,12 @@ VkDescriptorType scvkParseJsonDescriptorType(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_SAMPLER) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE) ||
-            (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_IMAGE) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER) ||
-            (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER) ||
-            (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_BUFFER) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC) ||
-            (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_SAMPLER) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER) ||
+            (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_IMAGE) ||
+            (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER) ||
+            (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_BUFFER) ||
+            (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC) || (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC) ||
+            (enumerant == (uint64_t)VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT);
     SCVK_ASSERT(found);
 
     return (VkDescriptorType)enumerant;
@@ -782,7 +786,7 @@ VkDeviceEventTypeEXT scvkParseJsonDeviceEventType(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DEVICE_EVENT_TYPE_DISPLAY_HOTPLUG_EXT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DEVICE_EVENT_TYPE_DISPLAY_HOTPLUG_EXT);
     SCVK_ASSERT(found);
 
     return (VkDeviceEventTypeEXT)enumerant;
@@ -800,7 +804,7 @@ VkDeviceGroupPresentModeFlagBitsKHR scvkParseJsonDeviceGroupPresentModeFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR) || (enumerant == (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR) || (enumerant == (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR) ||
             (enumerant == (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR) || (enumerant == (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR);
     SCVK_ASSERT(found);
 
@@ -816,7 +820,7 @@ VkDeviceQueueCreateFlagBits scvkParseJsonDeviceQueueCreateFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT);
     SCVK_ASSERT(found);
 
     return (VkDeviceQueueCreateFlagBits)enumerant;
@@ -832,7 +836,7 @@ VkDiscardRectangleModeEXT scvkParseJsonDiscardRectangleMode(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT) || (enumerant == (uint64_t)VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT) || (enumerant == (uint64_t)VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT);
     SCVK_ASSERT(found);
 
     return (VkDiscardRectangleModeEXT)enumerant;
@@ -847,7 +851,7 @@ VkDisplayEventTypeEXT scvkParseJsonDisplayEventType(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT);
     SCVK_ASSERT(found);
 
     return (VkDisplayEventTypeEXT)enumerant;
@@ -865,7 +869,7 @@ VkDisplayPlaneAlphaFlagBitsKHR scvkParseJsonDisplayPlaneAlphaFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR) || (enumerant == (uint64_t)VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR) || (enumerant == (uint64_t)VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR) ||
             (enumerant == (uint64_t)VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR) || (enumerant == (uint64_t)VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR);
     SCVK_ASSERT(found);
 
@@ -883,7 +887,8 @@ VkDisplayPowerStateEXT scvkParseJsonDisplayPowerState(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DISPLAY_POWER_STATE_OFF_EXT) || (enumerant == (uint64_t)VK_DISPLAY_POWER_STATE_SUSPEND_EXT) || (enumerant == (uint64_t)VK_DISPLAY_POWER_STATE_ON_EXT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DISPLAY_POWER_STATE_OFF_EXT) || (enumerant == (uint64_t)VK_DISPLAY_POWER_STATE_SUSPEND_EXT) ||
+            (enumerant == (uint64_t)VK_DISPLAY_POWER_STATE_ON_EXT);
     SCVK_ASSERT(found);
 
     return (VkDisplayPowerStateEXT)enumerant;
@@ -927,8 +932,8 @@ VkDriverId scvkParseJsonDriverId(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DRIVER_ID_AMD_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_AMD_OPEN_SOURCE) || (enumerant == (uint64_t)VK_DRIVER_ID_MESA_RADV) ||
-            (enumerant == (uint64_t)VK_DRIVER_ID_NVIDIA_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DRIVER_ID_AMD_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_AMD_OPEN_SOURCE) ||
+            (enumerant == (uint64_t)VK_DRIVER_ID_MESA_RADV) || (enumerant == (uint64_t)VK_DRIVER_ID_NVIDIA_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS) ||
             (enumerant == (uint64_t)VK_DRIVER_ID_INTEL_OPEN_SOURCE_MESA) || (enumerant == (uint64_t)VK_DRIVER_ID_IMAGINATION_PROPRIETARY) ||
             (enumerant == (uint64_t)VK_DRIVER_ID_QUALCOMM_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_ARM_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_GOOGLE_SWIFTSHADER) ||
             (enumerant == (uint64_t)VK_DRIVER_ID_GGP_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_BROADCOM_PROPRIETARY) || (enumerant == (uint64_t)VK_DRIVER_ID_MESA_LLVMPIPE) ||
@@ -986,7 +991,7 @@ VkDynamicState scvkParseJsonDynamicState(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_DYNAMIC_STATE_VIEWPORT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_SCISSOR) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_LINE_WIDTH) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_VIEWPORT) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_SCISSOR) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_LINE_WIDTH) ||
             (enumerant == (uint64_t)VK_DYNAMIC_STATE_DEPTH_BIAS) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_BLEND_CONSTANTS) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_DEPTH_BOUNDS) ||
             (enumerant == (uint64_t)VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_STENCIL_WRITE_MASK) ||
             (enumerant == (uint64_t)VK_DYNAMIC_STATE_STENCIL_REFERENCE) || (enumerant == (uint64_t)VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT) ||
@@ -1016,7 +1021,7 @@ VkEventCreateFlagBits scvkParseJsonEventCreateFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_EVENT_CREATE_DEVICE_ONLY_BIT_KHR);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_EVENT_CREATE_DEVICE_ONLY_BIT_KHR);
     SCVK_ASSERT(found);
 
     return (VkEventCreateFlagBits)enumerant;
@@ -1032,7 +1037,7 @@ VkExternalFenceFeatureFlagBits scvkParseJsonExternalFenceFeatureFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT);
     SCVK_ASSERT(found);
 
     return (VkExternalFenceFeatureFlagBits)enumerant;
@@ -1052,7 +1057,7 @@ VkExternalFenceHandleTypeFlagBits scvkParseJsonExternalFenceHandleTypeFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT) ||
             (enumerant == (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT) ||
             (enumerant == (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_SCI_SYNC_OBJ_BIT_NV) || (enumerant == (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_SCI_SYNC_FENCE_BIT_NV);
     SCVK_ASSERT(found);
@@ -1071,7 +1076,7 @@ VkExternalMemoryFeatureFlagBits scvkParseJsonExternalMemoryFeatureFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT) ||
             (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT);
     SCVK_ASSERT(found);
 
@@ -1098,7 +1103,7 @@ VkExternalMemoryHandleTypeFlagBits scvkParseJsonExternalMemoryHandleTypeFlagBits
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT) ||
             (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT) ||
             (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT) ||
             (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT) ||
@@ -1119,7 +1124,7 @@ VkExternalSemaphoreFeatureFlagBits scvkParseJsonExternalSemaphoreFeatureFlagBits
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT);
     SCVK_ASSERT(found);
 
     return (VkExternalSemaphoreFeatureFlagBits)enumerant;
@@ -1140,7 +1145,7 @@ VkExternalSemaphoreHandleTypeFlagBits scvkParseJsonExternalSemaphoreHandleTypeFl
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT) ||
             (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT) ||
             (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT) || (enumerant == (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SCI_SYNC_OBJ_BIT_NV);
     SCVK_ASSERT(found);
@@ -1160,7 +1165,7 @@ VkFaultLevel scvkParseJsonFaultLevel(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_FAULT_LEVEL_UNASSIGNED) || (enumerant == (uint64_t)VK_FAULT_LEVEL_CRITICAL) || (enumerant == (uint64_t)VK_FAULT_LEVEL_RECOVERABLE) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_FAULT_LEVEL_UNASSIGNED) || (enumerant == (uint64_t)VK_FAULT_LEVEL_CRITICAL) || (enumerant == (uint64_t)VK_FAULT_LEVEL_RECOVERABLE) ||
             (enumerant == (uint64_t)VK_FAULT_LEVEL_WARNING);
     SCVK_ASSERT(found);
 
@@ -1176,7 +1181,7 @@ VkFaultQueryBehavior scvkParseJsonFaultQueryBehavior(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_FAULT_QUERY_BEHAVIOR_GET_AND_CLEAR_ALL_FAULTS);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_FAULT_QUERY_BEHAVIOR_GET_AND_CLEAR_ALL_FAULTS);
     SCVK_ASSERT(found);
 
     return (VkFaultQueryBehavior)enumerant;
@@ -1197,7 +1202,7 @@ VkFaultType scvkParseJsonFaultType(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_FAULT_TYPE_INVALID) || (enumerant == (uint64_t)VK_FAULT_TYPE_UNASSIGNED) || (enumerant == (uint64_t)VK_FAULT_TYPE_IMPLEMENTATION) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_FAULT_TYPE_INVALID) || (enumerant == (uint64_t)VK_FAULT_TYPE_UNASSIGNED) || (enumerant == (uint64_t)VK_FAULT_TYPE_IMPLEMENTATION) ||
             (enumerant == (uint64_t)VK_FAULT_TYPE_SYSTEM) || (enumerant == (uint64_t)VK_FAULT_TYPE_PHYSICAL_DEVICE) || (enumerant == (uint64_t)VK_FAULT_TYPE_COMMAND_BUFFER_FULL) ||
             (enumerant == (uint64_t)VK_FAULT_TYPE_INVALID_API_USAGE);
     SCVK_ASSERT(found);
@@ -1214,7 +1219,7 @@ VkFenceCreateFlagBits scvkParseJsonFenceCreateFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_FENCE_CREATE_SIGNALED_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_FENCE_CREATE_SIGNALED_BIT);
     SCVK_ASSERT(found);
 
     return (VkFenceCreateFlagBits)enumerant;
@@ -1229,7 +1234,7 @@ VkFenceImportFlagBits scvkParseJsonFenceImportFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_FENCE_IMPORT_TEMPORARY_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_FENCE_IMPORT_TEMPORARY_BIT);
     SCVK_ASSERT(found);
 
     return (VkFenceImportFlagBits)enumerant;
@@ -1244,7 +1249,7 @@ VkFilter scvkParseJsonFilter(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_FILTER_NEAREST) || (enumerant == (uint64_t)VK_FILTER_LINEAR) || (enumerant == (uint64_t)VK_FILTER_CUBIC_EXT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_FILTER_NEAREST) || (enumerant == (uint64_t)VK_FILTER_LINEAR) || (enumerant == (uint64_t)VK_FILTER_CUBIC_EXT);
     SCVK_ASSERT(found);
 
     return (VkFilter)enumerant;
@@ -1498,7 +1503,7 @@ VkFormat scvkParseJsonFormat(
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
     found =
-        (enumerant == (uint64_t)VK_FORMAT_UNDEFINED) || (enumerant == (uint64_t)VK_FORMAT_R4G4_UNORM_PACK8) || (enumerant == (uint64_t)VK_FORMAT_R4G4B4A4_UNORM_PACK16) ||
+        scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_FORMAT_UNDEFINED) || (enumerant == (uint64_t)VK_FORMAT_R4G4_UNORM_PACK8) || (enumerant == (uint64_t)VK_FORMAT_R4G4B4A4_UNORM_PACK16) ||
         (enumerant == (uint64_t)VK_FORMAT_B4G4R4A4_UNORM_PACK16) || (enumerant == (uint64_t)VK_FORMAT_R5G6B5_UNORM_PACK16) || (enumerant == (uint64_t)VK_FORMAT_B5G6R5_UNORM_PACK16) ||
         (enumerant == (uint64_t)VK_FORMAT_R5G5B5A1_UNORM_PACK16) || (enumerant == (uint64_t)VK_FORMAT_B5G5R5A1_UNORM_PACK16) || (enumerant == (uint64_t)VK_FORMAT_A1R5G5B5_UNORM_PACK16) ||
         (enumerant == (uint64_t)VK_FORMAT_R8_UNORM) || (enumerant == (uint64_t)VK_FORMAT_R8_SNORM) || (enumerant == (uint64_t)VK_FORMAT_R8_USCALED) || (enumerant == (uint64_t)VK_FORMAT_R8_SSCALED) ||
@@ -1623,7 +1628,7 @@ VkFormatFeatureFlagBits scvkParseJsonFormatFeatureFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT) ||
             (enumerant == (uint64_t)VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT) ||
             (enumerant == (uint64_t)VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT) ||
             (enumerant == (uint64_t)VK_FORMAT_FEATURE_VERTEX_BUFFER_BIT) || (enumerant == (uint64_t)VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT) ||
@@ -1655,7 +1660,7 @@ VkFragmentShadingRateCombinerOpKHR scvkParseJsonFragmentShadingRateCombinerOp(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR) || (enumerant == (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_KHR) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR) || (enumerant == (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_KHR) ||
             (enumerant == (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MIN_KHR) || (enumerant == (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MAX_KHR) ||
             (enumerant == (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MUL_KHR);
     SCVK_ASSERT(found);
@@ -1672,7 +1677,7 @@ VkFramebufferCreateFlagBits scvkParseJsonFramebufferCreateFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT);
     SCVK_ASSERT(found);
 
     return (VkFramebufferCreateFlagBits)enumerant;
@@ -1687,7 +1692,7 @@ VkFrontFace scvkParseJsonFrontFace(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_FRONT_FACE_COUNTER_CLOCKWISE) || (enumerant == (uint64_t)VK_FRONT_FACE_CLOCKWISE);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_FRONT_FACE_COUNTER_CLOCKWISE) || (enumerant == (uint64_t)VK_FRONT_FACE_CLOCKWISE);
     SCVK_ASSERT(found);
 
     return (VkFrontFace)enumerant;
@@ -1712,9 +1717,9 @@ VkImageAspectFlagBits scvkParseJsonImageAspectFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_IMAGE_ASPECT_COLOR_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_DEPTH_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_STENCIL_BIT) ||
-            (enumerant == (uint64_t)VK_IMAGE_ASPECT_METADATA_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_PLANE_0_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_PLANE_1_BIT) ||
-            (enumerant == (uint64_t)VK_IMAGE_ASPECT_PLANE_2_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_COLOR_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_DEPTH_BIT) ||
+            (enumerant == (uint64_t)VK_IMAGE_ASPECT_STENCIL_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_METADATA_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_PLANE_0_BIT) ||
+            (enumerant == (uint64_t)VK_IMAGE_ASPECT_PLANE_1_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_PLANE_2_BIT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT) ||
             (enumerant == (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT) || (enumerant == (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT) ||
             (enumerant == (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT);
     SCVK_ASSERT(found);
@@ -1743,7 +1748,7 @@ VkImageCreateFlagBits scvkParseJsonImageCreateFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_IMAGE_CREATE_SPARSE_BINDING_BIT) || (enumerant == (uint64_t)VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_IMAGE_CREATE_SPARSE_BINDING_BIT) || (enumerant == (uint64_t)VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT) ||
             (enumerant == (uint64_t)VK_IMAGE_CREATE_SPARSE_ALIASED_BIT) || (enumerant == (uint64_t)VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT) ||
             (enumerant == (uint64_t)VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT) || (enumerant == (uint64_t)VK_IMAGE_CREATE_ALIAS_BIT) ||
             (enumerant == (uint64_t)VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT) || (enumerant == (uint64_t)VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT) ||
@@ -1783,10 +1788,10 @@ VkImageLayout scvkParseJsonImageLayout(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_IMAGE_LAYOUT_UNDEFINED) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_GENERAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) ||
-            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL) ||
-            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) ||
-            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_PREINITIALIZED) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_UNDEFINED) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_GENERAL) ||
+            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) ||
+            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) ||
+            (enumerant == (uint64_t)VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_PREINITIALIZED) ||
             (enumerant == (uint64_t)VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL) ||
             (enumerant == (uint64_t)VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL) ||
             (enumerant == (uint64_t)VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL) ||
@@ -1809,7 +1814,8 @@ VkImageTiling scvkParseJsonImageTiling(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_IMAGE_TILING_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_TILING_LINEAR) || (enumerant == (uint64_t)VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_IMAGE_TILING_OPTIMAL) || (enumerant == (uint64_t)VK_IMAGE_TILING_LINEAR) ||
+            (enumerant == (uint64_t)VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT);
     SCVK_ASSERT(found);
 
     return (VkImageTiling)enumerant;
@@ -1824,7 +1830,7 @@ VkImageType scvkParseJsonImageType(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_IMAGE_TYPE_1D) || (enumerant == (uint64_t)VK_IMAGE_TYPE_2D) || (enumerant == (uint64_t)VK_IMAGE_TYPE_3D);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_IMAGE_TYPE_1D) || (enumerant == (uint64_t)VK_IMAGE_TYPE_2D) || (enumerant == (uint64_t)VK_IMAGE_TYPE_3D);
     SCVK_ASSERT(found);
 
     return (VkImageType)enumerant;
@@ -1847,8 +1853,8 @@ VkImageUsageFlagBits scvkParseJsonImageUsageFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_IMAGE_USAGE_TRANSFER_SRC_BIT) || (enumerant == (uint64_t)VK_IMAGE_USAGE_TRANSFER_DST_BIT) || (enumerant == (uint64_t)VK_IMAGE_USAGE_SAMPLED_BIT) ||
-            (enumerant == (uint64_t)VK_IMAGE_USAGE_STORAGE_BIT) || (enumerant == (uint64_t)VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_IMAGE_USAGE_TRANSFER_SRC_BIT) || (enumerant == (uint64_t)VK_IMAGE_USAGE_TRANSFER_DST_BIT) ||
+            (enumerant == (uint64_t)VK_IMAGE_USAGE_SAMPLED_BIT) || (enumerant == (uint64_t)VK_IMAGE_USAGE_STORAGE_BIT) || (enumerant == (uint64_t)VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT) ||
             (enumerant == (uint64_t)VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT) || (enumerant == (uint64_t)VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT) ||
             (enumerant == (uint64_t)VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT) || (enumerant == (uint64_t)VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR);
     SCVK_ASSERT(found);
@@ -1880,7 +1886,7 @@ VkImageViewType scvkParseJsonImageViewType(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_1D) || (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_2D) || (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_3D) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_1D) || (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_2D) || (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_3D) ||
             (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_CUBE) || (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_1D_ARRAY) || (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_2D_ARRAY) ||
             (enumerant == (uint64_t)VK_IMAGE_VIEW_TYPE_CUBE_ARRAY);
     SCVK_ASSERT(found);
@@ -1900,7 +1906,7 @@ VkIndexType scvkParseJsonIndexType(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_INDEX_TYPE_UINT16) || (enumerant == (uint64_t)VK_INDEX_TYPE_UINT32) || (enumerant == (uint64_t)VK_INDEX_TYPE_UINT8_EXT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_INDEX_TYPE_UINT16) || (enumerant == (uint64_t)VK_INDEX_TYPE_UINT32) || (enumerant == (uint64_t)VK_INDEX_TYPE_UINT8_EXT);
     SCVK_ASSERT(found);
 
     return (VkIndexType)enumerant;
@@ -1924,7 +1930,7 @@ VkInternalAllocationType scvkParseJsonInternalAllocationType(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE);
     SCVK_ASSERT(found);
 
     return (VkInternalAllocationType)enumerant;
@@ -1946,9 +1952,9 @@ VkLayerSettingTypeEXT scvkParseJsonLayerSettingType(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_BOOL32_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_INT32_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_INT64_EXT) ||
-            (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_UINT32_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_UINT64_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_FLOAT32_EXT) ||
-            (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_FLOAT64_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_STRING_EXT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_BOOL32_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_INT32_EXT) ||
+            (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_INT64_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_UINT32_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_UINT64_EXT) ||
+            (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_FLOAT32_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_FLOAT64_EXT) || (enumerant == (uint64_t)VK_LAYER_SETTING_TYPE_STRING_EXT);
     SCVK_ASSERT(found);
 
     return (VkLayerSettingTypeEXT)enumerant;
@@ -1978,9 +1984,9 @@ VkLogicOp scvkParseJsonLogicOp(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_LOGIC_OP_CLEAR) || (enumerant == (uint64_t)VK_LOGIC_OP_AND) || (enumerant == (uint64_t)VK_LOGIC_OP_AND_REVERSE) || (enumerant == (uint64_t)VK_LOGIC_OP_COPY) ||
-            (enumerant == (uint64_t)VK_LOGIC_OP_AND_INVERTED) || (enumerant == (uint64_t)VK_LOGIC_OP_NO_OP) || (enumerant == (uint64_t)VK_LOGIC_OP_XOR) || (enumerant == (uint64_t)VK_LOGIC_OP_OR) ||
-            (enumerant == (uint64_t)VK_LOGIC_OP_NOR) || (enumerant == (uint64_t)VK_LOGIC_OP_EQUIVALENT) || (enumerant == (uint64_t)VK_LOGIC_OP_INVERT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_LOGIC_OP_CLEAR) || (enumerant == (uint64_t)VK_LOGIC_OP_AND) || (enumerant == (uint64_t)VK_LOGIC_OP_AND_REVERSE) ||
+            (enumerant == (uint64_t)VK_LOGIC_OP_COPY) || (enumerant == (uint64_t)VK_LOGIC_OP_AND_INVERTED) || (enumerant == (uint64_t)VK_LOGIC_OP_NO_OP) || (enumerant == (uint64_t)VK_LOGIC_OP_XOR) ||
+            (enumerant == (uint64_t)VK_LOGIC_OP_OR) || (enumerant == (uint64_t)VK_LOGIC_OP_NOR) || (enumerant == (uint64_t)VK_LOGIC_OP_EQUIVALENT) || (enumerant == (uint64_t)VK_LOGIC_OP_INVERT) ||
             (enumerant == (uint64_t)VK_LOGIC_OP_OR_REVERSE) || (enumerant == (uint64_t)VK_LOGIC_OP_COPY_INVERTED) || (enumerant == (uint64_t)VK_LOGIC_OP_OR_INVERTED) ||
             (enumerant == (uint64_t)VK_LOGIC_OP_NAND) || (enumerant == (uint64_t)VK_LOGIC_OP_SET);
     SCVK_ASSERT(found);
@@ -1999,7 +2005,7 @@ VkMemoryAllocateFlagBits scvkParseJsonMemoryAllocateFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT) || (enumerant == (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT) || (enumerant == (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT) ||
             (enumerant == (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT);
     SCVK_ASSERT(found);
 
@@ -2017,7 +2023,8 @@ VkMemoryHeapFlagBits scvkParseJsonMemoryHeapFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) || (enumerant == (uint64_t)VK_MEMORY_HEAP_MULTI_INSTANCE_BIT) || (enumerant == (uint64_t)VK_MEMORY_HEAP_SEU_SAFE_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) || (enumerant == (uint64_t)VK_MEMORY_HEAP_MULTI_INSTANCE_BIT) ||
+            (enumerant == (uint64_t)VK_MEMORY_HEAP_SEU_SAFE_BIT);
     SCVK_ASSERT(found);
 
     return (VkMemoryHeapFlagBits)enumerant;
@@ -2046,7 +2053,7 @@ VkMemoryPropertyFlagBits scvkParseJsonMemoryPropertyFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) || (enumerant == (uint64_t)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) || (enumerant == (uint64_t)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) ||
             (enumerant == (uint64_t)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) || (enumerant == (uint64_t)VK_MEMORY_PROPERTY_HOST_CACHED_BIT) ||
             (enumerant == (uint64_t)VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT) || (enumerant == (uint64_t)VK_MEMORY_PROPERTY_PROTECTED_BIT);
     SCVK_ASSERT(found);
@@ -2095,7 +2102,7 @@ VkObjectType scvkParseJsonObjectType(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_OBJECT_TYPE_UNKNOWN) || (enumerant == (uint64_t)VK_OBJECT_TYPE_INSTANCE) || (enumerant == (uint64_t)VK_OBJECT_TYPE_PHYSICAL_DEVICE) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_OBJECT_TYPE_UNKNOWN) || (enumerant == (uint64_t)VK_OBJECT_TYPE_INSTANCE) || (enumerant == (uint64_t)VK_OBJECT_TYPE_PHYSICAL_DEVICE) ||
             (enumerant == (uint64_t)VK_OBJECT_TYPE_DEVICE) || (enumerant == (uint64_t)VK_OBJECT_TYPE_QUEUE) || (enumerant == (uint64_t)VK_OBJECT_TYPE_SEMAPHORE) ||
             (enumerant == (uint64_t)VK_OBJECT_TYPE_COMMAND_BUFFER) || (enumerant == (uint64_t)VK_OBJECT_TYPE_FENCE) || (enumerant == (uint64_t)VK_OBJECT_TYPE_DEVICE_MEMORY) ||
             (enumerant == (uint64_t)VK_OBJECT_TYPE_BUFFER) || (enumerant == (uint64_t)VK_OBJECT_TYPE_IMAGE) || (enumerant == (uint64_t)VK_OBJECT_TYPE_EVENT) ||
@@ -2124,7 +2131,7 @@ VkPeerMemoryFeatureFlagBits scvkParseJsonPeerMemoryFeatureFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT) || (enumerant == (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_DST_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT) || (enumerant == (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_DST_BIT) ||
             (enumerant == (uint64_t)VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT) || (enumerant == (uint64_t)VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT);
     SCVK_ASSERT(found);
 
@@ -2143,7 +2150,8 @@ VkPerformanceCounterDescriptionFlagBitsKHR scvkParseJsonPerformanceCounterDescri
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR) ||
+            (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR);
     SCVK_ASSERT(found);
 
     return (VkPerformanceCounterDescriptionFlagBitsKHR)enumerant;
@@ -2163,7 +2171,7 @@ VkPerformanceCounterScopeKHR scvkParseJsonPerformanceCounterScope(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_BUFFER_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_RENDER_PASS_KHR) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_BUFFER_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_RENDER_PASS_KHR) ||
             (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_KHR);
     SCVK_ASSERT(found);
 
@@ -2184,7 +2192,7 @@ VkPerformanceCounterStorageKHR scvkParseJsonPerformanceCounterStorage(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_INT64_KHR) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_INT64_KHR) ||
             (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_UINT32_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_UINT64_KHR) ||
             (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_FLOAT32_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_FLOAT64_KHR);
     SCVK_ASSERT(found);
@@ -2211,7 +2219,7 @@ VkPerformanceCounterUnitKHR scvkParseJsonPerformanceCounterUnit(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_PERCENTAGE_KHR) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_PERCENTAGE_KHR) ||
             (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_NANOSECONDS_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_BYTES_KHR) ||
             (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_BYTES_PER_SECOND_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_KELVIN_KHR) ||
             (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_WATTS_KHR) || (enumerant == (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_VOLTS_KHR) ||
@@ -2235,7 +2243,7 @@ VkPhysicalDeviceType scvkParseJsonPhysicalDeviceType(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PHYSICAL_DEVICE_TYPE_OTHER) || (enumerant == (uint64_t)VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PHYSICAL_DEVICE_TYPE_OTHER) || (enumerant == (uint64_t)VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) ||
             (enumerant == (uint64_t)VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) || (enumerant == (uint64_t)VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU) || (enumerant == (uint64_t)VK_PHYSICAL_DEVICE_TYPE_CPU);
     SCVK_ASSERT(found);
 
@@ -2251,7 +2259,7 @@ VkPipelineBindPoint scvkParseJsonPipelineBindPoint(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PIPELINE_BIND_POINT_GRAPHICS) || (enumerant == (uint64_t)VK_PIPELINE_BIND_POINT_COMPUTE);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PIPELINE_BIND_POINT_GRAPHICS) || (enumerant == (uint64_t)VK_PIPELINE_BIND_POINT_COMPUTE);
     SCVK_ASSERT(found);
 
     return (VkPipelineBindPoint)enumerant;
@@ -2267,7 +2275,7 @@ VkPipelineCacheCreateFlagBits scvkParseJsonPipelineCacheCreateFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PIPELINE_CACHE_CREATE_READ_ONLY_BIT) || (enumerant == (uint64_t)VK_PIPELINE_CACHE_CREATE_USE_APPLICATION_STORAGE_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PIPELINE_CACHE_CREATE_READ_ONLY_BIT) || (enumerant == (uint64_t)VK_PIPELINE_CACHE_CREATE_USE_APPLICATION_STORAGE_BIT);
     SCVK_ASSERT(found);
 
     return (VkPipelineCacheCreateFlagBits)enumerant;
@@ -2283,7 +2291,7 @@ VkPipelineCacheHeaderVersion scvkParseJsonPipelineCacheHeaderVersion(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PIPELINE_CACHE_HEADER_VERSION_ONE) || (enumerant == (uint64_t)VK_PIPELINE_CACHE_HEADER_VERSION_SAFETY_CRITICAL_ONE);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PIPELINE_CACHE_HEADER_VERSION_ONE) || (enumerant == (uint64_t)VK_PIPELINE_CACHE_HEADER_VERSION_SAFETY_CRITICAL_ONE);
     SCVK_ASSERT(found);
 
     return (VkPipelineCacheHeaderVersion)enumerant;
@@ -2298,7 +2306,7 @@ VkPipelineCacheValidationVersion scvkParseJsonPipelineCacheValidationVersion(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PIPELINE_CACHE_VALIDATION_VERSION_SAFETY_CRITICAL_ONE);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PIPELINE_CACHE_VALIDATION_VERSION_SAFETY_CRITICAL_ONE);
     SCVK_ASSERT(found);
 
     return (VkPipelineCacheValidationVersion)enumerant;
@@ -2325,7 +2333,7 @@ VkPipelineCreateFlagBits scvkParseJsonPipelineCreateFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT) || (enumerant == (uint64_t)VK_PIPELINE_CREATE_DISPATCH_BASE_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT) || (enumerant == (uint64_t)VK_PIPELINE_CREATE_DISPATCH_BASE_BIT) ||
             (enumerant == (uint64_t)VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT);
     SCVK_ASSERT(found);
 
@@ -2359,7 +2367,7 @@ VkPipelineMatchControl scvkParseJsonPipelineMatchControl(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PIPELINE_MATCH_CONTROL_APPLICATION_UUID_EXACT_MATCH);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PIPELINE_MATCH_CONTROL_APPLICATION_UUID_EXACT_MATCH);
     SCVK_ASSERT(found);
 
     return (VkPipelineMatchControl)enumerant;
@@ -2375,7 +2383,8 @@ VkPipelineShaderStageCreateFlagBits scvkParseJsonPipelineShaderStageCreateFlagBi
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT) || (enumerant == (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT);
     SCVK_ASSERT(found);
 
     return (VkPipelineShaderStageCreateFlagBits)enumerant;
@@ -2408,13 +2417,14 @@ VkPipelineStageFlagBits scvkParseJsonPipelineStageFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_VERTEX_INPUT_BIT) ||
-            (enumerant == (uint64_t)VK_PIPELINE_STAGE_VERTEX_SHADER_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT) ||
-            (enumerant == (uint64_t)VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT) ||
-            (enumerant == (uint64_t)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT) ||
-            (enumerant == (uint64_t)VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT) ||
-            (enumerant == (uint64_t)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_TRANSFER_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT) ||
-            (enumerant == (uint64_t)VK_PIPELINE_STAGE_HOST_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_ALL_COMMANDS_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_STAGE_VERTEX_INPUT_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_VERTEX_SHADER_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_STAGE_TRANSFER_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_HOST_BIT) ||
+            (enumerant == (uint64_t)VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_ALL_COMMANDS_BIT) ||
             (enumerant == (uint64_t)VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR) || (enumerant == (uint64_t)VK_PIPELINE_STAGE_NONE_KHR);
     SCVK_ASSERT(found);
 
@@ -2431,7 +2441,7 @@ VkPointClippingBehavior scvkParseJsonPointClippingBehavior(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES) || (enumerant == (uint64_t)VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_ONLY);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES) || (enumerant == (uint64_t)VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_ONLY);
     SCVK_ASSERT(found);
 
     return (VkPointClippingBehavior)enumerant;
@@ -2448,7 +2458,7 @@ VkPolygonMode scvkParseJsonPolygonMode(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_POLYGON_MODE_FILL) || (enumerant == (uint64_t)VK_POLYGON_MODE_LINE) || (enumerant == (uint64_t)VK_POLYGON_MODE_POINT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_POLYGON_MODE_FILL) || (enumerant == (uint64_t)VK_POLYGON_MODE_LINE) || (enumerant == (uint64_t)VK_POLYGON_MODE_POINT);
     SCVK_ASSERT(found);
 
     return (VkPolygonMode)enumerant;
@@ -2468,8 +2478,8 @@ VkPresentModeKHR scvkParseJsonPresentMode(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PRESENT_MODE_IMMEDIATE_KHR) || (enumerant == (uint64_t)VK_PRESENT_MODE_MAILBOX_KHR) || (enumerant == (uint64_t)VK_PRESENT_MODE_FIFO_KHR) ||
-            (enumerant == (uint64_t)VK_PRESENT_MODE_FIFO_RELAXED_KHR) || (enumerant == (uint64_t)VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PRESENT_MODE_IMMEDIATE_KHR) || (enumerant == (uint64_t)VK_PRESENT_MODE_MAILBOX_KHR) ||
+            (enumerant == (uint64_t)VK_PRESENT_MODE_FIFO_KHR) || (enumerant == (uint64_t)VK_PRESENT_MODE_FIFO_RELAXED_KHR) || (enumerant == (uint64_t)VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR) ||
             (enumerant == (uint64_t)VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR);
     SCVK_ASSERT(found);
 
@@ -2495,11 +2505,12 @@ VkPrimitiveTopology scvkParseJsonPrimitiveTopology(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_POINT_LIST) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_LIST) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_STRIP) ||
-            (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP) ||
-            (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY) ||
-            (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY) ||
-            (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_PATCH_LIST);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_POINT_LIST) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_LIST) ||
+            (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_STRIP) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST) ||
+            (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN) ||
+            (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY) ||
+            (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY) || (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY) ||
+            (enumerant == (uint64_t)VK_PRIMITIVE_TOPOLOGY_PATCH_LIST);
     SCVK_ASSERT(found);
 
     return (VkPrimitiveTopology)enumerant;
@@ -2514,7 +2525,7 @@ VkQueryControlFlagBits scvkParseJsonQueryControlFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_QUERY_CONTROL_PRECISE_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_QUERY_CONTROL_PRECISE_BIT);
     SCVK_ASSERT(found);
 
     return (VkQueryControlFlagBits)enumerant;
@@ -2540,11 +2551,11 @@ VkQueryPipelineStatisticFlagBits scvkParseJsonQueryPipelineStatisticFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_VERTICES_BIT) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_PRIMITIVES_BIT) ||
-            (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_VERTEX_SHADER_INVOCATIONS_BIT) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_INVOCATIONS_BIT) ||
-            (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_PRIMITIVES_BIT) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_CLIPPING_INVOCATIONS_BIT) ||
-            (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_CLIPPING_PRIMITIVES_BIT) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_FRAGMENT_SHADER_INVOCATIONS_BIT) ||
-            (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_CONTROL_SHADER_PATCHES_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_VERTICES_BIT) ||
+            (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_PRIMITIVES_BIT) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_VERTEX_SHADER_INVOCATIONS_BIT) ||
+            (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_INVOCATIONS_BIT) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_PRIMITIVES_BIT) ||
+            (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_CLIPPING_INVOCATIONS_BIT) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_CLIPPING_PRIMITIVES_BIT) ||
+            (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_FRAGMENT_SHADER_INVOCATIONS_BIT) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_CONTROL_SHADER_PATCHES_BIT) ||
             (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT) || (enumerant == (uint64_t)VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT);
     SCVK_ASSERT(found);
 
@@ -2572,8 +2583,8 @@ VkQueryResultFlagBits scvkParseJsonQueryResultFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_QUERY_RESULT_64_BIT) || (enumerant == (uint64_t)VK_QUERY_RESULT_WAIT_BIT) || (enumerant == (uint64_t)VK_QUERY_RESULT_WITH_AVAILABILITY_BIT) ||
-            (enumerant == (uint64_t)VK_QUERY_RESULT_PARTIAL_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_QUERY_RESULT_64_BIT) || (enumerant == (uint64_t)VK_QUERY_RESULT_WAIT_BIT) ||
+            (enumerant == (uint64_t)VK_QUERY_RESULT_WITH_AVAILABILITY_BIT) || (enumerant == (uint64_t)VK_QUERY_RESULT_PARTIAL_BIT);
     SCVK_ASSERT(found);
 
     return (VkQueryResultFlagBits)enumerant;
@@ -2591,8 +2602,8 @@ VkQueryType scvkParseJsonQueryType(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_QUERY_TYPE_OCCLUSION) || (enumerant == (uint64_t)VK_QUERY_TYPE_PIPELINE_STATISTICS) || (enumerant == (uint64_t)VK_QUERY_TYPE_TIMESTAMP) ||
-            (enumerant == (uint64_t)VK_QUERY_TYPE_PERFORMANCE_QUERY_KHR);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_QUERY_TYPE_OCCLUSION) || (enumerant == (uint64_t)VK_QUERY_TYPE_PIPELINE_STATISTICS) ||
+            (enumerant == (uint64_t)VK_QUERY_TYPE_TIMESTAMP) || (enumerant == (uint64_t)VK_QUERY_TYPE_PERFORMANCE_QUERY_KHR);
     SCVK_ASSERT(found);
 
     return (VkQueryType)enumerant;
@@ -2610,7 +2621,7 @@ VkQueueFlagBits scvkParseJsonQueueFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_QUEUE_GRAPHICS_BIT) || (enumerant == (uint64_t)VK_QUEUE_COMPUTE_BIT) || (enumerant == (uint64_t)VK_QUEUE_TRANSFER_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_QUEUE_GRAPHICS_BIT) || (enumerant == (uint64_t)VK_QUEUE_COMPUTE_BIT) || (enumerant == (uint64_t)VK_QUEUE_TRANSFER_BIT) ||
             (enumerant == (uint64_t)VK_QUEUE_PROTECTED_BIT);
     SCVK_ASSERT(found);
 
@@ -2648,8 +2659,8 @@ VkResolveModeFlagBits scvkParseJsonResolveModeFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_RESOLVE_MODE_NONE) || (enumerant == (uint64_t)VK_RESOLVE_MODE_SAMPLE_ZERO_BIT) || (enumerant == (uint64_t)VK_RESOLVE_MODE_AVERAGE_BIT) ||
-            (enumerant == (uint64_t)VK_RESOLVE_MODE_MIN_BIT) || (enumerant == (uint64_t)VK_RESOLVE_MODE_MAX_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_RESOLVE_MODE_NONE) || (enumerant == (uint64_t)VK_RESOLVE_MODE_SAMPLE_ZERO_BIT) ||
+            (enumerant == (uint64_t)VK_RESOLVE_MODE_AVERAGE_BIT) || (enumerant == (uint64_t)VK_RESOLVE_MODE_MIN_BIT) || (enumerant == (uint64_t)VK_RESOLVE_MODE_MAX_BIT);
     SCVK_ASSERT(found);
 
     return (VkResolveModeFlagBits)enumerant;
@@ -2696,7 +2707,7 @@ VkResult scvkParseJsonResult(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SUCCESS) || (enumerant == (uint64_t)VK_NOT_READY) || (enumerant == (uint64_t)VK_TIMEOUT) || (enumerant == (uint64_t)VK_EVENT_SET) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SUCCESS) || (enumerant == (uint64_t)VK_NOT_READY) || (enumerant == (uint64_t)VK_TIMEOUT) || (enumerant == (uint64_t)VK_EVENT_SET) ||
             (enumerant == (uint64_t)VK_EVENT_RESET) || (enumerant == (uint64_t)VK_INCOMPLETE) || (enumerant == (uint64_t)VK_ERROR_OUT_OF_HOST_MEMORY) ||
             (enumerant == (uint64_t)VK_ERROR_OUT_OF_DEVICE_MEMORY) || (enumerant == (uint64_t)VK_ERROR_INITIALIZATION_FAILED) || (enumerant == (uint64_t)VK_ERROR_DEVICE_LOST) ||
             (enumerant == (uint64_t)VK_ERROR_MEMORY_MAP_FAILED) || (enumerant == (uint64_t)VK_ERROR_LAYER_NOT_PRESENT) || (enumerant == (uint64_t)VK_ERROR_EXTENSION_NOT_PRESENT) ||
@@ -2727,7 +2738,7 @@ VkSampleCountFlagBits scvkParseJsonSampleCountFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SAMPLE_COUNT_1_BIT) || (enumerant == (uint64_t)VK_SAMPLE_COUNT_2_BIT) || (enumerant == (uint64_t)VK_SAMPLE_COUNT_4_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SAMPLE_COUNT_1_BIT) || (enumerant == (uint64_t)VK_SAMPLE_COUNT_2_BIT) || (enumerant == (uint64_t)VK_SAMPLE_COUNT_4_BIT) ||
             (enumerant == (uint64_t)VK_SAMPLE_COUNT_8_BIT) || (enumerant == (uint64_t)VK_SAMPLE_COUNT_16_BIT) || (enumerant == (uint64_t)VK_SAMPLE_COUNT_32_BIT) ||
             (enumerant == (uint64_t)VK_SAMPLE_COUNT_64_BIT);
     SCVK_ASSERT(found);
@@ -2748,7 +2759,7 @@ VkSamplerAddressMode scvkParseJsonSamplerAddressMode(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SAMPLER_ADDRESS_MODE_REPEAT) || (enumerant == (uint64_t)VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SAMPLER_ADDRESS_MODE_REPEAT) || (enumerant == (uint64_t)VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT) ||
             (enumerant == (uint64_t)VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE) || (enumerant == (uint64_t)VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER) ||
             (enumerant == (uint64_t)VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE);
     SCVK_ASSERT(found);
@@ -2774,7 +2785,7 @@ VkSamplerMipmapMode scvkParseJsonSamplerMipmapMode(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SAMPLER_MIPMAP_MODE_NEAREST) || (enumerant == (uint64_t)VK_SAMPLER_MIPMAP_MODE_LINEAR);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SAMPLER_MIPMAP_MODE_NEAREST) || (enumerant == (uint64_t)VK_SAMPLER_MIPMAP_MODE_LINEAR);
     SCVK_ASSERT(found);
 
     return (VkSamplerMipmapMode)enumerant;
@@ -2791,7 +2802,8 @@ VkSamplerReductionMode scvkParseJsonSamplerReductionMode(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE) || (enumerant == (uint64_t)VK_SAMPLER_REDUCTION_MODE_MIN) || (enumerant == (uint64_t)VK_SAMPLER_REDUCTION_MODE_MAX);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE) || (enumerant == (uint64_t)VK_SAMPLER_REDUCTION_MODE_MIN) ||
+            (enumerant == (uint64_t)VK_SAMPLER_REDUCTION_MODE_MAX);
     SCVK_ASSERT(found);
 
     return (VkSamplerReductionMode)enumerant;
@@ -2810,7 +2822,7 @@ VkSamplerYcbcrModelConversion scvkParseJsonSamplerYcbcrModelConversion(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY) || (enumerant == (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY) || (enumerant == (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY) ||
             (enumerant == (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709) || (enumerant == (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601) ||
             (enumerant == (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020);
     SCVK_ASSERT(found);
@@ -2828,7 +2840,7 @@ VkSamplerYcbcrRange scvkParseJsonSamplerYcbcrRange(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SAMPLER_YCBCR_RANGE_ITU_FULL) || (enumerant == (uint64_t)VK_SAMPLER_YCBCR_RANGE_ITU_NARROW);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SAMPLER_YCBCR_RANGE_ITU_FULL) || (enumerant == (uint64_t)VK_SAMPLER_YCBCR_RANGE_ITU_NARROW);
     SCVK_ASSERT(found);
 
     return (VkSamplerYcbcrRange)enumerant;
@@ -2843,7 +2855,7 @@ VkSemaphoreImportFlagBits scvkParseJsonSemaphoreImportFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SEMAPHORE_IMPORT_TEMPORARY_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SEMAPHORE_IMPORT_TEMPORARY_BIT);
     SCVK_ASSERT(found);
 
     return (VkSemaphoreImportFlagBits)enumerant;
@@ -2858,7 +2870,7 @@ VkSemaphoreType scvkParseJsonSemaphoreType(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SEMAPHORE_TYPE_BINARY) || (enumerant == (uint64_t)VK_SEMAPHORE_TYPE_TIMELINE);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SEMAPHORE_TYPE_BINARY) || (enumerant == (uint64_t)VK_SEMAPHORE_TYPE_TIMELINE);
     SCVK_ASSERT(found);
 
     return (VkSemaphoreType)enumerant;
@@ -2873,7 +2885,7 @@ VkSemaphoreWaitFlagBits scvkParseJsonSemaphoreWaitFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SEMAPHORE_WAIT_ANY_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SEMAPHORE_WAIT_ANY_BIT);
     SCVK_ASSERT(found);
 
     return (VkSemaphoreWaitFlagBits)enumerant;
@@ -2890,7 +2902,7 @@ VkShaderFloatControlsIndependence scvkParseJsonShaderFloatControlsIndependence(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY) || (enumerant == (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY) || (enumerant == (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL) ||
             (enumerant == (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE);
     SCVK_ASSERT(found);
 
@@ -2913,7 +2925,7 @@ VkShaderStageFlagBits scvkParseJsonShaderStageFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SHADER_STAGE_VERTEX_BIT) || (enumerant == (uint64_t)VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SHADER_STAGE_VERTEX_BIT) || (enumerant == (uint64_t)VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT) ||
             (enumerant == (uint64_t)VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT) || (enumerant == (uint64_t)VK_SHADER_STAGE_GEOMETRY_BIT) || (enumerant == (uint64_t)VK_SHADER_STAGE_FRAGMENT_BIT) ||
             (enumerant == (uint64_t)VK_SHADER_STAGE_COMPUTE_BIT) || (enumerant == (uint64_t)VK_SHADER_STAGE_ALL_GRAPHICS) || (enumerant == (uint64_t)VK_SHADER_STAGE_ALL);
     SCVK_ASSERT(found);
@@ -2930,7 +2942,7 @@ VkSharingMode scvkParseJsonSharingMode(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SHARING_MODE_EXCLUSIVE) || (enumerant == (uint64_t)VK_SHARING_MODE_CONCURRENT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SHARING_MODE_EXCLUSIVE) || (enumerant == (uint64_t)VK_SHARING_MODE_CONCURRENT);
     SCVK_ASSERT(found);
 
     return (VkSharingMode)enumerant;
@@ -2947,7 +2959,8 @@ VkStencilFaceFlagBits scvkParseJsonStencilFaceFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_STENCIL_FACE_FRONT_BIT) || (enumerant == (uint64_t)VK_STENCIL_FACE_BACK_BIT) || (enumerant == (uint64_t)VK_STENCIL_FACE_FRONT_AND_BACK);
+    found =
+        scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_STENCIL_FACE_FRONT_BIT) || (enumerant == (uint64_t)VK_STENCIL_FACE_BACK_BIT) || (enumerant == (uint64_t)VK_STENCIL_FACE_FRONT_AND_BACK);
     SCVK_ASSERT(found);
 
     return (VkStencilFaceFlagBits)enumerant;
@@ -2969,7 +2982,7 @@ VkStencilOp scvkParseJsonStencilOp(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_STENCIL_OP_KEEP) || (enumerant == (uint64_t)VK_STENCIL_OP_ZERO) || (enumerant == (uint64_t)VK_STENCIL_OP_REPLACE) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_STENCIL_OP_KEEP) || (enumerant == (uint64_t)VK_STENCIL_OP_ZERO) || (enumerant == (uint64_t)VK_STENCIL_OP_REPLACE) ||
             (enumerant == (uint64_t)VK_STENCIL_OP_INCREMENT_AND_CLAMP) || (enumerant == (uint64_t)VK_STENCIL_OP_DECREMENT_AND_CLAMP) || (enumerant == (uint64_t)VK_STENCIL_OP_INVERT) ||
             (enumerant == (uint64_t)VK_STENCIL_OP_INCREMENT_AND_WRAP) || (enumerant == (uint64_t)VK_STENCIL_OP_DECREMENT_AND_WRAP);
     SCVK_ASSERT(found);
@@ -3323,7 +3336,7 @@ VkStructureType scvkParseJsonStructureType(
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
     found =
-        (enumerant == (uint64_t)VK_STRUCTURE_TYPE_APPLICATION_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO) ||
+        scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_APPLICATION_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO) ||
         (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO) ||
         (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SUBMIT_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE) ||
         (enumerant == (uint64_t)VK_STRUCTURE_TYPE_FENCE_CREATE_INFO) || (enumerant == (uint64_t)VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO) ||
@@ -3519,9 +3532,9 @@ VkSubgroupFeatureFlagBits scvkParseJsonSubgroupFeatureFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_BASIC_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_VOTE_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_ARITHMETIC_BIT) ||
-            (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_BALLOT_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_SHUFFLE_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT) ||
-            (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_CLUSTERED_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_QUAD_BIT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_BASIC_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_VOTE_BIT) ||
+            (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_ARITHMETIC_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_BALLOT_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_SHUFFLE_BIT) ||
+            (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_CLUSTERED_BIT) || (enumerant == (uint64_t)VK_SUBGROUP_FEATURE_QUAD_BIT);
     SCVK_ASSERT(found);
 
     return (VkSubgroupFeatureFlagBits)enumerant;
@@ -3537,7 +3550,7 @@ VkSubpassContents scvkParseJsonSubpassContents(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SUBPASS_CONTENTS_INLINE) || (enumerant == (uint64_t)VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SUBPASS_CONTENTS_INLINE) || (enumerant == (uint64_t)VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
     SCVK_ASSERT(found);
 
     return (VkSubpassContents)enumerant;
@@ -3562,7 +3575,7 @@ VkSurfaceCounterFlagBitsEXT scvkParseJsonSurfaceCounterFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SURFACE_COUNTER_VBLANK_BIT_EXT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SURFACE_COUNTER_VBLANK_BIT_EXT);
     SCVK_ASSERT(found);
 
     return (VkSurfaceCounterFlagBitsEXT)enumerant;
@@ -3585,7 +3598,7 @@ VkSurfaceTransformFlagBitsKHR scvkParseJsonSurfaceTransformFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) || (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) || (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR) ||
             (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR) || (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR) ||
             (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR) || (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR) ||
             (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR) || (enumerant == (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR) ||
@@ -3606,7 +3619,7 @@ VkSwapchainCreateFlagBitsKHR scvkParseJsonSwapchainCreateFlagBits(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR) || (enumerant == (uint64_t)VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR) || (enumerant == (uint64_t)VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR) ||
             (enumerant == (uint64_t)VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR);
     SCVK_ASSERT(found);
 
@@ -3626,8 +3639,8 @@ VkSystemAllocationScope scvkParseJsonSystemAllocationScope(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_COMMAND) || (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_OBJECT) || (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_CACHE) ||
-            (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_DEVICE) || (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_COMMAND) || (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_OBJECT) ||
+            (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_CACHE) || (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_DEVICE) || (enumerant == (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE);
     SCVK_ASSERT(found);
 
     return (VkSystemAllocationScope)enumerant;
@@ -3643,7 +3656,7 @@ VkTessellationDomainOrigin scvkParseJsonTessellationDomainOrigin(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT) || (enumerant == (uint64_t)VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT) || (enumerant == (uint64_t)VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT);
     SCVK_ASSERT(found);
 
     return (VkTessellationDomainOrigin)enumerant;
@@ -3661,8 +3674,8 @@ VkTimeDomainKHR scvkParseJsonTimeDomain(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_TIME_DOMAIN_DEVICE_KHR) || (enumerant == (uint64_t)VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR) || (enumerant == (uint64_t)VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_KHR) ||
-            (enumerant == (uint64_t)VK_TIME_DOMAIN_QUERY_PERFORMANCE_COUNTER_KHR);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_TIME_DOMAIN_DEVICE_KHR) || (enumerant == (uint64_t)VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR) ||
+            (enumerant == (uint64_t)VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_KHR) || (enumerant == (uint64_t)VK_TIME_DOMAIN_QUERY_PERFORMANCE_COUNTER_KHR);
     SCVK_ASSERT(found);
 
     return (VkTimeDomainKHR)enumerant;
@@ -3684,7 +3697,7 @@ VkValidationFeatureDisableEXT scvkParseJsonValidationFeatureDisable(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_ALL_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_SHADERS_EXT) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_ALL_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_SHADERS_EXT) ||
             (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_THREAD_SAFETY_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_API_PARAMETERS_EXT) ||
             (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_OBJECT_LIFETIMES_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_CORE_CHECKS_EXT) ||
             (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_UNIQUE_HANDLES_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_DISABLE_SHADER_VALIDATION_CACHE_EXT);
@@ -3706,9 +3719,9 @@ VkValidationFeatureEnableEXT scvkParseJsonValidationFeatureEnable(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT) ||
-            (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT) ||
-            (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT) ||
+            (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT) ||
+            (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT) || (enumerant == (uint64_t)VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT);
     SCVK_ASSERT(found);
 
     return (VkValidationFeatureEnableEXT)enumerant;
@@ -3731,8 +3744,8 @@ VkVendorId scvkParseJsonVendorId(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_VENDOR_ID_KHRONOS) || (enumerant == (uint64_t)VK_VENDOR_ID_VIV) || (enumerant == (uint64_t)VK_VENDOR_ID_VSI) || (enumerant == (uint64_t)VK_VENDOR_ID_KAZAN) ||
-            (enumerant == (uint64_t)VK_VENDOR_ID_CODEPLAY) || (enumerant == (uint64_t)VK_VENDOR_ID_MESA) || (enumerant == (uint64_t)VK_VENDOR_ID_POCL) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_VENDOR_ID_KHRONOS) || (enumerant == (uint64_t)VK_VENDOR_ID_VIV) || (enumerant == (uint64_t)VK_VENDOR_ID_VSI) ||
+            (enumerant == (uint64_t)VK_VENDOR_ID_KAZAN) || (enumerant == (uint64_t)VK_VENDOR_ID_CODEPLAY) || (enumerant == (uint64_t)VK_VENDOR_ID_MESA) || (enumerant == (uint64_t)VK_VENDOR_ID_POCL) ||
             (enumerant == (uint64_t)VK_VENDOR_ID_MOBILEYE) || (enumerant == (uint64_t)VK_VENDOR_ID_APE);
     SCVK_ASSERT(found);
 
@@ -3748,7 +3761,7 @@ VkVertexInputRate scvkParseJsonVertexInputRate(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_VERTEX_INPUT_RATE_VERTEX) || (enumerant == (uint64_t)VK_VERTEX_INPUT_RATE_INSTANCE);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_VERTEX_INPUT_RATE_VERTEX) || (enumerant == (uint64_t)VK_VERTEX_INPUT_RATE_INSTANCE);
     SCVK_ASSERT(found);
 
     return (VkVertexInputRate)enumerant;

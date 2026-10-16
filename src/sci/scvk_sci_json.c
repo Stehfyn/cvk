@@ -621,7 +621,7 @@ VkSciSyncClientTypeNV scvkParseJsonSciSyncClientTypeNV(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_NV) || (enumerant == (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_WAITER_NV) ||
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_NV) || (enumerant == (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_WAITER_NV) ||
             (enumerant == (uint64_t)VK_SCI_SYNC_CLIENT_TYPE_SIGNALER_WAITER_NV);
     SCVK_ASSERT(found);
 
@@ -638,7 +638,7 @@ VkSciSyncPrimitiveTypeNV scvkParseJsonSciSyncPrimitiveTypeNV(
 
     enumerant = scvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_FENCE_NV) || (enumerant == (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_SEMAPHORE_NV);
+    found = scvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_FENCE_NV) || (enumerant == (uint64_t)VK_SCI_SYNC_PRIMITIVE_TYPE_SEMAPHORE_NV);
     SCVK_ASSERT(found);
 
     return (VkSciSyncPrimitiveTypeNV)enumerant;

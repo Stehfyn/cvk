@@ -13,7 +13,7 @@
 /**
  * \brief Parses a VkImageConstraintsInfoFlagBitsFUCHSIA from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkImageConstraintsInfoFlagBitsFUCHSIA has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkImageConstraintsInfoFlagBitsFUCHSIA   The parsed value.
  */

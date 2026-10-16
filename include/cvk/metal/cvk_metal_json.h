@@ -12,7 +12,7 @@
 /**
  * \brief Parses a VkExportMetalObjectTypeFlagBitsEXT from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkExportMetalObjectTypeFlagBitsEXT has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkExportMetalObjectTypeFlagBitsEXT   The parsed value.
  */

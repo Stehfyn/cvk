@@ -565,7 +565,7 @@ VkExportMetalObjectTypeFlagBitsEXT cvkParseJsonExportMetalObjectTypeFlagBits(
 
     enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT) || (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT) ||
+    found = cvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT_EXT) || (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT_EXT) ||
             (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT_EXT) || (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT_EXT) ||
             (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT_EXT) || (enumerant == (uint64_t)VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT_EXT);
     CVK_ASSERT(found);

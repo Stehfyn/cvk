@@ -48501,27 +48501,21 @@ void cvkGetPhysicalDeviceGpaProperties2AMD(
     (*pPhysicalDeviceGpaProperties2AMD) = ext_properties;
 }
 void cvkGetPhysicalDeviceGpaPropertiesAMD(
-    VkPhysicalDevice                      physicalDevice,
-    void*                                 pNext,
-    VkPhysicalDeviceGpaPropertiesFlagsAMD flags,
-    VkDeviceSize                          maxSqttSeBufferSize,
-    uint32_t                              shaderEngineCount,
-    uint32_t                              perfBlockCount,
-    VkGpaPerfBlockPropertiesAMD*          pPerfBlocks,
-    VkPhysicalDeviceGpaPropertiesAMD*     pPhysicalDeviceGpaPropertiesAMD)
+    VkPhysicalDevice                  physicalDevice,
+    void*                             pNext,
+    uint32_t                          perfBlockCount,
+    VkGpaPerfBlockPropertiesAMD*      pPerfBlocks,
+    VkPhysicalDeviceGpaPropertiesAMD* pPhysicalDeviceGpaPropertiesAMD)
 {
     VkPhysicalDeviceProperties2      properties;
     VkPhysicalDeviceGpaPropertiesAMD ext_properties;
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
 
-    ext_properties.sType               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_PROPERTIES_AMD;
-    ext_properties.pNext               = pNext;
-    ext_properties.flags               = flags;
-    ext_properties.maxSqttSeBufferSize = maxSqttSeBufferSize;
-    ext_properties.shaderEngineCount   = shaderEngineCount;
-    ext_properties.perfBlockCount      = perfBlockCount;
-    ext_properties.pPerfBlocks         = pPerfBlocks;
+    ext_properties.sType          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_PROPERTIES_AMD;
+    ext_properties.pNext          = pNext;
+    ext_properties.perfBlockCount = perfBlockCount;
+    ext_properties.pPerfBlocks    = pPerfBlocks;
 
     cvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
@@ -49903,31 +49897,10 @@ void cvkGetPhysicalDeviceVulkan13Properties(
 void cvkGetPhysicalDeviceVulkan14Properties(
     VkPhysicalDevice                    physicalDevice,
     void*                               pNext,
-    uint32_t                            lineSubPixelPrecisionBits,
-    uint32_t                            maxVertexAttribDivisor,
-    VkBool32                            supportsNonZeroFirstInstance,
-    uint32_t                            maxPushDescriptors,
-    VkBool32                            dynamicRenderingLocalReadDepthStencilAttachments,
-    VkBool32                            dynamicRenderingLocalReadMultisampledAttachments,
-    VkBool32                            earlyFragmentMultisampleCoverageAfterSampleCounting,
-    VkBool32                            earlyFragmentSampleMaskTestBeforeSampleCounting,
-    VkBool32                            depthStencilSwizzleOneSupport,
-    VkBool32                            polygonModePointSize,
-    VkBool32                            nonStrictSinglePixelWideLinesUseParallelogram,
-    VkBool32                            nonStrictWideLinesUseParallelogram,
-    VkBool32                            blockTexelViewCompatibleMultipleLayers,
-    uint32_t                            maxCombinedImageSamplerDescriptorCount,
-    VkBool32                            fragmentShadingRateClampCombinerInputs,
-    VkPipelineRobustnessBufferBehavior  defaultRobustnessStorageBuffers,
-    VkPipelineRobustnessBufferBehavior  defaultRobustnessUniformBuffers,
-    VkPipelineRobustnessBufferBehavior  defaultRobustnessVertexInputs,
-    VkPipelineRobustnessImageBehavior   defaultRobustnessImages,
     uint32_t                            copySrcLayoutCount,
     VkImageLayout*                      pCopySrcLayouts,
     uint32_t                            copyDstLayoutCount,
     VkImageLayout*                      pCopyDstLayouts,
-    const uint8_t                       optimalTilingLayoutUUID[VK_UUID_SIZE],
-    VkBool32                            identicalMemoryTypeRequirements,
     VkPhysicalDeviceVulkan14Properties* pPhysicalDeviceVulkan14Properties)
 {
     VkPhysicalDeviceProperties2        properties;
@@ -49935,34 +49908,13 @@ void cvkGetPhysicalDeviceVulkan14Properties(
 
     cvkZeroMemory(&ext_properties, sizeof(ext_properties));
 
-    ext_properties.sType                                               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_PROPERTIES;
-    ext_properties.pNext                                               = pNext;
-    ext_properties.lineSubPixelPrecisionBits                           = lineSubPixelPrecisionBits;
-    ext_properties.maxVertexAttribDivisor                              = maxVertexAttribDivisor;
-    ext_properties.supportsNonZeroFirstInstance                        = supportsNonZeroFirstInstance;
-    ext_properties.maxPushDescriptors                                  = maxPushDescriptors;
-    ext_properties.dynamicRenderingLocalReadDepthStencilAttachments    = dynamicRenderingLocalReadDepthStencilAttachments;
-    ext_properties.dynamicRenderingLocalReadMultisampledAttachments    = dynamicRenderingLocalReadMultisampledAttachments;
-    ext_properties.earlyFragmentMultisampleCoverageAfterSampleCounting = earlyFragmentMultisampleCoverageAfterSampleCounting;
-    ext_properties.earlyFragmentSampleMaskTestBeforeSampleCounting     = earlyFragmentSampleMaskTestBeforeSampleCounting;
-    ext_properties.depthStencilSwizzleOneSupport                       = depthStencilSwizzleOneSupport;
-    ext_properties.polygonModePointSize                                = polygonModePointSize;
-    ext_properties.nonStrictSinglePixelWideLinesUseParallelogram       = nonStrictSinglePixelWideLinesUseParallelogram;
-    ext_properties.nonStrictWideLinesUseParallelogram                  = nonStrictWideLinesUseParallelogram;
-    ext_properties.blockTexelViewCompatibleMultipleLayers              = blockTexelViewCompatibleMultipleLayers;
-    ext_properties.maxCombinedImageSamplerDescriptorCount              = maxCombinedImageSamplerDescriptorCount;
-    ext_properties.fragmentShadingRateClampCombinerInputs              = fragmentShadingRateClampCombinerInputs;
-    ext_properties.defaultRobustnessStorageBuffers                     = defaultRobustnessStorageBuffers;
-    ext_properties.defaultRobustnessUniformBuffers                     = defaultRobustnessUniformBuffers;
-    ext_properties.defaultRobustnessVertexInputs                       = defaultRobustnessVertexInputs;
-    ext_properties.defaultRobustnessImages                             = defaultRobustnessImages;
-    ext_properties.copySrcLayoutCount                                  = copySrcLayoutCount;
-    ext_properties.pCopySrcLayouts                                     = pCopySrcLayouts;
-    ext_properties.copyDstLayoutCount                                  = copyDstLayoutCount;
-    ext_properties.pCopyDstLayouts                                     = pCopyDstLayouts;
-    ext_properties.identicalMemoryTypeRequirements                     = identicalMemoryTypeRequirements;
+    ext_properties.sType              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_PROPERTIES;
+    ext_properties.pNext              = pNext;
+    ext_properties.copySrcLayoutCount = copySrcLayoutCount;
+    ext_properties.pCopySrcLayouts    = pCopySrcLayouts;
+    ext_properties.copyDstLayoutCount = copyDstLayoutCount;
+    ext_properties.pCopyDstLayouts    = pCopyDstLayouts;
 
-    cvkCopyMemory(ext_properties.optimalTilingLayoutUUID, optimalTilingLayoutUUID, sizeof(ext_properties.optimalTilingLayoutUUID));
     cvkGetPhysicalDeviceProperties2(physicalDevice, &ext_properties, &properties);
 
     (*pPhysicalDeviceVulkan14Properties) = ext_properties;

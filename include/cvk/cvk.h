@@ -42926,16 +42926,13 @@ void cvkGetPhysicalDeviceGpaProperties2AMD(VkPhysicalDevice physicalDevice, void
  *
  * \param[in]     physicalDevice                    The handle to the physical device whose properties will be queried
  * \param[in,out] pNext                             Optional output extension chain attached to VkPhysicalDeviceGpaPropertiesAMD, or NULL
- * \param[in]     flags                             Reserved for future use; must be 0
- * \param[in]     maxSqttSeBufferSize               Ignored on input (the implementation overwrites it); read the SQTT buffer size per engine from pPhysicalDeviceGpaPropertiesAMD->maxSqttSeBufferSize
- * \param[in]     shaderEngineCount                 Ignored on input (the implementation overwrites it); read the shader engine count from pPhysicalDeviceGpaPropertiesAMD->shaderEngineCount
  * \param[in]     perfBlockCount                    Capacity of pPerfBlocks in elements; the written count is returned in pPhysicalDeviceGpaPropertiesAMD->perfBlockCount
  * \param[in]     pPerfBlocks                       NULL to query only the count, or caller storage for perfBlockCount VkGpaPerfBlockPropertiesAMD structures that receive the available performance blocks
  * \param[out]    pPhysicalDeviceGpaPropertiesAMD   Receives the structure describing GPU performance API properties for a physical device
  *
  * \retval        None
  */
-void cvkGetPhysicalDeviceGpaPropertiesAMD(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceGpaPropertiesFlagsAMD flags, VkDeviceSize maxSqttSeBufferSize, uint32_t shaderEngineCount, uint32_t perfBlockCount, VkGpaPerfBlockPropertiesAMD* pPerfBlocks, VkPhysicalDeviceGpaPropertiesAMD* pPhysicalDeviceGpaPropertiesAMD);
+void cvkGetPhysicalDeviceGpaPropertiesAMD(VkPhysicalDevice physicalDevice, void* pNext, uint32_t perfBlockCount, VkGpaPerfBlockPropertiesAMD* pPerfBlocks, VkPhysicalDeviceGpaPropertiesAMD* pPhysicalDeviceGpaPropertiesAMD);
 
 /*************************************************************************************************/
 /**
@@ -43909,38 +43906,17 @@ void cvkGetPhysicalDeviceVulkan13Properties(VkPhysicalDevice physicalDevice, voi
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceVulkan14Properties chained to the output.
  *
- * \param[in]     physicalDevice                                        The handle to the physical device whose properties will be queried
- * \param[in,out] pNext                                                 Optional output extension chain attached to VkPhysicalDeviceVulkan14Properties, or NULL
- * \param[in]     lineSubPixelPrecisionBits                             Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     maxVertexAttribDivisor                                Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     supportsNonZeroFirstInstance                          Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     maxPushDescriptors                                    Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     dynamicRenderingLocalReadDepthStencilAttachments      Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     dynamicRenderingLocalReadMultisampledAttachments      Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     earlyFragmentMultisampleCoverageAfterSampleCounting   Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     earlyFragmentSampleMaskTestBeforeSampleCounting       Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     depthStencilSwizzleOneSupport                         Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     polygonModePointSize                                  Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     nonStrictSinglePixelWideLinesUseParallelogram         Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     nonStrictWideLinesUseParallelogram                    Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     blockTexelViewCompatibleMultipleLayers                Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     maxCombinedImageSamplerDescriptorCount                Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     fragmentShadingRateClampCombinerInputs                Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     defaultRobustnessStorageBuffers                       Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     defaultRobustnessUniformBuffers                       Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     defaultRobustnessVertexInputs                         Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     defaultRobustnessImages                               Ignored input: overwritten by the implementation-reported value, which is returned in pPhysicalDeviceVulkan14Properties (drop this parameter)
- * \param[in]     copySrcLayoutCount                                    Capacity of pCopySrcLayouts; the number written, or available when pCopySrcLayouts is NULL, is returned in the output structure's copySrcLayoutCount
- * \param[in]     pCopySrcLayouts                                       Caller array of copySrcLayoutCount entries that receives the layouts supported as host copy sources, or NULL to query the count (written, so should be tagged [out])
- * \param[in]     copyDstLayoutCount                                    Capacity of pCopyDstLayouts; the number written, or available when pCopyDstLayouts is NULL, is returned in the output structure's copyDstLayoutCount
- * \param[in]     pCopyDstLayouts                                       Caller array of copyDstLayoutCount entries that receives the layouts supported as host copy destinations, or NULL to query the count (written, so should be tagged [out])
- * \param[in]     optimalTilingLayoutUUID                               Ignored input that the query overwrites; read the optimal-tiling layout UUID from the returned structure
- * \param[in]     identicalMemoryTypeRequirements                       Ignored input that the query overwrites; read the result from the returned structure
- * \param[out]    pPhysicalDeviceVulkan14Properties                     Receives the structure specifying physical device properties for functionality promoted to Vulkan 1.4
+ * \param[in]     physicalDevice                      The handle to the physical device whose properties will be queried
+ * \param[in,out] pNext                               Optional output extension chain attached to VkPhysicalDeviceVulkan14Properties, or NULL
+ * \param[in]     copySrcLayoutCount                  Capacity of pCopySrcLayouts; the number written, or available when pCopySrcLayouts is NULL, is returned in the output structure's copySrcLayoutCount
+ * \param[in]     pCopySrcLayouts                     Caller array of copySrcLayoutCount entries that receives the layouts supported as host copy sources, or NULL to query the count (written, so should be tagged [out])
+ * \param[in]     copyDstLayoutCount                  Capacity of pCopyDstLayouts; the number written, or available when pCopyDstLayouts is NULL, is returned in the output structure's copyDstLayoutCount
+ * \param[in]     pCopyDstLayouts                     Caller array of copyDstLayoutCount entries that receives the layouts supported as host copy destinations, or NULL to query the count (written, so should be tagged [out])
+ * \param[out]    pPhysicalDeviceVulkan14Properties   Receives the structure specifying physical device properties for functionality promoted to Vulkan 1.4
  *
  * \retval        None
  */
-void cvkGetPhysicalDeviceVulkan14Properties(VkPhysicalDevice physicalDevice, void* pNext, uint32_t lineSubPixelPrecisionBits, uint32_t maxVertexAttribDivisor, VkBool32 supportsNonZeroFirstInstance, uint32_t maxPushDescriptors, VkBool32 dynamicRenderingLocalReadDepthStencilAttachments, VkBool32 dynamicRenderingLocalReadMultisampledAttachments, VkBool32 earlyFragmentMultisampleCoverageAfterSampleCounting, VkBool32 earlyFragmentSampleMaskTestBeforeSampleCounting, VkBool32 depthStencilSwizzleOneSupport, VkBool32 polygonModePointSize, VkBool32 nonStrictSinglePixelWideLinesUseParallelogram, VkBool32 nonStrictWideLinesUseParallelogram, VkBool32 blockTexelViewCompatibleMultipleLayers, uint32_t maxCombinedImageSamplerDescriptorCount, VkBool32 fragmentShadingRateClampCombinerInputs, VkPipelineRobustnessBufferBehavior defaultRobustnessStorageBuffers, VkPipelineRobustnessBufferBehavior defaultRobustnessUniformBuffers, VkPipelineRobustnessBufferBehavior defaultRobustnessVertexInputs, VkPipelineRobustnessImageBehavior defaultRobustnessImages, uint32_t copySrcLayoutCount, VkImageLayout* pCopySrcLayouts, uint32_t copyDstLayoutCount, VkImageLayout* pCopyDstLayouts, const uint8_t optimalTilingLayoutUUID[VK_UUID_SIZE], VkBool32 identicalMemoryTypeRequirements, VkPhysicalDeviceVulkan14Properties* pPhysicalDeviceVulkan14Properties);
+void cvkGetPhysicalDeviceVulkan14Properties(VkPhysicalDevice physicalDevice, void* pNext, uint32_t copySrcLayoutCount, VkImageLayout* pCopySrcLayouts, uint32_t copyDstLayoutCount, VkImageLayout* pCopyDstLayouts, VkPhysicalDeviceVulkan14Properties* pPhysicalDeviceVulkan14Properties);
 
 /*************************************************************************************************/
 /**

@@ -700,7 +700,7 @@ VkImageConstraintsInfoFlagBitsFUCHSIA cvkParseJsonImageConstraintsInfoFlagBitsFU
 
     enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_RARELY_FUCHSIA) || (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_OFTEN_FUCHSIA) ||
+    found = cvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_RARELY_FUCHSIA) || (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_READ_OFTEN_FUCHSIA) ||
             (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_RARELY_FUCHSIA) || (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_CPU_WRITE_OFTEN_FUCHSIA) ||
             (enumerant == (uint64_t)VK_IMAGE_CONSTRAINTS_INFO_PROTECTED_OPTIONAL_FUCHSIA);
     CVK_ASSERT(found);

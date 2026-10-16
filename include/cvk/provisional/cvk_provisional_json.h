@@ -22,7 +22,7 @@ VkCompressedTriangleFormatAMDX cvkParseJsonCompressedTriangleFormatAMDX(const cv
 /**
  * \brief Parses a VkDisplacementMicromapFormatNV from JSON.
  *
- * \param[in] pValue   JSON value holding an enumerant name or its number; must not be NULL (VkDisplacementMicromapFormatNV has no zero value)
+ * \param[in] pValue   JSON value holding an enumerant name or its number, or NULL for 0
  *
  * \retval    VkDisplacementMicromapFormatNV   The parsed value.
  */

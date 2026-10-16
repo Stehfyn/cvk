@@ -927,7 +927,7 @@ VkFullScreenExclusiveEXT cvkParseJsonFullScreenExclusive(
 
     enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));
 
-    found = (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT) || (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT) ||
+    found = cvkIsJsonNull(pValue) || (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT) || (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT) ||
             (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT) || (enumerant == (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT);
     CVK_ASSERT(found);
 

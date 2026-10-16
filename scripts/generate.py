@@ -1436,7 +1436,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             elif zero:
                 value_doc = f"JSON value holding an enumerant name or its number, or NULL for {zero}"
             else:
-                value_doc = f"JSON value holding an enumerant name or its number; must not be NULL ({enum} has no zero value)"
+                value_doc = "JSON value holding an enumerant name or its number, or NULL for 0"
             params = [EmittedParam("const cvkJsonValue* pValue", "pValue", value_doc, False)]
             body = []
             if values:
@@ -1460,7 +1460,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
                             seen_values.add(canonical)
                     matches = " ||\n    ".join(f"(enumerant == (uint64_t){value})" for value in unique_values)
                     body += ["enumerant = cvkParseJsonEnumerant(pValue, table, VK_COUNT_OF(table));",
-                             f"found = {matches};", "CVK_ASSERT(found);", f"return ({enum})enumerant;"]
+                             f"found = cvkIsJsonNull(pValue) || {matches};", "CVK_ASSERT(found);", f"return ({enum})enumerant;"]
             else:
                 body += ["int64_t enumerant;", "",
                          "enumerant = cvkGetJsonInt64(pValue);",
@@ -2056,8 +2056,12 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
         if inout:
             used = {p.name for p in params} | {ext_out}
             storage_params = []
+            # A returned-only extender takes only its caller storage: the pointer members and the
+            # counts that size them. Every other member is written by the query and returned.
+            storage = {m.name for m in ext.members if m.is_pointer}
+            storage |= {n for m in ext.members if m.is_pointer and m.len for n in m.len.split(",") if n != "null-terminated"}
             for m in ext.members:
-                if m.name in ("sType", "pNext"):
+                if m.name in ("sType", "pNext") or (ext.returnedonly and m.name not in storage):
                     continue
                 pname = m.name if m.name not in used else self.member_alias(m, base, ext)
                 used.add(pname)
