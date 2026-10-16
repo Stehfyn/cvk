@@ -21937,7 +21937,7 @@ void* cvkParseJsonStructureChain(const cvkJsonContext* pContext, const cvkJsonVa
  *  links. Closing a container restores the public first-child and sibling links.
  *  Neither depth-dependent stack storage nor allocation is required.
  *
- * \param[in,out] pReader   Reader state and caller-owned values.
+ * \param[in,out] pReader   Reader state and caller-owned values
  *
  * \retval        uint32_t   The parsed root index.
  */
@@ -22115,7 +22115,7 @@ void* cvkAllocateArena(cvkArena* pArena, size_t size, size_t alignment);
 /**
  * \brief Frees callback-backed arena blocks and resets the arena.
  *
- * \param[in,out] pArena   Arena to release.
+ * \param[in,out] pArena   Arena to release
  *
  * \retval        None
  */
@@ -22137,8 +22137,8 @@ char* cvkCopyJsonString(cvkArena* pArena, const cvkJsonValue* pValue);
 /**
  * \brief Returns the JSON object ID recorded for a native handle field.
  *
- * \param[in] pReferences   First reference, or NULL for an empty list.
- * \param[in] pHandle       Address of the native handle field.
+ * \param[in] pReferences   First reference, or NULL for an empty list
+ * \param[in] pHandle       Address of the native handle field
  *
  * \retval    uint64_t   The JSON object ID, or 0 when no reference was recorded.
  */
@@ -22153,11 +22153,11 @@ uint64_t cvkGetJsonHandleId(const cvkJsonHandleReference* pReferences, const voi
  *  that exact native type and leaves it unchanged on failure. Deferred resolution
  *  requires a caller-owned reference-list head. Records use the caller's arena.
  *
- * \param[in]     pContext          Parsing context and optional native resolver.
- * \param[in]     pHandleType       Vulkan handle type name.
- * \param[in]     pValue            JSON object ID, or null for the null handle.
- * \param[in]     handleByteCount   Byte extent of the native handle type.
- * \param[in,out] pHandle           Native handle object, initially VK_NULL_HANDLE.
+ * \param[in]     pContext          Parsing context and optional native resolver
+ * \param[in]     pHandleType       Vulkan handle type name
+ * \param[in]     pValue            JSON object ID, or null for the null handle
+ * \param[in]     handleByteCount   Byte extent of the native handle type
+ * \param[in,out] pHandle           Native handle object, initially VK_NULL_HANDLE
  *
  * \retval        VK_TRUE    The ID was null or resolved to a native handle.
  * \retval        VK_FALSE   The reference remains unresolved and its handle stays null.
@@ -22170,7 +22170,7 @@ VkBool32 cvkResolveJsonHandle(const cvkJsonContext* pContext, const char* pHandl
  *
  * \param[in]  pContext      Parsing context
  * \param[in]  pList         The JSON array, or NULL for none
- * \param[in]  elementSize   sizeof the parsed structure
+ * \param[in]  elementSize   Sizeof the parsed structure
  * \param[out] ppIds         Receives the arena array of ids, one per entry
  * \param[out] ppElements    Receives the arena array of structures, zeroed; the caller parses each
  *
@@ -22213,9 +22213,9 @@ uint64_t cvkGetPipelineJsonHandle(uint32_t count, const uint64_t* pIds, const ui
 /**
  * \brief Finds an object ID in a pipeline object's ID table.
  *
- * \param[in] count   Number of entries.
- * \param[in] pIds    Object IDs.
- * \param[in] id      Requested ID.
+ * \param[in] count   Number of entries
+ * \param[in] pIds    Object IDs
+ * \param[in] id      Requested ID
  *
  * \retval    uint32_t   The matching index into a typed handle table, or VK_INVALID when no ID matches.
  */
@@ -22276,11 +22276,11 @@ void cvkCreatePipelineFromJson(VkDevice device, VkPipelineCache pipelineCache, c
 /**
  * \brief Creates only the render pass described by a pipeline JSON document.
  *
- * \param[in]  device        Logical device creating the render pass.
- * \param[in]  pJsonText     Pipeline JSON text containing a render pass.
- * \param[in]  jsonLength    Byte length of the text.
- * \param[in]  pAllocator    Allocation callbacks for scratch and Vulkan objects.
- * \param[out] pRenderPass   Receives the render pass.
+ * \param[in]  device        Logical device creating the render pass
+ * \param[in]  pJsonText     Pipeline JSON text containing a render pass
+ * \param[in]  jsonLength    Byte length of the text
+ * \param[in]  pAllocator    Allocation callbacks for scratch and Vulkan objects
+ * \param[out] pRenderPass   Receives the render pass
  *
  * \retval     None
  */
@@ -22294,15 +22294,15 @@ void cvkCreateRenderPassFromPipelineJson(VkDevice device, const char* pJsonText,
  *  The module IDs are taken from the vertex and fragment stages in the JSON. The supplied
  *  modules and external render pass remain owned by the caller.
  *
- * \param[in]  device               Logical device creating the objects.
- * \param[in]  pipelineCache        Pipeline cache, or VK_NULL_HANDLE.
- * \param[in]  pJsonText            Pipeline JSON text.
- * \param[in]  jsonLength           Byte length of the text.
- * \param[in]  vertex               Caller-owned vertex shader module.
- * \param[in]  fragment             Caller-owned fragment shader module.
- * \param[in]  externalRenderPass   Caller-owned render pass if the JSON omits one, or VK_NULL_HANDLE.
- * \param[in]  pAllocator           Allocation callbacks for scratch and Vulkan objects.
- * \param[out] pObjects             Receives the created JSON objects.
+ * \param[in]  device               Logical device creating the objects
+ * \param[in]  pipelineCache        Pipeline cache, or VK_NULL_HANDLE
+ * \param[in]  pJsonText            Pipeline JSON text
+ * \param[in]  jsonLength           Byte length of the text
+ * \param[in]  vertex               Caller-owned vertex shader module
+ * \param[in]  fragment             Caller-owned fragment shader module
+ * \param[in]  externalRenderPass   Caller-owned render pass if the JSON omits one, or VK_NULL_HANDLE
+ * \param[in]  pAllocator           Allocation callbacks for scratch and Vulkan objects
+ * \param[out] pObjects             Receives the created JSON objects
  *
  * \retval     None
  */
@@ -22316,17 +22316,17 @@ void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevice device, VkPipelineCac
  *  The shader modules are destroyed after pipeline creation. Use
  *  cvkCreateGraphicsPipelineFromJsonWithModules to retain or reuse caller-owned modules.
  *
- * \param[in]  device               Logical device creating the objects.
- * \param[in]  pipelineCache        Pipeline cache, or VK_NULL_HANDLE.
- * \param[in]  pJsonText            Pipeline JSON text.
- * \param[in]  jsonLength           Byte length of the text.
- * \param[in]  vertexCodeSize       Vertex SPIR-V byte length.
- * \param[in]  pVertexCode          Vertex SPIR-V words.
- * \param[in]  fragmentCodeSize     Fragment SPIR-V byte length.
- * \param[in]  pFragmentCode        Fragment SPIR-V words.
- * \param[in]  externalRenderPass   Caller-owned render pass if the JSON omits one, or VK_NULL_HANDLE.
- * \param[in]  pAllocator           Allocation callbacks for scratch and Vulkan objects.
- * \param[out] pObjects             Receives the created JSON objects.
+ * \param[in]  device               Logical device creating the objects
+ * \param[in]  pipelineCache        Pipeline cache, or VK_NULL_HANDLE
+ * \param[in]  pJsonText            Pipeline JSON text
+ * \param[in]  jsonLength           Byte length of the text
+ * \param[in]  vertexCodeSize       Vertex SPIR-V byte length
+ * \param[in]  pVertexCode          Vertex SPIR-V words
+ * \param[in]  fragmentCodeSize     Fragment SPIR-V byte length
+ * \param[in]  pFragmentCode        Fragment SPIR-V words
+ * \param[in]  externalRenderPass   Caller-owned render pass if the JSON omits one, or VK_NULL_HANDLE
+ * \param[in]  pAllocator           Allocation callbacks for scratch and Vulkan objects
+ * \param[out] pObjects             Receives the created JSON objects
  *
  * \retval     None
  */
@@ -22341,11 +22341,11 @@ void cvkCreateGraphicsPipelineFromJson(VkDevice device, VkPipelineCache pipeline
  *  pipeline, pipeline layout, descriptor set layout, and sampler belong to the caller.
  *  The render pass must be compatible with the pipeline's single color attachment.
  *
- * \param[in]  device          Logical device creating the objects.
- * \param[in]  pipelineCache   Pipeline cache, or VK_NULL_HANDLE.
- * \param[in]  renderPass      Caller-owned compatible render pass.
- * \param[in]  pAllocator      Allocation callbacks for scratch and Vulkan objects.
- * \param[out] pObjects        Receives the created JSON objects.
+ * \param[in]  device          Logical device creating the objects
+ * \param[in]  pipelineCache   Pipeline cache, or VK_NULL_HANDLE
+ * \param[in]  renderPass      Caller-owned compatible render pass
+ * \param[in]  pAllocator      Allocation callbacks for scratch and Vulkan objects
+ * \param[out] pObjects        Receives the created JSON objects
  *
  * \retval     None
  */
@@ -22359,14 +22359,14 @@ void cvkCreateBicubicScalingPipeline(VkDevice device, VkPipelineCache pipelineCa
  *  The descriptor set must bind the sampled image at set 0, binding 0. A blend value of
  *  zero selects bicubic filtering; one selects the original linearly filtered sample.
  *
- * \param[in] commandBuffer   Recording command buffer within a compatible render pass.
- * \param[in] pipeline        Pipeline created by cvkCreateBicubicScalingPipeline.
- * \param[in] layout          Layout returned with the pipeline.
- * \param[in] descriptorSet   Descriptor set for the sampled image.
- * \param[in] sourceExtent    Dimensions of the sampled image.
- * \param[in] contentExtent   Dimensions of the destination content.
- * \param[in] backingExtent   Dimensions of the backing image.
- * \param[in] blend           Bicubic-to-original blend in the range zero to one.
+ * \param[in] commandBuffer   Recording command buffer within a compatible render pass
+ * \param[in] pipeline        Pipeline created by cvkCreateBicubicScalingPipeline
+ * \param[in] layout          Layout returned with the pipeline
+ * \param[in] descriptorSet   Descriptor set for the sampled image
+ * \param[in] sourceExtent    Dimensions of the sampled image
+ * \param[in] contentExtent   Dimensions of the destination content
+ * \param[in] backingExtent   Dimensions of the backing image
+ * \param[in] blend           Bicubic-to-original blend in the range zero to one
  *
  * \retval    None
  */
@@ -22376,21 +22376,21 @@ void cvkCmdDrawFullscreenQuadWithBicubicScaling(VkCommandBuffer commandBuffer, V
 /**
  * \brief Acquires an external color image, executes bicubic scaling, and releases it.
  *
- * \param[in] commandBuffer      Command buffer recording the pass.
- * \param[in] externalLayout     Layout held by the external owner before and after the pass.
- * \param[in] renderLayout       Color attachment layout during the pass.
- * \param[in] queueFamilyIndex   Queue family recording the pass.
- * \param[in] image              Externally owned color attachment image.
- * \param[in] subresourceRange   Color attachment subresources.
- * \param[in] renderPass         Render pass compatible with the bicubic pipeline.
- * \param[in] framebuffer        Target framebuffer.
- * \param[in] backingExtent      Render area, viewport, and scissor extent.
- * \param[in] pipeline           Pipeline created by cvkCreateBicubicScalingPipeline.
- * \param[in] layout             Layout returned with the pipeline.
- * \param[in] descriptorSet      Descriptor set for the sampled image.
- * \param[in] sourceExtent       Dimensions of the sampled image.
- * \param[in] contentExtent      Dimensions of the destination content.
- * \param[in] blend              Bicubic-to-original blend in the range zero to one.
+ * \param[in] commandBuffer      Command buffer recording the pass
+ * \param[in] externalLayout     Layout held by the external owner before and after the pass
+ * \param[in] renderLayout       Color attachment layout during the pass
+ * \param[in] queueFamilyIndex   Queue family recording the pass
+ * \param[in] image              Externally owned color attachment image
+ * \param[in] subresourceRange   Color attachment subresources
+ * \param[in] renderPass         Render pass compatible with the bicubic pipeline
+ * \param[in] framebuffer        Target framebuffer
+ * \param[in] backingExtent      Render area, viewport, and scissor extent
+ * \param[in] pipeline           Pipeline created by cvkCreateBicubicScalingPipeline
+ * \param[in] layout             Layout returned with the pipeline
+ * \param[in] descriptorSet      Descriptor set for the sampled image
+ * \param[in] sourceExtent       Dimensions of the sampled image
+ * \param[in] contentExtent      Dimensions of the destination content
+ * \param[in] blend              Bicubic-to-original blend in the range zero to one
  *
  * \retval    None
  */

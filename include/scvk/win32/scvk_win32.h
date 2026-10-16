@@ -13,8 +13,8 @@
 /**
  * \brief Acquires winrt display.
  *
- * \param[in] physicalDevice   The physical device the display is on.
- * \param[in] display          The display the caller wishes to control in Vulkan.
+ * \param[in] physicalDevice   The physical device the display is on
+ * \param[in] display          The display the caller wishes to control in Vulkan
  *
  * \retval    None
  */
@@ -24,9 +24,9 @@ void scvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR dis
 /**
  * \brief Retrieves winrt display.
  *
- * \param[in]  physicalDevice     The physical device on which to query the display handle.
- * \param[in]  deviceRelativeId   The value of the https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displaytarget.adapterrelativeid["AdapterRelativeId"] property of a https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displaytarget["DisplayTarget"] that is enumerated by a https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displayadapter["DisplayAdapter"] with an https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displayadapter.id["Id"] property matching the deviceLUID property of a VkPhysicalDeviceIDProperties for physicalDevice.
- * \param[out] pDisplay           A pointer to a VkDisplayKHR handle where the display is returned.
+ * \param[in]  physicalDevice     The physical device on which to query the display handle
+ * \param[in]  deviceRelativeId   The value of the https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displaytarget.adapterrelativeid["AdapterRelativeId"] property of a https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displaytarget["DisplayTarget"] that is enumerated by a https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displayadapter["DisplayAdapter"] with an https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displayadapter.id["Id"] property matching the deviceLUID property of a VkPhysicalDeviceIDProperties for physicalDevice
+ * \param[out] pDisplay           A pointer to a VkDisplayKHR handle where the display is returned
  *
  * \retval     None
  */

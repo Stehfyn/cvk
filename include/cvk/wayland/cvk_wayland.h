@@ -15,9 +15,9 @@
  *
  * \param[out] pInfo     Receives the initialized VkWaylandSurfaceCreateInfoKHR
  * \param[in]  pNext     Optional extension chain attached to VkWaylandSurfaceCreateInfoKHR, or NULL
- * \param[in]  flags     VkWaylandSurfaceCreateInfoKHR::flags
- * \param[in]  display   VkWaylandSurfaceCreateInfoKHR::display
- * \param[in]  surface   VkWaylandSurfaceCreateInfoKHR::surface
+ * \param[in]  flags     Reserved for future use; must be 0
+ * \param[in]  display   Pointers to the Wayland wl_display and wl_surface to associate the surface with
+ * \param[in]  surface   Pointers to the Wayland wl_display and wl_surface to associate the surface with
  *
  * \retval     None
  */
@@ -27,13 +27,13 @@ void cvkInitWaylandSurfaceCreateInfo(VkWaylandSurfaceCreateInfoKHR* pInfo, const
 /**
  * \brief Creates a wayland surface.
  *
- * \param[in]  instance     The instance to associate the surface with.
+ * \param[in]  instance     The instance to associate the surface with
  * \param[in]  pNext        Optional extension chain attached to VkWaylandSurfaceCreateInfoKHR, or NULL
- * \param[in]  flags        Reserved for future use; must be 0.
- * \param[in]  display      Pointers to the Wayland wl_display and wl_surface to associate the surface with.
- * \param[in]  surface      Pointers to the Wayland wl_display and wl_surface to associate the surface with.
+ * \param[in]  flags        Reserved for future use; must be 0
+ * \param[in]  display      Pointers to the Wayland wl_display and wl_surface to associate the surface with
+ * \param[in]  surface      Pointers to the Wayland wl_display and wl_surface to associate the surface with
  * \param[in]  pAllocator   Optional allocation callbacks, or NULL
- * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned.
+ * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned
  *
  * \retval     None
  */
@@ -43,9 +43,9 @@ void cvkCreateWaylandSurface(VkInstance instance, const void* pNext, VkWaylandSu
 /**
  * \brief Retrieves physical device wayland presentation support.
  *
- * \param[in]  physicalDevice     The physical device.
- * \param[in]  queueFamilyIndex   The queue family index.
- * \param[out] display            A pointer to the wl_display associated with a Wayland compositor.
+ * \param[in]  physicalDevice     The physical device
+ * \param[in]  queueFamilyIndex   The queue family index
+ * \param[out] display            A pointer to the wl_display associated with a Wayland compositor
  *
  * \retval     VK_TRUE    The queried support is available.
  * \retval     VK_FALSE   The queried support is unavailable.

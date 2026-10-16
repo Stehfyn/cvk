@@ -14,8 +14,8 @@
  *
  * \param[out] pInfo    Receives the initialized VkViSurfaceCreateInfoNN
  * \param[in]  pNext    Optional extension chain attached to VkViSurfaceCreateInfoNN, or NULL
- * \param[in]  flags    VkViSurfaceCreateInfoNN::flags
- * \param[in]  window   VkViSurfaceCreateInfoNN::window
+ * \param[in]  flags    Reserved for future use; must be 0
+ * \param[in]  window   The nn::vi::NativeWindowHandle for the nn::vi::Layer with which to associate the surface
  *
  * \retval     None
  */
@@ -25,12 +25,12 @@ void cvkInitViSurfaceCreateInfoNN(VkViSurfaceCreateInfoNN* pInfo, const void* pN
 /**
  * \brief Creates a vi surface.
  *
- * \param[in]  instance     The instance with which to associate the surface.
+ * \param[in]  instance     The instance with which to associate the surface
  * \param[in]  pNext        Optional extension chain attached to VkViSurfaceCreateInfoNN, or NULL
- * \param[in]  flags        Reserved for future use; must be 0.
- * \param[in]  window       The nn::vi::NativeWindowHandle for the nn::vi::Layer with which to associate the surface.
+ * \param[in]  flags        Reserved for future use; must be 0
+ * \param[in]  window       The nn::vi::NativeWindowHandle for the nn::vi::Layer with which to associate the surface
  * \param[in]  pAllocator   Optional allocation callbacks, or NULL
- * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned.
+ * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned
  *
  * \retval     None
  */

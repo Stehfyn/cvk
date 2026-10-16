@@ -14,8 +14,8 @@
  *
  * \param[out] pInfo   Receives the initialized VkMacOSSurfaceCreateInfoMVK
  * \param[in]  pNext   Optional extension chain attached to VkMacOSSurfaceCreateInfoMVK, or NULL
- * \param[in]  flags   VkMacOSSurfaceCreateInfoMVK::flags
- * \param[in]  pView   VkMacOSSurfaceCreateInfoMVK::pView
+ * \param[in]  flags   Reserved for future use; must be 0
+ * \param[in]  pView   A reference to either a CAMetalLayer object or an NSView object
  *
  * \retval     None
  */
@@ -25,12 +25,12 @@ void cvkInitMacOSSurfaceCreateInfoMVK(VkMacOSSurfaceCreateInfoMVK* pInfo, const 
 /**
  * \brief Creates a mac os surface.
  *
- * \param[in]  instance     The instance with which to associate the surface.
+ * \param[in]  instance     The instance with which to associate the surface
  * \param[in]  pNext        Optional extension chain attached to VkMacOSSurfaceCreateInfoMVK, or NULL
- * \param[in]  flags        Reserved for future use; must be 0.
- * \param[in]  pView        A reference to either a CAMetalLayer object or an NSView object.
+ * \param[in]  flags        Reserved for future use; must be 0
+ * \param[in]  pView        A reference to either a CAMetalLayer object or an NSView object
  * \param[in]  pAllocator   Optional allocation callbacks, or NULL
- * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned.
+ * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned
  *
  * \retval     None
  */

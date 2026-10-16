@@ -14,9 +14,9 @@
 /**
  * \brief Acquires xlib display.
  *
- * \param[in]  physicalDevice   The physical device the display is on.
- * \param[out] dpy              A connection to the X11 server that currently owns display.
- * \param[in]  display          The display the caller wishes to control in Vulkan.
+ * \param[in]  physicalDevice   The physical device the display is on
+ * \param[out] dpy              A connection to the X11 server that currently owns display
+ * \param[in]  display          The display the caller wishes to control in Vulkan
  *
  * \retval     None
  */
@@ -26,10 +26,10 @@ void cvkAcquireXlibDisplay(VkPhysicalDevice physicalDevice, Display* dpy, VkDisp
 /**
  * \brief Retrieves rand r output display.
  *
- * \param[in]  physicalDevice   The physical device to query the display handle on.
- * \param[out] dpy              A connection to the X11 server from which rrOutput was queried.
- * \param[in]  rrOutput         An X11 RandR output ID.
- * \param[out] pDisplay         A pointer to a VkDisplayKHR handle where the display is returned.
+ * \param[in]  physicalDevice   The physical device to query the display handle on
+ * \param[out] dpy              A connection to the X11 server from which rrOutput was queried
+ * \param[in]  rrOutput         An X11 RandR output ID
+ * \param[out] pDisplay         A pointer to a VkDisplayKHR handle where the display is returned
  *
  * \retval     None
  */

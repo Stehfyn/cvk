@@ -15,10 +15,10 @@
  *
  * \param[out] pInfo                        Receives the initialized VkD3D12FenceSubmitInfoKHR
  * \param[in]  pNext                        Optional extension chain attached to VkD3D12FenceSubmitInfoKHR, or NULL
- * \param[in]  waitSemaphoreValuesCount     VkD3D12FenceSubmitInfoKHR::waitSemaphoreValuesCount
- * \param[in]  pWaitSemaphoreValues         VkD3D12FenceSubmitInfoKHR::pWaitSemaphoreValues
- * \param[in]  signalSemaphoreValuesCount   VkD3D12FenceSubmitInfoKHR::signalSemaphoreValuesCount
- * \param[in]  pSignalSemaphoreValues       VkD3D12FenceSubmitInfoKHR::pSignalSemaphoreValues
+ * \param[in]  waitSemaphoreValuesCount     The number of semaphore wait values specified in pWaitSemaphoreValues
+ * \param[in]  pWaitSemaphoreValues         A pointer to an array of waitSemaphoreValuesCount values for the corresponding semaphores in VkSubmitInfo::pWaitSemaphores to wait for
+ * \param[in]  signalSemaphoreValuesCount   The number of semaphore signal values specified in pSignalSemaphoreValues
+ * \param[in]  pSignalSemaphoreValues       A pointer to an array of signalSemaphoreValuesCount values for the corresponding semaphores in VkSubmitInfo::pSignalSemaphores to set when signaled
  *
  * \retval     None
  */
@@ -30,9 +30,9 @@ void cvkInitD3D12FenceSubmitInfo(VkD3D12FenceSubmitInfoKHR* pInfo, const void* p
  *
  * \param[out] pInfo         Receives the initialized VkExportFenceWin32HandleInfoKHR
  * \param[in]  pNext         Optional extension chain attached to VkExportFenceWin32HandleInfoKHR, or NULL
- * \param[in]  pAttributes   VkExportFenceWin32HandleInfoKHR::pAttributes
- * \param[in]  dwAccess      VkExportFenceWin32HandleInfoKHR::dwAccess
- * \param[in]  name          VkExportFenceWin32HandleInfoKHR::name
+ * \param[in]  pAttributes   A pointer to a Windows SECURITY_ATTRIBUTES structure specifying security attributes of the handle
+ * \param[in]  dwAccess      A DWORD specifying access rights of the handle
+ * \param[in]  name          A null-terminated UTF-16 string to associate with the underlying synchronization primitive referenced by NT handles exported from the created fence
  *
  * \retval     None
  */
@@ -44,9 +44,9 @@ void cvkInitExportFenceWin32HandleInfo(VkExportFenceWin32HandleInfoKHR* pInfo, c
  *
  * \param[out] pInfo         Receives the initialized VkExportMemoryWin32HandleInfoKHR
  * \param[in]  pNext         Optional extension chain attached to VkExportMemoryWin32HandleInfoKHR, or NULL
- * \param[in]  pAttributes   VkExportMemoryWin32HandleInfoKHR::pAttributes
- * \param[in]  dwAccess      VkExportMemoryWin32HandleInfoKHR::dwAccess
- * \param[in]  name          VkExportMemoryWin32HandleInfoKHR::name
+ * \param[in]  pAttributes   A pointer to a Windows SECURITY_ATTRIBUTES structure specifying security attributes of the handle
+ * \param[in]  dwAccess      A DWORD specifying access rights of the handle
+ * \param[in]  name          A null-terminated UTF-16 string to associate with the payload referenced by NT handles exported from the created memory
  *
  * \retval     None
  */
@@ -58,8 +58,8 @@ void cvkInitExportMemoryWin32HandleInfo(VkExportMemoryWin32HandleInfoKHR* pInfo,
  *
  * \param[out] pInfo         Receives the initialized VkExportMemoryWin32HandleInfoNV
  * \param[in]  pNext         Optional extension chain attached to VkExportMemoryWin32HandleInfoNV, or NULL
- * \param[in]  pAttributes   VkExportMemoryWin32HandleInfoNV::pAttributes
- * \param[in]  dwAccess      VkExportMemoryWin32HandleInfoNV::dwAccess
+ * \param[in]  pAttributes   A pointer to a Windows SECURITY_ATTRIBUTES structure specifying security attributes of the handle
+ * \param[in]  dwAccess      A DWORD specifying access rights of the handle
  *
  * \retval     None
  */
@@ -71,9 +71,9 @@ void cvkInitExportMemoryWin32HandleInfoNV(VkExportMemoryWin32HandleInfoNV* pInfo
  *
  * \param[out] pInfo         Receives the initialized VkExportSemaphoreWin32HandleInfoKHR
  * \param[in]  pNext         Optional extension chain attached to VkExportSemaphoreWin32HandleInfoKHR, or NULL
- * \param[in]  pAttributes   VkExportSemaphoreWin32HandleInfoKHR::pAttributes
- * \param[in]  dwAccess      VkExportSemaphoreWin32HandleInfoKHR::dwAccess
- * \param[in]  name          VkExportSemaphoreWin32HandleInfoKHR::name
+ * \param[in]  pAttributes   A pointer to a Windows SECURITY_ATTRIBUTES structure specifying security attributes of the handle
+ * \param[in]  dwAccess      A DWORD specifying access rights of the handle
+ * \param[in]  name          A null-terminated UTF-16 string to associate with the underlying synchronization primitive referenced by NT handles exported from the created semaphore
  *
  * \retval     None
  */
@@ -85,8 +85,8 @@ void cvkInitExportSemaphoreWin32HandleInfo(VkExportSemaphoreWin32HandleInfoKHR* 
  *
  * \param[out] pInfo        Receives the initialized VkFenceGetWin32HandleInfoKHR
  * \param[in]  pNext        Optional extension chain attached to VkFenceGetWin32HandleInfoKHR, or NULL
- * \param[in]  fence        VkFenceGetWin32HandleInfoKHR::fence
- * \param[in]  handleType   VkFenceGetWin32HandleInfoKHR::handleType
+ * \param[in]  fence        The fence from which state will be exported
+ * \param[in]  handleType   A VkExternalFenceHandleTypeFlagBits value specifying the type of handle requested
  *
  * \retval     None
  */
@@ -98,11 +98,11 @@ void cvkInitFenceGetWin32HandleInfo(VkFenceGetWin32HandleInfoKHR* pInfo, const v
  *
  * \param[out] pInfo        Receives the initialized VkImportFenceWin32HandleInfoKHR
  * \param[in]  pNext        Optional extension chain attached to VkImportFenceWin32HandleInfoKHR, or NULL
- * \param[in]  fence        VkImportFenceWin32HandleInfoKHR::fence
- * \param[in]  flags        VkImportFenceWin32HandleInfoKHR::flags
- * \param[in]  handleType   VkImportFenceWin32HandleInfoKHR::handleType
- * \param[in]  handle       VkImportFenceWin32HandleInfoKHR::handle
- * \param[in]  name         VkImportFenceWin32HandleInfoKHR::name
+ * \param[in]  fence        The fence into which the state will be imported
+ * \param[in]  flags        A bitmask of VkFenceImportFlagBits specifying additional parameters for the fence payload import operation
+ * \param[in]  handleType   A VkExternalFenceHandleTypeFlagBits value specifying the type of handle
+ * \param[in]  handle       NULL or the external handle to import
+ * \param[in]  name         NULL or a null-terminated UTF-16 string naming the underlying synchronization primitive to import
  *
  * \retval     None
  */
@@ -114,9 +114,9 @@ void cvkInitImportFenceWin32HandleInfo(VkImportFenceWin32HandleInfoKHR* pInfo, c
  *
  * \param[out] pInfo        Receives the initialized VkImportMemoryWin32HandleInfoKHR
  * \param[in]  pNext        Optional extension chain attached to VkImportMemoryWin32HandleInfoKHR, or NULL
- * \param[in]  handleType   VkImportMemoryWin32HandleInfoKHR::handleType
- * \param[in]  handle       VkImportMemoryWin32HandleInfoKHR::handle
- * \param[in]  name         VkImportMemoryWin32HandleInfoKHR::name
+ * \param[in]  handleType   A VkExternalMemoryHandleTypeFlagBits value specifying the type of handle or name
+ * \param[in]  handle       NULL or the external handle to import
+ * \param[in]  name         NULL or a null-terminated UTF-16 string naming the payload to import
  *
  * \retval     None
  */
@@ -128,8 +128,8 @@ void cvkInitImportMemoryWin32HandleInfo(VkImportMemoryWin32HandleInfoKHR* pInfo,
  *
  * \param[out] pInfo        Receives the initialized VkImportMemoryWin32HandleInfoNV
  * \param[in]  pNext        Optional extension chain attached to VkImportMemoryWin32HandleInfoNV, or NULL
- * \param[in]  handleType   VkImportMemoryWin32HandleInfoNV::handleType
- * \param[in]  handle       VkImportMemoryWin32HandleInfoNV::handle
+ * \param[in]  handleType   0 or a VkExternalMemoryHandleTypeFlagBitsNV value specifying the type of memory handle in handle
+ * \param[in]  handle       A Windows HANDLE referring to the memory
  *
  * \retval     None
  */
@@ -141,11 +141,11 @@ void cvkInitImportMemoryWin32HandleInfoNV(VkImportMemoryWin32HandleInfoNV* pInfo
  *
  * \param[out] pInfo        Receives the initialized VkImportSemaphoreWin32HandleInfoKHR
  * \param[in]  pNext        Optional extension chain attached to VkImportSemaphoreWin32HandleInfoKHR, or NULL
- * \param[in]  semaphore    VkImportSemaphoreWin32HandleInfoKHR::semaphore
- * \param[in]  flags        VkImportSemaphoreWin32HandleInfoKHR::flags
- * \param[in]  handleType   VkImportSemaphoreWin32HandleInfoKHR::handleType
- * \param[in]  handle       VkImportSemaphoreWin32HandleInfoKHR::handle
- * \param[in]  name         VkImportSemaphoreWin32HandleInfoKHR::name
+ * \param[in]  semaphore    The semaphore into which the payload will be imported
+ * \param[in]  flags        A bitmask of VkSemaphoreImportFlagBits specifying additional parameters for the semaphore payload import operation
+ * \param[in]  handleType   A VkExternalSemaphoreHandleTypeFlagBits value specifying the type of handle
+ * \param[in]  handle       NULL or the external handle to import
+ * \param[in]  name         NULL or a null-terminated UTF-16 string naming the underlying synchronization primitive to import
  *
  * \retval     None
  */
@@ -157,8 +157,8 @@ void cvkInitImportSemaphoreWin32HandleInfo(VkImportSemaphoreWin32HandleInfoKHR* 
  *
  * \param[out] pInfo        Receives the initialized VkMemoryGetWin32HandleInfoKHR
  * \param[in]  pNext        Optional extension chain attached to VkMemoryGetWin32HandleInfoKHR, or NULL
- * \param[in]  memory       VkMemoryGetWin32HandleInfoKHR::memory
- * \param[in]  handleType   VkMemoryGetWin32HandleInfoKHR::handleType
+ * \param[in]  memory       The memory object from which the handle will be exported
+ * \param[in]  handleType   A VkExternalMemoryHandleTypeFlagBits value specifying the type of handle requested
  *
  * \retval     None
  */
@@ -181,8 +181,8 @@ void cvkInitMemoryWin32HandleProperties(VkMemoryWin32HandlePropertiesKHR* pInfo,
  *
  * \param[out] pInfo        Receives the initialized VkSemaphoreGetWin32HandleInfoKHR
  * \param[in]  pNext        Optional extension chain attached to VkSemaphoreGetWin32HandleInfoKHR, or NULL
- * \param[in]  semaphore    VkSemaphoreGetWin32HandleInfoKHR::semaphore
- * \param[in]  handleType   VkSemaphoreGetWin32HandleInfoKHR::handleType
+ * \param[in]  semaphore    The semaphore from which state will be exported
+ * \param[in]  handleType   A VkExternalSemaphoreHandleTypeFlagBits value specifying the type of handle requested
  *
  * \retval     None
  */
@@ -205,7 +205,7 @@ void cvkInitSurfaceCapabilitiesFullScreenExclusive(VkSurfaceCapabilitiesFullScre
  *
  * \param[out] pInfo                 Receives the initialized VkSurfaceFullScreenExclusiveInfoEXT
  * \param[in]  pNext                 Optional extension chain attached to VkSurfaceFullScreenExclusiveInfoEXT, or NULL
- * \param[in]  fullScreenExclusive   VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
+ * \param[in]  fullScreenExclusive   A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior
  *
  * \retval     None
  */
@@ -217,7 +217,7 @@ void cvkInitSurfaceFullScreenExclusiveInfo(VkSurfaceFullScreenExclusiveInfoEXT* 
  *
  * \param[out] pInfo      Receives the initialized VkSurfaceFullScreenExclusiveWin32InfoEXT
  * \param[in]  pNext      Optional extension chain attached to VkSurfaceFullScreenExclusiveWin32InfoEXT, or NULL
- * \param[in]  hmonitor   VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
+ * \param[in]  hmonitor   The Win32 HMONITOR handle identifying the display to create the surface with
  *
  * \retval     None
  */
@@ -229,13 +229,13 @@ void cvkInitSurfaceFullScreenExclusiveWin32Info(VkSurfaceFullScreenExclusiveWin3
  *
  * \param[out] pInfo              Receives the initialized VkWin32KeyedMutexAcquireReleaseInfoKHR
  * \param[in]  pNext              Optional extension chain attached to VkWin32KeyedMutexAcquireReleaseInfoKHR, or NULL
- * \param[in]  acquireCount       VkWin32KeyedMutexAcquireReleaseInfoKHR::acquireCount
- * \param[in]  pAcquireSyncs      VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireSyncs
- * \param[in]  pAcquireKeys       VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireKeys
- * \param[in]  pAcquireTimeouts   VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireTimeouts
- * \param[in]  releaseCount       VkWin32KeyedMutexAcquireReleaseInfoKHR::releaseCount
- * \param[in]  pReleaseSyncs      VkWin32KeyedMutexAcquireReleaseInfoKHR::pReleaseSyncs
- * \param[in]  pReleaseKeys       VkWin32KeyedMutexAcquireReleaseInfoKHR::pReleaseKeys
+ * \param[in]  acquireCount       The number of entries in the pAcquireSyncs, pAcquireKeys, and pAcquireTimeouts arrays
+ * \param[in]  pAcquireSyncs      A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources
+ * \param[in]  pAcquireKeys       A pointer to an array of mutex key values to wait for prior to beginning the submitted work
+ * \param[in]  pAcquireTimeouts   A pointer to an array of timeout values, in millisecond units, for each acquire specified in pAcquireKeys
+ * \param[in]  releaseCount       The number of entries in the pReleaseSyncs and pReleaseKeys arrays
+ * \param[in]  pReleaseSyncs      A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources
+ * \param[in]  pReleaseKeys       A pointer to an array of mutex key values to set when the submitted work has completed
  *
  * \retval     None
  */
@@ -247,13 +247,13 @@ void cvkInitWin32KeyedMutexAcquireReleaseInfo(VkWin32KeyedMutexAcquireReleaseInf
  *
  * \param[out] pInfo                         Receives the initialized VkWin32KeyedMutexAcquireReleaseInfoNV
  * \param[in]  pNext                         Optional extension chain attached to VkWin32KeyedMutexAcquireReleaseInfoNV, or NULL
- * \param[in]  acquireCount                  VkWin32KeyedMutexAcquireReleaseInfoNV::acquireCount
- * \param[in]  pAcquireSyncs                 VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireSyncs
- * \param[in]  pAcquireKeys                  VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireKeys
- * \param[in]  pAcquireTimeoutMilliseconds   VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireTimeoutMilliseconds
- * \param[in]  releaseCount                  VkWin32KeyedMutexAcquireReleaseInfoNV::releaseCount
- * \param[in]  pReleaseSyncs                 VkWin32KeyedMutexAcquireReleaseInfoNV::pReleaseSyncs
- * \param[in]  pReleaseKeys                  VkWin32KeyedMutexAcquireReleaseInfoNV::pReleaseKeys
+ * \param[in]  acquireCount                  The number of entries in the pAcquireSyncs, pAcquireKeys, and pAcquireTimeoutMilliseconds arrays
+ * \param[in]  pAcquireSyncs                 A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources
+ * \param[in]  pAcquireKeys                  A pointer to an array of mutex key values to wait for prior to beginning the submitted work
+ * \param[in]  pAcquireTimeoutMilliseconds   A pointer to an array of timeout values, in millisecond units, for each acquire specified in pAcquireKeys
+ * \param[in]  releaseCount                  The number of entries in the pReleaseSyncs and pReleaseKeys arrays
+ * \param[in]  pReleaseSyncs                 A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources
+ * \param[in]  pReleaseKeys                  A pointer to an array of mutex key values to set when the submitted work has completed
  *
  * \retval     None
  */
@@ -265,9 +265,9 @@ void cvkInitWin32KeyedMutexAcquireReleaseInfoNV(VkWin32KeyedMutexAcquireReleaseI
  *
  * \param[out] pInfo       Receives the initialized VkWin32SurfaceCreateInfoKHR
  * \param[in]  pNext       Optional extension chain attached to VkWin32SurfaceCreateInfoKHR, or NULL
- * \param[in]  flags       VkWin32SurfaceCreateInfoKHR::flags
- * \param[in]  hinstance   VkWin32SurfaceCreateInfoKHR::hinstance
- * \param[in]  hwnd        VkWin32SurfaceCreateInfoKHR::hwnd
+ * \param[in]  flags       Reserved for future use; must be 0
+ * \param[in]  hinstance   The Win32 HINSTANCE for the window to associate the surface with
+ * \param[in]  hwnd        The Win32 HWND for the window to associate the surface with
  *
  * \retval     None
  */
@@ -277,8 +277,8 @@ void cvkInitWin32SurfaceCreateInfo(VkWin32SurfaceCreateInfoKHR* pInfo, const voi
 /**
  * \brief Acquires full screen exclusive mode.
  *
- * \param[in] device      The device associated with swapchain.
- * \param[in] swapchain   The swapchain to acquire exclusive full-screen access for.
+ * \param[in] device      The device associated with swapchain
+ * \param[in] swapchain   The swapchain to acquire exclusive full-screen access for
  *
  * \retval    VK_SUCCESS                  Command successfully completed.
  * \retval    VK_ERROR_SURFACE_LOST_KHR   The surface is no longer available.
@@ -289,8 +289,8 @@ VkResult cvkAcquireFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapc
 /**
  * \brief Acquires winrt display.
  *
- * \param[in] physicalDevice   The physical device the display is on.
- * \param[in] display          The display the caller wishes to control in Vulkan.
+ * \param[in] physicalDevice   The physical device the display is on
+ * \param[in] display          The display the caller wishes to control in Vulkan
  *
  * \retval    None
  */
@@ -300,13 +300,13 @@ void cvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR disp
 /**
  * \brief Creates a win 32 surface.
  *
- * \param[in]  instance     The instance to associate the surface with.
+ * \param[in]  instance     The instance to associate the surface with
  * \param[in]  pNext        Optional extension chain attached to VkWin32SurfaceCreateInfoKHR, or NULL
- * \param[in]  flags        Reserved for future use; must be 0.
- * \param[in]  hinstance    The Win32 HINSTANCE for the window to associate the surface with.
- * \param[in]  hwnd         The Win32 HWND for the window to associate the surface with.
+ * \param[in]  flags        Reserved for future use; must be 0
+ * \param[in]  hinstance    The Win32 HINSTANCE for the window to associate the surface with
+ * \param[in]  hwnd         The Win32 HWND for the window to associate the surface with
  * \param[in]  pAllocator   Optional allocation callbacks, or NULL
- * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned.
+ * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned
  *
  * \retval     None
  */
@@ -316,10 +316,10 @@ void cvkCreateWin32Surface(VkInstance instance, const void* pNext, VkWin32Surfac
 /**
  * \brief Retrieves device group surface present modes 2.
  *
- * \param[in]  device    The logical device.
+ * \param[in]  device    The logical device
  * \param[in]  pNext     Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  surface   The surface that will be associated with the swapchain.
- * \param[out] pModes    A pointer to a VkDeviceGroupPresentModeFlagsKHR in which the supported device group present modes for the surface are returned.
+ * \param[in]  surface   The surface that will be associated with the swapchain
+ * \param[out] pModes    A pointer to a VkDeviceGroupPresentModeFlagsKHR in which the supported device group present modes for the surface are returned
  *
  * \retval     VK_SUCCESS                  Command successfully completed.
  * \retval     VK_ERROR_SURFACE_LOST_KHR   The surface is no longer available.
@@ -330,11 +330,11 @@ VkResult cvkGetDeviceGroupSurfacePresentModes2(VkDevice device, const void* pNex
 /**
  * \brief Retrieves fence win 32 handle.
  *
- * \param[in]  device       The logical device that created the fence being exported.
+ * \param[in]  device       The logical device that created the fence being exported
  * \param[in]  pNext        Optional extension chain attached to VkFenceGetWin32HandleInfoKHR, or NULL
- * \param[in]  fence        The fence from which state will be exported.
- * \param[in]  handleType   A VkExternalFenceHandleTypeFlagBits value specifying the type of handle requested.
- * \param[out] pHandle      Will return the Windows handle representing the fence state.
+ * \param[in]  fence        The fence from which state will be exported
+ * \param[in]  handleType   A VkExternalFenceHandleTypeFlagBits value specifying the type of handle requested
+ * \param[out] pHandle      Will return the Windows handle representing the fence state
  *
  * \retval     None
  */
@@ -344,11 +344,11 @@ void cvkGetFenceWin32Handle(VkDevice device, const void* pNext, VkFence fence, V
 /**
  * \brief Retrieves memory win 32 handle.
  *
- * \param[in]  device       The logical device that created the device memory being exported.
+ * \param[in]  device       The logical device that created the device memory being exported
  * \param[in]  pNext        Optional extension chain attached to VkMemoryGetWin32HandleInfoKHR, or NULL
- * \param[in]  memory       The memory object from which the handle will be exported.
- * \param[in]  handleType   A VkExternalMemoryHandleTypeFlagBits value specifying the type of handle requested.
- * \param[out] pHandle      Will return the Windows handle representing the payload of the device memory object.
+ * \param[in]  memory       The memory object from which the handle will be exported
+ * \param[in]  handleType   A VkExternalMemoryHandleTypeFlagBits value specifying the type of handle requested
+ * \param[out] pHandle      Will return the Windows handle representing the payload of the device memory object
  *
  * \retval     None
  */
@@ -358,10 +358,10 @@ void cvkGetMemoryWin32Handle(VkDevice device, const void* pNext, VkDeviceMemory 
 /**
  * \brief Retrieves memory win 32 handle.
  *
- * \param[in]  device       The logical device that owns the memory.
- * \param[in]  memory       The VkDeviceMemory object.
- * \param[in]  handleType   A bitmask of VkExternalMemoryHandleTypeFlagBitsNV containing a single bit specifying the type of handle requested.
- * \param[out] pHandle      A pointer to a Windows HANDLE in which the handle is returned.
+ * \param[in]  device       The logical device that owns the memory
+ * \param[in]  memory       The VkDeviceMemory object
+ * \param[in]  handleType   A bitmask of VkExternalMemoryHandleTypeFlagBitsNV containing a single bit specifying the type of handle requested
+ * \param[out] pHandle      A pointer to a Windows HANDLE in which the handle is returned
  *
  * \retval     None
  */
@@ -371,11 +371,11 @@ void cvkGetMemoryWin32HandleNV(VkDevice device, VkDeviceMemory memory, VkExterna
 /**
  * \brief Retrieves memory win 32 handle properties.
  *
- * \param[in]  device                         The logical device that will be importing handle.
- * \param[in]  handleType                     A VkExternalMemoryHandleTypeFlagBits value specifying the type of the handle handle.
- * \param[in]  handle                         The handle which will be imported.
+ * \param[in]  device                         The logical device that will be importing handle
+ * \param[in]  handleType                     A VkExternalMemoryHandleTypeFlagBits value specifying the type of the handle handle
+ * \param[in]  handle                         The handle which will be imported
  * \param[in]  pNext                          Optional output extension chain attached to VkMemoryWin32HandlePropertiesKHR, or NULL
- * \param[out] pMemoryWin32HandleProperties   A pointer to a VkMemoryWin32HandlePropertiesKHR structure in which properties of handle are returned.
+ * \param[out] pMemoryWin32HandleProperties   A pointer to a VkMemoryWin32HandlePropertiesKHR structure in which properties of handle are returned
  *
  * \retval     None
  */
@@ -385,9 +385,9 @@ void cvkGetMemoryWin32HandleProperties(VkDevice device, VkExternalMemoryHandleTy
 /**
  * \brief Retrieves physical device surface present modes 2.
  *
- * \param[in]  physicalDevice      The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR.
+ * \param[in]  physicalDevice      The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
  * \param[in]  pNext               Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  surface             The surface that will be associated with the swapchain.
+ * \param[in]  surface             The surface that will be associated with the swapchain
  * \param[out] pPresentModeCount   Receives the number of entries written
  * \param[out] pPresentModes       Receives up to CVK_MAX_PRESENT_MODES entries
  *
@@ -399,8 +399,8 @@ void cvkGetPhysicalDeviceSurfacePresentModes2(VkPhysicalDevice physicalDevice, c
 /**
  * \brief Retrieves physical device win 32 presentation support.
  *
- * \param[in] physicalDevice     The physical device.
- * \param[in] queueFamilyIndex   The queue family index.
+ * \param[in] physicalDevice     The physical device
+ * \param[in] queueFamilyIndex   The queue family index
  *
  * \retval    VK_TRUE    The queried support is available.
  * \retval    VK_FALSE   The queried support is unavailable.
@@ -411,11 +411,11 @@ VkBool32 cvkGetPhysicalDeviceWin32PresentationSupport(VkPhysicalDevice physicalD
 /**
  * \brief Retrieves semaphore win 32 handle.
  *
- * \param[in]  device       The logical device that created the semaphore being exported.
+ * \param[in]  device       The logical device that created the semaphore being exported
  * \param[in]  pNext        Optional extension chain attached to VkSemaphoreGetWin32HandleInfoKHR, or NULL
- * \param[in]  semaphore    The semaphore from which state will be exported.
- * \param[in]  handleType   A VkExternalSemaphoreHandleTypeFlagBits value specifying the type of handle requested.
- * \param[out] pHandle      Will return the Windows handle representing the semaphore state.
+ * \param[in]  semaphore    The semaphore from which state will be exported
+ * \param[in]  handleType   A VkExternalSemaphoreHandleTypeFlagBits value specifying the type of handle requested
+ * \param[out] pHandle      Will return the Windows handle representing the semaphore state
  *
  * \retval     None
  */
@@ -425,9 +425,9 @@ void cvkGetSemaphoreWin32Handle(VkDevice device, const void* pNext, VkSemaphore 
 /**
  * \brief Retrieves winrt display.
  *
- * \param[in]  physicalDevice     The physical device on which to query the display handle.
- * \param[in]  deviceRelativeId   The value of the https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displaytarget.adapterrelativeid["AdapterRelativeId"] property of a https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displaytarget["DisplayTarget"] that is enumerated by a https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displayadapter["DisplayAdapter"] with an https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displayadapter.id["Id"] property matching the deviceLUID property of a VkPhysicalDeviceIDProperties for physicalDevice.
- * \param[out] pDisplay           A pointer to a VkDisplayKHR handle where the display is returned.
+ * \param[in]  physicalDevice     The physical device on which to query the display handle
+ * \param[in]  deviceRelativeId   The value of the https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displaytarget.adapterrelativeid["AdapterRelativeId"] property of a https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displaytarget["DisplayTarget"] that is enumerated by a https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displayadapter["DisplayAdapter"] with an https://docs.microsoft.com/en-us/uwp/api/windows.devices.display.core.displayadapter.id["Id"] property matching the deviceLUID property of a VkPhysicalDeviceIDProperties for physicalDevice
+ * \param[out] pDisplay           A pointer to a VkDisplayKHR handle where the display is returned
  *
  * \retval     None
  */
@@ -437,13 +437,13 @@ void cvkGetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelati
 /**
  * \brief Imports fence win 32 handle.
  *
- * \param[in] device       The logical device that created the fence.
+ * \param[in] device       The logical device that created the fence
  * \param[in] pNext        Optional extension chain attached to VkImportFenceWin32HandleInfoKHR, or NULL
- * \param[in] fence        The fence into which the state will be imported.
- * \param[in] flags        A bitmask of VkFenceImportFlagBits specifying additional parameters for the fence payload import operation.
- * \param[in] handleType   A VkExternalFenceHandleTypeFlagBits value specifying the type of handle.
- * \param[in] handle       NULL or the external handle to import.
- * \param[in] name         NULL or a null-terminated UTF-16 string naming the underlying synchronization primitive to import.
+ * \param[in] fence        The fence into which the state will be imported
+ * \param[in] flags        A bitmask of VkFenceImportFlagBits specifying additional parameters for the fence payload import operation
+ * \param[in] handleType   A VkExternalFenceHandleTypeFlagBits value specifying the type of handle
+ * \param[in] handle       NULL or the external handle to import
+ * \param[in] name         NULL or a null-terminated UTF-16 string naming the underlying synchronization primitive to import
  *
  * \retval    None
  */
@@ -453,13 +453,13 @@ void cvkImportFenceWin32Handle(VkDevice device, const void* pNext, VkFence fence
 /**
  * \brief Imports semaphore win 32 handle.
  *
- * \param[in] device       The logical device that created the semaphore.
+ * \param[in] device       The logical device that created the semaphore
  * \param[in] pNext        Optional extension chain attached to VkImportSemaphoreWin32HandleInfoKHR, or NULL
- * \param[in] semaphore    The semaphore into which the payload will be imported.
- * \param[in] flags        A bitmask of VkSemaphoreImportFlagBits specifying additional parameters for the semaphore payload import operation.
- * \param[in] handleType   A VkExternalSemaphoreHandleTypeFlagBits value specifying the type of handle.
- * \param[in] handle       NULL or the external handle to import.
- * \param[in] name         NULL or a null-terminated UTF-16 string naming the underlying synchronization primitive to import.
+ * \param[in] semaphore    The semaphore into which the payload will be imported
+ * \param[in] flags        A bitmask of VkSemaphoreImportFlagBits specifying additional parameters for the semaphore payload import operation
+ * \param[in] handleType   A VkExternalSemaphoreHandleTypeFlagBits value specifying the type of handle
+ * \param[in] handle       NULL or the external handle to import
+ * \param[in] name         NULL or a null-terminated UTF-16 string naming the underlying synchronization primitive to import
  *
  * \retval    None
  */
@@ -469,8 +469,8 @@ void cvkImportSemaphoreWin32Handle(VkDevice device, const void* pNext, VkSemapho
 /**
  * \brief Releases full screen exclusive mode.
  *
- * \param[in] device      The device associated with swapchain.
- * \param[in] swapchain   The swapchain to release exclusive full-screen access from.
+ * \param[in] device      The device associated with swapchain
+ * \param[in] swapchain   The swapchain to release exclusive full-screen access from
  *
  * \retval    VK_SUCCESS                  Command successfully completed.
  * \retval    VK_ERROR_SURFACE_LOST_KHR   The surface is no longer available.
@@ -481,15 +481,15 @@ VkResult cvkReleaseFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapc
 /**
  * \brief Allocates memory with VkExportMemoryWin32HandleInfoKHR chained.
  *
- * \param[in]  device            The logical device that owns the memory.
+ * \param[in]  device            The logical device that owns the memory
  * \param[in]  pNext             Optional extension chain attached to VkMemoryAllocateInfo, or NULL
- * \param[in]  pAttributes       A pointer to a Windows SECURITY_ATTRIBUTES structure specifying security attributes of the handle.
- * \param[in]  dwAccess          A DWORD specifying access rights of the handle.
- * \param[in]  name              A null-terminated UTF-16 string to associate with the payload referenced by NT handles exported from the created memory.
- * \param[in]  allocationSize    The size of the allocation in bytes.
- * \param[in]  memoryTypeIndex   An index identifying a memory type from the memoryTypes array of the VkPhysicalDeviceMemoryProperties structure.
+ * \param[in]  pAttributes       A pointer to a Windows SECURITY_ATTRIBUTES structure specifying security attributes of the handle
+ * \param[in]  dwAccess          A DWORD specifying access rights of the handle
+ * \param[in]  name              A null-terminated UTF-16 string to associate with the payload referenced by NT handles exported from the created memory
+ * \param[in]  allocationSize    The size of the allocation in bytes
+ * \param[in]  memoryTypeIndex   An index identifying a memory type from the memoryTypes array of the VkPhysicalDeviceMemoryProperties structure
  * \param[in]  pAllocator        Optional allocation callbacks, or NULL
- * \param[out] pMemory           A pointer to a VkDeviceMemory handle in which information about the allocated memory is returned.
+ * \param[out] pMemory           A pointer to a VkDeviceMemory handle in which information about the allocated memory is returned
  *
  * \retval     None
  */
@@ -499,14 +499,14 @@ void cvkAllocateExportMemoryWin32Handle(VkDevice device, const void* pNext, cons
 /**
  * \brief Allocates memory with VkExportMemoryWin32HandleInfoNV chained.
  *
- * \param[in]  device            The logical device that owns the memory.
+ * \param[in]  device            The logical device that owns the memory
  * \param[in]  pNext             Optional extension chain attached to VkMemoryAllocateInfo, or NULL
- * \param[in]  pAttributes       A pointer to a Windows SECURITY_ATTRIBUTES structure specifying security attributes of the handle.
- * \param[in]  dwAccess          A DWORD specifying access rights of the handle.
- * \param[in]  allocationSize    The size of the allocation in bytes.
- * \param[in]  memoryTypeIndex   An index identifying a memory type from the memoryTypes array of the VkPhysicalDeviceMemoryProperties structure.
+ * \param[in]  pAttributes       A pointer to a Windows SECURITY_ATTRIBUTES structure specifying security attributes of the handle
+ * \param[in]  dwAccess          A DWORD specifying access rights of the handle
+ * \param[in]  allocationSize    The size of the allocation in bytes
+ * \param[in]  memoryTypeIndex   An index identifying a memory type from the memoryTypes array of the VkPhysicalDeviceMemoryProperties structure
  * \param[in]  pAllocator        Optional allocation callbacks, or NULL
- * \param[out] pMemory           A pointer to a VkDeviceMemory handle in which information about the allocated memory is returned.
+ * \param[out] pMemory           A pointer to a VkDeviceMemory handle in which information about the allocated memory is returned
  *
  * \retval     None
  */
@@ -516,15 +516,15 @@ void cvkAllocateExportMemoryWin32HandleNV(VkDevice device, const void* pNext, co
 /**
  * \brief Allocates memory with VkImportMemoryWin32HandleInfoKHR chained.
  *
- * \param[in]  device            The logical device that owns the memory.
+ * \param[in]  device            The logical device that owns the memory
  * \param[in]  pNext             Optional extension chain attached to VkMemoryAllocateInfo, or NULL
- * \param[in]  handleType        A VkExternalMemoryHandleTypeFlagBits value specifying the type of handle or name.
- * \param[in]  handle            NULL or the external handle to import.
- * \param[in]  name              NULL or a null-terminated UTF-16 string naming the payload to import.
- * \param[in]  allocationSize    The size of the allocation in bytes.
- * \param[in]  memoryTypeIndex   An index identifying a memory type from the memoryTypes array of the VkPhysicalDeviceMemoryProperties structure.
+ * \param[in]  handleType        A VkExternalMemoryHandleTypeFlagBits value specifying the type of handle or name
+ * \param[in]  handle            NULL or the external handle to import
+ * \param[in]  name              NULL or a null-terminated UTF-16 string naming the payload to import
+ * \param[in]  allocationSize    The size of the allocation in bytes
+ * \param[in]  memoryTypeIndex   An index identifying a memory type from the memoryTypes array of the VkPhysicalDeviceMemoryProperties structure
  * \param[in]  pAllocator        Optional allocation callbacks, or NULL
- * \param[out] pMemory           A pointer to a VkDeviceMemory handle in which information about the allocated memory is returned.
+ * \param[out] pMemory           A pointer to a VkDeviceMemory handle in which information about the allocated memory is returned
  *
  * \retval     None
  */
@@ -534,14 +534,14 @@ void cvkAllocateImportMemoryWin32Handle(VkDevice device, const void* pNext, VkEx
 /**
  * \brief Allocates memory with VkImportMemoryWin32HandleInfoNV chained.
  *
- * \param[in]  device            The logical device that owns the memory.
+ * \param[in]  device            The logical device that owns the memory
  * \param[in]  pNext             Optional extension chain attached to VkMemoryAllocateInfo, or NULL
- * \param[in]  handleType        0 or a VkExternalMemoryHandleTypeFlagBitsNV value specifying the type of memory handle in handle.
- * \param[in]  handle            A Windows HANDLE referring to the memory.
- * \param[in]  allocationSize    The size of the allocation in bytes.
- * \param[in]  memoryTypeIndex   An index identifying a memory type from the memoryTypes array of the VkPhysicalDeviceMemoryProperties structure.
+ * \param[in]  handleType        0 or a VkExternalMemoryHandleTypeFlagBitsNV value specifying the type of memory handle in handle
+ * \param[in]  handle            A Windows HANDLE referring to the memory
+ * \param[in]  allocationSize    The size of the allocation in bytes
+ * \param[in]  memoryTypeIndex   An index identifying a memory type from the memoryTypes array of the VkPhysicalDeviceMemoryProperties structure
  * \param[in]  pAllocator        Optional allocation callbacks, or NULL
- * \param[out] pMemory           A pointer to a VkDeviceMemory handle in which information about the allocated memory is returned.
+ * \param[out] pMemory           A pointer to a VkDeviceMemory handle in which information about the allocated memory is returned
  *
  * \retval     None
  */
@@ -551,14 +551,14 @@ void cvkAllocateImportMemoryWin32HandleNV(VkDevice device, const void* pNext, Vk
 /**
  * \brief Creates a fence with VkExportFenceWin32HandleInfoKHR chained.
  *
- * \param[in]  device        The logical device that creates the fence.
+ * \param[in]  device        The logical device that creates the fence
  * \param[in]  pNext         Optional extension chain attached to VkFenceCreateInfo, or NULL
- * \param[in]  pAttributes   A pointer to a Windows SECURITY_ATTRIBUTES structure specifying security attributes of the handle.
- * \param[in]  dwAccess      A DWORD specifying access rights of the handle.
- * \param[in]  name          A null-terminated UTF-16 string to associate with the underlying synchronization primitive referenced by NT handles exported from the created fence.
- * \param[in]  flags         A bitmask of VkFenceCreateFlagBits specifying the initial state and behavior of the fence.
+ * \param[in]  pAttributes   A pointer to a Windows SECURITY_ATTRIBUTES structure specifying security attributes of the handle
+ * \param[in]  dwAccess      A DWORD specifying access rights of the handle
+ * \param[in]  name          A null-terminated UTF-16 string to associate with the underlying synchronization primitive referenced by NT handles exported from the created fence
+ * \param[in]  flags         A bitmask of VkFenceCreateFlagBits specifying the initial state and behavior of the fence
  * \param[in]  pAllocator    Optional allocation callbacks, or NULL
- * \param[out] pFence        A pointer to a handle in which the resulting fence object is returned.
+ * \param[out] pFence        A pointer to a handle in which the resulting fence object is returned
  *
  * \retval     None
  */
@@ -568,14 +568,14 @@ void cvkCreateExportFenceWin32Handle(VkDevice device, const void* pNext, const S
 /**
  * \brief Creates a semaphore with VkExportSemaphoreWin32HandleInfoKHR chained.
  *
- * \param[in]  device        The logical device that creates the semaphore.
+ * \param[in]  device        The logical device that creates the semaphore
  * \param[in]  pNext         Optional extension chain attached to VkSemaphoreCreateInfo, or NULL
- * \param[in]  pAttributes   A pointer to a Windows SECURITY_ATTRIBUTES structure specifying security attributes of the handle.
- * \param[in]  dwAccess      A DWORD specifying access rights of the handle.
- * \param[in]  name          A null-terminated UTF-16 string to associate with the underlying synchronization primitive referenced by NT handles exported from the created semaphore.
- * \param[in]  flags         Reserved for future use; must be 0.
+ * \param[in]  pAttributes   A pointer to a Windows SECURITY_ATTRIBUTES structure specifying security attributes of the handle
+ * \param[in]  dwAccess      A DWORD specifying access rights of the handle
+ * \param[in]  name          A null-terminated UTF-16 string to associate with the underlying synchronization primitive referenced by NT handles exported from the created semaphore
+ * \param[in]  flags         Reserved for future use; must be 0
  * \param[in]  pAllocator    Optional allocation callbacks, or NULL
- * \param[out] pSemaphore    A pointer to a handle in which the resulting semaphore object is returned.
+ * \param[out] pSemaphore    A pointer to a handle in which the resulting semaphore object is returned
  *
  * \retval     None
  */
@@ -585,27 +585,27 @@ void cvkCreateExportSemaphoreWin32Handle(VkDevice device, const void* pNext, con
 /**
  * \brief Creates a swapchain with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
- * \param[in]  device                  The device to create the swapchain for.
+ * \param[in]  device                  The device to create the swapchain for
  * \param[out] pNext                   Optional extension chain attached to VkSwapchainCreateInfoKHR, or NULL
- * \param[in]  fullScreenExclusive     A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior.
- * \param[in]  flags                   A bitmask of VkSwapchainCreateFlagBitsKHR indicating parameters of the swapchain creation.
- * \param[in]  surface                 The surface onto which the swapchain will present images.
- * \param[in]  minImageCount           The minimum number of presentable images that the application needs.
- * \param[in]  imageFormat             A VkFormat value specifying the format the swapchain image(s) will be created with.
- * \param[in]  imageColorSpace         A VkColorSpaceKHR value specifying the way the swapchain interprets image data.
- * \param[in]  imageExtent             The size (in pixels) of the swapchain image(s).
- * \param[in]  imageArrayLayers        The number of views in a multiview/stereo surface.
- * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images.
- * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain.
- * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT.
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT.
- * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation.
- * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems.
- * \param[in]  presentMode             The presentation mode the swapchain will use.
- * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible.
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4.
+ * \param[in]  fullScreenExclusive     A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior
+ * \param[in]  flags                   A bitmask of VkSwapchainCreateFlagBitsKHR indicating parameters of the swapchain creation
+ * \param[in]  surface                 The surface onto which the swapchain will present images
+ * \param[in]  minImageCount           The minimum number of presentable images that the application needs
+ * \param[in]  imageFormat             A VkFormat value specifying the format the swapchain image(s) will be created with
+ * \param[in]  imageColorSpace         A VkColorSpaceKHR value specifying the way the swapchain interprets image data
+ * \param[in]  imageExtent             The size (in pixels) of the swapchain image(s)
+ * \param[in]  imageArrayLayers        The number of views in a multiview/stereo surface
+ * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
+ * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
+ * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
+ * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
+ * \param[in]  presentMode             The presentation mode the swapchain will use
+ * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
+ * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
- * \param[out] pSwapchain              A pointer to a VkSwapchainKHR handle in which the created swapchain object will be returned.
+ * \param[out] pSwapchain              A pointer to a VkSwapchainKHR handle in which the created swapchain object will be returned
  *
  * \retval     VK_SUCCESS   Command successfully completed.
  */
@@ -615,27 +615,27 @@ VkResult cvkCreateSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice device, v
 /**
  * \brief Creates a swapchain with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
- * \param[in]  device                  The device to create the swapchain for.
+ * \param[in]  device                  The device to create the swapchain for
  * \param[in]  pNext                   Optional extension chain attached to VkSwapchainCreateInfoKHR, or NULL
- * \param[in]  hmonitor                The Win32 HMONITOR handle identifying the display to create the surface with.
- * \param[in]  flags                   A bitmask of VkSwapchainCreateFlagBitsKHR indicating parameters of the swapchain creation.
- * \param[in]  surface                 The surface onto which the swapchain will present images.
- * \param[in]  minImageCount           The minimum number of presentable images that the application needs.
- * \param[in]  imageFormat             A VkFormat value specifying the format the swapchain image(s) will be created with.
- * \param[in]  imageColorSpace         A VkColorSpaceKHR value specifying the way the swapchain interprets image data.
- * \param[in]  imageExtent             The size (in pixels) of the swapchain image(s).
- * \param[in]  imageArrayLayers        The number of views in a multiview/stereo surface.
- * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images.
- * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain.
- * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT.
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT.
- * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation.
- * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems.
- * \param[in]  presentMode             The presentation mode the swapchain will use.
- * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible.
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4.
+ * \param[in]  hmonitor                The Win32 HMONITOR handle identifying the display to create the surface with
+ * \param[in]  flags                   A bitmask of VkSwapchainCreateFlagBitsKHR indicating parameters of the swapchain creation
+ * \param[in]  surface                 The surface onto which the swapchain will present images
+ * \param[in]  minImageCount           The minimum number of presentable images that the application needs
+ * \param[in]  imageFormat             A VkFormat value specifying the format the swapchain image(s) will be created with
+ * \param[in]  imageColorSpace         A VkColorSpaceKHR value specifying the way the swapchain interprets image data
+ * \param[in]  imageExtent             The size (in pixels) of the swapchain image(s)
+ * \param[in]  imageArrayLayers        The number of views in a multiview/stereo surface
+ * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
+ * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
+ * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
+ * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
+ * \param[in]  presentMode             The presentation mode the swapchain will use
+ * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
+ * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
- * \param[out] pSwapchain              A pointer to a VkSwapchainKHR handle in which the created swapchain object will be returned.
+ * \param[out] pSwapchain              A pointer to a VkSwapchainKHR handle in which the created swapchain object will be returned
  *
  * \retval     VK_SUCCESS   Command successfully completed.
  */
@@ -645,11 +645,11 @@ VkResult cvkCreateSwapchainWithSurfaceFullScreenExclusiveWin32Info(VkDevice devi
 /**
  * \brief Retrieves device group surface present modes 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
- * \param[in]  device                The logical device.
+ * \param[in]  device                The logical device
  * \param[out] pNext                 Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  fullScreenExclusive   A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior.
- * \param[in]  surface               The surface that will be associated with the swapchain.
- * \param[out] pModes                A pointer to a VkDeviceGroupPresentModeFlagsKHR in which the supported device group present modes for the surface are returned.
+ * \param[in]  fullScreenExclusive   A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior
+ * \param[in]  surface               The surface that will be associated with the swapchain
+ * \param[out] pModes                A pointer to a VkDeviceGroupPresentModeFlagsKHR in which the supported device group present modes for the surface are returned
  *
  * \retval     VK_SUCCESS   Command successfully completed.
  */
@@ -659,11 +659,11 @@ VkResult cvkGetDeviceGroupSurfaceFullScreenExclusivePresentModes(VkDevice device
 /**
  * \brief Retrieves device group surface present modes 2 with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
- * \param[in]  device     The logical device.
+ * \param[in]  device     The logical device
  * \param[in]  pNext      Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  hmonitor   The Win32 HMONITOR handle identifying the display to create the surface with.
- * \param[in]  surface    The surface that will be associated with the swapchain.
- * \param[out] pModes     A pointer to a VkDeviceGroupPresentModeFlagsKHR in which the supported device group present modes for the surface are returned.
+ * \param[in]  hmonitor   The Win32 HMONITOR handle identifying the display to create the surface with
+ * \param[in]  surface    The surface that will be associated with the swapchain
+ * \param[out] pModes     A pointer to a VkDeviceGroupPresentModeFlagsKHR in which the supported device group present modes for the surface are returned
  *
  * \retval     VK_SUCCESS   Command successfully completed.
  */
@@ -673,11 +673,11 @@ VkResult cvkGetDeviceGroupSurfaceFullScreenExclusiveWin32PresentModes(VkDevice d
 /**
  * \brief Retrieves device group surface present modes 2 with VkSurfacePresentModeKHR chained.
  *
- * \param[in]  device        The logical device.
+ * \param[in]  device        The logical device
  * \param[out] pNext         Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  presentMode   The presentation mode the swapchain will use.
- * \param[in]  surface       The surface that will be associated with the swapchain.
- * \param[out] pModes        A pointer to a VkDeviceGroupPresentModeFlagsKHR in which the supported device group present modes for the surface are returned.
+ * \param[in]  presentMode   The presentation mode the swapchain will use
+ * \param[in]  surface       The surface that will be associated with the swapchain
+ * \param[out] pModes        A pointer to a VkDeviceGroupPresentModeFlagsKHR in which the supported device group present modes for the surface are returned
  *
  * \retval     VK_SUCCESS   Command successfully completed.
  */
@@ -687,12 +687,12 @@ VkResult cvkGetDeviceGroupSurfacePresentModePresentModes(VkDevice device, void* 
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
- * \param[in]  physicalDevice             The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR.
+ * \param[in]  physicalDevice             The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
  * \param[out] pSurfaceInfoNext           Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  fullScreenExclusive        A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior.
- * \param[in]  surface                    The surface that will be associated with the swapchain.
+ * \param[in]  fullScreenExclusive        A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior
+ * \param[in]  surface                    The surface that will be associated with the swapchain
  * \param[out] pSurfaceCapabilitiesNext   Optional output extension chain attached to VkSurfaceCapabilities2KHR, or NULL
- * \param[out] pSurfaceCapabilities       A pointer to a VkSurfaceCapabilities2KHR structure in which the capabilities are returned.
+ * \param[out] pSurfaceCapabilities       A pointer to a VkSurfaceCapabilities2KHR structure in which the capabilities are returned
  *
  * \retval     VK_SUCCESS   Command successfully completed.
  */
@@ -702,12 +702,12 @@ VkResult cvkGetPhysicalDeviceSurfaceFullScreenExclusiveCapabilities(VkPhysicalDe
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
- * \param[in]  physicalDevice             The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR.
+ * \param[in]  physicalDevice             The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
  * \param[in]  pSurfaceInfoNext           Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  hmonitor                   The Win32 HMONITOR handle identifying the display to create the surface with.
- * \param[in]  surface                    The surface that will be associated with the swapchain.
+ * \param[in]  hmonitor                   The Win32 HMONITOR handle identifying the display to create the surface with
+ * \param[in]  surface                    The surface that will be associated with the swapchain
  * \param[out] pSurfaceCapabilitiesNext   Optional output extension chain attached to VkSurfaceCapabilities2KHR, or NULL
- * \param[out] pSurfaceCapabilities       A pointer to a VkSurfaceCapabilities2KHR structure in which the capabilities are returned.
+ * \param[out] pSurfaceCapabilities       A pointer to a VkSurfaceCapabilities2KHR structure in which the capabilities are returned
  *
  * \retval     VK_SUCCESS   Command successfully completed.
  */
@@ -717,10 +717,10 @@ VkResult cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Capabilities(VkPhysi
 /**
  * \brief Retrieves physical device surface formats 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
- * \param[in]  physicalDevice        The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR.
+ * \param[in]  physicalDevice        The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
  * \param[out] pNext                 Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  fullScreenExclusive   A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior.
- * \param[in]  surface               The surface that will be associated with the swapchain.
+ * \param[in]  fullScreenExclusive   A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior
+ * \param[in]  surface               The surface that will be associated with the swapchain
  * \param[out] pSurfaceFormatCount   Receives the number of entries written
  * \param[in]  pSurfaceFormats       Receives up to CVK_MAX_SURFACE_FORMATS entries
  *
@@ -732,10 +732,10 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveFormats(VkPhysicalDevice phys
 /**
  * \brief Retrieves physical device surface formats 2 with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
- * \param[in]  physicalDevice        The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR.
+ * \param[in]  physicalDevice        The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
  * \param[in]  pNext                 Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  hmonitor              The Win32 HMONITOR handle identifying the display to create the surface with.
- * \param[in]  surface               The surface that will be associated with the swapchain.
+ * \param[in]  hmonitor              The Win32 HMONITOR handle identifying the display to create the surface with
+ * \param[in]  surface               The surface that will be associated with the swapchain
  * \param[out] pSurfaceFormatCount   Receives the number of entries written
  * \param[in]  pSurfaceFormats       Receives up to CVK_MAX_SURFACE_FORMATS entries
  *
@@ -747,10 +747,10 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Formats(VkPhysicalDevice
 /**
  * \brief Retrieves physical device surface present modes 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
- * \param[in]  physicalDevice        The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR.
+ * \param[in]  physicalDevice        The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
  * \param[out] pNext                 Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  fullScreenExclusive   A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior.
- * \param[in]  surface               The surface that will be associated with the swapchain.
+ * \param[in]  fullScreenExclusive   A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior
+ * \param[in]  surface               The surface that will be associated with the swapchain
  * \param[out] pPresentModeCount     Receives the number of entries written
  * \param[in]  pPresentModes         Receives up to CVK_MAX_PRESENT_MODES entries
  *
@@ -762,10 +762,10 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusivePresentModes(VkPhysicalDevice
 /**
  * \brief Retrieves physical device surface present modes 2 with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
- * \param[in]  physicalDevice      The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR.
+ * \param[in]  physicalDevice      The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
  * \param[in]  pNext               Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  hmonitor            The Win32 HMONITOR handle identifying the display to create the surface with.
- * \param[in]  surface             The surface that will be associated with the swapchain.
+ * \param[in]  hmonitor            The Win32 HMONITOR handle identifying the display to create the surface with
+ * \param[in]  surface             The surface that will be associated with the swapchain
  * \param[out] pPresentModeCount   Receives the number of entries written
  * \param[in]  pPresentModes       Receives up to CVK_MAX_PRESENT_MODES entries
  *
@@ -777,10 +777,10 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32PresentModes(VkPhysicalD
 /**
  * \brief Retrieves physical device surface present modes 2 with VkSurfacePresentModeKHR chained.
  *
- * \param[in]  physicalDevice      The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR.
+ * \param[in]  physicalDevice      The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
  * \param[out] pNext               Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  presentMode         The presentation mode the swapchain will use.
- * \param[in]  surface             The surface that will be associated with the swapchain.
+ * \param[in]  presentMode         The presentation mode the swapchain will use
+ * \param[in]  surface             The surface that will be associated with the swapchain
  * \param[out] pPresentModeCount   Receives the number of entries written
  * \param[in]  pPresentModes       Receives up to CVK_MAX_PRESENT_MODES entries
  *
@@ -792,25 +792,25 @@ void cvkGetPhysicalDeviceSurfacePresentModePresentModes(VkPhysicalDevice physica
 /**
  * \brief Creates a shared swapchains with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
- * \param[in]  device                  The device to create the swapchains for.
+ * \param[in]  device                  The device to create the swapchains for
  * \param[out] pNext                   Optional extension chain attached to VkSwapchainCreateInfoKHR, or NULL
- * \param[in]  fullScreenExclusive     A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior.
- * \param[in]  flags                   A bitmask of VkSwapchainCreateFlagBitsKHR indicating parameters of the swapchain creation.
- * \param[in]  surface                 The surface onto which the swapchain will present images.
- * \param[in]  minImageCount           The minimum number of presentable images that the application needs.
- * \param[in]  imageFormat             A VkFormat value specifying the format the swapchain image(s) will be created with.
- * \param[in]  imageColorSpace         A VkColorSpaceKHR value specifying the way the swapchain interprets image data.
- * \param[in]  imageExtent             The size (in pixels) of the swapchain image(s).
- * \param[in]  imageArrayLayers        The number of views in a multiview/stereo surface.
- * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images.
- * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain.
- * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT.
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT.
- * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation.
- * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems.
- * \param[in]  presentMode             The presentation mode the swapchain will use.
- * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible.
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4.
+ * \param[in]  fullScreenExclusive     A VkFullScreenExclusiveEXT value specifying the preferred full-screen transition behavior
+ * \param[in]  flags                   A bitmask of VkSwapchainCreateFlagBitsKHR indicating parameters of the swapchain creation
+ * \param[in]  surface                 The surface onto which the swapchain will present images
+ * \param[in]  minImageCount           The minimum number of presentable images that the application needs
+ * \param[in]  imageFormat             A VkFormat value specifying the format the swapchain image(s) will be created with
+ * \param[in]  imageColorSpace         A VkColorSpaceKHR value specifying the way the swapchain interprets image data
+ * \param[in]  imageExtent             The size (in pixels) of the swapchain image(s)
+ * \param[in]  imageArrayLayers        The number of views in a multiview/stereo surface
+ * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
+ * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
+ * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
+ * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
+ * \param[in]  presentMode             The presentation mode the swapchain will use
+ * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
+ * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pSwapchain              Receives the created VkSwapchainKHR
  *
@@ -822,25 +822,25 @@ VkResult cvkCreateSharedSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice dev
 /**
  * \brief Creates a shared swapchains with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
- * \param[in]  device                  The device to create the swapchains for.
+ * \param[in]  device                  The device to create the swapchains for
  * \param[in]  pNext                   Optional extension chain attached to VkSwapchainCreateInfoKHR, or NULL
- * \param[in]  hmonitor                The Win32 HMONITOR handle identifying the display to create the surface with.
- * \param[in]  flags                   A bitmask of VkSwapchainCreateFlagBitsKHR indicating parameters of the swapchain creation.
- * \param[in]  surface                 The surface onto which the swapchain will present images.
- * \param[in]  minImageCount           The minimum number of presentable images that the application needs.
- * \param[in]  imageFormat             A VkFormat value specifying the format the swapchain image(s) will be created with.
- * \param[in]  imageColorSpace         A VkColorSpaceKHR value specifying the way the swapchain interprets image data.
- * \param[in]  imageExtent             The size (in pixels) of the swapchain image(s).
- * \param[in]  imageArrayLayers        The number of views in a multiview/stereo surface.
- * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images.
- * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain.
- * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT.
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT.
- * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation.
- * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems.
- * \param[in]  presentMode             The presentation mode the swapchain will use.
- * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible.
- * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4.
+ * \param[in]  hmonitor                The Win32 HMONITOR handle identifying the display to create the surface with
+ * \param[in]  flags                   A bitmask of VkSwapchainCreateFlagBitsKHR indicating parameters of the swapchain creation
+ * \param[in]  surface                 The surface onto which the swapchain will present images
+ * \param[in]  minImageCount           The minimum number of presentable images that the application needs
+ * \param[in]  imageFormat             A VkFormat value specifying the format the swapchain image(s) will be created with
+ * \param[in]  imageColorSpace         A VkColorSpaceKHR value specifying the way the swapchain interprets image data
+ * \param[in]  imageExtent             The size (in pixels) of the swapchain image(s)
+ * \param[in]  imageArrayLayers        The number of views in a multiview/stereo surface
+ * \param[in]  imageUsage              A bitmask of VkImageUsageFlagBits describing the intended usage of the (acquired) swapchain images
+ * \param[in]  imageSharingMode        The sharing mode used for the image(s) of the swapchain
+ * \param[in]  queueFamilyIndexCount   The number of queue families having access to the image(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue family indices having access to the images(s) of the swapchain when imageSharingMode is VK_SHARING_MODE_CONCURRENT
+ * \param[in]  preTransform            A VkSurfaceTransformFlagBitsKHR value describing the transform, relative to the presentation engine's natural orientation, applied to the image content prior to presentation
+ * \param[in]  compositeAlpha          A VkCompositeAlphaFlagBitsKHR value indicating the alpha compositing mode to use when this surface is composited together with other surfaces on certain window systems
+ * \param[in]  presentMode             The presentation mode the swapchain will use
+ * \param[in]  clipped                 Specifies whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface that are not visible
+ * \param[in]  oldSwapchain            Must be VK_NULL_HANDLE in Vulkan SC SCID-4
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
  * \param[out] pSwapchain              Receives the created VkSwapchainKHR
  *
@@ -852,20 +852,20 @@ VkResult cvkCreateSharedSwapchainWithSurfaceFullScreenExclusiveWin32Info(VkDevic
 /**
  * \brief Queues submit with VkD3D12FenceSubmitInfoKHR chained.
  *
- * \param[in] queue                        The queue that the command buffers will be submitted to.
+ * \param[in] queue                        The queue that the command buffers will be submitted to
  * \param[in] pNext                        Optional extension chain attached to VkSubmitInfo, or NULL
- * \param[in] waitSemaphoreValuesCount     The number of semaphore wait values specified in pWaitSemaphoreValues.
- * \param[in] pWaitSemaphoreValues         A pointer to an array of waitSemaphoreValuesCount values for the corresponding semaphores in VkSubmitInfo::pWaitSemaphores to wait for.
- * \param[in] signalSemaphoreValuesCount   The number of semaphore signal values specified in pSignalSemaphoreValues.
- * \param[in] pSignalSemaphoreValues       A pointer to an array of signalSemaphoreValuesCount values for the corresponding semaphores in VkSubmitInfo::pSignalSemaphores to set when signaled.
- * \param[in] waitSemaphoreCount           The number of semaphores upon which to wait before executing the command buffers for the batch.
- * \param[in] pWaitSemaphores              A pointer to an array of VkSemaphore handles upon which to wait before the command buffers for this batch begin execution.
- * \param[in] pWaitDstStageMask            A pointer to an array of pipeline stages at which each corresponding semaphore wait will occur.
- * \param[in] commandBufferCount           The number of command buffers to execute in the batch.
- * \param[in] pCommandBuffers              A pointer to an array of VkCommandBuffer handles to execute in the batch.
- * \param[in] signalSemaphoreCount         The number of semaphores to be signaled once the commands specified in pCommandBuffers have completed execution.
- * \param[in] pSignalSemaphores            A pointer to an array of VkSemaphore handles which will be signaled when the command buffers for this batch have completed execution.
- * \param[in] fence                        An optional handle to a fence to be signaled once all submitted command buffers have completed execution.
+ * \param[in] waitSemaphoreValuesCount     The number of semaphore wait values specified in pWaitSemaphoreValues
+ * \param[in] pWaitSemaphoreValues         A pointer to an array of waitSemaphoreValuesCount values for the corresponding semaphores in VkSubmitInfo::pWaitSemaphores to wait for
+ * \param[in] signalSemaphoreValuesCount   The number of semaphore signal values specified in pSignalSemaphoreValues
+ * \param[in] pSignalSemaphoreValues       A pointer to an array of signalSemaphoreValuesCount values for the corresponding semaphores in VkSubmitInfo::pSignalSemaphores to set when signaled
+ * \param[in] waitSemaphoreCount           The number of semaphores upon which to wait before executing the command buffers for the batch
+ * \param[in] pWaitSemaphores              A pointer to an array of VkSemaphore handles upon which to wait before the command buffers for this batch begin execution
+ * \param[in] pWaitDstStageMask            A pointer to an array of pipeline stages at which each corresponding semaphore wait will occur
+ * \param[in] commandBufferCount           The number of command buffers to execute in the batch
+ * \param[in] pCommandBuffers              A pointer to an array of VkCommandBuffer handles to execute in the batch
+ * \param[in] signalSemaphoreCount         The number of semaphores to be signaled once the commands specified in pCommandBuffers have completed execution
+ * \param[in] pSignalSemaphores            A pointer to an array of VkSemaphore handles which will be signaled when the command buffers for this batch have completed execution
+ * \param[in] fence                        An optional handle to a fence to be signaled once all submitted command buffers have completed execution
  *
  * \retval    None
  */
@@ -875,23 +875,23 @@ void cvkQueueSubmitInfoWithD3D12FenceInfo(VkQueue queue, const void* pNext, uint
 /**
  * \brief Queues submit with VkWin32KeyedMutexAcquireReleaseInfoKHR chained.
  *
- * \param[in] queue                  The queue that the command buffers will be submitted to.
+ * \param[in] queue                  The queue that the command buffers will be submitted to
  * \param[in] pNext                  Optional extension chain attached to VkSubmitInfo, or NULL
- * \param[in] acquireCount           The number of entries in the pAcquireSyncs, pAcquireKeys, and pAcquireTimeouts arrays.
- * \param[in] pAcquireSyncs          A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources.
- * \param[in] pAcquireKeys           A pointer to an array of mutex key values to wait for prior to beginning the submitted work.
- * \param[in] pAcquireTimeouts       A pointer to an array of timeout values, in millisecond units, for each acquire specified in pAcquireKeys.
- * \param[in] releaseCount           The number of entries in the pReleaseSyncs and pReleaseKeys arrays.
- * \param[in] pReleaseSyncs          A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources.
- * \param[in] pReleaseKeys           A pointer to an array of mutex key values to set when the submitted work has completed.
- * \param[in] waitSemaphoreCount     The number of semaphores upon which to wait before executing the command buffers for the batch.
- * \param[in] pWaitSemaphores        A pointer to an array of VkSemaphore handles upon which to wait before the command buffers for this batch begin execution.
- * \param[in] pWaitDstStageMask      A pointer to an array of pipeline stages at which each corresponding semaphore wait will occur.
- * \param[in] commandBufferCount     The number of command buffers to execute in the batch.
- * \param[in] pCommandBuffers        A pointer to an array of VkCommandBuffer handles to execute in the batch.
- * \param[in] signalSemaphoreCount   The number of semaphores to be signaled once the commands specified in pCommandBuffers have completed execution.
- * \param[in] pSignalSemaphores      A pointer to an array of VkSemaphore handles which will be signaled when the command buffers for this batch have completed execution.
- * \param[in] fence                  An optional handle to a fence to be signaled once all submitted command buffers have completed execution.
+ * \param[in] acquireCount           The number of entries in the pAcquireSyncs, pAcquireKeys, and pAcquireTimeouts arrays
+ * \param[in] pAcquireSyncs          A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources
+ * \param[in] pAcquireKeys           A pointer to an array of mutex key values to wait for prior to beginning the submitted work
+ * \param[in] pAcquireTimeouts       A pointer to an array of timeout values, in millisecond units, for each acquire specified in pAcquireKeys
+ * \param[in] releaseCount           The number of entries in the pReleaseSyncs and pReleaseKeys arrays
+ * \param[in] pReleaseSyncs          A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources
+ * \param[in] pReleaseKeys           A pointer to an array of mutex key values to set when the submitted work has completed
+ * \param[in] waitSemaphoreCount     The number of semaphores upon which to wait before executing the command buffers for the batch
+ * \param[in] pWaitSemaphores        A pointer to an array of VkSemaphore handles upon which to wait before the command buffers for this batch begin execution
+ * \param[in] pWaitDstStageMask      A pointer to an array of pipeline stages at which each corresponding semaphore wait will occur
+ * \param[in] commandBufferCount     The number of command buffers to execute in the batch
+ * \param[in] pCommandBuffers        A pointer to an array of VkCommandBuffer handles to execute in the batch
+ * \param[in] signalSemaphoreCount   The number of semaphores to be signaled once the commands specified in pCommandBuffers have completed execution
+ * \param[in] pSignalSemaphores      A pointer to an array of VkSemaphore handles which will be signaled when the command buffers for this batch have completed execution
+ * \param[in] fence                  An optional handle to a fence to be signaled once all submitted command buffers have completed execution
  *
  * \retval    None
  */
@@ -901,23 +901,23 @@ void cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfo(VkQueue queue, cons
 /**
  * \brief Queues submit with VkWin32KeyedMutexAcquireReleaseInfoNV chained.
  *
- * \param[in] queue                         The queue that the command buffers will be submitted to.
+ * \param[in] queue                         The queue that the command buffers will be submitted to
  * \param[in] pNext                         Optional extension chain attached to VkSubmitInfo, or NULL
- * \param[in] acquireCount                  The number of entries in the pAcquireSyncs, pAcquireKeys, and pAcquireTimeoutMilliseconds arrays.
- * \param[in] pAcquireSyncs                 A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources.
- * \param[in] pAcquireKeys                  A pointer to an array of mutex key values to wait for prior to beginning the submitted work.
- * \param[in] pAcquireTimeoutMilliseconds   A pointer to an array of timeout values, in millisecond units, for each acquire specified in pAcquireKeys.
- * \param[in] releaseCount                  The number of entries in the pReleaseSyncs and pReleaseKeys arrays.
- * \param[in] pReleaseSyncs                 A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources.
- * \param[in] pReleaseKeys                  A pointer to an array of mutex key values to set when the submitted work has completed.
- * \param[in] waitSemaphoreCount            The number of semaphores upon which to wait before executing the command buffers for the batch.
- * \param[in] pWaitSemaphores               A pointer to an array of VkSemaphore handles upon which to wait before the command buffers for this batch begin execution.
- * \param[in] pWaitDstStageMask             A pointer to an array of pipeline stages at which each corresponding semaphore wait will occur.
- * \param[in] commandBufferCount            The number of command buffers to execute in the batch.
- * \param[in] pCommandBuffers               A pointer to an array of VkCommandBuffer handles to execute in the batch.
- * \param[in] signalSemaphoreCount          The number of semaphores to be signaled once the commands specified in pCommandBuffers have completed execution.
- * \param[in] pSignalSemaphores             A pointer to an array of VkSemaphore handles which will be signaled when the command buffers for this batch have completed execution.
- * \param[in] fence                         An optional handle to a fence to be signaled once all submitted command buffers have completed execution.
+ * \param[in] acquireCount                  The number of entries in the pAcquireSyncs, pAcquireKeys, and pAcquireTimeoutMilliseconds arrays
+ * \param[in] pAcquireSyncs                 A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources
+ * \param[in] pAcquireKeys                  A pointer to an array of mutex key values to wait for prior to beginning the submitted work
+ * \param[in] pAcquireTimeoutMilliseconds   A pointer to an array of timeout values, in millisecond units, for each acquire specified in pAcquireKeys
+ * \param[in] releaseCount                  The number of entries in the pReleaseSyncs and pReleaseKeys arrays
+ * \param[in] pReleaseSyncs                 A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources
+ * \param[in] pReleaseKeys                  A pointer to an array of mutex key values to set when the submitted work has completed
+ * \param[in] waitSemaphoreCount            The number of semaphores upon which to wait before executing the command buffers for the batch
+ * \param[in] pWaitSemaphores               A pointer to an array of VkSemaphore handles upon which to wait before the command buffers for this batch begin execution
+ * \param[in] pWaitDstStageMask             A pointer to an array of pipeline stages at which each corresponding semaphore wait will occur
+ * \param[in] commandBufferCount            The number of command buffers to execute in the batch
+ * \param[in] pCommandBuffers               A pointer to an array of VkCommandBuffer handles to execute in the batch
+ * \param[in] signalSemaphoreCount          The number of semaphores to be signaled once the commands specified in pCommandBuffers have completed execution
+ * \param[in] pSignalSemaphores             A pointer to an array of VkSemaphore handles which will be signaled when the command buffers for this batch have completed execution
+ * \param[in] fence                         An optional handle to a fence to be signaled once all submitted command buffers have completed execution
  *
  * \retval    None
  */
@@ -927,23 +927,23 @@ void cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfoNV(VkQueue queue, co
 /**
  * \brief Queues submit 2 with VkWin32KeyedMutexAcquireReleaseInfoKHR chained.
  *
- * \param[in] queue                      The queue that the command buffers will be submitted to.
+ * \param[in] queue                      The queue that the command buffers will be submitted to
  * \param[in] pNext                      Optional extension chain attached to VkSubmitInfo2, or NULL
- * \param[in] acquireCount               The number of entries in the pAcquireSyncs, pAcquireKeys, and pAcquireTimeouts arrays.
- * \param[in] pAcquireSyncs              A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources.
- * \param[in] pAcquireKeys               A pointer to an array of mutex key values to wait for prior to beginning the submitted work.
- * \param[in] pAcquireTimeouts           A pointer to an array of timeout values, in millisecond units, for each acquire specified in pAcquireKeys.
- * \param[in] releaseCount               The number of entries in the pReleaseSyncs and pReleaseKeys arrays.
- * \param[in] pReleaseSyncs              A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources.
- * \param[in] pReleaseKeys               A pointer to an array of mutex key values to set when the submitted work has completed.
- * \param[in] flags                      A bitmask of VkSubmitFlagBits.
- * \param[in] waitSemaphoreInfoCount     The number of elements in pWaitSemaphoreInfos.
- * \param[in] pWaitSemaphoreInfos        A pointer to an array of VkSemaphoreSubmitInfo structures defining semaphore wait operations.
- * \param[in] commandBufferInfoCount     The number of elements in pCommandBufferInfos and the number of command buffers to execute in the batch.
- * \param[in] pCommandBufferInfos        A pointer to an array of VkCommandBufferSubmitInfo structures describing command buffers to execute in the batch.
- * \param[in] signalSemaphoreInfoCount   The number of elements in pSignalSemaphoreInfos.
- * \param[in] pSignalSemaphoreInfos      A pointer to an array of VkSemaphoreSubmitInfo describing semaphore signal operations.
- * \param[in] fence                      An optional handle to a fence to be signaled once all submitted command buffers have completed execution.
+ * \param[in] acquireCount               The number of entries in the pAcquireSyncs, pAcquireKeys, and pAcquireTimeouts arrays
+ * \param[in] pAcquireSyncs              A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources
+ * \param[in] pAcquireKeys               A pointer to an array of mutex key values to wait for prior to beginning the submitted work
+ * \param[in] pAcquireTimeouts           A pointer to an array of timeout values, in millisecond units, for each acquire specified in pAcquireKeys
+ * \param[in] releaseCount               The number of entries in the pReleaseSyncs and pReleaseKeys arrays
+ * \param[in] pReleaseSyncs              A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources
+ * \param[in] pReleaseKeys               A pointer to an array of mutex key values to set when the submitted work has completed
+ * \param[in] flags                      A bitmask of VkSubmitFlagBits
+ * \param[in] waitSemaphoreInfoCount     The number of elements in pWaitSemaphoreInfos
+ * \param[in] pWaitSemaphoreInfos        A pointer to an array of VkSemaphoreSubmitInfo structures defining semaphore wait operations
+ * \param[in] commandBufferInfoCount     The number of elements in pCommandBufferInfos and the number of command buffers to execute in the batch
+ * \param[in] pCommandBufferInfos        A pointer to an array of VkCommandBufferSubmitInfo structures describing command buffers to execute in the batch
+ * \param[in] signalSemaphoreInfoCount   The number of elements in pSignalSemaphoreInfos
+ * \param[in] pSignalSemaphoreInfos      A pointer to an array of VkSemaphoreSubmitInfo describing semaphore signal operations
+ * \param[in] fence                      An optional handle to a fence to be signaled once all submitted command buffers have completed execution
  *
  * \retval    None
  */
@@ -953,23 +953,23 @@ void cvkQueueSubmitInfo2WithWin32KeyedMutexAcquireReleaseInfo(VkQueue queue, con
 /**
  * \brief Queues submit 2 with VkWin32KeyedMutexAcquireReleaseInfoNV chained.
  *
- * \param[in] queue                         The queue that the command buffers will be submitted to.
+ * \param[in] queue                         The queue that the command buffers will be submitted to
  * \param[in] pNext                         Optional extension chain attached to VkSubmitInfo2, or NULL
- * \param[in] acquireCount                  The number of entries in the pAcquireSyncs, pAcquireKeys, and pAcquireTimeoutMilliseconds arrays.
- * \param[in] pAcquireSyncs                 A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources.
- * \param[in] pAcquireKeys                  A pointer to an array of mutex key values to wait for prior to beginning the submitted work.
- * \param[in] pAcquireTimeoutMilliseconds   A pointer to an array of timeout values, in millisecond units, for each acquire specified in pAcquireKeys.
- * \param[in] releaseCount                  The number of entries in the pReleaseSyncs and pReleaseKeys arrays.
- * \param[in] pReleaseSyncs                 A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources.
- * \param[in] pReleaseKeys                  A pointer to an array of mutex key values to set when the submitted work has completed.
- * \param[in] flags                         A bitmask of VkSubmitFlagBits.
- * \param[in] waitSemaphoreInfoCount        The number of elements in pWaitSemaphoreInfos.
- * \param[in] pWaitSemaphoreInfos           A pointer to an array of VkSemaphoreSubmitInfo structures defining semaphore wait operations.
- * \param[in] commandBufferInfoCount        The number of elements in pCommandBufferInfos and the number of command buffers to execute in the batch.
- * \param[in] pCommandBufferInfos           A pointer to an array of VkCommandBufferSubmitInfo structures describing command buffers to execute in the batch.
- * \param[in] signalSemaphoreInfoCount      The number of elements in pSignalSemaphoreInfos.
- * \param[in] pSignalSemaphoreInfos         A pointer to an array of VkSemaphoreSubmitInfo describing semaphore signal operations.
- * \param[in] fence                         An optional handle to a fence to be signaled once all submitted command buffers have completed execution.
+ * \param[in] acquireCount                  The number of entries in the pAcquireSyncs, pAcquireKeys, and pAcquireTimeoutMilliseconds arrays
+ * \param[in] pAcquireSyncs                 A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources
+ * \param[in] pAcquireKeys                  A pointer to an array of mutex key values to wait for prior to beginning the submitted work
+ * \param[in] pAcquireTimeoutMilliseconds   A pointer to an array of timeout values, in millisecond units, for each acquire specified in pAcquireKeys
+ * \param[in] releaseCount                  The number of entries in the pReleaseSyncs and pReleaseKeys arrays
+ * \param[in] pReleaseSyncs                 A pointer to an array of VkDeviceMemory objects which were imported from Direct3D 11 resources
+ * \param[in] pReleaseKeys                  A pointer to an array of mutex key values to set when the submitted work has completed
+ * \param[in] flags                         A bitmask of VkSubmitFlagBits
+ * \param[in] waitSemaphoreInfoCount        The number of elements in pWaitSemaphoreInfos
+ * \param[in] pWaitSemaphoreInfos           A pointer to an array of VkSemaphoreSubmitInfo structures defining semaphore wait operations
+ * \param[in] commandBufferInfoCount        The number of elements in pCommandBufferInfos and the number of command buffers to execute in the batch
+ * \param[in] pCommandBufferInfos           A pointer to an array of VkCommandBufferSubmitInfo structures describing command buffers to execute in the batch
+ * \param[in] signalSemaphoreInfoCount      The number of elements in pSignalSemaphoreInfos
+ * \param[in] pSignalSemaphoreInfos         A pointer to an array of VkSemaphoreSubmitInfo describing semaphore signal operations
+ * \param[in] fence                         An optional handle to a fence to be signaled once all submitted command buffers have completed execution
  *
  * \retval    None
  */
@@ -979,11 +979,11 @@ void cvkQueueSubmitInfo2WithWin32KeyedMutexAcquireReleaseInfoNV(VkQueue queue, c
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceCapabilitiesFullScreenExclusiveEXT chained to the output.
  *
- * \param[in]  physicalDevice                                The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR.
+ * \param[in]  physicalDevice                                The physical device that will be associated with the swapchain to be created, as described for vkCreateSwapchainKHR
  * \param[in]  pSurfaceInfoNext                              Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in]  surface                                       The surface that will be associated with the swapchain.
+ * \param[in]  surface                                       The surface that will be associated with the swapchain
  * \param[in]  pSurfaceCapabilitiesFullScreenExclusiveNext   Optional output extension chain attached to VkSurfaceCapabilitiesFullScreenExclusiveEXT, or NULL
- * \param[out] pSurfaceCapabilitiesFullScreenExclusive       Receives the VkSurfaceCapabilitiesFullScreenExclusiveEXT
+ * \param[out] pSurfaceCapabilitiesFullScreenExclusive       Receives the structure describing full screen exclusive capabilities of a surface
  *
  * \retval     VK_SUCCESS   Command successfully completed.
  */
@@ -1011,19 +1011,19 @@ void cvkInitWin32AllocationCallbacks(VkAllocationCallbacks* pCallbacks);
  * \param[in]  physicalDevice          Physical device the image is created for
  * \param[in]  device                  Logical device owning the image and memory
  * \param[in]  pImageNext              Optional extension chain for VkImageCreateInfo, or NULL
- * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image.
- * \param[in]  imageType               A VkImageType value specifying the basic dimensionality of the image.
- * \param[in]  format                  A VkFormat describing the format and type of the texel blocks that will be contained in the image.
- * \param[in]  extent                  A VkExtent3D describing the number of texels/pixels in each dimension of the base level.
- * \param[in]  mipLevels               Describes the number of levels of detail available for minified sampling of the image.
- * \param[in]  arrayLayers             The number of layers in the image.
- * \param[in]  samples                 A VkSampleCountFlagBits value specifying the number of samples per texel.
- * \param[in]  tiling                  A VkImageTiling value specifying the tiling arrangement of the texel blocks in memory.
- * \param[in]  usage                   A bitmask of VkImageUsageFlagBits describing the intended usage of the image.
- * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the image when it will be accessed by multiple queue families.
- * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array.
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this image.
- * \param[in]  initialLayout           A VkImageLayout value specifying the initial VkImageLayout of all image subresources of the image.
+ * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image
+ * \param[in]  imageType               A VkImageType value specifying the basic dimensionality of the image
+ * \param[in]  format                  A VkFormat describing the format and type of the texel blocks that will be contained in the image
+ * \param[in]  extent                  A VkExtent3D describing the number of texels/pixels in each dimension of the base level
+ * \param[in]  mipLevels               Describes the number of levels of detail available for minified sampling of the image
+ * \param[in]  arrayLayers             The number of layers in the image
+ * \param[in]  samples                 A VkSampleCountFlagBits value specifying the number of samples per texel
+ * \param[in]  tiling                  A VkImageTiling value specifying the tiling arrangement of the texel blocks in memory
+ * \param[in]  usage                   A bitmask of VkImageUsageFlagBits describing the intended usage of the image
+ * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the image when it will be accessed by multiple queue families
+ * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this image
+ * \param[in]  initialLayout           A VkImageLayout value specifying the initial VkImageLayout of all image subresources of the image
  * \param[in]  handleType              Win32 external memory handle type being imported
  * \param[in]  handle                  Handle to import, or NULL when name is used
  * \param[in]  name                    Name of the object to import, or NULL when handle is used
@@ -1049,17 +1049,17 @@ void cvkImportWin32HandleImage(VkPhysicalDevice physicalDevice, VkDevice device,
  * \param[in]  physicalDevice          Physical device the image is created for
  * \param[in]  device                  Logical device owning the image and memory
  * \param[in]  pImageNext              Optional extension chain for VkImageCreateInfo, or NULL
- * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image.
- * \param[in]  format                  A VkFormat describing the format and type of the texel blocks that will be contained in the image.
- * \param[in]  mipLevels               Describes the number of levels of detail available for minified sampling of the image.
- * \param[in]  arrayLayers             The number of layers in the image.
- * \param[in]  samples                 A VkSampleCountFlagBits value specifying the number of samples per texel.
- * \param[in]  tiling                  A VkImageTiling value specifying the tiling arrangement of the texel blocks in memory.
- * \param[in]  usage                   A bitmask of VkImageUsageFlagBits describing the intended usage of the image.
- * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the image when it will be accessed by multiple queue families.
- * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array.
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this image.
- * \param[in]  initialLayout           A VkImageLayout value specifying the initial VkImageLayout of all image subresources of the image.
+ * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image
+ * \param[in]  format                  A VkFormat describing the format and type of the texel blocks that will be contained in the image
+ * \param[in]  mipLevels               Describes the number of levels of detail available for minified sampling of the image
+ * \param[in]  arrayLayers             The number of layers in the image
+ * \param[in]  samples                 A VkSampleCountFlagBits value specifying the number of samples per texel
+ * \param[in]  tiling                  A VkImageTiling value specifying the tiling arrangement of the texel blocks in memory
+ * \param[in]  usage                   A bitmask of VkImageUsageFlagBits describing the intended usage of the image
+ * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the image when it will be accessed by multiple queue families
+ * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this image
+ * \param[in]  initialLayout           A VkImageLayout value specifying the initial VkImageLayout of all image subresources of the image
  * \param[in]  extent2D                Image width and height
  * \param[in]  handleType              Win32 external memory handle type being imported
  * \param[in]  handle                  Handle to import, or NULL when name is used
@@ -1126,12 +1126,12 @@ void cvkImportD3D11Texture2D(VkPhysicalDevice physicalDevice, VkDevice device, V
  * \param[in]  physicalDevice          Physical device the buffer is created for
  * \param[in]  device                  Logical device owning the buffer and memory
  * \param[in]  pBufferNext             Optional extension chain for VkBufferCreateInfo, or NULL
- * \param[in]  flags                   A bitmask of VkBufferCreateFlagBits specifying additional parameters of the buffer.
- * \param[in]  size                    The size in bytes of the buffer to be created.
- * \param[in]  usage                   A bitmask of VkBufferUsageFlagBits specifying allowed usages of the buffer.
- * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the buffer when it will be accessed by multiple queue families.
- * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array.
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this buffer.
+ * \param[in]  flags                   A bitmask of VkBufferCreateFlagBits specifying additional parameters of the buffer
+ * \param[in]  size                    The size in bytes of the buffer to be created
+ * \param[in]  usage                   A bitmask of VkBufferUsageFlagBits specifying allowed usages of the buffer
+ * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the buffer when it will be accessed by multiple queue families
+ * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this buffer
  * \param[in]  handleType              Win32 external memory handle type being imported
  * \param[in]  handle                  Handle to import, or NULL when name is used
  * \param[in]  name                    Name of the object to import, or NULL when handle is used
@@ -1162,22 +1162,22 @@ void cvkImportWin32HandleBuffer(VkPhysicalDevice physicalDevice, VkDevice device
  * \param[in]  physicalDevice          Physical device the image is created for
  * \param[in]  device                  Logical device owning the image and memory
  * \param[in]  pImageNext              Optional extension chain for VkImageCreateInfo, or NULL
- * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image.
- * \param[in]  imageType               A VkImageType value specifying the basic dimensionality of the image.
- * \param[in]  format                  A VkFormat describing the format and type of the texel blocks that will be contained in the image.
- * \param[in]  extent                  A VkExtent3D describing the number of texels/pixels in each dimension of the base level.
- * \param[in]  mipLevels               Describes the number of levels of detail available for minified sampling of the image.
- * \param[in]  arrayLayers             The number of layers in the image.
- * \param[in]  samples                 A VkSampleCountFlagBits value specifying the number of samples per texel.
- * \param[in]  tiling                  A VkImageTiling value specifying the tiling arrangement of the texel blocks in memory.
- * \param[in]  usage                   A bitmask of VkImageUsageFlagBits describing the intended usage of the image.
- * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the image when it will be accessed by multiple queue families.
- * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array.
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this image.
- * \param[in]  initialLayout           A VkImageLayout value specifying the initial VkImageLayout of all image subresources of the image.
+ * \param[in]  flags                   A bitmask of VkImageCreateFlagBits describing additional parameters of the image
+ * \param[in]  imageType               A VkImageType value specifying the basic dimensionality of the image
+ * \param[in]  format                  A VkFormat describing the format and type of the texel blocks that will be contained in the image
+ * \param[in]  extent                  A VkExtent3D describing the number of texels/pixels in each dimension of the base level
+ * \param[in]  mipLevels               Describes the number of levels of detail available for minified sampling of the image
+ * \param[in]  arrayLayers             The number of layers in the image
+ * \param[in]  samples                 A VkSampleCountFlagBits value specifying the number of samples per texel
+ * \param[in]  tiling                  A VkImageTiling value specifying the tiling arrangement of the texel blocks in memory
+ * \param[in]  usage                   A bitmask of VkImageUsageFlagBits describing the intended usage of the image
+ * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the image when it will be accessed by multiple queue families
+ * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this image
+ * \param[in]  initialLayout           A VkImageLayout value specifying the initial VkImageLayout of all image subresources of the image
  * \param[in]  handleType              Win32 external memory handle type to export
  * \param[in]  pAttributes             VkExportMemoryWin32HandleInfoKHR::pAttributes, or NULL for the defaults
- * \param[in]  dwAccess                A DWORD specifying access rights of the handle.
+ * \param[in]  dwAccess                A DWORD specifying access rights of the handle
  * \param[in]  name                    VkExportMemoryWin32HandleInfoKHR::name, or NULL for an unnamed object
  * \param[in]  requiredProperties      Memory property flags the selected type must cover
  * \param[in]  pMemoryNext             Optional extension chain behind the export infos, or NULL
@@ -1204,15 +1204,15 @@ void cvkExportWin32HandleImage(VkPhysicalDevice physicalDevice, VkDevice device,
  * \param[in]  physicalDevice          Physical device the buffer is created for
  * \param[in]  device                  Logical device owning the buffer and memory
  * \param[in]  pBufferNext             Optional extension chain for VkBufferCreateInfo, or NULL
- * \param[in]  flags                   A bitmask of VkBufferCreateFlagBits specifying additional parameters of the buffer.
- * \param[in]  size                    The size in bytes of the buffer to be created.
- * \param[in]  usage                   A bitmask of VkBufferUsageFlagBits specifying allowed usages of the buffer.
- * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the buffer when it will be accessed by multiple queue families.
- * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array.
- * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this buffer.
+ * \param[in]  flags                   A bitmask of VkBufferCreateFlagBits specifying additional parameters of the buffer
+ * \param[in]  size                    The size in bytes of the buffer to be created
+ * \param[in]  usage                   A bitmask of VkBufferUsageFlagBits specifying allowed usages of the buffer
+ * \param[in]  sharingMode             A VkSharingMode value specifying the sharing mode of the buffer when it will be accessed by multiple queue families
+ * \param[in]  queueFamilyIndexCount   The number of entries in the pQueueFamilyIndices array
+ * \param[in]  pQueueFamilyIndices     A pointer to an array of queue families that will access this buffer
  * \param[in]  handleType              Win32 external memory handle type to export
  * \param[in]  pAttributes             VkExportMemoryWin32HandleInfoKHR::pAttributes, or NULL for the defaults
- * \param[in]  dwAccess                A DWORD specifying access rights of the handle.
+ * \param[in]  dwAccess                A DWORD specifying access rights of the handle
  * \param[in]  name                    VkExportMemoryWin32HandleInfoKHR::name, or NULL for an unnamed object
  * \param[in]  requiredProperties      Memory property flags the selected type must cover
  * \param[in]  pMemoryNext             Optional extension chain behind the export infos, or NULL

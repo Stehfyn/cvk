@@ -24,7 +24,7 @@ static SCVK_FORCE_INLINE VkBool32 scvkIsJsonTextSpace(char value);
 /**
  * \brief Advances over JSON whitespace.
  *
- * \param[in,out] pReader   Input cursor and bounds.
+ * \param[in,out] pReader   Input cursor and bounds
  *
  * \retval        None
  */
@@ -34,7 +34,7 @@ static SCVK_FORCE_INLINE void scvkSkipJsonSpace(scvkJsonReader* pReader);
 /**
  * \brief Consumes at least one decimal digit.
  *
- * \param[in,out] pReader   Input cursor and bounds.
+ * \param[in,out] pReader   Input cursor and bounds
  *
  * \retval        None
  */
@@ -44,7 +44,7 @@ static SCVK_FORCE_INLINE void scvkReadJsonDigits(scvkJsonReader* pReader);
 /**
  * \brief Consumes a JSON number according to its integer, fraction and exponent grammar.
  *
- * \param[in,out] pReader   Input cursor and bounds.
+ * \param[in,out] pReader   Input cursor and bounds
  *
  * \retval        None
  */
@@ -54,8 +54,8 @@ static SCVK_FORCE_INLINE void scvkReadJsonNumber(scvkJsonReader* pReader);
 /**
  * \brief Reads a quoted span while preserving its escape spelling.
  *
- * \param[in,out] pReader   Input cursor at the opening quote.
- * \param[out]    pLength   Receives the length excluding quotes.
+ * \param[in,out] pReader   Input cursor at the opening quote
+ * \param[out]    pLength   Receives the length excluding quotes
  *
  * \retval        const   char* The start of the quoted content.
  */
@@ -65,8 +65,8 @@ static SCVK_FORCE_INLINE const char* scvkReadJsonQuoted(scvkJsonReader* pReader,
 /**
  * \brief Consumes a literal and records its kind.
  *
- * \param[in,out] pReader   Input cursor and bounds.
- * \param[out]    pValue    Value receiving the literal kind.
+ * \param[in,out] pReader   Input cursor and bounds
+ * \param[out]    pValue    Value receiving the literal kind
  *
  * \retval        None
  */
@@ -76,7 +76,7 @@ static SCVK_FORCE_INLINE void scvkReadJsonLiteral(scvkJsonReader* pReader, scvkJ
 /**
  * \brief Appends one token; containers are opened without descending into them.
  *
- * \param[in,out] pReader   Input and caller-owned value storage.
+ * \param[in,out] pReader   Input and caller-owned value storage
  *
  * \retval        uint32_t   The new value index.
  */
@@ -86,8 +86,8 @@ static SCVK_FORCE_INLINE uint32_t scvkReadJsonToken(scvkJsonReader* pReader);
 /**
  * \brief Appends a child and its object key, linking it to the active container.
  *
- * \param[in,out] pReader   Input and caller-owned value storage.
- * \param[in]     parent    Active container index.
+ * \param[in,out] pReader   Input and caller-owned value storage
+ * \param[in]     parent    Active container index
  *
  * \retval        uint32_t   The new child index.
  */
@@ -97,9 +97,9 @@ static SCVK_FORCE_INLINE uint32_t scvkReadJsonChild(scvkJsonReader* pReader, uin
 /**
  * \brief Consumes a container separator and checks whether the next token closes it.
  *
- * \param[in,out] pReader        Input cursor and bounds.
- * \param[in]     close          Closing delimiter for the active container.
- * \param[in]     has_children   Whether a preceding value requires a separator.
+ * \param[in,out] pReader        Input cursor and bounds
+ * \param[in]     close          Closing delimiter for the active container
+ * \param[in]     has_children   Whether a preceding value requires a separator
  *
  * \retval        VK_TRUE    A closing delimiter is next.
  * \retval        VK_FALSE   Another child starts at the cursor.
@@ -115,9 +115,9 @@ static SCVK_FORCE_INLINE void scvkGrowArena(scvkArena* pArena, size_t size, size
 /**
  * \brief Reads the pipeline state and its render-pass version.
  *
- * \param[in]  pContext    Parsing context.
- * \param[in]  root        Document root.
- * \param[out] pPipeline   Parsed pipeline and render pass.
+ * \param[in]  pContext    Parsing context
+ * \param[in]  root        Document root
+ * \param[out] pPipeline   Parsed pipeline and render pass
  *
  * \retval     const   scvkJsonValue* The graphics or compute state object.
  */
@@ -127,10 +127,10 @@ static SCVK_FORCE_INLINE const scvkJsonValue* scvkReadPipelineJsonState(const sc
 /**
  * \brief Copies descriptor bindings and resolves immutable sampler references.
  *
- * \param[in]     pPipeline   Parsed description and retained object IDs.
- * \param[in]     pObjects    Previously created native samplers.
- * \param[in]     pInfo       Descriptor set layout description.
- * \param[in,out] pArena      Caller-owned output storage.
+ * \param[in]     pPipeline   Parsed description and retained object IDs
+ * \param[in]     pObjects    Previously created native samplers
+ * \param[in]     pInfo       Descriptor set layout description
+ * \param[in,out] pArena      Caller-owned output storage
  *
  * \retval        NULL       The layout is empty.
  * \retval        non-NULL   Resolved bindings.
@@ -144,11 +144,11 @@ static SCVK_FORCE_INLINE VkDescriptorSetLayoutBinding* scvkResolvePipelineJsonBi
 /**
  * \brief Copies one shader stage and resolves its retained module ID.
  *
- * \param[in]     pPipeline         Parsed description and retained object IDs.
- * \param[in]     resolveExternal   Optional resolver for external native handles.
- * \param[in,out] pUser             Resolver state.
- * \param[in]     pSource           Stage with its parse-time address intact.
- * \param[out]    pStage            Resolved stage copy.
+ * \param[in]     pPipeline         Parsed description and retained object IDs
+ * \param[in]     resolveExternal   Optional resolver for external native handles
+ * \param[in,out] pUser             Resolver state
+ * \param[in]     pSource           Stage with its parse-time address intact
+ * \param[out]    pStage            Resolved stage copy
  *
  * \retval        None
  */

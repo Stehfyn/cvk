@@ -797,7 +797,7 @@ void cvkSetupRayTracingShaderBindingTable(VkPhysicalDevice                 physi
  * \param[in]  memory                  Host-visible memory object
  * \param[in]  offset                  Byte offset of the range; must observe nonCoherentAtomSize with size
  * \param[in]  size                    Byte count to write; not VK_WHOLE_SIZE
- * \param[in]  flags                   vkMapMemory flags
+ * \param[in]  flags                   Must be 0; vkMapMemory accepts no map flags (VK_MEMORY_MAP_PLACED_BIT_EXT requires vkMapMemory2)
  * \param[in]  pRangeNext              Optional extension chain for the VkMappedMemoryRange, or NULL
  * \param[in]  pData                   Bytes to write; size bytes
  *
@@ -831,7 +831,7 @@ void cvkWriteMemory(VkDevice         device,
  * \param[in]  memory                  Host-visible memory object
  * \param[in]  offset                  Byte offset of the range; must observe nonCoherentAtomSize with size
  * \param[in]  size                    Byte count to read; not VK_WHOLE_SIZE
- * \param[in]  flags                   vkMapMemory flags
+ * \param[in]  flags                   Must be 0; vkMapMemory accepts no map flags (VK_MEMORY_MAP_PLACED_BIT_EXT requires vkMapMemory2)
  * \param[in]  pRangeNext              Optional extension chain for the VkMappedMemoryRange, or NULL
  * \param[out] pData                   Receives size bytes
  *
@@ -861,7 +861,7 @@ void cvkReadMemory(VkDevice         device,
  * \param[in]  memory                  Host-visible, host-coherent memory object
  * \param[in]  offset                  Byte offset of the range
  * \param[in]  size                    Byte count to write; not VK_WHOLE_SIZE
- * \param[in]  flags                   vkMapMemory flags
+ * \param[in]  flags                   Must be 0; vkMapMemory accepts no map flags (VK_MEMORY_MAP_PLACED_BIT_EXT requires vkMapMemory2)
  * \param[in]  pData                   Bytes to write; size bytes
  *
  * \retval None
@@ -888,7 +888,7 @@ void cvkWriteCoherentMemory(VkDevice         device,
  * \param[in]  memory                  Host-visible, host-coherent memory object
  * \param[in]  offset                  Byte offset of the range
  * \param[in]  size                    Byte count to read; not VK_WHOLE_SIZE
- * \param[in]  flags                   vkMapMemory flags
+ * \param[in]  flags                   Must be 0; vkMapMemory accepts no map flags (VK_MEMORY_MAP_PLACED_BIT_EXT requires vkMapMemory2)
  * \param[out] pData                   Receives size bytes
  *
  * \retval None

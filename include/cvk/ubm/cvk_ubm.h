@@ -14,9 +14,9 @@
  *
  * \param[out] pInfo     Receives the initialized VkUbmSurfaceCreateInfoSEC
  * \param[in]  pNext     Optional extension chain attached to VkUbmSurfaceCreateInfoSEC, or NULL
- * \param[in]  flags     VkUbmSurfaceCreateInfoSEC::flags
- * \param[in]  device    VkUbmSurfaceCreateInfoSEC::device
- * \param[in]  surface   VkUbmSurfaceCreateInfoSEC::surface
+ * \param[in]  flags     Reserved for future use; must be 0
+ * \param[in]  device    A pointer to a ubm_device to associate the surface with
+ * \param[in]  surface   A pointer to a ubm_surface to associate the surface with
  *
  * \retval     None
  */
@@ -26,13 +26,13 @@ void cvkInitUbmSurfaceCreateInfoSEC(VkUbmSurfaceCreateInfoSEC* pInfo, const void
 /**
  * \brief Creates a ubm surface.
  *
- * \param[in]  instance     The instance to associate the surface with.
+ * \param[in]  instance     The instance to associate the surface with
  * \param[in]  pNext        Optional extension chain attached to VkUbmSurfaceCreateInfoSEC, or NULL
- * \param[in]  flags        Reserved for future use; must be 0.
- * \param[in]  device       A pointer to a ubm_device to associate the surface with.
- * \param[in]  surface      A pointer to a ubm_surface to associate the surface with.
+ * \param[in]  flags        Reserved for future use; must be 0
+ * \param[in]  device       A pointer to a ubm_device to associate the surface with
+ * \param[in]  surface      A pointer to a ubm_surface to associate the surface with
  * \param[in]  pAllocator   Optional allocation callbacks, or NULL
- * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned.
+ * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned
  *
  * \retval     None
  */
@@ -42,9 +42,9 @@ void cvkCreateUbmSurfaceSEC(VkInstance instance, const void* pNext, VkUbmSurface
 /**
  * \brief Retrieves physical device ubm presentation support.
  *
- * \param[in]  physicalDevice     The physical device.
- * \param[in]  queueFamilyIndex   The queue family index.
- * \param[out] device             A pointer to the ubm_device associated with a UBM compositor.
+ * \param[in]  physicalDevice     The physical device
+ * \param[in]  queueFamilyIndex   The queue family index
+ * \param[out] device             A pointer to the ubm_device associated with a UBM compositor
  *
  * \retval     VK_TRUE    The queried support is available.
  * \retval     VK_FALSE   The queried support is unavailable.

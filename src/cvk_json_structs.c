@@ -12,8 +12,8 @@
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -78,8 +78,8 @@ static CVK_FORCE_INLINE uint8_t* cvkReadJsonUint8Array(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -144,8 +144,8 @@ static CVK_FORCE_INLINE VkSampleCountFlagBits* cvkReadJsonSampleCountFlagBitsArr
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -210,8 +210,8 @@ static CVK_FORCE_INLINE uint32_t* cvkReadJsonUint32Array(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -277,8 +277,8 @@ static CVK_FORCE_INLINE VkDescriptorSet* cvkReadJsonDescriptorSetArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -343,8 +343,8 @@ static CVK_FORCE_INLINE VkResult* cvkReadJsonResultArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -410,10 +410,10 @@ static CVK_FORCE_INLINE VkSemaphore* cvkReadJsonSemaphoreArray(
 /**
  * \brief Reads up to the declared native array capacity.
  *
- * \param[in]  pContext   Parsing document and arena.
- * \param[in]  pValue     JSON array, or NULL.
- * \param[out] pOutput    Native element storage, already zeroed.
- * \param[in]  capacity   Native element count.
+ * \param[in]  pContext   Parsing document and arena
+ * \param[in]  pValue     JSON array, or NULL
+ * \param[out] pOutput    Native element storage, already zeroed
+ * \param[in]  capacity   Native element count
  *
  * \retval     None
  */
@@ -449,10 +449,10 @@ static CVK_FORCE_INLINE void cvkReadJsonFloatFixedArray(
 /**
  * \brief Reads up to the declared native array capacity.
  *
- * \param[in]  pContext   Parsing document and arena.
- * \param[in]  pValue     JSON array, or NULL.
- * \param[out] pOutput    Native element storage, already zeroed.
- * \param[in]  capacity   Native element count.
+ * \param[in]  pContext   Parsing document and arena
+ * \param[in]  pValue     JSON array, or NULL
+ * \param[out] pOutput    Native element storage, already zeroed
+ * \param[in]  capacity   Native element count
  *
  * \retval     None
  */
@@ -488,10 +488,10 @@ static CVK_FORCE_INLINE void cvkReadJsonInt32FixedArray(
 /**
  * \brief Reads up to the declared native array capacity.
  *
- * \param[in]  pContext   Parsing document and arena.
- * \param[in]  pValue     JSON array, or NULL.
- * \param[out] pOutput    Native element storage, already zeroed.
- * \param[in]  capacity   Native element count.
+ * \param[in]  pContext   Parsing document and arena
+ * \param[in]  pValue     JSON array, or NULL
+ * \param[out] pOutput    Native element storage, already zeroed
+ * \param[in]  capacity   Native element count
  *
  * \retval     None
  */
@@ -527,8 +527,8 @@ static CVK_FORCE_INLINE void cvkReadJsonUint32FixedArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -593,8 +593,8 @@ static CVK_FORCE_INLINE VkFormat* cvkReadJsonFormatArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -659,8 +659,8 @@ static CVK_FORCE_INLINE size_t* cvkReadJsonSizeArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -726,8 +726,8 @@ static CVK_FORCE_INLINE VkSampler* cvkReadJsonSamplerArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -793,8 +793,8 @@ static CVK_FORCE_INLINE VkDescriptorSetLayout* cvkReadJsonDescriptorSetLayoutArr
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -859,10 +859,10 @@ static CVK_FORCE_INLINE VkDescriptorBindingFlags* cvkReadJsonDescriptorBindingFl
 /**
  * \brief Reads up to the declared native array capacity.
  *
- * \param[in]  pContext   Parsing document and arena.
- * \param[in]  pValue     JSON array, or NULL.
- * \param[out] pOutput    Native element storage, already zeroed.
- * \param[in]  capacity   Native element count.
+ * \param[in]  pContext   Parsing document and arena
+ * \param[in]  pValue     JSON array, or NULL
+ * \param[out] pOutput    Native element storage, already zeroed
+ * \param[in]  capacity   Native element count
  *
  * \retval     None
  */
@@ -898,8 +898,8 @@ static CVK_FORCE_INLINE void cvkReadJsonUint8FixedArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -965,8 +965,8 @@ static CVK_FORCE_INLINE VkPhysicalDevice* cvkReadJsonPhysicalDeviceArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -1031,8 +1031,8 @@ static CVK_FORCE_INLINE float* cvkReadJsonFloatArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -1098,8 +1098,8 @@ static CVK_FORCE_INLINE VkImage* cvkReadJsonImageArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -1165,8 +1165,8 @@ static CVK_FORCE_INLINE VkBuffer* cvkReadJsonBufferArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -1232,8 +1232,8 @@ static CVK_FORCE_INLINE VkTensorARM* cvkReadJsonTensorARMArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -1299,8 +1299,8 @@ static CVK_FORCE_INLINE VkImageView* cvkReadJsonImageViewArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -1366,8 +1366,8 @@ static CVK_FORCE_INLINE VkShaderEXT* cvkReadJsonShaderArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -1433,8 +1433,8 @@ static CVK_FORCE_INLINE VkPipeline* cvkReadJsonPipelineArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -1499,8 +1499,8 @@ static CVK_FORCE_INLINE VkImageCompressionFixedRateFlagsEXT* cvkReadJsonImageCom
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -1565,8 +1565,8 @@ static CVK_FORCE_INLINE uint64_t* cvkReadJsonUint64Array(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -1631,8 +1631,8 @@ static CVK_FORCE_INLINE VkIndexType* cvkReadJsonIndexTypeArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -1697,8 +1697,8 @@ static CVK_FORCE_INLINE VkPresentModeKHR* cvkReadJsonPresentModeArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -1763,10 +1763,10 @@ static CVK_FORCE_INLINE VkDescriptorType* cvkReadJsonDescriptorTypeArray(
 /**
  * \brief Reads up to the declared native array capacity.
  *
- * \param[in]  pContext   Parsing document and arena.
- * \param[in]  pValue     JSON array, or NULL.
- * \param[out] pOutput    Native element storage, already zeroed.
- * \param[in]  capacity   Native element count.
+ * \param[in]  pContext   Parsing document and arena
+ * \param[in]  pValue     JSON array, or NULL
+ * \param[out] pOutput    Native element storage, already zeroed
+ * \param[in]  capacity   Native element count
  *
  * \retval     None
  */
@@ -1804,8 +1804,8 @@ static CVK_FORCE_INLINE void cvkReadJsonPhysicalDeviceFixedArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -1870,10 +1870,10 @@ static CVK_FORCE_INLINE VkImageLayout* cvkReadJsonImageLayoutArray(
 /**
  * \brief Reads up to the declared native array capacity.
  *
- * \param[in]  pContext   Parsing document and arena.
- * \param[in]  pValue     JSON array, or NULL.
- * \param[out] pOutput    Native element storage, already zeroed.
- * \param[in]  capacity   Native element count.
+ * \param[in]  pContext   Parsing document and arena
+ * \param[in]  pValue     JSON array, or NULL
+ * \param[out] pOutput    Native element storage, already zeroed
+ * \param[in]  capacity   Native element count
  *
  * \retval     None
  */
@@ -1909,8 +1909,8 @@ static CVK_FORCE_INLINE void cvkReadJsonDeviceSizeFixedArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -1976,8 +1976,8 @@ static CVK_FORCE_INLINE VkPipelineBinaryKHR* cvkReadJsonPipelineBinaryArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -2042,8 +2042,8 @@ static CVK_FORCE_INLINE VkBool32* cvkReadJsonBool32Array(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -2108,10 +2108,10 @@ static CVK_FORCE_INLINE VkDynamicState* cvkReadJsonDynamicStateArray(
 /**
  * \brief Reads up to the declared native array capacity.
  *
- * \param[in]  pContext   Parsing document and arena.
- * \param[in]  pValue     JSON array, or NULL.
- * \param[out] pOutput    Native element storage, already zeroed.
- * \param[in]  capacity   Native element count.
+ * \param[in]  pContext   Parsing document and arena
+ * \param[in]  pValue     JSON array, or NULL
+ * \param[out] pOutput    Native element storage, already zeroed
+ * \param[in]  capacity   Native element count
  *
  * \retval     None
  */
@@ -2150,8 +2150,8 @@ static CVK_FORCE_INLINE void cvkReadJsonFragmentShadingRateCombinerOpFixedArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -2216,8 +2216,8 @@ static CVK_FORCE_INLINE VkSampleMask* cvkReadJsonSampleMaskArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -2283,10 +2283,10 @@ static CVK_FORCE_INLINE VkSwapchainKHR* cvkReadJsonSwapchainArray(
 /**
  * \brief Reads up to the declared native array capacity.
  *
- * \param[in]  pContext   Parsing document and arena.
- * \param[in]  pValue     JSON array, or NULL.
- * \param[out] pOutput    Native element storage, already zeroed.
- * \param[in]  capacity   Native element count.
+ * \param[in]  pContext   Parsing document and arena
+ * \param[in]  pValue     JSON array, or NULL
+ * \param[out] pOutput    Native element storage, already zeroed
+ * \param[in]  capacity   Native element count
  *
  * \retval     None
  */
@@ -2322,8 +2322,8 @@ static CVK_FORCE_INLINE void cvkReadJsonQueueGlobalPriorityFixedArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -2388,8 +2388,8 @@ static CVK_FORCE_INLINE int32_t* cvkReadJsonInt32Array(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -2454,8 +2454,8 @@ static CVK_FORCE_INLINE VkDeviceAddress* cvkReadJsonDeviceAddressArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -2520,8 +2520,8 @@ static CVK_FORCE_INLINE VkDeviceSize* cvkReadJsonDeviceSizeArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -2586,8 +2586,8 @@ static CVK_FORCE_INLINE VkShadingRatePaletteEntryNV* cvkReadJsonShadingRatePalet
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -2652,8 +2652,8 @@ static CVK_FORCE_INLINE VkPipelineStageFlags* cvkReadJsonPipelineStageFlagsArray
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -2719,8 +2719,8 @@ static CVK_FORCE_INLINE VkCommandBuffer* cvkReadJsonCommandBufferArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -2786,8 +2786,8 @@ static CVK_FORCE_INLINE VkFence* cvkReadJsonFenceArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -2852,8 +2852,8 @@ static CVK_FORCE_INLINE VkTimeDomainKHR* cvkReadJsonTimeDomainArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -2918,8 +2918,8 @@ static CVK_FORCE_INLINE int64_t* cvkReadJsonInt64Array(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -2984,8 +2984,8 @@ static CVK_FORCE_INLINE VkValidationFeatureEnableEXT* cvkReadJsonValidationFeatu
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -3050,8 +3050,8 @@ static CVK_FORCE_INLINE VkValidationFeatureDisableEXT* cvkReadJsonValidationFeat
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -3116,8 +3116,8 @@ static CVK_FORCE_INLINE VkValidationCheckEXT* cvkReadJsonValidationCheckArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -3183,8 +3183,8 @@ static CVK_FORCE_INLINE VkBufferView* cvkReadJsonBufferViewArray(
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -3250,8 +3250,8 @@ static CVK_FORCE_INLINE VkAccelerationStructureKHR* cvkReadJsonAccelerationStruc
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.
@@ -3317,8 +3317,8 @@ static CVK_FORCE_INLINE VkAccelerationStructureNV* cvkReadJsonAccelerationStruct
 /**
  * \brief Reads a JSON array into aligned caller-arena storage.
  *
- * \param[in] pContext   Parsing context and arena.
- * \param[in] pValue     Non-null array value; other kinds produce NULL.
+ * \param[in] pContext   Parsing context and arena
+ * \param[in] pValue     Non-null array value; other kinds produce NULL
  *
  * \retval    NULL       The value is not an array or the array is empty.
  * \retval    non-NULL   The typed array in the caller's arena.

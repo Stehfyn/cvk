@@ -15,9 +15,9 @@
  *
  * \param[out] pInfo    Receives the initialized VkXlibSurfaceCreateInfoKHR
  * \param[in]  pNext    Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
- * \param[in]  flags    VkXlibSurfaceCreateInfoKHR::flags
- * \param[in]  dpy      VkXlibSurfaceCreateInfoKHR::dpy
- * \param[in]  window   VkXlibSurfaceCreateInfoKHR::window
+ * \param[in]  flags    Reserved for future use; must be 0
+ * \param[in]  dpy      A pointer to an Xlib Display connection to the X server
+ * \param[in]  window   An Xlib Window to associate the surface with
  *
  * \retval     None
  */
@@ -27,13 +27,13 @@ void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void*
 /**
  * \brief Creates a xlib surface.
  *
- * \param[in]  instance     The instance to associate the surface with.
+ * \param[in]  instance     The instance to associate the surface with
  * \param[in]  pNext        Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
- * \param[in]  flags        Reserved for future use; must be 0.
- * \param[in]  dpy          A pointer to an Xlib Display connection to the X server.
- * \param[in]  window       An Xlib Window to associate the surface with.
+ * \param[in]  flags        Reserved for future use; must be 0
+ * \param[in]  dpy          A pointer to an Xlib Display connection to the X server
+ * \param[in]  window       An Xlib Window to associate the surface with
  * \param[in]  pAllocator   Optional allocation callbacks, or NULL
- * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned.
+ * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned
  *
  * \retval     None
  */
@@ -43,10 +43,10 @@ void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceC
 /**
  * \brief Retrieves physical device xlib presentation support.
  *
- * \param[in]  physicalDevice     The physical device.
- * \param[in]  queueFamilyIndex   The queue family index.
- * \param[out] dpy                A pointer to an Xlib Display connection to the server.
- * \param[in]  visualID           An X11 visual (VisualID).
+ * \param[in]  physicalDevice     The physical device
+ * \param[in]  queueFamilyIndex   The queue family index
+ * \param[out] dpy                A pointer to an Xlib Display connection to the server
+ * \param[in]  visualID           An X11 visual (VisualID)
  *
  * \retval     VK_TRUE    The queried support is available.
  * \retval     VK_FALSE   The queried support is unavailable.

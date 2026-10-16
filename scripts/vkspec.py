@@ -28,10 +28,15 @@ def clean(text: str) -> str:
     text = NORMATIVE.sub(r"\1", text)
     text = text.replace("{nbsp}", " ").replace("{ldquo}", "\"").replace("{rdquo}", "\"")
     text = text.replace("{lsquo}", "'").replace("{rsquo}", "'").replace("{times}", "x")
+    text = text.replace("{YCbCr}", "Y'CbCr").replace("{RGBprime}", "R'G'B'")
+    text = re.sub(r"\{(\w+)\}", r"\1", text)
     text = re.sub(r"\[eq\]#([^#]*)#", r"\1", text).replace("~", "")
     text = re.sub(r"`([^`]*)`", r"\1", text)
     text = re.sub(r"(?<!\w)[_*]([^_*]+)[_*](?!\w)", r"\1", text)
     text = re.sub(r"\s+", " ", text).strip()
+    optional = re.match(r"if it is not 0, is (.+?)\.\s+Otherwise, the implementation", text)
+    if optional:
+        text = optional.group(1) + ", or 0 to let the implementation choose."
     sentence = re.split(r"(?<!e\.g)(?<!i\.e)(?<!etc)\.(?:\s|$)", text, maxsplit=1)[0].rstrip(".")
     sentence = re.sub(r"^(?:is|are) ", "", sentence)
     if sentence == "reserved for future use":
@@ -70,11 +75,14 @@ def parse(lines, docs: Dict[Tuple[str, str], str]) -> None:
         text.clear()
 
     for line in lines:
-        opened = re.match(r"^\[open,refpage='(\w+)'", line)
+        opened = re.match(r"^\[open,refpage='(\w+)'(?:,desc='([^']*)')?", line)
         bullet = BULLET.match(line)
         if opened:
             flush()
             page = opened.group(1)
+            # The page's own one-line description, under the empty name.
+            if opened.group(2) and not opened.group(2).startswith("Stub description"):
+                docs.setdefault((page, ""), clean(opened.group(2)).rstrip("."))
         elif bullet:
             flush()
             names.extend([bullet.group(1)] + re.findall(r"pname:(\w+)", bullet.group(2)))

@@ -6601,7 +6601,7 @@ void* scvkParseJsonStructureChain(const scvkJsonContext* pContext, const scvkJso
  *  links. Closing a container restores the public first-child and sibling links.
  *  Neither depth-dependent stack storage nor allocation is required.
  *
- * \param[in,out] pReader   Reader state and caller-owned values.
+ * \param[in,out] pReader   Reader state and caller-owned values
  *
  * \retval        uint32_t   The parsed root index.
  */
@@ -6779,7 +6779,7 @@ void* scvkAllocateArena(scvkArena* pArena, size_t size, size_t alignment);
 /**
  * \brief Frees callback-backed arena blocks and resets the arena.
  *
- * \param[in,out] pArena   Arena to release.
+ * \param[in,out] pArena   Arena to release
  *
  * \retval        None
  */
@@ -6801,8 +6801,8 @@ char* scvkCopyJsonString(scvkArena* pArena, const scvkJsonValue* pValue);
 /**
  * \brief Returns the JSON object ID recorded for a native handle field.
  *
- * \param[in] pReferences   First reference, or NULL for an empty list.
- * \param[in] pHandle       Address of the native handle field.
+ * \param[in] pReferences   First reference, or NULL for an empty list
+ * \param[in] pHandle       Address of the native handle field
  *
  * \retval    uint64_t   The JSON object ID, or 0 when no reference was recorded.
  */
@@ -6817,11 +6817,11 @@ uint64_t scvkGetJsonHandleId(const scvkJsonHandleReference* pReferences, const v
  *  that exact native type and leaves it unchanged on failure. Deferred resolution
  *  requires a caller-owned reference-list head. Records use the caller's arena.
  *
- * \param[in]     pContext          Parsing context and optional native resolver.
- * \param[in]     pHandleType       Vulkan handle type name.
- * \param[in]     pValue            JSON object ID, or null for the null handle.
- * \param[in]     handleByteCount   Byte extent of the native handle type.
- * \param[in,out] pHandle           Native handle object, initially VK_NULL_HANDLE.
+ * \param[in]     pContext          Parsing context and optional native resolver
+ * \param[in]     pHandleType       Vulkan handle type name
+ * \param[in]     pValue            JSON object ID, or null for the null handle
+ * \param[in]     handleByteCount   Byte extent of the native handle type
+ * \param[in,out] pHandle           Native handle object, initially VK_NULL_HANDLE
  *
  * \retval        VK_TRUE    The ID was null or resolved to a native handle.
  * \retval        VK_FALSE   The reference remains unresolved and its handle stays null.
@@ -6834,7 +6834,7 @@ VkBool32 scvkResolveJsonHandle(const scvkJsonContext* pContext, const char* pHan
  *
  * \param[in]  pContext      Parsing context
  * \param[in]  pList         The JSON array, or NULL for none
- * \param[in]  elementSize   sizeof the parsed structure
+ * \param[in]  elementSize   Sizeof the parsed structure
  * \param[out] ppIds         Receives the arena array of ids, one per entry
  * \param[out] ppElements    Receives the arena array of structures, zeroed; the caller parses each
  *
@@ -6877,9 +6877,9 @@ uint64_t scvkGetPipelineJsonHandle(uint32_t count, const uint64_t* pIds, const u
 /**
  * \brief Finds an object ID in a pipeline object's ID table.
  *
- * \param[in] count   Number of entries.
- * \param[in] pIds    Object IDs.
- * \param[in] id      Requested ID.
+ * \param[in] count   Number of entries
+ * \param[in] pIds    Object IDs
+ * \param[in] id      Requested ID
  *
  * \retval    uint32_t   The matching index into a typed handle table, or VK_INVALID when no ID matches.
  */
@@ -6954,8 +6954,8 @@ void scvkCreatePipelineFromJson(VkDevice device, VkPipelineCache pipelineCache, 
  * \param[in]  pJsonValues         Storage for the document's values
  * \param[in]  jsonValueCapacity   Capacity of pJsonValues
  * \param[in]  pArena              Arena for the parsed structures and resolved arrays
- * \param[in]  matchControl        A VkPipelineMatchControl value specifying the type of identifier being used and how the match should be performed.
- * \param[in]  poolEntrySize       The size of the entry in pipeline memory to use for this pipeline.
+ * \param[in]  matchControl        A VkPipelineMatchControl value specifying the type of identifier being used and how the match should be performed
+ * \param[in]  poolEntrySize       The size of the entry in pipeline memory to use for this pipeline
  * \param[in]  pAllocator          Optional allocation callbacks, or NULL
  * \param[out] pPipeline           Receives the parsed description; numeric IDs are retained in pHandleReferences
  * \param[out] pObjects            Receives every created handle beside its id

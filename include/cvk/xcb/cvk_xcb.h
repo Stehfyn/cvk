@@ -15,9 +15,9 @@
  *
  * \param[out] pInfo        Receives the initialized VkXcbSurfaceCreateInfoKHR
  * \param[in]  pNext        Optional extension chain attached to VkXcbSurfaceCreateInfoKHR, or NULL
- * \param[in]  flags        VkXcbSurfaceCreateInfoKHR::flags
- * \param[in]  connection   VkXcbSurfaceCreateInfoKHR::connection
- * \param[in]  window       VkXcbSurfaceCreateInfoKHR::window
+ * \param[in]  flags        Reserved for future use; must be 0
+ * \param[in]  connection   A pointer to an xcb_connection_t to the X server
+ * \param[in]  window       The xcb_window_t for the X11 window to associate the surface with
  *
  * \retval     None
  */
@@ -27,13 +27,13 @@ void cvkInitXcbSurfaceCreateInfo(VkXcbSurfaceCreateInfoKHR* pInfo, const void* p
 /**
  * \brief Creates a xcb surface.
  *
- * \param[in]  instance     The instance to associate the surface with.
+ * \param[in]  instance     The instance to associate the surface with
  * \param[in]  pNext        Optional extension chain attached to VkXcbSurfaceCreateInfoKHR, or NULL
- * \param[in]  flags        Reserved for future use; must be 0.
- * \param[in]  connection   A pointer to an xcb_connection_t to the X server.
- * \param[in]  window       The xcb_window_t for the X11 window to associate the surface with.
+ * \param[in]  flags        Reserved for future use; must be 0
+ * \param[in]  connection   A pointer to an xcb_connection_t to the X server
+ * \param[in]  window       The xcb_window_t for the X11 window to associate the surface with
  * \param[in]  pAllocator   Optional allocation callbacks, or NULL
- * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned.
+ * \param[out] pSurface     A pointer to a VkSurfaceKHR handle in which the created surface object is returned
  *
  * \retval     None
  */
@@ -43,10 +43,10 @@ void cvkCreateXcbSurface(VkInstance instance, const void* pNext, VkXcbSurfaceCre
 /**
  * \brief Retrieves physical device xcb presentation support.
  *
- * \param[in]  physicalDevice     The physical device.
- * \param[in]  queueFamilyIndex   The queue family index.
- * \param[out] connection         A pointer to an xcb_connection_t to the X server.
- * \param[in]  visual_id          An X11 visual (xcb_visualid_t).
+ * \param[in]  physicalDevice     The physical device
+ * \param[in]  queueFamilyIndex   The queue family index
+ * \param[out] connection         A pointer to an xcb_connection_t to the X server
+ * \param[in]  visual_id          An X11 visual (xcb_visualid_t)
  *
  * \retval     VK_TRUE    The queried support is available.
  * \retval     VK_FALSE   The queried support is unavailable.

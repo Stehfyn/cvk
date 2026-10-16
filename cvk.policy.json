@@ -86,7 +86,16 @@
     "vkSetLatencySleepModeLegacyNV::lowLatencyBoost": "VK_TRUE to let the GPU run at maximum clocks to reduce latency.",
     "vkSetLatencySleepModeLegacyNV::lowLatencyMode": "VK_TRUE to enable low latency mode.",
     "vkSetLatencySleepModeLegacyNV::minimumIntervalUs": "Minimum number of microseconds between presents; 0 disables frame limiting.",
-    "vkShutdownLatencyDeviceLegacyNV::device": "Logical device whose latency tracking is shut down."
+    "vkShutdownLatencyDeviceLegacyNV::device": "Logical device whose latency tracking is shut down.",
+    "VkDescriptorSetLayoutHostMappingInfoVALVE::descriptorOffset": "Byte offset of the binding's first descriptor within the descriptor set's host mapping",
+    "VkDescriptorSetLayoutHostMappingInfoVALVE::descriptorSize": "Size in bytes of one descriptor of the binding in the host mapping",
+    "VkIndirectCommandsLayoutTokenNV::pIndexTypeValues": "Pointer to an array of indexTypeCount custom uint32_t values, each treated as the VkIndexType at the same index in pIndexTypes",
+    "VkPhysicalDeviceAmigoProfilingFeaturesSEC::amigoProfiling": "Indicates whether the implementation supports Amigo profiling submission information",
+    "VkPhysicalDeviceDescriptorSetHostMappingFeaturesVALVE::descriptorSetHostMapping": "Indicates whether the implementation supports direct host access to descriptor set storage",
+    "VkPhysicalDevicePipelineCacheIncrementalModeFeaturesSEC::pipelineCacheIncrementalMode": "Indicates whether the implementation supports incremental pipeline cache data",
+    "VkPhysicalDeviceTensorFeaturesARM::shaderStorageTensorArrayDynamicIndexing": "Indicates whether arrays of storage tensors can be indexed by dynamically uniform integer expressions in shader code",
+    "VkPhysicalDeviceThrottleHintFeaturesSEC::throttleHint": "Indicates whether the implementation supports submission throttle hints",
+    "VkPhysicalDeviceVulkan12Features::subgroupBroadcastDynamicId": "Indicates whether the Id operand of OpGroupNonUniformBroadcast and the Index operand of OpGroupNonUniformQuadBroadcast can be dynamically uniform"
   },
   "role_overrides": {
     "vkGetExternalComputeQueueDataNV::params": "I",
@@ -1074,12 +1083,12 @@
         {
           "type": "VkOffset2D",
           "name": "imageOffset2D",
-          "doc": "imageOffset without depth"
+          "doc": "Initial x and y offsets in texels of the image subregion; z is 0"
         },
         {
           "type": "VkExtent2D",
           "name": "imageExtent2D",
-          "doc": "imageExtent without depth"
+          "doc": "Width and height in texels of the image subregion; depth is 1"
         }
       ],
       "steps": [
@@ -1120,12 +1129,12 @@
         {
           "type": "VkOffset2D",
           "name": "imageOffset2D",
-          "doc": "imageOffset without depth"
+          "doc": "Initial x and y offsets in texels of the image subregion; z is 0"
         },
         {
           "type": "VkExtent2D",
           "name": "imageExtent2D",
-          "doc": "imageExtent without depth"
+          "doc": "Width and height in texels of the image subregion; depth is 1"
         }
       ],
       "steps": [
@@ -1166,12 +1175,12 @@
         {
           "type": "VkOffset2D",
           "name": "imageOffset2D",
-          "doc": "imageOffset without depth"
+          "doc": "Initial x and y offsets in texels of the image subregion; z is 0"
         },
         {
           "type": "VkExtent2D",
           "name": "imageExtent2D",
-          "doc": "imageExtent without depth"
+          "doc": "Width and height in texels of the image subregion; depth is 1"
         }
       ],
       "steps": [
@@ -1212,17 +1221,17 @@
         {
           "type": "VkOffset2D",
           "name": "srcOffset2D",
-          "doc": "srcOffset without depth"
+          "doc": "Initial x and y offsets in texels of the source region; z is 0"
         },
         {
           "type": "VkOffset2D",
           "name": "dstOffset2D",
-          "doc": "dstOffset without depth"
+          "doc": "Initial x and y offsets in texels of the destination region; z is 0"
         },
         {
           "type": "VkExtent2D",
           "name": "extent2D",
-          "doc": "extent without depth"
+          "doc": "Width and height in texels of the region to copy; depth is 1"
         }
       ],
       "steps": [
@@ -1275,22 +1284,22 @@
         {
           "type": "VkOffset2D",
           "name": "srcOffset2D",
-          "doc": "srcOffset without depth"
+          "doc": "Initial x and y offsets in texels of the source region; z is 0"
         },
         {
           "type": "VkExtent2D",
           "name": "srcExtent2D",
-          "doc": "srcExtent without depth"
+          "doc": "Width and height in texels of the source region; depth is 1"
         },
         {
           "type": "VkOffset2D",
           "name": "dstOffset2D",
-          "doc": "dstOffset without depth"
+          "doc": "Initial x and y offsets in texels of the destination region; z is 0"
         },
         {
           "type": "VkExtent2D",
           "name": "dstExtent2D",
-          "doc": "dstExtent without depth"
+          "doc": "Width and height in texels of the destination region; depth is 1"
         }
       ],
       "steps": [
@@ -1355,17 +1364,17 @@
         {
           "type": "VkExtent2D",
           "name": "itemCount2D",
-          "doc": "itemCount without depth"
+          "doc": "Number of work items in x and y; z is 1"
         },
         {
           "type": "VkExtent2D",
           "name": "itemsPerInvocation2D",
-          "doc": "itemsPerInvocation without depth"
+          "doc": "Work items each shader invocation processes in x and y; z is 1"
         },
         {
           "type": "VkExtent2D",
           "name": "localSize2D",
-          "doc": "localSize without depth"
+          "doc": "Workgroup local size in x and y declared by the shader; z is 1"
         }
       ],
       "steps": [
@@ -1418,17 +1427,17 @@
         {
           "type": "VkExtent2D",
           "name": "itemCount2D",
-          "doc": "itemCount without depth"
+          "doc": "Number of work items in x and y; z is 1"
         },
         {
           "type": "VkExtent2D",
           "name": "itemsPerInvocation2D",
-          "doc": "itemsPerInvocation without depth"
+          "doc": "Work items each shader invocation processes in x and y; z is 1"
         },
         {
           "type": "VkExtent2D",
           "name": "localSize2D",
-          "doc": "localSize without depth"
+          "doc": "Workgroup local size in x and y declared by the shader; z is 1"
         }
       ],
       "steps": [
@@ -1801,7 +1810,7 @@
         {
           "type": "VkExtent2D",
           "name": "extent2D",
-          "doc": "extent without depth"
+          "doc": "Width and height in texels of the image; depth is 1"
         }
       ],
       "steps": [
@@ -1831,7 +1840,7 @@
         {
           "type": "VkExtent2D",
           "name": "extent2D",
-          "doc": "extent without depth"
+          "doc": "Width and height in texels of the image; depth is 1"
         }
       ],
       "steps": [
@@ -5178,7 +5187,7 @@
         {
           "type": "VkExtent2D",
           "name": "extent2D",
-          "doc": "Ray grid without depth"
+          "doc": "Width and height of the ray grid; depth is 1"
         }
       ],
       "steps": [
@@ -5237,7 +5246,7 @@
         {
           "type": "VkExtent2D",
           "name": "extent2D",
-          "doc": "Ray grid without depth"
+          "doc": "Width and height of the ray grid; depth is 1"
         }
       ],
       "steps": [
@@ -5777,17 +5786,17 @@
         {
           "type": "VkExtent2D",
           "name": "itemCount2D",
-          "doc": "itemCount without depth"
+          "doc": "Number of work items in x and y; z is 1"
         },
         {
           "type": "VkExtent2D",
           "name": "itemsPerInvocation2D",
-          "doc": "itemsPerInvocation without depth"
+          "doc": "Work items each shader invocation processes in x and y; z is 1"
         },
         {
           "type": "VkExtent2D",
           "name": "localSize2D",
-          "doc": "localSize without depth"
+          "doc": "Workgroup local size in x and y declared by the shader; z is 1"
         }
       ],
       "steps": [
@@ -5840,17 +5849,17 @@
         {
           "type": "VkExtent2D",
           "name": "itemCount2D",
-          "doc": "itemCount without depth"
+          "doc": "Number of work items in x and y; z is 1"
         },
         {
           "type": "VkExtent2D",
           "name": "itemsPerInvocation2D",
-          "doc": "itemsPerInvocation without depth"
+          "doc": "Work items each shader invocation processes in x and y; z is 1"
         },
         {
           "type": "VkExtent2D",
           "name": "localSize2D",
-          "doc": "localSize without depth"
+          "doc": "Workgroup local size in x and y declared by the shader; z is 1"
         }
       ],
       "steps": [

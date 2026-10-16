@@ -498,6 +498,11 @@ class Generator:
             return self.member_doc(self.reg.struct_of(member.group(1)), member.group(2))
         return doc
 
+    def receives(self, struct: str) -> str:
+        """An output structure described by its reference page: "Receives the structure describing ..."."""
+        desc = self.spec_docs.get((struct, ""))
+        return f"Receives the {desc[0].lower()}{desc[1:]}" if desc else f"Receives the {struct}"
+
     def stub_doc(self, key: str) -> str:
         """The specification only has stub pages for a few vendor entities; policy describes them."""
         if key in self.policy.get("member_docs", {}):
@@ -1033,11 +1038,11 @@ class Generator:
                 if m.name in ("sType", "pNext"):
                     continue
                 if m.array_len:
-                    params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, f"{s.name}::{m.name}", False))
+                    params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, self.member_doc(s, m.name), False))
                     body.append(f"cvkCopyMemory(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));")
                     arrays.append(m)
                 else:
-                    params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
+                    params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, self.member_doc(s, m.name), False))
                     body.append(f"pInfo->{m.name} = {m.name};")
                     fields.append((m.name, m.name))
         # Returned-only builders set chain headers without overwriting output members.
@@ -1059,10 +1064,10 @@ class Generator:
             name = self.register("cvkInit" + self.struct_short(s) + cap, f"{s.name}::{m.name}")
             params = [EmittedParam(f"{s.name}* pInfo", "pInfo", f"Receives the initialized {s.name}", True)]
             if m.array_len:
-                params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, f"{s.name}::{m.name}", False))
+                params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, self.member_doc(s, m.name), False))
                 body = [f"cvkCopyMemory(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));"]
             else:
-                params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
+                params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, self.member_doc(s, m.name), False))
                 body = [f"pInfo->{m.name} = {m.name};"]
             if self.designated_initializers:
                 body = self.designated_builder_body(s, [] if m.array_len else [(m.name, m.name)], [m] if m.array_len else [])
@@ -1494,7 +1499,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             worker_doc = ("/**\n * \\brief Reads one structure and appends its nested objects to the work stack.\n"
                           " * \\param[in,out] pWork Bounded parse workspace.\n"
                           " * \\param[in] pObject JSON object to read.\n"
-                          " * \\param[out] pOutput Storage for the typed Vulkan structure.\n"
+                          f" * \\param[out] pOutput Storage for the {s.name}\n"
                           " * \\retval None\n */\n")
             self.json_worker_decls.append(worker_doc + worker_sig + ";")
             worker_decls = ["const cvkJsonContext* pContext;", f"{s.name}* pInfo;"] + decls
@@ -2009,8 +2014,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             index = next(i for i, p in enumerate(params) if p.name == ext_next) + 1
             params[index:index] = storage_params
             var = self.struct_local_name(ext, used | {base_var, "result", ext_next})
-        params.append(EmittedParam(f"{ext.name}* {ext_out}", ext_out,
-                                   f"Receives the {ext.name}", True))
+        params.append(EmittedParam(f"{ext.name}* {ext_out}", ext_out, self.receives(ext.name), True))
         args = [f"&{var}" if p is chain_param else arg for p, arg in zip(t_params, args)]
         body = [f"{base.name} {base_var};", f"{ext.name} {var};", ""]
         body += self.struct_initialization(ext, var, fields, arrays)
@@ -2349,7 +2353,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
         # Declared outputs join the parameter list where a step first binds, stores, or sets them.
         declared_outputs: Dict[str, EmittedParam] = {}
         for out in spec.get("outputs", []):
-            declared_outputs[out["name"]] = EmittedParam(f"{out['type']}* {out['name']}", out["name"], f"Receives the {stem(out['name'])}", True)
+            declared_outputs[out["name"]] = EmittedParam(f"{out['type']}* {out['name']}", out["name"], out.get("doc") or "Receives the " + re.sub(r"(?<!^)(?=[A-Z])", " ", stem(out["name"])).lower(), True)
             available[stem(out["name"])] = f"(*{out['name']})"
         raw_decls: List[str] = []
         local_arrays: Dict[str, Tuple[str, int]] = {}
@@ -3015,6 +3019,11 @@ RESULT_DOCS = {
 }
 
 
+def sentence_case(text: str) -> str:
+    """Capitalize a leading plain lowercase word; identifiers such as vkMapMemory keep their case."""
+    return text[:1].upper() + text[1:] if re.match(r"[a-z]+\b", text) else text
+
+
 def finish_doc_comments(text: str) -> str:
     """Apply the doc comment layout to every Doxygen block on the way out (generated,
     hand-written and protocol blocks alike): a blank line and the full-width banner open each
@@ -3037,7 +3046,10 @@ def finish_doc_comments(text: str) -> str:
             for m in rows:
                 kind = m.group(1)[:6]
                 value[kind] = max(value.get(kind, 0), len(m.group(2)) + 2)
-            lines = [f" * {m.group(1).ljust(tag)} " + (f"{m.group(2).ljust(value[m.group(1)[:6]])} {m.group(3)}" if m.group(3) else m.group(2))
+            # Parameter descriptions are phrases: no trailing period.
+            lines = [f" * {m.group(1).ljust(tag)} " + (f"{m.group(2).ljust(value[m.group(1)[:6]])} "
+                                                        + (sentence_case(m.group(3).rstrip(".")) if m.group(1).startswith("\\param") else m.group(3))
+                                                        if m.group(3) else m.group(2))
                      if m else line for m, line in zip(map(row.match, lines), lines)]
         return "\n".join(lines)
 
